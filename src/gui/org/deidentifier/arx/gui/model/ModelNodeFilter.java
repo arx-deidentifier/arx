@@ -378,10 +378,8 @@ public class ModelNodeFilter implements Serializable {
      */
     public boolean isAllowed(final ARXLattice lattice, final ARXNode node) {
         
-        double max = node.getMaximumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
-                                                                 lattice.getMaximumInformationLoss());
-        double min = node.getMinimumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
-                                                                 lattice.getMaximumInformationLoss());
+        double max = node.getHighestScore().relativeTo(lattice.getLowestScore(), lattice.getHighestScore());
+        double min = node.getLowestScore().relativeTo(lattice.getLowestScore(), lattice.getHighestScore());
         
         if (max < minInformationLoss) {
             return false;

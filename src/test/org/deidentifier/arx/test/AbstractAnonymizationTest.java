@@ -437,11 +437,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
             
-            String lossActual = result.getGlobalOptimum().getMaximumInformationLoss().toString();
+            String lossActual = result.getGlobalOptimum().getHighestScore().toString();
             String lossExpected = testCase.optimalInformationLoss;
             
             assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
-                         lossActual + "(" + result.getGlobalOptimum().getMinimumInformationLoss().toString() + ")",
+                         lossActual + "(" + result.getGlobalOptimum().getLowestScore().toString() + ")",
                          lossExpected,
                          lossActual);
                          
@@ -475,7 +475,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                     if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
                         statistics[5]++;
                     }
-                    if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
+                    if (arxNode.getHighestScore() == arxNode.getLowestScore()) {
                         statistics[6]++;
                     }
                 }

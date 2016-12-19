@@ -276,9 +276,9 @@ public abstract class ViewSolutionSpace implements IView {
             public String decorate(ARXNode node) {
                 final StringBuffer b = new StringBuffer();
                 b.append(Resources.getMessage("LatticeView.1")); //$NON-NLS-1$
-                b.append(SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss())));
+                b.append(SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())));
                 b.append(" - "); //$NON-NLS-1$
-                b.append(SWTUtil.getPrettyString(asRelativeValue(node.getMaximumInformationLoss())));
+                b.append(SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())));
                 b.append(" [%]\n"); //$NON-NLS-1$
                 if (model.getOutputDefinition() != null) {
                     for (final String qi : node.getQuasiIdentifyingAttributes()) {
@@ -364,8 +364,8 @@ public abstract class ViewSolutionSpace implements IView {
     protected double asRelativeValue(final InformationLoss<?> infoLoss) {
         if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
             model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
-            return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(),
-                                       model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
+            return infoLoss.relativeTo(model.getResult().getLattice().getLowestScore(),
+                                       model.getResult().getLattice().getHighestScore()) * 100d;
         } else {
             return 0;
         }
@@ -500,11 +500,11 @@ public abstract class ViewSolutionSpace implements IView {
      * @return
      */
     protected Color getUtilityColor(ARXNode node) {
-        if (node.getMinimumInformationLoss().compareTo(node.getMaximumInformationLoss()) != 0 &&
-            asRelativeValue(node.getMinimumInformationLoss()) == 0d) {
+        if (node.getLowestScore().compareTo(node.getHighestScore()) != 0 &&
+            asRelativeValue(node.getLowestScore()) == 0d) {
             return COLOR_GRAY;
         } else {
-            return gradient.getColor(asRelativeValue(node.getMinimumInformationLoss()) / 100d);
+            return gradient.getColor(asRelativeValue(node.getLowestScore()) / 100d);
         }
     }
     

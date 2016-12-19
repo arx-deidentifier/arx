@@ -235,17 +235,17 @@ public class ViewList extends ViewSolutionSpace {
         item.setText(2, anonymity);
 
         String min = null;
-        if (node.getMinimumInformationLoss() != null) {
-            min = node.getMinimumInformationLoss().toString() +
-                  " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+        if (node.getLowestScore() != null) {
+            min = node.getLowestScore().toString() +
+                  " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             min = Resources.getMessage("ListView.7"); //$NON-NLS-1$
         }
         item.setText(4, min);
         String max = null;
-        if (node.getMaximumInformationLoss() != null) {
-            max = node.getMaximumInformationLoss().toString() +
-                  " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMaximumInformationLoss())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+        if (node.getHighestScore() != null) {
+            max = node.getHighestScore().toString() +
+                  " [" + SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             max = Resources.getMessage("ListView.10"); //$NON-NLS-1$
         }
@@ -355,8 +355,8 @@ public class ViewList extends ViewSolutionSpace {
                     @Override
                     public int compare(final ARXNode arg0,
                                        final ARXNode arg1) {
-                        return arg0.getMaximumInformationLoss()
-                                   .compareTo(arg1.getMaximumInformationLoss());
+                        return arg0.getHighestScore()
+                                   .compareTo(arg1.getHighestScore());
                     }
                 });
 

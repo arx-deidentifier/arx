@@ -162,8 +162,8 @@ public class ViewProperties implements IView {
      */
     private double asRelativeValue(final InformationLoss<?> infoLoss) {
         if (result == null) return 0;
-        return infoLoss.relativeTo(result.getLattice().getMinimumInformationLoss(),
-                                   result.getLattice().getMaximumInformationLoss()) * 100d;
+        return infoLoss.relativeTo(result.getLattice().getLowestScore(),
+                                   result.getLattice().getHighestScore()) * 100d;
     }
 
     /**
@@ -184,17 +184,17 @@ public class ViewProperties implements IView {
         c.setText(1, String.valueOf(node.getAnonymity()));
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
-        if (node.getMinimumInformationLoss() != null) {
-            c.setText(1, node.getMinimumInformationLoss().toString() +
-                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (node.getLowestScore() != null) {
+            c.setText(1, node.getLowestScore().toString() +
+                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
         }
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
-        if (node.getMaximumInformationLoss() != null) {
-            c.setText(1, node.getMaximumInformationLoss().toString() +
-                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMaximumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (node.getHighestScore() != null) {
+            c.setText(1, node.getHighestScore().toString() +
+                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
         }

@@ -92,7 +92,7 @@ public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTes
                 if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
                     statistics[5]++;
                 }
-                if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
+                if (arxNode.getHighestScore() == arxNode.getLowestScore()) {
                     statistics[6]++;
                 }
             }

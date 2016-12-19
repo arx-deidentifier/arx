@@ -211,32 +211,9 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
         ARXAnonymizer anonymizer2 = new ARXAnonymizer();
         ARXResult result2 = anonymizer2.anonymize(data2, testcaseconfig);
         
-        String loss1 = result1.getGlobalOptimum().getMaximumInformationLoss().toString();
-        String loss2 = result2.getGlobalOptimum().getMaximumInformationLoss().toString();
+        String loss1 = result1.getGlobalOptimum().getHighestScore().toString();
+        String loss2 = result2.getGlobalOptimum().getHighestScore().toString();
         
         assertEquals("Metric value differs", loss1, loss2);
-        
-        // Map<String, ARXNode> result1nodesmap = new HashMap<String, ARXNode>();
-        //
-        // for (ARXNode[] level : result1.getLattice().getLevels()) {
-        // for (ARXNode node : level) {
-        // result1nodesmap.put(Arrays.toString(node.getTransformation()), node);
-        // }
-        // }
-        //
-        // // Test equality information loss for all transformations
-        // for (ARXNode[] level : result2.getLattice().getLevels()) {
-        // for (ARXNode node : level) {
-        //
-        // String label = Arrays.toString(node.getTransformation());
-        // result1.getOutput(result1nodesmap.get(label), false);
-        // result2.getOutput(node, false);
-        //
-        // String loss1 = result1nodesmap.get(label).getMaximumInformationLoss().toString();
-        // String loss2 = node.getMaximumInformationLoss().toString();
-        //
-        // assertEquals(label, loss1, loss2);
-        // }
-        // }
     }
 }

@@ -58,19 +58,19 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXUtilityMetricsTestCase {
-        
-        /** TODO */
-        public ARXConfiguration config;
-        
-        /** TODO */
-        public String dataset;
-        
-        /** TODO */
-        public String sensitiveAttribute;
-        
-        /** TODO */
+
+        /** Config */
+        public ARXConfiguration    config;
+
+        /** Dataset */
+        public String              dataset;
+
+        /** Attribute */
+        public String              sensitiveAttribute;
+
+        /** Score */
         public Map<String, String> informationLoss;
-        
+
         /**
          * Creates a new instance.
          *
@@ -209,11 +209,11 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
                 String loss = testcase.informationLoss.get(label);
                 
                 if (loss != null) {
-                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
+                    if (node.getHighestScore().compareTo(node.getLowestScore()) != 0) {
                         result.getOutput(node, false);
                     }
                     
-                    String actualLoss = node.getMaximumInformationLoss().toString();
+                    String actualLoss = node.getHighestScore().toString();
                     String expectedLoss = testcase.informationLoss.get(label);
                     
                     assertEquals(label, expectedLoss, actualLoss);

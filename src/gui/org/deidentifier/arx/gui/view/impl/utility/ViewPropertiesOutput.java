@@ -243,11 +243,11 @@ public class ViewPropertiesOutput extends ViewProperties {
         roots.clear();
         
         // Print score
-        if (node.getMaximumInformationLoss().getValue().equals( 
-            node.getMinimumInformationLoss().getValue())) {
+        if (node.getHighestScore().getValue().equals( 
+            node.getLowestScore().getValue())) {
             
-            final String infoloss = node.getMinimumInformationLoss().toString() +
-                                    " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+            final String infoloss = node.getLowestScore().toString() +
+                                    " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
             new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
 
         } 

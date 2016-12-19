@@ -109,7 +109,7 @@ public class Example25 extends Example {
             for (ARXNode node : level) {
                 Iterator<String[]> transformed = result.getOutput(node, false).iterator();
                 System.out.println("Transformation : "+Arrays.toString(node.getTransformation()));
-                System.out.println("InformationLoss: "+node.getMaximumInformationLoss());
+                System.out.println("InformationLoss: "+node.getHighestScore());
                 while (transformed.hasNext()) {
                     System.out.print("   ");
                     System.out.println(Arrays.toString(transformed.next()));

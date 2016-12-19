@@ -78,8 +78,8 @@ public class TestSolutionSpaceClassification extends AbstractTest {
         
         for (ARXNode[] level : lattice.getLevels()) {
             for (ARXNode node : level) {
-                if (Double.compare((Double.valueOf(node.getMinimumInformationLoss().toString())), Double.NaN) == 0 ||
-                    Double.compare((Double.valueOf(node.getMaximumInformationLoss().toString())), Double.NaN) == 0) {
+                if (Double.compare((Double.valueOf(node.getLowestScore().toString())), Double.NaN) == 0 ||
+                    Double.compare((Double.valueOf(node.getHighestScore().toString())), Double.NaN) == 0) {
                     fail();
                 }
             }

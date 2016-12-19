@@ -75,7 +75,7 @@ public class ModelClipboard {
         collectTopSolutions(utility, result.getLattice(), new Comparator<ARXNode>(){
             @Override
             public int compare(ARXNode o1, ARXNode o2) {
-                return o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
+                return o1.getHighestScore().compareTo(o2.getHighestScore());
             }
         }, 10);
         
@@ -95,7 +95,7 @@ public class ModelClipboard {
                 }
                 int cmp = Double.valueOf(val1).compareTo(val2);
                 if (cmp == 0) {
-                    return o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
+                    return o1.getHighestScore().compareTo(o2.getHighestScore());
                 } else {
                     return cmp;
                 }
@@ -232,8 +232,8 @@ public class ModelClipboard {
         Collections.sort(clipboard, new Comparator<ARXNode>(){
             @Override
             public int compare(ARXNode arg0, ARXNode arg1) {
-                InformationLoss<?> loss0 = arg0.getMinimumInformationLoss();
-                InformationLoss<?> loss1 = arg1.getMinimumInformationLoss();
+                InformationLoss<?> loss0 = arg0.getLowestScore();
+                InformationLoss<?> loss1 = arg1.getLowestScore();
                 if (loss0==null && loss1==null) return 0;
                 else if (loss0==null && loss1!=null) return -1;
                 else if (loss0!=null && loss1==null) return +1;

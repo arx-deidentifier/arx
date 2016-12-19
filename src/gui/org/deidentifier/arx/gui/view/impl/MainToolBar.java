@@ -132,7 +132,7 @@ public class MainToolBar extends AbstractMenu {
                     } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
                         anonymityUnknown++;
                     }
-                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) == 0) {
+                    if (node.getHighestScore().compareTo(node.getLowestScore()) == 0) {
                         infolossAvailable++;
                     }
                 }
@@ -229,7 +229,7 @@ public class MainToolBar extends AbstractMenu {
                   .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
                   .append(Arrays.toString(optimum.getTransformation()));
                 sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$
-                  .append(optimum.getMaximumInformationLoss().toString());
+                  .append(optimum.getHighestScore().toString());
             }
 
             // Return

@@ -188,8 +188,8 @@ public class WorkerSave extends Worker<Model> {
                 	writer.write(vocabulary.getSuccessors(), n.getSuccessors(), map);
                 }
                 writer.indent(vocabulary.getInfoloss());
-                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().toString());
-                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().toString());
+                writer.write(vocabulary.getMax2(), n.getHighestScore().toString());
+                writer.write(vocabulary.getMin2(), n.getLowestScore().toString());
                 writer.unindent();
                 writer.unindent();
             }
@@ -596,8 +596,8 @@ public class WorkerSave extends Worker<Model> {
         for (final ARXNode[] level : l.getLevels()) {
             for (final ARXNode n : level) {
                 final String key = Arrays.toString(n.getTransformation());
-                min.put(map.get(key), n.getMinimumInformationLoss());
-                max.put(map.get(key), n.getMaximumInformationLoss());
+                min.put(map.get(key), n.getLowestScore());
+                max.put(map.get(key), n.getHighestScore());
             }
         }
         oos = new ObjectOutputStream(zip);
