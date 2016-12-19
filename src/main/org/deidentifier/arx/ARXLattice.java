@@ -1330,13 +1330,13 @@ public class ARXLattice implements Serializable {
             this.maximumInformationLoss = null;
             for (ARXNode[] level : this.levels) {
                 for (ARXNode node : level) {
-                    this.minimumInformationLoss = this.minimumInformationLoss == null ? node.getMinimumInformationLoss() : this.minimumInformationLoss;
-                    this.maximumInformationLoss = this.maximumInformationLoss == null ? node.getMaximumInformationLoss() : this.maximumInformationLoss;
-                    if (this.minimumInformationLoss.compareTo(node.getMinimumInformationLoss()) > 0) {
-                        this.minimumInformationLoss = node.getMinimumInformationLoss().clone();
+                    this.minimumInformationLoss = this.minimumInformationLoss == null ? node.getLowestScore() : this.minimumInformationLoss;
+                    this.maximumInformationLoss = this.maximumInformationLoss == null ? node.getHighestScore() : this.maximumInformationLoss;
+                    if (this.minimumInformationLoss.compareTo(node.getLowestScore()) > 0) {
+                        this.minimumInformationLoss = node.getLowestScore().clone();
                     }
-                    if (this.maximumInformationLoss.compareTo(node.getMaximumInformationLoss()) < 0) {
-                        this.maximumInformationLoss = node.getMaximumInformationLoss().clone();
+                    if (this.maximumInformationLoss.compareTo(node.getHighestScore()) < 0) {
+                        this.maximumInformationLoss = node.getHighestScore().clone();
                     }
                 }
             }
