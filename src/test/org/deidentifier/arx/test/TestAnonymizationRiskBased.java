@@ -74,16 +74,10 @@ public class TestAnonymizationRiskBased extends AbstractAnonymizationTest {
      */
     private static PopulationUniqueness getPopulationUniqueness(double threshold, PopulationUniquenessModel model) {
         
-        double[][] startValues = new double[16][];
-        int index = 0;
-        for (double d1 = 0d; d1 < 1d; d1 += 0.33d) {
-            for (double d2 = 0d; d2 < 1d; d2 += 0.33d) {
-                startValues[index++] = new double[] { d1, d2 };
-            }
-        }
-        
         return new PopulationUniqueness(threshold, model,
                                                      ARXPopulationModel.create(Region.USA),
-                                                     ARXSolverConfiguration.create().preparedStartValues(startValues).iterationsPerTry(15));
+                                                     ARXSolverConfiguration.create()
+                                                                           .setDeterministic(true)
+                                                                           .iterationsPerTry(15));
     }
 }

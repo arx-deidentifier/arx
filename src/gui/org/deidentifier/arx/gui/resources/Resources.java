@@ -48,22 +48,22 @@ import org.eclipse.swt.widgets.Shell;
  * @author Fabian Prasser
  */
 public class Resources {
-    
+
     /** Messages */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-                                                                                                                                   
+
     /** The splash. */
     private static Image                splash          = null;
-    
+
     /** The iconset. */
     private static Image[]              iconset         = null;
-    
+
     /** The image cache */
     private final Map<String, Image>    imageCache;
-    
+
     /** The charset used to read the license text */
-    private final static Charset CHARSET = StandardCharsets.UTF_8;
-    
+    private final static Charset        CHARSET         = StandardCharsets.UTF_8;
+
     /**
      * Returns the logo.
      *

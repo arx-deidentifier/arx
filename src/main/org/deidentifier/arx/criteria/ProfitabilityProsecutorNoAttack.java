@@ -18,7 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -34,29 +34,29 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * 
  * @author Fabian Prasser
  */
-public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion {
+public class ProfitabilityProsecutorNoAttack extends ImplicitPrivacyCriterion {
 
     /** SVUID */
-    private static final long         serialVersionUID = -1283022087083117810L;
+    private static final long           serialVersionUID = -1283022087083117810L;
 
     /** The underlying k-anonymity privacy model */
-    private int                       k                = -1;
+    private int                         k                = -1;
 
-    /** The underlying financial configuration */
-    private ARXFinancialConfiguration config           = null;
+    /** The underlying cost/benefit configuration */
+    private ARXCostBenefitConfiguration config           = null;
 
     /**
      * Creates a new instance
      * @param config
      */
-    public FinancialProsecutorNoAttackPrivacy() {
+    public ProfitabilityProsecutorNoAttack() {
         // This model is monotonic
         super(true, true);
     }
     
     @Override
     public PrivacyCriterion clone() {
-        return new FinancialProsecutorNoAttackPrivacy();
+        return new ProfitabilityProsecutorNoAttack();
     }
     
     @Override
@@ -106,7 +106,7 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
     public void initialize(DataManager manager, ARXConfiguration config) {
 
         // Compute domain shares
-        this.config = config.getFinancialConfiguration();
+        this.config = config.getCostBenefitConfiguration();
         
         // We reduce this model to k-map or k-anonymity:
         // adversaryPayoff = adversaryGain * successProbability - adversaryCost
@@ -123,7 +123,7 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= k;
     }
-    
+
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
@@ -141,7 +141,7 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
 
     @Override
     public ElementData render() {
-        ElementData result = new ElementData("Financial no-attack privacy");
+        ElementData result = new ElementData("No-attack profitability");
         result.addProperty("Attacker model", "Prosecutor");
         if (config != null) {
             result.addProperty("Threshold", getK());
@@ -159,10 +159,10 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
     }
 
     /**
-     * Returns the config
+     * Returns the current configuration
      * @return
      */
-    protected ARXFinancialConfiguration getConfiguration() {
+    protected ARXCostBenefitConfiguration getConfiguration() {
         return this.config;
     }
 
@@ -170,6 +170,6 @@ public class FinancialProsecutorNoAttackPrivacy extends ImplicitPrivacyCriterion
      * Returns a string representation
      */
     protected String toString(String attackerModel) {
-        return "no-attack-financial-privacy (" + attackerModel + ")" + (config != null ? config.toString() : "");
+        return "no-attack-profitability (" + attackerModel + ")" + (config != null ? config.toString() : "");
     }
 }

@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -246,7 +246,7 @@ public class ViewPropertiesInput extends ViewProperties {
             if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
                 part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
                 part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE ||
-                part == ModelPart.FINANCIAL_MODEL) {
+                part == ModelPart.COST_BENEFIT_MODEL) {
                 return;
             }
             
@@ -292,26 +292,26 @@ public class ViewPropertiesInput extends ViewProperties {
         new Property(m, Resources.getMessage("PropertiesView.157"), new String[] { SWTUtil.getPrettyString(metric.isPrecomputed()) }); //$NON-NLS-1$
         new Property(m, Resources.getMessage("PropertiesView.158"), new String[] { SWTUtil.getPrettyString(metric.isAbleToHandleMicroaggregation()) }); //$NON-NLS-1$
                 
-        // Financial configuration
+        // Cost/benefit configuration
         if (metric instanceof MetricSDNMPublisherPayout) {
             
             // Obtain for output data
-            ARXFinancialConfiguration financial = ((MetricSDNMPublisherPayout)metric).getFinancialConfiguration();
+            ARXCostBenefitConfiguration costBenefitConfig = ((MetricSDNMPublisherPayout)metric).getCostBenefitConfiguration();
             
             // Obtain for input only. This is a bit ugly.
-            if (financial == null) {
-                financial = ARXFinancialConfiguration.create();
-                financial.setAdversaryCost(config.getAdversaryCost())
-                         .setAdversaryGain(config.getAdversaryGain())
-                         .setPublisherBenefit(config.getPublisherBenefit())
-                         .setPublisherLoss(config.getPublisherLoss());
+            if (costBenefitConfig == null) {
+                costBenefitConfig = ARXCostBenefitConfiguration.create();
+                costBenefitConfig.setAdversaryCost(config.getAdversaryCost())
+                                 .setAdversaryGain(config.getAdversaryGain())
+                                 .setPublisherBenefit(config.getPublisherBenefit())
+                                 .setPublisherLoss(config.getPublisherLoss());
             }
                 
             // Render
-            new Property(m, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(financial.getPublisherBenefit())}); //$NON-NLS-1$
-            new Property(m, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(financial.getPublisherLoss())}); //$NON-NLS-1$
-            new Property(m, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryGain())}); //$NON-NLS-1$
-            new Property(m, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(financial.getAdversaryCost())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(costBenefitConfig.getPublisherBenefit())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(costBenefitConfig.getPublisherLoss())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(costBenefitConfig.getAdversaryGain())}); //$NON-NLS-1$
+            new Property(m, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(costBenefitConfig.getAdversaryCost())}); //$NON-NLS-1$
             if (((MetricSDNMPublisherPayout)metric).isProsecutorAttackerModel()) { 
                 new Property(m, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
             }

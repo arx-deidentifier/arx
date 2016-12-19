@@ -18,13 +18,14 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
- * Privacy model for the game theoretic approach proposed in:
+ * Privacy model for the "no-attack" variant of the game theoretic approach proposed in:
  * A Game Theoretic Framework for Analyzing Re-Identification Risk.
  * Zhiyu Wan, Yevgeniy Vorobeychik, Weiyi Xia, Ellen Wright Clayton,
  * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
@@ -32,31 +33,28 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  * 
  * @author Fabian Prasser
  */
-public class FinancialJournalistPrivacy extends FinancialProsecutorPrivacy {
+public class ProfitabilityJournalistNoAttack extends ProfitabilityProsecutorNoAttack {
 
     /** SVUID */
-    private static final long serialVersionUID = 5089787798100584405L;
+    private static final long serialVersionUID = 1073520003237793563L;
 
-    /** Data subset */
-    private DataSubset        subset;
+    /** The data subset */
+    private final DataSubset        subset;
 
     /**
-     * Creates a new instance of game theoretic approach proposed in:
-     * A Game Theoretic Framework for Analyzing Re-Identification Risk.
-     * Zhiyu Wan, Yevgeniy Vorobeychik, Weiyi Xia, Ellen Wright Clayton, 
-     * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
-     * PLOS|ONE. 2015. 
+     * Creates a new instance
+     * @param subset
      */
-    public FinancialJournalistPrivacy(DataSubset subset){
+    public ProfitabilityJournalistNoAttack(DataSubset subset) {
         super();
         this.subset = subset;
     }
-
+    
     @Override
-    public FinancialJournalistPrivacy clone() {
-        return new FinancialJournalistPrivacy(this.subset.clone());
+    public PrivacyCriterion clone() {
+        return new ProfitabilityJournalistNoAttack(this.subset.clone());
     }
-
+    
     @Override
     public PrivacyCriterion clone(DataSubset subset) {
         throw new UnsupportedOperationException("Local recoding is not supported by this model");
@@ -64,12 +62,37 @@ public class FinancialJournalistPrivacy extends FinancialProsecutorPrivacy {
     
     @Override
     public DataSubset getDataSubset() {
-        return this.subset;
+        return subset;
     }
     
     @Override
-    public int getRequirements(){
+    public int getMinimalClassSize() {
+        return 0;
+    }
+    
+    @Override
+    public int getRequirements() {
         return ARXConfiguration.REQUIREMENT_COUNTER | ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
+    }
+    
+    @Override
+    public double getRiskThresholdJournalist() {
+        return super.getRiskThresholdProsecutor();
+    }
+    
+    @Override
+    public double getRiskThresholdMarketer() {
+        return super.getRiskThresholdJournalist();
+    }
+    
+    @Override
+    public double getRiskThresholdProsecutor() {
+        return 0d;
+    }
+
+    @Override
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+        return entry.pcount >= super.getK();
     }
     
     @Override
@@ -78,16 +101,22 @@ public class FinancialJournalistPrivacy extends FinancialProsecutorPrivacy {
     }
 
     @Override
+    public boolean isMinimalClassSizeAvailable() {
+        return false;
+    }
+
+    @Override
     public boolean isSubsetAvailable() {
         return true;
     }
-    
+
     @Override
     public ElementData render() {
-        ElementData result = new ElementData("Financial privacy");
+        ElementData result = new ElementData("No-attack profitability");
         result.addProperty("Attacker model", "Journalist");
-        ARXFinancialConfiguration config = super.getConfiguration();
+        ARXCostBenefitConfiguration config = super.getConfiguration();
         if (config != null) {
+            result.addProperty("Threshold", super.getK());
             result.addProperty("Adversary cost", config.getAdversaryCost());
             result.addProperty("Adversary gain", config.getAdversaryGain());
             result.addProperty("Publisher loss", config.getPublisherLoss());
@@ -101,8 +130,4 @@ public class FinancialJournalistPrivacy extends FinancialProsecutorPrivacy {
         return toString("journalist");
     }
 
-    @Override
-    protected double getSuccessProbability(HashGroupifyEntry entry) {
-        return entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
-    }
 }

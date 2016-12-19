@@ -35,11 +35,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This view displays the financial settings
+ * This view displays the montary amounts used for cost/benefit analyses
  * 
  * @author Fabian Prasser
  */
-public class ViewFinancialModel implements IView {
+public class ViewCostBenefitModel implements IView {
 
     /**
      * Helper interface
@@ -94,7 +94,7 @@ public class ViewFinancialModel implements IView {
      * @param controller
      * @param layoutCriteria 
      */
-    public ViewFinancialModel(final Composite parent,
+    public ViewCostBenefitModel(final Composite parent,
                                final Controller controller) {
 
         controller.addListener(ModelPart.MODEL, this);
@@ -105,28 +105,28 @@ public class ViewFinancialModel implements IView {
         root.setLayout(GridLayoutFactory.swtDefaults().numColumns(6).create());
 
         // Create text fields
-        textPublisherBenefit = createInputField(Resources.getMessage("ViewFinancialModel.1"), new Callback<Double>(){ //$NON-NLS-1$
+        textPublisherBenefit = createInputField(Resources.getMessage("ViewCostBenefitModel.1"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setPublisherBenefit(value);
-                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
+                controller.update(new ModelEvent(ViewCostBenefitModel.this, ModelPart.COST_BENEFIT_MODEL, value));
             }            
         });
-        textPublisherLoss = createInputField(Resources.getMessage("ViewFinancialModel.2"), new Callback<Double>(){ //$NON-NLS-1$
+        textPublisherLoss = createInputField(Resources.getMessage("ViewCostBenefitModel.2"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setPublisherLoss(value);
-                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
+                controller.update(new ModelEvent(ViewCostBenefitModel.this, ModelPart.COST_BENEFIT_MODEL, value));
             }            
         });
-        textAdversaryGain = createInputField(Resources.getMessage("ViewFinancialModel.3"), new Callback<Double>(){ //$NON-NLS-1$
+        textAdversaryGain = createInputField(Resources.getMessage("ViewCostBenefitModel.3"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setAdversaryGain(value);
-                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
+                controller.update(new ModelEvent(ViewCostBenefitModel.this, ModelPart.COST_BENEFIT_MODEL, value));
             }            
         });
-        textAdversaryCost = createInputField(Resources.getMessage("ViewFinancialModel.4"), new Callback<Double>(){ //$NON-NLS-1$
+        textAdversaryCost = createInputField(Resources.getMessage("ViewCostBenefitModel.4"), new Callback<Double>(){ //$NON-NLS-1$
             @Override public void call(Double value){
                 model.getInputConfig().setAdversaryCost(value);
-                controller.update(new ModelEvent(ViewFinancialModel.this, ModelPart.FINANCIAL_MODEL, value));
+                controller.update(new ModelEvent(ViewCostBenefitModel.this, ModelPart.COST_BENEFIT_MODEL, value));
             }            
         });
         
@@ -183,13 +183,13 @@ public class ViewFinancialModel implements IView {
         
         // Button
         Button btn1 = new Button(root, SWT.PUSH);
-        btn1.setText(Resources.getMessage("ViewFinancialModel.0")); //$NON-NLS-1$
+        btn1.setText(Resources.getMessage("ViewCostBenefitModel.0")); //$NON-NLS-1$
         btn1.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 String value = controller.actionShowInputDialog(root.getShell(), 
-                                                                Resources.getMessage("ViewFinancialModel.5"),  //$NON-NLS-1$
-                                                                Resources.getMessage("ViewFinancialModel.6"),  //$NON-NLS-1$
+                                                                Resources.getMessage("ViewCostBenefitModel.5"),  //$NON-NLS-1$
+                                                                Resources.getMessage("ViewCostBenefitModel.6"),  //$NON-NLS-1$
                                                                 text.getToolTipText(), 
                                                                 validator);
                 if (value != null) {

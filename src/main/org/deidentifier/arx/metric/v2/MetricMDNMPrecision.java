@@ -178,9 +178,10 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
             unsuppressedTuples += m.isNotOutlier ? m.count : 0;
             suppressedTuples += m.isNotOutlier ? 0 : m.count;
 
-            // Calculate avg. MSE
+            // Calculate avg. error
             for (int i = 0; i < dimensionsAggregated; i++) {
-                double share = (double) m.count * microaggregationFunctions[i].getMeanError(m.distributions[microaggregationStart + i]);
+                double share = (double) m.count * super.getError(microaggregationFunctions[i],
+                                                                 m.distributions[microaggregationStart + i]);  
                 result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
                                                                       (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
             }

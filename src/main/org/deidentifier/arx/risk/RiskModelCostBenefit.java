@@ -18,10 +18,10 @@ package org.deidentifier.arx.risk;
 
 import java.io.Serializable;
 
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 
 /**
- * This class implements a financial risk model, following the approach proposed in: <br>
+ * This class implements a cost/benefit analysis following the game-theoretic approach proposed in: <br>
  * 
  * A Game Theoretic Framework for Analyzing Re-Identification Risk.
  * Zhiyu Wan, Yevgeniy Vorobeychik, Weiyi Xia, Ellen Wright Clayton,
@@ -30,19 +30,19 @@ import org.deidentifier.arx.ARXFinancialConfiguration;
  * 
  * @author Fabian Prasser
  */
-public class RiskModelFinancial implements Serializable {
+public class RiskModelCostBenefit implements Serializable {
 
     /** SVUID */
     private static final long                 serialVersionUID = -6124431335607475931L;
 
     /** The underlying configuration */
-    private final ARXFinancialConfiguration config;
+    private final ARXCostBenefitConfiguration config;
 
     /**
      * Creates a new instance
      * @param configuration
      */
-    public RiskModelFinancial(ARXFinancialConfiguration configuration) {
+    public RiskModelCostBenefit(ARXCostBenefitConfiguration configuration) {
         this.config = configuration;
     }
     
@@ -84,7 +84,7 @@ public class RiskModelFinancial implements Serializable {
      */
     private void checkArgument(double argument) {
         if (argument < 0d || argument > 1d) {
-            throw new IllegalArgumentException("Argument out of range [0,1]");
+            throw new IllegalArgumentException("Argument out of range [0,1]: " + argument);
         }
     }
 }

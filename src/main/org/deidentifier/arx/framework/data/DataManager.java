@@ -117,6 +117,9 @@ public class DataManager {
     /** Map for microaggregated attributes */
     private final int[]                                microaggregationMap;
 
+    /** Map for microaggregated attributes */
+    private final int[]                                microaggregationDomainSizes;
+
     /** The number of microaggregation attributes in the dataDI */
     private final int                                  microaggregationNumAttributes;
 
@@ -362,6 +365,7 @@ public class DataManager {
 
         // Init microaggregation functions
         microaggregationFunctions = new DistributionAggregateFunction[attributesMicroaggregated.size()];
+        microaggregationDomainSizes = new int[attributesMicroaggregated.size()];
         for (int i = 0; i < header.length; i++) {
             final int idx = i * 2;
             if (attributesMicroaggregated.contains(header[i]) &&
@@ -369,6 +373,7 @@ public class DataManager {
                 final int dictionaryIndex = map[idx + 1] - microaggregationStartIndex;
                 final String name = header[i];
                 if (definition.getMicroAggregationFunction(name) != null) {
+                    microaggregationDomainSizes[dictionaryIndex] = dictionaryAnalyzed.getMapping()[dictionaryIndex + microaggregationStartIndex].length;
                     microaggregationFunctions[dictionaryIndex] = functions.get(name);
                     microaggregationFunctions[dictionaryIndex].initialize(dictionaryAnalyzed.getMapping()[dictionaryIndex + microaggregationStartIndex],
                                                                           definition.getDataType(name),
@@ -411,6 +416,7 @@ public class DataManager {
      * @param microaggregationFunctions
      * @param microaggregationHeader
      * @param microaggregationMap
+     * @param microaggregationDomainSizes
      * @param microaggregationNumAttributes
      * @param microaggregationStartIndex
      * @param minLevels
@@ -429,6 +435,7 @@ public class DataManager {
                           DistributionAggregateFunction[] microaggregationFunctions,
                           String[] microaggregationHeader,
                           int[] microaggregationMap,
+                          int[] microaggregationDomainSizes,
                           int microaggregationNumAttributes,
                           int microaggregationStartIndex,
                           int[] minLevels,
@@ -444,6 +451,7 @@ public class DataManager {
         this.indexesSensitive = indexesSensitive;
         this.maxLevels = maxLevels;
         this.microaggregationFunctions = microaggregationFunctions;
+        this.microaggregationDomainSizes = microaggregationDomainSizes;
         this.microaggregationHeader = microaggregationHeader;
         this.microaggregationMap = microaggregationMap;
         this.microaggregationNumAttributes = microaggregationNumAttributes;
@@ -619,6 +627,14 @@ public class DataManager {
     }
 
     /**
+     * Returns the map for the according buffer
+     * @return
+     */
+    public int[] getMicroaggregationDomainSizes() {
+        return microaggregationDomainSizes;
+    }
+
+    /**
      * Returns the microaggregation functions.
      * 
      * @return
@@ -729,6 +745,7 @@ public class DataManager {
                                      microaggregationFunctions,
                                      this.microaggregationHeader,
                                      this.microaggregationMap,
+                                     this.microaggregationDomainSizes,
                                      this.microaggregationNumAttributes,
                                      this.microaggregationStartIndex,
                                      this.minLevels,

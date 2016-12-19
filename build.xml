@@ -149,6 +149,7 @@
                     <include name="**/TestAnonymizationLocalRecoding.java" />
                     <include name="**/TestAnonymizationOrderedDistanceTCloseness.java" />
                     <include name="**/TestAnonymizationEntropyLDiversity.java" />
+                	<include name="**/TestAnonymizationProfitability.java" />
                 </fileset>
                 <formatter type="plain" usefile="false" />
                 <formatter type="xml" />
@@ -411,7 +412,6 @@
             <fileset dir="doc/gui" defaultexcludes="no" />
         </jar>
     </target>
-
 
     <target name="jars" depends="jar-win, jar-linux, jar-osx, jar-libs, jar-docs">
         <antcall target="end-clean" />

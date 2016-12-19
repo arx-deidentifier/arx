@@ -52,8 +52,11 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     /** The microaggregation functions. */
     private DistributionAggregateFunction[] microaggregationFunctions;
 
-    /** The start index of the attributes with microaggregation in the data array */
+    /** The start index of the attributes with microaggregation in the data array (dataAnalyzed) */
     private int                             microaggregationStartIndex;
+
+    /** Domain size for each microaggregated attribute */
+    private int[]                           microaggregationDomainSizes;
 
     /**
      * Creates a new instance.
@@ -138,6 +141,14 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      * Needed for microaggregation
      * @return
      */
+    protected int[] getMicroaggregationDomainSizes() {
+        return microaggregationDomainSizes;
+    }
+    
+    /**
+     * Needed for microaggregation
+     * @return
+     */
     protected DistributionAggregateFunction[] getMicroaggregationFunctions() {
         return microaggregationFunctions;
     }
@@ -149,7 +160,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     protected int getMicroaggregationStartIndex() {
         return microaggregationStartIndex;
     }
-    
+
     /**
      * Returns the number of rows in the dataset or subset.
      *
@@ -171,6 +182,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         // Handle microaggregation
         this.microaggregationFunctions = manager.getMicroaggregationFunctions();
         this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
+        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
         if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
             this.microaggregationFunctions = new DistributionAggregateFunction[0];
         }

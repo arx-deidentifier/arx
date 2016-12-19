@@ -18,14 +18,16 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.DomainShare;
-import org.deidentifier.arx.risk.RiskModelFinancial;
+import org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss;
+import org.deidentifier.arx.risk.RiskModelCostBenefit;
 
 /**
  * Privacy model for the game theoretic approach proposed in:
@@ -36,22 +38,31 @@ import org.deidentifier.arx.risk.RiskModelFinancial;
  * 
  * @author Fabian Prasser
  */
-public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
+public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
 
     /** SVUID */
-    private static final long         serialVersionUID = -1698534839214708559L;
+    private static final long               serialVersionUID = -1698534839214708559L;
 
     /** Configuration */
-    private ARXFinancialConfiguration config;
+    private ARXCostBenefitConfiguration     config;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]             shares;
+    private DomainShare[]                   shares;
+
+    /** The microaggregation functions. */
+    private DistributionAggregateFunction[] microaggregationFunctions;
+
+    /** The start index of the attributes with microaggregation in the data array (dataAnalyzed) */
+    private int                             microaggregationStartIndex;
+
+    /** Domain size for each microaggregated attribute */
+    private int[]                           microaggregationDomainSizes;
 
     /** MaxIL */
-    private double                    maxIL;
+    private double                          maxIL;
 
     /** Risk model */
-    private RiskModelFinancial        riskModel;
+    private RiskModelCostBenefit            riskModel;
 
     /**
      * Creates a new instance of game theoretic approach proposed in:
@@ -60,7 +71,7 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
      * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
      * PLOS|ONE. 2015. 
      */
-    public FinancialProsecutorPrivacy(){
+    public ProfitabilityProsecutor(){
         // This model is not monotonic:
         // Often, generalization only marginally reduces the adversary's success
         // probability but at the same time it significantly reduces the
@@ -70,21 +81,13 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
     }
 
     @Override
-    public FinancialProsecutorPrivacy clone() {
-        return new FinancialProsecutorPrivacy();
+    public ProfitabilityProsecutor clone() {
+        return new ProfitabilityProsecutor();
     }
 
     @Override
     public PrivacyCriterion clone(DataSubset subset) {
         return clone();
-    }
-    
-    /**
-     * Returns the config
-     * @return
-     */
-    public ARXFinancialConfiguration getConfiguration() {
-        return this.config;
     }
     
     @Override
@@ -96,21 +99,22 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
     public int getRequirements(){
         return ARXConfiguration.REQUIREMENT_COUNTER;
     }
-
+    
     @Override
     public void initialize(DataManager manager, ARXConfiguration config) {
 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
-        this.config = config.getFinancialConfiguration();
-        this.riskModel = new RiskModelFinancial(this.config);
+        this.config = config.getCostBenefitConfiguration();
+        this.riskModel = new RiskModelCostBenefit(this.config);
+
+        // Prepare consideration of microaggregation
+        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
+        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
+        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
                 
         // Calculate MaxIL
-        this.maxIL = 1d;
-        for (DomainShare share : shares) {
-            maxIL *= share.getDomainSize();
-        }
-        maxIL = Math.log10(maxIL);
+        this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, this.microaggregationDomainSizes);
     }
 
     @Override
@@ -122,27 +126,32 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         }
         
         // Calculate information loss and success probability
-        double informationLoss = getEntropyBasedInformationLoss(transformation, entry);
+        double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation,
+                                                                                                      entry,
+                                                                                                      shares,
+                                                                                                      this.microaggregationFunctions,
+                                                                                                      this.microaggregationStartIndex,
+                                                                                                      maxIL);
         double successProbability = getSuccessProbability(entry);
         double publisherPayoff = riskModel.getExpectedPublisherPayout(informationLoss, successProbability);
                 
         // We keep the set of records if the payoff is > 0
         return publisherPayoff > 0;
     }
-    
+
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
     }
-
+    
     @Override
     public boolean isSubsetAvailable() {
         return false;
     }
-    
+
     @Override
     public ElementData render() {
-        ElementData result = new ElementData("Financial privacy");
+        ElementData result = new ElementData("Profitability");
         result.addProperty("Attacker model", "Prosecutor");
         if (config != null) {
             result.addProperty("Adversary cost", config.getAdversaryCost());
@@ -152,25 +161,18 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
         }
         return result;
     }
-
+    
     @Override
     public String toString() {
         return toString("prosecutor");
     }
 
     /**
-     * Returns the information loss for the according class. This is an exact copy of: 
-     * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)
+     * Returns the current configuration
+     * @return
      */
-    private double getEntropyBasedInformationLoss(Transformation transformation, HashGroupifyEntry entry) {
-        int[] generalization = transformation.getGeneralization();
-        double infoLoss = 1d;
-        for (int dimension = 0; dimension < shares.length; dimension++) {
-            int value = entry.key[dimension];
-            int level = generalization[dimension];
-            infoLoss *= shares[dimension].getShare(value, level);
-        }
-        return Math.log10(infoLoss) / maxIL + 1d;
+    protected ARXCostBenefitConfiguration getConfiguration() {
+        return this.config;
     }
 
     /**
@@ -187,6 +189,6 @@ public class FinancialProsecutorPrivacy extends ImplicitPrivacyCriterion {
      * Returns a string representation
      */
     protected String toString(String attackerModel) {
-        return "financial-privacy (" + attackerModel + ")" + (config != null ? config.toString() : "");
+        return "profitability (" + attackerModel + ")" + (config != null ? config.toString() : "");
     }
 }

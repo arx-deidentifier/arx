@@ -17,10 +17,10 @@
 package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
-import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
-import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
-import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
+import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityJournalist;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 
@@ -30,7 +30,7 @@ import org.deidentifier.arx.gui.resources.Resources;
  * @author James Gaupp
  * @author Fabian Prasser
  */
-public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
+public class ModelProfitabilityCriterion extends ModelImplicitCriterion {
     
     /**
      * The attacker model used by the privacy model
@@ -54,7 +54,7 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
     /**
      * Creates a new instance
      */
-    public ModelStackelbergPrivacyCriterion() {
+    public ModelProfitabilityCriterion() {
     	this.attackerModel = AttackerModel.PROSECUTOR; 
     	this.allowAttacks = true;
     }
@@ -64,14 +64,14 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
      * @param attackerModel
      * @param allowAttacks
      */
-    public ModelStackelbergPrivacyCriterion(AttackerModel attackerModel, boolean allowAttacks) {
+    public ModelProfitabilityCriterion(AttackerModel attackerModel, boolean allowAttacks) {
         this.attackerModel = attackerModel;
         this.allowAttacks = allowAttacks;
     }
 
 	@Override
 	public ModelCriterion clone() {
-		ModelStackelbergPrivacyCriterion  result = new ModelStackelbergPrivacyCriterion();
+		ModelProfitabilityCriterion  result = new ModelProfitabilityCriterion();
 		result.setAttackerModel(attackerModel);
 		return result;
 	}
@@ -89,17 +89,17 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
         // Create privacy model
         if (this.attackerModel == AttackerModel.PROSECUTOR) {
             if (this.allowAttacks) {
-                return new FinancialProsecutorPrivacy();
+                return new ProfitabilityProsecutor();
             } else {
-                return new FinancialProsecutorNoAttackPrivacy();
+                return new ProfitabilityProsecutorNoAttack();
             }
         } else if (this.attackerModel == AttackerModel.JOURNALIST) {
             DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), 
                                                   model.getInputConfig().getResearchSubset());
             if (this.allowAttacks) {
-                return new FinancialJournalistPrivacy(subset);
+                return new ProfitabilityJournalist(subset);
             } else {
-                return new FinancialJournalistNoAttackPrivacy(subset);
+                return new ProfitabilityJournalistNoAttack(subset);
             }
         } else {
             throw new IllegalStateException("Unknown attacker model"); //$NON-NLS-1$
@@ -120,10 +120,10 @@ public class ModelStackelbergPrivacyCriterion extends ModelImplicitCriterion {
     
     @Override
 	public void parse(ModelCriterion criterion, boolean _default) {
-        if (!(criterion instanceof ModelStackelbergPrivacyCriterion)) {
+        if (!(criterion instanceof ModelProfitabilityCriterion)) {
             return;
         }
-        ModelStackelbergPrivacyCriterion other = (ModelStackelbergPrivacyCriterion)criterion;
+        ModelProfitabilityCriterion other = (ModelProfitabilityCriterion)criterion;
         this.allowAttacks = other.allowAttacks;
         this.attackerModel = other.attackerModel;
         if (!_default) {

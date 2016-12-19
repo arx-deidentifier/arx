@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>Uses of Class org.deidentifier.arx.metric.Metric.AggregateFunction (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -281,6 +281,16 @@ the order they are declared.</div>
 <div class="block">Constructs a new instance.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/MetricConfiguration.html#MetricConfiguration(boolean,%20double,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction,%20org.deidentifier.arx.metric.MetricConfiguration.MetricConfigurationAttackerModel)">MetricConfiguration</a></strong>(boolean&nbsp;monotonic,
+                   double&nbsp;gsFactor,
+                   boolean&nbsp;precomputed,
+                   double&nbsp;precomputationThreshold,
+                   <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;aggregateFunction,
+                   <a href="../../../../../org/deidentifier/arx/metric/MetricConfiguration.MetricConfigurationAttackerModel.html" title="enum in org.deidentifier.arx.metric">MetricConfiguration.MetricConfigurationAttackerModel</a>&nbsp;attackerModel)</code>
+<div class="block">Constructs a new instance.</div>
+</td>
+</tr>
 </tbody>
 </table>
 </li>
@@ -297,11 +307,11 @@ the order they are declared.</div>
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a></code></td>
-<td class="colLast"><span class="strong">AbstractMetricMultiDimensionalPotentiallyPrecomputed.</span><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getAggregateFunction()">getAggregateFunction</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">AbstractMetricMultiDimensional.</span><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#getAggregateFunction()">getAggregateFunction</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a></code></td>
-<td class="colLast"><span class="strong">AbstractMetricMultiDimensional.</span><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensional.html#getAggregateFunction()">getAggregateFunction</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">AbstractMetricMultiDimensionalPotentiallyPrecomputed.</span><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractMetricMultiDimensionalPotentiallyPrecomputed.html#getAggregateFunction()">getAggregateFunction</a></strong>()</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -475,7 +485,8 @@ the order they are declared.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#MetricMDNMPrecision(boolean,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNMPrecision</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#MetricMDNMPrecision(boolean,%20boolean,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNMPrecision</a></strong>(boolean&nbsp;monotonicWithGeneralization,
+                   boolean&nbsp;monotonicWithSuppression,
                    boolean&nbsp;independent,
                    double&nbsp;gsFactor,
                    <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
@@ -483,7 +494,8 @@ the order they are declared.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#MetricMDNMPrecision(boolean,%20boolean,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNMPrecision</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNMPrecision.html#MetricMDNMPrecision(boolean,%20boolean,%20boolean,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNMPrecision</a></strong>(boolean&nbsp;monotonicWithGeneralization,
+                   boolean&nbsp;monotonicWithSuppression,
                    boolean&nbsp;independent,
                    <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">For subclasses.</div>
@@ -514,7 +526,8 @@ the order they are declared.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#MetricMDNUEntropyPrecomputed(boolean,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNUEntropyPrecomputed</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#MetricMDNUEntropyPrecomputed(boolean,%20boolean,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNUEntropyPrecomputed</a></strong>(boolean&nbsp;monotonicWithGeneralization,
+                            boolean&nbsp;monotonicWithSuppression,
                             boolean&nbsp;independent,
                             double&nbsp;gsFactor,
                             <a href="../../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>

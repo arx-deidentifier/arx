@@ -32,15 +32,15 @@ import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
-import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
-import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
-import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.ProfitabilityJournalist;
+import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -315,70 +315,67 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /** Absolute tuple outliers. */
-    private int                                absMaxOutliers                        = 0;
+    private int                                absMaxOutliers                                   = 0;
 
     /** Criteria. */
-    private PrivacyCriterion[]                 aCriteria                             = new PrivacyCriterion[0];
+    private PrivacyCriterion[]                 aCriteria                                        = new PrivacyCriterion[0];
 
     /** Criteria. */
-    private SampleBasedCriterion[]             bCriteria                             = new SampleBasedCriterion[0];
+    private SampleBasedCriterion[]             bCriteria                                        = new SampleBasedCriterion[0];
 
     /** A map of weights per attribute. */
-    private Map<String, Double>                attributeWeights                      = null;
+    private Map<String, Double>                attributeWeights                                 = null;
 
     /** The criteria. */
-    private Set<PrivacyCriterion>              criteria                              = new HashSet<PrivacyCriterion>();
+    private Set<PrivacyCriterion>              criteria                                         = new HashSet<PrivacyCriterion>();
 
     /** The metric. */
-    private Metric<?>                          metric                                = Metric.createLossMetric();
+    private Metric<?>                          metric                                           = Metric.createLossMetric();
 
     /** Do we assume practical monotonicity. */
-    private boolean                            practicalMonotonicity                 = false;
+    private boolean                            practicalMonotonicity                            = false;
 
     /** Relative tuple outliers. */
-    private double                             relMaxOutliers                        = -1;
+    private double                             relMaxOutliers                                   = -1;
 
     /** The requirements per equivalence class. */
-    private int                                requirements                          = 0x0;
+    private int                                requirements                                     = 0x0;
 
     /** The snapshot length. */
     private int                                snapshotLength;
 
-    /**
-     * Defines values of which attribute type are to be replaced by the
-     * suppression string in suppressed tuples.
-     */
-    private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
+    /** Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
+    private Integer                            suppressedAttributeTypes                         = 1 << AttributeType.ATTR_TYPE_QI;
 
-    /**
-     * Determines whether suppression is applied to the output of anonymous as
-     * well as non-anonymous transformations.
-     */
-    private Boolean                            suppressionAlwaysEnabled              = true;
+    /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
+    private Boolean                            suppressionAlwaysEnabled                         = true;
 
     /** Should microaggregation be based on data utility measurements */
-    private boolean                            utilityBasedMicroaggregation          = false;
+    private boolean                            utilityBasedMicroaggregation                     = false;
+
+    /** Should the mean-squared error be used to measure the impact of microaggregation */
+    private Boolean                            utilityBasedMicroaggregationUseMeansSquaredError = false;
 
     /** Internal variant of the class providing a broader interface. */
-    private transient ARXConfigurationInternal accessibleInstance                    = null;
+    private transient ARXConfigurationInternal accessibleInstance                               = null;
 
     /** Are we performing optimal anonymization for sample-based criteria? */
-    private boolean                            heuristicSearchForSampleBasedCriteria = false;
+    private boolean                            heuristicSearchForSampleBasedCriteria            = false;
 
     /** Should we use the heuristic search algorithm? */
-    private boolean                            heuristicSearchEnabled                = false;
+    private boolean                            heuristicSearchEnabled                           = false;
 
     /**
      * We will use the heuristic algorithm, if the size of the search space
      * exceeds this threshold
      */
-    private Integer                            heuristicSearchThreshold              = 100000;
+    private Integer                            heuristicSearchThreshold                         = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchTimeLimit              = 30000;
+    private Integer                            heuristicSearchTimeLimit                         = 30000;
 
-    /** Financial configuration*/
-    private ARXFinancialConfiguration          financialConfiguration                = ARXFinancialConfiguration.create();
+    /** Cost/benefit configuration */
+    private ARXCostBenefitConfiguration        costBenefitConfiguration                         = ARXCostBenefitConfiguration.create();
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -506,7 +503,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
-        result.financialConfiguration = this.getFinancialConfiguration().clone();
+        result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -613,13 +610,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
     }
     /**
-     * Returns the financial configuration
+     * Returns the cost/benefit configuration
      */
-    public ARXFinancialConfiguration getFinancialConfiguration() {
-        if (this.financialConfiguration == null) {
-            this.financialConfiguration = ARXFinancialConfiguration.create();
+    public ARXCostBenefitConfiguration getCostBenefitConfiguration() {
+        if (this.costBenefitConfiguration == null) {
+            this.costBenefitConfiguration = ARXCostBenefitConfiguration.create();
         }
-        return this.financialConfiguration;
+        return this.costBenefitConfiguration;
     }
     
     /**
@@ -807,11 +804,25 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns whether microaggregation is based on utility measures
+     * Returns whether the impact of microaggregation on data utility should be considered
      * @return
      */
     public boolean isUtilityBasedMicroaggregation() {
         return this.utilityBasedMicroaggregation;
+    }
+    
+    /**
+     * If set to true, mean squared error will be used to measure the impact of microaggregation
+     * on data quality. If set to false, a more simple measure of information loss will be used.
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
+        
+        // Backwards compatibility
+        if (this.utilityBasedMicroaggregationUseMeansSquaredError == null) {
+            this.utilityBasedMicroaggregationUseMeansSquaredError = true;
+        } 
+        return this.utilityBasedMicroaggregationUseMeansSquaredError;
     }
 
     /**
@@ -887,14 +898,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Sets the financial configuration
+     * Sets the cost/benefit configuration
      * @param config
      */
-    public ARXConfiguration setFinancialConfiguration(ARXFinancialConfiguration config) {
+    public ARXConfiguration setCostBenefitConfiguration(ARXCostBenefitConfiguration config) {
         if (config == null) {
             throw new NullPointerException("Argument must not be null");
         }
-        this.financialConfiguration = config;
+        this.costBenefitConfiguration = config;
         return this;
     }
 
@@ -983,11 +994,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Sets whether microaggregation should be based on utility measures
+     * Sets whether the impact of microaggregation on data utility should be considered 
      * @return
      */
     public void setUtilityBasedMicroaggregation(boolean value) {
         this.utilityBasedMicroaggregation = value;
+    }
+
+    /**
+     * If set to true, mean squared error will be used to measure the impact of microaggregation
+     * on data quality. If set to false, a more simple measure of information loss will be used.
+     * @return
+     */
+    public void setUtilityBasedMicroaggregationUseMeanSquaredError(boolean useMSE) {
+        this.utilityBasedMicroaggregationUseMeansSquaredError = useMSE;
     }
 
     /**
@@ -1282,17 +1302,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (this.containsCriterion(TCloseness.class)) {
             list.addAll(this.getCriteria(TCloseness.class));
         }
-        if (this.containsCriterion(FinancialProsecutorPrivacy.class)) {
-            list.addAll(this.getCriteria(FinancialProsecutorPrivacy.class));
+        if (this.containsCriterion(ProfitabilityProsecutor.class)) {
+            list.addAll(this.getCriteria(ProfitabilityProsecutor.class));
         }
-        if (this.containsCriterion(FinancialProsecutorNoAttackPrivacy.class)) {
-            list.addAll(this.getCriteria(FinancialProsecutorNoAttackPrivacy.class));
+        if (this.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
+            list.addAll(this.getCriteria(ProfitabilityProsecutorNoAttack.class));
         }
-        if (this.containsCriterion(FinancialJournalistPrivacy.class)) {
-            list.addAll(this.getCriteria(FinancialJournalistPrivacy.class));
+        if (this.containsCriterion(ProfitabilityJournalist.class)) {
+            list.addAll(this.getCriteria(ProfitabilityJournalist.class));
         }
-        if (this.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
-            list.addAll(this.getCriteria(FinancialJournalistNoAttackPrivacy.class));
+        if (this.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
+            list.addAll(this.getCriteria(ProfitabilityJournalistNoAttack.class));
         }
         this.aCriteria = list.toArray(new PrivacyCriterion[0]);
         

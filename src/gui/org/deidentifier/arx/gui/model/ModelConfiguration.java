@@ -137,14 +137,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return the adversaryCost
      */
     public double getAdversaryCost() {
-        return this.config.getFinancialConfiguration().getAdversaryCost();
+        return this.config.getCostBenefitConfiguration().getAdversaryCost();
     }
     
     /**
      * @return the adversaryGain
      */
     public double getAdversaryGain() {
-        return this.config.getFinancialConfiguration().getAdversaryGain();
+        return this.config.getCostBenefitConfiguration().getAdversaryGain();
     }
     
     /**
@@ -338,14 +338,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return the publisherBenefit
      */
     public double getPublisherBenefit() {
-        return this.config.getFinancialConfiguration().getPublisherBenefit();
+        return this.config.getCostBenefitConfiguration().getPublisherBenefit();
     }
     
     /**
      * @return the publisherLoss
      */
     public double getPublisherLoss() {
-        return this.config.getFinancialConfiguration().getPublisherLoss();
+        return this.config.getCostBenefitConfiguration().getPublisherLoss();
     }
     
     /**
@@ -448,6 +448,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isUtilityBasedMicroaggregation() {
         return config.isUtilityBasedMicroaggregation();
     }
+
+    /**
+     * Returns whether microaggregation will be considered using the mean squared error
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
+        return config.isUtilityBasedMicroaggregationUseMeanSquaredError();
+    }
     
     /**
      * Removes all criteria.
@@ -496,7 +504,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getAdversaryCost() != adversaryCost) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setAdversaryCost(adversaryCost);
+        this.config.getCostBenefitConfiguration().setAdversaryCost(adversaryCost);
     }
     
     /**
@@ -506,7 +514,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getAdversaryGain() != adversaryGain) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setAdversaryGain(adversaryGain);
+        this.config.getCostBenefitConfiguration().setAdversaryGain(adversaryGain);
     }
     
     /**
@@ -689,7 +697,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getPublisherBenefit() != publisherBenefit) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setPublisherBenefit(publisherBenefit);
+        this.config.getCostBenefitConfiguration().setPublisherBenefit(publisherBenefit);
     }
 
 
@@ -700,7 +708,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getPublisherLoss() != publisherLoss) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setPublisherLoss(publisherLoss);
+        this.config.getCostBenefitConfiguration().setPublisherLoss(publisherLoss);
     }
 
     /**
@@ -754,14 +762,22 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns whether microaggregation will be considered by utility measures
+     * Sets whether microaggregation will be considered by utility measures
      * @return
      */
     public void setUseUtilityBasedMicroaggregation(boolean value) {
         setModified();
         config.setUtilityBasedMicroaggregation(value);
     }
-    
+
+    /**
+     * Sets whether microaggregation will be considered using the mean squared error
+     * @return
+     */
+    public void setUseUtilityBasedMicroaggregationMeanSquaredError(boolean value) {
+        setModified();
+        config.setUtilityBasedMicroaggregationUseMeanSquaredError(value);
+    }
     /**
      * Mark as modified.
      */

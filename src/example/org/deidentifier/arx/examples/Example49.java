@@ -29,18 +29,18 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 
 /**
- * Examples of using the No-Attack variant of the Stackelberg game for 
- * de-identifying the Adult dataset based on prosecutor risk.
+ * Examples of using the no-attack variant of the game-theoretic approach for 
+ * performing a monetary cost/benefit analysis using prosecutor risk.
  *
  * @author Fabian Prasser
  */
@@ -96,21 +96,21 @@ public class Example49 extends Example {
         Data data = createData("adult");
         
         // Config from PLOS|ONE paper
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d));
 
         // Fewer costs
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(600d)
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d));
 
         // More costs, more gain
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(1d)
                                                .setAdversaryGain(1200d)
                                                .setPublisherLoss(300d)
@@ -124,25 +124,25 @@ public class Example49 extends Example {
      * @param config
      * @throws IOException
      */
-    private static void solve(Data data, ARXFinancialConfiguration config) throws IOException {
+    private static void solve(Data data, ARXCostBenefitConfiguration config) throws IOException {
         
         // Release
         data.getHandle().release();
         
         // Configure
         ARXConfiguration arxconfig = ARXConfiguration.create();
-        arxconfig.setFinancialConfiguration(config);
+        arxconfig.setCostBenefitConfiguration(config);
         
         // Create model for measuring publisher's benefit
-        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(false);
+        MetricSDNMPublisherPayout maximizePublisherPayout = Metric.createPublisherPayoutMetric(false);
         
         // Create privacy model for the game-theoretic approach
-        FinancialProsecutorNoAttackPrivacy stackelbergPrivacyModel = new FinancialProsecutorNoAttackPrivacy();
+        ProfitabilityProsecutorNoAttack profitability = new ProfitabilityProsecutorNoAttack();
         
         // Configure ARX
         arxconfig.setMaxOutliers(1d);
-        arxconfig.setMetric(stackelbergMetric);
-        arxconfig.addCriterion(stackelbergPrivacyModel);
+        arxconfig.setMetric(maximizePublisherPayout);
+        arxconfig.addCriterion(profitability);
 
         // Anonymize
         ARXAnonymizer anonymizer = new ARXAnonymizer();
