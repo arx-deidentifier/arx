@@ -82,7 +82,7 @@ public class Example44 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KMap(50, 0.1d, populationmodel));
+        config.addPrivacyModel(new KMap(50, 0.1d, populationmodel));
         config.setMaxOutliers(1d);
         
         // Anonymize

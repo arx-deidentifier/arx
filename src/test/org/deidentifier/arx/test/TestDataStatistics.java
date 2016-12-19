@@ -112,7 +112,7 @@ public class TestDataStatistics extends AbstractTest {
         this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -180,8 +180,8 @@ public class TestDataStatistics extends AbstractTest {
         DataSubset subset = DataSubset.create(this.provider.getData(), set);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new DPresence(0.0d, 1.0d, subset));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new DPresence(0.0d, 1.0d, subset));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -231,7 +231,7 @@ public class TestDataStatistics extends AbstractTest {
         this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -270,7 +270,7 @@ public class TestDataStatistics extends AbstractTest {
         this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();

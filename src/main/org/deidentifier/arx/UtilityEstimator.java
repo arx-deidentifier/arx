@@ -342,7 +342,7 @@ class UtilityEstimator {
         }
         
         // Set
-        node.access().setMaximumInformationLoss(minimalMaximum);
+        node.access().setHighestScore(minimalMaximum);
     }
 
     /**
@@ -376,7 +376,7 @@ class UtilityEstimator {
         }
         
         // Set
-        node.access().setMinimumInformationLoss(maximalMinimum);
+        node.access().setLowestScore(maximalMinimum);
     }
 
     /**

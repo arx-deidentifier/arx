@@ -91,9 +91,9 @@ public class Example38 extends Example {
 
         // Create a config which favors suppression over generalization
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(1d);
-        config.setMetric(Metric.createLossMetric(0.25d));
+        config.setQualityModel(Metric.createLossMetric(0.25d));
 
         // Print input
         System.out.println(" - Input data:");

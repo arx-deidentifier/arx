@@ -97,7 +97,7 @@ public class Example34 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.setHeuristicSearchEnabled(true);
         config.setHeuristicSearchTimeLimit(10);
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0.5d);
 
         // Obtain result

@@ -102,7 +102,7 @@ public class Example40 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(3));
+        config.addPrivacyModel(new KAnonymity(3));
         ARXResult result = anonymizer.anonymize(data, config);
 
         System.out.println("3-anonymous dataset");

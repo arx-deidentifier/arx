@@ -86,7 +86,7 @@ public class Example19 extends Example {
 
         // Create config
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         ARXResult result = anonymizer.anonymize(data, config);
 

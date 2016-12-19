@@ -92,7 +92,7 @@ public class Example37 extends Example {
                                                                     DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
 
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(criterion);
+        config.addPrivacyModel(criterion);
         config.setMaxOutliers(1d);
         ARXResult result = anonymizer.anonymize(data, config);
 

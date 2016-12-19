@@ -106,7 +106,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
             builder.append(" - Metric1: ").append(m1.toString()).append("\n");
             builder.append(" - Metric2: ").append(m2.toString()).append("\n");
             builder.append(" - Criteria:\n");
-            for (PrivacyCriterion c : config.getCriteria()) {
+            for (PrivacyCriterion c : config.getPrivacyModels()) {
                 builder.append("   * ").append(c.toString()).append("\n");
             }
             builder.append("}");
@@ -115,7 +115,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
         
         @Override
         public String toString() {
-            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
@@ -158,7 +158,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.containsCriterion(LDiversity.class) || testCase.config.containsCriterion(TCloseness.class)) {
+                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
@@ -200,13 +200,13 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
         ARXConfiguration testcaseconfig = testcase.config;
         
         // Metric 1
-        testcaseconfig.setMetric(testcase.m1);
+        testcaseconfig.setQualityModel(testcase.m1);
         Data data1 = getDataObject(testcase);
         ARXAnonymizer anonymizer1 = new ARXAnonymizer();
         ARXResult result1 = anonymizer1.anonymize(data1, testcaseconfig);
         
         // Metric 2
-        testcaseconfig.setMetric(testcase.m2);
+        testcaseconfig.setQualityModel(testcase.m2);
         Data data2 = getDataObject(testcase);
         ARXAnonymizer anonymizer2 = new ARXAnonymizer();
         ARXResult result2 = anonymizer2.anonymize(data2, testcaseconfig);

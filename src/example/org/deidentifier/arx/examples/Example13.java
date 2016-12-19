@@ -63,11 +63,11 @@ public class Example13 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(3));
-        config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
-        config.addCriterion(new RecursiveCLDiversity("disease2", 3d, 2));
+        config.addPrivacyModel(new KAnonymity(3));
+        config.addPrivacyModel(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
+        config.addPrivacyModel(new RecursiveCLDiversity("disease2", 3d, 2));
         config.setMaxOutliers(0d);
-        config.setMetric(Metric.createEntropyMetric());
+        config.setQualityModel(Metric.createEntropyMetric());
 
         // Now anonymize
         ARXResult result = anonymizer.anonymize(data, config);

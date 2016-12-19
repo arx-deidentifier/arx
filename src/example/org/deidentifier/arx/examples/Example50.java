@@ -155,8 +155,8 @@ public class Example50 extends Example {
         
         // Configure ARX
         arxconfig.setMaxOutliers(1d);
-        arxconfig.setMetric(maximizePublisherPayout);
-        arxconfig.addCriterion(profitability);
+        arxconfig.setQualityModel(maximizePublisherPayout);
+        arxconfig.addPrivacyModel(profitability);
 
         // Anonymize
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -171,11 +171,11 @@ public class Example50 extends Example {
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
         System.out.println("   * Optimal: " + result.getLattice().isComplete());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
-        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getMetric().createInstanceOfLowestScore());
-        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getMetric().createInstanceOfHighestScore());
+        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getQualityModel().createInstanceOfLowestScore());
+        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getQualityModel().createInstanceOfHighestScore());
         System.out.println("   * Reduction in publisher benefit: " + node.getLowestScore() + " (" +
-                                      node.getLowestScore().relativeTo(result.getConfiguration().getMetric().createInstanceOfLowestScore(),
-                                                                       result.getConfiguration().getMetric().createInstanceOfHighestScore()) * 100 + "%)");
+                                      node.getLowestScore().relativeTo(result.getConfiguration().getQualityModel().createInstanceOfLowestScore(),
+                                                                       result.getConfiguration().getQualityModel().createInstanceOfHighestScore()) * 100 + "%)");
         System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
  
     }

@@ -105,10 +105,10 @@ public class ARXLattice implements Serializable {
         /**
          * Accessor method
          *
-         * @param metric
+         * @param model
          */
-        public void setMetric(final Metric<?> metric) {
-            lattice.metric = metric;
+        public void setQualityModel(final Metric<?> model) {
+            lattice.metric = model;
         }
 
         /**
@@ -271,7 +271,7 @@ public class ARXLattice implements Serializable {
              *
              * @param a
              */
-            public void setMaximumInformationLoss(final InformationLoss<?> a) {
+            public void setHighestScore(final InformationLoss<?> a) {
                 node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
@@ -280,7 +280,7 @@ public class ARXLattice implements Serializable {
              *
              * @param a
              */
-            public void setMinimumInformationLoss(final InformationLoss<?> a) {
+            public void setLowestScore(final InformationLoss<?> a) {
                 node.minInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
@@ -507,6 +507,7 @@ public class ARXLattice implements Serializable {
 
         /**
          * Returns the maximal information loss.
+         * This method is deprecated. Please use getHighestScore() instead.
          * @return
          */
         @Deprecated
@@ -516,6 +517,7 @@ public class ARXLattice implements Serializable {
 
         /**
          * Returns the minimal information loss.
+         * This method is deprecated. Please use getLowestScore() instead.
          * @return
          */
         @Deprecated
@@ -743,7 +745,7 @@ public class ARXLattice implements Serializable {
 
         // Init
         this.solutions = solutions;
-        this.metric = config.getMetric();
+        this.metric = config.getQualityModel();
         this.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
         this.complete = complete;
         this.virtualSize = solutions.getSize();
@@ -932,6 +934,7 @@ public class ARXLattice implements Serializable {
 
     /**
      * Returns the maximal information loss.
+     * This method is deprecated. Please use getHighestScore() instead.
      * @return
      */
     @Deprecated
@@ -944,6 +947,7 @@ public class ARXLattice implements Serializable {
 
     /**
      * Returns the minimal information loss.
+     * This method is deprecated. Please use getLowestScore() instead.
      * @return
      */
     @Deprecated

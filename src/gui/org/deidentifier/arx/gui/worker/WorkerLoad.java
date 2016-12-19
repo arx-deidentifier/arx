@@ -248,7 +248,7 @@ public class WorkerLoad extends Worker<Model> {
                                              ARXLattice.getDeserializationContext().minLevel, 
                                              ARXLattice.getDeserializationContext().maxLevel));
         
-        config.getConfig().setMetric(Metric.createMetric(config.getConfig().getMetric(), 
+        config.getConfig().setQualityModel(Metric.createMetric(config.getConfig().getQualityModel(), 
                                                          ARXLattice.getDeserializationContext().minLevel, 
                                                          ARXLattice.getDeserializationContext().maxLevel));
         
@@ -728,8 +728,8 @@ public class WorkerLoad extends Worker<Model> {
                     node.access().setAnonymity(anonymity);
                     node.access().setChecked(checked);
                     node.access().setTransformation(transformation);
-                    node.access().setMaximumInformationLoss(max.get(id));
-                    node.access().setMinimumInformationLoss(min.get(id));
+                    node.access().setHighestScore(max.get(id));
+                    node.access().setLowestScore(min.get(id));
                     node.access().setAttributes(attrs.get(id));
                     node.access().setHeadermap(headermap);
                     levels.get(level).add(node);

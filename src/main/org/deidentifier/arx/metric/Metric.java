@@ -1533,7 +1533,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected RowSet getSubset(ARXConfiguration config) {
-        for (PrivacyCriterion c : config.getCriteria()) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c.isSubsetAvailable()) {
                 DataSubset subset = c.getDataSubset();
                 if (subset != null) {

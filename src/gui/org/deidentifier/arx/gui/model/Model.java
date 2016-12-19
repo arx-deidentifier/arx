@@ -482,7 +482,7 @@ public class Model implements Serializable {
         // Add an enclosure criterion
         DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
                                               getInputConfig().getResearchSubset());
-		config.addCriterion(new Inclusion(subset));
+		config.addPrivacyModel(new Inclusion(subset));
 
         // Return the config
 		return config;
@@ -752,7 +752,7 @@ public class Model implements Serializable {
 	    
 	    if (this.metricConfig == null) {
 	        if (this.inputConfig == null || this.inputConfig.getMetric() == null) {
-	            this.metricConfig = ARXConfiguration.create().getMetric().getConfiguration();
+	            this.metricConfig = ARXConfiguration.create().getQualityModel().getConfiguration();
 	        } else {
 	            this.metricConfig = this.inputConfig.getMetric().getConfiguration();
 	        }
@@ -768,7 +768,7 @@ public class Model implements Serializable {
 	public MetricDescription getMetricDescription() {
 	    if (this.metricDescription == null) {
             if (this.inputConfig == null || this.inputConfig.getMetric() == null) {
-                this.metricDescription = ARXConfiguration.create().getMetric().getDescription();
+                this.metricDescription = ARXConfiguration.create().getQualityModel().getDescription();
             } else {
                 this.metricDescription = this.inputConfig.getMetric().getDescription();
             }

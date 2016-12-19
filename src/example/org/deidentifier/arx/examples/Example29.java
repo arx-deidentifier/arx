@@ -98,7 +98,7 @@ public class Example29 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new AverageReidentificationRisk(0.5d));
+        config.addPrivacyModel(new AverageReidentificationRisk(0.5d));
         config.setMaxOutliers(1d);
 
         // Anonymize

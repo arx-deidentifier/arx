@@ -105,9 +105,9 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
             builder.append(" - Dataset: ").append(dataset).append("\n");
             builder.append(" - Sensitive: ").append(sensitiveAttribute).append("\n");
             builder.append(" - Suppression: ").append(config.getMaxOutliers()).append("\n");
-            builder.append(" - Metric: ").append(config.getMetric().toString()).append("\n");
+            builder.append(" - Metric: ").append(config.getQualityModel().toString()).append("\n");
             builder.append(" - Criteria:\n");
-            for (PrivacyCriterion c : config.getCriteria()) {
+            for (PrivacyCriterion c : config.getPrivacyModels()) {
                 builder.append("   * ").append(c.toString()).append("\n");
             }
             builder.append("}");
@@ -116,7 +116,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
         
         @Override
         public String toString() {
-            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
@@ -159,7 +159,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.containsCriterion(LDiversity.class) || testCase.config.containsCriterion(TCloseness.class)) {
+                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }

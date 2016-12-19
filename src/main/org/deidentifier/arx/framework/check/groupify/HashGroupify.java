@@ -109,7 +109,7 @@ public class HashGroupify {
         // Set params
         this.currentNumOutliers = 0;
         this.suppressionLimit = config.getAbsoluteMaxOutliers();
-        this.utilityMeasure = config.getMetric();
+        this.utilityMeasure = config.getQualityModel();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
         // Extract research subset
@@ -120,8 +120,8 @@ public class HashGroupify {
         }
         
         // Extract criteria
-        this.classBasedCriteria = config.getClassBasedCriteriaAsArray();
-        this.sampleBasedCriteria = config.getSampleBasedCriteriaAsArray();
+        this.classBasedCriteria = config.getClassBasedPrivacyModelsAsArray();
+        this.sampleBasedCriteria = config.getSampleBasedPrivacyModelsAsArray();
         this.minimalClassSize = config.getMinimalGroupSize();
         
         // Sanity check: by convention, d-presence must be the first criterion

@@ -118,7 +118,7 @@ public class ARXResult {
                                                     dataArray,
                                                     dictionary,
                                                     handle.getDefinition(),
-                                                    config.getCriteria(),
+                                                    config.getPrivacyModels(),
                                                     getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
@@ -325,8 +325,8 @@ public class ARXResult {
             } else {
                 node.access().setNotAnonymous();
             }
-            node.access().setMaximumInformationLoss(transformation.getInformationLoss());
-            node.access().setMinimumInformationLoss(transformation.getInformationLoss());
+            node.access().setHighestScore(transformation.getInformationLoss());
+            node.access().setLowestScore(transformation.getInformationLoss());
             node.access().setLowerBound(transformation.getLowerBound());
             lattice.estimateInformationLoss();
         }
@@ -402,7 +402,7 @@ public class ARXResult {
         }
         
         // Check if optimizable
-        for (PrivacyCriterion c : config.getCriteria()) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (!c.isLocalRecodingSupported()) {
                 return false;
             }

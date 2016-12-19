@@ -62,7 +62,7 @@ public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTes
         // Warm up
         System.out.println("Experiment:");
         System.out.println(" - Dataset: " + testCase.dataset);
-        System.out.println(" - Utility measure: " + testCase.config.getMetric().toString());
+        System.out.println(" - Utility measure: " + testCase.config.getQualityModel().toString());
         System.out.println(" - Practical monotonicity: " + testCase.practical);
         System.out.println(" - Suppression limit: " + testCase.config.getMaxOutliers());
         System.out.println(" - Privacy model: " + getPrivacyModel(testCase.config));
@@ -118,9 +118,9 @@ public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTes
     private String getPrivacyModel(ARXConfiguration config) {
         StringBuilder result = new StringBuilder();
         result.append("{");
-        int num = config.getCriteria().size();
+        int num = config.getPrivacyModels().size();
         int count = 0;
-        for (PrivacyCriterion c : config.getCriteria()) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             result.append(c.toString());
             if (++count < num) {
                 result.append(", ");

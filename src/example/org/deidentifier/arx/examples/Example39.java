@@ -116,9 +116,9 @@ public class Example39 extends Example {
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(5));
+        config.addPrivacyModel(new KAnonymity(5));
         config.setMaxOutliers(1d);
-        config.setMetric(Metric.createLossMetric());
+        config.setQualityModel(Metric.createLossMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
         System.out.println("5-anonymous dataset");

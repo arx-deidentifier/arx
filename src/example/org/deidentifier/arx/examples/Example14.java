@@ -83,14 +83,14 @@ public class Example14 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(3));
+        config.addPrivacyModel(new KAnonymity(3));
         
         // NDS-specific settings
         config.setMaxOutliers(1d); // Recommended default: 1d
         config.setAttributeWeight("age", 0.5d); // attribute weight
         config.setAttributeWeight("gender", 0.3d); // attribute weight
         config.setAttributeWeight("zipcode", 0.5d); // attribute weight
-        config.setMetric(Metric.createLossMetric(0.5d)); // suppression/generalization-factor
+        config.setQualityModel(Metric.createLossMetric(0.5d)); // suppression/generalization-factor
 
         ARXResult result = anonymizer.anonymize(data, config);
 

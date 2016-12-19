@@ -107,10 +107,10 @@ public class Example42 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KMap(3, subset));
-        config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
+        config.addPrivacyModel(new KMap(3, subset));
+        config.addPrivacyModel(new DPresence(1d / 2d, 2d / 3d, subset));
         config.setMaxOutliers(1d);
-        config.setMetric(Metric.createLossMetric());
+        config.setQualityModel(Metric.createLossMetric());
 
         // Now anonymize
         ARXResult result = anonymizer.anonymize(data, config);
