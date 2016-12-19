@@ -26,7 +26,7 @@ package org.deidentifier.arx.metric;
  */
 class InformationLossDefault extends InformationLoss<Double> {
 
-    /** serialVersionUID. */
+    /** SVUID */
     private static final long           serialVersionUID = -4341081298410703417L;
 
     /** Current value. */

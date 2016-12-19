@@ -35,7 +35,7 @@ import org.deidentifier.arx.metric.v2.__MetricV2;
  */
 public abstract class InformationLoss<T> implements Comparable<InformationLoss<?>>, Serializable {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = -5347658129539223333L;
     
     /**
