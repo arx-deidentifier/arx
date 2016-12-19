@@ -352,7 +352,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private boolean                            utilityBasedMicroaggregation                     = false;
 
     /** Should the mean-squared error be used to measure the impact of microaggregation */
-    private boolean                            utilityBasedMicroaggregationUseMeansSquaredError = false;
+    private boolean                            utilityBasedMicroaggregationUseMeanSquaredError  = false;
 
     /** Internal variant of the class providing a broader interface. */
     private transient ARXConfigurationInternal accessibleInstance                               = null;
@@ -887,7 +887,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
-        return this.utilityBasedMicroaggregationUseMeansSquaredError;
+        return this.utilityBasedMicroaggregationUseMeanSquaredError;
     }
 
     /**
@@ -1071,7 +1071,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     public void setUtilityBasedMicroaggregationUseMeanSquaredError(boolean useMSE) {
-        this.utilityBasedMicroaggregationUseMeansSquaredError = useMSE;
+        this.utilityBasedMicroaggregationUseMeanSquaredError = useMSE;
     }
 
     /**
