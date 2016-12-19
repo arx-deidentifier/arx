@@ -242,7 +242,7 @@ public class ViewPropertiesOutput extends ViewProperties {
         // Clear
         roots.clear();
         
-        // Print information loss
+        // Print score
         if (node.getMaximumInformationLoss().getValue().equals( 
             node.getMinimumInformationLoss().getValue())) {
             

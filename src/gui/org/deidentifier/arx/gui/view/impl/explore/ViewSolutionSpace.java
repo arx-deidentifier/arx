@@ -356,7 +356,7 @@ public abstract class ViewSolutionSpace implements IView {
     }
 
     /**
-     * Converts an information loss into a relative value in percent.
+     * Converts an score into a relative value in percent.
      *
      * @param infoLoss
      * @return

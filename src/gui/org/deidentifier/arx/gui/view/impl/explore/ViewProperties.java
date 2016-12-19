@@ -155,7 +155,7 @@ public class ViewProperties implements IView {
     }
 
     /**
-     * Converts an information loss into a relative value in percent.
+     * Converts a score into a relative value in percent.
      * 
      * @param infoLoss
      * @return

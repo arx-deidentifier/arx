@@ -69,7 +69,7 @@ public class ModelClipboard {
             return;
         }
 
-        // Collect top-10 in terms of lowest information loss
+        // Collect top-10 in terms of best score
         List<ARXNode> utility = new ArrayList<ARXNode>();
         utility.add(result.getGlobalOptimum());
         collectTopSolutions(utility, result.getLattice(), new Comparator<ARXNode>(){
@@ -226,7 +226,7 @@ public class ModelClipboard {
     }
 
     /**
-     * Sorts all nodes according to their minimal information loss.
+     * Sorts all nodes according to their minimal score.
      */
     public void sort() {
         Collections.sort(clipboard, new Comparator<ARXNode>(){

@@ -48,10 +48,10 @@ public class ModelNodeFilter implements Serializable {
     /** The initial number of nodes. */
     private int                  maxNumNodesInitial = 0;
     
-    /** Bound for min information loss. */
+    /** Bound for min. score. */
     private double               minInformationLoss = 0d;
     
-    /** Bound for max information loss. */
+    /** Bound for max. score. */
     private double               maxInformationLoss = 1d;
 
     /**
@@ -100,7 +100,7 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Allows transformations with any information loss to pass the filter.
+     * Allows transformations with any score to pass the filter.
      */
     public void allowAllInformationLoss() {
         minInformationLoss = 0d;
@@ -126,7 +126,7 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Allows transformations with certain information loss to pass the filter.
+     * Allows transformations with certain score to pass the filter.
      *
      * @param min
      * @param max

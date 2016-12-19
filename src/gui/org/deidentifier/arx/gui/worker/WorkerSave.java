@@ -589,7 +589,7 @@ public class WorkerSave extends Worker<Model> {
                              .getAttributeMap());
         oos.flush();
 
-        // Write information loss
+        // Write score
         zip.putNextEntry(new ZipEntry("infoloss.dat")); //$NON-NLS-1$
         final Map<Integer, InformationLoss<?>> max = new HashMap<Integer, InformationLoss<?>>();
         final Map<Integer, InformationLoss<?>> min = new HashMap<Integer, InformationLoss<?>>();
