@@ -290,7 +290,7 @@ public class ViewPropertiesInput extends ViewProperties {
         new Property(m, Resources.getMessage("PropertiesView.155"), new String[] { SWTUtil.getPrettyString(metric.isMonotonic(config.getAllowedOutliers())) }); //$NON-NLS-1$
         new Property(m, Resources.getMessage("PropertiesView.156"), new String[] { SWTUtil.getPrettyString(metric.isWeighted()) }); //$NON-NLS-1$
         new Property(m, Resources.getMessage("PropertiesView.157"), new String[] { SWTUtil.getPrettyString(metric.isPrecomputed()) }); //$NON-NLS-1$
-        new Property(m, Resources.getMessage("PropertiesView.158"), new String[] { SWTUtil.getPrettyString(metric.isAbleToHandleMicroaggregation()) }); //$NON-NLS-1$
+        new Property(m, Resources.getMessage("PropertiesView.158"), new String[] { SWTUtil.getPrettyString(metric.isAbleToHandleMicroaggregation() && config.isUtilityBasedMicroaggregation())}); //$NON-NLS-1$
                 
         // Cost/benefit configuration
         if (metric instanceof MetricSDNMPublisherPayout) {
