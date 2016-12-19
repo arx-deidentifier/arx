@@ -490,19 +490,35 @@ public class ARXLattice implements Serializable {
         }
         
         /**
-         * Returns the maximal information loss.
-         *
+         * Returns the highest score. Lower is better.
          * @return
          */
+        public InformationLoss<?> getHighestScore() {
+            return maxInformationLoss;
+        }
+
+        /**
+         * Returns the highest score. Lower is better.
+         * @return
+         */
+        public InformationLoss<?> getLowestScore() {
+            return minInformationLoss;
+        }
+
+        /**
+         * Returns the maximal information loss.
+         * @return
+         */
+        @Deprecated
         public InformationLoss<?> getMaximumInformationLoss() {
             return maxInformationLoss;
         }
 
         /**
          * Returns the minimal information loss.
-         *
          * @return
          */
+        @Deprecated
         public InformationLoss<?> getMinimumInformationLoss() {
             return minInformationLoss;
         }
@@ -890,6 +906,14 @@ public class ARXLattice implements Serializable {
     }
 
     /**
+     * Returns the highest score. Lower is better.
+     * @return
+     */
+    public InformationLoss<?> getHighestScore(){
+        return this.getMaximumInformationLoss();
+    }
+    
+    /**
      * Returns the levels of the generalization lattice.
      *
      * @return
@@ -899,10 +923,18 @@ public class ARXLattice implements Serializable {
     }
     
     /**
-     * Returns the maximal information loss.
-     *
+     * Returns the lowest score. Lower is better.
      * @return
      */
+    public InformationLoss<?> getLowestScore(){
+        return this.getMinimumInformationLoss();
+    }
+
+    /**
+     * Returns the maximal information loss.
+     * @return
+     */
+    @Deprecated
     public InformationLoss<?> getMaximumInformationLoss(){
         if (this.maximumInformationLoss == null) {
             this.estimateInformationLoss();
@@ -912,16 +944,16 @@ public class ARXLattice implements Serializable {
 
     /**
      * Returns the minimal information loss.
-     *
      * @return
      */
+    @Deprecated
     public InformationLoss<?> getMinimumInformationLoss(){
         if (this.minimumInformationLoss == null) {
             this.estimateInformationLoss();
         }
         return this.minimumInformationLoss;
     }
-    
+
     /**
      * Returns the number of nodes.
      *
