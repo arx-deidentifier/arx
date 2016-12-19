@@ -62,6 +62,15 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private boolean                   journalistAttackerModel;
 
     /**
+     * Creates a new instance. Default constructor which treats all transformation methods equally.
+     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
+     *                                the prosecutor model will be assumed, otherwise
+     */
+    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
+       this(journalistAttackerModel, 0.5d);
+    }
+    
+    /**
      * Creates a new instance
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
@@ -75,15 +84,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     public MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
         super(false, false, false, gsFactor);
         this.journalistAttackerModel = journalistAttackerModel;
-    }
-    
-    /**
-     * Creates a new instance. Default constructor which treats all transformation methods equally.
-     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
-     *                                the prosecutor model will be assumed, otherwise
-     */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
-       this(journalistAttackerModel, 0.5d);
     }
     
     @Override
@@ -126,6 +126,11 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     @Override
     public String getName() {
         return "Publisher benefit";
+    }
+
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
     }
 
     @Override

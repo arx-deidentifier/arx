@@ -185,6 +185,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
         if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
             this.microaggregationFunctions = new DistributionAggregateFunction[0];
+            this.microaggregationDomainSizes = new int[0];
         }
         
         // Initialize dimensions

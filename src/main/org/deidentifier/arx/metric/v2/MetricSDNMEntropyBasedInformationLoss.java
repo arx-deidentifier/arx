@@ -181,6 +181,11 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     }
     
     @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
+    }
+
+    @Override
     public boolean isGSFactorSupported() {
         return true;
     }
