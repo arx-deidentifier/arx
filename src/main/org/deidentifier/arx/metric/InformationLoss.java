@@ -71,7 +71,7 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
     }
     
     /**
-     * 
+     * Creates a new instance
      */
     protected InformationLoss(){
         // Protected
@@ -97,7 +97,7 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
     public abstract boolean equals(Object obj);
 
     /**
-     * 
+     * Returns the value
      *
      * @return
      */
