@@ -104,7 +104,7 @@ public class SolutionSpace {
                 }
                 if (node.isChecked()) {
                     this.lattice.putProperty(index, lvl, this.getPropertyChecked());
-                    this.setInformationLoss(id, node.getMaximumInformationLoss());
+                    this.setInformationLoss(id, node.getHighestScore());
                 }
             }
         }
