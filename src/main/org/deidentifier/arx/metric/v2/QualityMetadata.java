@@ -16,18 +16,24 @@
  */
 package org.deidentifier.arx.metric.v2;
 
+import java.io.Serializable;
+
 /**
  * A class encapsulating information about data quality
  * 
  * @author Fabian Prasser
  */
-public class QualityMetadata<T> {
+public class QualityMetadata<T> implements Serializable {
+
+    /** SVUID */
+    private static final long serialVersionUID = 8750896039746232218L;
 
     /** Parameter */
-    private final String parameter;
-    /** Value */
-    private final T      value;
+    private final String      parameter;
     
+    /** Value */
+    private final T           value;
+
     /**
      * Creates a new instance
      * @param parameter
