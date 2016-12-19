@@ -48,6 +48,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
     /** Parameter strings */
     private static final String         PUBLISHER_PAYOUT = "Publisher payout";
+    
     /** Parameter strings */
     private static final String         MAXIMAL_PAYOUT   = "Theoretical maximum";
 
