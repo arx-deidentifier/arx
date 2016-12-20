@@ -215,9 +215,9 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                 cumulative = model.getFractionOfRecordsForCumulativeRiskThresholds();
                 labels = new String[frequencies.length];
                 for (int i = 0; i < frequencies.length; i++) {
-                    labels[i] = String.valueOf(SWTUtil.getPrettyString(model.getAvailableRiskThresholds()[i] * 100d));
+                    labels[i] = "]" + String.valueOf(SWTUtil.getPrettyString(model.getAvailableLowerRiskThresholds()[i] * 100d)) +  //$NON-NLS-1$
+                                ", " + String.valueOf(SWTUtil.getPrettyString(model.getAvailableUpperRiskThresholds()[i] * 100d)) + "]"; //$NON-NLS-1$ $NON-NLS-2$
                 }
-                labels[0] = "<=" + SWTUtil.getPrettyString(1e-6); //$NON-NLS-1$
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
