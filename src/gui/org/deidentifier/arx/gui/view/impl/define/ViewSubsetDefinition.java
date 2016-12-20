@@ -40,39 +40,39 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class ViewSubsetDefinition implements IView{
 
-    /**  Controller */
+    /** Controller */
     private Controller controller;
-    
-    /**  View */
-    private Composite root;
-    
-    /**  Model */
-    private Model model;
-    
-    /**  View */
-    private Text size;
-    
-    /**  View */
-    private Text origin;
-    
-    /**  View */
-    private Text total;
-    
-    /**  View */
-    private Text percent;
 
-    /**  View */
-    private ToolItem all;
-    
-    /**  View */
-    private ToolItem none;
-    
-    /**  View */
-    private ToolItem file;
-    
-    /**  View */
-    private ToolItem filter;
-    
+    /** View */
+    private Composite  root;
+
+    /** Model */
+    private Model      model;
+
+    /** View */
+    private Text       size;
+
+    /** View */
+    private Text       origin;
+
+    /** View */
+    private Text       total;
+
+    /** View */
+    private Text       percent;
+
+    /** View */
+    private ToolItem   all;
+
+    /** View */
+    private ToolItem   none;
+
+    /** View */
+    private ToolItem   file;
+
+    /** View */
+    private ToolItem   filter;
+
     /**
      * Creates a new instance.
      *
