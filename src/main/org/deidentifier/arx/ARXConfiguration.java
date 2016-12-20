@@ -30,15 +30,15 @@ import java.util.Set;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
-import org.deidentifier.arx.criteria.ProfitabilityJournalist;
-import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
-import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
 import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.ProfitabilityJournalist;
+import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -478,7 +478,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Check DP has been combined with a subset
         if (this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             for (PrivacyCriterion other : this.getPrivacyModels()) {
-                if (other != c && other.isSubsetAvailable()) {
+                if (!(other instanceof EDDifferentialPrivacy) && other.isSubsetAvailable()) {
                     
                     // Remove and complain
                     criteria.remove(c);
