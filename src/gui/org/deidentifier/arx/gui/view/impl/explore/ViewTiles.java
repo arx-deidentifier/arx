@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright (C) 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,19 +107,19 @@ public class ViewTiles extends ViewSolutionSpace {
         tiles.setComparator(new Comparator<ARXNode>() {
             public int compare(ARXNode o1, ARXNode o2) {
                 
-                boolean unknown2 = o2.getMinimumInformationLoss().compareTo(o2.getMaximumInformationLoss())!=0 &&
-                                   asRelativeValue(o2.getMinimumInformationLoss())==0d;
+                boolean unknown2 = o2.getLowestScore().compareTo(o2.getHighestScore())!=0 &&
+                                   asRelativeValue(o2.getLowestScore())==0d;
                 
-                boolean unknown1 = o1.getMinimumInformationLoss().compareTo(o1.getMaximumInformationLoss())!=0 &&
-                                   asRelativeValue(o1.getMinimumInformationLoss())==0d;
+                boolean unknown1 = o1.getLowestScore().compareTo(o1.getHighestScore())!=0 &&
+                                   asRelativeValue(o1.getLowestScore())==0d;
                 
                 if (unknown1 && unknown2) return 0;
                 else if (unknown1 && !unknown2) return +1;
                 else if (!unknown1 && unknown2) return -1;
                 else {
                     try {
-                        int c1 = o1.getMinimumInformationLoss().compareTo(o2.getMinimumInformationLoss());
-                        return c1 != 0 ? c1 : o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
+                        int c1 = o1.getLowestScore().compareTo(o2.getLowestScore());
+                        return c1 != 0 ? c1 : o1.getHighestScore().compareTo(o2.getHighestScore());
                     } catch (Exception e) {
                         return 0;
                     }

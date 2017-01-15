@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,11 +136,11 @@ public class Example23 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(3));
-        config.addCriterion(new DistinctLDiversity("disease", 2));
-        config.addCriterion(new DistinctLDiversity("age", 2));
+        config.addPrivacyModel(new KAnonymity(3));
+        config.addPrivacyModel(new DistinctLDiversity("disease", 2));
+        config.addPrivacyModel(new DistinctLDiversity("age", 2));
         config.setMaxOutliers(0.1d);
-        config.setMetric(Metric.createEntropyMetric());
+        config.setQualityModel(Metric.createEntropyMetric());
 
         // Now anonymize
         ARXResult result = anonymizer.anonymize(data, config);

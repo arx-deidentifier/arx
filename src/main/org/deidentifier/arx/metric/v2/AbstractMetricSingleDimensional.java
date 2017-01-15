@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -185,6 +185,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
         if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
             this.microaggregationFunctions = new DistributionAggregateFunction[0];
+            this.microaggregationDomainSizes = new int[0];
         }
         
         // Initialize dimensions

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,7 +118,7 @@ public class ARXResult {
                                                     dataArray,
                                                     dictionary,
                                                     handle.getDefinition(),
-                                                    config.getCriteria(),
+                                                    config.getPrivacyModels(),
                                                     getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
@@ -317,7 +317,7 @@ public class ARXResult {
         transformation.setChecked(information.properties);
 
         // Store
-        if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
+        if (!node.isChecked() || node.getHighestScore().compareTo(node.getLowestScore()) != 0) {
             
             node.access().setChecked(true);
             if (transformation.hasProperty(solutionSpace.getPropertyAnonymous())) {
@@ -325,8 +325,8 @@ public class ARXResult {
             } else {
                 node.access().setNotAnonymous();
             }
-            node.access().setMaximumInformationLoss(transformation.getInformationLoss());
-            node.access().setMinimumInformationLoss(transformation.getInformationLoss());
+            node.access().setHighestScore(transformation.getInformationLoss());
+            node.access().setLowestScore(transformation.getInformationLoss());
             node.access().setLowerBound(transformation.getLowerBound());
             lattice.estimateInformationLoss();
         }
@@ -402,7 +402,7 @@ public class ARXResult {
         }
         
         // Check if optimizable
-        for (PrivacyCriterion c : config.getCriteria()) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (!c.isLocalRecodingSupported()) {
                 return false;
             }

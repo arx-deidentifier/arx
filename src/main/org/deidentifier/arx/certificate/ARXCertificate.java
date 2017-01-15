@@ -178,14 +178,14 @@ public class ARXCertificate {
             this.add(new ElementSubtitle((section++)+". Transformation"));
             this.add(asList(transformation.render()));
             this.add(new ElementNewLine());
-            if (config.getMetric() != null) {
+            if (config.getQualityModel() != null) {
                 this.add(new ElementSubtitle((section++)+". Data quality model"));
-                this.add(asList(config.getMetric().render(config)));
+                this.add(asList(config.getQualityModel().render(config)));
                 this.add(new ElementNewLine());
             }
             this.add(new ElementSubtitle((section++)+". Privacy models"));
             if (transformation.getAnonymity() == Anonymity.ANONYMOUS) {
-                for (PrivacyCriterion c : config.getCriteria()) {
+                for (PrivacyCriterion c : config.getPrivacyModels()) {
                     this.add(asList(c.render()));
                 }
             }

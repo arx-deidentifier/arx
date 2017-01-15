@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
 
         // We transform the formula, to make evaluating it more efficient.
         //
-        // With maxIL = long(size_1 * size_2 * ... * size_n) we define
+        // With maxIL = log(size_1 * size_2 * ... * size_n) we define
         // IL = [-log( 1 / (share_1 * size_1) ) - log ( 1 / (share_2 * size_2) ) ... - log( 1 / (share_n * size_n) ) ] / maxIL
         //
         // Step 1:
@@ -179,6 +179,11 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     @Override
     public String getName() {
         return "Entropy-based information loss";
+    }
+
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
     }
 
     @Override

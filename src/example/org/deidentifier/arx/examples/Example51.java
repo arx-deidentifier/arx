@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 
 /**
  * Examples of using the game-theoretic approach for 
@@ -156,8 +157,8 @@ public class Example51 extends Example {
         
         // Configure ARX
         arxconfig.setMaxOutliers(1d);
-        arxconfig.setMetric(maximizePublisherPayout);
-        arxconfig.addCriterion(profitability);
+        arxconfig.setQualityModel(maximizePublisherPayout);
+        arxconfig.addPrivacyModel(profitability);
 
         // Anonymize
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -172,11 +173,9 @@ public class Example51 extends Example {
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
         System.out.println("   * Optimal: " + result.getLattice().isComplete());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
-        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMinInformationLoss());
-        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMaxInformationLoss());
-        System.out.println("   * Reduction in publisher benefit: " + node.getMinimumInformationLoss() + " (" +
-                           node.getMinimumInformationLoss().relativeTo(result.getConfiguration().getMetric().createMinInformationLoss(),
-                                                                       result.getConfiguration().getMetric().createMaxInformationLoss()) * 100 + "%)");
+        for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+            System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());
+        }
         System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
  
     }

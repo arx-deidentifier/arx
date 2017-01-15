@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1190,10 +1190,27 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Returns an instance of the highest possible score. Lower is better.
+     * @return
+     */
+    public InformationLoss<?> createInstanceOfHighestScore() {
+        return createMaxInformationLoss();
+    }
+
+    /**
+     * Returns an instance of the lowest possible score. Lower is better.
+     * @return
+     */
+    public InformationLoss<?> createInstanceOfLowestScore() {
+        return createMinInformationLoss();
+    }
+    
+    /**
      * Returns an instance of the maximal value.
      *
      * @return
      */
+    @Deprecated
     public abstract InformationLoss<?> createMaxInformationLoss();
     
     /**
@@ -1201,6 +1218,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      *
      * @return
      */
+    @Deprecated
     public abstract InformationLoss<?> createMinInformationLoss();
     
     /**
@@ -1522,7 +1540,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     protected RowSet getSubset(ARXConfiguration config) {
-        for (PrivacyCriterion c : config.getCriteria()) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c.isSubsetAvailable()) {
                 DataSubset subset = c.getDataSubset();
                 if (subset != null) {

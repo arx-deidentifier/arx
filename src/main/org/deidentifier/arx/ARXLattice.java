@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -106,10 +106,10 @@ public class ARXLattice implements Serializable {
         /**
          * Accessor method
          *
-         * @param metric
+         * @param model
          */
-        public void setMetric(final Metric<?> metric) {
-            lattice.metric = metric;
+        public void setQualityModel(final Metric<?> model) {
+            lattice.metric = model;
         }
 
         /**
@@ -272,7 +272,7 @@ public class ARXLattice implements Serializable {
              *
              * @param a
              */
-            public void setMaximumInformationLoss(final InformationLoss<?> a) {
+            public void setHighestScore(final InformationLoss<?> a) {
                 node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
@@ -281,7 +281,7 @@ public class ARXLattice implements Serializable {
              *
              * @param a
              */
-            public void setMinimumInformationLoss(final InformationLoss<?> a) {
+            public void setLowestScore(final InformationLoss<?> a) {
                 node.minInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
@@ -426,10 +426,10 @@ public class ARXLattice implements Serializable {
             // Important for expand operations
             if (!complete) {
                 if (this.maxInformationLoss == null) {
-                    this.maxInformationLoss = metric.createMaxInformationLoss();
+                    this.maxInformationLoss = metric.createInstanceOfHighestScore();
                 }
                 if (this.minInformationLoss == null) {
-                    this.minInformationLoss = metric.createMinInformationLoss();
+                    this.minInformationLoss = metric.createInstanceOfLowestScore();
                 }
             }
         }
@@ -491,19 +491,37 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * Returns the maximal information loss.
-         *
+         * Returns the highest score. Lower is better.
          * @return
          */
+        public InformationLoss<?> getHighestScore() {
+            return maxInformationLoss;
+        }
+
+        /**
+         * Returns the highest score. Lower is better.
+         * @return
+         */
+        public InformationLoss<?> getLowestScore() {
+            return minInformationLoss;
+        }
+
+        /**
+         * Returns the maximal information loss.
+         * This method is deprecated. Please use getHighestScore() instead.
+         * @return
+         */
+        @Deprecated
         public InformationLoss<?> getMaximumInformationLoss() {
             return maxInformationLoss;
         }
         
         /**
          * Returns the minimal information loss.
-         *
+         * This method is deprecated. Please use getLowestScore() instead.
          * @return
          */
+        @Deprecated
         public InformationLoss<?> getMinimumInformationLoss() {
             return minInformationLoss;
         }
@@ -754,7 +772,7 @@ public class ARXLattice implements Serializable {
 
         // Init
         this.solutions = solutions;
-        this.metric = config.getMetric();
+        this.metric = config.getQualityModel();
         this.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
         this.complete = complete;
         this.virtualSize = solutions.getSize();
@@ -917,6 +935,14 @@ public class ARXLattice implements Serializable {
     }
 
     /**
+     * Returns the highest score. Lower is better.
+     * @return
+     */
+    public InformationLoss<?> getHighestScore(){
+        return this.getMaximumInformationLoss();
+    }
+    
+    /**
      * Returns the levels of the generalization lattice.
      *
      * @return
@@ -926,10 +952,19 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * Returns the maximal information loss.
-     *
+     * Returns the lowest score. Lower is better.
      * @return
      */
+    public InformationLoss<?> getLowestScore(){
+        return this.getMinimumInformationLoss();
+    }
+
+    /**
+     * Returns the maximal information loss.
+     * This method is deprecated. Please use getHighestScore() instead.
+     * @return
+     */
+    @Deprecated
     public InformationLoss<?> getMaximumInformationLoss(){
         if (this.maximumInformationLoss == null) {
             this.estimateInformationLoss();
@@ -939,9 +974,10 @@ public class ARXLattice implements Serializable {
     
     /**
      * Returns the minimal information loss.
-     *
+     * This method is deprecated. Please use getLowestScore() instead.
      * @return
      */
+    @Deprecated
     public InformationLoss<?> getMinimumInformationLoss(){
         if (this.minimumInformationLoss == null) {
             this.estimateInformationLoss();
@@ -1333,13 +1369,13 @@ public class ARXLattice implements Serializable {
             this.maximumInformationLoss = null;
             for (ARXNode[] level : this.levels) {
                 for (ARXNode node : level) {
-                    this.minimumInformationLoss = this.minimumInformationLoss == null ? node.getMinimumInformationLoss() : this.minimumInformationLoss;
-                    this.maximumInformationLoss = this.maximumInformationLoss == null ? node.getMaximumInformationLoss() : this.maximumInformationLoss;
-                    if (this.minimumInformationLoss.compareTo(node.getMinimumInformationLoss()) > 0) {
-                        this.minimumInformationLoss = node.getMinimumInformationLoss().clone();
+                    this.minimumInformationLoss = this.minimumInformationLoss == null ? node.getLowestScore() : this.minimumInformationLoss;
+                    this.maximumInformationLoss = this.maximumInformationLoss == null ? node.getHighestScore() : this.maximumInformationLoss;
+                    if (this.minimumInformationLoss.compareTo(node.getLowestScore()) > 0) {
+                        this.minimumInformationLoss = node.getLowestScore().clone();
                     }
-                    if (this.maximumInformationLoss.compareTo(node.getMaximumInformationLoss()) < 0) {
-                        this.maximumInformationLoss = node.getMaximumInformationLoss().clone();
+                    if (this.maximumInformationLoss.compareTo(node.getHighestScore()) < 0) {
+                        this.maximumInformationLoss = node.getHighestScore().clone();
                     }
                 }
             }
