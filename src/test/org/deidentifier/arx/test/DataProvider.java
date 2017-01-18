@@ -30,31 +30,31 @@ import org.deidentifier.arx.Data.DefaultData;
  */
 public class DataProvider {
     
-    /** TODO */
+    /** Data */
     protected DefaultData data;
     
-    /** TODO */
+    /** Hierarchy */
     protected DefaultHierarchy age;
     
-    /** TODO */
+    /** Hierarchy */
     private final DefaultHierarchy ageWrong;
     
-    /** TODO */
+    /** Hierarchy */
     private final DefaultHierarchy gender;
     
-    /** TODO */
+    /** Hierarchy */
     private final DefaultHierarchy zipcode;
     
-    /** TODO */
+    /** Hierarchy */
     private final DefaultHierarchy ageOne;
     
-    /** TODO */
+    /** Hierarchy */
     private final DefaultHierarchy genderOne;
     
-    /** TODO */
+    /** Hierarchy */
     private final DefaultHierarchy zipcodeOne;
     
-    /** TODO */
+    /** Hierarchy */
     private final DefaultHierarchy ageMissing;
     
     /**
