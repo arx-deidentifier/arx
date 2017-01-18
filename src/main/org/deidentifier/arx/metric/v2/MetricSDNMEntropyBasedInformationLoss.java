@@ -98,7 +98,19 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         }
         
         // Finalize
-        return Math.log10(infoLoss) / maxIL + 1d;
+        double result = Math.log10(infoLoss) / maxIL + 1d;
+        
+        // TODO: Floating point operations suck
+        if (Double.isNaN(result) || result <= -0.001d || result >= +1.001d) {
+            throw new IllegalStateException("Value (" + result + ") out of range [0,1]");
+        }
+        
+        // Fix rounding problems
+        result = result < 0d ? 0d : result;
+        result = result > 1d ? 1d : result;
+        
+        // Return
+        return result;
     }
 
     /**
