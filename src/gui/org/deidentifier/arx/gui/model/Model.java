@@ -411,7 +411,6 @@ public class Model implements Serializable {
 
         if (this.dPresenceModel != null && 
             this.dPresenceModel.isEnabled()) {
-            System.out.println("ADDING D-PRESENCE");
             config.addCriterion(this.dPresenceModel.getCriterion(this));
         }
         
