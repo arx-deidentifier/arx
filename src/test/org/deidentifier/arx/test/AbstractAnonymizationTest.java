@@ -364,9 +364,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         
         // Test or warmup
         ARXResult result = anonymizer.anonymize(data, testCase.config);
+        DataHandle output = null;
         if (testCase.hashcode != -1) {
             try {
-                result.optimize(result.getOutput());
+                output = result.getOutput();
+                result.optimizeIterative(output, 0.05d, 100, 0.05d);
             } catch (RollbackRequiredException e) {
                 throw new RuntimeException(e);
             }
@@ -390,7 +392,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 result = anonymizer.anonymize(data, testCase.config);
                 if (testCase.hashcode != -1) {
                     try {
-                        result.optimize(result.getOutput());
+                        output = result.getOutput();
+                        result.optimizeIterative(output, 0.05d, 100, 0.05d);
                     } catch (RollbackRequiredException e) {
                         throw new RuntimeException(e);
                     }
@@ -420,10 +423,9 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             
             // Compute hashcode of result
             int hashcode = 23;
-            DataHandle handle = result.getOutput();
-            for (int row = 0; row < handle.getNumRows(); row++) {
-                for (int column = 0; column < handle.getNumColumns(); column++) {
-                    hashcode = (37 * hashcode) + handle.getValue(row, column).hashCode();
+            for (int row = 0; row < output.getNumRows(); row++) {
+                for (int column = 0; column < output.getNumColumns(); column++) {
+                    hashcode = (37 * hashcode) + output.getValue(row, column).hashCode();
                 }
             }
             
