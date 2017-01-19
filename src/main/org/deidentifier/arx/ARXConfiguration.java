@@ -30,7 +30,6 @@ import java.util.Set;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
@@ -1126,18 +1125,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         DataSubset subset = this.getSubset();
         if (subset != null) {
             subset = subset.getSubsetInstance(rowset);
-        } else {
-            subset = DataSubset.create(rowset.length(), rowset);
         }
         
         // Clone all criteria
-        boolean subsetAdded = false;
         HashSet<PrivacyCriterion> criteria = new HashSet<PrivacyCriterion>();
         for (PrivacyCriterion criterion : this.getPrivacyModels()) {
             
             // Clone and store
             PrivacyCriterion clone = criterion.clone(subset);
-            subsetAdded |= criterion.isSubsetAvailable();
             
             // We need to make sure that we don't add multiple instances of k-anonymity
             // because k-map can be converted into this model
@@ -1159,11 +1154,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
             } else {
                 criteria.add(clone);
             }
-        }
-        
-        // Make sure that we have added the subset
-        if (!subsetAdded) {
-            criteria.add(new Inclusion(subset));
         }
         
         // Clone the config
