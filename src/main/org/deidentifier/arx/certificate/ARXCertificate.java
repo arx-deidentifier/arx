@@ -22,8 +22,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import org.apache.pdfbox.multipdf.Overlay;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
@@ -37,6 +39,7 @@ import org.deidentifier.arx.certificate.elements.ElementList;
 import org.deidentifier.arx.certificate.elements.ElementNewLine;
 import org.deidentifier.arx.certificate.elements.ElementSubtitle;
 import org.deidentifier.arx.certificate.elements.ElementTitle;
+import org.deidentifier.arx.certificate.resources.Watermark;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.io.CSVDataChecksum;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -216,6 +219,13 @@ public class ARXCertificate {
         for (Element element : this.elements) {
             element.render(document, 0, this.style);
         }
+        
+        Overlay overlay = new Overlay();
+        overlay.setInputPDF(document.getPDDocument());
+        overlay.setAllPagesOverlayPDF(new Watermark().getWatermark());
+        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+        overlay.overlay(new HashMap<Integer, String>());    
+        overlay.close();
         
         // Save
         document.save(stream);

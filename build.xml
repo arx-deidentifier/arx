@@ -122,6 +122,12 @@
                 <exclude name="**/*.txt" />
             </fileset>
         </copy>
+        <copy todir="build/test/org/deidentifier/arx/certificate/resources" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/certificate/resources" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
+            </fileset>
+        </copy>
     </target>
 
     <target name="benchmark" depends="git.revision,compileTest">
@@ -301,8 +307,20 @@
                 <exclude name="**/*.txt" />
             </fileset>
         </copy>
+        <copy todir="build/main/org/deidentifier/arx/certificate/resources" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/certificate/resources" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
+            </fileset>
+        </copy>
         <copy todir="build/gui/org/deidentifier/arx/risk/resources/us" overwrite="true">
             <fileset dir="src/main/org/deidentifier/arx/risk/resources/us" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
+            </fileset>
+        </copy>
+        <copy todir="build/gui/org/deidentifier/arx/certificate/resources" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/certificate/resources" defaultexcludes="yes">
                 <exclude name="**/*.java" />
                 <exclude name="**/*.txt" />
             </fileset>
