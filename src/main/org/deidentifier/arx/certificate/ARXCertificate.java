@@ -224,13 +224,13 @@ public class ARXCertificate {
         overlay.setInputPDF(document.getPDDocument());
         overlay.setAllPagesOverlayPDF(new Watermark().getWatermark());
         overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
-        overlay.overlay(new HashMap<Integer, String>());    
+        overlay.overlay(new HashMap<Integer, String>());
         overlay.close();
         
         // Save
         document.save(stream);
     }
-	
+    
 	/**
      * Renders as a list
      * @param data
