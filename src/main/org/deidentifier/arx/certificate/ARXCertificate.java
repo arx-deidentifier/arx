@@ -22,10 +22,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.apache.pdfbox.multipdf.Overlay;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
@@ -220,12 +219,11 @@ public class ARXCertificate {
             element.render(document, 0, this.style);
         }
         
-        Overlay overlay = new Overlay();
-        overlay.setInputPDF(document.getPDDocument());
-        overlay.setAllPagesOverlayPDF(new Watermark().getWatermark());
-        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
-        overlay.overlay(new HashMap<Integer, String>());
-        overlay.close();
+        PDDocument pdDocument = document.getPDDocument();
+        Watermark watermark = new Watermark(pdDocument);
+        for (int page = 0; page < pdDocument.getNumberOfPages(); page++) {
+            watermark.mark(pdDocument, page);
+        }
         
         // Save
         document.save(stream);

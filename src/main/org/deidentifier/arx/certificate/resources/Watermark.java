@@ -16,9 +16,16 @@
  */
 package org.deidentifier.arx.certificate.resources;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
  * Class for accessing the water mark
@@ -26,12 +33,28 @@ import org.apache.pdfbox.pdmodel.PDDocument;
  * @author Fabian Prasser
  */
 public class Watermark {
-
+    
+    /** Image*/
+    private BufferedImage image;
+    
     /**
-     * Returns the water mark
-     * @throws IOException 
+     * Creates a new instance
+     * @param document
+     * @throws IOException
      */
-    public PDDocument getWatermark() throws IOException {
-        return PDDocument.load(Watermark.class.getResourceAsStream("Watermark.pdf"));
+    public Watermark(PDDocument document) throws IOException {
+        BufferedImage tmp_image = ImageIO.read(Watermark.class.getResourceAsStream("watermark.png"));
+        BufferedImage image = new BufferedImage(tmp_image.getWidth(), tmp_image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);        
+        image.createGraphics().drawRenderedImage(tmp_image, null);
+    }
+    
+    @SuppressWarnings("deprecation")
+    public void mark(PDDocument document, int page) throws IOException {   
+
+        PDPage pdPage = (PDPage)document.getDocumentCatalog().getPages().get(page);
+        PDImageXObject xImage = LosslessFactory.createFromImage(document, image);
+        PDPageContentStream contentStream = new PDPageContentStream(document, pdPage, true, true);
+        contentStream.drawXObject(xImage, 10, 10, xImage.getWidth(), xImage.getHeight());
+        contentStream.close();
     }
 }
