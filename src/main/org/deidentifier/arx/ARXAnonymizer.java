@@ -314,21 +314,21 @@ public class ARXAnonymizer {
             KAnonymity c = config.getPrivacyModel(KAnonymity.class);
             // TODO: getDataGeneralized().getDataLength() does not consider data subsets
             if ((c.getK() > manager.getDataGeneralized().getDataLength()) || (c.getK() < 1)) { 
-                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
             }
         }
         if (config.isPrivacyModelSpecified(LDiversity.class)){
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)){
                 // TODO: getDataGeneralized().getDataLength() does not consider data subsets
 	            if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
 	            }
             }
         }
         if (config.isPrivacyModelSpecified(DDisclosurePrivacy.class)){
             for (DDisclosurePrivacy c : config.getPrivacyModels(DDisclosurePrivacy.class)){
                 if (c.getD() <= 0) { 
-                    throw new IllegalArgumentException("Parameter d (" + c.getD() + ") musst be positive and larger than 0"); 
+                    throw new IllegalArgumentException("Parameter d (" + c.getD() + ") must be positive and larger than 0"); 
                 }
             }
         }
@@ -350,7 +350,7 @@ public class ARXAnonymizer {
             if (maxLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid maximum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
                                                                                                maxLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
             if (maxLevels[i] < minLevels[i]) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() +
-                                                                                  "' has to be lower than or requal to the defined maximum!"); }
+                                                                                  "' has to be lower than or equal to the defined maximum!"); }
         }
     }
 
