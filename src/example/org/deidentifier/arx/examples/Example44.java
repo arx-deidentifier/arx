@@ -30,7 +30,7 @@ import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.KMap;
 
 /**
- * This class implements an example of how to use the derived k-anonymity criterion.
+ * This class implements an example of how to use the k-map privacy model with a statistical estimator.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
