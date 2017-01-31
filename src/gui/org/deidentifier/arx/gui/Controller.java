@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@
 
 package org.deidentifier.arx.gui;
 
-import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -82,7 +81,6 @@ import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizard
 import org.deidentifier.arx.gui.view.impl.wizard.ImportWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
-import org.deidentifier.arx.gui.worker.WorkerCreateCertificate;
 import org.deidentifier.arx.gui.worker.WorkerExport;
 import org.deidentifier.arx.gui.worker.WorkerImport;
 import org.deidentifier.arx.gui.worker.WorkerLoad;
@@ -957,72 +955,6 @@ public class Controller implements IView {
     }
 
     /**
-     * Creates and displays a certificate
-     */
-    public void actionMenuFileCreateCertificate() {
-        
-        if (model == null) {
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.30"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.31")); //$NON-NLS-1$
-            return;
-        } else if (model.getOutput() == null) {
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.32"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.33")); //$NON-NLS-1$
-            return;
-        }
-
-        // Check node
-        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
-            if (!main.showQuestionDialog(main.getShell(),
-                                         Resources.getMessage("Controller.34"), //$NON-NLS-1$
-                                         Resources.getMessage("Controller.156"))) //$NON-NLS-1$
-            {
-                return;
-            }
-        }
-
-        // Ask for file
-        String file = main.showSaveFileDialog(main.getShell(), "*.pdf"); //$NON-NLS-1$
-        if (file == null) {
-            return;
-        }
-        if (!file.endsWith(".pdf")) { //$NON-NLS-1$
-            file = file + ".pdf"; //$NON-NLS-1$
-        }
-
-        // Export
-        final WorkerCreateCertificate worker = new WorkerCreateCertificate(file,
-                                                                           model.getCSVSyntax(),
-                                                                           model.getInputConfig().getInput().getHandle(),
-                                                                           model.getOutputDefinition(),
-                                                                           model.getOutputConfig().getConfig(),
-                                                                           model.getResult(),
-                                                                           model.getOutputNode(),
-                                                                           model.getOutput(),
-                                                                           model);
-
-        main.showProgressDialog(Resources.getMessage("Controller.154"), worker); //$NON-NLS-1$
-
-        if (worker.getError() != null) {
-            main.showErrorDialog(main.getShell(),
-                                 Resources.getMessage("Controller.155"), //$NON-NLS-1$
-                                 worker.getError());
-            return;
-        }
-
-        // Open
-        if (Desktop.isDesktopSupported()) {
-            try {
-                Desktop.getDesktop().open(worker.getResult());
-            } catch (Exception e) {
-                // Drop silently
-            }
-        }
-    }
-
-    /**
      * File->exit.
      */
     public void actionMenuFileExit() {
@@ -1350,6 +1282,13 @@ public class Controller implements IView {
     public void actionMenuHelpAbout() {
         main.showAboutDialog();
     }
+    
+    /**
+     * Shows the "about" dialog.
+     */
+    public void actionMenuHelpChecklistWizard() {
+        main.showChecklistWizard();
+    }
 
     /**
      * Shows the "debug" dialog.
@@ -1581,7 +1520,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-    
+
     /**
      * Shows a dialog for selecting a format string for a data type.
      *
@@ -1604,7 +1543,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, preselected, locale, type, values);
     }
-
+    
     /**
      * Shows a help dialog.
      *
@@ -1624,6 +1563,7 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1639,7 +1579,6 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1726,6 +1665,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
+
     /**
      * Shows a question dialog.
      *
@@ -1737,7 +1677,6 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(this.main.getShell(), header, text);
     }
-    
     /**
      * Internal method for showing a "save file" dialog.
      *
@@ -1748,7 +1687,7 @@ public class Controller implements IView {
     public String actionShowSaveFileDialog(final Shell shell, String filter) {
         return main.showSaveFileDialog(shell, filter);
     }
-
+    
     /**
      * Includes all tuples in the research subset.
      */
@@ -1887,7 +1826,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-    
+
     /**
      * Registers a listener at the controller.
      *
@@ -1900,7 +1839,7 @@ public class Controller implements IView {
         }
         listeners.get(target).add(listener);
     }
-
+    
     @Override
     public void dispose() {
         for (final Set<IView> listeners : getListeners().values()) {

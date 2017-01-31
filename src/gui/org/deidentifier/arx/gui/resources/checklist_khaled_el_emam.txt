@@ -1,0 +1,38 @@
+#mitigating: Mitigating Controls
+	sharing-forbids:		The data sharing agreement forbids the recipient from disclosing the database to third parties
+	sharing-enforceable:		The data sharing agreement is enforceable in all jurisdictions where the recipient will use the data
+	sharing-audits:			The data sharing agreement will allow surprise audits of the recipient's record management system and practices
+	sharing-dblimits:		The data sharing agreement imposes strong limits linking the database with other administrative or clinical data sources
+	privacy-policy:			The recipient has a written privacy policy
+	privacy-on-site:		There is a person responsible for privacy at the recipient's site
+	staff-confidential:		All members of the team on the recipient site have signed a confidentiality agreement as a condition of them having access to the disclosed database
+	recipient-assessment:	A threat and risk assessment has been completed on the recipient
+	security-documentation:	Strong security procedures for the collection, transmission, storage and disposal of personal information, and access to it, have been documented
+	staff-trained:			IT & database staff are sufficiently trained in the requirements for protecting personal information
+	system-backlog:			Systems are designed so that access and changes to personal information can be audited by date and user authentication
+	system-full-control:	User accounts, access rights and security authorizations are fully controlled by a system or record management process
+	breach-protocol:		The recipient has an adequate breach notification protocol in place and their staff are trained in its implementation
+	physically-secure:		Computer systems are housed in a physically secure environment
+	physically-privatearea:	There is no public access to areas where computers holding the data will be
+	data-destruction:		The data will be destroyed once its purpose has been accomplished (e.g., the study has been published or other funding agency data retention period expires)
+	staff-restricted:		Access rights are only provided to users on a ‘need to know’ basis consistent with the stated purpose for which the data was collected
+
+#motives: Motives and Capacity
+	criminal-value:			The disclosed database has potential commercial or criminal value
+	re-identify-motive:		There is a likely motive for the recipient to try to re-identify the disclosed database
+	re-identify-expertise:	The recipient has the technical expertise to attempt to re-identify the disclosed database
+	re-identify-resources:	The recipient has the financial resources to attempt to re-identify the disclosed database
+	recipient-wants-harm:	The recipient may want to harm or embarrass the data custodian
+	recipient-only-choice:	If the recipient does have a possible motive to attempt re-identification, they can not achieve their objectives through other means apart from re-identification
+
+#privacy: Invasion-of-Privacy
+	highly-detailed:		The personal information is highly detailed
+	large-database:			The database is large / many people would be affected if there was a breach
+	sensitive-data:			The information is of a highly sensitive personal nature
+	sensitive-context:		The information comes from a sensitive context (for example, data about individuals participating in a youth employment program are less sensitive than a similar list containing names and addresses of Hepatitis C and HIV compensation victims)
+	no-promise:				There is no commitment or promise not to disclose to any third party or institution
+	no-guarantee:			The information wasn't compiled or obtained under guarantees that preclude some or all types of disclosure
+	no-expectation:			The information wasn't unsolicited, given freely and voluntarily with little expectation of it being maintained in total confidence
+	injury-risk:			Disclosure of the information carries a probability of causing measurable injury (e.g., identity theft, fraud, etc)
+	foreign-laws-risk:		There is a risk in terms of the possible application of foreign laws
+	injury-serious:			The potential injury to the patients in case of an inappropriate disclosure is grave or serious

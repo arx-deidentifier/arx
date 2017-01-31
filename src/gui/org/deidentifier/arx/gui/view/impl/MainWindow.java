@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,6 +65,9 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogTopBottomCoding;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
 import org.deidentifier.arx.gui.worker.Worker;
+import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.ChecklistWizard;
+import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.ChecklistDialog;
+import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -82,6 +85,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
+
 
 /**
  * This class implements the global application window.
@@ -265,6 +269,15 @@ public class MainWindow implements IView {
         final DialogAbout dialog = new DialogAbout(shell, controller);
         dialog.create();
         dialog.open();
+    }
+    
+    /**
+     * Shows the checklist wizard.
+     */
+    public void showChecklistWizard() {
+		Checklist checklist = new Checklist(controller.getResources().getStream("checklist_khaled_el_emam.txt"));
+		final ChecklistDialog dialog = new ChecklistDialog(checklist, shell, controller, new ChecklistWizard(checklist, controller));
+		dialog.open();
     }
     
     /**
@@ -720,27 +733,10 @@ public class MainWindow implements IView {
     
 
     /**
-     * Creates the global menu
-     * @return
-     */
-    private List<MainMenuItem> getMenu() {
-        
-        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
-
-        menu.add(getMenuFile());
-        menu.add(getMenuEdit());
-        menu.add(getMenuView());
-        menu.add(getMenuHelp());
-        
-        return menu;
-    }
-
-
-    /**
      * Creates the edit menu
      * @return
      */
-    private MainMenuItem getMenuEdit() {
+    private MainMenuItem getEditMenu() {
         
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();
         
@@ -895,6 +891,75 @@ public class MainWindow implements IView {
         };
     }
 
+
+    /**
+     * Creates the help menu
+     * @return
+     */
+    private MainMenuItem getHelpMenu() {
+
+
+        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("help.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.28"), //$NON-NLS-1$
+        		controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+        		true) {
+        	public void action(Controller controller) { controller.actionMenuHelpChecklistWizard(); }
+        	public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
+            public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.isDebugEnabled(); 
+            }
+        });
+        
+        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
+            public boolean isEnabled(Model model) {
+                return true;
+            }  
+        };
+    }
+
+    /**
+     * Creates the global menu
+     * @return
+     */
+    private List<MainMenuItem> getMenu() {
+        
+        List<MainMenuItem> menu = new ArrayList<MainMenuItem>();
+
+        menu.add(getMenuFile());
+        menu.add(getEditMenu());
+        menu.add(getViewMenu());
+        menu.add(getHelpMenu());
+        
+        return menu;
+    }
+
     /**
      * Creates the file menu
      * @return
@@ -951,15 +1016,6 @@ public class MainWindow implements IView {
             }
         });
 
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.43"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("file_create_certificate.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuFileCreateCertificate(); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.getOutput() != null && model.getPerspective() == Perspective.ANALYSIS;
-            }
-        });
-
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.15"), //$NON-NLS-1$
@@ -1002,50 +1058,7 @@ public class MainWindow implements IView {
      * Creates the help menu
      * @return
      */
-    private MainMenuItem getMenuHelp() {
-
-
-        List<MainMenuItem> items = new ArrayList<MainMenuItem>();
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.27"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("help.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuHelpHelp(); }
-            public boolean isEnabled(Model model) { return true; }
-        });
-
-        items.add(new MainMenuSeparator());
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { controller.actionMenuHelpAbout(); }
-            public boolean isEnabled(Model model) { return true; }
-        });
-
-        items.add(new MainMenuSeparator());
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.32"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { controller.actionMenuHelpDebug(); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.isDebugEnabled(); 
-            }
-        });
-        
-        return new MainMenuGroup(Resources.getMessage("MainMenu.2"), items) { //$NON-NLS-1$
-            public boolean isEnabled(Model model) {
-                return true;
-            }  
-        };
-    }
-
-    /**
-     * Creates the help menu
-     * @return
-     */
-    private MainMenuItem getMenuView() {
+    private MainMenuItem getViewMenu() {
 
 
         List<MainMenuItem> items = new ArrayList<MainMenuItem>();
