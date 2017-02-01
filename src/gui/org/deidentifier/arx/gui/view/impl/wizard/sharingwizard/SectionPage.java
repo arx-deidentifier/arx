@@ -7,23 +7,15 @@ import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Spinner;
-import org.eclipse.swt.widgets.Text;
-
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Question;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Section;
-import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Question.Answer;
 
 /**
  * each SectionPage shows all the questions from a checklist section
@@ -35,16 +27,22 @@ public class SectionPage extends WizardPage {
 	private boolean weightEditable;
 	private List<WeightField> weightFields;
 
-
+	/**
+	 * create a new page for a section
+	 * @param section the section of this page
+	 */
 	public SectionPage(Section section) {
 		super(section.getTitle());
 
 		this.weightEditable = false;
 		this.section = section;
 		this.setTitle(section.getTitle());
-		this.setDescription("Answer the following questions");
+		this.setDescription(Resources.getMessage("RiskWizard.1"));
 	}
 
+	/**
+	 * creates the control, by adding the questions inside a scroll view
+	 */
 	@Override
 	public void createControl(Composite parent) {
 		final Composite rootComposite = new Composite(parent, SWT.NONE);
@@ -90,6 +88,9 @@ public class SectionPage extends WizardPage {
 		setControl(rootComposite);
 	}
 
+	/**
+	 * creates the interface for the individual items (questions)
+	 */
 	private void createItems() {
 		// add weight fields
 		this.weightFields = new ArrayList<WeightField>();
@@ -125,6 +126,9 @@ public class SectionPage extends WizardPage {
 		}
 	}
 	
+	/**
+	 * enable or disable the weight edit mode
+	 */
 	public void setWeightEditable(boolean editable) {
 		if(editable == this.weightEditable) {
 			return;
@@ -137,6 +141,9 @@ public class SectionPage extends WizardPage {
 		}
 	}
 	
+	/**
+	 * update the weights (called when a new weight configuration is loaded)
+	 */
 	protected void updateWeights() {
 		if(this.weightFields == null) {
 			return;

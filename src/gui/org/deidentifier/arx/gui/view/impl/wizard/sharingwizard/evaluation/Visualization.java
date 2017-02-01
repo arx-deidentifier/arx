@@ -11,9 +11,19 @@ import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checkli
  *
  */
 public abstract class Visualization extends Composite {
+	/**
+	 * the checklist used for the visualization
+	 */
 	protected Checklist checklist;
+	
 	protected Controller controller;
 	
+	/**
+	 * create a new visualization for the checklist
+	 * @param parent the parent
+	 * @param controller the controller
+	 * @param checklist the checklist
+	 */
 	public Visualization(Composite parent, Controller controller, Checklist checklist) {
 		super(parent, SWT.NO_SCROLL);
 		
@@ -29,10 +39,16 @@ public abstract class Visualization extends Composite {
 		this.createVisualization();
 	}
 	
+	/**
+	 * used in subclasses for the initial setup
+	 */
 	protected void createVisualization() {
 		
 	}
 	
+	/**
+	 * used in subclasses to respond to changes
+	 */
 	public void updateWeights() {
 		
 	}

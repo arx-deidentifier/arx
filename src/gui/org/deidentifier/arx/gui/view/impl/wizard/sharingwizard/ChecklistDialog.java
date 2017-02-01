@@ -19,18 +19,49 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.WeightConfiguration;
 
-
+/**
+ * The ChecklistDialog is the dialog presented for the wizard
+ * @author Thomas Günzel
+ *
+ */
 public class ChecklistDialog extends WizardDialog {
-	private Button weightButton;
+	
+	/**
+	 * button to toggle the weight edit mode
+	 */
+	private Button weightEditButton;
+	
+	/**
+	 * button to load a weight setting
+	 */
 	private Button loadButton;
+	
+	/**
+	 * button to save a weight setting
+	 */
 	private Button saveButton;
+	
+	/**
+	 *  the used checklist
+	 */
 	private Checklist checklist;
 	
+	/**
+	 * the arx controller
+	 */
 	private Controller controller;
 	
+	/**
+	 * creates a new checklist dialog for a specified checklist
+	 * @param checklist the checklist to use
+	 * @param parentShell the parent for this dialog
+	 * @param controller the arx controller
+	 * @param newWizard the wizard
+	 */
 	public ChecklistDialog(Checklist checklist, Shell parentShell, Controller controller, IWizard newWizard) {
 		super(parentShell, newWizard);
 		this.checklist = checklist;
@@ -54,13 +85,13 @@ public class ChecklistDialog extends WizardDialog {
 		// add the settings button
 		layout.numColumns++;
 		
-		weightButton = new Button(parent, SWT.CHECK);
-		weightButton.setText("Edit");
+		weightEditButton = new Button(parent, SWT.CHECK);
+		weightEditButton.setText(Resources.getMessage("RiskWizard.6"));
 		
 		final ChecklistDialog reference = this;
 		
 		loadButton = new Button(parent, SWT.PUSH);
-		loadButton.setText("Load");
+		loadButton.setText(Resources.getMessage("RiskWizard.7"));
 		loadButton.setVisible(false);
 		loadButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -77,14 +108,14 @@ public class ChecklistDialog extends WizardDialog {
 		layout.numColumns++;
 		
 		saveButton = new Button(parent, SWT.PUSH);
-		saveButton.setText("Save");
+		saveButton.setText(Resources.getMessage("RiskWizard.8"));
 		saveButton.setVisible(false);
 		saveButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(saveButton.getShell(), SWT.SAVE);
 				String name = checklist.getWeightConfiguration().getName();
-				if(name == "Last used") {
+				if(name == Resources.getMessage("RiskWizard.14")) {
 					name = "last_used.txt";
 				}
 				dialog.setFileName(name);
@@ -101,11 +132,11 @@ public class ChecklistDialog extends WizardDialog {
 		
 		Listener listener = new Listener() {
 		      public void handleEvent(Event event) {
-		        reference.setWeightsEditable(weightButton.getSelection());
+		        reference.setWeightsEditable(weightEditButton.getSelection());
 		      }
 		    };
 		
-		weightButton.addListener(SWT.Selection, listener);
+		weightEditButton.addListener(SWT.Selection, listener);
 		
 		
 		// add a placeholder label that uses the empty space

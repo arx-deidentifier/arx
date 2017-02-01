@@ -13,14 +13,25 @@ import java.util.ArrayList;
  *
  */
 public class Checklist {
+	/**
+	 * the array containing the sections of the checklist
+	 */
 	private ArrayList<Section> sections;
+	
+	/**
+	 * the maximum achievable weight
+	 */
 	private double maximumWeight = 0.0;
+	
+	/**
+	 * the current weight configuration
+	 */
 	protected WeightConfiguration weightConfiguration;
 
-	public Checklist() {
-		this("config/khaled_el_emam.txt");
-	}
-	
+	/**
+	 * create a checklist from a file
+	 * @param filename the filename
+	 */
 	public Checklist(String filename) {
 		super();
 		weightConfiguration = new WeightConfiguration();
@@ -29,10 +40,14 @@ public class Checklist {
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
 			loadChecklist(bufferedReader);
 		} catch(IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * create a checklist from an input stream
+	 * @param stream the input stream
+	 */
 	public Checklist(InputStream stream) {
 		super();
 		weightConfiguration = new WeightConfiguration();
@@ -41,6 +56,10 @@ public class Checklist {
 		loadChecklist(bufferedReader);
 	}
 	
+	/**
+	 * loads the checklist using a buffered reader
+	 * @param bufferedReader the buffered reader used to parse the file
+	 */
 	private void loadChecklist(BufferedReader bufferedReader) {
 		// create new and empty sections array
 		sections = new ArrayList<Section>();
@@ -65,7 +84,7 @@ public class Checklist {
 		    	} else {
 		    		// current line is an item
 		    		if(currentSection == null) {
-		    			System.out.println("Invalid syntax. Checklist item before section (section-lines start with #)");
+		    			//System.out.println("Invalid syntax. Checklist item before section (section-lines start with #)");
 		    		}
 		    		
 		    		// parse and add item
@@ -85,23 +104,35 @@ public class Checklist {
 				try {
 					bufferedReader.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}
 	}
 
+	/**
+	 * get all sections
+	 * @return the sections
+	 */
 	public Section[] getSections() {
 		return (sections.toArray(new Section[sections.size()]));
 	}
 	
+	/**
+	 * get the maximum weight
+	 * @return the maximum weight
+	 */
 	public double getMaximumWeight() {
 		return maximumWeight;
 	}
 	
+	/**
+	 * get the current score of the complete checklist
+	 * @return the score
+	 */
 	public double getScore() {
 		if(maximumWeight == 0.0) {
-			System.out.println("This Checklist has a maximum weight of 0.0, it can't calculate a score: "+this);
+			//System.out.println("This Checklist has a maximum weight of 0.0, it can't calculate a score: "+this);
 			return 0.0;
 		}
 		double result = 0.0;
@@ -117,14 +148,25 @@ public class Checklist {
 		return "Checklist [score="+this.getScore()+", sections=" + sections + "\n]";
 	}
 	
+	/**
+	 * saves the current weights to the last used filename
+	 */
 	public void saveWeightDefaults() {
 		this.weightConfiguration.saveLastUsed();
 	}
 	
+	/**
+	 * gets the current weight configuration
+	 * @return the weight configuration
+	 */
 	public WeightConfiguration getWeightConfiguration() {
 		return this.weightConfiguration;
 	}
 	
+	/**
+	 * sets the weight configuration and updates the values
+	 * @param weightConfiguration the weight configuration
+	 */
 	public void setWeightConfiguration(WeightConfiguration weightConfiguration) {
 		if(this.weightConfiguration == weightConfiguration) {
 			return;

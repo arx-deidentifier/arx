@@ -2,14 +2,33 @@ package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.*;
 
-
+/**
+ * The checklist wizard for evaluating the data sharing risk
+ *
+ */
 public class ChecklistWizard extends Wizard {
-
+	
+	/**
+	 * array containing each section's wizard page
+	 */
 	protected SectionPage[] pages;
+	
+	/**
+	 * final page showing the evaluation
+	 */
 	protected EvaluationPage evaluationPage;
+	
+	/**
+	 * the checklist used for the wizard
+	 */
 	private Checklist checklist;
+	
+	/**
+	 * the arx controller
+	 */
 	private Controller controller;
 
 	/**
@@ -22,10 +41,12 @@ public class ChecklistWizard extends Wizard {
 		
 		this.checklist = checklist;
 		this.controller = controller;
-		this.setWindowTitle("Checklist Wizard");
+		this.setWindowTitle(Resources.getMessage("RiskWizard.0"));
 	}
 	
-
+	/**
+	 * adds the necessary pages to the wizard
+	 */
 	@Override
 	public void addPages() {
 		// add a page for each section

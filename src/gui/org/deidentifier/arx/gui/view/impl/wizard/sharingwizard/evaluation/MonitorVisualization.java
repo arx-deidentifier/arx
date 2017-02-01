@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
 import org.eclipse.swt.SWT;
@@ -18,13 +19,29 @@ import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.*;
  *
  */
 public class MonitorVisualization extends Visualization {
+	/**
+	 * contains the monitors for each section
+	 */
 	private List<ComponentRiskMonitor> monitors;
+	
+	/**
+	 * the total monitor, showing the overall score
+	 */
 	private ComponentRiskMonitor totalMonitor;
 	
+	/**
+	 * create a new monitor visualization
+	 * @param parent the parent
+	 * @param controller the controller
+	 * @param checklist the checklist to use
+	 */
 	public MonitorVisualization(Composite parent, Controller controller, Checklist checklist) {
 		super(parent, controller, checklist);
 	}
 	
+	/**
+	 * creates the view containing the different monitors
+	 */
 	protected void createVisualization() {
 		Section sections[] = this.checklist.getSections();
 		monitors = new ArrayList<ComponentRiskMonitor>();
@@ -47,7 +64,8 @@ public class MonitorVisualization extends Visualization {
 			monitors.add(riskMonitor);
 		}
 
-		totalMonitor = new ComponentRiskMonitor(this, this.controller, "Total", "Total");
+		String totalTitle = Resources.getMessage("RiskWizard.2");
+		totalMonitor = new ComponentRiskMonitor(this, this.controller, totalTitle, totalTitle);
 		totalMonitor.setLayoutData(SWTUtil.createFillGridData());
 		totalMonitor.setRisk(0.5);
 
@@ -60,6 +78,9 @@ public class MonitorVisualization extends Visualization {
 		totalMonitor.setLayoutData(gridData);
 	}
 	
+	/**
+	 * update the UI when the weights change
+	 */
 	public void updateWeights() {
 		Section sections[] = checklist.getSections();
 		for(int i = 0; i < sections.length; i++) {

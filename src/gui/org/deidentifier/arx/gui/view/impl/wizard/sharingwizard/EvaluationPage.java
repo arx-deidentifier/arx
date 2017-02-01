@@ -3,34 +3,20 @@ package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard;
 
 
 import org.eclipse.jface.resource.FontDescriptor;
-import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.swtchart.Chart;
-
-import java.awt.GridBagLayout;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
-
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
-import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Section;
-import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.WeightConfiguration;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.evaluation.MonitorVisualization;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.evaluation.StackVisualization;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.evaluation.Visualization;
@@ -40,25 +26,40 @@ import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.evaluation.Visual
  *
  */
 public class EvaluationPage extends WizardPage {
+	/**
+	 * the checklist
+	 */
 	private Checklist checklist;
 	
 	private Label fileLabel;
 	private Composite topBar;
 	
+	/**
+	 * the current visualization
+	 */
 	private Visualization visualization;
+	
 	private Composite rootComposite;
 	
 	private Controller controller;
 
+	/**
+	 * create the evaluation page for the checklist
+	 * @param checklist the checklist to use
+	 * @param controller the arx controller
+	 */
 	protected EvaluationPage(Checklist checklist, Controller controller) {
-		super("Evaluation");
+		super(Resources.getMessage("RiskWizard.9"));
 
 		this.checklist = checklist;
 		this.controller = controller;
-		this.setTitle("Risk Evaluation");
-		this.setDescription("This is the risk evaluation based on your answers.");
+		this.setTitle(Resources.getMessage("RiskWizard.10"));
+		this.setDescription(Resources.getMessage("RiskWizard.11"));
 	}
-
+	
+	/**
+	 * creates the control and adds the visualization selection top bar
+	 */
 	@Override
 	public void createControl(Composite parent) {
 		GridLayout layout = new GridLayout();
@@ -85,7 +86,12 @@ public class EvaluationPage extends WizardPage {
 		setControl(rootComposite);
 	}
 
-
+	/**
+	 * creates the top bar used for switching between visualizations
+	 * @param parent the parent composite
+	 * @param span the span to use for the bar
+	 * @return
+	 */
 	private Composite createTopBar(Composite parent, int span) {
 		Composite c = new Composite(parent, SWT.NO_BACKGROUND);
 
@@ -103,25 +109,27 @@ public class EvaluationPage extends WizardPage {
 		GridData weightData = new GridData();
 		weightData.grabExcessHorizontalSpace = true;
 		weightLabel.setLayoutData(weightData);
-		weightLabel.setText("Visualization:");
+		weightLabel.setText(Resources.getMessage("RiskWizard.19"));
 		FontDescriptor boldDescriptor = FontDescriptor.createFrom(weightLabel.getFont()).setStyle(SWT.BOLD);
 		Font boldFont = boldDescriptor.createFont(weightLabel.getDisplay());
 		weightLabel.setFont(boldFont);
 		fileLabel = weightLabel;
 		
 		final Combo visualizationDropDown = new Combo(c, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
-		visualizationDropDown.add("Monitor");
-		visualizationDropDown.add("Stacks");
-		visualizationDropDown.setText("Monitor");
+		String monitorTitle = Resources.getMessage("RiskWizard.12");
+		String stacksTitle = Resources.getMessage("RiskWizard.13");
+		visualizationDropDown.add(monitorTitle);
+		visualizationDropDown.add(stacksTitle);
+		visualizationDropDown.setText(monitorTitle);
 		visualizationDropDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				String selected = visualizationDropDown.getText(); 
-				if(selected.equals("Stacks")) {
-					System.out.println("Select Stacks");
+				if(selected.equals(stacksTitle)) {
+					//System.out.println("Select Stacks");
 					showStacksVisualization();
-				} else if(selected.equals("Monitor")) {
-					System.out.println("Select Monitor");
+				} else if(selected.equals(monitorTitle)) {
+					//System.out.println("Select Monitor");
 					showMonitorVisualization();
 				}
 			}
@@ -147,19 +155,31 @@ public class EvaluationPage extends WizardPage {
 		}
 	}
 	
+	/**
+	 * update the current visualization when the weights change 
+	 */
 	protected void updateWeights() {
 		visualization.updateWeights();
 	}
 	
-	
+	/**
+	 * change to monitor visualization
+	 */
 	private void showMonitorVisualization() {
 		setVisualization(new MonitorVisualization(rootComposite, controller, checklist));
 	}
 	
+	/**
+	 * change to stacks visualization
+	 */
 	private void showStacksVisualization() {
 		setVisualization(new StackVisualization(rootComposite, controller, checklist));
 	}
 	
+	/**
+	 * set the current visualization and update the UI
+	 * @param visualization the visualization to change to
+	 */
 	private void setVisualization(Visualization visualization) {
 		removeVisualization();
 		this.visualization = visualization;
@@ -167,8 +187,9 @@ public class EvaluationPage extends WizardPage {
 		this.rootComposite.layout();
 	}
 	
-	
-	
+	/**
+	 * remove the current visualization from the UI
+	 */
 	private void removeVisualization() {
 		if(this.visualization != null) {
 			this.visualization.dispose();

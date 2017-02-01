@@ -5,14 +5,29 @@ package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist;
  *
  */
 public abstract class Item {
+	/**
+	 * the current weight configuration
+	 */
 	private WeightConfiguration weightConfiguration;
+	
+	/**
+	 * the identifier (used for the weight configuration)
+	 */
 	protected String identifier;
+	
+	/**
+	 * the item's title
+	 */
 	protected String title;
-		
+	
+	/**
+	 * create a new item from a line
+	 * @param line the line to parse
+	 */
 	public Item(String line) {
 		String components[] = line.split(":",2);
 		if(components.length != 2) {
-			System.err.println("Couldn't parse item! Original line: "+line);
+			//System.err.println("Couldn't parse item! Original line: "+line);
 			return;
 		}
 		this.identifier = components[0].trim();
@@ -23,15 +38,26 @@ public abstract class Item {
 		return this.weightConfiguration;
 	}
 	
+	/**
+	 * set weight configuration and update weights
+	 * @param weightConfiguration
+	 */
 	public void setWeightConfiguration(WeightConfiguration weightConfiguration) {
 		this.weightConfiguration = weightConfiguration;
 		updateWeights();
 	}
 	
+	/**
+	 * update the weights, used by subclasses to calculate the new score accordingly
+	 */
 	public void updateWeights() {
 		
 	}
 	
+	/**
+	 * gets the current weight for this item according to the current weight configuration
+	 * @return
+	 */
 	public double getWeight() {
 		if(weightConfiguration == null) {
 			return 1.0;
@@ -39,6 +65,10 @@ public abstract class Item {
 		return weightConfiguration.weightForIdentifier(this.getIdentifier());
 	}
 	
+	/**
+	 * updates the weight configurations weight for this item
+	 * @param weight the new weight for this item
+	 */
 	public void setWeight(double weight) {
 		weightConfiguration.setWeightForIdentifier(this.getIdentifier(), weight);
 	}

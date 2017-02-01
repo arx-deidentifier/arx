@@ -6,6 +6,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.swtchart.*;
 import org.swtchart.ISeries.*;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Question;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Section;
@@ -15,15 +16,40 @@ import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Section
  *
  */
 public class StackVisualization extends Visualization {
+	/**
+	 * the displayed chart
+	 */
 	private Chart chart;
+	
+	/**
+	 * the bar series for the positive values
+	 */
 	private IBarSeries positive;
+	
+	/**
+	 * the bar series for the neutral values
+	 */
 	private IBarSeries neutral;
+	
+	/**
+	 * the bar series for the negative values
+	 */
 	private IBarSeries negative;
 
+	
+	/**
+	 * create a new stack visualization
+	 * @param parent the parent
+	 * @param controller the controller
+	 * @param checklist the checklist
+	 */
 	public StackVisualization(Composite parent, Controller controller, Checklist checklist) {
 		super(parent, controller, checklist);
 	}
 
+	/**
+	 * creates the view containing the stack bar graph visualization
+	 */
 	protected void createVisualization() {
 		Section sections[] = this.checklist.getSections();
 		String sectionNames[] = new String[sections.length];
@@ -37,7 +63,7 @@ public class StackVisualization extends Visualization {
 		fillLayout.type = SWT.VERTICAL;
 		this.setLayout(fillLayout);
 		chart = new Chart(this, SWT.NONE);
-		chart.getTitle().setText("Weighted Answers");
+		chart.getTitle().setText(Resources.getMessage("RiskWizard.18"));
 		
 		double[] positiveSeries = { 0.1, 0, 0};
 		double[] neutralSeries = { 0.1, 0, 0};
@@ -45,17 +71,17 @@ public class StackVisualization extends Visualization {
 		
 		ISeriesSet seriesSet = chart.getSeriesSet();
 		
-		positive = (IBarSeries)seriesSet.createSeries(SeriesType.BAR, "Positive");
+		positive = (IBarSeries)seriesSet.createSeries(SeriesType.BAR, Resources.getMessage("RiskWizard.15"));
 		positive.setBarColor(this.getDisplay().getSystemColor(SWT.COLOR_GREEN));
 		positive.enableStack(true);
 		positive.setYSeries(positiveSeries);
 		
-		neutral = (IBarSeries)seriesSet.createSeries(SeriesType.BAR, "Neutral");
+		neutral = (IBarSeries)seriesSet.createSeries(SeriesType.BAR, Resources.getMessage("RiskWizard.16"));
 		neutral.setBarColor(this.getDisplay().getSystemColor(SWT.COLOR_GRAY));
 		neutral.enableStack(true);
 		neutral.setYSeries(neutralSeries);
 		
-		negative = (IBarSeries)seriesSet.createSeries(SeriesType.BAR, "Negative");
+		negative = (IBarSeries)seriesSet.createSeries(SeriesType.BAR, Resources.getMessage("RiskWizard.17"));
 		negative.setBarColor(this.getDisplay().getSystemColor(SWT.COLOR_RED));
 		negative.enableStack(true);
 		negative.setYSeries(negativeSeries);
@@ -73,6 +99,9 @@ public class StackVisualization extends Visualization {
 		xAxis.getTitle().setVisible(false);
 	}
 
+	/**
+	 * updates the UI when the weights/score changes
+	 */
 	public void updateWeights() {
 		Section sections[] = this.checklist.getSections();
 		double[] posY = new double[sections.length];
