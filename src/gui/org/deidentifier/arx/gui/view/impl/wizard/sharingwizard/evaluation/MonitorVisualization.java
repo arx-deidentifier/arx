@@ -13,6 +13,10 @@ import org.eclipse.swt.widgets.Composite;
 
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.*;
 
+/**
+ * the monitor visualization
+ *
+ */
 public class MonitorVisualization extends Visualization {
 	private List<ComponentRiskMonitor> monitors;
 	private ComponentRiskMonitor totalMonitor;

@@ -8,6 +8,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+/**
+ * the Checklist holds the sections and calculates the overall score
+ *
+ */
 public class Checklist {
 	private ArrayList<Section> sections;
 	private double maximumWeight = 0.0;

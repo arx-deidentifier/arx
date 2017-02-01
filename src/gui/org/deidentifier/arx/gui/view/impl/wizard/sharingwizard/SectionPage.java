@@ -25,6 +25,10 @@ import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Questio
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Section;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Question.Answer;
 
+/**
+ * each SectionPage shows all the questions from a checklist section
+ *
+ */
 public class SectionPage extends WizardPage {
 	private Section section;
 	private Composite container;
@@ -44,8 +48,6 @@ public class SectionPage extends WizardPage {
 	@Override
 	public void createControl(Composite parent) {
 		final Composite rootComposite = new Composite(parent, SWT.NONE);
-		//parent.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_BLUE));
-		System.out.println("Data: " + parent.getLayoutData());
 		
 		GridLayout rootGrid = new GridLayout();
 		rootComposite.setLayout(rootGrid);

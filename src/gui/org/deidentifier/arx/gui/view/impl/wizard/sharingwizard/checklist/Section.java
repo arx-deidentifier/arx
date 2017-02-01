@@ -2,6 +2,10 @@ package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist;
 
 import java.util.ArrayList;
 
+/**
+ * represents a section from the checklist
+ *
+ */
 public class Section extends Item {
 	private ArrayList<Question> items;
 	private double maximumWeight = 0.0;
@@ -52,6 +56,7 @@ public class Section extends Item {
 		for(Question q : items) {
 			result += q.getScore();
 		}
+		// if the weight is negative, 'flip' the answers rating (yes will be -1, no will be 1)
 		if(this.getWeight() < 0.0) {
 			result = (result * (-1.0));
 		}

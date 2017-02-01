@@ -37,6 +37,9 @@ public class ChecklistDialog extends WizardDialog {
 		this.controller = controller;
 	}
 	
+	/**
+	 * create a custom button bar, with the load/store/edit buttons for the weight profiles
+	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// this code creates the button on the left side (settings)
 		GridLayout layout = (GridLayout) parent.getLayout();
@@ -51,7 +54,7 @@ public class ChecklistDialog extends WizardDialog {
 		// add the settings button
 		layout.numColumns++;
 		
-		weightButton = new Button(parent, SWT.CHECK);//this.createButton(parent, 1000, "Settings", false);
+		weightButton = new Button(parent, SWT.CHECK);
 		weightButton.setText("Edit");
 		
 		final ChecklistDialog reference = this;
@@ -115,10 +118,14 @@ public class ChecklistDialog extends WizardDialog {
 		super.createButtonsForButtonBar(parent);
 	}
 	
+	/**
+	 * enable or disable the edit mode
+	 * @param weightsEditable whether the weights should be changeable
+	 */
 	protected void setWeightsEditable(boolean weightsEditable) {
 		loadButton.setVisible(weightsEditable);
 		saveButton.setVisible(weightsEditable);
-		System.out.println("Editable: "+weightsEditable);
+		//System.out.println("Editable: "+weightsEditable);
 		IWizardPage pages[] = this.getWizard().getPages();
 		for(IWizardPage page : pages) {
 			if(page instanceof SectionPage) {
@@ -128,9 +135,11 @@ public class ChecklistDialog extends WizardDialog {
 		}
 		this.dialogArea.update();
 	}
-	
-	
-	
+
+	/**
+	 * updates the current weight configuration
+	 * @param result the weight configuration to load
+	 */
 	protected void updateWeightConfig(String result) {
 		checklist.setWeightConfiguration(new WeightConfiguration(result));
 		IWizard wizard = this.getWizard();
@@ -138,10 +147,6 @@ public class ChecklistDialog extends WizardDialog {
 			ChecklistWizard casted = (ChecklistWizard)wizard;
 			casted.updateWeights();
 		}
-		
-		//this.updateWeights();
-		//this.updateBar();
-		//this.updateWizard();
 	}
 	
 	// remove progress monitor, taken from

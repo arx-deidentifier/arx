@@ -11,6 +11,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+/**
+ * the weight configuration used when evaluating the checklist
+ *
+ */
 public class WeightConfiguration {
 	private String filename;
 	private String name;

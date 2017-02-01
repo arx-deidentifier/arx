@@ -6,6 +6,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
 
+/**
+ * base class for the visualizations
+ *
+ */
 public abstract class Visualization extends Composite {
 	protected Checklist checklist;
 	protected Controller controller;

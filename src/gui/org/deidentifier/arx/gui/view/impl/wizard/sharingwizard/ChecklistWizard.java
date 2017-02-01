@@ -12,10 +12,14 @@ public class ChecklistWizard extends Wizard {
 	private Checklist checklist;
 	private Controller controller;
 
+	/**
+	 * create a new checklist wizard
+	 * @param checklist the checklist to use
+	 * @param controller the controller opening the wizard 
+	 */
 	public ChecklistWizard(Checklist checklist, Controller controller) {
 		super();
 		
-//		setNeedsProgressMonitor(true);
 		this.checklist = checklist;
 		this.controller = controller;
 		this.setWindowTitle("Checklist Wizard");
@@ -24,7 +28,7 @@ public class ChecklistWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		
+		// add a page for each section
 		Section[] sections = checklist.getSections();
 		pages = new SectionPage[sections.length];
 		for(int i = 0; i < sections.length; i++) {
@@ -34,20 +38,27 @@ public class ChecklistWizard extends Wizard {
 			pages[i] = p;
 		}
 		
+		// add the final evaluation page
 		evaluationPage = new EvaluationPage(checklist, controller);
 		this.addPage(evaluationPage);
 	}
 
+	/**
+	 * called when the dialog is finished, saves the current weights
+	 */
 	@Override
 	public boolean performFinish() {
 		// Print the result to the console
 		//this.pages = null;
 		//return false;
 		checklist.saveWeightDefaults();
-		System.out.println(checklist);
+		//System.out.println(checklist);
 		return true;
 	}
 	
+	/**
+	 * updates the weights for each section and the evaluation
+	 */
 	protected void updateWeights() {
 		for(SectionPage page : pages) {
 			page.updateWeights();

@@ -1,5 +1,9 @@
 package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist;
 
+/**
+ * represents a single question from the checklist
+ *
+ */
 public class Question extends Item {
 	private Section section;
 	public enum Answer { YES, NO, N_A }

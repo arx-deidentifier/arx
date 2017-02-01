@@ -10,6 +10,10 @@ import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checkli
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Question;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Section;
 
+/**
+ * the stack visualization
+ *
+ */
 public class StackVisualization extends Visualization {
 	private Chart chart;
 	private IBarSeries positive;
@@ -97,14 +101,12 @@ public class StackVisualization extends Visualization {
 			neuY[idx] = neu / sec.getMaximumWeight();
 			negY[idx] = neg / sec.getMaximumWeight();
 			
-			System.out.println("Updated "+sec.getIdentifier()+" : "+posY[idx]+" "+neuY[idx]+" "+negY[idx]);
+			//System.out.println("Updated "+sec.getIdentifier()+" : "+posY[idx]+" "+neuY[idx]+" "+negY[idx]);
 			
 			idx++;
 			
 			
 		}
-		
-		
 		
 		
 		positive.setYSeries(posY);
@@ -113,9 +115,7 @@ public class StackVisualization extends Visualization {
 		neutral.enableStack(true);
 		negative.setYSeries(negY);
 		negative.enableStack(true);
-		
-//		IAxisSet axisSet = chart.getAxisSet();
-//		axisSet.adjustRange();
+
 		chart.update();
 		chart.redraw();
 	}

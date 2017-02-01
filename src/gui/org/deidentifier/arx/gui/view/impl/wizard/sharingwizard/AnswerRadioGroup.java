@@ -9,7 +9,10 @@ import org.eclipse.swt.widgets.*;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Question;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Question.*;
 
-
+/**
+ * The radio group component for answering the questions, contains yes, no and n/a as possible answers
+ *
+ */
 public class AnswerRadioGroup extends Composite {
 	private Button yesButton;
 	private Button noButton;

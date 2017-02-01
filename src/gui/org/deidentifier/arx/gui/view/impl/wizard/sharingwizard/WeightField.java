@@ -14,6 +14,10 @@ import org.eclipse.swt.widgets.Text;
 
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Item;
 
+/**
+ * a dropdown field for changing a question's weight
+ *
+ */
 public class WeightField {
 	private Item item;
 	private Text field;
@@ -24,9 +28,7 @@ public class WeightField {
 	
 	static final DecimalFormat df = new DecimalFormat("#.00"); 
 	
-	public WeightField(Composite composite, Item item, boolean enabled) {
-		//this.field = new Text(composite, SWT.BORDER);
-		
+	public WeightField(Composite composite, Item item, boolean enabled) {		
 		dropdown = new Combo(composite, SWT.DROP_DOWN | SWT.READ_ONLY | SWT.BORDER);
 		dropdown.add("0.25");
 		dropdown.add("0.50");
@@ -42,29 +44,8 @@ public class WeightField {
 		GridData gridData = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 		gridData.widthHint = 72;
 		dropdown.setLayoutData(gridData);
-		/*field.setLayoutData(gridData);
-		field.addListener (SWT.Verify, e -> {
-			String string = e.text;
-			char [] chars = new char [string.length ()];
-			string.getChars (0, chars.length, chars, 0);
-			for (int i=0; i<chars.length; i++) {
-				if (!(('0' <= chars [i] && chars [i] <= '9') || chars[i] == '.')) {
-					e.doit = false;
-					return;
-				}
-			}
-		});
 		
-		WeightField reference = this;
 		
-		ModifyListener modifyListener = new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				reference.updateItem();
-			}
-		};
-		
-		field.addModifyListener(modifyListener);
-		*/
 		updateText();
 	}
 	
@@ -74,7 +55,7 @@ public class WeightField {
 		disableUpdateQuestion = true;
 		double newWeight = item.getWeight();
 		String weightString = df.format(newWeight);
-		System.out.println("Weight: "+weightString+" item="+item.getIdentifier());
+		//System.out.println("Weight: "+weightString+" item="+item.getIdentifier());
 		
 		boolean containsText = false;
 		for(String t : dropdown.getItems()) {
@@ -98,7 +79,6 @@ public class WeightField {
 			double value = df.parse(field.getText()).doubleValue();
 			item.setWeight(value);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

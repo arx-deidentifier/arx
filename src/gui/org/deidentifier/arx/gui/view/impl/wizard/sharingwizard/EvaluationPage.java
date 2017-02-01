@@ -35,6 +35,10 @@ import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.evaluation.Monito
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.evaluation.StackVisualization;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.evaluation.Visualization;
 
+/**
+ * final page containing the two different visualizations
+ *
+ */
 public class EvaluationPage extends WizardPage {
 	private Checklist checklist;
 	
@@ -75,12 +79,8 @@ public class EvaluationPage extends WizardPage {
 		rootComposite.setLayoutData(rootData);
 
 		createTopBar(rootComposite, layout.numColumns);
-
-		//		rootComposite.setBackground(rootComposite.getDisplay().getSystemColor(SWT.COLOR_BLUE));
 		
 		this.showMonitorVisualization();
-		//
-		//this.visualization = new StackVisualization(rootComposite, checklist);
 
 		setControl(rootComposite);
 	}
@@ -88,8 +88,6 @@ public class EvaluationPage extends WizardPage {
 
 	private Composite createTopBar(Composite parent, int span) {
 		Composite c = new Composite(parent, SWT.NO_BACKGROUND);
-
-		//		c.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_CYAN));
 
 		GridData cData = new GridData();
 		cData.horizontalSpan = span;
@@ -128,42 +126,6 @@ public class EvaluationPage extends WizardPage {
 				}
 			}
 		});
-
-		/*Button load = new Button (c, SWT.PUSH);
-		load.setText("Load");
-		load.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(load.getShell(), SWT.OPEN);
-				dialog.setFilterExtensions(new String [] {"*.txt","*.properties","*.weights"});
-				dialog.setFilterPath("config/weights");
-				String result = dialog.open();
-				if(result != null) {
-					updateWeightConfig(result);
-				}
-			}
-		});
-		Button save = new Button (c, SWT.PUSH);
-		save.setText("Save");
-		save.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog dialog = new FileDialog(load.getShell(), SWT.SAVE);
-				String name = checklist.getWeightConfiguration().getName();
-				if(name == "Last used") {
-					name = "last_used.txt";
-				}
-				dialog.setFileName(name);
-				//dialog.setFilterExtensions(new String [] {"*.txt","*.properties","*.weights"});
-				dialog.setFilterPath("config/weights");
-				String result = dialog.open();
-				if(result != null) {
-					WeightConfiguration wc = checklist.getWeightConfiguration();
-					wc.save(result);
-					updateBar();
-				}
-			}
-		});*/
 
 		Label separator = new Label(c, SWT.SEPARATOR | SWT.HORIZONTAL);
 		GridData sepData = new GridData();

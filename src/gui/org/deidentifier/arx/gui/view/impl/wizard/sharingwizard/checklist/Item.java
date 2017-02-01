@@ -1,6 +1,9 @@
 package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist;
 
-
+/**
+ * this is the base class for the Question as well as the Section.
+ *
+ */
 public abstract class Item {
 	private WeightConfiguration weightConfiguration;
 	protected String identifier;
