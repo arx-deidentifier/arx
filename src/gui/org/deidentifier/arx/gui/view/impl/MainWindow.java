@@ -65,6 +65,9 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogTopBottomCoding;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
 import org.deidentifier.arx.gui.worker.Worker;
+import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.ChecklistWizard;
+import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.ChecklistDialog;
+import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -514,6 +517,12 @@ public class MainWindow implements IView {
 	 */
 	public void showInfoDialog(final Shell shell, final String header, final String text) {
 		MessageDialog.openInformation(getShell(), header, text);
+	}
+	
+	public void showChecklistWizard() {
+		Checklist checklist = new Checklist(controller.getResources().getStream("default_checklist.txt"));
+		final ChecklistDialog dialog = new ChecklistDialog(checklist, shell, controller, new ChecklistWizard(checklist, controller));
+		dialog.open();
 	}
 	
 	/**
@@ -1015,6 +1024,15 @@ public class MainWindow implements IView {
 		});
 		
 		items.add(new MainMenuSeparator());
+		
+		items.add(new MainMenuItem(Resources.getMessage("MainMenu.28"), //$NON-NLS-1$
+        		controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
+        		true) {
+        	public void action(Controller controller) { controller.actionMenuHelpChecklistWizard(); }
+        	public boolean isEnabled(Model model) { return true; }
+        });
+
+        items.add(new MainMenuSeparator());
 		
 		items.add(new MainMenuItem(Resources.getMessage("MainMenu.29"), //$NON-NLS-1$
 								   controller.getResources().getManagedImage("information.png"), //$NON-NLS-1$
