@@ -66,11 +66,11 @@ public class MonitorVisualization extends Visualization {
 			Section s = sections[i];
 
 			ComponentRiskMonitor riskMonitor = monitors.get(i);
-			riskMonitor.setRisk((s.getScore() / 2.0) + 0.5);
+			riskMonitor.setRisk(1.0 - ((s.getScore() / 2.0) + 0.5));
 			//				System.out.println("Setup");
 		}
 
-		totalMonitor.setRisk((checklist.getScore() / 2.0) + 0.5);
+		totalMonitor.setRisk(1.0 - ((checklist.getScore() / 2.0) + 0.5));
 	}
 	
 }
