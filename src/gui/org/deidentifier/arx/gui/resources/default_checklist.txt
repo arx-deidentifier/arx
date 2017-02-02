@@ -1,6 +1,6 @@
 #mitigating: Mitigating Controls
 	sharing-forbids:		The data sharing agreement forbids the recipient from disclosing the database to third parties
-	sharing-enforceable:		The data sharing agreement is enforceable in all jurisdictions where the recipient will use the data
+	sharing-enforceable:	The data sharing agreement is enforceable in all jurisdictions where the recipient will use the data
 	sharing-audits:			The data sharing agreement will allow surprise audits of the recipient's record management system and practices
 	sharing-dblimits:		The data sharing agreement imposes strong limits linking the database with other administrative or clinical data sources
 	privacy-policy:			The recipient has a written privacy policy
@@ -15,7 +15,7 @@
 	physically-secure:		Computer systems are housed in a physically secure environment
 	physically-privatearea:	There is no public access to areas where computers holding the data will be
 	data-destruction:		The data will be destroyed once its purpose has been accomplished (e.g., the study has been published or other funding agency data retention period expires)
-	staff-restricted:		Access rights are only provided to users on a ‘need to know’ basis consistent with the stated purpose for which the data was collected
+	staff-restricted:		Access rights are only provided to users on a "need to know" basis consistent with the stated purpose for which the data was collected
 
 #motives: Motives and Capacity
 	criminal-value:			The disclosed database has potential commercial or criminal value

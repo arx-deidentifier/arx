@@ -46,6 +46,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
+import org.deidentifier.arx.risk.RiskQuestionnaireWeights;
 
 /**
  * This class implements a large portion of the model used by the GUI.
@@ -266,7 +267,7 @@ public class Model implements Serializable {
      * RISK WIZARD
      ******************************************/
     /** Current configuration for the risk wizard */
-    private ModelRiskWizard                       riskWizardModel = null;
+    private RiskQuestionnaireWeights                       riskWizardModel = null;
 
     /* *****************************************
      * LOCAL RECODING
@@ -1054,7 +1055,7 @@ public class Model implements Serializable {
      * Returns the risk wizard configuration
      * @return
      */
-    public ModelRiskWizard getRiskWizardModel() {
+    public RiskQuestionnaireWeights getRiskWizardModel() {
 		return riskWizardModel;
 	}
 
@@ -1554,7 +1555,7 @@ public class Model implements Serializable {
      * Sets the current risk wizard configuration
      * @param riskWizardModel
      */
-	public void setRiskWizardModel(ModelRiskWizard riskWizardModel) {
+	public void setRiskWizardModel(RiskQuestionnaireWeights riskWizardModel) {
 		this.riskWizardModel = riskWizardModel;
 	}
 

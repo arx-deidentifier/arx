@@ -65,9 +65,9 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogTopBottomCoding;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
 import org.deidentifier.arx.gui.worker.Worker;
-import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.ChecklistWizard;
-import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.ChecklistDialog;
-import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
+import org.deidentifier.arx.gui.view.impl.wizard.RiskWizard;
+import org.deidentifier.arx.gui.view.impl.wizard.RiskWizardDialogChecklist;
+import org.deidentifier.arx.risk.RiskQuestionnaire;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -512,8 +512,8 @@ public class MainWindow implements IView {
      * Shows the checklist wizard
      */
 	public void showChecklistWizard() {
-		Checklist checklist = new Checklist(controller.getResources().getStream("default_checklist.txt"));
-		final ChecklistDialog dialog = new ChecklistDialog(checklist, shell, controller, new ChecklistWizard(checklist, controller));
+		RiskQuestionnaire checklist = new RiskQuestionnaire(controller.getResources().getStream("default_checklist.txt"));
+		final RiskWizardDialogChecklist dialog = new RiskWizardDialogChecklist(checklist, shell, new RiskWizard(checklist, controller));
 		dialog.open();
 	}
 
