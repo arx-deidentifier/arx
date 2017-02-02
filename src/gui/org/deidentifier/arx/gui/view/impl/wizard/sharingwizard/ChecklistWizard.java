@@ -47,7 +47,6 @@ public class ChecklistWizard extends Wizard {
 		if(model != null) {
 			ModelRiskWizard savedModel = model.getRiskWizardModel();
 			if(savedModel != null) {
-				System.out.println(savedModel);
 				this.checklist.setWeightConfiguration(savedModel);
 			}
 		}
