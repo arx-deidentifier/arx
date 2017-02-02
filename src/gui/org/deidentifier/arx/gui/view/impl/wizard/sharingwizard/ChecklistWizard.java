@@ -2,6 +2,8 @@ package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard;
 
 import org.eclipse.jface.wizard.Wizard;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelRiskWizard;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.*;
 
@@ -40,6 +42,15 @@ public class ChecklistWizard extends Wizard {
 		super();
 		
 		this.checklist = checklist;
+		// try to restore a saved version of the weights
+		Model model = controller.getModel();
+		if(model != null) {
+			ModelRiskWizard savedModel = model.getRiskWizardModel();
+			if(savedModel != null) {
+				System.out.println(savedModel);
+				this.checklist.setWeightConfiguration(savedModel);
+			}
+		}
 		this.controller = controller;
 		this.setWindowTitle(Resources.getMessage("RiskWizard.0"));
 	}
@@ -72,7 +83,7 @@ public class ChecklistWizard extends Wizard {
 		// Print the result to the console
 		//this.pages = null;
 		//return false;
-		checklist.saveWeightDefaults();
+		this.controller.getModel().setRiskWizardModel(this.checklist.getWeightConfiguration());
 		//System.out.println(checklist);
 		return true;
 	}

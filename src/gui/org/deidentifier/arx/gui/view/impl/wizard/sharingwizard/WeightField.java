@@ -47,6 +47,16 @@ public class WeightField {
 		dropdown.add("3.00");
 		dropdown.add("5.00");
 		
+		WeightField reference = this;
+		
+		ModifyListener modifyListener = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				reference.updateItem();
+			}
+		};
+		
+		dropdown.addModifyListener(modifyListener);
+		
 		this.item = item;
 		this.setEnabled(enabled);
 		

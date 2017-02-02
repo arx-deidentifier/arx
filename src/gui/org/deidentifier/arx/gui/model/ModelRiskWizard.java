@@ -1,9 +1,10 @@
-package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist;
+package org.deidentifier.arx.gui.model;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -18,16 +19,11 @@ import java.util.Properties;
  * the weight configuration used when evaluating the checklist
  *
  */
-public class WeightConfiguration {
+public class ModelRiskWizard implements Serializable {
 	/**
-	 * the current configurations filename
+	 * the current serialization version
 	 */
-	private String filename;
-	
-	/**
-	 * the current configurations name (last path component)
-	 */
-	private String name;
+	private static final long serialVersionUID = 1L;
 	
 	/**
 	 * a map, mapping the item identifiers to a weight
@@ -35,37 +31,19 @@ public class WeightConfiguration {
 	private Map<String,Double> weights;
 	
 	/**
-	 * path to the last used configuration file
-	 */
-	private static final String lastUsedPath = "config/weights/last_used.txt";
-	
-	/**
 	 * create a new configuration, preferably the previously used one
 	 */
-	public WeightConfiguration() {
-		this(lastUsedPath);
-		this.name = Resources.getMessage("RiskWizard.14"); 
+	public ModelRiskWizard() {
+		weights = new HashMap<String,Double>();
 	}
 	
 	/**
 	 * create a new configuration from a file
 	 * @param filename the file's filename
 	 */
-	public WeightConfiguration(String filename) {
-		this.filename = filename;
-		weights = new HashMap<String,Double>();
-		loadProperties();
-		
-		updateName();
-		
-	}
-	
-	/**
-	 * update the name, based on the filename's path filename
-	 */
-	private void updateName() {
-		Path p = Paths.get(filename);
-		this.name = p.getFileName().toString();
+	public ModelRiskWizard(String filename) {
+		this();
+		loadProperties(filename);
 	}
 	
 	/**
@@ -91,8 +69,9 @@ public class WeightConfiguration {
 	
 	/**
 	 * try to load the weights from the specified filename
+	 * @param filename the filename
 	 */
-	private void loadProperties() {
+	private void loadProperties(String filename) {
 		Properties props = new Properties();
 		try {
 			FileInputStream in = new FileInputStream(filename);
@@ -114,24 +93,6 @@ public class WeightConfiguration {
 			return;
 		}
 		
-	}
-	
-	public String getName() {
-		return this.name;
-	}
-	
-	/**
-	 * tries to save the weight configuration to the lastUsedPath
-	 */
-	public void saveLastUsed() {
-		save(lastUsedPath);
-	}
-	
-	/**
-	 * save the configuration to the current filename
-	 */
-	public void save() {
-		save(this.filename);
 	}
 	
 	/**
@@ -161,9 +122,6 @@ public class WeightConfiguration {
 			//System.err.println("Couldn't store file: "+filename);
 			return;
 		}
-		
-		this.filename = filename;
-		updateName();
 	}
 	
 }

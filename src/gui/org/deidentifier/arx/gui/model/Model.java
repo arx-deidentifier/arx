@@ -262,6 +262,11 @@ public class Model implements Serializable {
     /** Selected quasi identifiers*/
     private Set<String>                           selectedQuasiIdentifiers        = null;
     
+    /* *****************************************
+     * RISK WIZARD
+     ******************************************/
+    /** Current configuration for the risk wizard */
+    private ModelRiskWizard                       riskWizardModel = null;
 
     /* *****************************************
      * LOCAL RECODING
@@ -1045,6 +1050,14 @@ public class Model implements Serializable {
         }
         return this.selectedQuasiIdentifiers;
     }
+    
+    /**
+     * Returns the risk wizard configuration
+     * @return
+     */
+    public ModelRiskWizard getRiskWizardModel() {
+		return riskWizardModel;
+	}
 
     /**
      * Returns the separator.
@@ -1539,6 +1552,14 @@ public class Model implements Serializable {
     }
 
     /**
+     * Sets the current risk wizard configuration
+     * @param riskWizardModel
+     */
+	public void setRiskWizardModel(ModelRiskWizard riskWizardModel) {
+		this.riskWizardModel = riskWizardModel;
+	}
+
+	/**
      * 
      *
      * @param snapshotSize

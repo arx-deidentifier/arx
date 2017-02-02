@@ -2,6 +2,8 @@ package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist;
 
 import java.util.ArrayList;
 
+import org.deidentifier.arx.gui.model.ModelRiskWizard;
+
 /**
  * represents a section from the checklist
  *
@@ -22,7 +24,7 @@ public class Section extends Item {
 	 * @param weightConfiguration the current weight configuration
 	 * @param line the line to parse
 	 */
-	public Section(WeightConfiguration weightConfiguration, String line) {
+	public Section(ModelRiskWizard weightConfiguration, String line) {
 		super(line);
 		this.items = new ArrayList<Question>();
 		setWeightConfiguration(weightConfiguration);
@@ -34,7 +36,7 @@ public class Section extends Item {
 	 * @param line the line to parse
 	 * @return the section item
 	 */
-	public static Section sectionFromLine(WeightConfiguration weightConfiguration, String line) {
+	public static Section sectionFromLine(ModelRiskWizard weightConfiguration, String line) {
 		line = line.trim();
 		Section section = new Section(weightConfiguration, line);
 		return section;
@@ -98,7 +100,7 @@ public class Section extends Item {
 	
 	@Override
 	public String toString() {
-		return "\n\tSection [id=" + this.getIdentifier() + ", title=" + this.getTitle() + ", weight=" + this.getWeight() + ", score="+ this.getScore() +", items=" + items + ", config="+this.getWeightConfiguration().getName()+"\n\t]";
+		return "\n\tSection [id=" + this.getIdentifier() + ", title=" + this.getTitle() + ", weight=" + this.getWeight() + ", score="+ this.getScore() +", items=" + items + ", config="+this.getWeightConfiguration()+"\n\t]";
 	}
 	
 }

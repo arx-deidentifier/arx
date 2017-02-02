@@ -19,9 +19,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelRiskWizard;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.Checklist;
-import org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist.WeightConfiguration;
 
 /**
  * The ChecklistDialog is the dialog presented for the wizard
@@ -114,16 +114,12 @@ public class ChecklistDialog extends WizardDialog {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(saveButton.getShell(), SWT.SAVE);
-				String name = checklist.getWeightConfiguration().getName();
-				if(name == Resources.getMessage("RiskWizard.14")) {
-					name = "last_used.txt";
-				}
-				dialog.setFileName(name);
+				dialog.setFileName("weights.txt");
 				dialog.setFilterExtensions(new String [] {"*.txt","*.properties","*.weights"});
 				dialog.setFilterPath("config/weights");
 				String result = dialog.open();
 				if(result != null) {
-					WeightConfiguration wc = checklist.getWeightConfiguration();
+					ModelRiskWizard wc = checklist.getWeightConfiguration();
 					wc.save(result);
 				}
 			}
@@ -172,7 +168,7 @@ public class ChecklistDialog extends WizardDialog {
 	 * @param result the weight configuration to load
 	 */
 	protected void updateWeightConfig(String result) {
-		checklist.setWeightConfiguration(new WeightConfiguration(result));
+		checklist.setWeightConfiguration(new ModelRiskWizard(result));
 		IWizard wizard = this.getWizard();
 		if(wizard instanceof ChecklistWizard) {
 			ChecklistWizard casted = (ChecklistWizard)wizard;

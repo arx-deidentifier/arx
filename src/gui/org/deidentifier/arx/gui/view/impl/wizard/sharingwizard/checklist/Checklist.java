@@ -8,6 +8,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import org.deidentifier.arx.gui.model.ModelRiskWizard;
+
 /**
  * the Checklist holds the sections and calculates the overall score
  *
@@ -26,7 +28,7 @@ public class Checklist {
 	/**
 	 * the current weight configuration
 	 */
-	protected WeightConfiguration weightConfiguration;
+	protected ModelRiskWizard weightConfiguration;
 
 	/**
 	 * create a checklist from a file
@@ -34,7 +36,7 @@ public class Checklist {
 	 */
 	public Checklist(String filename) {
 		super();
-		weightConfiguration = new WeightConfiguration();
+		weightConfiguration = new ModelRiskWizard();
 		try {
 			// initialize reader
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
@@ -50,7 +52,7 @@ public class Checklist {
 	 */
 	public Checklist(InputStream stream) {
 		super();
-		weightConfiguration = new WeightConfiguration();
+		weightConfiguration = new ModelRiskWizard();
 		// initialize reader
 		BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
 		loadChecklist(bufferedReader);
@@ -149,17 +151,10 @@ public class Checklist {
 	}
 	
 	/**
-	 * saves the current weights to the last used filename
-	 */
-	public void saveWeightDefaults() {
-		this.weightConfiguration.saveLastUsed();
-	}
-	
-	/**
 	 * gets the current weight configuration
 	 * @return the weight configuration
 	 */
-	public WeightConfiguration getWeightConfiguration() {
+	public ModelRiskWizard getWeightConfiguration() {
 		return this.weightConfiguration;
 	}
 	
@@ -167,7 +162,7 @@ public class Checklist {
 	 * sets the weight configuration and updates the values
 	 * @param weightConfiguration the weight configuration
 	 */
-	public void setWeightConfiguration(WeightConfiguration weightConfiguration) {
+	public void setWeightConfiguration(ModelRiskWizard weightConfiguration) {
 		if(this.weightConfiguration == weightConfiguration) {
 			return;
 		}

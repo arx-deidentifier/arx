@@ -1,5 +1,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard.sharingwizard.checklist;
 
+import org.deidentifier.arx.gui.model.ModelRiskWizard;
+
 /**
  * this is the base class for the Question as well as the Section.
  *
@@ -8,7 +10,7 @@ public abstract class Item {
 	/**
 	 * the current weight configuration
 	 */
-	private WeightConfiguration weightConfiguration;
+	private ModelRiskWizard weightConfiguration;
 	
 	/**
 	 * the identifier (used for the weight configuration)
@@ -34,7 +36,7 @@ public abstract class Item {
 		this.title = components[1].trim();
 	}
 	
-	protected WeightConfiguration getWeightConfiguration() {
+	protected ModelRiskWizard getWeightConfiguration() {
 		return this.weightConfiguration;
 	}
 	
@@ -42,7 +44,7 @@ public abstract class Item {
 	 * set weight configuration and update weights
 	 * @param weightConfiguration
 	 */
-	public void setWeightConfiguration(WeightConfiguration weightConfiguration) {
+	public void setWeightConfiguration(ModelRiskWizard weightConfiguration) {
 		this.weightConfiguration = weightConfiguration;
 		updateWeights();
 	}
