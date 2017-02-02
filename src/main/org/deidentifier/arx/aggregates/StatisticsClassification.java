@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
@@ -149,6 +150,7 @@ public class StatisticsClassification {
      * @param features - The feature attributes
      * @param clazz - The class attributes
      * @param config - The configuration
+     * @param scaling 
      * @param interrupt - The interrupt flag
      * @param progress 
      * @throws ParseException 
@@ -158,6 +160,7 @@ public class StatisticsClassification {
                              String[] features,
                              String clazz,
                              ARXLogisticRegressionConfiguration config,
+                             ARXFeatureScaling scaling, 
                              WrappedBoolean interrupt,
                              WrappedInteger progress) throws ParseException {
 
@@ -182,9 +185,10 @@ public class StatisticsClassification {
             this.random = new Random(config.getSeed());
         }
         
-        // TODO: Feature is not used. Continuous variables are treated as categorical.
+        // Create specification
         ClassificationDataSpecification specification = new ClassificationDataSpecification(inputHandle, 
                                                                                             outputHandle, 
+                                                                                            scaling,
                                                                                             features,
                                                                                             clazz,
                                                                                             interrupt);

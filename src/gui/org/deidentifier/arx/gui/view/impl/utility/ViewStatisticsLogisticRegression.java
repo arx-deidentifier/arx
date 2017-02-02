@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsClassification;
@@ -441,6 +442,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
         final ARXLogisticRegressionConfiguration config = context.model.getClassificationModel().getARXLogisticRegressionConfiguration();
+        final ARXFeatureScaling scaling = context.model.getClassificationModel().getFeatureScaling();
         
         // Break, if nothing do
         if (context.model.getSelectedFeatures().isEmpty() ||
@@ -530,7 +532,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                     // Compute
                     StatisticsClassification result = builder.getClassificationPerformance(features,
                                                                                            clazz,
-                                                                                           config);
+                                                                                           config,
+                                                                                           scaling);
                     progress++;
                     if (stopped) {
                         break;

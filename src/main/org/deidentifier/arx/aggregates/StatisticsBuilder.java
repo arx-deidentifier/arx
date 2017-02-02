@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
@@ -84,7 +85,7 @@ public class StatisticsBuilder {
     public StatisticsClassification getClassificationPerformance(String clazz, ARXLogisticRegressionConfiguration config) throws ParseException {
         return getClassificationPerformance(new String[] {}, clazz, config);
     }
-    
+
     /**
      * Creates a new set of statistics for the given classification task
      * @param features - The feature attributes
@@ -96,12 +97,36 @@ public class StatisticsBuilder {
                                                                  String clazz,
                                                                  ARXLogisticRegressionConfiguration config) throws ParseException {
     
+        // Return
+        return getClassificationPerformance(features, clazz, config, null);
+    }
+    
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param features - The feature attributes
+     * @param clazz - The class attributes
+     * @param config - The configuration
+     * @param scaling - Feature scaling
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String[] features,
+                                                                 String clazz,
+                                                                 ARXLogisticRegressionConfiguration config,
+                                                                 ARXFeatureScaling scaling) throws ParseException {
+    
         // Reset stop flag
         interrupt.value = false;
         progress.value = 0;
         
         // Return
-        return new StatisticsClassification(handle.getAssociatedInput(), handle, features, clazz, config, interrupt, progress);
+        return new StatisticsClassification(handle.getAssociatedInput(), 
+                                            handle, 
+                                            features, 
+                                            clazz, 
+                                            config, 
+                                            scaling,
+                                            interrupt, 
+                                            progress);
     }
     
     /**

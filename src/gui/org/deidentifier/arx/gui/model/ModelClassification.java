@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
 
@@ -34,8 +35,10 @@ public class ModelClassification implements Serializable {
 
     /** Modified */
     private boolean                            modified         = false;
-    /** Config*/
+    /** Configuration */
     private ARXLogisticRegressionConfiguration config           = null;
+    /** Feature scaling */
+    private ARXFeatureScaling                  featureScaling;
 
     /**
      * @return
@@ -61,6 +64,17 @@ public class ModelClassification implements Serializable {
         return getConfig().getDecayExponent();
     }
     
+    /**
+     * Returns the feature scaling
+     * @return
+     */
+    public ARXFeatureScaling getFeatureScaling() {
+        if (this.featureScaling == null) {
+            this.featureScaling = ARXFeatureScaling.create();
+        }
+        return this.featureScaling;
+    }
+
     /**
      * @return
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getLambda()
@@ -222,6 +236,16 @@ public class ModelClassification implements Serializable {
     }
 
     /**
+     * Sets a feature scaling function
+     * @param attribute
+     * @param function
+     */
+    public void setScalingFunction(String attribute, String function) {
+        this.setModified();
+        this.getFeatureScaling().setScalingFunction(attribute, function);
+    }
+    
+    /**
      * @param seed
      * @return
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setSeed(java.lang.Integer)
@@ -230,7 +254,7 @@ public class ModelClassification implements Serializable {
         setModified();
         getConfig().setSeed(seed);
     }
-
+    
     /**
      * @param stepOffset
      * @return
@@ -240,14 +264,14 @@ public class ModelClassification implements Serializable {
         setModified();
         getConfig().setStepOffset(stepOffset);
     }
-    
+
     /**
      * Set unmodified
      */
     public void setUnmodified() {
         this.modified = false;
     }
-    
+
     /**
      * @param vectorLength
      * @return
@@ -257,7 +281,7 @@ public class ModelClassification implements Serializable {
         setModified();
         return getConfig().setVectorLength(vectorLength);
     }
-
+    
     /**
      * For backwards compatibility
      */
@@ -267,7 +291,7 @@ public class ModelClassification implements Serializable {
         }
         return this.config;
     }
-
+    
     /**
      * Sets modified
      */

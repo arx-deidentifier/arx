@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
@@ -87,6 +88,29 @@ public class StatisticsBuilderInterruptible {
         }
     }
 
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param features - The feature attributes
+     * @param clazz - The class attributes
+     * @param config - The configuration
+     * @param scaling - Feature scaling
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String[] features,
+                                                                 String clazz,
+                                                                 ARXLogisticRegressionConfiguration config,
+                                                                 ARXFeatureScaling scaling) throws InterruptedException {
+        try {
+            return builder.getClassificationPerformance(features, clazz, config, scaling);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+    
     /**
      * Returns a contingency table for the given columns.
      *
