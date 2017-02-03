@@ -119,7 +119,14 @@ public class ModelEvent {
         ATTRIBUTE_WEIGHT,
         
         /** COST/BENEFIT MODEL*/
-        COST_BENEFIT_MODEL
+        COST_BENEFIT_MODEL,
+
+        // TODO Description
+        MASKING,
+
+        // TODO ModelParts for Added, removed, etc.?
+        MASKING_VARIABLE,
+
     }
 
     /** The part of the model that has changed. */

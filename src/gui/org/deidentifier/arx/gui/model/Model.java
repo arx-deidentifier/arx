@@ -63,7 +63,8 @@ public class Model implements Serializable {
         CONFIGURATION,
         EXPLORATION,
         ANALYSIS,
-        RISK
+        RISK,
+        MASKING,
     }
 
     /** SVUID. */
@@ -290,6 +291,7 @@ public class Model implements Serializable {
         this.name = name;
         this.description = description;
         this.locale = locale;
+        this.maskingModel = new ModelMasking();
         setModified();
     }
 
@@ -1634,4 +1636,19 @@ public class Model implements Serializable {
         this.showVisualization = value;
         this.setModified();
     }
+
+    private ModelMasking maskingModel = null;
+
+    public ModelMasking getMaskingModel() {
+
+        if (maskingModel == null) {
+
+            maskingModel = new ModelMasking();
+
+        }
+
+        return maskingModel;
+
+    }
+
 }

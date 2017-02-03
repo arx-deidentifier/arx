@@ -48,6 +48,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
+import org.deidentifier.arx.gui.view.impl.masking.LayoutMasking;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
@@ -166,6 +167,9 @@ public class MainWindow implements IView {
         Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
         helpids.put(item4, "help.risk.overview"); //$NON-NLS-1$
         new LayoutRisks(item4, controller);
+        Composite item5 = root.createItem("Masking", controller.getResources().getManagedImage("perspective_masking.png")); //$NON-NLS-2$ // TODO: Fix string
+        helpids.put(item5, "help.risk.masking"); //$NON-NLS-1$ // TODO How is this actually used?
+        new LayoutMasking(item5, controller);
 
         // Hack to update visualizations
         root.addSelectionListener(new SelectionAdapter(){
@@ -183,6 +187,9 @@ public class MainWindow implements IView {
                         break;
                     case 3: 
                         controller.getModel().setPerspective(Perspective.RISK);
+                        break;
+                    case 4:
+                        controller.getModel().setPerspective(Perspective.MASKING);
                         break;
                 }
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));

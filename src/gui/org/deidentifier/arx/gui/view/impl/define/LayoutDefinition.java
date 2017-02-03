@@ -89,6 +89,7 @@ public class LayoutDefinition implements ILayout {
         new LayoutAttributeSettings(compositeTopRight, controller);
         new LayoutCriteria(compositeCenterRight, controller);
         new LayoutTransformationModel(compositeBottomRight, controller);
+
     }
 
 }
