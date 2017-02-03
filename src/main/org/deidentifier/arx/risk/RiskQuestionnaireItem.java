@@ -18,6 +18,7 @@
 package org.deidentifier.arx.risk;
 
 import java.io.IOException;
+import java.io.Serializable;
 
 /**
  * This is the base class for the Question as well as the Section.
@@ -25,7 +26,10 @@ import java.io.IOException;
  * @author Thomas Guenzel
  * @author Fabian Prasser
  */
-public abstract class RiskQuestionnaireItem {
+public abstract class RiskQuestionnaireItem implements Serializable {
+
+    /** SVUID*/
+    private static final long serialVersionUID = -9134631374669047761L;
 
     /** Identifier (used for the weight configuration) */
     private String identifier = null;

@@ -17,7 +17,10 @@
 
 package org.deidentifier.arx.risk;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a section from the checklist
@@ -25,52 +28,33 @@ import java.util.ArrayList;
  * @author Thomas Guenzel
  * @author Fabian Prasser
  */
-public class RiskQuestionnaireSection extends RiskQuestionnaireItem {
+public class RiskQuestionnaireSection extends RiskQuestionnaireItem implements Serializable {
 
-    /**
-     * Create a new section from a line
-     * 
-     * @param weightConfiguration
-     * @param line
-     * @return the section item
-     */
-    public static RiskQuestionnaireSection
-            sectionFromLine(RiskQuestionnaireWeights weightConfiguration, String line) {
-        line = line.trim();
-        RiskQuestionnaireSection section = new RiskQuestionnaireSection(weightConfiguration, line);
-        return section;
-    }
-
+    /** SVUID*/
+    private static final long serialVersionUID = -6574573674768245518L;
+    
     /** The items this section contains */
-    private ArrayList<RiskQuestionnaireQuestion> items;
-
-    /** The maximum weight possible */
-    private double                               maximumWeight = 0.0;
+    private List<RiskQuestionnaireQuestion> items = new ArrayList<>();
 
     /**
      * Create a new section from a line
      * 
-     * @param weightConfiguration
-     *            the current weight configuration
-     * @param line
-     *            the line to parse
+     * @param weightConfiguration the current weight configuration
+     * @param line the line to parse
+     * @throws IOException 
      */
-    public RiskQuestionnaireSection(RiskQuestionnaireWeights weightConfiguration, String line) {
-        super(line);
+    public RiskQuestionnaireSection(String line) throws IOException {
+        super(line.trim());
         this.items = new ArrayList<RiskQuestionnaireQuestion>();
-        setWeightConfiguration(weightConfiguration);
     }
 
     /**
      * Add a question to the section and updates the maximumWeight
      * 
-     * @param item
-     *            the question to add
+     * @param item the question to add
      */
     public void addItem(RiskQuestionnaireQuestion item) {
-        item.setWeightConfiguration(this.getWeightConfiguration());
         items.add(item);
-        maximumWeight += Math.abs(item.getWeight());
     }
 
     /**
@@ -83,52 +67,19 @@ public class RiskQuestionnaireSection extends RiskQuestionnaireItem {
     }
 
     /**
-     * Returns the maximum weight
-     * 
-     * @return
-     */
-    public double getMaximumWeight() {
-        return maximumWeight;
-    }
-
-    /**
      * Calculates the score based on the section's question's scores
      * 
      * @return
      */
     public double getScore() {
-        if (maximumWeight == 0.0) {
-            // System.out.println("This Section has a maximum weight of 0.0, it can't calculate a score: "+this);
-            return 0.0;
-        }
-        double result = 0.0;
+        
+        double result = 0d;
+        double max = 0d;
         for (RiskQuestionnaireQuestion q : items) {
             result += q.getScore();
+            max += q.getWeight();
         }
-        // if the weight is negative, 'flip' the answers rating (yes will be -1,
-        // no will be 1)
-        if (this.getWeight() < 0.0) {
-            result = (result * (-1.0));
-        }
-        result /= maximumWeight;
+        result /= max;
         return result;
-    }
-
-    @Override
-    public String toString() {
-        return "\n\tSection [id=" + this.getIdentifier() + ", title=" + this.getTitle() +
-               ", weight=" + this.getWeight() + ", score=" + this.getScore() + ", items=" + items +
-               ", config=" + this.getWeightConfiguration() + "\n\t]";
-    }
-
-    /**
-     * Updates the weights and calculates the maximum weight
-     */
-    public void updateWeights() {
-        maximumWeight = 0.0;
-        for (RiskQuestionnaireQuestion item : items) {
-            item.setWeightConfiguration(this.getWeightConfiguration());
-            maximumWeight += Math.abs(item.getWeight());
-        }
     }
 }

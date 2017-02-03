@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.risk;
 
+import java.io.IOException;
+import java.io.Serializable;
+
 import org.deidentifier.arx.gui.resources.Resources;
 
 /**
@@ -25,26 +28,16 @@ import org.deidentifier.arx.gui.resources.Resources;
  * @author Thomas Guenzel
  * @author Fabian Prasser
  */
-public class RiskQuestionnaireQuestion extends RiskQuestionnaireItem {
+public class RiskQuestionnaireQuestion extends RiskQuestionnaireItem implements Serializable {
+
+    /** SVUID*/
+    private static final long serialVersionUID = 1342060103957413041L;
 
     /** Enum for answers */
     public enum Answer {
         YES,
         NO,
         N_A
-    }
-
-    /**
-     * Creates a new question from a line, in a section
-     * 
-     * @param section
-     * @param line
-     * @return the question item
-     */
-    public static RiskQuestionnaireQuestion itemFromLine(String line) {
-        line = line.trim();
-        RiskQuestionnaireQuestion item = new RiskQuestionnaireQuestion(section, line);
-        return item;
     }
 
     /** Current answer */
@@ -55,10 +48,10 @@ public class RiskQuestionnaireQuestion extends RiskQuestionnaireItem {
      * 
      * @param section
      * @param line
+     * @throws IOException 
      */
-    public RiskQuestionnaireQuestion(RiskQuestionnaireSection section, String line) {
-        super(line);
-        this.section = section;
+    public RiskQuestionnaireQuestion(String line) throws IOException {
+        super(line.trim());
         this.answer = Answer.N_A;
     }
 
@@ -79,14 +72,6 @@ public class RiskQuestionnaireQuestion extends RiskQuestionnaireItem {
     }
 
     /**
-     * Returns the identifier
-     */
-    @Override
-    public String getIdentifier() {
-        return section.getIdentifier() + "." + identifier;
-    }
-
-    /**
      * Returns the question's score using the weight and taking the answer into
      * account
      * 
@@ -101,11 +86,5 @@ public class RiskQuestionnaireQuestion extends RiskQuestionnaireItem {
         default:
             return 0.0;
         }
-    }
-
-    @Override
-    public String toString() {
-        return "\n\t\tQuestion [id=" + this.getIdentifier() + ", answer=" + this.getAnswerString() +
-               ", weight=" + this.getWeight() + ", title=" + title + "]";
     }
 }

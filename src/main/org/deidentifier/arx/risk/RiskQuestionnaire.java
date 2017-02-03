@@ -39,9 +39,6 @@ public class RiskQuestionnaire {
     /** The array containing the sections of the checklist */
     private List<RiskQuestionnaireSection> sections            = new ArrayList<>();
 
-    /** The maximum achievable weight */
-    private double                         maxScore       = 0.0d;
-
     /**
      * Create a questionnaire from an input stream
      * 
@@ -68,11 +65,14 @@ public class RiskQuestionnaire {
      * @return the score
      */
     public double getScore() {
+        
         double result = 0.0;
+        double max = 0d;
         for (RiskQuestionnaireSection s : sections) {
             result += s.getScore();
+            max += s.getWeight();
         }
-        result /= maxScore;
+        result /= max;
         return result;
     }
 
@@ -84,36 +84,14 @@ public class RiskQuestionnaire {
     public RiskQuestionnaireSection[] getSections() {
         return (sections.toArray(new RiskQuestionnaireSection[sections.size()]));
     }
-
+    
     /**
-     * Gets the current weight configuration
-     * 
-     * @return the weight configuration
+     * Sets the weights
+     * @param weights
      */
-    public RiskQuestionnaireWeights getWeightConfiguration() {
-        return this.weightConfiguration;
-    }
-
-    /**
-     * Sets the weight configuration and updates the values
-     * 
-     * @param weightConfiguration
-     *            the weight configuration
-     */
-    public void setWeightConfiguration(RiskQuestionnaireWeights weightConfiguration) {
-        if (this.weightConfiguration == weightConfiguration) { return; }
-
-        this.weightConfiguration = weightConfiguration;
-        this.maxScore = 0.0;
-        for (RiskQuestionnaireSection s : this.sections) {
-            s.setWeightConfiguration(weightConfiguration);
-            maxScore += Math.abs(s.getWeight());
-        }
-    }
-
-    @Override
-    public String toString() {
-        return "Questionnaire [score=" + this.getScore() + ", sections=" + sections + "\n]";
+    public void setWeights(RiskQuestionnaireWeights weights) {
+        // TODO
+        throw new UnsupportedOperationException("");
     }
 
     /**
@@ -123,45 +101,41 @@ public class RiskQuestionnaire {
      * @throws IOException 
      */
     private void load(BufferedReader bufferedReader) throws IOException {
-        
-        // create new and empty sections array
-        sections = new ArrayList<RiskQuestionnaireSection>();
 
         try {
 
-            // hold a reference to the current section
+            // Hold a reference to the current section
             RiskQuestionnaireSection currentSection = null;
 
-            // read first line, then iterate over the lines
+            // Read first line, then iterate over the lines
             String line = bufferedReader.readLine();
             while (line != null) {
-                line = line.trim(); // get rid of leading/trailing whitespaces
+                
+                // Get rid of leading/trailing whitespaces
+                line = line.trim(); 
                 if (line.length() == 0) {
-                    // do nothing
-                } else if (line.startsWith("#") == true) {
-                    // current line is a section
-                    line = line.substring(1);
-                    currentSection = RiskQuestionnaireSection.sectionFromLine(weightConfiguration, line);
+                    
+                    // Ignore
+                    
+                } else if (line.startsWith("#")) {
+                    
+                    // Current line is a section
+                    currentSection = new RiskQuestionnaireSection(line.substring(1));
                     sections.add(currentSection);
-                    maxScore += Math.abs(currentSection.getWeight());
+                    
                 } else {
-                    // current line is an item
+                    
+                    // Current line is an item
                     if (currentSection == null) {
-                        // System.out.println("Invalid syntax. Checklist item before section (section-lines start with #)");
+                        throw new IOException("Invalid questionnaire specification");
                     }
 
                     // parse and add item
-                    RiskQuestionnaireQuestion newItem = RiskQuestionnaireQuestion.itemFromLine(currentSection,
-                                                                                               line);
-                    currentSection.addItem(newItem);
+                    currentSection.addItem(new RiskQuestionnaireQuestion(line));
                 }
 
                 // read next line
                 line = bufferedReader.readLine();
-            }
-            
-            if (maxScore <= 0d) {
-                throw new IOException("Invalid overall weight: " + maxScore);
             }
             
         } catch (FileNotFoundException e) {

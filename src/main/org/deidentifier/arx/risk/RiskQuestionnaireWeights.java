@@ -17,10 +17,6 @@
 
 package org.deidentifier.arx.risk;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,53 +33,18 @@ public class RiskQuestionnaireWeights implements Serializable {
     private static final long   serialVersionUID = -7601091333545929290L;
 
     /** Map, mapping the item identifiers to a weight */
-    private Map<String, Double> weights;
+    private Map<String, Double> weights = new HashMap<String, Double>();
 
     /**
-     * Create a new configuration
-     */
-    public RiskQuestionnaireWeights() {
-        weights = new HashMap<String, Double>();
-    }
-
-    /**
-     * Create a new configuration from a file
+     * Returns properties
      * 
-     * @param filename
      */
-    public RiskQuestionnaireWeights(String filename) {
-        this();
-        loadProperties(filename);
-    }
-
-    /**
-     * Save the configuration to a new filename
-     * 
-     * @param filename
-     */
-    public void save(String filename) {
-        if (filename == null) {
-            // System.out.println("No file specified to save to");
-            return;
-        }
-
+    public Properties asProperties() {
         Properties props = new Properties();
         for (Entry<String, Double> entry : weights.entrySet()) {
             props.setProperty(entry.getKey(), Double.toString(entry.getValue()));
         }
-
-        FileOutputStream out;
-        try {
-            out = new FileOutputStream(filename);
-            props.store(out, null);
-            out.close();
-        } catch (FileNotFoundException e) {
-            // System.err.println("Couldn't open file: "+filename);
-            return;
-        } catch (IOException e) {
-            // System.err.println("Couldn't store file: "+filename);
-            return;
-        }
+        return props;
     }
 
     /**
@@ -92,7 +53,7 @@ public class RiskQuestionnaireWeights implements Serializable {
      * @param identifier
      * @param weight
      */
-    public void setWeightForIdentifier(String identifier, double weight) {
+    public void setWeight(String identifier, double weight) {
         weights.put(identifier, weight);
     }
 
@@ -102,37 +63,25 @@ public class RiskQuestionnaireWeights implements Serializable {
      * @param identifier
      * @return the weight
      */
-    public double weightForIdentifier(String identifier) {
+    public double getWeight(String identifier) {
         if (weights.containsKey(identifier) == false) { return 1.0; }
         return weights.get(identifier);
     }
 
     /**
-     * Try to load the weights from the specified filename
-     * 
-     * @param filename
+     * Load weights
+     * @param properties
      */
-    private void loadProperties(String filename) {
-        Properties props = new Properties();
+    public void loadFromProperties(Properties properties) {
         try {
-            FileInputStream in = new FileInputStream(filename);
-            props.load(in);
-
-            for (Entry<Object, Object> entry : props.entrySet()) {
+            for (Entry<Object, Object> entry : properties.entrySet()) {
                 String key = (String) entry.getKey();
                 String value = (String) entry.getValue();
-
                 double weight = Double.parseDouble(value);
                 weights.put(key, weight);
             }
-            in.close();
-        } catch (FileNotFoundException e) {
-            // System.err.println("Couldn't open file: "+filename);
-            return;
-        } catch (IOException e) {
-            // System.err.println("Couldn't parse file: "+filename);
-            return;
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid properties");
         }
-
     }
 }
