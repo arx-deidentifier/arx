@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * The questionnaire holds the sections and calculates the overall score
@@ -31,55 +33,33 @@ import java.util.ArrayList;
  * @author Fabian Prasser
  */
 public class RiskQuestionnaire {
+    
+    // TODO: LOAD/SAVE OF WEIGHTS DOES NOT WORK CURRENTLY
 
     /** The array containing the sections of the checklist */
-    private ArrayList<RiskQuestionnaireSection> sections;
+    private List<RiskQuestionnaireSection> sections            = new ArrayList<>();
 
     /** The maximum achievable weight */
-    private double                              maximumWeight = 0.0;
-
-    /** Current weight configuration */
-    protected RiskQuestionnaireWeights          weightConfiguration;
+    private double                         maxScore       = 0.0d;
 
     /**
-     * Create a checklist from an input stream
+     * Create a questionnaire from an input stream
      * 
-     * @param stream
-     *            the input stream
+     * @param stream the input stream
+     * @throws IOException 
      */
-    public RiskQuestionnaire(InputStream stream) {
-        super();
-        weightConfiguration = new RiskQuestionnaireWeights();
-        // initialize reader
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(stream));
-        loadChecklist(bufferedReader);
+    public RiskQuestionnaire(InputStream stream) throws IOException {
+        load(new BufferedReader(new InputStreamReader(stream)));
     }
 
     /**
-     * Create a checklist from a file
+     * Create a questionnaire from a file
      * 
-     * @param filename
-     *            the filename
+     * @param filename the filename
+     * @throws IOException 
      */
-    public RiskQuestionnaire(String filename) {
-        super();
-        weightConfiguration = new RiskQuestionnaireWeights();
-        try {
-            // initialize reader
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(filename));
-            loadChecklist(bufferedReader);
-        } catch (IOException e) {
-            // e.printStackTrace();
-        }
-    }
-
-    /**
-     * Get the maximum weight
-     * 
-     * @return the maximum weight
-     */
-    public double getMaximumWeight() {
-        return maximumWeight;
+    public RiskQuestionnaire(String filename) throws IOException {
+        load(new BufferedReader(new FileReader(filename)));
     }
 
     /**
@@ -88,15 +68,11 @@ public class RiskQuestionnaire {
      * @return the score
      */
     public double getScore() {
-        if (maximumWeight == 0.0) {
-            // System.out.println("This Checklist has a maximum weight of 0.0, it can't calculate a score: "+this);
-            return 0.0;
-        }
         double result = 0.0;
         for (RiskQuestionnaireSection s : sections) {
-            result += s.getWeight() * s.getScore();
+            result += s.getScore();
         }
-        result /= maximumWeight;
+        result /= maxScore;
         return result;
     }
 
@@ -128,24 +104,26 @@ public class RiskQuestionnaire {
         if (this.weightConfiguration == weightConfiguration) { return; }
 
         this.weightConfiguration = weightConfiguration;
-        this.maximumWeight = 0.0;
+        this.maxScore = 0.0;
         for (RiskQuestionnaireSection s : this.sections) {
             s.setWeightConfiguration(weightConfiguration);
-            maximumWeight += Math.abs(s.getWeight());
+            maxScore += Math.abs(s.getWeight());
         }
     }
 
     @Override
     public String toString() {
-        return "Checklist [score=" + this.getScore() + ", sections=" + sections + "\n]";
+        return "Questionnaire [score=" + this.getScore() + ", sections=" + sections + "\n]";
     }
 
     /**
      * Loads the checklist using a buffered reader
      * 
      * @param bufferedReader
+     * @throws IOException 
      */
-    private void loadChecklist(BufferedReader bufferedReader) {
+    private void load(BufferedReader bufferedReader) throws IOException {
+        
         // create new and empty sections array
         sections = new ArrayList<RiskQuestionnaireSection>();
 
@@ -163,10 +141,9 @@ public class RiskQuestionnaire {
                 } else if (line.startsWith("#") == true) {
                     // current line is a section
                     line = line.substring(1);
-                    currentSection = RiskQuestionnaireSection.sectionFromLine(weightConfiguration,
-                                                                              line);
+                    currentSection = RiskQuestionnaireSection.sectionFromLine(weightConfiguration, line);
                     sections.add(currentSection);
-                    maximumWeight += Math.abs(currentSection.getWeight());
+                    maxScore += Math.abs(currentSection.getWeight());
                 } else {
                     // current line is an item
                     if (currentSection == null) {
@@ -182,16 +159,21 @@ public class RiskQuestionnaire {
                 // read next line
                 line = bufferedReader.readLine();
             }
+            
+            if (maxScore <= 0d) {
+                throw new IOException("Invalid overall weight: " + maxScore);
+            }
+            
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            throw(e);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw(e);
         } finally {
             if (bufferedReader != null) {
                 try {
                     bufferedReader.close();
                 } catch (IOException e) {
-                    // e.printStackTrace();
+                   // Ignore
                 }
             }
         }

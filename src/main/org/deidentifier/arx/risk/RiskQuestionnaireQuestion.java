@@ -41,15 +41,11 @@ public class RiskQuestionnaireQuestion extends RiskQuestionnaireItem {
      * @param line
      * @return the question item
      */
-    public static RiskQuestionnaireQuestion itemFromLine(RiskQuestionnaireSection section,
-                                                         String line) {
+    public static RiskQuestionnaireQuestion itemFromLine(String line) {
         line = line.trim();
         RiskQuestionnaireQuestion item = new RiskQuestionnaireQuestion(section, line);
         return item;
     }
-
-    /** The section this question is in */
-    private RiskQuestionnaireSection section;
 
     /** Current answer */
     public Answer                    answer;
