@@ -441,16 +441,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 
         // Check models for which only one instance is supported
         if ((c instanceof DPresence) && this.isPrivacyModelSpecified(DPresence.class)) {
-            throw new RuntimeException("You must not add more than one d-presence criterion");
+            throw new IllegalArgumentException("You must not add more than one instance of the d-presence model");
         }
         if ((c instanceof KMap) && this.isPrivacyModelSpecified(KMap.class)) { 
-            throw new RuntimeException("You must not add more than one k-map criterion"); 
+            throw new IllegalArgumentException("You must not add more than one instance of the k-map model"); 
         } 
         if ((c instanceof KAnonymity) && this.isPrivacyModelSpecified(KAnonymity.class)) { 
-               throw new RuntimeException("You must not add more than one k-anonymity criterion"); 
+               throw new IllegalArgumentException("You must not add more than one instance of the k-anonymity model"); 
         }
         if ((c instanceof EDDifferentialPrivacy) && this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) { 
-            throw new RuntimeException("You must not add more than one differential privacy criterion"); 
+            throw new IllegalArgumentException("You must not add more than one instance of the differential privacy model"); 
         }
         
         // Check whether different subsets have been defined
