@@ -73,7 +73,7 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
      */
     private void addNormalModeStyling(final IConfigRegistry configRegistry) {
 
-        final TextPainter txtPainter = new TextPainter(false, false);
+        final TextPainter txtPainter = new TextPainter(false, false, true, true);
         final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
                                                                        IMAGE_COL_BACK,
                                                                        GUIHelper.getColor(192, 192, 192));
