@@ -50,7 +50,7 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
         this.font = context.getFont();
         IMAGE_ROW_BACK   = context.getController().getResources().getManagedImage("row_header_bg.png");         //$NON-NLS-1$
         IMAGE_ROW_SELECT = context.getController().getResources().getManagedImage("selected_row_header_bg.png"); //$NON-NLS-1$
-        final TextPainter txtPainter = new TextPainter(false, false);
+        final TextPainter txtPainter = new TextPainter(false, false, true, true);
         final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter, IMAGE_ROW_BACK, null);
         cellPainter = bgImagePainter;
     }
