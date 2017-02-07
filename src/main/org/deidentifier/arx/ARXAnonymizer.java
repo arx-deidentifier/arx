@@ -396,17 +396,17 @@ public class ARXAnonymizer {
                 }
             }
             if (!found) {
-                throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
+                throw new IllegalArgumentException("No privacy model specified for sensitive attribute: '"+attr+"'!");
             }
         }
         for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("L-Diversity model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
             }
         }
         for (TCloseness c : config.getPrivacyModels(TCloseness.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("T-Closeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
             }
         }
 

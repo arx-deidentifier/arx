@@ -131,7 +131,7 @@ public abstract class Example {
         final List<String> qis = new ArrayList<String>(data.getDefinition().getQuasiIdentifyingAttributes());
 
         if (optimum == null) {
-            System.out.println(" - Criteria cannot be enforced!");
+            System.out.println(" - No solution found!");
             return;
         }
 
