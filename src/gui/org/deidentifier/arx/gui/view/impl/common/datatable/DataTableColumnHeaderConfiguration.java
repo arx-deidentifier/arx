@@ -38,13 +38,13 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyleConfiguration {
 
-    /**  TODO */
+    /** Image */
     private final Image            IMAGE_COL_BACK;
-    
-    /**  TODO */
+
+    /** Image */
     private final Image            IMAGE_COL_SELECT;
-    
-    /**  TODO */
+
+    /** Context */
     private final DataTableContext context;
 
     /**
