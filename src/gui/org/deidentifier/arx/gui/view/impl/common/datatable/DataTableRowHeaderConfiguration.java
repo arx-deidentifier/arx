@@ -21,7 +21,6 @@ import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.layer.config.DefaultRowHeaderStyleConfiguration;
-import org.eclipse.nebula.widgets.nattable.painter.cell.BackgroundImagePainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.style.DisplayMode;
@@ -35,12 +34,12 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfiguration {
 
-    /**  TODO */
-    private final Image IMAGE_ROW_BACK; //$NON-NLS-1$
+    /**  Image */
+    private final Image backgroundDefault; 
     
-    /**  TODO */
-    private final Image IMAGE_ROW_SELECT; //$NON-NLS-1$
-
+    /**  Image */
+    private final Image backgroundSelected;
+    
     /**
      * Creates a new instance.
      *
@@ -48,11 +47,11 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
      */
     public DataTableRowHeaderConfiguration(DataTableContext context) {
         this.font = context.getFont();
-        IMAGE_ROW_BACK   = context.getController().getResources().getManagedImage("row_header_bg.png");         //$NON-NLS-1$
-        IMAGE_ROW_SELECT = context.getController().getResources().getManagedImage("selected_row_header_bg.png"); //$NON-NLS-1$
+        this.backgroundDefault   = context.getController().getResources().getManagedImage("row_header_bg.png"); //$NON-NLS-1$
+        this.backgroundSelected = context.getController().getResources().getManagedImage("selected_row_header_bg.png"); //$NON-NLS-1$
         final TextPainter txtPainter = new TextPainter(false, false);
-        final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter, IMAGE_ROW_BACK, null);
-        cellPainter = bgImagePainter;
+        final ICellPainter bgImagePainter = new DataTableBackgroundImagePainter(txtPainter, backgroundDefault, null);
+        this.cellPainter = bgImagePainter;
     }
 
     @Override
@@ -69,9 +68,9 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
 
         final TextPainter txtPainter = new TextPainter(false, false);
-        final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
-                                                                            IMAGE_ROW_SELECT,
-                                                                            GUIHelper.getColor(192, 192, 192));
+        final ICellPainter selectedCellPainter = new DataTableBackgroundImagePainter(txtPainter,
+                                                                                     backgroundSelected,
+                                                                                     GUIHelper.getColor(192, 192, 192));
 
         configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,
                                                selectedCellPainter,
