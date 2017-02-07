@@ -68,7 +68,7 @@ public class StyleConfigurationHeader extends CTStyleConfiguration {
     private final BorderStyle             borderStyle     = null;
     
     /**  TODO */
-    private final ICellPainter            cellPainter     = new BeveledBorderDecorator(new TextPainter());
+    private final ICellPainter            cellPainter     = new BeveledBorderDecorator(new TextPainter(false, false, true, true));
     
     /**  TODO */
     private final Boolean                 renderGridLines = Boolean.FALSE;
