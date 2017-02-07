@@ -100,7 +100,7 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
      */
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
 
-        final TextPainter txtPainter = new TextPainter(false, false);
+        final TextPainter txtPainter = new TextPainter(false, false, true, true);
         final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
                                                                             IMAGE_COL_SELECT,
                                                                             GUIHelper.getColor(192, 192, 192));
