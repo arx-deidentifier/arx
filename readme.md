@@ -18,7 +18,7 @@ graphical user interface. You can find further information on our [website](http
 License
 ------
 
-The ARX framework is copyright (C) 2012-2016 Florian Kohlmayer and Fabian Prasser. 
+The ARX framework is copyright (C) 2012-2017 Florian Kohlmayer and Fabian Prasser. 
 It is licensed under the Apache License, Version 2.0:
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
