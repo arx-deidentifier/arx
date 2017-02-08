@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class describing a masking configuration
+ * Class containing the masking configuration, i.e. a map of attributes and maskings
  *
  * @author Karol Babioch
  */

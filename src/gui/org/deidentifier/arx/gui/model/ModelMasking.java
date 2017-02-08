@@ -18,10 +18,8 @@
 package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 
 import org.deidentifier.arx.masking.MaskingConfiguration;
-import org.deidentifier.arx.masking.Variable;
 
 /**
  * Model for masking variables
@@ -32,27 +30,7 @@ public class ModelMasking implements Serializable {
 
     private static final long serialVersionUID = 2058280257707159023L;
 
-    private ArrayList<Variable> variables = new ArrayList<Variable>();
-
     private MaskingConfiguration maskingConfiguration = new MaskingConfiguration();
-
-    public void addVariable(Variable variable) {
-
-        variables.add(variable);
-
-    }
-
-    public void removeVariable(Variable variable) {
-
-        variables.remove(variable);
-
-    }
-
-    public ArrayList<Variable> getVariables() {
-
-        return variables;
-
-    }
 
     public MaskingConfiguration getMaskingConfiguration() {
 

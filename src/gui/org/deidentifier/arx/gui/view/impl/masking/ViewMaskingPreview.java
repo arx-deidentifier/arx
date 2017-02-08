@@ -19,34 +19,53 @@ package org.deidentifier.arx.gui.view.impl.masking;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 /**
- * This view displays the distribution for a particular variable as table
+ * This view previews data ...
  *
  * @author Karol Babioch
  */
-public class ViewVariableDistributionTable implements IView {
+public class ViewMaskingPreview implements IView {
 
     private Controller controller;
 
-    private Composite parentComposition;
+    private Composite parentComposite;
 
 
-    public ViewVariableDistributionTable(final Composite parent, final Controller controller) {
+    public ViewMaskingPreview(final Composite parent, final Controller controller) {
 
         this.controller = controller;
-        this.parentComposition = build(parent);
+        this.parentComposite = build(parent);
 
     }
 
 
     private Composite build(Composite parent) {
 
-        return parent;
+        // Title bar
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, null);
+        folder.setLayoutData(SWTUtil.createFillGridData());
+
+        // First tab
+        Composite composite = folder.createItem("Masking preview", null);
+        composite.setLayout(SWTUtil.createGridLayout(1));
+        folder.setSelection(0);
+
+        // Only a placeholder for now
+        // TODO Replace this depending on the masking operation and attribute
+        Label l1 = new Label(composite, SWT.HORIZONTAL);
+        l1.setText("Preview of masking applied to data, i.e. how will the data look like ... Use DataTable?");
+
+        return composite;
 
     }
+
 
     @Override
     public void dispose() {

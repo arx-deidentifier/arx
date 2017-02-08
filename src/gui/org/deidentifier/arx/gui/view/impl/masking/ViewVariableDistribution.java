@@ -28,12 +28,12 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Karol Babioch
  */
-public class LayoutVariableDistribution implements ILayout {
+public class ViewVariableDistribution implements ILayout {
 
     private Composite composite;
     private Controller controller;
 
-    public LayoutVariableDistribution(final Composite parent, final Controller controller) {
+    public ViewVariableDistribution(final Composite parent, final Controller controller) {
 
         this.composite = parent;
         this.controller = controller;
@@ -45,12 +45,10 @@ public class LayoutVariableDistribution implements ILayout {
         // Plot view
         Composite compositePlot = folder.createItem("Distribution plot", null);
         compositePlot.setLayout(SWTUtil.createGridLayout(1));
-        new ViewVariableDistributionPlot(compositePlot, controller);
 
         // Table view
         Composite compositeTable = folder.createItem("Distribution table", null);
         compositeTable.setLayout(SWTUtil.createGridLayout(1));
-        new ViewVariableDistributionTable(compositeTable, controller);
 
         // Select distribution plot view by default
         folder.setSelection(0);

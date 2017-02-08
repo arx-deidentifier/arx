@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.masking;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
+import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
@@ -37,11 +38,15 @@ public class ViewMaskingConfiguration implements IView {
 
     private Composite parentComposite;
 
+    private Label l;
+
 
     public ViewMaskingConfiguration(final Composite parent, final Controller controller) {
 
         this.controller = controller;
         this.parentComposite = build(parent);
+
+        controller.addListener(ModelPart.MASKING_ATTRIBUTE_SELECTED, this);
 
     }
 
@@ -59,8 +64,8 @@ public class ViewMaskingConfiguration implements IView {
 
         // Only a placeholder for now
         // TODO Replace this depending on the masking operation and attribute
-        Label l1 = new Label(composite, SWT.HORIZONTAL);
-        l1.setText("Options depending on selected attribute and masking type");
+        l = new Label(composite, SWT.HORIZONTAL);
+        l.setText("Nothing selected");
 
         return composite;
 
@@ -76,9 +81,11 @@ public class ViewMaskingConfiguration implements IView {
     public void reset() {
 
     }
-
+    int i = 0;
     @Override
     public void update(ModelEvent event) {
+
+        l.setText((String)event.data);
 
     }
 
