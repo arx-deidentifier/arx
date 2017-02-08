@@ -82,4 +82,20 @@ public class RiskQuestionnaireSection extends RiskQuestionnaireItem implements S
         result /= max;
         return result;
     }
+
+    /**
+     * Set weights
+     */
+    public void setWeights(RiskQuestionnaireWeights weights) {
+        Double weight = weights.getWeight(this.getIdentifier());
+        if (weight != null) {
+            this.setWeight(weight);
+        }
+        for (RiskQuestionnaireQuestion item : this.items) {
+            weight = weights.getWeight(this.getIdentifier()+":"+item.getIdentifier());
+            if (weight != null) {
+                item.setWeight(weight);
+            }
+        }
+    }
 }

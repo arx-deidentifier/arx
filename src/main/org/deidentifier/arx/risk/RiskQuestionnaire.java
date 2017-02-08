@@ -34,8 +34,6 @@ import java.util.List;
  */
 public class RiskQuestionnaire {
     
-    // TODO: LOAD/SAVE OF WEIGHTS DOES NOT WORK CURRENTLY
-
     /** The array containing the sections of the checklist */
     private List<RiskQuestionnaireSection> sections            = new ArrayList<>();
 
@@ -90,8 +88,9 @@ public class RiskQuestionnaire {
      * @param weights
      */
     public void setWeights(RiskQuestionnaireWeights weights) {
-        // TODO
-        throw new UnsupportedOperationException("");
+        for (RiskQuestionnaireSection section : this.sections) {
+            section.setWeights(weights);
+        }
     }
 
     /**

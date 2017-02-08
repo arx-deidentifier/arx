@@ -28,18 +28,18 @@ import java.io.Serializable;
  */
 public abstract class RiskQuestionnaireItem implements Serializable {
 
-    /** SVUID*/
+    /** SVUID */
     private static final long serialVersionUID = -9134631374669047761L;
 
     /** Identifier (used for the weight configuration) */
-    private String identifier = null;
+    private String            identifier       = null;
 
     /** Item's title */
-    private String title      = null;
+    private String            title            = null;
 
     /** Weight */
-    private double weight     = 1d;
-    
+    private double            weight           = 1d;
+
     /**
      * Creates a new instance
      * @param line
@@ -47,23 +47,6 @@ public abstract class RiskQuestionnaireItem implements Serializable {
      */
     public RiskQuestionnaireItem(String line) throws IOException {
         parse(line);
-    }
-
-    /**
-     * Parse the item
-     * @param line
-     * @throws IOException 
-     */
-    private void parse(String line) throws IOException {
-        if (line == null) {
-            throw new IOException("Invalid questionnaire definition: " + line);
-        }
-        String components[] = line.split(":", 2);
-        if (components == null ||components.length != 2) {
-            throw new IOException("Invalid questionnaire definition: " + line);
-        }
-        this.identifier = components[0].trim();
-        this.title = components[1].trim();
     }
 
     /**
@@ -101,5 +84,22 @@ public abstract class RiskQuestionnaireItem implements Serializable {
      */
     public void setWeight(double weight) {
         this.weight = weight;
+    }
+
+    /**
+     * Parse the item
+     * @param line
+     * @throws IOException 
+     */
+    private void parse(String line) throws IOException {
+        if (line == null) {
+            throw new IOException("Invalid questionnaire definition: " + line);
+        }
+        String components[] = line.split(":", 2);
+        if (components == null ||components.length != 2) {
+            throw new IOException("Invalid questionnaire definition: " + line);
+        }
+        this.identifier = components[0].trim();
+        this.title = components[1].trim();
     }
 }
