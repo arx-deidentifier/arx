@@ -20,13 +20,11 @@ package org.deidentifier.arx.gui.view.impl.masking;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.masking.RandomVariable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.swtchart.Chart;
 
 /**
  * This implements the distribution table plot
@@ -50,10 +48,8 @@ public class ViewVariableDistributionPlot implements IView {
 
     private void build(Composite parent) {
 
-        // Only a placeholder for now
-        // TODO Replace this depending on the masking operation and attribute
-        l = new Label(parent, SWT.HORIZONTAL);
-        l.setText("Select a variable to view plot for");
+        // Create chart
+        Chart chart = new Chart(parent, SWT.NONE);
 
     }
 
@@ -69,9 +65,6 @@ public class ViewVariableDistributionPlot implements IView {
 
     @Override
     public void update(ModelEvent event) {
-
-        RandomVariable variable = (RandomVariable)event.data;
-        l.setText("Plotting for variable: " + variable.getName());
 
     }
 
