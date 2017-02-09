@@ -58,7 +58,7 @@ public class LayoutMasking implements ILayout {
         // Create bottom left composite
         Composite compositeBottomLeft = new Composite(sashBottom, SWT.NONE);
         compositeBottomLeft.setLayoutData(SWTUtil.createFillGridData());
-        compositeBottomLeft.setLayout(SWTUtil.createGridLayout(1));
+        compositeBottomLeft.setLayout(SWTUtil.createGridLayout(2));
 
         // Create bottom right composite
         Composite compositeBottomRight = new Composite(sashBottom, SWT.NONE);
@@ -69,13 +69,14 @@ public class LayoutMasking implements ILayout {
         // Set SashForm weights
         sashMid.setWeights(new int[] { 50, 50 });
         sashTop.setWeights(new int[] { 50, 50 });
-        sashBottom.setWeights(new int[] { 50, 50 });
+        sashBottom.setWeights(new int[] { 60, 40 });
 
 
         // Add views and sub-layouts
         new ViewAttributeConfiguration(compositeTopLeft, controller);
         new ViewMaskingConfiguration(compositeTopRight, controller);
         new ViewVariableConfiguration(compositeBottomLeft, controller);
+        new ViewDistributionConfiguration(compositeBottomLeft, controller);
         new LayoutVariableDistribution(compositeBottomRight, controller);
 
     }

@@ -257,7 +257,7 @@ public class ViewVariableConfiguration implements IView {
         TableColumn columnName = tableViewerColumnName.getColumn();
         columnName.setToolTipText("Name of the variable");
         columnName.setText("Variable");
-        columnName.setWidth(200);
+        columnName.setWidth(150);
 
 
         // Column containing distribution type
@@ -277,7 +277,7 @@ public class ViewVariableConfiguration implements IView {
         TableColumn columnDistribution = tableViewerColumnDistribution.getColumn();
         columnDistribution.setToolTipText("Distribution of the variable");
         columnDistribution.setText("Distribution");
-        columnDistribution.setWidth(200);
+        columnDistribution.setWidth(150);
 
     }
 
