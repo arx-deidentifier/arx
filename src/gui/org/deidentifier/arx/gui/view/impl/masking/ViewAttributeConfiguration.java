@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
- * This view displays all available attributes and allows them to be configured for masking
+ * This view displays all available attributes and allows to choose a masking operation for them
  *
  * @author Karol Babioch
  */

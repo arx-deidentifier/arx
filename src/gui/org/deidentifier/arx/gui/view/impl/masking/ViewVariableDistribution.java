@@ -24,7 +24,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This class layouts the variable distribution
+ * This class layouts the variable distribution view (plot & table)
  *
  * @author Karol Babioch
  */

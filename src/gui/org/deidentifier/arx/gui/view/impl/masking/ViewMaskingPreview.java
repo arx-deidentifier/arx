@@ -27,7 +27,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * This view previews data ...
+ * This view will display a preview of the data with masking applied
+ *
+ * @TODO Everything :-)
  *
  * @author Karol Babioch
  */
@@ -58,7 +60,6 @@ public class ViewMaskingPreview implements IView {
         folder.setSelection(0);
 
         // Only a placeholder for now
-        // TODO Replace this depending on the masking operation and attribute
         Label l1 = new Label(composite, SWT.HORIZONTAL);
         l1.setText("Preview of masking applied to data, i.e. how will the data look like ... Use DataTable?");
 

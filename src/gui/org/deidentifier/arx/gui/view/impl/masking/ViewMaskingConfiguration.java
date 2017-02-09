@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 /**
- * This view allows to configure a particular masking operation (i.e. set parameters).
+ * This view allows to configure a particular masking operation, e.g. set specific parameters
  *
  * @author Karol Babioch
  */
