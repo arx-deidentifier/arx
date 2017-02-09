@@ -18,11 +18,11 @@ abstract public class MaskingType implements Serializable {
     abstract public MaskingTypeDescription getDescription();
 
 
-    public static class Substitution extends MaskingType {
+    public static class MatchAndReplaceString extends MaskingType {
 
         private static final long serialVersionUID = -3408327861831396157L;
 
-        public static final MaskingTypeDescription description = new MaskingTypeDescription("Substitution") {
+        public static final MaskingTypeDescription description = new MaskingTypeDescription("MatchAndReplaceString") {
 
             private static final long serialVersionUID = -7038871832896082645L;
 
@@ -31,7 +31,6 @@ abstract public class MaskingType implements Serializable {
 
                 List<DataType<?>> list = new ArrayList<>();
                 list.add(DataType.STRING);
-                list.add(DataType.INTEGER);
 
                 return list;
 
@@ -40,7 +39,7 @@ abstract public class MaskingType implements Serializable {
             @Override
             public MaskingType newInstance() {
 
-                return new Substitution();
+                return new MatchAndReplaceString();
 
             }
 
@@ -56,11 +55,47 @@ abstract public class MaskingType implements Serializable {
     }
 
 
-    public static class Redaction extends MaskingType {
+    public static class SplitAndReplaceString extends MaskingType {
+
+        private static final long serialVersionUID = -3408327861831396157L;
+
+        public static final MaskingTypeDescription description = new MaskingTypeDescription("SplitAndReplaceString") {
+
+            private static final long serialVersionUID = -7038871832896082645L;
+
+            @Override
+            public List<DataType<?>> getSupportedDataTypes() {
+
+                List<DataType<?>> list = new ArrayList<>();
+                list.add(DataType.STRING);
+
+                return list;
+
+            }
+
+            @Override
+            public MaskingType newInstance() {
+
+                return new SplitAndReplaceString();
+
+            }
+
+        };
+
+        @Override
+        public MaskingTypeDescription getDescription() {
+
+            return description;
+
+        }
+
+    }
+
+    public static class ConstantShiftDate extends MaskingType {
 
         private static final long serialVersionUID = -2544358188399389355L;
 
-        public static final MaskingTypeDescription description = new MaskingTypeDescription("Redaction") {
+        public static final MaskingTypeDescription description = new MaskingTypeDescription("ConstantShiftDate") {
 
             private static final long serialVersionUID = 8209429201843292494L;
 
@@ -68,8 +103,7 @@ abstract public class MaskingType implements Serializable {
             public List<DataType<?>> getSupportedDataTypes() {
 
                 List<DataType<?>> list = new ArrayList<>();
-                list.add(DataType.STRING);
-                list.add(DataType.INTEGER);
+                list.add(DataType.DATE);
 
                 return list;
 
@@ -78,10 +112,9 @@ abstract public class MaskingType implements Serializable {
             @Override
             public MaskingType newInstance() {
 
-                return new Redaction();
+                return new ConstantShiftDate();
 
             }
-
 
         };
 
@@ -94,6 +127,42 @@ abstract public class MaskingType implements Serializable {
 
     }
 
+    public static class ConstantShiftDecimal extends MaskingType {
+
+        private static final long serialVersionUID = -3408327861831396157L;
+
+        public static final MaskingTypeDescription description = new MaskingTypeDescription("ConstantShiftDecimal") {
+
+            private static final long serialVersionUID = -7038871832896082645L;
+
+            @Override
+            public List<DataType<?>> getSupportedDataTypes() {
+
+                List<DataType<?>> list = new ArrayList<>();
+                list.add(DataType.INTEGER);
+                list.add(DataType.DECIMAL);
+
+                return list;
+
+            }
+
+            @Override
+            public MaskingType newInstance() {
+
+                return new ConstantShiftDecimal();
+
+            }
+
+        };
+
+        @Override
+        public MaskingTypeDescription getDescription() {
+
+            return description;
+
+        }
+
+    }
 
     public static abstract class MaskingTypeDescription implements Serializable {
 
@@ -120,16 +189,20 @@ abstract public class MaskingType implements Serializable {
     }
 
 
-    public static final MaskingType SUBSTITUTION = new Substitution();
-    public static final MaskingType REDACTION = new Redaction();
+    public static final MaskingType MatchAndReplaceString = new MatchAndReplaceString();
+    public static final MaskingType SplitAndReplaceString = new SplitAndReplaceString();
+    public static final MaskingType ConstantShiftDecimal = new ConstantShiftDecimal();
+    public static final MaskingType ConstantShiftDate = new ConstantShiftDate();
 
 
     public static final List<MaskingTypeDescription> list() {
 
         ArrayList<MaskingTypeDescription> list = new ArrayList<>();
 
-        list.add(SUBSTITUTION.getDescription());
-        list.add(REDACTION.getDescription());
+        list.add(MatchAndReplaceString.getDescription());
+        list.add(SplitAndReplaceString.getDescription());
+        list.add(ConstantShiftDecimal.getDescription());
+        list.add(ConstantShiftDate.getDescription());
 
         return list;
 
