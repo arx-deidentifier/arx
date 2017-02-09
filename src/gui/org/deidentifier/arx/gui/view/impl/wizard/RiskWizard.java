@@ -17,12 +17,12 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.io.IOException;
+
 import org.deidentifier.arx.gui.Controller;
-import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.risk.RiskQuestionnaire;
 import org.deidentifier.arx.risk.RiskQuestionnaireSection;
-import org.deidentifier.arx.risk.RiskQuestionnaireWeights;
 import org.eclipse.jface.wizard.Wizard;
 
 /**
@@ -40,7 +40,7 @@ public class RiskWizard extends Wizard {
     protected RiskWizardPageEvaluation evaluationPage;
 
     /** The questionnaire used for the wizard */
-    private RiskQuestionnaire                  checklist;
+    private RiskQuestionnaire          questionnaire;
 
     /** Controller */
     private Controller                 controller;
@@ -48,32 +48,21 @@ public class RiskWizard extends Wizard {
     /**
      * Create a new questionnaire wizard
      * 
-     * @param checklist
      * @param controller
+     * @throws IOException 
      */
-    public RiskWizard(RiskQuestionnaire checklist, Controller controller) {
+    public RiskWizard(Controller controller) throws IOException {
         super();
-
-        this.checklist = checklist;
-        // try to restore a saved version of the weights
-        Model model = controller.getModel();
-        if (model != null) {
-            RiskQuestionnaireWeights savedModel = model.getRiskWizardModel();
-            if (savedModel != null) {
-                this.checklist.setWeightConfiguration(savedModel);
-            }
-        }
+        this.questionnaire = controller.getModel().getRiskQuestionnaire();
+        this.questionnaire.setWeights(controller.getModel().getRiskQuestionnaireWeights());
         this.controller = controller;
         this.setWindowTitle(Resources.getMessage("RiskWizard.0"));
     }
 
-    /**
-     * Adds the necessary pages to the wizard
-     */
     @Override
     public void addPages() {
         // add a page for each section
-        RiskQuestionnaireSection[] sections = checklist.getSections();
+        RiskQuestionnaireSection[] sections = questionnaire.getSections();
         pages = new RiskWizardPageSection[sections.length];
         for (int i = 0; i < sections.length; i++) {
             RiskQuestionnaireSection s = sections[i];
@@ -83,8 +72,24 @@ public class RiskWizard extends Wizard {
         }
 
         // add the final evaluation page
-        evaluationPage = new RiskWizardPageEvaluation(checklist, controller);
+        evaluationPage = new RiskWizardPageEvaluation(questionnaire, controller);
         this.addPage(evaluationPage);
+    }
+
+    /**
+     * Returns the controller
+     * @return
+     */
+    public Controller getController() {
+        return this.controller;
+    }
+
+    /**
+     * Returns the questionnaire
+     * @return
+     */
+    public RiskQuestionnaire getQuestionnaire() {
+        return this.questionnaire;
     }
 
     /**
@@ -92,7 +97,7 @@ public class RiskWizard extends Wizard {
      */
     @Override
     public boolean performFinish() {
-        this.controller.getModel().setRiskWizardModel(this.checklist.getWeightConfiguration());
+        this.controller.getModel().setRiskQuestionnaireWeights(this.questionnaire.getWeights());
         return true;
     }
 

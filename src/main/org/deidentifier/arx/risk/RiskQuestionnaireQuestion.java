@@ -30,15 +30,15 @@ import org.deidentifier.arx.gui.resources.Resources;
  */
 public class RiskQuestionnaireQuestion extends RiskQuestionnaireItem implements Serializable {
 
-    /** SVUID*/
-    private static final long serialVersionUID = 1342060103957413041L;
-
     /** Enum for answers */
     public enum Answer {
         YES,
         NO,
         N_A
     }
+
+    /** SVUID*/
+    private static final long serialVersionUID = 1342060103957413041L;
 
     /** Current answer */
     public Answer                    answer;

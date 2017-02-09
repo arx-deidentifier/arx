@@ -74,13 +74,14 @@ public class RiskWizardVisualizationStack extends RiskWizardVisualization {
 
         int idx = 0;
         for (RiskQuestionnaireSection sec : sections) {
-            double pos = 0.0;
-            double neu = 0.0;
-            double neg = 0.0;
-
+            double pos = 0.0d;
+            double neu = 0.0d;
+            double neg = 0.0d;
+            double max = 0.0d;
             for (RiskQuestionnaireQuestion q : sec.getItems()) {
                 double w = q.getWeight();
                 double s = q.getScore();
+                max += w;
                 if (s == 0.0) {
                     neu += w;
                 } else if (s > 0.0) {
@@ -90,9 +91,9 @@ public class RiskWizardVisualizationStack extends RiskWizardVisualization {
                 }
             }
 
-            posY[idx] = pos / sec.getMaximumWeight();
-            neuY[idx] = neu / sec.getMaximumWeight();
-            negY[idx] = neg / sec.getMaximumWeight();
+            posY[idx] = pos / max;
+            neuY[idx] = neu / max;
+            negY[idx] = neg / max;
 
             idx++;
         }

@@ -18,10 +18,9 @@ package org.deidentifier.arx.risk;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,29 +31,22 @@ import java.util.List;
  * @author Thomas Guenzel
  * @author Fabian Prasser
  */
-public class RiskQuestionnaire {
-    
-    /** The array containing the sections of the checklist */
-    private List<RiskQuestionnaireSection> sections            = new ArrayList<>();
+public class RiskQuestionnaire implements Serializable {
+
+    /** SVUID */
+    private static final long              serialVersionUID = 5949613671782771835L;
+
+    /** The array containing the sections of the questionnaire */
+    private List<RiskQuestionnaireSection> sections         = new ArrayList<>();
 
     /**
-     * Create a questionnaire from an input stream
+     * Create a questionnaire
      * 
-     * @param stream the input stream
+     * @param data
      * @throws IOException 
      */
-    public RiskQuestionnaire(InputStream stream) throws IOException {
-        load(new BufferedReader(new InputStreamReader(stream)));
-    }
-
-    /**
-     * Create a questionnaire from a file
-     * 
-     * @param filename the filename
-     * @throws IOException 
-     */
-    public RiskQuestionnaire(String filename) throws IOException {
-        load(new BufferedReader(new FileReader(filename)));
+    public RiskQuestionnaire(RiskConstants data) throws IOException {
+        load(new BufferedReader(new InputStreamReader(data.getInputStream("risk-questionnaire.data"))));
     }
 
     /**
@@ -81,6 +73,20 @@ public class RiskQuestionnaire {
      */
     public RiskQuestionnaireSection[] getSections() {
         return (sections.toArray(new RiskQuestionnaireSection[sections.size()]));
+    }
+    
+    /**
+     * Returns the current weights
+     */
+    public RiskQuestionnaireWeights getWeights() {
+        RiskQuestionnaireWeights weights = new RiskQuestionnaireWeights();
+        for (RiskQuestionnaireSection section : this.sections) {
+            weights.setWeight(section.getIdentifier(), section.getWeight());
+            for (RiskQuestionnaireItem item : section.getItems()) {
+                weights.setWeight(section.getIdentifier()+":"+item.getIdentifier(), item.getWeight());
+            }
+        }
+        return weights;
     }
     
     /**

@@ -30,3 +30,9 @@ zip.csv
 ***********
 
 (1) http://simplemaps.com/resources/us-cities-data
+
+**************
+Questionnaire
+**************
+
+K. E. Emam, “De-identifying health data for secondary use: A framework,” Technical Report, CHEO Research Institute, 2008.

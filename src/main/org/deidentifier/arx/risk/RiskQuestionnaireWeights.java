@@ -48,16 +48,6 @@ public class RiskQuestionnaireWeights implements Serializable {
     }
 
     /**
-     * Sets the weight for an item's identifier
-     * 
-     * @param identifier
-     * @param weight
-     */
-    public void setWeight(String identifier, double weight) {
-        weights.put(identifier, weight);
-    }
-
-    /**
      * Get the weight for an item's identifier
      * 
      * @param identifier
@@ -83,5 +73,15 @@ public class RiskQuestionnaireWeights implements Serializable {
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid properties");
         }
+    }
+
+    /**
+     * Sets the weight for an item's identifier
+     * 
+     * @param identifier
+     * @param weight
+     */
+    public void setWeight(String identifier, double weight) {
+        weights.put(identifier, weight);
     }
 }

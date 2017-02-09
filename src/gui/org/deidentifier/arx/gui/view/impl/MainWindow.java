@@ -64,10 +64,9 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogTopBottomCoding;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
-import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.view.impl.wizard.RiskWizard;
-import org.deidentifier.arx.gui.view.impl.wizard.RiskWizardDialogChecklist;
-import org.deidentifier.arx.risk.RiskQuestionnaire;
+import org.deidentifier.arx.gui.view.impl.wizard.RiskWizardDialog;
+import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -512,9 +511,12 @@ public class MainWindow implements IView {
      * Shows the checklist wizard
      */
 	public void showChecklistWizard() {
-		RiskQuestionnaire checklist = new RiskQuestionnaire(controller.getResources().getStream("default_checklist.txt"));
-		final RiskWizardDialogChecklist dialog = new RiskWizardDialogChecklist(checklist, shell, new RiskWizard(checklist, controller));
-		dialog.open();
+        try {
+            RiskWizardDialog dialog = new RiskWizardDialog(new RiskWizard(controller));
+            dialog.open();
+        } catch (Exception e) {
+            controller.actionShowInfoDialog(this.getShell(), Resources.getMessage("Controller.13"), Resources.getMessage("MainWindow.30")); //$NON-NLS-1$ //$NON-NLS-2$
+        } 
 	}
 
     /**

@@ -17,6 +17,12 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.util.Properties;
+
+import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.risk.RiskQuestionnaire;
 import org.deidentifier.arx.risk.RiskQuestionnaireWeights;
@@ -37,7 +43,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * The ChecklistDialog is the dialog presented for the wizard
@@ -45,35 +50,35 @@ import org.eclipse.swt.widgets.Shell;
  * @author Thomas Guenzel
  * @author Fabian Prasser
  */
-public class RiskWizardDialogChecklist extends WizardDialog {
+public class RiskWizardDialog extends WizardDialog {
 
     /** Widget */
-    private Button    weightEditButton;
+    private Button            weightEditButton;
 
     /** Widget */
-    private Button    loadButton;
+    private Button            loadButton;
 
     /** Widget */
-    private Button    saveButton;
+    private Button            saveButton;
 
     /** Model */
-    private RiskQuestionnaire checklist;
+    private RiskQuestionnaire questionnaire;
+
+    /** Controller */
+    private Controller        controller;
 
     /**
      * creates a new checklist dialog for a specified checklist
      * 
-     * @param checklist
-     *            the checklist to use
-     * @param parentShell
-     *            the parent for this dialog
-     * @param controller
-     *            the arx controller
-     * @param newWizard
-     *            the wizard
+     * @param checklist the checklist to use
+     * @param parentShell the parent for this dialog
+     * @param controller the arx controller
+     * @param newWizard the wizard
      */
-    public RiskWizardDialogChecklist(RiskQuestionnaire checklist, Shell parentShell, IWizard newWizard) {
-        super(parentShell, newWizard);
-        this.checklist = checklist;
+    public RiskWizardDialog(RiskWizard wizard) {
+        super(wizard.getShell(), wizard);
+        this.questionnaire = wizard.getQuestionnaire();
+        this.controller = wizard.getController();;
     }
 
     /**
@@ -98,7 +103,7 @@ public class RiskWizardDialogChecklist extends WizardDialog {
         weightEditButton = new Button(parent, SWT.CHECK);
         weightEditButton.setText(Resources.getMessage("RiskWizard.6"));
 
-        final RiskWizardDialogChecklist reference = this;
+        final RiskWizardDialog reference = this;
 
         loadButton = new Button(parent, SWT.PUSH);
         loadButton.setText(Resources.getMessage("RiskWizard.7"));
@@ -129,8 +134,11 @@ public class RiskWizardDialogChecklist extends WizardDialog {
                 dialog.setFilterPath("config/weights");
                 String result = dialog.open();
                 if (result != null) {
-                    RiskQuestionnaireWeights wc = checklist.getWeightConfiguration();
-                    wc.save(result);
+                    try {
+                        questionnaire.getWeights().asProperties().store(new FileOutputStream(result), null);
+                    } catch (Exception exception) {
+                        controller.actionShowInfoDialog(getShell(), Resources.getMessage("Controller.13"), Resources.getMessage("RiskWizard.20"));
+                    }
                 }
             }
         });
@@ -199,11 +207,19 @@ public class RiskWizardDialogChecklist extends WizardDialog {
      *            the weight configuration to load
      */
     protected void updateWeightConfig(String result) {
-        checklist.setWeightConfiguration(new RiskQuestionnaireWeights(result));
-        IWizard wizard = this.getWizard();
-        if (wizard instanceof RiskWizard) {
-            RiskWizard casted = (RiskWizard) wizard;
-            casted.updateWeights();
+        try {
+            RiskQuestionnaireWeights weights = new RiskQuestionnaireWeights();
+            Properties properties = new Properties();
+            properties.load(new FileInputStream(new File(result)));
+            weights.loadFromProperties(properties);
+            questionnaire.setWeights(weights);
+            IWizard wizard = this.getWizard();
+            if (wizard instanceof RiskWizard) {
+                RiskWizard casted = (RiskWizard) wizard;
+                casted.updateWeights();
+            }
+        } catch (Exception e) {
+            controller.actionShowInfoDialog(getShell(), Resources.getMessage("Controller.13"), Resources.getMessage("RiskWizard.21"));
         }
     }
 }

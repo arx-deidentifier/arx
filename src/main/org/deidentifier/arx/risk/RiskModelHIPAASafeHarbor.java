@@ -134,7 +134,7 @@ class RiskModelHIPAASafeHarbor {
      */
     private List<HIPAAIdentifierConfig> getConfigurations() {
         
-        HIPAAConstants constants = HIPAAConstants.getUSData();
+        RiskConstants constants = RiskConstants.getUSData();
         
         List<HIPAAIdentifierConfig> configurations = new ArrayList<HIPAAIdentifierConfig>();
 

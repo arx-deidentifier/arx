@@ -30,23 +30,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.deidentifier.arx.risk.resources.us.HIPAAConstantsUS;
+import org.deidentifier.arx.risk.resources.us.RiskConstantsUS;
 
 /**
- * Utility class providing access to important constants for finding HIPAA identifiers.
+ * Utility class providing access to important constants for risk analyses.
  * 
  * @author Fabian Prasser
  */
-public abstract class HIPAAConstants {
+public abstract class RiskConstants {
     
     /** US data*/
-    private static final HIPAAConstants dataUS = new HIPAAConstantsUS();
+    private static final RiskConstants dataUS = new RiskConstantsUS();
     
     /**
      * Returns constants for the US
      * @return
      */
-    public static HIPAAConstants getUSData() {
+    public static RiskConstants getUSData() {
         return dataUS;
     }
 
@@ -66,6 +66,13 @@ public abstract class HIPAAConstants {
     /** Default charset */
     private static final Charset              CHARSET    = StandardCharsets.UTF_8;
 
+    /**
+     * Returns a stream for the given file
+     * @param file
+     * @return
+     */
+    public abstract InputStream getInputStream(String file);
+    
     /**
      * Returns all matchers for the given category
      * @param category
@@ -115,7 +122,7 @@ public abstract class HIPAAConstants {
     public boolean isLastname(String value) {
         return getLastnames().contains(value);
     }
-    
+
     /** 
      * States
      * 
@@ -125,7 +132,7 @@ public abstract class HIPAAConstants {
     public boolean isState(String value) {
         return getStates().contains(value);
     }
-
+    
     /** 
      * Zip codes
      * 
@@ -139,7 +146,7 @@ public abstract class HIPAAConstants {
     /** Cities */
     private Set<String> getCities() {
         if (cities == null) {
-            cities = load("cities.csv");
+            cities = loadSet("cities.csv");
         }
         return cities;
     }
@@ -147,7 +154,7 @@ public abstract class HIPAAConstants {
     /** First names */
     private Set<String> getFirstnames() {
         if (firstnames == null) {
-            firstnames = load("firstnames.csv");
+            firstnames = loadSet("firstnames.csv");
         }
         return firstnames;
     }
@@ -155,11 +162,11 @@ public abstract class HIPAAConstants {
     /** Last names */
     private Set<String> getLastnames() {
         if (lastnames == null) {
-            lastnames = load("lastnames.csv");
+            lastnames = loadSet("lastnames.csv");
         }
         return lastnames;
     }
-    
+
     /**
      * Returns all name configurations
      * @return
@@ -203,7 +210,7 @@ public abstract class HIPAAConstants {
     /** States */
     private Set<String> getStates() {
         if (states == null) {
-            states = load("states.csv");
+            states = loadSet("states.csv");
         }
         return states;
     }
@@ -211,17 +218,17 @@ public abstract class HIPAAConstants {
     /** Zip codes */
     private Set<String> getZipcodes() {
         if (zipcodes == null) {
-            zipcodes = load("zipcodes.csv");
+            zipcodes = loadSet("zipcodes.csv");
         }
         return zipcodes;
     }
-
+    
     /**
      * Loads the given set of resources
      * @param file
      * @return
      */
-    private Set<String> load(String file) {
+    private Set<String> loadSet(String file) {
         InputStream stream = getInputStream(file);
         BufferedReader br = new BufferedReader(new InputStreamReader(stream, CHARSET));
         Set<String> set = new HashSet<String>();
@@ -232,21 +239,14 @@ public abstract class HIPAAConstants {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException(e);
         } finally {
             try {
                 br.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                /** Ignore*/
             }
         }
         return set;
     }
-    
-    /**
-     * Implement this to load the according file
-     * @param file
-     * @return
-     */
-    protected abstract InputStream getInputStream(String file);
 }

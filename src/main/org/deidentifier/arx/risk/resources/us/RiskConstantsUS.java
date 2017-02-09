@@ -18,19 +18,17 @@ package org.deidentifier.arx.risk.resources.us;
 
 import java.io.InputStream;
 
-import org.deidentifier.arx.risk.HIPAAConstants;
+import org.deidentifier.arx.risk.RiskConstants;
 
 /**
  * Utility class providing access to important constants for finding HIPAA identifiers.
  * 
  * @author Fabian Prasser
  */
-public class HIPAAConstantsUS extends HIPAAConstants{
+public class RiskConstantsUS extends RiskConstants{
     
-    /**
-     * Returns constants for the US population
-     */
-    protected InputStream getInputStream(String file) {
-        return HIPAAConstantsUS.class.getResourceAsStream(file);
+    @Override
+    public InputStream getInputStream(String file) {
+        return RiskConstantsUS.class.getResourceAsStream(file);
     }
 }
