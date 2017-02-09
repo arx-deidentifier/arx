@@ -38,17 +38,6 @@ abstract public class MaskingType implements Serializable {
             }
 
             @Override
-            public List<MaskingParameter<?>> getParameters() {
-
-                List<MaskingParameter<?>> list = new ArrayList<>();
-                list.add(MaskingParameter.createBoolean("Parameter #1"));
-                list.add(MaskingParameter.createString("Parameter #2"));
-
-                return list;
-
-            }
-
-            @Override
             public MaskingType newInstance() {
 
                 return new Substitution();
@@ -81,17 +70,6 @@ abstract public class MaskingType implements Serializable {
                 List<DataType<?>> list = new ArrayList<>();
                 list.add(DataType.STRING);
                 list.add(DataType.INTEGER);
-
-                return list;
-
-            }
-
-            @Override
-            public List<MaskingParameter<?>> getParameters() {
-
-                List<MaskingParameter<?>> list = new ArrayList<>();
-
-                list.add(MaskingParameter.BOOLEAN);
 
                 return list;
 
@@ -136,8 +114,6 @@ abstract public class MaskingType implements Serializable {
         }
 
         abstract public List<DataType<?>> getSupportedDataTypes();
-
-        abstract public List<MaskingParameter<?>> getParameters();
 
         abstract public MaskingType newInstance();
 

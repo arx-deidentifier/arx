@@ -74,9 +74,9 @@ public class LayoutMasking implements ILayout {
 
         // Add views and sub-layouts
         new ViewAttributeConfiguration(compositeTopLeft, controller);
-        new ViewMaskingConfiguration(compositeBottomLeft, controller);
-        new ViewMaskingPreview(compositeTopRight, controller);
-        new ViewVariableDistribution(compositeBottomRight, controller);
+        new ViewMaskingConfiguration(compositeTopRight, controller);
+        new ViewVariableConfiguration(compositeBottomLeft, controller);
+        new LayoutVariableDistribution(compositeBottomRight, controller);
 
     }
 

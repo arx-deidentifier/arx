@@ -24,19 +24,13 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This class layouts the variable distribution view (plot & table)
+ * This class layouts the variable distribution
  *
  * @author Karol Babioch
  */
-public class ViewVariableDistribution implements ILayout {
+public class LayoutVariableDistribution implements ILayout {
 
-    private Composite composite;
-    private Controller controller;
-
-    public ViewVariableDistribution(final Composite parent, final Controller controller) {
-
-        this.composite = parent;
-        this.controller = controller;
+    public LayoutVariableDistribution(final Composite parent, final Controller controller) {
 
         // Create the tab folder
         ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, null); // TODO Assign help id
@@ -52,6 +46,10 @@ public class ViewVariableDistribution implements ILayout {
 
         // Select distribution plot view by default
         folder.setSelection(0);
+
+        // Create sub-views
+        new ViewVariableDistributionPlot(compositePlot, controller);
+        new ViewVariableDistributionTable(compositeTable, controller);
 
     }
 

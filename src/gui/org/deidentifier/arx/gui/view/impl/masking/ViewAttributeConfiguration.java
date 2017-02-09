@@ -33,12 +33,14 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.masking.Masking;
 import org.deidentifier.arx.masking.MaskingConfiguration;
 import org.deidentifier.arx.masking.MaskingType;
+import org.deidentifier.arx.masking.RandomVariable;
 import org.deidentifier.arx.masking.MaskingType.MaskingTypeDescription;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -129,8 +131,6 @@ public class ViewAttributeConfiguration implements IView {
             } catch (NullPointerException e) {
 
                 // Silently catch NullPointerExceptions here (when model is not yet defined, etc.)
-                // TODO: Maybe too generic, but handling all different cases might be more complicated
-                System.out.println("NullPointer");
 
             }
 
@@ -259,7 +259,7 @@ public class ViewAttributeConfiguration implements IView {
             }
 
             // Send update event
-            controller.update(new ModelEvent(this, ModelPart.MASKING_FOR_ATTRIBUTE_CHANGED, null));
+            controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION_FOR_ATTRIBUTE_CHANGED, null));
 
         }
 
@@ -267,27 +267,27 @@ public class ViewAttributeConfiguration implements IView {
 
     private Controller controller;
 
-    private Composite parentComposition;
-
     private TableViewer tableViewer;
 
 
     public ViewAttributeConfiguration(final Composite parent, final Controller controller) {
 
         this.controller = controller;
-        this.parentComposition = build(parent);
+
+        // Build view
+        build(parent);
 
         // These events are triggered when data is imported, i.e. attributes are "created" // TODO Are these all or correct?
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
 
         // Get notified whenever the masking for an attribute is changed
-        this.controller.addListener(ModelPart.MASKING_FOR_ATTRIBUTE_CHANGED, this);
+        this.controller.addListener(ModelPart.MASKING_CONFIGURATION_FOR_ATTRIBUTE_CHANGED, this);
 
     }
 
 
-    private Composite build(Composite parent) {
+    private void build(Composite parent) {
 
         // Create button bar
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(null); // TODO Assign help id
@@ -321,6 +321,7 @@ public class ViewAttributeConfiguration implements IView {
         composite.setLayout(SWTUtil.createGridLayout(1));
         folder.setSelection(0);
 
+
         // Create table
         tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new AttributeContentProvider());
@@ -334,7 +335,10 @@ public class ViewAttributeConfiguration implements IView {
             @Override
             public void widgetSelected(SelectionEvent event) {
 
-                controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_SELECTED, String.valueOf(table.getSelectionIndex())));
+                Attribute attribute = (Attribute) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
+
+                // Send notification
+                controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_SELECTED, attribute.getName()));
 
             }
 
@@ -407,9 +411,6 @@ public class ViewAttributeConfiguration implements IView {
         columnMasking.setToolTipText("Masking operation for attribute");
         columnMasking.setText("Masking type");
         columnMasking.setWidth(100);
-
-
-        return composite;
 
     }
 

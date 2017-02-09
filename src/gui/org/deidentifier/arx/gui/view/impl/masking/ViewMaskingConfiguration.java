@@ -23,6 +23,7 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.masking.RandomVariable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -36,22 +37,21 @@ public class ViewMaskingConfiguration implements IView {
 
     private Controller controller;
 
-    private Composite parentComposite;
-
     private Label l;
 
 
     public ViewMaskingConfiguration(final Composite parent, final Controller controller) {
 
         this.controller = controller;
-        this.parentComposite = build(parent);
+
+        build(parent);
 
         controller.addListener(ModelPart.MASKING_ATTRIBUTE_SELECTED, this);
 
     }
 
 
-    private Composite build(Composite parent) {
+    private void build(Composite parent) {
 
         // Title bar
         ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, null);
@@ -65,9 +65,7 @@ public class ViewMaskingConfiguration implements IView {
         // Only a placeholder for now
         // TODO Replace this depending on the masking operation and attribute
         l = new Label(composite, SWT.HORIZONTAL);
-        l.setText("Nothing selected");
-
-        return composite;
+        l.setText("Select an attribute to change configuration");
 
     }
 
@@ -81,11 +79,12 @@ public class ViewMaskingConfiguration implements IView {
     public void reset() {
 
     }
-    int i = 0;
+
     @Override
     public void update(ModelEvent event) {
 
-        l.setText((String)event.data);
+        String attribute = (String)event.data;
+        l.setText("Masking configuration for attribute: " + attribute);
 
     }
 
