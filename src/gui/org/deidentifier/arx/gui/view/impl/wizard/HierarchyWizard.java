@@ -52,10 +52,10 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      */
     public static class HierarchyWizardResult<T> {
 
-        /**  TODO */
+        /**  Hierarchy */
         public final Hierarchy hierarchy;
         
-        /**  TODO */
+        /**  Builder */
         public final HierarchyBuilder<T> builder;
         
         /**
