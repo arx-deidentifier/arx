@@ -193,7 +193,12 @@ public class ViewAttributeList implements IView {
                 // Set and update
                 this.model.getInputDefinition().setDataType(attribute, type);
                 this.updateDataTypes();
+
+                // Remove masking, since data type changed
+                this.model.getMaskingModel().getMaskingConfiguration().removeMasking(attribute);
+
                 this.controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
+
             }
         }
     }
