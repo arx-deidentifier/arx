@@ -1101,6 +1101,26 @@ public class MainWindow implements IView {
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
         });
 
+        items.add(new MainMenuItem("Masking", controller.getResources().getManagedImage("perspective_masking.png"), false) {
+
+            @Override
+            public void action(Controller controller) {
+
+                root.setSelection(4);
+                controller.getModel().setPerspective(Perspective.MASKING);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+
+            }
+
+            @Override
+            public boolean isEnabled(Model model) {
+
+                return model != null && model.getPerspective() != Perspective.MASKING;
+
+            }
+
+        });
+
         items.add(new MainMenuSeparator());
 
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.34") + " " + Resources.getMessage("ExploreView.0"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
