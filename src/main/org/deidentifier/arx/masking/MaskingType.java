@@ -164,6 +164,45 @@ abstract public class MaskingType implements Serializable {
 
     }
 
+
+    public static class RandomShiftDecimal extends MaskingType {
+
+        private static final long serialVersionUID = -476644133411909846L;
+
+        public static final MaskingTypeDescription description = new MaskingTypeDescription("RandomShiftDecimal") {
+
+            private static final long serialVersionUID = -4414489925882607507L;
+
+            @Override
+            public List<DataType<?>> getSupportedDataTypes() {
+
+                List<DataType<?>> list = new ArrayList<>();
+                list.add(DataType.INTEGER);
+                list.add(DataType.DECIMAL);
+
+                return list;
+
+            }
+
+            @Override
+            public MaskingType newInstance() {
+
+                return new RandomShiftDecimal();
+
+            }
+
+        };
+
+        @Override
+        public MaskingTypeDescription getDescription() {
+
+            return description;
+
+        }
+
+    }
+
+
     public static abstract class MaskingTypeDescription implements Serializable {
 
         private static final long serialVersionUID = -3328298087202770639L;
@@ -193,6 +232,7 @@ abstract public class MaskingType implements Serializable {
     public static final MaskingType SplitAndReplaceString = new SplitAndReplaceString();
     public static final MaskingType ConstantShiftDecimal = new ConstantShiftDecimal();
     public static final MaskingType ConstantShiftDate = new ConstantShiftDate();
+    public static final MaskingType RandomShiftDecimal = new RandomShiftDecimal();
 
 
     public static final List<MaskingTypeDescription> list() {
@@ -203,6 +243,7 @@ abstract public class MaskingType implements Serializable {
         list.add(SplitAndReplaceString.getDescription());
         list.add(ConstantShiftDecimal.getDescription());
         list.add(ConstantShiftDate.getDescription());
+        list.add(RandomShiftDecimal.getDescription());
 
         return list;
 
