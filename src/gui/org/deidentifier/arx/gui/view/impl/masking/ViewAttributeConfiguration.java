@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.masking;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
@@ -120,9 +121,18 @@ public class ViewAttributeConfiguration implements IView {
 
                 for (int i = 0; i < data.getNumColumns(); i++) {
 
-                    String name = data.getAttributeName(i);
-                    DataType<?> type = model.getInputDefinition().getDataType(name);
-                    list.add(new Attribute(name, type));
+                    String attributeName = data.getAttributeName(i);
+                    AttributeType attributeType = model.getInputDefinition().getAttributeType(attributeName);
+
+                    // Skip if attribute is not identifying
+                    if (attributeType != AttributeType.IDENTIFYING_ATTRIBUTE) {
+
+                        continue;
+
+                    }
+
+                    DataType<?> dataType = model.getInputDefinition().getDataType(attributeName);
+                    list.add(new Attribute(attributeName, dataType));
 
                 }
 
@@ -275,9 +285,10 @@ public class ViewAttributeConfiguration implements IView {
         // Build view
         build(parent);
 
-        // These events are triggered when data is imported, i.e. attributes are "created" // TODO Are these all or correct?
-        this.controller.addListener(ModelPart.INPUT, this);
+        // These events are triggered when data is imported or attribute configuration changes
+        this.controller.addListener(ModelPart.INPUT, this); // TODO: Is this actually needed? Can data be imported with an attribute being set as identifying?
         this.controller.addListener(ModelPart.DATA_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
 
         // Get notified whenever the masking for an attribute is changed
         this.controller.addListener(ModelPart.MASKING_CONFIGURATION_FOR_ATTRIBUTE_CHANGED, this);
