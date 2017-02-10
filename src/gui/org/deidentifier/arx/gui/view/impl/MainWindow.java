@@ -158,18 +158,19 @@ public class MainWindow implements IView {
         Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getManagedImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
         helpids.put(item1, "id-3"); //$NON-NLS-1$
         new LayoutDefinition(item1, controller);
-        Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getManagedImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item2, "id-4"); //$NON-NLS-1$
-        this.layoutExplore = new LayoutExplore(item2, controller);
-        Composite item3 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getManagedImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item3, "help.utility.overview"); //$NON-NLS-1$
-        new LayoutUtility(item3, controller);
-        Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
-        helpids.put(item4, "help.risk.overview"); //$NON-NLS-1$
-        new LayoutRisks(item4, controller);
-        Composite item5 = root.createItem("Masking", controller.getResources().getManagedImage("perspective_masking.png")); //$NON-NLS-2$ // TODO: Fix string
-        helpids.put(item5, "help.risk.masking"); //$NON-NLS-1$ // TODO How is this actually used?
-        new LayoutMasking(item5, controller);
+        Composite item2 = root.createItem("Masking", controller.getResources().getManagedImage("perspective_masking.png")); //$NON-NLS-2$
+        helpids.put(item2, "help.risk.masking"); //$NON-NLS-1$ // TODO Implement help
+        new LayoutMasking(item2, controller);
+        Composite item3 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getManagedImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item3, "id-4"); //$NON-NLS-1$
+        this.layoutExplore = new LayoutExplore(item3, controller);
+        Composite item4 = root.createItem(Resources.getMessage("MainWindow.1"), controller.getResources().getManagedImage("perspective_analyze.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item4, "help.utility.overview"); //$NON-NLS-1$
+        new LayoutUtility(item4, controller);
+        Composite item5 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item5, "help.risk.overview"); //$NON-NLS-1$
+        new LayoutRisks(item5, controller);
+
 
         // Hack to update visualizations
         root.addSelectionListener(new SelectionAdapter(){
@@ -179,17 +180,17 @@ public class MainWindow implements IView {
                     case 0: 
                         controller.getModel().setPerspective(Perspective.CONFIGURATION);
                         break;
-                    case 1: 
-                        controller.getModel().setPerspective(Perspective.EXPLORATION);
+                    case 1:
+                        controller.getModel().setPerspective(Perspective.MASKING);
                         break;
                     case 2: 
-                        controller.getModel().setPerspective(Perspective.ANALYSIS);
+                        controller.getModel().setPerspective(Perspective.EXPLORATION);
                         break;
                     case 3: 
-                        controller.getModel().setPerspective(Perspective.RISK);
+                        controller.getModel().setPerspective(Perspective.ANALYSIS);
                         break;
                     case 4:
-                        controller.getModel().setPerspective(Perspective.MASKING);
+                        controller.getModel().setPerspective(Perspective.RISK);
                         break;
                 }
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
@@ -1067,46 +1068,13 @@ public class MainWindow implements IView {
             }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.CONFIGURATION; }
         });
-        
-        items.add(new MainMenuItem(Resources.getMessage("MainWindow.3"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("perspective_explore.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { 
-                root.setSelection(1);
-                controller.getModel().setPerspective(Perspective.EXPLORATION);
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.EXPLORATION; }
-        });
-
-        items.add(new MainMenuItem(Resources.getMessage("MainWindow.1"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("perspective_analyze.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { 
-                root.setSelection(2);
-                controller.getModel().setPerspective(Perspective.ANALYSIS);
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
-        });
-
-        items.add(new MainMenuItem(Resources.getMessage("MainWindow.4"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("perspective_risk.png"), //$NON-NLS-1$
-                                   false) {
-            public void action(Controller controller) { 
-                root.setSelection(3);
-                controller.getModel().setPerspective(Perspective.RISK);
-                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
-            }
-            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
-        });
 
         items.add(new MainMenuItem("Masking", controller.getResources().getManagedImage("perspective_masking.png"), false) {
 
             @Override
             public void action(Controller controller) {
 
-                root.setSelection(4);
+                root.setSelection(1);
                 controller.getModel().setPerspective(Perspective.MASKING);
                 controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
 
@@ -1119,6 +1087,39 @@ public class MainWindow implements IView {
 
             }
 
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.3"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_explore.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(2);
+                controller.getModel().setPerspective(Perspective.EXPLORATION);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.EXPLORATION; }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.1"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_analyze.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(3);
+                controller.getModel().setPerspective(Perspective.ANALYSIS);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ANALYSIS; }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.4"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_risk.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(4);
+                controller.getModel().setPerspective(Perspective.RISK);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
         });
 
         items.add(new MainMenuSeparator());
