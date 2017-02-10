@@ -1,13 +1,13 @@
 /*
  * ARX: Powerful Data Anonymization
  * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,6 +28,7 @@ import org.deidentifier.arx.masking.RandomVariable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -100,12 +101,15 @@ public class ViewVariableConfiguration implements IView {
 
     private class DistributionEditingSupport extends EditingSupport {
 
-        private TextCellEditor editor;
+        private ComboBoxCellEditor editor;
+
+        private String[] choices = new String[] { "Binomial", "Geometric", };
 
         public DistributionEditingSupport(TableViewer viewer) {
 
             super(viewer);
-            editor = new TextCellEditor(viewer.getTable());
+
+            editor = new ComboBoxCellEditor(viewer.getTable(), choices, SWT.READ_ONLY);
 
         }
 
@@ -126,17 +130,15 @@ public class ViewVariableConfiguration implements IView {
         @Override
         protected Object getValue(Object element) {
 
-            return ((RandomVariable)element).getDistribution();
+            return 0;
 
         }
 
         @Override
         protected void setValue(Object element, Object value) {
 
-            RandomVariable variable = ((RandomVariable)element);
-            variable.setDistribution((String)value);
-
-            // Send notification about update
+            RandomVariable variable = (RandomVariable)element;
+            variable.setDistribution(choices[(int)value]);
             controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION_FOR_VARIABLE_CHANGED, variable));
 
         }
@@ -171,7 +173,7 @@ public class ViewVariableConfiguration implements IView {
                 if (value != null && value.length() > 0) {
 
                     // Create new variable
-                    RandomVariable variable = new RandomVariable(value, "Whatever");
+                    RandomVariable variable = new RandomVariable(value, "Binomial");
 
                     // Add variable to model
                     controller.getModel().getMaskingModel().addRandomVariable(variable);

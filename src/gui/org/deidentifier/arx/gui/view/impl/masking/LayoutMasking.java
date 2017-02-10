@@ -1,13 +1,13 @@
 /*
  * ARX: Powerful Data Anonymization
  * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,7 +45,7 @@ public class LayoutMasking implements ILayout {
         // Create top left composite
         Composite compositeTopLeft = new Composite(sashTop, SWT.NONE);
         compositeTopLeft.setLayoutData(SWTUtil.createFillGridData());
-        compositeTopLeft.setLayout(SWTUtil.createGridLayout(1));
+        compositeTopLeft.setLayout(SWTUtil.createGridLayout(2));
 
         // Create top right composite
         Composite compositeTopRight = new Composite(sashTop, SWT.NONE);
@@ -69,14 +69,12 @@ public class LayoutMasking implements ILayout {
         // Set SashForm weights
         sashMid.setWeights(new int[] { 50, 50 });
         sashTop.setWeights(new int[] { 50, 50 });
-        sashBottom.setWeights(new int[] { 60, 40 });
+        sashBottom.setWeights(new int[] { 50, 50 });
 
 
         // Add views and sub-layouts
         new ViewAttributeConfiguration(compositeTopLeft, controller);
-        new ViewMaskingConfiguration(compositeTopRight, controller);
         new ViewVariableConfiguration(compositeBottomLeft, controller);
-        new ViewDistributionConfiguration(compositeBottomLeft, controller);
         new LayoutVariableDistribution(compositeBottomRight, controller);
 
     }

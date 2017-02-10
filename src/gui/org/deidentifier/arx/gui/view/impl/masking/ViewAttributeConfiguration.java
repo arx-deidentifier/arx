@@ -1,13 +1,13 @@
 /*
  * ARX: Powerful Data Anonymization
  * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,11 +29,9 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.masking.Masking;
 import org.deidentifier.arx.masking.MaskingConfiguration;
 import org.deidentifier.arx.masking.MaskingType;
-import org.deidentifier.arx.masking.RandomVariable;
 import org.deidentifier.arx.masking.MaskingType.MaskingTypeDescription;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -92,7 +90,7 @@ public class ViewAttributeConfiguration implements IView {
 
     /**
      * Content provider for attributes
-     * 
+     *
      * This content provider retrieves the available attributes from the model and iterates over them in order to
      * retrieve the required information.
      *
@@ -121,11 +119,11 @@ public class ViewAttributeConfiguration implements IView {
                 DataHandle data = model.getInputConfig().getInput().getHandle();
 
                 for (int i = 0; i < data.getNumColumns(); i++) {
-    
+
                     String name = data.getAttributeName(i);
                     DataType<?> type = model.getInputDefinition().getDataType(name);
                     list.add(new Attribute(name, type));
-    
+
                 }
 
             } catch (NullPointerException e) {
@@ -289,31 +287,8 @@ public class ViewAttributeConfiguration implements IView {
 
     private void build(Composite parent) {
 
-        // Create button bar
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(null); // TODO Assign help id
-        bar.add("Add attribute", controller.getResources().getManagedImage("add.png"), new Runnable() {
-
-            @Override
-            public void run() {
-
-                controller.actionShowInfoDialog(controller.getResources().getShell(), "NOT YET IMPLEMENTED", "This could be used to add attributes for data generation (i.e. random data)");
-
-            }
-
-        });
-        bar.add("Remove attribute", controller.getResources().getManagedImage("remove.png"), new Runnable() {
-
-            @Override
-            public void run() {
-
-                controller.actionShowInfoDialog(controller.getResources().getShell(), "NOT YET IMPLEMENTED", "Remove attributes? But only previously added ones? Or all ones, i.e. also the ones imported?");
-
-            }
-
-        });
-
         // Title bar
-        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, null);
         folder.setLayoutData(SWTUtil.createFillGridData());
 
         // First tab
@@ -361,7 +336,7 @@ public class ViewAttributeConfiguration implements IView {
         TableColumn columnName = tableViewerColumnName.getColumn();
         columnName.setToolTipText("Name of the attribute");
         columnName.setText("Attribute");
-        columnName.setWidth(200);
+        columnName.setWidth(100);
 
 
         // Column containing attribute data type
