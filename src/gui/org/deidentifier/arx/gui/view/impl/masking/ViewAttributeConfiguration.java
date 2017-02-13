@@ -267,7 +267,7 @@ public class ViewAttributeConfiguration implements IView {
             }
 
             // Send update event
-            controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION_FOR_ATTRIBUTE_CHANGED, null));
+            controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
 
         }
 
@@ -291,7 +291,7 @@ public class ViewAttributeConfiguration implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
 
         // Get notified whenever the masking for an attribute is changed
-        this.controller.addListener(ModelPart.MASKING_CONFIGURATION_FOR_ATTRIBUTE_CHANGED, this);
+        this.controller.addListener(ModelPart.MASKING_ATTRIBUTE_CHANGED, this);
 
     }
 
@@ -324,7 +324,7 @@ public class ViewAttributeConfiguration implements IView {
                 Attribute attribute = (Attribute) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
 
                 // Send notification
-                controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_SELECTED, attribute.getName()));
+                controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, attribute.getName()));
 
             }
 

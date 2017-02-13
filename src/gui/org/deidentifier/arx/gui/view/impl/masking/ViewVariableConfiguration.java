@@ -24,26 +24,25 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
+import org.deidentifier.arx.gui.view.impl.menu.DialogVariableConfiguration;
 import org.deidentifier.arx.masking.RandomVariable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ComboBoxCellEditor;
-import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
-import org.eclipse.jface.viewers.TextCellEditor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This view displays all available attributes and allows them to be configured for masking
+ * This view displays all random variables and allows them to be configured (distribution, parameters, etc.)
  *
  * @author Karol Babioch
  */
@@ -53,106 +52,17 @@ public class ViewVariableConfiguration implements IView {
 
     private TableViewer tableViewer;
 
-
-    private class NameEditingSupport extends EditingSupport {
-
-        private TextCellEditor editor;
-
-        public NameEditingSupport(TableViewer viewer) {
-
-            super(viewer);
-            editor = new TextCellEditor(viewer.getTable());
-
-        }
-
-        @Override
-        protected boolean canEdit(Object arg0) {
-
-            return true;
-
-        }
-
-        @Override
-        protected CellEditor getCellEditor(Object element) {
-
-            return editor;
-
-        }
-
-        @Override
-        protected Object getValue(Object element) {
-
-            return ((RandomVariable)element).getName();
-
-        }
-
-        @Override
-        protected void setValue(Object element, Object value) {
-
-            RandomVariable variable = ((RandomVariable)element);
-            variable.setName((String)value);
-
-            // Send notification about update
-            controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION_FOR_VARIABLE_CHANGED, variable));
-
-        }
-
-    }
-
-    private class DistributionEditingSupport extends EditingSupport {
-
-        private ComboBoxCellEditor editor;
-
-        private String[] choices = new String[] { "Binomial", "Geometric", };
-
-        public DistributionEditingSupport(TableViewer viewer) {
-
-            super(viewer);
-
-            editor = new ComboBoxCellEditor(viewer.getTable(), choices, SWT.READ_ONLY);
-
-        }
-
-        @Override
-        protected boolean canEdit(Object arg0) {
-
-            return true;
-
-        }
-
-        @Override
-        protected CellEditor getCellEditor(Object element) {
-
-            return editor;
-
-        }
-
-        @Override
-        protected Object getValue(Object element) {
-
-            return 0;
-
-        }
-
-        @Override
-        protected void setValue(Object element, Object value) {
-
-            RandomVariable variable = (RandomVariable)element;
-            variable.setDistribution(choices[(int)value]);
-            controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION_FOR_VARIABLE_CHANGED, variable));
-
-        }
-
-    }
+    private ToolItem buttonAdd;
+    private ToolItem buttonRemove;
+    private ToolItem buttonEdit;
 
 
     public ViewVariableConfiguration(final Composite parent, final Controller controller) {
 
         this.controller = controller;
-
         build(parent);
 
-        this.controller.addListener(ModelPart.MASKING_CONFIGURATION_FOR_VARIABLE_CHANGED, this);
+        controller.addListener(ModelPart.MASKING_VARIABLE_CHANGED, this);
 
     }
 
@@ -165,23 +75,8 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public void run() {
 
-                // Ask user for variable name
-                Shell shell = controller.getResources().getShell();
-                String value = controller.actionShowInputDialog(shell, "Add a variable", "Please enter a variable name", "");
-
-                // Check if valid name was entered
-                if (value != null && value.length() > 0) {
-
-                    // Create new variable
-                    RandomVariable variable = new RandomVariable(value, "Binomial");
-
-                    // Add variable to model
-                    controller.getModel().getMaskingModel().addRandomVariable(variable);
-
-                    // Send notification about update
-                    controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION_FOR_VARIABLE_CHANGED, variable));
-
-                }
+                // Open dialog to configure new variable
+                new DialogVariableConfiguration(controller).open();
 
             }
 
@@ -191,21 +86,28 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public void run() {
 
-                // Check if one variable was selected
-                if (((IStructuredSelection)tableViewer.getSelection()).size() != 1) {
-
-                    return;
-
-                }
-
                 // Get currently selected variable
-                RandomVariable variable = (RandomVariable) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
+                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
 
                 // Remove from controller
                 controller.getModel().getMaskingModel().removeRandomVariable((variable));
 
                 // Send notification about update
-                controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION_FOR_VARIABLE_CHANGED, variable));
+                controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_CHANGED, variable));
+
+            }
+
+        });
+        bar.add("Edit variable", controller.getResources().getManagedImage("edit.png"), new Runnable() {
+
+            @Override
+            public void run() {
+
+                // Get currently selected variable
+                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+
+                // Open dialog to edit existing variable
+                new DialogVariableConfiguration(controller, variable).open();
 
             }
 
@@ -218,10 +120,22 @@ public class ViewVariableConfiguration implements IView {
         composite.setLayout(SWTUtil.createGridLayout(1));
         folder.setSelection(0);
 
-
         // Create table
         tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new ArrayContentProvider());
+        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+
+            @Override
+            public void doubleClick(DoubleClickEvent event) {
+
+                // Get currently selected variable
+                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+
+                // Edit config dialog for variable
+                new DialogVariableConfiguration(controller, variable).open();
+
+            }
+        });
 
         Table table = tableViewer.getTable();
         table.setHeaderVisible(true);
@@ -232,7 +146,10 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public void widgetSelected(SelectionEvent event) {
 
-                RandomVariable variable = (RandomVariable) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
+                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+
+                // Update button status
+                updateButtons();
 
                 // Send notification
                 controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_SELECTED, variable));
@@ -241,16 +158,14 @@ public class ViewVariableConfiguration implements IView {
 
         });
 
-
         // Column containing variable name
         TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnName.setEditingSupport(new NameEditingSupport(tableViewer));
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
             public String getText(Object element) {
 
-                return ((RandomVariable)element).getName();
+                return ((RandomVariable) element).getName();
 
             }
 
@@ -261,16 +176,14 @@ public class ViewVariableConfiguration implements IView {
         columnName.setText("Variable");
         columnName.setWidth(150);
 
-
         // Column containing distribution type
         TableViewerColumn tableViewerColumnDistribution = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnDistribution.setEditingSupport(new DistributionEditingSupport(tableViewer));
         tableViewerColumnDistribution.setLabelProvider(new ColumnLabelProvider() {
 
             @Override
             public String getText(Object element) {
 
-                return ((RandomVariable)element).getDistribution();
+                return ((RandomVariable) element).getDistribution();
 
             }
 
@@ -280,6 +193,12 @@ public class ViewVariableConfiguration implements IView {
         columnDistribution.setToolTipText("Distribution of the variable");
         columnDistribution.setText("Distribution");
         columnDistribution.setWidth(150);
+
+        // Set default status for buttons
+        buttonAdd = folder.getButtonItem("Add variable");
+        buttonRemove = folder.getButtonItem("Remove variable");
+        buttonEdit = folder.getButtonItem("Edit variable");
+        updateButtons();
 
     }
 
@@ -297,6 +216,7 @@ public class ViewVariableConfiguration implements IView {
 
     }
 
+    // TODO Maybe make this more effective by only updating affected row?
     @Override
     public void update(ModelEvent event) {
 
@@ -311,6 +231,25 @@ public class ViewVariableConfiguration implements IView {
 
         // Reenable redrawing
         tableViewer.getTable().setRedraw(true);
+
+        // Check whether buttons need to be enabled or disabled
+        updateButtons();
+
+    }
+
+    private void updateButtons() {
+
+        // Refresh data
+        tableViewer.refresh();
+
+        // Always enabled
+        buttonAdd.setEnabled(true);
+
+        // Only enable when something is selected
+        boolean enableButtons = !tableViewer.getSelection().isEmpty();
+
+        buttonRemove.setEnabled(enableButtons);
+        buttonEdit.setEnabled(enableButtons);
 
     }
 

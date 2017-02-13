@@ -122,15 +122,10 @@ public class ModelEvent {
         COST_BENEFIT_MODEL,
 
         // TODO Consolidate Masking events?
-        // TODO RENAME?
-        // Used whenever the masking type for an attribute is changed
-        MASKING_CONFIGURATION_FOR_ATTRIBUTE_CHANGED,
-        // Used whenever an attribute in the masking view is selected
-        MASKING_ATTRIBUTE_SELECTED,
-        // Used whenever a variable in the masking view is selected
         MASKING_VARIABLE_SELECTED,
-        // Used whenever a variable is changed
-        MASKING_CONFIGURATION_FOR_VARIABLE_CHANGED,
+        MASKING_VARIABLE_CHANGED, // Added, removed, changed
+
+        MASKING_ATTRIBUTE_CHANGED,
 
     }
 
