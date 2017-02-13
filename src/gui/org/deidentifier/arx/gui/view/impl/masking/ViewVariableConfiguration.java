@@ -30,6 +30,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
@@ -223,11 +224,17 @@ public class ViewVariableConfiguration implements IView {
         // Disable redrawing, so changes won't be noticed by the user and appear to be atomic
         tableViewer.getTable().setRedraw(false);
 
+        // Save selection
+        ISelection selection = tableViewer.getSelection();
+
         // Remove all data
         tableViewer.getTable().removeAll();
 
         // Apply new data
         tableViewer.setInput(controller.getModel().getMaskingModel().getRandomVariables());
+
+        // Restore selection
+        tableViewer.setSelection(selection, true);
 
         // Reenable redrawing
         tableViewer.getTable().setRedraw(true);
