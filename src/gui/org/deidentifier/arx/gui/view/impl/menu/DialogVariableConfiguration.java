@@ -23,11 +23,16 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelMasking;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
-import org.deidentifier.arx.masking.RandomVariable;
+import org.deidentifier.arx.gui.view.impl.masking.DistributionComposite;
+import org.deidentifier.arx.gui.view.impl.masking.DistributionCompositeBinomial;
+import org.deidentifier.arx.gui.view.impl.masking.DistributionCompositeGeometric;
+import org.deidentifier.arx.masking.variable.RandomVariable;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -57,8 +62,12 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
     // Flag whether a new variable is newly created, or an existing one is being edited
     private boolean isNew = false;
 
+    // Widgets
     private Text textVariableName;
     private Combo comboDistribution;
+    private Composite compositeParameter;
+
+    private DistributionComposite c1;
 
     // Constructor for editing an existing random variable
     public DialogVariableConfiguration(Controller controller, RandomVariable variable) {
@@ -93,7 +102,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
         }
 
-        setMessage("Please configure the random variable by setting the parameters appropriately", IMessageProvider.INFORMATION);
+        setMessage("Please configure the random variable by setting the parameters shown below", IMessageProvider.INFORMATION);
 
     }
 
@@ -112,15 +121,52 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
         Label labelDistribution = new Label(parent, SWT.NONE);
         labelDistribution.setText("Distribution");
         comboDistribution = new Combo(parent, SWT.READ_ONLY);
-        comboDistribution.setItems(new String[] { "Binomial", "Geometric", });
+        comboDistribution.setItems(new String[]{
+            "Binomial distribution (discrete)",
+            "Geometric distribution (discrete)",
+        });
         comboDistribution.select(0);
+        comboDistribution.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+
+                updateParameterComposite();
+
+            }
+
+        });
 
         // Composite for parameters
-        Composite parameterComposite = new Composite(parent, SWT.NONE);
-        parameterComposite.setLayout(SWTUtil.createGridLayout(2));
-        parameterComposite.setLayoutData(SWTUtil.createFillGridData(2));
+        compositeParameter = new Composite(parent, SWT.NONE);
+        compositeParameter.setLayoutData(SWTUtil.createSpanColumnsGridData(2));
+
+        // Display parameter composite for default selection
+        updateParameterComposite();
 
         return parent;
+
+    }
+
+    private void updateParameterComposite() {
+
+        // Dispose all children
+        for (Control c : compositeParameter.getChildren()) {
+
+            c.dispose();
+
+        }
+
+        // Create new composite for given distribution
+        switch (comboDistribution.getSelectionIndex()) {
+
+            case 0: c1 = new DistributionCompositeBinomial(compositeParameter); break;
+            case 1: c1 = new DistributionCompositeGeometric(compositeParameter); break;
+
+        }
+
+        // Update layout
+        compositeParameter.layout();
 
     }
 
@@ -137,7 +183,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
         // Configure variable in accordance to user input
         variable.setName(textVariableName.getText());
-        variable.setDistribution(comboDistribution.getItems()[comboDistribution.getSelectionIndex()]);
+        variable.setDistribution(c1.getResultingDistribution());
 
         // Add or replace variable in model
         ModelMasking maskingModel = controller.getModel().getMaskingModel();

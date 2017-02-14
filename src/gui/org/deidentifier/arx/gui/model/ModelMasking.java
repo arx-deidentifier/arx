@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.masking.MaskingConfiguration;
-import org.deidentifier.arx.masking.RandomVariable;
+import org.deidentifier.arx.masking.variable.RandomVariable;
 
 /**
  * Model for masking variables

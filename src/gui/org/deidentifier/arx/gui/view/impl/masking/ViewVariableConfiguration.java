@@ -25,7 +25,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.gui.view.impl.menu.DialogVariableConfiguration;
-import org.deidentifier.arx.masking.RandomVariable;
+import org.deidentifier.arx.masking.variable.RandomVariable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -121,6 +121,11 @@ public class ViewVariableConfiguration implements IView {
         composite.setLayout(SWTUtil.createGridLayout(1));
         folder.setSelection(0);
 
+        // Get references to buttons
+        buttonAdd = folder.getButtonItem("Add variable");
+        buttonRemove = folder.getButtonItem("Remove variable");
+        buttonEdit = folder.getButtonItem("Edit variable");
+
         // Create table
         tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
         tableViewer.setContentProvider(new ArrayContentProvider());
@@ -174,7 +179,7 @@ public class ViewVariableConfiguration implements IView {
 
         TableColumn columnName = tableViewerColumnName.getColumn();
         columnName.setToolTipText("Name of the variable");
-        columnName.setText("Variable");
+        columnName.setText("Name");
         columnName.setWidth(150);
 
         // Column containing distribution type
@@ -184,7 +189,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return ((RandomVariable) element).getDistribution();
+                return ((RandomVariable) element).getDistribution().toString();
 
             }
 
@@ -193,12 +198,153 @@ public class ViewVariableConfiguration implements IView {
         TableColumn columnDistribution = tableViewerColumnDistribution.getColumn();
         columnDistribution.setToolTipText("Distribution of the variable");
         columnDistribution.setText("Distribution");
-        columnDistribution.setWidth(150);
+        columnDistribution.setWidth(250);
+
+        // Column displaying number
+        TableViewerColumn tableViewerColumnNumber = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnNumber.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnNumber = tableViewerColumnNumber.getColumn();
+        columnNumber.setToolTipText("Number");
+        columnNumber.setText("N");
+        columnNumber.setWidth(50);
+
+        // Column displaying probability
+        TableViewerColumn tableViewerColumnProbability = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnProbability.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnProbability = tableViewerColumnProbability.getColumn();
+        columnProbability.setToolTipText("Probability");
+        columnProbability.setText("P");
+        columnProbability.setWidth(50);
+
+        // Column displaying mean
+        TableViewerColumn tableViewerColumnMean = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnMean.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnMean = tableViewerColumnMean.getColumn();
+        columnMean.setToolTipText("Mean");
+        columnMean.setText("μ");
+        columnMean.setWidth(50);
+
+        // Column displaying standard deviation
+        TableViewerColumn tableViewerStdDev = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerStdDev.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnStdDev = tableViewerStdDev.getColumn();
+        columnStdDev.setToolTipText("Standard deviation");
+        columnStdDev.setText("σ");
+        columnStdDev.setWidth(50);
+
+        // Column displaying location parameter
+        TableViewerColumn tableViewerLocation = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerLocation.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnLocation = tableViewerLocation.getColumn();
+        columnLocation.setToolTipText("Location");
+        columnLocation.setText("x");
+        columnLocation.setWidth(50);
+
+        // Column displaying scale parameter
+        TableViewerColumn tableViewerScale = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerScale.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnScale = tableViewerScale.getColumn();
+        columnScale.setToolTipText("Scale");
+        columnScale.setText("γ");
+        columnScale.setWidth(50);
+
+        // Column displaying degrees of freedom
+        TableViewerColumn tableViewerDegrees = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerDegrees.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnDegrees = tableViewerDegrees.getColumn();
+        columnDegrees.setToolTipText("Degrees of freedom");
+        columnDegrees.setText("k");
+        columnDegrees.setWidth(50);
+
+        // Column displaying rate
+        TableViewerColumn tableViewerRate = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerRate.setLabelProvider(new ColumnLabelProvider() {
+
+            @Override
+            public String getText(Object element) {
+
+                return "";
+
+            }
+
+        });
+
+        TableColumn columnRate = tableViewerRate.getColumn();
+        columnRate.setToolTipText("Rate");
+        columnRate.setText("λ");
+        columnRate.setWidth(50);
 
         // Set default status for buttons
-        buttonAdd = folder.getButtonItem("Add variable");
-        buttonRemove = folder.getButtonItem("Remove variable");
-        buttonEdit = folder.getButtonItem("Edit variable");
         updateButtons();
 
     }
@@ -239,7 +385,7 @@ public class ViewVariableConfiguration implements IView {
         // Reenable redrawing
         tableViewer.getTable().setRedraw(true);
 
-        // Check whether buttons need to be enabled or disabled
+        // Set default status for buttons
         updateButtons();
 
     }
