@@ -14,13 +14,12 @@ tight integration of the many different aspects relevant to data anonymization. 
  * Methods for analyzing re-identification risks
 
 The software is able to handle very large datasets on commodity hardware and features an intuitive cross-platform 
-graphical user interface. You can find further information on our [website](http://arx.deidentifier.org/). 
+graphical user interface. You can find further information on the project [website](http://arx.deidentifier.org/). 
 
 License
 ------
 
-The ARX framework is copyright (C) 2012-2017 Florian Kohlmayer and Fabian Prasser. 
-It is licensed under the Apache License, Version 2.0:
+ARX (C) 2012-2017 Fabian Prasser, Florian Kohlmayer and Contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
