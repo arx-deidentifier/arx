@@ -21,18 +21,29 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.exceptions.ComputationInterruptedException;
+
 import com.carrotsearch.hppc.IntOpenHashSet;
 
+/**
+ * This class implements the SUDA2 algorithm
+ * @author Fabian Prasser
+ */
 public class SUDA2 {
 
     /** Debug data */
-    private int           calls = 0;
+    private int                   calls = 0;
     /** The data */
-    private final int[][] data;
+    private final int[][]         data;
     /** Number of columns */
-    private final int     columns;
+    private final int             columns;
     /** The result */
-    private SUDA2Result   result;
+    private SUDA2Result           result;
+    /** Progress listener */
+    private SUDA2ProgressListener progressListener;
+    /** Stop flag */
+    private WrappedBoolean        stop;
 
     /**
      * Constructor
@@ -296,6 +307,10 @@ public class SUDA2 {
             for (SUDA2ItemSet msu : msus) {
                 result.registerMSU(msu);
             }
+        } 
+        
+        if (stop != null && stop.value) {
+            throw new ComputationInterruptedException();
         }
 //
 //        // Find perfectly correlating MSUs
@@ -316,17 +331,21 @@ public class SUDA2 {
 
         // For each item i
         int index = 0;
+        int total = currentList.getList().size();
         for (SUDA2Item referenceItem : currentList.getList()) {
             
             // Track
             index++;
             
             // Progress information
-            if (numRecords == data.length) {
-                System.out.println(index + "/" + currentList.size() + " -> " + calls);
+            if (numRecords == data.length && progressListener != null) {
+             
+                progressListener.update((double)index / (double)total);
+//                System.out.println(index + "/" + currentList.size() + " -> " + calls);
 //                if (index == 50) {
 //                    return null;
 //                }
+                
             }
 
             // Recursive call
@@ -387,5 +406,21 @@ public class SUDA2 {
         
         // Return
         return msus;
+    }
+
+    /**
+     * Sets a progress listener
+     * @param progressListener
+     */
+    public void setProgressListener(SUDA2ProgressListener progressListener) {
+        this.progressListener = progressListener;
+    }
+
+    /**
+     * Sets a stop flag
+     * @param stop
+     */
+    public void setStopFlag(WrappedBoolean stop) {
+        this.stop = stop;
     }
 }

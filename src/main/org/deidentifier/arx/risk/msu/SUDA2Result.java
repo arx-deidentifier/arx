@@ -60,6 +60,30 @@ public class SUDA2Result {
         this.sizeDistribution = new int[maxK];
     }
     
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (getClass() != obj.getClass()) return false;
+        SUDA2Result other = (SUDA2Result) obj;
+        if (!Arrays.equals(columnKeyAverageSize, other.columnKeyAverageSize)) return false;
+        if (!Arrays.equals(columnKeyContributions, other.columnKeyContributions)) return false;
+        if (!Arrays.equals(columnKeyMaxSize, other.columnKeyMaxSize)) return false;
+        if (!Arrays.equals(columnKeyMinSize, other.columnKeyMinSize)) return false;
+        if (columns != other.columns) return false;
+        if (maxK != other.maxK) return false;
+        if (numMSUs != other.numMSUs) return false;
+        if (!Arrays.equals(sizeDistribution, other.sizeDistribution)) return false;
+        return true;
+    }
+
+    /**
+     * @return the columnKeyAverageSize
+     */
+    public int[] getColumnKeyAverageSize() {
+        return columnKeyAverageSize;
+    }
+    
     /**
      * Returns the contributions of each column
      * @return
@@ -68,6 +92,28 @@ public class SUDA2Result {
         return this.columnKeyContributions;
     }
 
+    /**
+     * @return the columnKeyMaxSize
+     */
+    public int[] getColumnKeyMaxSize() {
+        return columnKeyMaxSize;
+    }
+
+    /**
+     * @return the columnKeyMinSize
+     */
+    public int[] getColumnKeyMinSize() {
+        return columnKeyMinSize;
+    }
+
+    /**
+     * Returns the distribution of the sizes of MSUs
+     * @return
+     */
+    public int[] getKeySizeDistribution() {
+        return this.sizeDistribution;
+    }
+    
     /**
      * Returns the maximal size which has been searched for
      * @return
@@ -92,45 +138,64 @@ public class SUDA2Result {
         return this.numMSUs;
     }
     
-    /**
-     * Returns the distribution of the sizes of MSUs
-     * @return
-     */
-    public int[] getKeySizeDistribution() {
-        return this.sizeDistribution;
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + Arrays.hashCode(columnKeyAverageSize);
+        result = prime * result + Arrays.hashCode(columnKeyContributions);
+        result = prime * result + Arrays.hashCode(columnKeyMaxSize);
+        result = prime * result + Arrays.hashCode(columnKeyMinSize);
+        result = prime * result + columns;
+        result = prime * result + maxK;
+        result = prime * result + numMSUs;
+        result = prime * result + Arrays.hashCode(sizeDistribution);
+        return result;
     }
     
     @Override
     public String toString() {
         
-        int[] totals1 = new int[columns];
-        Arrays.fill(totals1, numMSUs);
+        int[] totalsContributions = new int[columns];
+        Arrays.fill(totalsContributions, numMSUs);
         
-        int[] totals2 = new int[columns];
-        for (int i = 0; i < totals2.length; i++) {
-            totals2[i] = columnKeyContributions[i];
+        int[] totalAvgSize = new int[columns];
+        for (int i = 0; i < totalAvgSize.length; i++) {
+            totalAvgSize[i] = columnKeyContributions[i];
         }
         
-        int[] totals3 = new int[maxK];
-        Arrays.fill(totals3, numMSUs);
+        int[] totalsSize = new int[maxK];
+        Arrays.fill(totalsSize, numMSUs);
         
         StringBuilder builder = new StringBuilder();
         builder.append("SUDA2 result\n");
         builder.append(" - Number of columns: ").append(this.columns).append("\n");
         builder.append(" - Number of MSUs: ").append(this.numMSUs).append("\n");
         builder.append(" - Column key contributions\n");
-        builder.append(toString("     ", columnKeyContributions, totals1, 0, false, true));
+        builder.append(toString("     ", columnKeyContributions, totalsContributions, 0, false, true));
         builder.append(" - Column key min. size\n");
         builder.append(toString("     ", columnKeyMinSize, null, 0, true, false));
         builder.append(" - Column key max. size\n");
         builder.append(toString("     ", columnKeyMaxSize, null, 0, true, false));
         builder.append(" - Column key avg. size\n");
-        builder.append(toString("     ", columnKeyAverageSize, totals2, 0, false, true));
+        builder.append(toString("     ", columnKeyAverageSize, totalAvgSize, 0, false, true));
         builder.append(" - Size distribution\n");
-        builder.append(toString("     ", sizeDistribution, totals3, 1, true, true));
+        builder.append(toString("     ", sizeDistribution, totalsSize, 1, true, true));
         return builder.toString();
     }
-    
+
+    /**
+     * Registers an MSU with a column
+     * @param column
+     * @param size
+     */
+    private void registerColumn(int column, int size) {
+        this.columnKeyContributions[column]++;
+        this.columnKeyMinSize[column] = Math.min(this.columnKeyMinSize[column], size);
+        this.columnKeyMaxSize[column] = Math.max(this.columnKeyMaxSize[column], size);
+        this.columnKeyAverageSize[column] += size;
+    }
+
     /**
      * Makes sure that the value has the given number of characters
      * @param value
@@ -143,7 +208,7 @@ public class SUDA2Result {
         }
         return value;
     }
-    
+
     /**
      * Renders a distribution
      * @param intent
@@ -237,17 +302,5 @@ public class SUDA2Result {
             int column = set.get(i).getColumn();
             registerColumn(column, set.size());
         }
-    }
-
-    /**
-     * Registers an MSU with a column
-     * @param column
-     * @param size
-     */
-    private void registerColumn(int column, int size) {
-        this.columnKeyContributions[column]++;
-        this.columnKeyMinSize[column] = Math.min(this.columnKeyMinSize[column], size);
-        this.columnKeyMaxSize[column] = Math.max(this.columnKeyMaxSize[column], size);
-        this.columnKeyAverageSize[column] += size;
     }
 }

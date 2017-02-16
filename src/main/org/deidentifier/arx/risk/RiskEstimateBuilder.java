@@ -230,13 +230,24 @@ public class RiskEstimateBuilder {
         progress.value = 0;
         return new RiskEstimateBuilderInterruptible(this);
     }
+    
     /**
      * Returns a model of the MSUs in this data set
      * @return
      */
     public RiskModelMSU getMSUStatistics() {
         progress.value = 0;
-        return new RiskModelMSU(this.handle, this.identifiers, progress, stop);
+        return new RiskModelMSU(this.handle, this.identifiers, progress, stop, 0);
+    }
+
+    /**
+     * Returns a model of the MSUs in this data set
+     * @param maxK The maximal size of an MSU considered
+     * @return
+     */
+    public RiskModelMSU getMSUStatistics(int maxK) {
+        progress.value = 0;
+        return new RiskModelMSU(this.handle, this.identifiers, progress, stop, maxK);
     }
 
     /**
