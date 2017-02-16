@@ -36,4 +36,4 @@ governing permissions and limitations under the License.
 External Libraries
 ------
 
-The framework uses external libraries. The according licenses are listed in the respective folders.
+ARX uses external libraries. Their licenses are listed in the respective folders.
