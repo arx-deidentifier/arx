@@ -26,12 +26,14 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelMSU;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -39,10 +41,10 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.swtchart.Chart;
@@ -88,10 +90,16 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     private Chart               chart;
 
     /** View */
-    private Composite           chartRoot;
+    private Composite           rootChart;
+
+    /** View */
+    private Composite           rootTable;
 
     /** View */
     private Composite           root;
+
+    /** View */
+    private SashForm            sash;
 
     /** View */
     private DynamicTable        tableAttributes;
@@ -174,7 +182,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         if (chart != null) {
             chart.dispose();
         }
-        chart = new Chart(chartRoot, SWT.NONE);
+        chart = new Chart(rootChart, SWT.NONE);
         chart.setOrientation(SWT.HORIZONTAL);
         chart.setLayoutData(SWTUtil.createFillGridData(0));
         
@@ -272,20 +280,41 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     @Override
     protected Control createControl(Composite parent) {
 
+        // Root
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(SWTUtil.createGridLayout(1));
-        Label label = new Label(root, SWT.NONE);
-        label.setText(LABEL_DISTRIBUTION);
-        this.chartRoot = new Composite(root, SWT.NONE);
-        this.chartRoot.setLayoutData(SWTUtil.createFillGridData(0));
-        this.chartRoot.setLayout(SWTUtil.createGridLayout(1));
+        this.root.setLayout(new FillLayout());
+        
+        // Sash
+        sash = new SashForm(this.root, SWT.VERTICAL);
+
+        // Chart
+        this.rootChart = new Composite(sash, SWT.NONE);
+        this.rootChart.setLayout(SWTUtil.createGridLayout(1));
+        
+        ComponentTitledSeparator separator1 = new ComponentTitledSeparator(rootChart, SWT.NONE);
+        separator1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        separator1.setText(LABEL_DISTRIBUTION);
+        
+        this.rootChart = new Composite(rootChart, SWT.NONE);
+        this.rootChart.setLayoutData(SWTUtil.createFillGridData(0));
+        this.rootChart.setLayout(SWTUtil.createGridLayout(1));
         this.resetChart();
-        label = new Label(root, SWT.NONE);
-        label.setText(LABEL_COLUMN_PROPERTIES);
-        this.tableAttributes = createTable(root, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
+
+        // Table
+        this.rootTable = new Composite(sash, SWT.NONE);
+        this.rootTable.setLayout(SWTUtil.createGridLayout(1));
+
+        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(rootTable, SWT.NONE);
+        separator2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        separator2.setText(LABEL_COLUMN_PROPERTIES);
+        
+        this.tableAttributes = createTable(rootTable, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
+
+        // Configure & return
+        sash.setWeights(new int[] {2, 2});
+        root.layout();
         return this.root;
     }
-
 
     @Override
     protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
@@ -339,16 +368,18 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
             @Override
             public void onFinish() {
 
+                // Check
                 if (stopped || !isEnabled()) {
                     return;
                 }
-                
 
+                // Disable redraw
                 root.setRedraw(false);
-                // Clear
-                clearTable(tableAttributes);
                 
+                // Clear table
+                clearTable(tableAttributes);
 
+                // Fill table
                 ISeriesSet seriesSet = chart.getSeriesSet();
                 IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR, LABEL_SIZE); //$NON-NLS-1$
                 series.getLabel().setVisible(false);
@@ -364,19 +395,23 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                     labels[i] = String.valueOf(i);
                 }
                 series.setYSeries(msuSizeDistribution);
+                
+                // Configure
                 chart.getLegend().setVisible(false);
-
                 IAxisSet axisSet = chart.getAxisSet();
 
+                // X-axis
                 IAxis yAxis = axisSet.getYAxis(0);
                 yAxis.setRange(new Range(0d, 100d));
                 yAxis.adjustRange();
 
+                // X-axis
                 IAxis xAxis = axisSet.getXAxis(0);
                 xAxis.setCategorySeries(labels);
                 xAxis.adjustRange();
                 updateCategories();
 
+                // Update
                 chart.updateLayout();
                 chart.update();
 
@@ -396,9 +431,11 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                     }
                 }
                 
-                root.layout();
-                setStatusDone();
+                // Enable
                 root.setRedraw(true);
+                root.layout();
+                sash.setWeights(new int[] {2, 2});
+                setStatusDone();
             }
 
             @Override
@@ -443,12 +480,22 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
     @Override
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
-        return null;
+        return new ComponentStatusLabelProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
     }
+    
     @Override
     protected ViewRiskType getViewType() {
         return ViewRiskType.CLASSES_TABLE;
     }
+    
     /**
      * Is an analysis running
      */
