@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class LayoutRisksTop extends LayoutRisksAbstract {
         registerView(1, new ViewRisksRiskDistributionTable(createTab(Resources.getMessage("RiskAnalysis.0"), "help.risk.classsizes"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         registerView(2, new ViewRisksQuasiIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.15"), "help.risk.quasiidentifiers"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         registerView(3, new ViewRisksReIdentification(createTab(Resources.getMessage("RiskAnalysis.32"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(4, new ViewRisksMSUs(createTab(Resources.getMessage("RiskAnalysis.43"), "help.risk.msu"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(4, new ViewRisksMSUs(createTab(Resources.getMessage("RiskAnalysis.45"), "help.risk.msu"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         
         if (target == ModelPart.INPUT) {
             new ViewRisksHIPAAIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.26"), "help.risk.hipaa"), controller, target, reset); //$NON-NLS-1$ //$NON-NLS-2$

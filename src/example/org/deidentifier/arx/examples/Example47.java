@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,61 +18,109 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.nio.charset.Charset;
 
-import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXResult;
+import org.apache.commons.lang.StringUtils;
+import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataSource;
-import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
+import org.deidentifier.arx.risk.RiskModelAttributes;
 
 /**
- * This class implements an example of how to use ordered distance t-closeness. Implements Example 3
- * from the paper Li et al. "t-Closeness: Privacy Beyond k-Anonymity and l-Diversity"
+ * Example for evaluating distinction and separation of attributes as described in
+ * R. Motwani et al. "Efficient algorithms for masking and finding quasi-identifiers"
+ * Proc. VLDB Conf., 2007.
  * 
+ * @author Maximilian Zitzmann
  * @author Fabian Prasser
  */
 public class Example47 extends Example {
-    
+
     /**
      * Entry point.
-     * 
+     *
      * @param args the arguments
      */
     public static void main(String[] args) throws IOException {
 
-        // Load data
-        DataSource source = DataSource.createCSVSource("data/test2.csv", Charset.forName("UTF-8"), ';', true);
-        source.addColumn("ZIPCode", DataType.STRING);
-        source.addColumn("Age", DataType.INTEGER);
-        source.addColumn("Salary", DataType.INTEGER); // in k
-        source.addColumn("Disease", DataType.STRING);
-        Data data = Data.create(source);
-        
-        // Load hierarchies
-        Hierarchy zipcode = Hierarchy.create("data/test2_hierarchy_ZIPCode.csv", Charset.forName("UTF-8"), ';');
-        Hierarchy age = Hierarchy.create("data/test2_hierarchy_Age.csv", Charset.forName("UTF-8"), ';');
-        
-        // Define
-        data.getDefinition().setAttributeType("ZIPCode", zipcode);
-        data.getDefinition().setAttributeType("Age", age);
-        data.getDefinition().setAttributeType("Salary", AttributeType.SENSITIVE_ATTRIBUTE);
-        
-        // Create an instance of the anonymizer
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new OrderedDistanceTCloseness("Salary", 0.3751));
-        config.setMaxOutliers(0d);
-        
-        // Anonymize
-        ARXResult result = anonymizer.anonymize(data, config);
+        Data data = loadData();
 
-        // Print results
-        System.out.println("Output data:");
-        print(result.getOutput());
+        // Flag every attribute as quasi identifier
+        for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
+            data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        }
+
+        // Perform risk analysis
+        System.out.println("\n - Input data");
+        print(data.getHandle());
+
+        System.out.println("\n - Quasi-identifiers with values (in percent):");
+        analyzeAttributes(data.getHandle());
+    }
+
+    /**
+     * Calculate Alpha Distinction and Separation
+     *
+     * @param handle the data handle
+     */
+    private static void analyzeAttributes(DataHandle handle) {
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(ARXPopulationModel.Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
+        RiskModelAttributes riskmodel = builder.getAttributeRisks();
+
+        // output
+        printPrettyTable(riskmodel.getAttributeRisks());
+    }
+
+    private static Data loadData() {
+        // Define data
+        Data.DefaultData data = Data.create();
+        data.add("age", "sex", "state");
+        data.add("20", "Female", "CA");
+        data.add("30", "Female", "CA");
+        data.add("40", "Female", "TX");
+        data.add("20", "Male", "NY");
+        data.add("40", "Male", "CA");
+        data.add("53", "Male", "CA");
+        data.add("76", "Male", "EU");
+        data.add("40", "Female", "AS");
+        data.add("32", "Female", "CA");
+        data.add("88", "Male", "CA");
+        data.add("48", "Female", "AS");
+        data.add("76", "Male", "UU");
+        return data;
+    }
+
+    /**
+     * Helper that prints a table
+     * @param quasiIdentifiers
+     */
+    private static void printPrettyTable(RiskModelAttributes.QuasiIdentifierRisk[] quasiIdentifiers) {
+        
+        // get char count of longest quasi-identifier
+        int charCountLongestQi = quasiIdentifiers[quasiIdentifiers.length-1].getIdentifier().toString().length();
+
+        // make sure that there is enough space for the table header strings
+        charCountLongestQi = Math.max(charCountLongestQi, 12);
+
+        // calculate space needed
+        String leftAlignFormat = "| %-" + charCountLongestQi + "s | %13.2f | %12.2f |%n";
+
+        // add 2 spaces that are in the string above on the left and right side of the first pattern
+        charCountLongestQi += 2;
+
+        // subtract the char count of the column header string to calculate
+        // how many spaces we need for filling up to the right columnborder
+        int spacesAfterColumHeader = charCountLongestQi - 12;
+
+        System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
+        System.out.format("| Identifier " + StringUtils.repeat(" ", spacesAfterColumHeader) + "|   Distinction |   Separation |%n");
+        System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
+        for (RiskModelAttributes.QuasiIdentifierRisk quasiIdentifier : quasiIdentifiers) {
+            // print every Quasi-Identifier
+            System.out.format(leftAlignFormat, quasiIdentifier.getIdentifier(), quasiIdentifier.getDistinction() * 100, quasiIdentifier.getSeparation() * 100);
+        }
+        System.out.format("+" + StringUtils.repeat("-", charCountLongestQi) + "+---------------+--------------+%n");
     }
 }

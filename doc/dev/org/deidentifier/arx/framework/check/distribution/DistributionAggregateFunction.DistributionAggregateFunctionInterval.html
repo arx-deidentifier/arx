@@ -190,13 +190,19 @@ extends <a href="../../../../../../org/deidentifier/arx/framework/check/distribu
 <div class="block">Clone method</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>&lt;T&gt;&nbsp;double</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionInterval.html#getError(org.deidentifier.arx.framework.check.distribution.Distribution)">getError</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</code>
+<div class="block">Returns the normalized error induced by aggregation.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.framework.check.distribution.<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></h3>
-<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics,%20org.deidentifier.arx.framework.check.distribution.Distribution,%20org.deidentifier.arx.DataType.DataTypeWithRatioScale,%20double)">addAll</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">getMeanError</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMinMax(java.lang.String[],%20org.deidentifier.arx.DataType.DataTypeWithRatioScale)">getMinMax</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getNMSE(double,%20double,%20double[],%20double)">getNMSE</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#isTypePreserving()">isTypePreserving</a></code></li>
+<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics, org.deidentifier.arx.framework.check.distribution.Distribution, org.deidentifier.arx.DataType.DataTypeWithRatioScale, double)">addAll</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getInformationLoss(org.deidentifier.arx.framework.check.distribution.Distribution)">getInformationLoss</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMinMax(java.lang.String[], org.deidentifier.arx.DataType.DataTypeWithRatioScale)">getMinMax</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getNMSE(double, double, double[], double)">getNMSE</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#isTypePreserving()">isTypePreserving</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -256,7 +262,7 @@ extends <a href="../../../../../../org/deidentifier/arx/framework/check/distribu
 <a name="clone()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>clone</h4>
 <pre>public&nbsp;<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionInterval.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction.DistributionAggregateFunctionInterval</a>&nbsp;clone()</pre>
@@ -265,6 +271,24 @@ extends <a href="../../../../../../org/deidentifier/arx/framework/check/distribu
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="getError(org.deidentifier.arx.framework.check.distribution.Distribution)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getError</h4>
+<pre>public&nbsp;&lt;T&gt;&nbsp;double&nbsp;getError(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getError(org.deidentifier.arx.framework.check.distribution.Distribution)">DistributionAggregateFunction</a></code></strong></div>
+<div class="block">Returns the normalized error induced by aggregation. In most cases this will be the mean squared error 
+ normalized into [0,1]. In case of generalization, it will return the normalized generalization level
+ (also called generalization intensity). In case of intervals, it will return the normalized number
+ of aggregated values.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getError(org.deidentifier.arx.framework.check.distribution.Distribution)">getError</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

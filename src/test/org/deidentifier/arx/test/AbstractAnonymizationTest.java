@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -240,7 +240,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         
         @Override
         public String toString() {
-            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
@@ -305,7 +305,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.containsCriterion(LDiversity.class) || testCase.config.containsCriterion(TCloseness.class)) {
+                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
@@ -364,9 +364,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         
         // Test or warmup
         ARXResult result = anonymizer.anonymize(data, testCase.config);
+        DataHandle output = null;
         if (testCase.hashcode != -1) {
             try {
-                result.optimize(result.getOutput());
+                output = result.getOutput();
+                result.optimizeIterative(output, 0.05d, 100, 0.05d);
             } catch (RollbackRequiredException e) {
                 throw new RuntimeException(e);
             }
@@ -390,7 +392,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 result = anonymizer.anonymize(data, testCase.config);
                 if (testCase.hashcode != -1) {
                     try {
-                        result.optimize(result.getOutput());
+                        output = result.getOutput();
+                        result.optimizeIterative(output, 0.05d, 100, 0.05d);
                     } catch (RollbackRequiredException e) {
                         throw new RuntimeException(e);
                     }
@@ -420,10 +423,9 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             
             // Compute hashcode of result
             int hashcode = 23;
-            DataHandle handle = result.getOutput();
-            for (int row = 0; row < handle.getNumRows(); row++) {
-                for (int column = 0; column < handle.getNumColumns(); column++) {
-                    hashcode = (37 * hashcode) + handle.getValue(row, column).hashCode();
+            for (int row = 0; row < output.getNumRows(); row++) {
+                for (int column = 0; column < output.getNumColumns(); column++) {
+                    hashcode = (37 * hashcode) + output.getValue(row, column).hashCode();
                 }
             }
             
@@ -437,11 +439,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
             
-            String lossActual = result.getGlobalOptimum().getMaximumInformationLoss().toString();
+            String lossActual = result.getGlobalOptimum().getHighestScore().toString();
             String lossExpected = testCase.optimalInformationLoss;
             
             assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
-                         lossActual + "(" + result.getGlobalOptimum().getMinimumInformationLoss().toString() + ")",
+                         lossActual + "(" + result.getGlobalOptimum().getLowestScore().toString() + ")",
                          lossExpected,
                          lossActual);
                          
@@ -475,7 +477,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                     if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
                         statistics[5]++;
                     }
-                    if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
+                    if (arxNode.getHighestScore() == arxNode.getLowestScore()) {
                         statistics[6]++;
                     }
                 }

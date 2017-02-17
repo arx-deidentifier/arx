@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
-import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -86,7 +84,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * @param function
      */
     public MetricMDNMLoss(double gsFactor, AggregateFunction function){
-        super(false, false, function);
+        super(true, false, false, function);
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Parameter must be in [0, 1]");
         }
@@ -114,24 +112,44 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public double getGeneralizationFactor() {
         return gFactor;
     }
-
+    
     @Override
     // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
-    
+
     @Override
     public String getName() {
         return "Loss";
     }
-
+    
     @Override
     // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getSuppressionFactor() {
         return sFactor;
     }
 
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
+    }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Loss");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+    
     @Override
     public String toString() {
         return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
@@ -151,7 +169,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double[] result = new double[dimensions];
         double[] bound = new double[dimensions];
 
-        // Compute NDS and lower bound
+        // Compute information loss and lower bound
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
@@ -165,10 +183,13 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 }
                 for (int dimension=0; dimension<dimensionsAggregated; dimension++){
                     
-                    double share = (double)m.count * microaggregationFunctions[dimension].getMeanError(m.distributions[microaggregationStart + dimension]);
+                    double share = (double)m.count * super.getError(microaggregationFunctions[dimension],
+                                                                    m.distributions[microaggregationStart + dimension]);
                     result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
                                          (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
-                    // Note: we ignore the bound, as we cannot compute it
+                    // Note: we ignore a bound for microaggregation, as we cannot compute it
+                    // this means that the according entries in the resulting array are not changed and remain 0d
+                    // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
                 }
             }
             m = m.nextOrdered;
@@ -190,7 +211,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                                                super.createInformationLoss(bound));
         
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
 
@@ -213,21 +234,21 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
         // Compute
         for (int dimension=0; dimension<dimensionsAggregated; dimension++){
-            result[dimensionsGeneralized + dimension] = (double)entry.count * microaggregationFunctions[dimension].getMeanError(entry.distributions[microaggregationStart + dimension]);
+            result[dimensionsGeneralized + dimension] = (double)entry.count * super.getError(microaggregationFunctions[dimension],
+                                                                                             entry.distributions[microaggregationStart + dimension]); 
         }
         
         // Return
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-
+    
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
-                                                               HashGroupify g) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify g) {
         
         // Prepare
         int dimensions = getDimensions();
@@ -246,6 +267,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                     bound[dimension] += share * gFactor;
                 }
                 // Note: we ignore microaggregation, as we cannot compute a bound for it
+                // this means that the according entries in the resulting array are not changed and remain 0d
+                // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
             }
             m = m.nextOrdered;
         }
@@ -258,7 +281,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Return
         return super.createInformationLoss(bound);
     }
-    
+
     /**
      * For subclasses.
      *
@@ -267,7 +290,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected DomainShare[] getShares(){
         return this.shares;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -278,36 +301,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Prepare weights
         super.initializeInternal(manager, definition, input, hierarchies, config);
 
-        // Compute domain shares
-        this.shares = new DomainShare[hierarchies.length];
-        for (int i=0; i<shares.length; i++) {
-            
-            // Extract info
-            String attribute = input.getHeader()[i];
-            String[][] hierarchy = definition.getHierarchy(attribute);
-            HierarchyBuilder<?> builder = definition.getHierarchyBuilder(attribute);
-            
-            // Create shares for redaction-based hierarchies
-            if ((builder instanceof HierarchyBuilderRedactionBased) &&
-                ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
-                shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
-                
-             // Create shares for interval-based hierarchies
-            } else if (builder instanceof HierarchyBuilderIntervalBased){
-                shares[i] = new DomainShareInterval<>((HierarchyBuilderIntervalBased<?>)builder,
-                                                        hierarchies[i].getArray(),
-                                                        input.getDictionary().getMapping()[i]);
-                
-            // Create fallback-shares for materialized hierarchies
-            } else {
-                shares[i] = new DomainShareMaterialized(hierarchy, 
-                                                        input.getDictionary().getMapping()[i],
-                                                        hierarchies[i].getArray());
-            }
-        }
-   
         // Determine total number of tuples
         this.tuples = (double)super.getNumRecords(config, input);
+        
+        // Save domain shares
+        this.shares = manager.getDomainShares();
         
         // Min and max
         double[] min = new double[getDimensions()];
@@ -319,11 +317,16 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     /**
-     * Returns whether this metric handles microaggregation
+     * Normalizes the aggregate.
+     *
+     * @param aggregate
+     * @param dimension
      * @return
      */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return true;
+    protected double normalizeAggregated(double aggregate) {
+        double result = aggregate / tuples;
+        result = result >= 0d ? result : 0d;
+        return round(result);
     }
 
     /**
@@ -338,19 +341,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double min = gFactor * tuples / shares[dimension].getDomainSize();
         double max = tuples;
         double result = (aggregate - min) / (max - min);
-        result = result >= 0d ? result : 0d;
-        return round(result);
-    }
-
-    /**
-     * Normalizes the aggregate.
-     *
-     * @param aggregate
-     * @param dimension
-     * @return
-     */
-    protected double normalizeAggregated(double aggregate) {
-        double result = aggregate / tuples;
         result = result >= 0d ? result : 0d;
         return round(result);
     }

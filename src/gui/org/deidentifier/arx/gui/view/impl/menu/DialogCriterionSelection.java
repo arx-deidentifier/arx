@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,29 +48,25 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
 /**
- * A dialog for selecting privacy criteria.
+ * A dialog for selecting privacy models.
  *
  * @author Fabian Prasser
  */
 public class DialogCriterionSelection extends TitleAreaDialog implements IDialog {
 
-    /**  TODO */
-    private Button                       ok         = null;
-    
-    /**  TODO */
+    /** View */
+    private Button                       ok         = null;    
+    /**  View */
     private Button                       cancel     = null;
-    
-    /**  TODO */
+    /**  Model */
     private List<ModelExplicitCriterion> elements   = null;
-    
-    /**  TODO */
+    /**  Model */
     private ModelExplicitCriterion       selection  = null;
-
-    /**  TODO */
+    /**  Controller */
     private Controller                   controller = null;
 
     /**
-     * Constructor.
+     * Creates a new instance.
      *
      * @param controller
      * @param parent
@@ -90,7 +86,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
     }
 
     /**
-     * Returns the selected criterion.
+     * Returns the selected model.
      *
      * @return
      */

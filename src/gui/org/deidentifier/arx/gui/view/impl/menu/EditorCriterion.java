@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import de.linearbits.swt.widgets.KnobColorProfile;
 import de.linearbits.swt.widgets.KnobRange;
 
 /**
- * Base class
+ * Base class for editors
  * 
  * @author Fabian Prasser
  */
@@ -187,10 +187,10 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * @param label
      * @param value
      */
-    protected void updateLabel(Text label, double value) {
-        String text = SWTUtil.getPrettyString(value);
+    protected void updateLabel(Label label, int value) {
+        String text = String.valueOf(value);
         label.setText(" " + text);
-        label.setToolTipText(String.valueOf(value));
+        label.setToolTipText(text);
     }
 
     /**
@@ -199,10 +199,10 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * @param label
      * @param value
      */
-    protected void updateLabel(Text label, int value) {
+    protected void updateLabel(Text label, double value) {
         String text = SWTUtil.getPrettyString(value);
         label.setText(" " + text);
-        label.setToolTipText(text);
+        label.setToolTipText(String.valueOf(value));
     }
     
     /**
@@ -211,8 +211,8 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      * @param label
      * @param value
      */
-    protected void updateLabel(Label label, int value) {
-        String text = String.valueOf(value);
+    protected void updateLabel(Text label, int value) {
+        String text = SWTUtil.getPrettyString(value);
         label.setText(" " + text);
         label.setToolTipText(text);
     }

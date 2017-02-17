@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,26 +47,26 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
      */
     public static abstract class SerializableComparator<T> implements Comparator<T>, Serializable {
         
-        /**  TODO */
+        /**  Method */
         private static final long serialVersionUID = 3851134667082727602L;
     }
     
     /**
-     * 
+     * Internal helper class
      *
      * @param <T>
      */
     @SuppressWarnings("hiding")
     protected class CloseElements<T> extends AbstractGroup {
         
-        /**  TODO */
+        /**  Method */
         private static final long serialVersionUID = 7224062023293601561L;
         
-        /**  TODO */
+        /**  Values */
         private String[] values;
 
         /**
-         * 
+         * Creates a new instance
          *
          * @param values
          * @param function
@@ -77,7 +77,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
 
         /**
-         * 
+         * Returns the values
          *
          * @return
          */
@@ -86,8 +86,8 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         }
 
         /**
-         * 
-         *
+         *  Method
+         *  
          * @param list
          * @param function
          * @return
@@ -178,7 +178,7 @@ public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased
         return create(new File(file));
     }
 
-    /**  TODO */
+    /** Comparator */
     private final Comparator<String> comparator;
 
     /**

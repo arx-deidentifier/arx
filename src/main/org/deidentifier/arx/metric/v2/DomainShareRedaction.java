@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,7 +50,7 @@ public class DomainShareRedaction implements DomainShare {
 
     /** For interpolating linearly from input to output range. */
     private double            maxOutput;
-
+    
     /**
      * Creates a new set of domain shares derived from the given functional redaction-based hierarchy.
      *
@@ -71,6 +71,43 @@ public class DomainShareRedaction implements DomainShare {
     }
 
     /**
+     * Clone constructor
+     * @param maxValueLength
+     * @param domainSize
+     * @param alphabetSize
+     * @param minInput
+     * @param maxInput
+     * @param minOutput
+     * @param maxOutput
+     */
+    private DomainShareRedaction(double maxValueLength,
+                                   double domainSize,
+                                   double alphabetSize,
+                                   double minInput,
+                                   double maxInput,
+                                   double minOutput,
+                                   double maxOutput) {
+        this.maxValueLength = maxValueLength;
+        this.domainSize = domainSize;
+        this.alphabetSize = alphabetSize;
+        this.minInput = minInput;
+        this.maxInput = maxInput;
+        this.minOutput = minOutput;
+        this.maxOutput = maxOutput;
+    }
+
+    @Override
+    public DomainShareRedaction clone() {
+        return new DomainShareRedaction(this.maxValueLength,
+                                        this.domainSize,
+                                        this.alphabetSize,
+                                        this.minInput,
+                                        this.maxInput,
+                                        this.minOutput,
+                                        this.maxOutput);
+    }
+
+    /**
      * Returns the size of the domain.
      *
      * @return
@@ -79,7 +116,7 @@ public class DomainShareRedaction implements DomainShare {
     public double getDomainSize() {
         return domainSize;
     }
-
+    
     /**
      * Returns the share of the given value.
      *
@@ -93,6 +130,5 @@ public class DomainShareRedaction implements DomainShare {
         // Compute and interpolate
         double input = Math.pow(alphabetSize, (double)level - maxValueLength);
         return (input - minInput) / (maxInput - minInput) * (maxOutput - minOutput) + minOutput;
-        
     }
 }

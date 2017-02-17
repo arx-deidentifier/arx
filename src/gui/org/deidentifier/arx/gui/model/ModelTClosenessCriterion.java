@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,12 +54,8 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelTClosenessCriterion(String attribute,
-                                    int variant,
-                                    double t) {
+    public ModelTClosenessCriterion(String attribute) {
         super(attribute);
-        this.variant = variant;
-        this.t = t;
     }
     
     /**
@@ -67,8 +63,12 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelTClosenessCriterion(String attribute) {
+    public ModelTClosenessCriterion(String attribute,
+                                    int variant,
+                                    double t) {
         super(attribute);
+        this.variant = variant;
+        this.t = t;
     }
     
     @Override
@@ -122,7 +122,9 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
         ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
         this.t = other.t;
         this.variant = other.variant;
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
     
 	@Override

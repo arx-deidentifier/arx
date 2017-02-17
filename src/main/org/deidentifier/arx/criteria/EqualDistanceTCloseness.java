@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,11 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The t-closeness criterion with equal-distance EMD.
@@ -53,13 +56,13 @@ public class EqualDistanceTCloseness extends TCloseness {
     }
     
     @Override
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         distribution = manager.getDistribution(attribute);
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
         // Calculate EMD with equal distance
         int[] buckets = entry.distributions[index].getBuckets();
@@ -99,6 +102,15 @@ public class EqualDistanceTCloseness extends TCloseness {
 	@Override
     public boolean isLocalRecodingSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("t-Closeness");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (t)", this.t);
+        result.addProperty("Distance", "Equal");
+        return result;
     }
 
     @Override

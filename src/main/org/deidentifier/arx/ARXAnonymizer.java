@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -303,61 +303,6 @@ public class ARXAnonymizer {
     }
 
     /**
-     * Reset a previous lattice and run the algorithm .
-     *
-     * @param manager
-     * @param definition
-     * @param config
-     * @return
-     * @throws IOException
-     */
-    protected Result anonymize(final DataManager manager,
-                               final DataDefinition definition,
-                               final ARXConfiguration config) throws IOException {
-
-        // Initialize
-        config.initialize(manager);
-
-        // Check
-        checkAfterEncoding(config, manager);
-
-        // Build or clean the lattice
-        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
-
-        // Build a node checker
-        final NodeChecker checker = new NodeChecker(manager,
-                                                    config.getMetric(),
-                                                    config.getInternalConfiguration(),
-                                                    historySize,
-                                                    snapshotSizeDataset,
-                                                    snapshotSizeSnapshot,
-                                                    solutionSpace);
-
-        // Initialize the metric
-        config.getMetric().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
-
-        // Create an algorithm instance
-        AbstractAlgorithm algorithm = getAlgorithm(config,
-                                                   manager,
-                                                   solutionSpace,
-                                                   checker);
-        algorithm.setListener(listener);
-
-        
-        // Execute
-
-        final long time = System.currentTimeMillis();
-        algorithm.traverse();
-        
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
-        
-        // Return the result
-        return new Result(config.getMetric(), checker, solutionSpace, manager, algorithm, time);
-    }
-
-    /**
      * Performs some sanity checks.
      *
      * @param config
@@ -365,23 +310,25 @@ public class ARXAnonymizer {
      */
     private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
 
-        if (config.containsCriterion(KAnonymity.class)){
-            KAnonymity c = config.getCriterion(KAnonymity.class);
+        if (config.isPrivacyModelSpecified(KAnonymity.class)){
+            KAnonymity c = config.getPrivacyModel(KAnonymity.class);
+            // TODO: getDataGeneralized().getDataLength() does not consider data subsets
             if ((c.getK() > manager.getDataGeneralized().getDataLength()) || (c.getK() < 1)) { 
-                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+                throw new IllegalArgumentException("Parameter k (" + c.getK() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
             }
         }
-        if (config.containsCriterion(LDiversity.class)){
-            for (LDiversity c : config.getCriteria(LDiversity.class)){
+        if (config.isPrivacyModelSpecified(LDiversity.class)){
+            for (LDiversity c : config.getPrivacyModels(LDiversity.class)){
+                // TODO: getDataGeneralized().getDataLength() does not consider data subsets
 	            if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") musst be positive and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
 	            }
             }
         }
-        if (config.containsCriterion(DDisclosurePrivacy.class)){
-            for (DDisclosurePrivacy c : config.getCriteria(DDisclosurePrivacy.class)){
-                if (c.getD() < 0) { 
-                    throw new IllegalArgumentException("Parameter d (" + c.getD() + ") musst be positive and larger than 0"); 
+        if (config.isPrivacyModelSpecified(DDisclosurePrivacy.class)){
+            for (DDisclosurePrivacy c : config.getPrivacyModels(DDisclosurePrivacy.class)){
+                if (c.getD() <= 0) { 
+                    throw new IllegalArgumentException("Parameter d (" + c.getD() + ") must be positive and larger than 0"); 
                 }
             }
         }
@@ -403,7 +350,7 @@ public class ARXAnonymizer {
             if (maxLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid maximum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
                                                                                                maxLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
             if (maxLevels[i] < minLevels[i]) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() +
-                                                                                  "' has to be lower than or requal to the defined maximum!"); }
+                                                                                  "' has to be lower than or equal to the defined maximum!"); }
         }
     }
 
@@ -420,20 +367,20 @@ public class ARXAnonymizer {
 
         // Lots of checks
         if (handle == null) { throw new NullPointerException("Data must not be null!"); }
-        if (config.containsCriterion(LDiversity.class) ||
-            config.containsCriterion(TCloseness.class)){
+        if (config.isPrivacyModelSpecified(LDiversity.class) ||
+            config.isPrivacyModelSpecified(TCloseness.class)){
             if (handle.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
         }
         for (String attr : handle.getDefinition().getSensitiveAttributes()){
             boolean found = false;
-            for (LDiversity c : config.getCriteria(LDiversity.class)) {
+            for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
                 if (c.getAttribute().equals(attr)) {
                     found = true;
                     break;
                 }
             }
             if (!found) {
-                for (TCloseness c : config.getCriteria(TCloseness.class)) {
+                for (TCloseness c : config.getPrivacyModels(TCloseness.class)) {
                     if (c.getAttribute().equals(attr)) {
                         found = true;
                         break;
@@ -441,7 +388,7 @@ public class ARXAnonymizer {
                 }
             }
             if (!found) {
-                for (DDisclosurePrivacy c : config.getCriteria(DDisclosurePrivacy.class)) {
+                for (DDisclosurePrivacy c : config.getPrivacyModels(DDisclosurePrivacy.class)) {
                     if (c.getAttribute().equals(attr)) {
                         found = true;
                         break;
@@ -449,17 +396,17 @@ public class ARXAnonymizer {
                 }
             }
             if (!found) {
-                throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
+                throw new IllegalArgumentException("No privacy model specified for sensitive attribute: '"+attr+"'!");
             }
         }
-        for (LDiversity c : config.getCriteria(LDiversity.class)) {
+        for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("L-Diversity model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
             }
         }
-        for (TCloseness c : config.getCriteria(TCloseness.class)) {
+        for (TCloseness c : config.getPrivacyModels(TCloseness.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("T-Closeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
             }
         }
 
@@ -507,7 +454,7 @@ public class ARXAnonymizer {
         }
         
         // Check constraints for (e,d)-DP
-        if (config.containsCriterion(EDDifferentialPrivacy.class)) {
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
@@ -573,7 +520,62 @@ public class ARXAnonymizer {
         final String[] header = ((DataHandleInput) handle).header;
         final int[][] dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getCriteria(), getAggregateFunctions(definition));
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getPrivacyModels(), getAggregateFunctions(definition));
         return manager;
+    }
+
+    /**
+     * Reset a previous lattice and run the algorithm .
+     *
+     * @param manager
+     * @param definition
+     * @param config
+     * @return
+     * @throws IOException
+     */
+    protected Result anonymize(final DataManager manager,
+                               final DataDefinition definition,
+                               final ARXConfiguration config) throws IOException {
+
+        // Initialize
+        config.initialize(manager);
+
+        // Check
+        checkAfterEncoding(config, manager);
+
+        // Build or clean the lattice
+        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
+
+        // Initialize the metric
+        config.getQualityModel().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
+
+        // Build a node checker
+        final NodeChecker checker = new NodeChecker(manager,
+                                                    config.getQualityModel(),
+                                                    config.getInternalConfiguration(),
+                                                    historySize,
+                                                    snapshotSizeDataset,
+                                                    snapshotSizeSnapshot,
+                                                    solutionSpace);
+
+        // Create an algorithm instance
+        AbstractAlgorithm algorithm = getAlgorithm(config,
+                                                   manager,
+                                                   solutionSpace,
+                                                   checker);
+        algorithm.setListener(listener);
+
+        
+        // Execute
+
+        final long time = System.currentTimeMillis();
+        algorithm.traverse();
+        
+        // Deactivate history to prevent bugs when sorting data
+        checker.getHistory().reset();
+        checker.getHistory().setSize(0);
+        
+        // Return the result
+        return new Result(config.getQualityModel(), checker, solutionSpace, manager, algorithm, time);
     }
 }

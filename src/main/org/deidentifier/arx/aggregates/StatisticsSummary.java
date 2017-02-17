@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -85,13 +85,28 @@ public class StatisticsSummary<T> {
         }
         
         /**
+         * Adds a value
+         * @param value
+         */
+        public void addValue(String value) {
+            this.values.add(value);
+        }
+        
+        /**
+         * Clears the data
+         */
+        public void clear() {
+            this.values.clear();
+        }
+
+        /**
          * Returns a summary
          * @return
          */
         public String getMax() {
             return max;
         }
-        
+
         /**
          * Returns a summary
          * @return
@@ -123,7 +138,7 @@ public class StatisticsSummary<T> {
         public int getNumberOfMeasures() {
             return numberOfMeasures;
         }
-
+        
         /**
          * Returns the index of the next element that does not equal the element at the given index
          * @param index
@@ -137,21 +152,6 @@ public class StatisticsSummary<T> {
                 index++;
             }
             return index;
-        }
-
-        /**
-         * Adds a value
-         * @param value
-         */
-        public void addValue(String value) {
-            this.values.add(value);
-        }
-        
-        /**
-         * Clears the data
-         */
-        public void clear() {
-            this.values.clear();
         }
 
         /**

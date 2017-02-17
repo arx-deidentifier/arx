@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,24 +28,38 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
  */
 public class MetricConfiguration implements Serializable {
 
+    /**
+     * Attacker model used by the metric
+     * 
+     * @author Fabian Prasser
+     * 
+     */
+    public static enum MetricConfigurationAttackerModel {
+        PROSECUTOR,
+        JOURNALIST
+    }
+
     /** SVUID. */
-    private static final long serialVersionUID = 871854276489749340L;
+    private static final long                serialVersionUID        = 871854276489749340L;
 
     /** Monotonic variant. */
-    private boolean           monotonic               = false;
-    
+    private boolean                          monotonic               = false;
+
     /** Coding model. */
-    private double            gsFactor                = 0.5d;
-    
+    private double                           gsFactor                = 0.5d;
+
     /** Precomputed. */
-    private boolean           precomputed             = false;
-    
+    private boolean                          precomputed             = false;
+
     /** Precomputation threshold. */
-    private double            precomputationThreshold = 0.1d;
-    
+    private double                           precomputationThreshold = 0.1d;
+
     /** Aggregate function. */
-    private AggregateFunction aggregateFunction       = AggregateFunction.GEOMETRIC_MEAN;
-    
+    private AggregateFunction                aggregateFunction       = AggregateFunction.GEOMETRIC_MEAN;
+
+    /** Attacker model */
+    private MetricConfigurationAttackerModel attackerModel           = MetricConfigurationAttackerModel.PROSECUTOR;
+
     /**
      * Constructs a new instance.
      *
@@ -56,15 +70,36 @@ public class MetricConfiguration implements Serializable {
      * @param aggregateFunction
      */
     public MetricConfiguration(boolean monotonic,
-                                double gsFactor,
-                                boolean precomputed,
-                                double precomputationThreshold,
-                                AggregateFunction aggregateFunction) {
+                               double gsFactor,
+                               boolean precomputed,
+                               double precomputationThreshold,
+                               AggregateFunction aggregateFunction) {
+        this(monotonic, gsFactor, precomputed, precomputationThreshold, aggregateFunction, 
+             MetricConfigurationAttackerModel.PROSECUTOR);
+    }
+    
+    /**
+     * Constructs a new instance.
+     *
+     * @param monotonic
+     * @param gsFactor
+     * @param precomputed
+     * @param precomputationThreshold
+     * @param aggregateFunction
+     * @param attackerModel 
+     */
+    public MetricConfiguration(boolean monotonic,
+                               double gsFactor,
+                               boolean precomputed,
+                               double precomputationThreshold,
+                               AggregateFunction aggregateFunction, 
+                               MetricConfigurationAttackerModel attackerModel) {
         this.monotonic = monotonic;
         this.gsFactor = gsFactor;
         this.precomputed = precomputed;
         this.precomputationThreshold = precomputationThreshold;
         this.aggregateFunction = aggregateFunction;
+        this.attackerModel = attackerModel;
     }
 
     /**
@@ -72,6 +107,16 @@ public class MetricConfiguration implements Serializable {
      */
     public AggregateFunction getAggregateFunction() {
         return aggregateFunction;
+    }
+    
+    /**
+     * @return the attackerModel
+     */
+    public MetricConfigurationAttackerModel getAttackerModel() {
+        if (this.attackerModel == null) {
+            this.attackerModel = MetricConfigurationAttackerModel.PROSECUTOR;
+        }
+        return this.attackerModel;
     }
     
     /**
@@ -110,6 +155,13 @@ public class MetricConfiguration implements Serializable {
     }
     
     /**
+     * @param attackerModel the attackerModel to set
+     */
+    public void setAttackerModel(MetricConfigurationAttackerModel attackerModel) {
+        this.attackerModel = attackerModel;
+    }
+    
+    /**
      * @param gsFactor the gsFactor to set
      */
     public void setGsFactor(double gsFactor) {
@@ -122,14 +174,14 @@ public class MetricConfiguration implements Serializable {
     public void setMonotonic(boolean monotonic) {
         this.monotonic = monotonic;
     }
-    
+
     /**
      * @param precomputationThreshold the precomputationThreshold to set
      */
     public void setPrecomputationThreshold(double precomputationThreshold) {
         this.precomputationThreshold = precomputationThreshold;
     }
-    
+
     /**
      * @param precomputed the precomputed to set
      */

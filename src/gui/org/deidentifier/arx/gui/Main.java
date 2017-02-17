@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,15 +47,6 @@ public class Main {
     
     /** The main window. */
     private static MainWindow main   = null;
-
-    /**
-     * Main entry point.
-     *
-     * @param args
-     */
-    public static void main(String[] args) {
-        main(null, args);
-    }
 
     /**
      * Main entry point.
@@ -145,6 +136,15 @@ public class Main {
     }
 
     /**
+     * Main entry point.
+     *
+     * @param args
+     */
+    public static void main(String[] args) {
+        main(null, args);
+    }
+
+    /**
      * Returns the monitor on which the application was launched.
      *
      * @param display
@@ -161,6 +161,15 @@ public class Main {
     }
 
     /**
+     * Determine os
+     * @return
+     */
+    private static boolean isUnix() {
+        String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
+        return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0 ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+    }
+    
+    /**
      * Loads a project.
      *
      * @param main
@@ -172,14 +181,5 @@ public class Main {
             if (splash != null) splash.hide();
             main.getController().actionOpenProject(path);
         }
-    }
-    
-    /**
-     * Determine os
-     * @return
-     */
-    private static boolean isUnix() {
-        String os = System.getProperty("os.name").toLowerCase(); //$NON-NLS-1$
-        return (os.indexOf("nix") >= 0 || os.indexOf("nux") >= 0 || os.indexOf("aix") > 0 ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 }

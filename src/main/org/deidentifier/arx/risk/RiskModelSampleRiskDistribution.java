@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,35 +29,60 @@ import org.deidentifier.arx.ARXConfiguration;
 public class RiskModelSampleRiskDistribution {
     
     /** Thresholds */
-    private static final double[] thresholds              = new double[] { 0d,
-                                                          0.0000001d,
-                                                          0.000001d,
-                                                          0.00001d,
-                                                          0.0001d,
-                                                          0.001d,
-                                                          0.01d,
-                                                          0.02d,
-                                                          0.03d,
-                                                          0.04d,
-                                                          0.05d,
-                                                          0.06d,
-                                                          0.07d,
-                                                          0.08d,
-                                                          0.09d,
-                                                          0.1d,
-                                                          0.125d,
-                                                          0.143d,
-                                                          0.167d,
-                                                          0.2d,
-                                                          0.25d,
-                                                          0.334d,
-                                                          0.5d,
-                                                          1d };
+    private static final double[] thresholdsLow           = new double[] {  0d,
+                                                                            0.00000001d,
+                                                                            0.0000001d,
+                                                                            0.000001d,
+                                                                            0.00001d,
+                                                                            0.0001d,
+                                                                            0.001d,
+                                                                            0.01d,
+                                                                            0.02d,
+                                                                            0.03d,
+                                                                            0.04d,
+                                                                            0.05d,
+                                                                            0.06d,
+                                                                            0.07d,
+                                                                            0.08d,
+                                                                            0.09d,
+                                                                            0.1d,
+                                                                            0.125d,
+                                                                            0.143d,
+                                                                            0.167d,
+                                                                            0.2d,
+                                                                            0.25d,
+                                                                            0.334d,
+                                                                            0.5d};
+    /** Thresholds */
+    private static final double[] thresholdsHigh          = new double[] {  0.00000001d,
+                                                                            0.0000001d,
+                                                                            0.000001d,
+                                                                            0.00001d,
+                                                                            0.0001d,
+                                                                            0.001d,
+                                                                            0.01d,
+                                                                            0.02d,
+                                                                            0.03d,
+                                                                            0.04d,
+                                                                            0.05d,
+                                                                            0.06d,
+                                                                            0.07d,
+                                                                            0.08d,
+                                                                            0.09d,
+                                                                            0.1d,
+                                                                            0.125d,
+                                                                            0.143d,
+                                                                            0.167d,
+                                                                            0.2d,
+                                                                            0.25d,
+                                                                            0.334d,
+                                                                            0.5d,
+                                                                            1d };
 
     /** Risks */
-    private final double[]        recordsAtRisk           = new double[thresholds.length];
+    private final double[]        recordsAtRisk           = new double[thresholdsLow.length];
     /** Cumulative risks */
-    private final double[]        recordsAtCumulativeRisk = new double[thresholds.length];
+    private final double[]        recordsAtCumulativeRisk = new double[thresholdsLow.length];
     /** Threshold risk */
     private final double          threshold;
     
@@ -78,14 +103,14 @@ public class RiskModelSampleRiskDistribution {
             int count = array[i+1];
             double risk = 1d / (double)size;
             double records = (double)(count * size)/ histogram.getNumRecords();
-            int index = Arrays.binarySearch(thresholds, risk);
+            int index = Arrays.binarySearch(thresholdsHigh, risk);
             if (index < 0) {
                 index = -index - 1;
             }
             this.recordsAtRisk[index] += records;
         }
         double cumulativeRisk = 0;
-        for (int i=0; i<thresholds.length; i++) {
+        for (int i=0; i<thresholdsHigh.length; i++) {
             cumulativeRisk += this.recordsAtRisk[i];
             this.recordsAtCumulativeRisk[i] = cumulativeRisk;
         }
@@ -93,24 +118,35 @@ public class RiskModelSampleRiskDistribution {
     }
     
     /**
-     * Returns a set of risk thresholds for which data is maintained.
-     * Note: all risks below 10^-6 are mapped to 0% risk.
+     * Returns the lower bounds (exclusive) of the intervals for the according data points.
+     * 
      * @return
      */
-    public double[] getAvailableRiskThresholds() {
-        return thresholds;
+    public double[] getAvailableLowerRiskThresholds() {
+        return thresholdsLow;
+    }
+
+    /**
+     * Returns the lower bounds (inclusive) of the intervals for the according data points.
+     * 
+     * @return
+     */
+    public double[] getAvailableUpperRiskThresholds() {
+        return thresholdsHigh;
     }
     
     /**
      * Returns the fraction of records with a risk lower than or equal
      * to the given threshold.
-     * Note: all risks below 10^-6 are mapped to 0% risk.
      * 
      * @param risk
      * @return
      */
     public double getFractionOfRecordsAtCumulativeRisk(double risk) {
-        int index = Arrays.binarySearch(thresholds, risk);
+        if (risk < 0d || risk >1d) {
+            throw new IllegalArgumentException("Parameter out of range [0, 1]: " + risk);
+        }
+        int index = Arrays.binarySearch(thresholdsHigh, risk);
         if (index < 0) {
             index = -index - 1;
         }
@@ -119,12 +155,15 @@ public class RiskModelSampleRiskDistribution {
 
     /**
      * Returns the fraction of records with a risk which equals the given threshold.
-     * Note: all risks below 10^-6 are mapped to 0% risk.
+     * 
      * @param risk
      * @return
      */
     public double getFractionOfRecordsAtRisk(double risk) {
-        int index = Arrays.binarySearch(thresholds, risk);
+        if (risk < 0d || risk >1d) {
+            throw new IllegalArgumentException("Parameter out of range [0, 1]: " + risk);
+        }
+        int index = Arrays.binarySearch(thresholdsHigh, risk);
         if (index < 0) {
             index = -index - 1;
         }
@@ -148,15 +187,10 @@ public class RiskModelSampleRiskDistribution {
     }
 
     /**
-     * Returns the threshold for which is closest to the threshold which has 
-     * been defined on prosecutor risks and for which data is maintained
+     * Returns the threshold for which is available on prosecutor risks
      * @return
      */
     public double getRiskThreshold() {
-        int index = Arrays.binarySearch(thresholds, this.threshold);
-        if (index < 0) {
-            index = -index - 1;
-        }
-        return thresholds[index];
+        return this.threshold;
     }
 }

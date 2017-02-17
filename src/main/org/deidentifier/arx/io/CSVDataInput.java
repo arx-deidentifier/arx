@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,16 +68,16 @@ public class CSVDataInput {
         }
 
         @Override
-        public int read(char[] cbuf, int off, int len) throws IOException {
-            reader = reader != null ? reader : new InputStreamReader(new FileInputStream(file), charset);
-            return reader.read(cbuf, off, len);
-        }
-
-        @Override
         public void close() throws IOException {
             if (reader != null) {
                 reader.close();
             }
+        }
+
+        @Override
+        public int read(char[] cbuf, int off, int len) throws IOException {
+            reader = reader != null ? reader : new InputStreamReader(new FileInputStream(file), charset);
+            return reader.read(cbuf, off, len);
         }
     }
 
@@ -385,15 +385,6 @@ public class CSVDataInput {
             CsvParser parser = null;
             String[] next = null;
             
-            /** Initializes the parser*/
-            private void initParser() {
-                if (parser == null) {
-                    parser = new CsvParser(settings);
-                    parser.beginParsing(reader);
-                    next = parser.parseNext();
-                }
-            }
-
             @Override
             public boolean hasNext() {
                 initParser();
@@ -424,6 +415,15 @@ public class CSVDataInput {
             @Override
             public void remove() {
                 throw new UnsupportedOperationException("Not implemented");
+            }
+
+            /** Initializes the parser*/
+            private void initParser() {
+                if (parser == null) {
+                    parser = new CsvParser(settings);
+                    parser.beginParsing(reader);
+                    next = parser.parseNext();
+                }
             }
         };
     }

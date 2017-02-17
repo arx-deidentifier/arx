@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
@@ -41,7 +43,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
+public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     
     /** SVUID */
     private static final long        serialVersionUID = 242579895476272606L;
@@ -115,6 +117,11 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         return beta;
     }
     
+    @Override
+    public DataSubset getDataSubset() {
+        return subset;
+    }
+
     /**
      * Returns the delta parameter of (e,d)-DP
      * @return
@@ -148,23 +155,23 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     }
 
     @Override
+    public int getMinimalClassSize() {
+        return k;
+    }
+    
+    @Override
     public int getRequirements(){
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
 
-    @Override
-    public DataSubset getSubset() {
-        return this.subset;
-    }
-    
     /**
      * Creates a random sample based on beta
      *
      * @param manager
      */
-    public void initialize(DataManager manager){
+    public void initialize(DataManager manager, ARXConfiguration config){
         
         // Needed for consistent de-serialization. We need to call this
         // method in the constructor of the class DataManager. The following
@@ -203,13 +210,33 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= k;
     }
 
     @Override
     public boolean isLocalRecodingSupported() {
         return false;
+    }
+    
+    @Override
+    public boolean isMinimalClassSizeAvailable() {
+        return true;
+    }
+
+    @Override
+    public boolean isSubsetAvailable() {
+        return subset != null;
+    }
+    
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Differential privacy");
+        result.addProperty("Epsilon", epsilon);
+        result.addProperty("Delta", delta);
+        result.addProperty("Uniqueness threshold (k)", k);
+        result.addProperty("Sampling probability (beta)", beta);
+        return result;
     }
 
     @Override
@@ -255,7 +282,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
 
         return sum;
     }
-    
+
     /**
      * Calculates c_n
      * @param n
@@ -300,7 +327,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         double power = (new Exp()).value(epsilon);
         return (power - 1.0d + beta) / power;
     }
-    
+
     /**
      * Calculates k
      * @param delta

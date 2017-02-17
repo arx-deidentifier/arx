@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -149,7 +149,6 @@ public class DataHandleOutput extends DataHandle {
         this.result = result;
         this.definition = definition;
         this.anonymous = node.getAnonymity() == Anonymity.ANONYMOUS;
-        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
         this.node = node;
         
         // Extract data
@@ -273,6 +272,11 @@ public class DataHandleOutput extends DataHandle {
         return outputGeneralized.getDataLength();
     }
 
+    @Override
+    public StatisticsBuilder getStatistics() {
+        return new StatisticsBuilder(new DataHandleInternal(this));
+    }
+
     /**
      * Gets the value.
      * 
@@ -293,7 +297,7 @@ public class DataHandleOutput extends DataHandle {
         // Perform
         return internalGetValue(row, col, false);
     }
-
+    
     @Override
     public boolean isOptimized() {
         return this.optimized;
@@ -452,7 +456,7 @@ public class DataHandleOutput extends DataHandle {
         // Finalize
         dictionary.finalizeAll();
     }
-    
+
     /**
      * Releases all resources.
      */
@@ -471,7 +475,6 @@ public class DataHandleOutput extends DataHandle {
         dataTypes = null;
         definition = null;
         header = null;
-        statistics = null;
         node = null;
     }
     

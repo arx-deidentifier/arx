@@ -239,7 +239,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="type parameter in AggregateFunction.AggregateFunctionBuilder">T</a>&gt;</code></td>
-<td class="colLast"><span class="strong">AggregateFunction.AggregateFunctionBuilder.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createIntervalFunction(boolean,%20boolean)">createIntervalFunction</a></strong>(boolean&nbsp;lowerIncluded,
+<td class="colLast"><span class="strong">AggregateFunction.AggregateFunctionBuilder.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html#createIntervalFunction(boolean, boolean)">createIntervalFunction</a></strong>(boolean&nbsp;lowerIncluded,
                       boolean&nbsp;upperIncluded)</code>
 <div class="block">An aggregate function that returns an interval [min, max].</div>
 </td>
@@ -299,14 +299,14 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.Level.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderGroupingBased.Level</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.Level.html" title="type parameter in HierarchyBuilderGroupingBased.Level">U</a>&gt;</code></td>
-<td class="colLast"><span class="strong">HierarchyBuilderGroupingBased.Level.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.Level.html#addGroup(int,%20org.deidentifier.arx.aggregates.AggregateFunction)">addGroup</a></strong>(int&nbsp;size,
+<td class="colLast"><span class="strong">HierarchyBuilderGroupingBased.Level.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.Level.html#addGroup(int, org.deidentifier.arx.aggregates.AggregateFunction)">addGroup</a></strong>(int&nbsp;size,
         <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.Level.html" title="type parameter in HierarchyBuilderGroupingBased.Level">U</a>&gt;&nbsp;function)</code>
 <div class="block">Adds the given group with the given aggregate function.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&gt;</code></td>
-<td class="colLast"><span class="strong">HierarchyBuilderIntervalBased.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T,%20T,%20org.deidentifier.arx.aggregates.AggregateFunction)">addInterval</a></strong>(<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&nbsp;min,
+<td class="colLast"><span class="strong">HierarchyBuilderIntervalBased.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T, T, org.deidentifier.arx.aggregates.AggregateFunction)">addInterval</a></strong>(<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&nbsp;min,
            <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&nbsp;max,
            <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&gt;&nbsp;function)</code>
 <div class="block">Adds an interval.</div>
@@ -314,8 +314,10 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased.CloseElements</a></code></td>
-<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.CloseElements.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html#merge(java.util.List,%20org.deidentifier.arx.aggregates.AggregateFunction)">merge</a></strong>(java.util.List&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased.CloseElements</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="type parameter in HierarchyBuilderOrderBased.CloseElements">T</a>&gt;&gt;&nbsp;list,
-     <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="type parameter in HierarchyBuilderOrderBased.CloseElements">T</a>&gt;&nbsp;function)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.CloseElements.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html#merge(java.util.List, org.deidentifier.arx.aggregates.AggregateFunction)">merge</a></strong>(java.util.List&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased.CloseElements</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="type parameter in HierarchyBuilderOrderBased.CloseElements">T</a>&gt;&gt;&nbsp;list,
+     <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="type parameter in HierarchyBuilderOrderBased.CloseElements">T</a>&gt;&nbsp;function)</code>
+<div class="block">Method</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
@@ -332,8 +334,10 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html#HierarchyBuilderOrderBased.CloseElements(java.lang.String[],%20org.deidentifier.arx.aggregates.AggregateFunction)">HierarchyBuilderOrderBased.CloseElements</a></strong>(java.lang.String[]&nbsp;values,
-                                        <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="type parameter in HierarchyBuilderOrderBased.CloseElements">T</a>&gt;&nbsp;function)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html#HierarchyBuilderOrderBased.CloseElements(java.lang.String[], org.deidentifier.arx.aggregates.AggregateFunction)">HierarchyBuilderOrderBased.CloseElements</a></strong>(java.lang.String[]&nbsp;values,
+                                        <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.CloseElements.html" title="type parameter in HierarchyBuilderOrderBased.CloseElements">T</a>&gt;&nbsp;function)</code>
+<div class="block">Creates a new instance</div>
+</td>
 </tr>
 </tbody>
 </table>
@@ -436,11 +440,11 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup.html#HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup(int,%20org.deidentifier.arx.aggregates.AggregateFunction)">HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup</a></strong>(int&nbsp;size,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup.html#HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup(int, org.deidentifier.arx.aggregates.AggregateFunction)">HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup</a></strong>(int&nbsp;size,
                                                          <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup.html" title="type parameter in HierarchyWizardModelGrouping.HierarchyWizardGroupingGroup">U</a>&gt;&nbsp;function)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval.html#HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval(U,%20U,%20org.deidentifier.arx.aggregates.AggregateFunction)">HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval.html" title="type parameter in HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval">U</a>&nbsp;min,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval.html#HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval(U, U, org.deidentifier.arx.aggregates.AggregateFunction)">HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval.html" title="type parameter in HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval">U</a>&nbsp;min,
                                                             <a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval.html" title="type parameter in HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval">U</a>&nbsp;max,
                                                             <a href="../../../../../org/deidentifier/arx/aggregates/AggregateFunction.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction</a>&lt;<a href="../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval.html" title="type parameter in HierarchyWizardModelGrouping.HierarchyWizardGroupingInterval">U</a>&gt;&nbsp;function)</code>&nbsp;</td>
 </tr>

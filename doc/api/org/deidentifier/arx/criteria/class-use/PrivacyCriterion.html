@@ -105,18 +105,30 @@
 <tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>java.util.Set&lt;T&gt;</code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getCriteria(java.lang.Class)">getCriteria</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
-<div class="block">Returns all privacy criteria that are instances of the given class.</div>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>T</code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getCriterion(java.lang.Class)">getCriterion</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
-<div class="block">Returns an instance of the class, if any.</div>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>T</code></td>
-<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getCriterion(java.lang.Class)">getCriterion</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getPrivacyModel(java.lang.Class)">getPrivacyModel</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
+<div class="block">Returns an instance of the class, if any.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>T</code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getPrivacyModel(java.lang.Class)">getPrivacyModel</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>java.util.Set&lt;T&gt;</code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getPrivacyModels(java.lang.Class)">getPrivacyModels</a></strong>(java.lang.Class&lt;T&gt;&nbsp;clazz)</code>
+<div class="block">Returns all privacy models which are instances of the given class.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
@@ -135,7 +147,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>[]</code></td>
-<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getClassBasedCriteriaAsArray()">getClassBasedCriteriaAsArray</a></strong>()</code>
+<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getClassBasedPrivacyModelsAsArray()">getClassBasedPrivacyModelsAsArray</a></strong>()</code>
 <div class="block">Returns all class-based criteria (except k-anonymity) as an array.</div>
 </td>
 </tr>
@@ -151,12 +163,18 @@
 <tr class="altColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;</code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getCriteria()">getCriteria</a></strong>()</code>
-<div class="block">Returns all criteria.</div>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;</code></td>
-<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getCriteria()">getCriteria</a></strong>()</code>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#getPrivacyModels()">getPrivacyModels</a></strong>()</code>
+<div class="block">Returns all privacy models.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>java.util.Set&lt;<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;</code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#getPrivacyModels()">getPrivacyModels</a></strong>()</code>
 <div class="block">Returns all criteria.</div>
 </td>
 </tr>
@@ -172,10 +190,16 @@
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#addCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">addCriterion</a></strong>(<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;c)</code>
-<div class="block">Adds a criterion to the configuration.</div>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#addPrivacyModel(org.deidentifier.arx.criteria.PrivacyCriterion)">addPrivacyModel</a></strong>(<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;c)</code>
+<div class="block">Adds a privacy model to the configuration.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">removeCriterion</a></strong>(<a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;arg)</code>
 <div class="block">Removes the given criterion.</div>
@@ -193,12 +217,18 @@
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#containsCriterion(java.lang.Class)">containsCriterion</a></strong>(java.lang.Class&lt;? extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</code>
-<div class="block">Returns whether the configuration contains a criterion of the given class.</div>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#containsCriterion(java.lang.Class)">containsCriterion</a></strong>(java.lang.Class&lt;? extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">ARXConfiguration.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.html#isPrivacyModelSpecified(java.lang.Class)">isPrivacyModelSpecified</a></strong>(java.lang.Class&lt;? extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</code>
+<div class="block">Returns whether the configuration contains a privacy model which is an instance of the given class.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><span class="strong">ARXConfiguration.ARXConfigurationInternal.</span><code><strong><a href="../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html#isPrivacyModelSpecified(java.lang.Class)">isPrivacyModelSpecified</a></strong>(java.lang.Class&lt;? extends <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;clazz)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>
@@ -257,7 +287,7 @@
 <tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/EntropyLDiversity.html" title="class in org.deidentifier.arx.criteria">EntropyLDiversity</a></strong></code>
-<div class="block">The entropy l-diversity criterion.</div>
+<div class="block">The entropy l-diversity privacy model.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -315,35 +345,69 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/OrderedDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria">OrderedDistanceTCloseness</a></strong></code>
+<div class="block">The t-closeness criterion for ordered attributes.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/PopulationUniqueness.html" title="class in org.deidentifier.arx.criteria">PopulationUniqueness</a></strong></code>
 <div class="block">This criterion ensures that the population uniqueness falls below a given threshold.</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityJournalist.html" title="class in org.deidentifier.arx.criteria">ProfitabilityJournalist</a></strong></code>
+<div class="block">Privacy model for the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</td>
+</tr>
 <tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityJournalistNoAttack</a></strong></code>
+<div class="block">Privacy model for the "no-attack" variant of the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutor.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutor</a></strong></code>
+<div class="block">Privacy model for the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a></strong></code>
+<div class="block">Privacy model for the "no-attack" variant of the game theoretic approach proposed in:
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/RecursiveCLDiversity.html" title="class in org.deidentifier.arx.criteria">RecursiveCLDiversity</a></strong></code>
 <div class="block">The recursive-(c,l)-diversity criterion.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/RiskBasedCriterion.html" title="class in org.deidentifier.arx.criteria">RiskBasedCriterion</a></strong></code>
 <div class="block">Abstract class for criteria that ensure that a certain risk measure is lower than or equal to a given threshold</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/SampleBasedCriterion.html" title="class in org.deidentifier.arx.criteria">SampleBasedCriterion</a></strong></code>
 <div class="block">An abstract base class for sample-based privacy criteria.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/SampleUniqueness.html" title="class in org.deidentifier.arx.criteria">SampleUniqueness</a></strong></code>
 <div class="block">This criterion ensures that the sample uniqueness falls below a given threshold.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/criteria/TCloseness.html" title="class in org.deidentifier.arx.criteria">TCloseness</a></strong></code>
 <div class="block">An abstract base class for t-closeness criteria as proposed in:
@@ -360,10 +424,48 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">ProfitabilityProsecutorNoAttack.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#clone()">clone</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">ProfitabilityJournalistNoAttack.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html#clone()">clone</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
 <td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></strong>()</code>
 <div class="block">Clone</div>
 </td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">ProfitabilityProsecutorNoAttack.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">ProfitabilityProsecutor.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutor.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">ProfitabilityJournalistNoAttack.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">ProfitabilityJournalist.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/ProfitabilityJournalist.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">PrivacyCriterion.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
+<div class="block">Clone for local recoding</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">KMap.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/KMap.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><span class="strong">Inclusion.</span><code><strong><a href="../../../../../org/deidentifier/arx/criteria/Inclusion.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>&nbsp;</td>
 </tr>
 </tbody>
 </table>

@@ -116,7 +116,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXConfiguration,%20boolean)">RiskModelSampleRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
+<td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRisks.html#RiskModelSampleRisks(org.deidentifier.arx.risk.RiskModelHistogram, org.deidentifier.arx.ARXConfiguration, boolean)">RiskModelSampleRisks</a></strong>(<a href="../../../../org/deidentifier/arx/risk/RiskModelHistogram.html" title="class in org.deidentifier.arx.risk">RiskModelHistogram</a>&nbsp;histogram,
                     <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
                     boolean&nbsp;anonymous)</code>
 <div class="block">Creates a new instance</div>
@@ -259,6 +259,39 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getEstimatedJournalistRisk()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimatedJournalistRisk</h4>
+<pre>public&nbsp;double&nbsp;getEstimatedJournalistRisk()</pre>
+<div class="block">Return journalist risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getEstimatedMarketerRisk()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimatedMarketerRisk</h4>
+<pre>public&nbsp;double&nbsp;getEstimatedMarketerRisk()</pre>
+<div class="block">Return marketer risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getEstimatedProsecutorRisk()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getEstimatedProsecutorRisk</h4>
+<pre>public&nbsp;double&nbsp;getEstimatedProsecutorRisk()</pre>
+<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getFractionOfTuplesAffectedByHighestRisk()">
 <!--   -->
 </a>
@@ -302,39 +335,6 @@ extends java.lang.Object</pre>
 <h4>getLowestRisk</h4>
 <pre>public&nbsp;double&nbsp;getLowestRisk()</pre>
 <div class="block">Returns the lowest re-identification risk of any tuple in the data set</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getEstimatedJournalistRisk()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getEstimatedJournalistRisk</h4>
-<pre>public&nbsp;double&nbsp;getEstimatedJournalistRisk()</pre>
-<div class="block">Return journalist risk threshold, 1 if there is none</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getEstimatedMarketerRisk()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getEstimatedMarketerRisk</h4>
-<pre>public&nbsp;double&nbsp;getEstimatedMarketerRisk()</pre>
-<div class="block">Return marketer risk threshold, 1 if there is none</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getEstimatedProsecutorRisk()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getEstimatedProsecutorRisk</h4>
-<pre>public&nbsp;double&nbsp;getEstimatedProsecutorRisk()</pre>
-<div class="block">Return prosecutor risk threshold, 1 if there is none</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

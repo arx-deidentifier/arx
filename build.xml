@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.4.2" />
+    <property name="arx.version" value="3.6.0" />
 
     <!-- add extra parameter to javadoc generation if Java 1.8 is used -->
     <condition property="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" else="-notimestamp">
@@ -37,6 +37,8 @@
             <filename name="**/hadoop-core-1.2.1.jar" />
             <filename name="**/guava-18.0.jar" />
             <filename name="**/slf4j-api-1.7.13.jar" />
+			<filename name="**/pdfbox-app-2.0.1.jar" />
+			<filename name="**/pdfbox-layout.jar" />
         </or>
     </fileset>
 
@@ -120,6 +122,12 @@
                 <exclude name="**/*.txt" />
             </fileset>
         </copy>
+        <copy todir="build/test/org/deidentifier/arx/certificate/resources" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/certificate/resources" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
+            </fileset>
+        </copy>
     </target>
 
     <target name="benchmark" depends="git.revision,compileTest">
@@ -146,6 +154,8 @@
                     <include name="**/TestAnonymizationRiskBased.java" />
                     <include name="**/TestAnonymizationLocalRecoding.java" />
                     <include name="**/TestAnonymizationOrderedDistanceTCloseness.java" />
+                    <include name="**/TestAnonymizationEntropyLDiversity.java" />
+                	<include name="**/TestAnonymizationProfitability.java" />
                 </fileset>
                 <formatter type="plain" usefile="false" />
                 <formatter type="xml" />
@@ -297,8 +307,20 @@
                 <exclude name="**/*.txt" />
             </fileset>
         </copy>
+        <copy todir="build/main/org/deidentifier/arx/certificate/resources" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/certificate/resources" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
+            </fileset>
+        </copy>
         <copy todir="build/gui/org/deidentifier/arx/risk/resources/us" overwrite="true">
             <fileset dir="src/main/org/deidentifier/arx/risk/resources/us" defaultexcludes="yes">
+                <exclude name="**/*.java" />
+                <exclude name="**/*.txt" />
+            </fileset>
+        </copy>
+        <copy todir="build/gui/org/deidentifier/arx/certificate/resources" overwrite="true">
+            <fileset dir="src/main/org/deidentifier/arx/certificate/resources" defaultexcludes="yes">
                 <exclude name="**/*.java" />
                 <exclude name="**/*.txt" />
             </fileset>
@@ -408,7 +430,6 @@
             <fileset dir="doc/gui" defaultexcludes="no" />
         </jar>
     </target>
-
 
     <target name="jars" depends="jar-win, jar-linux, jar-osx, jar-libs, jar-docs">
         <antcall target="end-clean" />

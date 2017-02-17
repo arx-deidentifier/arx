@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -154,7 +154,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler stop) {
         return handle.getDistinctValues(column, ignoreSuppression, stop);
     }
-
+    
     /**
      * Method
      * @param column
@@ -164,7 +164,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column, InterruptHandler stop) {
         return handle.getDistinctValues(column, false, stop);
     }
-    
+
     /**
      * Delegate
      * @param row
@@ -175,7 +175,7 @@ public class DataHandleInternal {
     public Double getDouble(int row, int column) throws ParseException {
         return handle.getDouble(row, column);
     }
-
+    
     /**
      * Method
      * @param attribute
@@ -227,7 +227,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-
+  
     /**
      * Method
      * @param row
@@ -237,7 +237,7 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-    
+
     /**
      * Gets the value
      */
