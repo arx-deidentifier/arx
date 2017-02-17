@@ -52,6 +52,8 @@ public class RiskModelMSU {
     private final double[]       columnKeyAverageSize;
     /** Distribution of sizes of MSUs */
     private final double[]       sizeDistribution;
+    /** Attributes */
+    private final String[]       attributes;
 
     /**
      * Creates a new instance
@@ -81,6 +83,7 @@ public class RiskModelMSU {
         
         // Build column array
         int[] columns = getColumns(handle, identifiers);
+        attributes = getAttributes(handle, columns);
         
         // Update progress
         progress.value = 10;
@@ -127,6 +130,56 @@ public class RiskModelMSU {
     }
     
     /**
+     * Returns the attributes addressed by the statistics
+     * @return
+     */
+    public String[] getAttributes() {
+        return attributes;
+    }
+
+    /**
+     * @return the columnKeyAverageSize
+     */
+    public double[] getColumnKeyAverageSize() {
+        return columnKeyAverageSize;
+    }
+
+    /**
+     * @return the columnKeyContributions
+     */
+    public double[] getColumnKeyContributions() {
+        return columnKeyContributions;
+    }
+
+    /**
+     * @return the columnKeyMaxSize
+     */
+    public int[] getColumnKeyMaxSize() {
+        return columnKeyMaxSize;
+    }
+
+    /**
+     * @return the columnKeyMinSize
+     */
+    public int[] getColumnKeyMinSize() {
+        return columnKeyMinSize;
+    }
+
+    /**
+     * @return the maxK
+     */
+    public int getMaxK() {
+        return maxK;
+    }
+
+    /**
+     * @return the sizeDistribution
+     */
+    public double[] getMSUSizeDistribution() {
+        return sizeDistribution;
+    }
+
+    /**
      * @return the numMSUs
      */
     public int getNumMSUs() {
@@ -141,52 +194,25 @@ public class RiskModelMSU {
     }
 
     /**
-     * @return the maxK
-     */
-    public int getMaxK() {
-        return maxK;
-    }
-
-    /**
-     * @return the columnKeyContributions
-     */
-    public double[] getColumnKeyContributions() {
-        return columnKeyContributions;
-    }
-
-    /**
-     * @return the columnKeyMinSize
-     */
-    public int[] getColumnKeyMinSize() {
-        return columnKeyMinSize;
-    }
-
-    /**
-     * @return the columnKeyMaxSize
-     */
-    public int[] getColumnKeyMaxSize() {
-        return columnKeyMaxSize;
-    }
-
-    /**
-     * @return the columnKeyAverageSize
-     */
-    public double[] getColumnKeyAverageSize() {
-        return columnKeyAverageSize;
-    }
-
-    /**
-     * @return the sizeDistribution
-     */
-    public double[] getMSUSizeDistribution() {
-        return sizeDistribution;
-    }
-
-    /**
      * Checks for interrupts
      */
     private void checkInterrupt() {
         if (stop.value) { throw new ComputationInterruptedException(); }
+    }
+
+    /**
+     * Returns the column array
+     * @param handle
+     * @param columns
+     * @return
+     */
+    private String[] getAttributes(DataHandleInternal handle, int[] columns) {
+        String[] result = new String[columns.length];
+        int index = 0;
+        for (int column : columns) {
+            result[index++] = handle.getAttributeName(column);
+        }
+        return result;
     }
 
     /**

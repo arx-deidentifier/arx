@@ -16,10 +16,13 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
+import java.util.Arrays;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
@@ -29,11 +32,27 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelMSU;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.swtchart.Chart;
+import org.swtchart.IAxis;
+import org.swtchart.IAxisSet;
+import org.swtchart.IBarSeries;
+import org.swtchart.ISeries.SeriesType;
+import org.swtchart.ISeriesSet;
+import org.swtchart.ITitle;
+import org.swtchart.Range;
 
 import de.linearbits.swt.table.DynamicTable;
 import de.linearbits.swt.table.DynamicTableColumn;
@@ -45,20 +64,40 @@ import de.linearbits.swt.table.DynamicTableColumn;
  */
 public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
-    /** View */
-    private Composite                root;
+    /** Label */
+    private static final String LABEL_ATTRIBUTE         = Resources.getMessage("RiskAnalysisMSU.1");
+    /** Label */
+    private static final String LABEL_CONTRIBUTION      = Resources.getMessage("RiskAnalysisMSU.2");
+    /** Label */
+    private static final String LABEL_AVERAGE_SIZE      = Resources.getMessage("RiskAnalysisMSU.3");
+    /** Label */
+    private static final String LABEL_SIZE              = Resources.getMessage("RiskAnalysisMSU.4");
+    /** Label */
+    private static final String LABEL_FRACTION          = Resources.getMessage("RiskAnalysisMSU.5");
+    /** Label */
+    private static final String LABEL_DISTRIBUTION      = Resources.getMessage("RiskAnalysisMSU.6");
+    /** Label */
+    private static final String LABEL_COLUMN_PROPERTIES = Resources.getMessage("RiskAnalysisMSU.7");
+    /** Label */
+    private static final String LABEL_NO_MSUS_FOUND     = Resources.getMessage("RiskAnalysisMSU.8");
+
+    /** Minimal width of a category label. */
+    private static final int    MIN_CATEGORY_WIDTH      = 10;
+
+    /** The chart. */
+    private Chart               chart;
 
     /** View */
-    private DynamicTable             tableMSUSize;
+    private Composite           chartRoot;
 
     /** View */
-    private DynamicTable             tableColumnContribution;
+    private Composite           root;
 
     /** View */
-    private DynamicTable             tableColumnAverageKeySize;
+    private DynamicTable        tableAttributes;
 
     /** Internal stuff. */
-    private AnalysisManager          manager;
+    private AnalysisManager     manager;
 
     /**
      * Creates a new instance.
@@ -69,9 +108,9 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
      * @param reset
      */
     public ViewRisksMSUs(final Composite parent,
-                                   final Controller controller,
-                                   final ModelPart target,
-                                   final ModelPart reset) {
+                         final Controller controller,
+                         final ModelPart target,
+                         final ModelPart reset) {
         
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
@@ -105,52 +144,128 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
      * @param title
      * @return
      */
-    private DynamicTable createTable(Composite root, String title) {
-        Label label = new Label(root, SWT.NONE);
-        label.setLayoutData(SWTUtil.createNoFillGridData());
-        label.setText(title);
+    private DynamicTable createTable(Composite root, String[] columns, String[] bars) {
         DynamicTable table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
-        DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("Key"); //$NON-NLS-1$
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("50%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText("Value"); //$NON-NLS-1$
+        String width = String.valueOf((int) (100d / (double) columns.length)) + "%"; //$NON-NLS-1$
+        for (String column : columns) {
+            DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
+            if (Arrays.asList(bars).contains(column)) {
+                SWTUtil.createColumnWithBarCharts(table, c);
+            }
+            c.setWidth(width, "100px"); //$NON-NLS-1$
+            c.setText(column);
+        }
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
-        SWTUtil.createGenericTooltip(table);
         table.setLayoutData(SWTUtil.createFillGridData(0));
+        SWTUtil.createGenericTooltip(table);
         return table;
     }
 
     /**
-     * Fills the table
-     * @param table
-     * @param data
+     * Resets the chart
      */
-    private void fillTableRelative(DynamicTable table, double[] data) {
-        for (int i=0; i<data.length; i++) {
-            TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(0, String.valueOf(i+1));
-            item.setData("1", data[i]);
+    private void resetChart() {
+        
+        if (chart != null) {
+            chart.dispose();
         }
+        chart = new Chart(chartRoot, SWT.NONE);
+        chart.setOrientation(SWT.HORIZONTAL);
+        chart.setLayoutData(SWTUtil.createFillGridData(0));
+        
+        // Show/Hide axis
+        chart.addControlListener(new ControlAdapter(){
+            @Override
+            public void controlResized(ControlEvent arg0) {
+                updateCategories();
+            }
+        });
+
+        // Update font
+        FontData[] fd = chart.getFont().getFontData();
+        fd[0].setHeight(8);
+        final Font font = new Font(chart.getDisplay(), fd[0]);
+        chart.setFont(font);
+        chart.addDisposeListener(new DisposeListener(){
+            public void widgetDisposed(DisposeEvent arg0) {
+                if (font != null && !font.isDisposed()) {
+                    font.dispose();
+                }
+            } 
+        });
+        
+        // Update title
+        ITitle graphTitle = chart.getTitle();
+        graphTitle.setText(""); //$NON-NLS-1$
+        graphTitle.setFont(chart.getFont());
+        
+        // Set colors
+        chart.setBackground(root.getBackground());
+        chart.setForeground(root.getForeground());
+        
+        // OSX workaround
+        if (System.getProperty("os.name").toLowerCase().contains("mac")){ //$NON-NLS-1$ //$NON-NLS-2$
+            int r = chart.getBackground().getRed()-13;
+            int g = chart.getBackground().getGreen()-13;
+            int b = chart.getBackground().getBlue()-13;
+            r = r>0 ? r : 0;
+            r = g>0 ? g : 0;
+            r = b>0 ? b : 0;
+            final Color background = new Color(chart.getDisplay(), r, g, b);
+            chart.setBackground(background);
+            chart.addDisposeListener(new DisposeListener(){
+                public void widgetDisposed(DisposeEvent arg0) {
+                    if (background != null && !background.isDisposed()) {
+                        background.dispose();
+                    }
+                } 
+            });
+        }
+
+        // Initialize axes
+        IAxisSet axisSet = chart.getAxisSet();
+        IAxis yAxis = axisSet.getYAxis(0);
+        IAxis xAxis = axisSet.getXAxis(0);
+        ITitle xAxisTitle = xAxis.getTitle();
+        xAxisTitle.setText(""); //$NON-NLS-1$
+        xAxis.getTitle().setFont(chart.getFont());
+        yAxis.getTitle().setFont(chart.getFont());
+        xAxis.getTick().setFont(chart.getFont());
+        yAxis.getTick().setFont(chart.getFont());
+        xAxis.getTick().setForeground(chart.getForeground());
+        yAxis.getTick().setForeground(chart.getForeground());
+        xAxis.getTitle().setForeground(chart.getForeground());
+        yAxis.getTitle().setForeground(chart.getForeground());
+
+        // Initialize y-axis
+        ITitle yAxisTitle = yAxis.getTitle();
+        yAxisTitle.setText(LABEL_FRACTION);
+        chart.setEnabled(false);
+        updateCategories();
     }
 
     /**
-     * Fills the table
-     * @param table
-     * @param data
+     * Makes the chart show category labels or not.
      */
-    private void fillTableAbsolute(DynamicTable table, double[] data) {
-        for (int i=0; i<data.length; i++) {
-            TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(0, String.valueOf(i+1));
-            item.setText(1, SWTUtil.getPrettyString(data[i]));
+    private void updateCategories(){
+        if (chart != null){
+            IAxisSet axisSet = chart.getAxisSet();
+            if (axisSet != null) {
+                IAxis xAxis = axisSet.getXAxis(0);
+                if (xAxis != null) {
+                    String[] series = xAxis.getCategorySeries();
+                    if (series != null) {
+                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
+                        xAxis.enableCategory(enoughSpace);
+                        xAxis.getTick().setVisible(enoughSpace);
+                    }
+                }
+            }
         }
     }
 
@@ -159,11 +274,18 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(SWTUtil.createGridLayout(1));
-        this.tableMSUSize = createTable(root, "Size distribution of MSUs");
-        this.tableColumnContribution = createTable(root, "Column contributions");
-        this.tableColumnAverageKeySize = createTable(root, "Average MSU size");
+        Label label = new Label(root, SWT.NONE);
+        label.setText(LABEL_DISTRIBUTION);
+        this.chartRoot = new Composite(root, SWT.NONE);
+        this.chartRoot.setLayoutData(SWTUtil.createFillGridData(0));
+        this.chartRoot.setLayout(SWTUtil.createGridLayout(1));
+        this.resetChart();
+        label = new Label(root, SWT.NONE);
+        label.setText(LABEL_COLUMN_PROPERTIES);
+        this.tableAttributes = createTable(root, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
         return this.root;
     }
+
 
     @Override
     protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
@@ -176,13 +298,11 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
             this.manager.stop();
         }
         root.setRedraw(false);
-        clearTable(tableMSUSize);
-        clearTable(tableColumnAverageKeySize);
-        clearTable(tableColumnContribution);
+        this.resetChart();
+        this.clearTable(tableAttributes);
         root.setRedraw(true);
         setStatusEmpty();
     }
-
 
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
@@ -204,10 +324,11 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
             private double[] msuSizeDistribution;
             private double[] columnContribution;
             private double[] columnAverageKeySize;
+            private String[] attributes;
             
             @Override
             public int getProgress() {
-                return 0;
+                return builder == null ? 0 : builder.getProgress();
             }
 
             @Override
@@ -225,15 +346,56 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
                 root.setRedraw(false);
                 // Clear
-                clearTable(tableColumnAverageKeySize);
-                clearTable(tableColumnContribution);
-                clearTable(tableMSUSize);
+                clearTable(tableAttributes);
+                
 
-                // Create entries
-                fillTableAbsolute(tableColumnAverageKeySize, columnAverageKeySize);
-                fillTableRelative(tableColumnContribution, columnContribution);
-                fillTableRelative(tableMSUSize, msuSizeDistribution);
-               
+                ISeriesSet seriesSet = chart.getSeriesSet();
+                IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR, LABEL_SIZE); //$NON-NLS-1$
+                series.getLabel().setVisible(false);
+                series.getLabel().setFont(chart.getFont());
+                series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+                String[] labels = new String[msuSizeDistribution.length];
+                for (int i = 0; i < msuSizeDistribution.length; i++) {
+                    if (Double.isNaN(msuSizeDistribution[i])) {
+                        msuSizeDistribution[i] = 0d;
+                    } else {
+                        msuSizeDistribution[i] *= 100d;
+                    }
+                    labels[i] = String.valueOf(i);
+                }
+                series.setYSeries(msuSizeDistribution);
+                chart.getLegend().setVisible(false);
+
+                IAxisSet axisSet = chart.getAxisSet();
+
+                IAxis yAxis = axisSet.getYAxis(0);
+                yAxis.setRange(new Range(0d, 100d));
+                yAxis.adjustRange();
+
+                IAxis xAxis = axisSet.getXAxis(0);
+                xAxis.setCategorySeries(labels);
+                xAxis.adjustRange();
+                updateCategories();
+
+                chart.updateLayout();
+                chart.update();
+
+                // Create entries for attributes
+                for (int i=0; i<columnContribution.length; i++) {
+                    TableItem item = new TableItem(tableAttributes, SWT.NONE);
+                    item.setText(0, attributes[i]);
+                    if (Double.isNaN(columnContribution[i])) {
+                        item.setText(1, LABEL_NO_MSUS_FOUND);
+                    } else {
+                        item.setData("1", columnContribution[i]); //$NON-NLS-1$                
+                    }
+                    if (Double.isNaN(columnAverageKeySize[i])) {
+                        item.setText(2, LABEL_NO_MSUS_FOUND);
+                    } else {
+                        item.setText(2, SWTUtil.getPrettyString(columnAverageKeySize[i]));                    
+                    }
+                }
+                
                 root.layout();
                 setStatusDone();
                 root.setRedraw(true);
@@ -261,6 +423,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 msuSizeDistribution = model.getMSUSizeDistribution();
                 columnContribution = model.getColumnKeyContributions();
                 columnAverageKeySize = model.getColumnKeyAverageSize();
+                attributes = model.getAttributes();
               
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
@@ -282,12 +445,10 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
         return null;
     }
-
     @Override
     protected ViewRiskType getViewType() {
         return ViewRiskType.CLASSES_TABLE;
     }
-
     /**
      * Is an analysis running
      */
