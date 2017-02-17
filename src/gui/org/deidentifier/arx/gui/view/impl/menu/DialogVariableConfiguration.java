@@ -17,15 +17,20 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelMasking;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
-import org.deidentifier.arx.gui.view.impl.masking.DistributionComposite;
-import org.deidentifier.arx.gui.view.impl.masking.DistributionCompositeBinomial;
-import org.deidentifier.arx.gui.view.impl.masking.DistributionCompositeGeometric;
+import org.deidentifier.arx.gui.view.impl.masking.ParameterText;
+import org.deidentifier.arx.masking.variable.DistributionParameter;
+import org.deidentifier.arx.masking.variable.DistributionType;
+import org.deidentifier.arx.masking.variable.DistributionType.DistributionTypeDescription;
 import org.deidentifier.arx.masking.variable.RandomVariable;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -59,23 +64,41 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
     private Controller controller;
     private RandomVariable variable;
 
-    // Flag whether a new variable is newly created, or an existing one is being edited
+    // Flag whether a variable is newly created, or an existing one is being edited
     private boolean isNew = false;
+
+    // Map translating parameter names to labels
+    Map<String, String> parameterLabels = new HashMap<>();
 
     // Widgets
     private Text textVariableName;
     private Combo comboDistribution;
     private Composite compositeParameter;
 
-    private DistributionComposite c1;
 
     // Constructor for editing an existing random variable
     public DialogVariableConfiguration(Controller controller, RandomVariable variable) {
 
         super(controller.getResources().getShell());
 
+        initiliazeParameterLabelMap();
+
         this.controller = controller;
         this.variable = variable;
+
+
+    }
+
+    private void initiliazeParameterLabelMap() {
+
+        parameterLabels.put("number", "Number");
+        parameterLabels.put("probability", "Probability");
+        parameterLabels.put("mean", "Mean");
+        parameterLabels.put("stddev", "Standard deviation");
+        parameterLabels.put("location", "Location");
+        parameterLabels.put("scale", "Scale");
+        parameterLabels.put("degrees", "Degrees of freedom");
+        parameterLabels.put("rate", "Rate");
 
     }
 
@@ -102,71 +125,109 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
         }
 
-        setMessage("Please configure the random variable by setting the parameters shown below", IMessageProvider.INFORMATION);
+        setMessage("Please configure the random variable by setting the parameters", IMessageProvider.INFORMATION);
 
     }
 
     @Override
-    protected Control createDialogArea(Composite parent) {
+    protected Control createDialogArea(Composite composite) {
 
-        parent.setLayout(SWTUtil.createGridLayout(2));
+        composite.setLayout(SWTUtil.createGridLayout(2));
 
         // Variable name
-        Label labelVariableName = new Label(parent, SWT.NONE);
+        Label labelVariableName = new Label(composite, SWT.NONE);
         labelVariableName.setText("Variable name");
-        textVariableName = new Text(parent, SWT.NONE);
+        textVariableName = new Text(composite, SWT.BORDER);
         textVariableName.setText(variable.getName());
 
         // Variable distribution
-        Label labelDistribution = new Label(parent, SWT.NONE);
+        Label labelDistribution = new Label(composite, SWT.NONE);
         labelDistribution.setText("Distribution");
-        comboDistribution = new Combo(parent, SWT.READ_ONLY);
-        comboDistribution.setItems(new String[]{
-            "Binomial distribution (discrete)",
-            "Geometric distribution (discrete)",
-        });
-        comboDistribution.select(0);
+        comboDistribution = new Combo(composite, SWT.READ_ONLY);
+
+        // Add all available distributions to combo box
+        List<DistributionTypeDescription> distributions = DistributionType.list();
+
+        for (DistributionTypeDescription distribution : distributions) {
+
+            comboDistribution.add(distribution.getLabel());
+
+        }
+
+        // Preselect correct distribution
+        if (!isNew) {
+
+            comboDistribution.select(comboDistribution.indexOf(variable.getDistributionType().getDescription().getLabel()));
+
+        // New variable, select first element
+        } else {
+
+            comboDistribution.select(0);
+
+        }
+
+        // Update parameters whenever selection changes
         comboDistribution.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {
 
-                updateParameterComposite();
+                updateParameters();
 
             }
 
         });
 
         // Composite for parameters
-        compositeParameter = new Composite(parent, SWT.NONE);
+        compositeParameter = new Composite(composite, SWT.NONE);
         compositeParameter.setLayoutData(SWTUtil.createSpanColumnsGridData(2));
+        compositeParameter.setLayout(SWTUtil.createGridLayout(2));
 
-        // Display parameter composite for default selection
-        updateParameterComposite();
+        // Display parameters initially
+        updateParameters();
 
-        return parent;
+        return composite;
 
     }
 
-    private void updateParameterComposite() {
+    private void updateParameters() {
 
-        // Dispose all children
-        for (Control c : compositeParameter.getChildren()) {
+        // Dispose all existing parameter widgets
+        for (Control children : compositeParameter.getChildren()) {
 
-            c.dispose();
+            children.dispose();
 
         }
 
-        // Create new composite for given distribution
-        switch (comboDistribution.getSelectionIndex()) {
+        // Iterate over parameters for selected distribution
+        for (DistributionTypeDescription distribution : DistributionType.list()) {
 
-            case 0: c1 = new DistributionCompositeBinomial(compositeParameter); break;
-            case 1: c1 = new DistributionCompositeGeometric(compositeParameter); break;
+            if (distribution.getLabel().equals(comboDistribution.getText())) {
+
+                for (DistributionParameter<?> parameter : distribution.getParameters()) {
+
+                    createText(parameter);
+
+                }
+
+            }
 
         }
 
         // Update layout
         compositeParameter.layout();
+
+    }
+
+    private void createText(DistributionParameter<?> parameter) {
+
+        // Create label
+        Label label = new Label(compositeParameter, SWT.NONE);
+        label.setText(parameterLabels.get(parameter.getName()));
+
+        // Create text
+        ParameterText text = new ParameterText(parameter, compositeParameter, SWT.BORDER);
+        text.setText(String.valueOf(parameter.getInitial()));
 
     }
 
@@ -181,9 +242,37 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
     @Override
     protected void okPressed() {
 
-        // Configure variable in accordance to user input
+        // Set name of variable
         variable.setName(textVariableName.getText());
-        variable.setDistribution(c1.getResultingDistribution());
+
+        // Set variable type
+        switch (comboDistribution.getText()) {
+
+            // TODO: Export, so no hardcoded strings?
+            case "Binomial distribution (discrete)":
+                variable.setDistributionType(DistributionType.DISCRETE_BINOMIAL);
+                break;
+
+            case "Geometric distribution (discrete)":
+                variable.setDistributionType(DistributionType.DISCRETE_GEOMETRIC);
+                break;
+
+        }
+
+        // Iterate over all available parameters and add them
+        for (Control children : compositeParameter.getChildren()) {
+
+            if (children instanceof ParameterText) {
+
+                // Replace new parameter
+                // TODO Clean this up
+                DistributionParameter<?> parameter = ((ParameterText)children).getParameter();
+                variable.removeParameter(parameter.getName());
+                variable.addParameter(parameter);
+
+            }
+
+        }
 
         // Add or replace variable in model
         ModelMasking maskingModel = controller.getModel().getMaskingModel();

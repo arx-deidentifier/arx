@@ -25,6 +25,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.gui.view.impl.menu.DialogVariableConfiguration;
+import org.deidentifier.arx.masking.variable.DistributionParameter;
 import org.deidentifier.arx.masking.variable.RandomVariable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
@@ -189,7 +190,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return ((RandomVariable) element).getDistribution().toString();
+                return ((RandomVariable) element).getDistributionType().getDescription().getLabel();
 
             }
 
@@ -198,7 +199,7 @@ public class ViewVariableConfiguration implements IView {
         TableColumn columnDistribution = tableViewerColumnDistribution.getColumn();
         columnDistribution.setToolTipText("Distribution of the variable");
         columnDistribution.setText("Distribution");
-        columnDistribution.setWidth(250);
+        columnDistribution.setWidth(300);
 
         // Column displaying number
         TableViewerColumn tableViewerColumnNumber = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -207,7 +208,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("number"));
 
             }
 
@@ -225,7 +226,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("probability"));
 
             }
 
@@ -243,7 +244,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("mean"));
 
             }
 
@@ -261,7 +262,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("stddev"));
 
             }
 
@@ -279,7 +280,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("location"));
 
             }
 
@@ -297,7 +298,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("scale"));
 
             }
 
@@ -315,7 +316,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("degrees"));
 
             }
 
@@ -333,7 +334,7 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                return "";
+                return getParameterValue(((RandomVariable) element).getParameter("rate"));
 
             }
 
@@ -403,6 +404,19 @@ public class ViewVariableConfiguration implements IView {
 
         buttonRemove.setEnabled(enableButtons);
         buttonEdit.setEnabled(enableButtons);
+
+    }
+
+    // Returns value in case it exists, or empty string otherwise
+    private String getParameterValue(DistributionParameter<?> parameter) {
+
+        if (parameter != null) {
+
+            return String.valueOf(parameter.getValue());
+
+        }
+
+        return "";
 
     }
 

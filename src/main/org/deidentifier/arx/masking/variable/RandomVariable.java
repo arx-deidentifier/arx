@@ -17,31 +17,35 @@
 
 package org.deidentifier.arx.masking.variable;
 
-import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.deidentifier.arx.masking.variable.DistributionType.DiscreteBinomial;
 
 /**
  * Class describing a random variable
  *
  * @author Karol Babioch
  */
-public class RandomVariable implements Serializable {
-
-    private static final long serialVersionUID = 5890088358051823161L;
+public class RandomVariable {
 
     private String name;
 
-    private Distribution<Integer> distribution;
+    private DistributionType type;
 
-    public RandomVariable(String name, Distribution<Integer> distribution) {
-
-        this.name = name;
-        this.distribution = distribution;
-
-    }
+    private List<DistributionParameter<?>> parameters = new ArrayList<>();
 
     public RandomVariable(String name) {
 
         this.name = name;
+
+    }
+
+    public RandomVariable(String name, DistributionType type) {
+
+        this.name = name;
+        this.type = type;
 
     }
 
@@ -57,15 +61,72 @@ public class RandomVariable implements Serializable {
 
     }
 
-    public void setDistribution(Distribution<Integer> distribution) {
+    public void setDistributionType(DistributionType type) {
 
-        this.distribution = distribution;
+        this.type = type;
 
     }
 
+    public DistributionType getDistributionType() {
+
+        return this.type;
+
+    }
+
+    public void addParameter(DistributionParameter<?> parameter) {
+
+        parameters.add(parameter);
+
+    }
+
+    public DistributionParameter<?> getParameter(String name) {
+
+        for (DistributionParameter<?> parameter : this.parameters) {
+
+            if (parameter.getName().equals(name)) {
+
+                return parameter;
+
+            }
+
+        }
+
+        return null;
+
+    }
+
+    public void removeParameter(DistributionParameter<?> parameter) {
+
+        parameters.remove(parameter);
+
+    }
+
+    public void removeParameter(String parameterName) {
+
+        for (DistributionParameter<?> parameter : parameters) {
+
+            if (parameter.getName().equals(parameterName)) {
+
+                removeParameter(parameter);
+
+            }
+
+        }
+
+    }
+
+    // TODO: Check for null, update distribution if parameters are updated, etc.
     public Distribution<Integer> getDistribution() {
 
-        return this.distribution;
+        if (this.type instanceof DiscreteBinomial) {
+
+            Integer number = ((DistributionParameter.Int)getParameter("number")).getValue();
+            Double probability = ((DistributionParameter.Dou)getParameter("probability")).getValue();
+            return new DiscreteDistribution(0, number, new BinomialDistribution(number, probability));
+
+        }
+
+        return null;
 
     }
 
