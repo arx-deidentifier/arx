@@ -306,21 +306,19 @@ public class ViewPropertiesOutput extends ViewProperties {
                 new Property(n, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(context.config.getPublisherLoss())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryGain())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryCost())}); //$NON-NLS-1$
-                
-                if (context.config.containsCriterion(ProfitabilityProsecutor.class) ||
-                    context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
-                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
-                }
+                 
                 if (context.config.containsCriterion(ProfitabilityJournalist.class) ||
                     context.config.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
                     new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                if (context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
-                    ProfitabilityProsecutorNoAttack model = context.config.getCriterion(ProfitabilityProsecutorNoAttack.class);
-                    new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
-                }
+                } else if (context.config.containsCriterion(ProfitabilityProsecutor.class) ||
+                    context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
+                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
+                } 
                 if (context.config.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
                     ProfitabilityJournalistNoAttack model = context.config.getCriterion(ProfitabilityJournalistNoAttack.class);
+                    new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
+                } else  if (context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
+                    ProfitabilityProsecutorNoAttack model = context.config.getCriterion(ProfitabilityProsecutorNoAttack.class);
                     new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
                 }
             }

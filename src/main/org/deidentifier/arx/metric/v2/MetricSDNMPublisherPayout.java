@@ -167,6 +167,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
+        result.addProperty("Attacker model", (journalistAttackerModel ? "Journalist" : "Prosecutor"));
         if (this.config != null) {
             result.addProperty("Adversary cost", this.config.getAdversaryCost());
             result.addProperty("Adversary gain", this.config.getAdversaryGain());
