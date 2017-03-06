@@ -163,7 +163,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
     @Override
     public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Average equivalence class size");
+        ElementData result = new ElementData("Publisher payout");
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
