@@ -30,7 +30,6 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.MetricConfiguration;
-import org.deidentifier.arx.metric.MetricConfiguration.MetricConfigurationAttackerModel;
 import org.deidentifier.arx.risk.RiskModelCostBenefit;
 
 /**
@@ -121,9 +120,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
                                        super.getGeneralizationSuppressionFactor(), // gs-factor
                                        false, 
                                        0.0d, 
-                                       this.getAggregateFunction(),
-                                       this.journalistAttackerModel ? MetricConfigurationAttackerModel.JOURNALIST : 
-                                                                      MetricConfigurationAttackerModel.PROSECUTOR);
+                                       this.getAggregateFunction());
     }
     
     /**
