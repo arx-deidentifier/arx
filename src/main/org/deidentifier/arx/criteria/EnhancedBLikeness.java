@@ -24,7 +24,7 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
- * Basic-beta-Likeness:<br>
+ * Enhanced-beta-Likeness:<br>
  * <br>
  * Jianneng Cao, Panagiotis Karras:<br>
  * Publishing Microdata with a Robust Privacy Guarantee<br>
@@ -32,11 +32,10 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  *
  * @author Fabian Prasser
  */
-public class BasicBLikeness extends ExplicitPrivacyCriterion {
-
+public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
 
     /** SVUID*/
-    private static final long serialVersionUID = 2528498679732389575L;
+    private static final long serialVersionUID = 5319052409590347904L;
 
     /** Parameter */
     private final double        b;
@@ -50,7 +49,7 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
      * @param attribute
      * @param beta
      */
-    public BasicBLikeness(String attribute, double beta) {
+    public EnhancedBLikeness(String attribute, double beta) {
         super(attribute, false, true);
         if (beta <= 0) {
             throw new IllegalArgumentException("Beta (" + beta + ") must be > 0");
@@ -59,8 +58,8 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
     }
 
     @Override
-    public BasicBLikeness clone() {
-        return new BasicBLikeness(this.getAttribute(), this.getB());
+    public EnhancedBLikeness clone() {
+        return new EnhancedBLikeness(this.getAttribute(), this.getB());
     }
 
     /**
@@ -90,7 +89,7 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
         // For table t
         // For each class c
         //     For each sensitive value s
-        //         (freq(s, c) - freq(s, t)) / freq(s, t) <= beta 
+        //         (freq(s, c) - freq(s, t)) / freq(s, t) <= min(beta, - ln(freq(s, t))) 
         
         // Init
         int[] buckets = entry.distributions[index].getBuckets();
@@ -102,7 +101,7 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
                 double frequencyInT = distribution[buckets[i]];
                 double frequencyInC = (double) buckets[i + 1] / count;
                 double value = (frequencyInC - frequencyInT) / frequencyInT;
-                if (value > b) {
+                if (value > Math.min(b, - Math.log(frequencyInT))) {
                     return false;
                 }
             }
@@ -119,7 +118,7 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
 
     @Override
     public ElementData render() {
-        ElementData result = new ElementData("Basic likeness");
+        ElementData result = new ElementData("Enhanced likeness");
         result.addProperty("Attribute", attribute);
         result.addProperty("Threshold (beta)", b);
         return result;
@@ -127,6 +126,6 @@ public class BasicBLikeness extends ExplicitPrivacyCriterion {
 
     @Override
 	public String toString() {
-        return "basic-" + b + "-likeness for attribute '" + attribute + "'";
+        return "enhanced-" + b + "-likeness for attribute '" + attribute + "'";
 	}
 }

@@ -28,6 +28,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
@@ -43,6 +44,9 @@ public class EditorCriterionBLikeness extends EditorCriterion<ModelBLikenessCrit
 
     /** View */
     private Knob<Double> knobB;
+
+    /** View */
+    private Button       btnEnhanced;
 
     /** View */
     private Text         labelB;
@@ -66,7 +70,7 @@ public class EditorCriterionBLikeness extends EditorCriterion<ModelBLikenessCrit
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 3;
+        groupInputGridLayout.numColumns = 5;
         group.setLayout(groupInputGridLayout);
 
         // Create t slider
@@ -84,6 +88,18 @@ public class EditorCriterionBLikeness extends EditorCriterion<ModelBLikenessCrit
             }
         });
 
+        // Allow attack
+        Label lblEnhanced = new Label(group, SWT.NONE);
+        lblEnhanced.setText(Resources.getMessage("CriterionDefinitionView.131"));
+
+        btnEnhanced = new Button(group, SWT.CHECK);
+        btnEnhanced.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                model.setEnhanced(btnEnhanced.getSelection());
+            }
+        });
+        
         return group;
     }
     
@@ -91,22 +107,22 @@ public class EditorCriterionBLikeness extends EditorCriterion<ModelBLikenessCrit
     protected List<ModelCriterion> getTypicalParameters() {
 
         List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 0.01));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 0.1));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 1));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 2));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 3));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 4));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 5));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 6));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 7));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 8));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 9));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 10));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 100));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 1000));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 10000));
-        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 100000));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 0.01, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 0.1, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 1, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 2, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 3, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 4, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 5, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 6, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 7, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 8, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 9, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 10, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 100, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 1000, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 10000, true));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 100000, true));
         return result;
     }
 
@@ -115,5 +131,6 @@ public class EditorCriterionBLikeness extends EditorCriterion<ModelBLikenessCrit
     protected void parse(ModelBLikenessCriterion model, boolean _default) {
         knobB.setValue(model.getB());
         updateLabel(labelB, model.getB());
+        btnEnhanced.setSelection(model.isEnhanced());
     }
 }

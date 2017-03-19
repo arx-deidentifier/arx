@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.criteria.BasicBLikeness;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -31,6 +32,9 @@ public class ModelBLikenessCriterion extends ModelExplicitCriterion{
 
     /** SVUID */
     private static final long serialVersionUID = 2269238032187539934L;
+
+    /** Is this the enhanced variant */
+    private boolean           enhanced         = false;
 
     /** Delta */
     private double            beta             = 1.0d;
@@ -48,23 +52,31 @@ public class ModelBLikenessCriterion extends ModelExplicitCriterion{
      * Creates a new instance.
      *
      * @param attribute
+     * @param beta
+     * @param enhanced
      */
-    public ModelBLikenessCriterion(String attribute, double beta) {
+    public ModelBLikenessCriterion(String attribute, double beta, boolean enhanced) {
         super(attribute);
         this.beta = beta;
+        this.enhanced = enhanced;
     }
     
     @Override
     public ModelBLikenessCriterion clone() {
         ModelBLikenessCriterion result = new ModelBLikenessCriterion(this.getAttribute());
         result.beta = this.beta;
+        result.enhanced = this.enhanced;
         result.setEnabled(this.isEnabled());
         return result;
     }
 	
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
-	    return new BasicBLikeness(getAttribute(), beta);
+	    if (enhanced) {
+	        return new EnhancedBLikeness(getAttribute(), beta);
+	    } else {
+	        return new BasicBLikeness(getAttribute(), beta);
+	    }
 	}
 	
 	/**
@@ -76,9 +88,17 @@ public class ModelBLikenessCriterion extends ModelExplicitCriterion{
 		return beta;
 	}
 	
+	/**
+	 * Returns whether this is the enhanced variant
+	 * @return
+	 */
+	public boolean isEnhanced() {
+	    return enhanced;
+	}
+	
 	@Override
     public String getLabel() {
-        return Resources.getMessage("Model.37") + '\u03B2' + Resources.getMessage("Model.38"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        return '\u03B2' + Resources.getMessage("Model.36"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Override
@@ -88,6 +108,7 @@ public class ModelBLikenessCriterion extends ModelExplicitCriterion{
         }
         ModelBLikenessCriterion other = (ModelBLikenessCriterion)criterion;
         this.beta = other.beta;
+        this.enhanced = other.enhanced;
         this.setEnabled(other.isEnabled());
     }
     
@@ -98,6 +119,7 @@ public class ModelBLikenessCriterion extends ModelExplicitCriterion{
         }
         ModelBLikenessCriterion other = (ModelBLikenessCriterion)criterion;
         this.beta = other.beta;
+        this.enhanced = other.enhanced;
     }
 
     /**
@@ -108,9 +130,18 @@ public class ModelBLikenessCriterion extends ModelExplicitCriterion{
 	public void setB(double beta) {
 		this.beta = beta;
 	}
+	
+	/**
+	 * Sets whether or not this is the enhanced variant
+	 * @param enhanced
+	 */
+	public void setEnhanced(boolean enhanced) {
+	    this.enhanced = enhanced;
+	}
     
     @Override
     public String toString() {
-        return Resources.getMessage("Model.37") + SWTUtil.getPrettyString(beta) + Resources.getMessage("Model.38"); //$NON-NLS-1$ //$NON-NLS-2$
+        return (this.enhanced ? Resources.getMessage("Model.39") : Resources.getMessage("Model.37")) + //$NON-NLS-1$ //$NON-NLS-2$
+                SWTUtil.getPrettyString(beta) + Resources.getMessage("Model.38"); //$NON-NLS-1$
     }
 }

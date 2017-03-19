@@ -33,6 +33,7 @@ import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
@@ -1371,6 +1372,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         if (this.isPrivacyModelSpecified(BasicBLikeness.class)) {
             list.addAll(this.getPrivacyModels(BasicBLikeness.class));
+        }
+        if (this.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
+            list.addAll(this.getPrivacyModels(EnhancedBLikeness.class));
         }
         if (this.isPrivacyModelSpecified(LDiversity.class)) {
             list.addAll(this.getPrivacyModels(LDiversity.class));
