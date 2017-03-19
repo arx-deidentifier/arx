@@ -1010,6 +1010,8 @@ public class ARXLattice implements Serializable {
 
     /**
      * Returns whether the search space has been characterized completely
+     * (i.e. whether an optimal solution has been determined, *not* whether
+     * all transformations have been materialized).
      * @return
      */
     public boolean isComplete() {
