@@ -20,8 +20,8 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelCriterion;
-import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
@@ -35,17 +35,17 @@ import org.eclipse.swt.widgets.Text;
 import de.linearbits.swt.widgets.Knob;
 
 /**
- * Implements a view on a d-disclosure privacy criterion
+ * Implements a view on a b-likeness privacy model
  *
  * @author Fabian Prasser
  */
-public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDisclosurePrivacyCriterion> {
+public class EditorCriterionBLikeness extends EditorCriterion<ModelBLikenessCriterion> {
 
     /** View */
-    private Knob<Double> knobD;
+    private Knob<Double> knobB;
 
     /** View */
-    private Text         labelD;
+    private Text         labelB;
 
     /**
      * Creates a new instance.
@@ -53,8 +53,8 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
      * @param parent
      * @param model
      */
-    public EditorCriterionDDisclosurePrivacy(final Composite parent,
-                                     final ModelDDisclosurePrivacyCriterion model) {
+    public EditorCriterionBLikeness(final Composite parent,
+                                     final ModelBLikenessCriterion model) {
 
         super(parent, model);
     }
@@ -71,16 +71,16 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
 
         // Create t slider
         final Label zLabel = new Label(group, SWT.NONE);
-        zLabel.setText(Resources.getMessage("CriterionDefinitionView.100")); //$NON-NLS-1$
+        zLabel.setText(Resources.getMessage("CriterionDefinitionView.130")); //$NON-NLS-1$
 
-        labelD = createLabel(group);
-        knobD = createKnobDouble(group, 0.000001d, 1000000d);
-        updateLabel(labelD, knobD.getValue());
-        knobD.addSelectionListener(new SelectionAdapter() {
+        labelB = createLabel(group);
+        knobB = createKnobDouble(group, 0.000001d, 1000000d);
+        updateLabel(labelB, knobB.getValue());
+        knobB.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setD(knobD.getValue());
-                updateLabel(labelD, model.getD());
+                model.setB(knobB.getValue());
+                updateLabel(labelB, model.getB());
             }
         });
 
@@ -91,17 +91,29 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
     protected List<ModelCriterion> getTypicalParameters() {
 
         List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-        result.add(new ModelDDisclosurePrivacyCriterion(this.model.getAttribute(), 0.8));
-        result.add(new ModelDDisclosurePrivacyCriterion(this.model.getAttribute(), 1.0));
-        result.add(new ModelDDisclosurePrivacyCriterion(this.model.getAttribute(), 1.2));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 0.01));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 0.1));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 1));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 2));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 3));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 4));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 5));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 6));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 7));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 8));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 9));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 10));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 100));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 1000));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 10000));
+        result.add(new ModelBLikenessCriterion(this.model.getAttribute(), 100000));
         return result;
     }
 
 
     @Override
-    protected void parse(ModelDDisclosurePrivacyCriterion model, boolean _default) {
-        
-        knobD.setValue(model.getD());
-        updateLabel(labelD, model.getD());
+    protected void parse(ModelBLikenessCriterion model, boolean _default) {
+        knobB.setValue(model.getB());
+        updateLabel(labelB, model.getB());
     }
 }

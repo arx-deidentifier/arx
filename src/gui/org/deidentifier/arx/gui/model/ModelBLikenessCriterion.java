@@ -27,10 +27,10 @@ import org.deidentifier.arx.gui.view.SWTUtil;
  *
  * @author Fabian Prasser
  */
-public class ModelBLikeness extends ModelExplicitCriterion{
+public class ModelBLikenessCriterion extends ModelExplicitCriterion{
 
     /** SVUID */
-    private static final long serialVersionUID = 2102590973710328801L;
+    private static final long serialVersionUID = 2269238032187539934L;
 
     /** Delta */
     private double            beta             = 1.0d;
@@ -40,7 +40,7 @@ public class ModelBLikeness extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelBLikeness(String attribute) {
+    public ModelBLikenessCriterion(String attribute) {
         super(attribute);
     }
     
@@ -49,14 +49,14 @@ public class ModelBLikeness extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelBLikeness(String attribute, double beta) {
+    public ModelBLikenessCriterion(String attribute, double beta) {
         super(attribute);
         this.beta = beta;
     }
     
     @Override
-    public ModelBLikeness clone() {
-        ModelBLikeness result = new ModelBLikeness(this.getAttribute());
+    public ModelBLikenessCriterion clone() {
+        ModelBLikenessCriterion result = new ModelBLikenessCriterion(this.getAttribute());
         result.beta = this.beta;
         result.setEnabled(this.isEnabled());
         return result;
@@ -78,25 +78,25 @@ public class ModelBLikeness extends ModelExplicitCriterion{
 	
 	@Override
     public String getLabel() {
-        return  Resources.getMessage("Model.36"); //$NON-NLS-1$
+        return Resources.getMessage("Model.37") + '\u03B2' + Resources.getMessage("Model.38"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
-        if (!(criterion instanceof ModelBLikeness)) {
+        if (!(criterion instanceof ModelBLikenessCriterion)) {
             return;
         }
-        ModelBLikeness other = (ModelBLikeness)criterion;
+        ModelBLikenessCriterion other = (ModelBLikenessCriterion)criterion;
         this.beta = other.beta;
         this.setEnabled(other.isEnabled());
     }
     
 	@Override
     public void pull(ModelExplicitCriterion criterion) {
-        if (!(criterion instanceof ModelBLikeness)) {
+        if (!(criterion instanceof ModelBLikenessCriterion)) {
             throw new RuntimeException(Resources.getMessage("Model.2d")); //$NON-NLS-1$
         }
-        ModelBLikeness other = (ModelBLikeness)criterion;
+        ModelBLikenessCriterion other = (ModelBLikenessCriterion)criterion;
         this.beta = other.beta;
     }
 
