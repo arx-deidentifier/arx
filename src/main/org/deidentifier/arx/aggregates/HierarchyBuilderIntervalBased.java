@@ -203,7 +203,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.min = min;
             this.max = max;
             this.function = function;
-            this.lower = false;
+            this.lower = null;
         }
         
         @Override
