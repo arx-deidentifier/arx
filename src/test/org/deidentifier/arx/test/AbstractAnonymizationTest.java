@@ -48,6 +48,9 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.criteria.BasicBLikeness;
+import org.deidentifier.arx.criteria.DDisclosurePrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
@@ -330,7 +333,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
+                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || 
+                        testCase.config.isPrivacyModelSpecified(TCloseness.class) || 
+                        testCase.config.isPrivacyModelSpecified(DDisclosurePrivacy.class) ||
+                        testCase.config.isPrivacyModelSpecified(BasicBLikeness.class) ||
+                        testCase.config.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
@@ -339,7 +346,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         }
         
         if (testCase.builders != null) {
-            
+
             // Remove all QIs
             Set<String> qis = data.getDefinition().getQuasiIdentifyingAttributes();
             for (String qi : qis) {
@@ -474,7 +481,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             assertEquals("Hash code not equal", hashcode, testCase.hashcode);
             return;
         }
-        
+
         // Check if no solution
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
