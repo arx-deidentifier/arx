@@ -48,6 +48,7 @@ import org.deidentifier.arx.metric.v2.ILSingleDimensional;
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class NodeChecker {
 	
