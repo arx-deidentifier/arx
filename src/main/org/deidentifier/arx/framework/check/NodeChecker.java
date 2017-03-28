@@ -418,118 +418,117 @@ public class NodeChecker {
         
         
         switch (score) {
-            case AECS:
-                return currentGroupify.getNumberOfEquivalenceClasses();
-            case LOSS:
-                Metric<AbstractILMultiDimensional> metricMultiDim = Metric.createLossMetric(AggregateFunction.SUM);
-                metricMultiDim.initialize(manager, 
-                                  definition, 
-                                  manager.getDataGeneralized(), 
-                                  manager.getHierarchies(), 
-                                  config.getParent());
-                double[] lossAttrs = metricMultiDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValues();
-                double loss = 0d;
-                for (int i = 0; i < numAttrs; i++) {
-                    double min = numRecords / (double)manager.getHierarchies()[i].getArray().length;
-                    double max = numRecords;
-                    loss += lossAttrs[i] * (max - min) + min;
+        case AECS:
+            return currentGroupify.getNumberOfEquivalenceClasses();
+        case LOSS:
+            Metric<AbstractILMultiDimensional> metricMultiDim = Metric.createLossMetric(AggregateFunction.SUM);
+            metricMultiDim.initialize(manager,
+                                      definition,
+                                      manager.getDataGeneralized(),
+                                      manager.getHierarchies(),
+                                      config.getParent());
+            double[] lossAttrs = metricMultiDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValues();
+            double loss = 0d;
+            for (int i = 0; i < numAttrs; i++) {
+                double min = numRecords / (double) manager.getHierarchies()[i].getArray().length;
+                double max = numRecords;
+                loss += lossAttrs[i] * (max - min) + min;
+            }
+            loss *= -1d / ((double) lossAttrs.length);
+            loss /= k + 1d;
+            return loss;
+        case PRECISION:
+            metricMultiDim = Metric.createPrecisionMetric(AggregateFunction.SUM);
+            metricMultiDim.initialize(manager,
+                                      definition,
+                                      manager.getDataGeneralized(),
+                                      manager.getHierarchies(),
+                                      config.getParent());
+            double[] precisionAttrs = metricMultiDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValues();
+            double precision = 0d;
+            for (int i = 0; i < numAttrs; i++) {
+                precision += precisionAttrs[i];
+            }
+            return precision * -1d * numRecords / ((double) precisionAttrs.length * (k + 1d));
+        case DISCERNABILITY:
+            Metric<ILSingleDimensional> metricSingleDim = Metric.createDiscernabilityMetric();
+            metricSingleDim.initialize(manager,
+                                       definition,
+                                       manager.getDataGeneralized(),
+                                       manager.getHierarchies(),
+                                       config.getParent());
+            double sensitivity = (k == 1d) ? 5d : k * k / (k - 1d) + 1d;
+            double discernibilityVal = metricSingleDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValue();
+            return -1d * discernibilityVal / (numRecords * sensitivity);
+        case ENTROPY:
+            double entropy = 0d;
+
+            for (int j = 0; j < numAttrs; ++j) {
+
+                Map<Integer, Integer> valueToCount = new HashMap<Integer, Integer>();
+
+                HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
+                while (entry != null) {
+
+                    int count = entry.count;
+                    if (entry.isNotOutlier && entry.key[j] != rootValues[j]) {
+                        // The attribute value is not suppressed
+                        int value = entry.key[j];
+                        int valueCount = valueToCount.containsKey(value) ? (valueToCount.get(value) + count) : count;
+                        valueToCount.put(value, valueCount);
+                    } else {
+                        entropy -= numRecords * count;
+                    }
+
+                    // Next group
+                    entry = entry.nextOrdered;
                 }
-                loss *= -1d / ((double) lossAttrs.length);
-                loss /= k + 1d;
-                return loss;
-            case PRECISION:
-            	metricMultiDim = Metric.createPrecisionMetric(AggregateFunction.SUM);
-            	metricMultiDim.initialize(manager, 
-                        definition, 
-                        manager.getDataGeneralized(), 
-                        manager.getHierarchies(), 
-                        config.getParent());
-            	double[] precisionAttrs = metricMultiDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValues();
-            	double precision = 0d;
-            	for (int i = 0; i < numAttrs; i++) {
-            		precision += precisionAttrs[i];
-            	}
-            	return precision * -1d * numRecords / ((double) precisionAttrs.length * (k + 1d));
-            case DISCERNABILITY:
-            	Metric<ILSingleDimensional> metricSingleDim = Metric.createDiscernabilityMetric();
-            	metricSingleDim.initialize(manager, 
-                        definition, 
-                        manager.getDataGeneralized(), 
-                        manager.getHierarchies(), 
-                        config.getParent());
-                double sensitivity = (k == 1d) ? 5d : k * k / (k - 1d) + 1d;
-                double discernibilityVal = metricSingleDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValue();
-                return -1d * discernibilityVal / (numRecords * sensitivity);
-            case ENTROPY:
-                double entropy = 0d;
-                
-                for (int j = 0; j < numAttrs; ++j) {
-                	
-                	Map<Integer, Integer> valueToCount = new HashMap<Integer, Integer>();
-                
-                	HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
-                	while (entry != null) {
-                		
-                		int count = entry.count;
-                		if (entry.isNotOutlier && entry.key[j] != rootValues[j]) {
-                			// The attribute value is not suppressed
-                		    int value = entry.key[j];
-                			int valueCount = valueToCount.containsKey(value) ? (valueToCount.get(value) + count) : count;
-                			valueToCount.put(value, valueCount);
-                		} else {
-                			entropy -= numRecords * count;
-                		}
-                  
-                		// Next group
-                		entry = entry.nextOrdered;
-                	}
-                	
-                	for (int count : valueToCount.values()) {
-                		entropy -= count * count;
-                	}
+
+                for (int count : valueToCount.values()) {
+                    entropy -= count * count;
                 }
-                
-                return entropy / ((k * k / (k - 1d) + 1d) * numAttrs * numRecords);
-                
-            case CLASSIFICATION:
-            	
-            	Map<RecordWrapper, Map<Integer, Integer>> featuresToClassToCount = new HashMap<>();
-            	
-              for (HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass(); entry != null; entry = entry.nextOrdered) {
-            	  
-            	  if (!entry.isNotOutlier) continue;
-            	  
-                  int[] record = entry.key;
-                  int count = entry.count;
-                  int classValue = record[clazz];
-                  
-                  int[] features = new int[record.length-1];
-                  boolean featuresSuppressed = true;
-                  for (int i = 0; i < record.length; i++) {
-                	  if (i < clazz) {
-                		  features[i] = record[i];
-                		  if (record[i] != rootValues[i]) featuresSuppressed = false;
-                	  } else if (i > clazz) {
-                		  features[i-1] = record[i];
-                		  if (record[i] != rootValues[i]) featuresSuppressed = false;
-                	  }
-                  }
-                  
-                  if (featuresSuppressed) continue;
-                  
-                  RecordWrapper featuresWrapped = new RecordWrapper(features);
-                  
-                  Map<Integer, Integer> classToCount = featuresToClassToCount.get(featuresWrapped);
-                  if (classToCount == null) {
-                      classToCount = new HashMap<>();
-                      classToCount.put(classValue, count);
-                  } else {
-                      int classCount = classToCount.containsKey(classValue) ? classToCount.get(classValue) + count : count;
-                      classToCount.put(classValue, classCount);
-                  }
-                  featuresToClassToCount.put(featuresWrapped, classToCount);
-              }
-              
+            }
+
+            return entropy / ((k * k / (k - 1d) + 1d) * numAttrs * numRecords);
+
+        case CLASSIFICATION:
+            Map<RecordWrapper, Map<Integer, Integer>> featuresToClassToCount = new HashMap<>();
+
+            for (HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass(); entry != null; entry = entry.nextOrdered) {
+
+                if (!entry.isNotOutlier) continue;
+
+                int[] record = entry.key;
+                int count = entry.count;
+                int classValue = record[clazz];
+
+                int[] features = new int[record.length - 1];
+                boolean featuresSuppressed = true;
+                for (int i = 0; i < record.length; i++) {
+                    if (i < clazz) {
+                        features[i] = record[i];
+                        if (record[i] != rootValues[i]) featuresSuppressed = false;
+                    } else if (i > clazz) {
+                        features[i - 1] = record[i];
+                        if (record[i] != rootValues[i]) featuresSuppressed = false;
+                    }
+                }
+
+                if (featuresSuppressed) continue;
+
+                RecordWrapper featuresWrapped = new RecordWrapper(features);
+
+                Map<Integer, Integer> classToCount = featuresToClassToCount.get(featuresWrapped);
+                if (classToCount == null) {
+                    classToCount = new HashMap<>();
+                    classToCount.put(classValue, count);
+                } else {
+                    int classCount = classToCount.containsKey(classValue) ? classToCount.get(classValue) + count : count;
+                    classToCount.put(classValue, classCount);
+                }
+                featuresToClassToCount.put(featuresWrapped, classToCount);
+            }
+
             int unpenalizedCount = 0;
             for (Map<Integer, Integer> classToCount : featuresToClassToCount.values()) {
                 int maxCount = 0;
@@ -540,23 +539,10 @@ public class NodeChecker {
             }
 
             return (double) unpenalizedCount / k;
-              
-            default:
-                // Example how to iterate over all equivalence classes
-//                HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
-//                while (entry != null) {
-//                    
-//                    // Properties of the group
-//                    int[] record = entry.key; // Only use this, when the group is not suppressed!
-//                    int count = entry.count;
-//                    boolean suppressed = !entry.isNotOutlier;
-//                    
-//                    // Next group
-//                    entry = entry.nextOrdered;
-//                }
-                
-                // Return dummy data
-                return 0;
+            
+        default:
+            // Return dummy data
+            return 0;
         }
     }
 }
