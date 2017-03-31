@@ -49,7 +49,7 @@ public class StatisticsSummary<T> {
         /** Var */
         private String                   mode;
         /** Var */
-        private int						 distinctNumberOfMeasures;
+        private int						 distinctNumberOfValues;
         /** Var */
         private String                   median;
         /** Var */
@@ -139,8 +139,8 @@ public class StatisticsSummary<T> {
          * Returns the number of distinct values
          * @return
          */
-        public int getDistinctNumberOfMeasures() {
-        	return distinctNumberOfMeasures;
+        public int getDistinctNumberOfValues() {
+        	return distinctNumberOfValues;
         }
 
         /**
@@ -177,7 +177,7 @@ public class StatisticsSummary<T> {
                 max = DataType.NULL_VALUE;
                 mode = DataType.NULL_VALUE;
                 median = DataType.NULL_VALUE;
-                distinctNumberOfMeasures = 0;
+                distinctNumberOfValues = 0;
                 numberOfMeasures = 0;
             } else {
                 
@@ -208,7 +208,7 @@ public class StatisticsSummary<T> {
                 // determine distinct number of measures
                 Set<String> distinct = new HashSet<String>();
                 distinct.addAll(values);
-                distinctNumberOfMeasures = distinct.size();
+                distinctNumberOfValues = distinct.size();
                 distinct.clear();
                 
                 // Determine mode
@@ -238,7 +238,7 @@ public class StatisticsSummary<T> {
     private final int            numberOfMeasures;
     
     /** The distinct number of measures */
-    private final int			 distinctNumberOfMeasures;
+    private final int			 distinctNumberOfValues;
 
     /* ******************************************************************** 
      * ARXString, ARXOrderedString, ARXDate, ARXInteger, ARXDecimal 
@@ -327,11 +327,11 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
-                      int distinctValues,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT) {
 
-        this(scale, numberOfMeasures, distinctValues,
+        this(scale, numberOfMeasures, distinctNumberOfValues,
              mode, modeT,
              null, null, 
              null, null, 
@@ -360,7 +360,7 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
-                      int distinctValues,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT,
                       String median,
@@ -370,7 +370,7 @@ public class StatisticsSummary<T> {
                       String max,
                       T maxT) {
 
-        this(scale, numberOfMeasures, distinctValues,
+        this(scale, numberOfMeasures, distinctNumberOfValues,
              mode, modeT,
              median, medianT, 
              min, minT,
@@ -417,7 +417,7 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
-                      int distinctValues,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT,
                       String median,
@@ -446,7 +446,7 @@ public class StatisticsSummary<T> {
                       double kurtosisD) {
         
         
-        this(scale, numberOfMeasures, distinctValues,
+        this(scale, numberOfMeasures, distinctNumberOfValues,
              mode, modeT,
              median, medianT, 
              min, minT,
@@ -496,7 +496,7 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
-                      int distinctValues,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT,
                       String median,
@@ -530,7 +530,7 @@ public class StatisticsSummary<T> {
         this.scale = scale;
         this.mode = mode;
         this.modeT = modeT;
-        this.distinctNumberOfMeasures = distinctValues;
+        this.distinctNumberOfValues = distinctNumberOfValues;
         this.median = median;
         this.medianT = medianT;
         this.min = min;
@@ -565,16 +565,16 @@ public class StatisticsSummary<T> {
      * Returns the number of distinct values
      * @return
      */
-    public int getDistinctNumberOfMeasuresValuesAsInt() {
-    	return distinctNumberOfMeasures;
+    public int getNumberOfDistinctValuesAsInt() {
+    	return distinctNumberOfValues;
     }
     
     /**
      * Returns the number of distinct values
      * @return
      */
-    public String getDistinctNumberOfMeasuresValuesAsString() {
-    	return String.valueOf(distinctNumberOfMeasures);
+    public String getNumberOfDistinctValuesAsString() {
+    	return String.valueOf(distinctNumberOfValues);
     }
 
     /**
@@ -920,7 +920,7 @@ public class StatisticsSummary<T> {
         return "StatisticsSummary [\n" + 
                                    " - scale=" + scale + "\n" + 
                                    " - numberOfMeasures=" + numberOfMeasures + "\n" + 
-                                   " - numberOfDistinctMeasures=" + distinctNumberOfMeasures + "\n" + 
+                                   " - numberOfDistinctMeasures=" + distinctNumberOfValues + "\n" + 
                                    (isModeAvailable() ? " - mode=" + mode + "\n" : "") + 
                                    (isMedianAvailable() ?  " - median=" + median + "\n" : "") + 
                                    (isMinAvailable() ?  " - min=" + min + "\n" : "") + 
