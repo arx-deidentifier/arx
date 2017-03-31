@@ -920,7 +920,7 @@ public class StatisticsSummary<T> {
         return "StatisticsSummary [\n" + 
                                    " - scale=" + scale + "\n" + 
                                    " - numberOfMeasures=" + numberOfMeasures + "\n" + 
-                                   " - numberOfDistinctMeasures=" + distinctNumberOfValues + "\n" + 
+                                   " - distinctNumberOfValues=" + distinctNumberOfValues + "\n" + 
                                    (isModeAvailable() ? " - mode=" + mode + "\n" : "") + 
                                    (isMedianAvailable() ?  " - median=" + median + "\n" : "") + 
                                    (isMinAvailable() ?  " - min=" + min + "\n" : "") + 
