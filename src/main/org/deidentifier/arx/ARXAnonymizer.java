@@ -23,8 +23,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXResult.ScoreType;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.EDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
@@ -33,6 +35,7 @@ import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -332,6 +335,14 @@ public class ARXAnonymizer {
                 }
             }
         }
+        if (config.containsCriterion(EDDifferentialPrivacy.class)){
+            for (EDDifferentialPrivacy c : config.getCriteria(EDDifferentialPrivacy.class)){
+                // TODO: Check validity of privacy parameters
+                if (c.getScoreType() == ScoreType.CLASSIFICATION && c.getClassIndex() < 0) { 
+                    throw new IllegalArgumentException("A class attribute has to be specified when using the Classification Score Function"); 
+                }
+            }
+        }
         
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
@@ -486,14 +497,24 @@ public class ARXAnonymizer {
      * Returns an algorithm for the given problem instance
      * @param config
      * @param manager
+     * @param definition 
      * @param solutionSpace
      * @param checker
      * @return
      */
     private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
                                           final DataManager manager,
+                                          DataDefinition definition,
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
+        
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (c instanceof EDDifferentialPrivacy && ((EDDifferentialPrivacy)c).isDataDependent()) {
+                return EDDPAlgorithm.create(solutionSpace, checker, ((EDDifferentialPrivacy)c).getClassIndex(), definition,
+                                            ((EDDifferentialPrivacy)c).getSteps(), ((EDDifferentialPrivacy)c).getEpsilonSearch(),
+                                            ((EDDifferentialPrivacy)c).getScoreType());
+            }
+        }
         
         if (config.isHeuristicSearchEnabled() ||
             solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
@@ -561,6 +582,7 @@ public class ARXAnonymizer {
         // Create an algorithm instance
         AbstractAlgorithm algorithm = getAlgorithm(config,
                                                    manager,
+                                                   definition,
                                                    solutionSpace,
                                                    checker);
         algorithm.setListener(listener);

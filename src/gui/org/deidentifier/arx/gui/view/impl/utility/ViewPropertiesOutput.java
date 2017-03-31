@@ -322,7 +322,7 @@ public class ViewPropertiesOutput extends ViewProperties {
             if (context.config.containsCriterion(EDDifferentialPrivacy.class)) {
                 EDDifferentialPrivacy criterion = context.config.getCriterion(EDDifferentialPrivacy.class);
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.141") }); //$NON-NLS-1$ //$NON-NLS-2$
-                new Property(n, Resources.getMessage("PropertiesView.142"), new String[] { SWTUtil.getPrettyString(criterion.getEpsilon())}); //$NON-NLS-1$
+                new Property(n, Resources.getMessage("PropertiesView.142"), new String[] { SWTUtil.getPrettyString(criterion.getEpsilonAnon())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.143"), new String[] { SWTUtil.getPrettyString(criterion.getDelta())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.144"), new String[] { SWTUtil.getPrettyString(criterion.getK())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.145"), new String[] { SWTUtil.getPrettyString(criterion.getBeta())}); //$NON-NLS-1$
