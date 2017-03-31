@@ -782,12 +782,14 @@ public class StatisticsBuilder {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.NOMINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode())));
             } else if (scale == DataScale.ORDINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.ORDINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -809,6 +811,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.INTERVAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -848,6 +851,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.RATIO,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfMeasures(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
