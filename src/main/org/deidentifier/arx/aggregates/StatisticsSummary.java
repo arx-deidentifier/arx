@@ -49,7 +49,7 @@ public class StatisticsSummary<T> {
         /** Var */
         private String                   mode;
         /** Var */
-        private int						 distinctNumberOfValues;
+        private int                      distinctNumberOfValues;
         /** Var */
         private String                   median;
         /** Var */
@@ -331,7 +331,8 @@ public class StatisticsSummary<T> {
                       String mode,
                       T modeT) {
 
-        this(scale, numberOfMeasures, distinctNumberOfValues,
+        this(scale, numberOfMeasures, 
+             distinctNumberOfValues,
              mode, modeT,
              null, null, 
              null, null, 
@@ -370,7 +371,8 @@ public class StatisticsSummary<T> {
                       String max,
                       T maxT) {
 
-        this(scale, numberOfMeasures, distinctNumberOfValues,
+        this(scale, numberOfMeasures, 
+             distinctNumberOfValues,
              mode, modeT,
              median, medianT, 
              min, minT,
@@ -446,7 +448,8 @@ public class StatisticsSummary<T> {
                       double kurtosisD) {
         
         
-        this(scale, numberOfMeasures, distinctNumberOfValues,
+        this(scale, numberOfMeasures, 
+             distinctNumberOfValues,
              mode, modeT,
              median, medianT, 
              min, minT,
@@ -560,23 +563,6 @@ public class StatisticsSummary<T> {
         this.stdDevD = stdDevD;
     }
 
-    
-    /**
-     * Returns the number of distinct values
-     * @return
-     */
-    public int getNumberOfDistinctValuesAsInt() {
-    	return distinctNumberOfValues;
-    }
-    
-    /**
-     * Returns the number of distinct values
-     * @return
-     */
-    public String getNumberOfDistinctValuesAsString() {
-    	return String.valueOf(distinctNumberOfValues);
-    }
-
     /**
      * Returns the mean
      * @return
@@ -649,8 +635,6 @@ public class StatisticsSummary<T> {
         return kurtosisT;
     }
 
-    
-
     /**
      * Returns the max
      * @return
@@ -713,6 +697,22 @@ public class StatisticsSummary<T> {
      */
     public T getModeAsValue() {
         return modeT;
+    }
+
+    /**
+     * Returns the number of distinct values
+     * @return
+     */
+    public int getNumberOfDistinctValuesAsInt() {
+        return distinctNumberOfValues;
+    }
+    
+    /**
+     * Returns the number of distinct values
+     * @return
+     */
+    public String getNumberOfDistinctValuesAsString() {
+        return String.valueOf(distinctNumberOfValues);
     }
 
     /**
