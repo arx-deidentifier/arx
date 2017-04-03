@@ -2122,14 +2122,6 @@ public class Controller implements IView {
                                 Resources.getMessage("Controller.87")); //$NON-NLS-1$
             return;
         }
-        
-        // Cannot save project without data
-		if (model.getInputConfig().getInput() == null) {
-			main.showInfoDialog(main.getShell(),
-								Resources.getMessage("Controller.90"), //$NON-NLS-1$
-								Resources.getMessage("Controller.157"));
-			return;
-		}
 
         final WorkerSave worker = new WorkerSave(model.getPath(), this, model);
         main.showProgressDialog(Resources.getMessage("Controller.88"), worker); //$NON-NLS-1$
