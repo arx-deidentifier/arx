@@ -510,12 +510,12 @@ public class WorkerSave extends Worker<Model> {
                 final String attr = handle.getAttributeName(i);
 
                 // Do we have a hierarchy
-                if (!saved.contains(attr) && definition.getHierarchy(attr) != null &&
+                if (!saved.contains(attr) && definition.getHierarchy(attr) != null && 
                     definition.getHierarchy(attr).length != 0 &&
                     definition.getHierarchy(attr)[0].length != 0) {
 
                     // Store this hierarchy
-                    zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(attr) + ".csv")); //$NON-NLS-1$ //$NON-NLS-1$
+                    zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(attr) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
                     CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
                     out.write(definition.getHierarchy(attr));
                     saved.add(attr);
