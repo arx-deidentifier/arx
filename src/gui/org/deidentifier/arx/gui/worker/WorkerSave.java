@@ -502,9 +502,9 @@ public class WorkerSave extends Worker<Model> {
         DataDefinition definition = null;
         if (config == model.getInputConfig()) definition = model.getInputDefinition();
         else definition = model.getOutputDefinition();
-        
+                
         // Store all from definition that have not yet been stored
-        if (config.getInput().getHandle() != null) {
+        if (config.getInput() != null) {
             DataHandle handle = config.getInput().getHandle();
             for (int i = 0; i < handle.getNumColumns(); i++) {
                 final String attr = handle.getAttributeName(i);
