@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -34,10 +35,13 @@ import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import de.linearbits.swt.table.DynamicTable;
+import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * This view allows to select a set of attributes for classification analysis
@@ -47,17 +51,26 @@ import org.eclipse.swt.widgets.TableItem;
 public class ViewClassificationAttributes implements IView, ViewStatisticsBasic {
 
     /** Controller */
-    private final Controller controller;
-
+    private final Controller   controller;
+    
     /** View */
-    private final Composite  root;
+    private final Composite    root;
     /** View */
-    private final Table      features;
+    private final DynamicTable features;
     /** View */
-    private final Table      classes;
-
+    private final DynamicTable classes;
+    
     /** Model */
-    private Model            model;
+    private Model              model;
+
+    /** Resource */
+    private final Image        IMAGE_IDENTIFYING;
+    /** Resource */
+    private final Image        IMAGE_INSENSITIVE;
+    /** Resource */
+    private final Image        IMAGE_QUASI_IDENTIFYING;
+    /** Resource */
+    private final Image        IMAGE_SENSITIVE;
 
     /**
      * Creates a new instance.
@@ -67,10 +80,17 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
      */
     public ViewClassificationAttributes(final Composite parent,
                                     final Controller controller) {
+        
+        // Load images
+        IMAGE_INSENSITIVE       = controller.getResources().getManagedImage("bullet_green.png"); //$NON-NLS-1$
+        IMAGE_SENSITIVE         = controller.getResources().getManagedImage("bullet_purple.png"); //$NON-NLS-1$
+        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
+        IMAGE_IDENTIFYING       = controller.getResources().getManagedImage("bullet_red.png"); //$NON-NLS-1$
 
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         
         this.controller = controller;
 
@@ -86,7 +106,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         // Create table
-        features = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
         features.addSelectionListener(new DelayedChangeListener(1000) {
             @Override
@@ -95,14 +115,25 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
             }
         });
         
+        DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
+        column0.setWidth("10%", "40px");
+        DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
+        column1.setWidth("90%", "40px");
+        
+        
         // Create button
-        classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        classes = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
         classes.addSelectionListener(new DelayedChangeListener(1000) {
             public void delayedEvent() {
                 fireEvent();
             }   
         });
+        
+        DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
+        column3.setWidth("10%", "40px");
+        DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
+        column4.setWidth("90%", "40px");
         
         // Reset view
         reset();
@@ -142,7 +173,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         if (event.part == ModelPart.MODEL) {
            this.model = (Model) event.data;
            update();
-        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES) {
+        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES || event.part == ModelPart.ATTRIBUTE_TYPE) {
            update();
         }
     }
@@ -196,33 +227,51 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
 
         root.setRedraw(false);
         
-        Set<String> selectedFeatures = model.getSelectedFeatures();
-        
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
-        
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            TableItem item = new TableItem(features, SWT.NONE);
-            String value = handle.getAttributeName(i);
-            item.setText(value);
-            item.setChecked(selectedFeatures.contains(value));
-        }
-        
-        Set<String> selectedClasses = model.getSelectedClasses();
-        
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
         
         for (int i = 0; i < handle.getNumColumns(); i++) {
-            TableItem item = new TableItem(classes, SWT.NONE);
-            String value = handle.getAttributeName(i);
-            item.setText(value);
-            item.setChecked(selectedClasses.contains(value));
+            updateTableItem(handle, i, features, model.getSelectedFeatures());
+            updateTableItem(handle, i, classes, model.getSelectedClasses());
         }
         
         root.setRedraw(true);
         SWTUtil.enable(root);
+    }
+    
+    /**
+     * Update table item.
+     * 
+     * @param handle
+     * @param i
+     * @param table
+     * @param set
+     */
+    private void updateTableItem(DataHandle handle, int i, DynamicTable table, Set<String> set){
+        
+        TableItem item = new TableItem(table, SWT.NONE);
+        String attribute = handle.getAttributeName(i);
+        item.setText(new String[] { "", attribute } );
+        item.setImage(0, getAttributeImage(attribute));
+        item.setChecked(set.contains(attribute));
+    }
+    
+    /**
+     * Update
+     * 
+     * @param attribute
+     * @return
+     */
+    private Image getAttributeImage(String attribute) {
+        AttributeType type = model.getInputDefinition().getAttributeType(attribute);
+        if (type == AttributeType.IDENTIFYING_ATTRIBUTE) { return IMAGE_IDENTIFYING; }
+        if (type == AttributeType.SENSITIVE_ATTRIBUTE) { return IMAGE_SENSITIVE; }
+        if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) { return IMAGE_QUASI_IDENTIFYING; }
+        if (type == AttributeType.INSENSITIVE_ATTRIBUTE) { return IMAGE_INSENSITIVE; }
+        return null;
     }
 }
