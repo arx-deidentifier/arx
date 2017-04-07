@@ -25,7 +25,6 @@ import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.commons.math3.analysis.function.Log;
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXResult.ScoreType;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -68,22 +67,16 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private transient boolean              deterministic    = false;
     /** Parameter */
     private final DataGeneralizationScheme generalization;
-    /** Parameter */
-    private final ScoreType                scoreType;
-    /** Parameter */
-    private final int                      classIndex;
     
     /**
      * Creates a new instance which performs data-dependent generalization
      * @param epsilonAnon
      * @param delta
-     * @param classIndex
-     * @param scoreType
      * @param epsilonSearch
      * @param steps
      */
-    public EDDifferentialPrivacy(double epsilonAnon, double delta, int classIndex,
-                                 ScoreType scoreType, double epsilonSearch, int steps) {
+    public EDDifferentialPrivacy(double epsilonAnon, double delta,
+                                 double epsilonSearch, int steps) {
         super(false, false);
         this.epsilonAnon = epsilonAnon;
         this.epsilonSearch = epsilonSearch;
@@ -92,22 +85,31 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         this.beta = calculateBeta(epsilonAnon);
         this.k = calculateK(delta, epsilonAnon, this.beta);
         this.deterministic = false;
-        this.scoreType = scoreType;
         this.steps = steps;
-        this.classIndex = classIndex;
     }
     
     /**
-     * Creates a new instance which performs data-dependent generalization
+     * Creates a new instance which performs data-dependent generalization and
+     * may be configured to produce deterministic output.
+     * Note: *never* use this in production. It is implemented for testing purposes, only.
+     * 
      * @param epsilonAnon
      * @param delta
-     * @param scoreType
      * @param epsilonSearch
      * @param steps
+     * @param deterministic
      */
     public EDDifferentialPrivacy(double epsilonAnon, double delta,
-                                 ScoreType scoreType, double epsilonSearch, int steps) {
-        this(epsilonAnon, delta, -1, scoreType, epsilonSearch, steps);
+                                 double epsilonSearch, int steps, boolean deterministic) {
+        super(false, false);
+        this.epsilonAnon = epsilonAnon;
+        this.epsilonSearch = epsilonSearch;
+        this.delta = delta;
+        this.generalization = null;
+        this.beta = calculateBeta(epsilonAnon);
+        this.k = calculateK(delta, epsilonAnon, this.beta);
+        this.deterministic = true;
+        this.steps = steps;
     }
 
     /**
@@ -126,13 +128,12 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         this.beta = calculateBeta(epsilonAnon);
         this.k = calculateK(delta, epsilonAnon, this.beta);
         this.deterministic = false;
-        this.scoreType = null;
         this.steps = -1;
-        this.classIndex = -1;
     }
     
     /**
-     * Creates a new instance which may be configured to produce deterministic output.
+     * Creates a new instance which performs data-independent generalization and
+     * may be configured to produce deterministic output.
      * Note: *never* use this in production. It is implemented for testing purposes, only.
      * 
      * @param epsilonAnon
@@ -151,18 +152,14 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         this.beta = calculateBeta(epsilonAnon);
         this.k = calculateK(delta, epsilonAnon, this.beta);
         this.deterministic = true;
-        this.scoreType = null;
         this.steps = -1;
-        this.classIndex = -1;
     }
-    
-    // TODO: create constructor for testing instance for data-dependent generalization
 
     @Override
     public EDDifferentialPrivacy clone() {
         if (isDataDependent())
-            return new EDDifferentialPrivacy(this.getEpsilonAnon(), this.getDelta(), this.getClassIndex(),
-                                             this.getScoreType(), this.getEpsilonSearch(), this.getSteps());
+            return new EDDifferentialPrivacy(this.getEpsilonAnon(), this.getDelta(),
+                                             this.getEpsilonSearch(), this.getSteps());
         else
             return new EDDifferentialPrivacy(this.getEpsilonAnon(), this.getDelta(), this.getGeneralizationScheme());
     }
@@ -219,14 +216,6 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public DataGeneralizationScheme getGeneralizationScheme() {
         return this.generalization;
     }
-    
-    /**
-     * Returns the defined score type
-     * @return
-     */
-    public ScoreType getScoreType() {
-        return this.scoreType;
-    }
 
     /**
      * Returns the k parameter of (k,b)-SDGS
@@ -235,21 +224,21 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public int getK() {
         return k;
     }
-    
-    /**
-     * Returns the classIndex parameter of (k,b)-SDGS
-     * @return
-     */
-    public int getClassIndex() {
-        return classIndex;
-    }
-    
+
     /**
      * Returns whether this instance performs data-dependent generalization
      * @return
      */
     public boolean isDataDependent() {
         return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return this.deterministic;
     }
 
     @Override

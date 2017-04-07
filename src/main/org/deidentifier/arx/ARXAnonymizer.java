@@ -23,7 +23,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.ARXResult.ScoreType;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.EDDPAlgorithm;
@@ -335,14 +334,6 @@ public class ARXAnonymizer {
                 }
             }
         }
-        if (config.containsCriterion(EDDifferentialPrivacy.class)){
-            for (EDDifferentialPrivacy c : config.getCriteria(EDDifferentialPrivacy.class)){
-                // TODO: Check validity of privacy parameters
-                if (c.getScoreType() == ScoreType.CLASSIFICATION && c.getClassIndex() < 0) { 
-                    throw new IllegalArgumentException("A class attribute has to be specified when using the Classification Score Function"); 
-                }
-            }
-        }
         
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
@@ -510,9 +501,9 @@ public class ARXAnonymizer {
         
         for (PrivacyCriterion c : config.getCriteria()) {
             if (c instanceof EDDifferentialPrivacy && ((EDDifferentialPrivacy)c).isDataDependent()) {
-                return EDDPAlgorithm.create(solutionSpace, checker, ((EDDifferentialPrivacy)c).getClassIndex(), definition,
-                                            ((EDDifferentialPrivacy)c).getSteps(), ((EDDifferentialPrivacy)c).getEpsilonSearch(),
-                                            ((EDDifferentialPrivacy)c).getScoreType());
+                return EDDPAlgorithm.create(solutionSpace, checker, -1, definition, config.getMetric(),
+                                            ((EDDifferentialPrivacy)c).isDeterministic(), ((EDDifferentialPrivacy)c).getSteps(),
+                                            ((EDDifferentialPrivacy)c).getEpsilonSearch());
             }
         }
         

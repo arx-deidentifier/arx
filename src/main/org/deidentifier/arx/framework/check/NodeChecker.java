@@ -23,7 +23,6 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
-import org.deidentifier.arx.ARXResult.ScoreType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -42,6 +41,11 @@ import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.ILSingleDimensional;
+import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
+import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropy;
+import org.deidentifier.arx.metric.v2.MetricSDAECS;
+import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
 
 /**
  * This class orchestrates the process of transforming and analyzing a dataset.
@@ -397,37 +401,54 @@ public class NodeChecker {
      * @param definition 
      * @param transformation
      * @param score
+     * @param metric
      * @param clazz 
      * @return
      */
-    public double getScore(DataDefinition definition, Transformation transformation, ScoreType score, int clazz) {
+    public double getScore(DataDefinition definition, Transformation transformation, Metric<?> metric, int clazz) {
 
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
         currentGroupify.stateAnalyze(transformation, true);
-        currentGroupify.prepareScore();
         
+        // Prepare
         double k = (double)config.getMinimalGroupSize();
         double numRecords = (double)manager.getDataGeneralized().getDataLength();
         double numAttrs = manager.getHierarchies().length;
-        int[] rootValues = new int[(int)numAttrs]; // TODO: This assumes that a single root node exists in all hierarchies
-		for (int i = 0; i < numAttrs; i++) {
-			int[] row = manager.getHierarchies()[i].getArray()[0];
-			rootValues[i] = row[row.length - 1];
-		}
-        
-        
-        
-        switch (score) {
-        case AECS:
-            return currentGroupify.getNumberOfEquivalenceClasses();
-        case LOSS:
+		
+		// Calculate the score for the respective metric
+		if (metric instanceof MetricSDAECS) {
+		    
+		    // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
+		    // TODO off by one in metrik?
+            boolean hasSuppressed = false;
+            int numberOfNonSuppressedClasses = 0;
+            HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
+            while (entry != null) {
+                if (!entry.isNotOutlier && entry.count > 0 || entry.pcount > entry.count) {
+                    // The equivalence class is suppressed or contains records removed by sampling
+                    hasSuppressed = true;
+                }
+                if (entry.isNotOutlier && entry.count > 0) {
+                    // The equivalence class contains records which are not suppressed
+                    numberOfNonSuppressedClasses++;
+                }
+                // Next group
+                entry = entry.nextOrdered;
+            }
+            return (double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d);
+            
+		} else if (metric instanceof MetricMDNMLoss) {
+		    
+		    // Calculate the Loss metric
             Metric<AbstractILMultiDimensional> metricMultiDim = Metric.createLossMetric(AggregateFunction.SUM);
             metricMultiDim.initialize(manager,
                                       definition,
                                       manager.getDataGeneralized(),
                                       manager.getHierarchies(),
                                       config.getParent());
+            
+            // Undo normalization and calculate sum over all attributes
             double[] lossAttrs = metricMultiDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValues();
             double loss = 0d;
             for (int i = 0; i < numAttrs; i++) {
@@ -435,115 +456,121 @@ public class NodeChecker {
                 double max = numRecords;
                 loss += lossAttrs[i] * (max - min) + min;
             }
+            
+            // Add values for records which have been suppressed by sampling
+            HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
+            while (entry != null) {
+                loss += (entry.pcount - entry.count) * numAttrs;
+                entry = entry.nextOrdered;
+            }
+            
+            // Produce score function divided through sensitivity
             loss *= -1d / ((double) lossAttrs.length);
-            loss /= k + 1d;
+            if (k > 1) loss /= k - 1d;
             return loss;
-        case PRECISION:
-            metricMultiDim = Metric.createPrecisionMetric(AggregateFunction.SUM);
+            
+		} else if (metric instanceof MetricMDNMPrecision) {
+		    
+		    // Calculate the Precision metric
+		    Metric<AbstractILMultiDimensional> metricMultiDim = Metric.createPrecisionMetric(AggregateFunction.SUM);
             metricMultiDim.initialize(manager,
                                       definition,
                                       manager.getDataGeneralized(),
                                       manager.getHierarchies(),
                                       config.getParent());
+            
+            // Undo normalization and calculate sum over all attributes
             double[] precisionAttrs = metricMultiDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValues();
             double precision = 0d;
             for (int i = 0; i < numAttrs; i++) {
-                precision += precisionAttrs[i];
+                precision += precisionAttrs[i] * numRecords;
             }
-            return precision * -1d * numRecords / ((double) precisionAttrs.length * (k + 1d));
-        case DISCERNABILITY:
+            
+            // Add values for records which have been suppressed by sampling
+            HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
+            while (entry != null) {
+                precision += (entry.pcount - entry.count) * numAttrs;
+                entry = entry.nextOrdered;
+            }
+            
+            // Produce score function divided through sensitivity
+            precision *= -1d / numAttrs;
+            if (k > 1) precision /= k - 1d;
+            return precision;
+            
+		} else if (metric instanceof MetricSDNMDiscernability) {
+		    
+		    // Calculate the Discernability metric
             Metric<ILSingleDimensional> metricSingleDim = Metric.createDiscernabilityMetric();
             metricSingleDim.initialize(manager,
                                        definition,
                                        manager.getDataGeneralized(),
                                        manager.getHierarchies(),
                                        config.getParent());
+            double discernibility = metricSingleDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValue();
+            
+            // Add values for records which have been suppressed by sampling
+            HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
+            while (entry != null) {
+                discernibility += (entry.pcount - entry.count) * numRecords;
+                entry = entry.nextOrdered;
+            }
+            
+            // Produce score function divided through sensitivity
             double sensitivity = (k == 1d) ? 5d : k * k / (k - 1d) + 1d;
-            double discernibilityVal = metricSingleDim.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValue();
-            return -1d * discernibilityVal / (numRecords * sensitivity);
-        case ENTROPY:
+            return -1d * discernibility / (numRecords * sensitivity);
+            
+		} else if (metric instanceof MetricMDNUNMEntropy) {
+		    
+		    // Prepare
             double entropy = 0d;
+            int[] rootValues = new int[(int)numAttrs]; // TODO: This assumes that a single root node exists in all hierarchies
+            for (int i = 0; i < numAttrs; i++) {
+                int[] row = manager.getHierarchies()[i].getArray()[0];
+                rootValues[i] = row[row.length - 1];
+            }
 
+            // For every attribute
             for (int j = 0; j < numAttrs; ++j) {
 
-                Map<Integer, Integer> valueToCount = new HashMap<Integer, Integer>();
+                Map<Integer, Integer> nonSuppressedValueToCount = new HashMap<Integer, Integer>();
 
                 HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
                 while (entry != null) {
 
-                    int count = entry.count;
+                    // Process values of records which have not been suppressed by sampling
                     if (entry.isNotOutlier && entry.key[j] != rootValues[j]) {
-                        // The attribute value is not suppressed
+                        // The attribute value has neither been suppressed because of record suppression nor because of generalization
                         int value = entry.key[j];
-                        int valueCount = valueToCount.containsKey(value) ? (valueToCount.get(value) + count) : count;
-                        valueToCount.put(value, valueCount);
+                        int valueCount = nonSuppressedValueToCount.containsKey(value) ?
+                                (nonSuppressedValueToCount.get(value) + entry.count) : entry.count;
+                        nonSuppressedValueToCount.put(value, valueCount);
                     } else {
-                        entropy -= numRecords * count;
+                        // The attribute value has been suppressed because of record suppression or because of generalization
+                        entropy += entry.count * numRecords;
                     }
+                    
+                    // Add values for records which have been suppressed by sampling
+                    entropy += (entry.pcount - entry.count) * numRecords;
 
                     // Next group
                     entry = entry.nextOrdered;
                 }
 
-                for (int count : valueToCount.values()) {
-                    entropy -= count * count;
+                // Add values for all attribute values which were not suppressed
+                for (int count : nonSuppressedValueToCount.values()) {
+                    entropy += count * count;
                 }
             }
 
-            return entropy / ((k * k / (k - 1d) + 1d) * numAttrs * numRecords);
-
-        case CLASSIFICATION:
-            Map<RecordWrapper, Map<Integer, Integer>> featuresToClassToCount = new HashMap<>();
-
-            for (HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass(); entry != null; entry = entry.nextOrdered) {
-
-                if (!entry.isNotOutlier) continue;
-
-                int[] record = entry.key;
-                int count = entry.count;
-                int classValue = record[clazz];
-
-                int[] features = new int[record.length - 1];
-                boolean featuresSuppressed = true;
-                for (int i = 0; i < record.length; i++) {
-                    if (i < clazz) {
-                        features[i] = record[i];
-                        if (record[i] != rootValues[i]) featuresSuppressed = false;
-                    } else if (i > clazz) {
-                        features[i - 1] = record[i];
-                        if (record[i] != rootValues[i]) featuresSuppressed = false;
-                    }
-                }
-
-                if (featuresSuppressed) continue;
-
-                RecordWrapper featuresWrapped = new RecordWrapper(features);
-
-                Map<Integer, Integer> classToCount = featuresToClassToCount.get(featuresWrapped);
-                if (classToCount == null) {
-                    classToCount = new HashMap<>();
-                    classToCount.put(classValue, count);
-                } else {
-                    int classCount = classToCount.containsKey(classValue) ? classToCount.get(classValue) + count : count;
-                    classToCount.put(classValue, classCount);
-                }
-                featuresToClassToCount.put(featuresWrapped, classToCount);
-            }
-
-            int unpenalizedCount = 0;
-            for (Map<Integer, Integer> classToCount : featuresToClassToCount.values()) {
-                int maxCount = 0;
-                for (int count : classToCount.values()) {
-                    maxCount = Math.max(maxCount, count);
-                }
-                unpenalizedCount += maxCount;
-            }
-
-            return (double) unpenalizedCount / k;
+            // Produce score function divided through sensitivity
+            entropy *= -1d / (numRecords * numAttrs);
+            return (k==1) ? entropy / 5d : entropy / (k * k / (k - 1d) + 1d);
             
-        default:
-            // Return dummy data
-            return 0;
-        }
+		} else {
+		    throw new IllegalArgumentException("Data-dependent differential privacy for the metric "
+		    + metric.getName() + " is not yet implemented");
+		}
+
     }
 }

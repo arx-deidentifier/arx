@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
@@ -43,10 +44,10 @@ import org.apache.commons.math3.util.Pair;
 public class ExponentialMechanism<T> {
 
     /** The precision to use for BigDecimal arithmetic */
-    private static final int defaultPrecision = 100;
+    public static final int defaultPrecision = 100;
 
     /** The math context to use for BigDecimal arithmetic */
-    private MathContext      mc;
+    private MathContext     mc;
 
     /** A cryptographically strong random generator */
     private static class SecureRandomGenerator extends AbstractRandomGenerator {
@@ -55,6 +56,26 @@ public class ExponentialMechanism<T> {
         public SecureRandomGenerator() {
             super();
             random = new SecureRandom();
+        }
+
+        @Override
+        public double nextDouble() {
+            return random.nextDouble();
+        }
+
+        @Override
+        public void setSeed(long seed) {
+            random.setSeed(seed);
+        }
+    }
+    
+    /** A deterministic random generator */
+    private static class DeterministicRandomGenerator extends AbstractRandomGenerator {
+        private Random random;
+
+        public DeterministicRandomGenerator() {
+            super();
+            random = new Random(0xDEADBEEF);
         }
 
         @Override
@@ -77,16 +98,19 @@ public class ExponentialMechanism<T> {
      * @param epsilon
      */
     public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon) {
-        this(valueToScore, epsilon, defaultPrecision);
+        this(valueToScore, epsilon, defaultPrecision, false);
     }
 
     /**
      * Constructs a new instance
+     * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
+     * 
      * @param valueToScore
      * @param epsilon
      * @param precision
+     * @param deterministic
      */
-    public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon, int precision) {
+    public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon, int precision, boolean deterministic) {
 
         mc = new MathContext(precision, RoundingMode.HALF_UP);
 
@@ -117,7 +141,9 @@ public class ExponentialMechanism<T> {
             pmf.add(new Pair<T, Double>(transformation, probability.doubleValue()));
         }
 
-        distribution = new EnumeratedDistribution<T>(new SecureRandomGenerator(), pmf);
+        AbstractRandomGenerator random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
+        
+        distribution = new EnumeratedDistribution<T>(random, pmf);
     }
 
     /**

@@ -20,12 +20,12 @@ package org.deidentifier.arx.algorithm;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.deidentifier.arx.ARXResult.ScoreType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.metric.Metric;
 
 import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
@@ -42,14 +42,17 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
      * @param checker
      * @param classIndex
      * @param definition
+     * @param metric 
+     * @param deterministic 
      * @param steps
      * @param epsilonSearch
      * @param scoreType 
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker, int classIndex,
-                                           DataDefinition definition, int steps, double epsilonSearch, ScoreType scoreType) {
-        return new EDDPAlgorithm(solutionSpace, checker, classIndex, definition, steps, epsilonSearch, scoreType);
+                                           DataDefinition definition, Metric<?> metric, boolean deterministic,
+                                           int steps, double epsilonSearch) {
+        return new EDDPAlgorithm(solutionSpace, checker, classIndex, definition, metric, deterministic, steps, epsilonSearch);
     }
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -59,10 +62,12 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
     private final double             epsilonSearch;
     /** Data definition */
     private final DataDefinition     definition;
-    /** Score type */
-    private final ScoreType          scoreType;
+    /** The metric */
+    private final Metric<?>          metric;
     /** Parameter */
     private final int                classIndex;
+    /** Parameter */
+    private final boolean            deterministic;
     
     /**
     * Constructor
@@ -70,20 +75,22 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
     * @param checker
     * @param classIndex
     * @param definition
+     * @param deterministic 
     * @param steps
     * @param epsilonSearch
     * @param scoreType 
     */
     private EDDPAlgorithm(SolutionSpace space, NodeChecker checker, int classIndex,
-                          DataDefinition definition, int steps, double epsilonSearch, ScoreType scoreType) {
+                          DataDefinition definition, Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.epsilonSearch = epsilonSearch;
         this.definition = definition;
-        this.scoreType = scoreType;
         this.classIndex = classIndex;
+        this.metric = metric;
+        this.deterministic = deterministic;
         this.steps = steps;
         if (steps < 0) { 
             throw new IllegalArgumentException("Invalid step number. Must not be negative."); 
@@ -94,10 +101,14 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
     public void traverse() {
         
         Transformation transformation = solutionSpace.getTop();
-        assureChecked(transformation, 0);
+        double score = getScore(transformation);
         
+        Transformation bestTransformation = transformation;
+        double bestScore = score;
+        progress(0d);
+
         Map<Long, Double> transformationIDToScore = new HashMap<Long, Double>();
-        transformationIDToScore.put(transformation.getIdentifier(), getScore(transformation));
+        transformationIDToScore.put(transformation.getIdentifier(), score);
         
         for (int step = 1; step <= steps; ++step) {
             
@@ -106,17 +117,27 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
                 long id = list.getQuick(i);
                 if (transformationIDToScore.containsKey(id)) continue;
                 Transformation predecessor = solutionSpace.getTransformation(id);
-                transformationIDToScore.put(predecessor.getIdentifier(), getScore(predecessor));
+                transformationIDToScore.put(id, getScore(predecessor));
             }
             
             transformationIDToScore.remove(transformation.getIdentifier());
-            
+
             ExponentialMechanism<Long> expMechanism = new ExponentialMechanism<Long>(transformationIDToScore,
-                    epsilonSearch / ((double) steps));
+                    epsilonSearch / ((double) steps), ExponentialMechanism.defaultPrecision, deterministic);
             
-            transformation = solutionSpace.getTransformation(expMechanism.sample());
-            assureChecked(transformation, step);
+            long id = expMechanism.sample();
+            transformation = solutionSpace.getTransformation(id);
+            score = transformationIDToScore.get(id);
+            
+            if (score > bestScore) {
+                bestTransformation = transformation;
+                bestScore = score;
+            }
+            
+            progress((double)step / (double)steps);
         }
+        
+        assureChecked(bestTransformation);
     }
     
     /**
@@ -125,19 +146,17 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
      * @return
      */
     private Double getScore(Transformation transformation) {
-        return checker.getScore(definition, transformation, scoreType, classIndex);
+        return checker.getScore(definition, transformation, metric, classIndex);
     }
 
     /**
     * Makes sure that the given Transformation has been checked
     * @param transformation
-    * @param step
     */
-    private void assureChecked(final Transformation transformation, int step) {
+    private void assureChecked(final Transformation transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true));
             trackOptimum(transformation);
-            progress((double)(steps) / (double)step);
         }
     }
 }
