@@ -296,7 +296,7 @@ public class Resources {
         if (type == AttributeType.INSENSITIVE_ATTRIBUTE) { return getManagedImage("bullet_green.png"); }
         if (type == AttributeType.SENSITIVE_ATTRIBUTE) { return getManagedImage("bullet_purple.png"); }
         if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) { return getManagedImage("bullet_yellow.png"); }
-        return null;
+        throw new IllegalArgumentException("Unknown attribute type '" + type +"'");
     }
     
     /**

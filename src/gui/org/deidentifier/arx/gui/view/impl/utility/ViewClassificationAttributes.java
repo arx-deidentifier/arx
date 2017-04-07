@@ -35,6 +35,7 @@ import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
@@ -122,19 +123,17 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
     }
     
     /**
-     * Update table item.
+     * Create table item.
      * 
      * @param handle
      * @param i
      * @param table
      * @param set
      */
-    private void createTableItem(DataHandle handle, int i, DynamicTable table, Set<String> set){
+    private void createTableItem(String attribute, Image image, DynamicTable table, Set<String> set){
         TableItem item = new TableItem(table, SWT.NONE);
-        String attribute = handle.getAttributeName(i);
         item.setText(new String[] { "", attribute } );
-        AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-        item.setImage(0, controller.getResources().getImage(type));
+        item.setImage(0, image);
         item.setChecked(set.contains(attribute));
     }
 
@@ -233,9 +232,11 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
             item.dispose();
         }
         
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            createTableItem(handle, i, features, model.getSelectedFeatures());
-            createTableItem(handle, i, classes, model.getSelectedClasses());
+        for (int col = 0; col < handle.getNumColumns(); col++) {
+            String attribute = handle.getAttributeName(col);
+            Image image = controller.getResources().getImage(model.getInputDefinition().getAttributeType(attribute));
+            createTableItem(attribute, image, features, model.getSelectedFeatures());
+            createTableItem(attribute, image, classes, model.getSelectedClasses());
         }
         
         root.setRedraw(true);
