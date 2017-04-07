@@ -21,7 +21,6 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
