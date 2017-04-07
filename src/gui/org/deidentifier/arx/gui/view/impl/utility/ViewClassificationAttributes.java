@@ -114,7 +114,6 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
                 fireEvent();
             }
         });
-        
         DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
         column0.setWidth("10%", "40px");
         DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
@@ -129,7 +128,6 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
                 fireEvent();
             }   
         });
-        
         DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
         column3.setWidth("10%", "40px");
         DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
