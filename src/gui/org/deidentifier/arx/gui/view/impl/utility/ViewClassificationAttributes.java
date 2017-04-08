@@ -165,7 +165,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         Set<String> selectedFeatures = new HashSet<String>();
         for (TableItem item : features.getItems()) {
             if (item.getChecked()) {
-                selectedFeatures.add(item.getText());
+                selectedFeatures.add(item.getText(1));
             }
         }
         Set<String> selectedClasses = new HashSet<String>();
