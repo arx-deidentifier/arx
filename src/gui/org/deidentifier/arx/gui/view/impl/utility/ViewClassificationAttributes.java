@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -37,6 +38,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.linearbits.swt.table.DynamicTable;
@@ -57,7 +59,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
     /** View */
     private final DynamicTable features;
     /** View */
-    private final DynamicTable classes;
+    private final Table classes;
     
     /** Model */
     private Model              model;
@@ -105,35 +107,16 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         
         
         // Create button
-        classes = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
         classes.addSelectionListener(new DelayedChangeListener(1000) {
             public void delayedEvent() {
                 fireEvent();
             }   
         });
-        DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
-        column3.setWidth("10%", "40px");
-        DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
-        column4.setWidth("90%", "40px");
         
         // Reset view
         reset();
-    }
-    
-    /**
-     * Create table item.
-     * 
-     * @param handle
-     * @param i
-     * @param table
-     * @param set
-     */
-    private void createTableItem(String attribute, Image image, DynamicTable table, Set<String> set){
-        TableItem item = new TableItem(table, SWT.NONE);
-        item.setText(new String[] { "", attribute } );
-        item.setImage(0, image);
-        item.setChecked(set.contains(attribute));
     }
 
     @Override
@@ -233,9 +216,19 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         
         for (int col = 0; col < handle.getNumColumns(); col++) {
             String attribute = handle.getAttributeName(col);
-            Image image = controller.getResources().getImage(model.getInputDefinition().getAttributeType(attribute));
-            createTableItem(attribute, image, features, model.getSelectedFeatures());
-            createTableItem(attribute, image, classes, model.getSelectedClasses());
+            DataDefinition def = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getInputDefinition();
+            Image image = controller.getResources().getImage(def.getAttributeType(attribute));
+            
+            // Features
+            TableItem itemF = new TableItem(features, SWT.NONE);
+            itemF.setText(new String[] { "", attribute } );
+            itemF.setImage(0, image);
+            itemF.setChecked(model.getSelectedFeatures().contains(attribute));
+
+            // Classes
+            TableItem itemC = new TableItem(classes, SWT.NONE);
+            itemC.setText(attribute);
+            itemC.setChecked(model.getSelectedClasses().contains(attribute));
         }
         
         root.setRedraw(true);
