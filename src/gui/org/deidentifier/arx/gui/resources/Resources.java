@@ -292,11 +292,15 @@ public class Resources {
      * @return
      */
     public Image getImage(AttributeType type) {
-        if (type == AttributeType.IDENTIFYING_ATTRIBUTE) { return getManagedImage("bullet_red.png"); }
-        if (type == AttributeType.INSENSITIVE_ATTRIBUTE) { return getManagedImage("bullet_green.png"); }
-        if (type == AttributeType.SENSITIVE_ATTRIBUTE) { return getManagedImage("bullet_purple.png"); }
-        if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) { return getManagedImage("bullet_yellow.png"); }
-        throw new IllegalArgumentException("Unknown attribute type '" + type +"'");
+        if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
+            return getManagedImage("bullet_red.png");
+        } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
+            return getManagedImage("bullet_green.png");
+        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
+            return getManagedImage("bullet_purple.png");
+        } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
+            return getManagedImage("bullet_yellow.png");
+        } else throw new IllegalArgumentException("Unknown attribute type '" + type + "'");
     }
     
     /**
