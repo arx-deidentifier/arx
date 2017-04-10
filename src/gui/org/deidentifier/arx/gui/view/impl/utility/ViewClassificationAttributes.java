@@ -216,7 +216,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         
         for (int col = 0; col < handle.getNumColumns(); col++) {
             String attribute = handle.getAttributeName(col);
-            DataDefinition def = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getInputDefinition();
+            DataDefinition def = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
             Image image = controller.getResources().getImage(def.getAttributeType(attribute));
             
             // Features
