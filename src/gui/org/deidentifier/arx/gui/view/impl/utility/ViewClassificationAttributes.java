@@ -77,6 +77,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.OUTPUT, this);
         
         this.controller = controller;
 
