@@ -33,6 +33,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
+import org.deidentifier.arx.AttributeType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -282,6 +283,26 @@ public class Resources {
      */
     public InputStream getStream(final String name) {
         return this.getClass().getResourceAsStream(name);
+    }
+    
+    /**
+     * Returns an image.
+     * 
+     * @param type
+     * @return
+     */
+    public Image getImage(AttributeType type) {
+        if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
+            return getManagedImage("bullet_red.png");
+        } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
+            return getManagedImage("bullet_green.png");
+        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
+            return getManagedImage("bullet_purple.png");
+        } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
+            return getManagedImage("bullet_yellow.png");
+        } else {
+            throw new IllegalArgumentException("Unknown attribute type '" + type + "'");
+        }
     }
     
     /**

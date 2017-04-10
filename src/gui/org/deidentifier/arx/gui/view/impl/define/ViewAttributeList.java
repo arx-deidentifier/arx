@@ -41,7 +41,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -69,15 +68,6 @@ public class ViewAttributeList implements IView {
     /** View */
     private DynamicTable     table;
 
-    /** Resource */
-    private final Image      IMAGE_IDENTIFYING;
-    /** Resource */
-    private final Image      IMAGE_INSENSITIVE;
-    /** Resource */
-    private final Image      IMAGE_QUASI_IDENTIFYING;
-    /** Resource */
-    private final Image      IMAGE_SENSITIVE;
-
     /**
      * Creates a new instance.
      * 
@@ -88,14 +78,6 @@ public class ViewAttributeList implements IView {
     public ViewAttributeList(final Composite parent,
                              final Controller controller) {
 
-
-        // Load images
-        IMAGE_INSENSITIVE = controller.getResources().getManagedImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE = controller.getResources().getManagedImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING = controller.getResources().getManagedImage("bullet_red.png"); //$NON-NLS-1$
-        
-        
         // Controller
         this.controller = controller;
         this.controller.addListener(ModelPart.INPUT, this);
@@ -382,15 +364,7 @@ public class ViewAttributeList implements IView {
             for (int i = 0; i < data.getNumColumns(); i++) {
                 String attribute = data.getAttributeName(i);
                 AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-                if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_IDENTIFYING);  
-                } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_SENSITIVE);
-                } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_QUASI_IDENTIFYING);
-                } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_INSENSITIVE);
-                }
+                table.getItem(i).setImage(0, controller.getResources().getImage(type));
             }
             table.setRedraw(true);
             SWTUtil.enable(table);
@@ -434,15 +408,7 @@ public class ViewAttributeList implements IView {
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(new String[] { "", attribute, getDataType(attribute), getDataTypeFormat(attribute) }); //$NON-NLS-1$
             AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-            if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-                item.setImage(0, IMAGE_IDENTIFYING);  
-            } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-                item.setImage(0, IMAGE_SENSITIVE);
-            } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-                item.setImage(0, IMAGE_QUASI_IDENTIFYING);
-            } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-                item.setImage(0, IMAGE_INSENSITIVE);
-            }
+            item.setImage(0, controller.getResources().getImage(type));  
             if (model.getSelectedAttribute() != null && model.getSelectedAttribute().equals(attribute)) {
                 table.select(i);
             }
