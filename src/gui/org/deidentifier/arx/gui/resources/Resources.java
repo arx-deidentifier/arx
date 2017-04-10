@@ -300,7 +300,9 @@ public class Resources {
             return getManagedImage("bullet_purple.png");
         } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
             return getManagedImage("bullet_yellow.png");
-        } else throw new IllegalArgumentException("Unknown attribute type '" + type + "'");
+        } else {
+            throw new IllegalArgumentException("Unknown attribute type '" + type + "'");
+        }
     }
     
     /**
