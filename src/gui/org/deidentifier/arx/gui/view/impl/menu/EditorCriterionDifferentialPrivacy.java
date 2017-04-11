@@ -48,6 +48,7 @@ import de.linearbits.swt.widgets.Knob;
  * A view on an (e,d)-DP criterion.
  *
  * @author Fabian Prasser
+ * @author Raffael Bild
  */
 public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDifferentialPrivacyCriterion> {
 
@@ -110,6 +111,8 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
      *
      * @param parent
      * @param model
+     * @param controller
+     * @param arxmodel
      */
     public EditorCriterionDifferentialPrivacy(final Composite parent,
                                               final ModelDifferentialPrivacyCriterion model,
@@ -122,6 +125,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
 
     /**
      * Returns a generalization degree
+     * @param index
      * @return
      */
     private GeneralizationDegree getGeneralizationDegree(int index) {
@@ -161,20 +165,32 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     @Override
     protected Composite build(Composite parent) {
 
-        // Create input group
-        final Composite group = new Composite(parent, SWT.NONE);
-        group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        // Create input groups
+        final Composite groups = new Composite(parent, SWT.NONE);
+        groups.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 9;
-        group.setLayout(groupInputGridLayout);
+        groupInputGridLayout.numColumns = 1;
+        groups.setLayout(groupInputGridLayout);
+        
+        final Composite topGroup = new Composite(groups, SWT.NONE);
+        topGroup.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        final GridLayout topGroupInputGridLayout = new GridLayout();
+        topGroupInputGridLayout.numColumns = 9;
+        topGroup.setLayout(topGroupInputGridLayout);
+        
+        final Composite bottomGroup = new Composite(groups, SWT.NONE);
+        bottomGroup.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        final GridLayout bottomGroupInputGridLayout = new GridLayout();
+        bottomGroupInputGridLayout.numColumns = 5;
+        bottomGroup.setLayout(bottomGroupInputGridLayout);
         
 
         // Create epsilon anon slider
-        final Label aLabel = new Label(group, SWT.NONE);
+        final Label aLabel = new Label(topGroup, SWT.NONE);
         aLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
 
-        labelEpsilonAnon = createLabel(group);
-        knobEpsilonAnon = createKnobDouble(group, 0.01d, 2d);
+        labelEpsilonAnon = createLabel(topGroup);
+        knobEpsilonAnon = createKnobDouble(topGroup, 0.01d, 2d);
         updateLabel(labelEpsilonAnon, knobEpsilonAnon.getValue()); //$NON-NLS-1$
         knobEpsilonAnon.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -185,19 +201,19 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         });
         
         // Create epsilon search slider
-        final Label sLabel = new Label(group, SWT.NONE);
+        final Label sLabel = new Label(topGroup, SWT.NONE);
         sLabel.setText(Resources.getMessage("CriterionDefinitionView.124")); //$NON-NLS-1$
 
-        labelEpsilonSearch = createLabel(group);
-        knobEpsilonSearch = createKnobDouble(group, 0d, 2d);
+        labelEpsilonSearch = createLabel(topGroup);
+        knobEpsilonSearch = createKnobDouble(topGroup, 0d, 2d);
         updateLabel(labelEpsilonSearch, knobEpsilonSearch.getValue()); //$NON-NLS-1$
 
         // Create delta slider
-        final Label lLabel = new Label(group, SWT.NONE);
+        final Label lLabel = new Label(topGroup, SWT.NONE);
         lLabel.setText(Resources.getMessage("CriterionDefinitionView.93")); //$NON-NLS-1$
 
-        labelDelta = createLabel(group);
-        knobDelta = createKnobDouble(group, 0.00000000001d, 0.00001d);
+        labelDelta = createLabel(topGroup);
+        knobDelta = createKnobDouble(topGroup, 0.00000000001d, 0.00001d);
         updateLabel(labelDelta, knobDelta.getValue());
         knobDelta.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -208,10 +224,10 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         });
 
         // Create criterion combo
-        final Label cLabel = new Label(group, SWT.PUSH);
+        final Label cLabel = new Label(bottomGroup, SWT.PUSH);
         cLabel.setText(Resources.getMessage("CriterionDefinitionView.94")); //$NON-NLS-1$
 
-        comboGeneralization = new Combo(group, SWT.READ_ONLY);
+        comboGeneralization = new Combo(bottomGroup, SWT.READ_ONLY);
         GridData d31 = SWTUtil.createFillHorizontallyGridData();
         d31.verticalAlignment = SWT.CENTER;
         d31.horizontalSpan = 1;
@@ -247,12 +263,12 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         });
         
         // Create steps slider
-        final Label tLabel = new Label(group, SWT.NONE);
+        final Label tLabel = new Label(bottomGroup, SWT.NONE);
         tLabel.setText(Resources.getMessage("CriterionDefinitionView.125")); //$NON-NLS-1$
 
-        labelSteps = createLabel(group);
+        labelSteps = createLabel(bottomGroup);
         labelSteps.setEnabled(knobEpsilonSearch.getValue() > 0d);
-        knobSteps = createKnobInteger(group, 0, 1000);
+        knobSteps = createKnobInteger(bottomGroup, 0, 1000);
         knobSteps.setEnabled(knobEpsilonSearch.getValue() > 0d);
         
         updateLabel(labelSteps, knobSteps.getValue());
@@ -276,7 +292,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
             }
         });
 
-        return group;
+        return groups;
     }
     
     @Override
@@ -299,10 +315,10 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         updateLabel(labelDelta, model.getDelta());
         updateLabel(labelSteps, model.getSteps());
         knobDelta.setValue(model.getDelta());
-        // FIXME ugly hack because the initial value of epsilonAnon is somehow not being overtaken ...
+        // TODO this is a hack because the initial value of epsilonAnon = 2 is somehow not being overtaken but set to 0
         knobEpsilonAnon.setValue(model.getEpsilonAnon() == 0d ? 2d : model.getEpsilonAnon());
         knobEpsilonSearch.setValue(model.getEpsilonSearch());
-        // FIXME ugly hack because the initial value of steps is somehow not being overtaken ...
+        // TODO this is a hack because the initial value of steps = 100 is somehow not being overtaken but set to 0
         knobSteps.setValue(model.getSteps() == 0 ? 100 : model.getSteps());
         if (!_default) {
             int index = getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree());

@@ -325,22 +325,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /**
      * Calculates a_n
      * @param n
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateA(int n, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
+    private double calculateA(int n, double epsilonAnon, double beta) {
+        double gamma = calculateGamma(epsilonAnon, beta);
         return calculateBinomialSum((int) Math.floor(n * gamma) + 1, n, beta);
     }
 
     /**
      * Calculates beta_max
-     * @param epsilon
+     * @param epsilonAnon
      * @return
      */
-    private double calculateBeta(double epsilon) {
-        return 1.0d - (new Exp()).value(-1.0d * epsilon);
+    private double calculateBeta(double epsilonAnon) {
+        return 1.0d - (new Exp()).value(-1.0d * epsilonAnon);
     }
     
     /**
@@ -364,32 +364,32 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /**
      * Calculates c_n
      * @param n
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateC(int n, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
+    private double calculateC(int n, double epsilonAnon, double beta) {
+        double gamma = calculateGamma(epsilonAnon, beta);
         return (new Exp()).value(-1.0d * n * (gamma * (new Log()).value(gamma / beta) - (gamma - beta)));
     }
 
     /**
      * Calculates delta
      * @param k
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateDelta(int k, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
+    private double calculateDelta(int k, double epsilonAnon, double beta) {
+        double gamma = calculateGamma(epsilonAnon, beta);
         int n_m = (int) Math.ceil((double) k / gamma - 1.0d);
 
         double delta = Double.MIN_VALUE;
         double bound = Double.MAX_VALUE;
 
         for (int n = n_m; delta < bound; ++n) {
-            delta = Math.max(delta, calculateA(n, epsilon, beta));
-            bound = calculateC(n, epsilon, beta);
+            delta = Math.max(delta, calculateA(n, epsilonAnon, beta));
+            bound = calculateC(n, epsilonAnon, beta);
         }
 
         return delta;
@@ -397,27 +397,27 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     /**
      * Calculates gamma
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateGamma(double epsilon, double beta) {
-        double power = (new Exp()).value(epsilon);
+    private double calculateGamma(double epsilonAnon, double beta) {
+        double power = (new Exp()).value(epsilonAnon);
         return (power - 1.0d + beta) / power;
     }
 
     /**
      * Calculates k
      * @param delta
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private int calculateK(double delta, double epsilon, double beta) {
+    private int calculateK(double delta, double epsilonAnon, double beta) {
         int k = 1;
 
         for (double delta_k = Double.MAX_VALUE; delta_k > delta; ++k) {
-            delta_k = calculateDelta(k, epsilon, beta);
+            delta_k = calculateDelta(k, epsilonAnon, beta);
         }
 
         return k;
