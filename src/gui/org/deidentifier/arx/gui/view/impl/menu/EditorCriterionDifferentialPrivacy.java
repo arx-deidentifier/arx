@@ -55,16 +55,28 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     private Knob<Double>          knobDelta;
 
     /** View */
-    private Knob<Double>          knobEpsilon;
+    private Knob<Double>          knobEpsilonAnon;
+    
+    /** View */
+    private Knob<Double>          knobEpsilonSearch;
+    
+    /** View */
+    private Knob<Integer>         knobSteps;
 
     /** View */
     private Combo                 comboGeneralization;
 
     /** View */
-    private Text                  labelEpsilon;
+    private Text                  labelEpsilonAnon;
+    
+    /** View */
+    private Text                  labelEpsilonSearch;
 
     /** View */
     private Text                  labelDelta;
+    
+    /** View */
+    private Text                  labelSteps;
 
     /**
      * Some epsilon values mentioned in "Practicing Differential Privacy in Health Care: A Review"
@@ -153,24 +165,32 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 8;
+        groupInputGridLayout.numColumns = 9;
         group.setLayout(groupInputGridLayout);
         
 
-        // Create epsilon slider
-        final Label zLabel = new Label(group, SWT.NONE);
-        zLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
+        // Create epsilon anon slider
+        final Label aLabel = new Label(group, SWT.NONE);
+        aLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
 
-        labelEpsilon = createLabel(group);
-        knobEpsilon = createKnobDouble(group, 0.01d, 2d);
-        updateLabel(labelEpsilon, knobEpsilon.getValue()); //$NON-NLS-1$
-        knobEpsilon.addSelectionListener(new SelectionAdapter() {
+        labelEpsilonAnon = createLabel(group);
+        knobEpsilonAnon = createKnobDouble(group, 0.01d, 2d);
+        updateLabel(labelEpsilonAnon, knobEpsilonAnon.getValue()); //$NON-NLS-1$
+        knobEpsilonAnon.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setEpsilon(knobEpsilon.getValue());
-                updateLabel(labelEpsilon, model.getEpsilon());
+                model.setEpsilonAnon(knobEpsilonAnon.getValue());
+                updateLabel(labelEpsilonAnon, model.getEpsilonAnon());
             }
         });
+        
+        // Create epsilon search slider
+        final Label sLabel = new Label(group, SWT.NONE);
+        sLabel.setText(Resources.getMessage("CriterionDefinitionView.124")); //$NON-NLS-1$
+
+        labelEpsilonSearch = createLabel(group);
+        knobEpsilonSearch = createKnobDouble(group, 0d, 2d);
+        updateLabel(labelEpsilonSearch, knobEpsilonSearch.getValue()); //$NON-NLS-1$
 
         // Create delta slider
         final Label lLabel = new Label(group, SWT.NONE);
@@ -198,6 +218,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         comboGeneralization.setLayoutData(d31);
         comboGeneralization.setItems(getGeneralizationDegrees());
         comboGeneralization.select(0);
+        comboGeneralization.setEnabled(knobEpsilonSearch.getValue() == 0d);
 
         comboGeneralization.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -224,6 +245,36 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                 }
             }
         });
+        
+        // Create steps slider
+        final Label tLabel = new Label(group, SWT.NONE);
+        tLabel.setText(Resources.getMessage("CriterionDefinitionView.125")); //$NON-NLS-1$
+
+        labelSteps = createLabel(group);
+        labelSteps.setEnabled(knobEpsilonSearch.getValue() > 0d);
+        knobSteps = createKnobInteger(group, 0, 1000);
+        knobSteps.setEnabled(knobEpsilonSearch.getValue() > 0d);
+        
+        updateLabel(labelSteps, knobSteps.getValue());
+        knobSteps.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.setSteps(knobSteps.getValue());
+                updateLabel(labelSteps, model.getSteps());
+            }
+        });
+        
+        // Create selection listener for epsilon search slider 
+        knobEpsilonSearch.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.setEpsilonSearch(knobEpsilonSearch.getValue());
+                updateLabel(labelEpsilonSearch, model.getEpsilonSearch());
+                comboGeneralization.setEnabled(knobEpsilonSearch.getValue() == 0d);
+                knobSteps.setEnabled(knobEpsilonSearch.getValue() > 0d);
+                labelSteps.setEnabled(knobEpsilonSearch.getValue() > 0d);
+            }
+        });
 
         return group;
     }
@@ -243,10 +294,16 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     @Override
     protected void parse(ModelDifferentialPrivacyCriterion model, boolean _default) {
         
-        updateLabel(labelEpsilon, model.getEpsilon());
+        updateLabel(labelEpsilonAnon, model.getEpsilonAnon());
+        updateLabel(labelEpsilonSearch, model.getEpsilonSearch());
         updateLabel(labelDelta, model.getDelta());
+        updateLabel(labelSteps, model.getSteps());
         knobDelta.setValue(model.getDelta());
-        knobEpsilon.setValue(model.getEpsilon());
+        // FIXME ugly hack because the initial value of epsilonAnon is somehow not being overtaken ...
+        knobEpsilonAnon.setValue(model.getEpsilonAnon() == 0d ? 2d : model.getEpsilonAnon());
+        knobEpsilonSearch.setValue(model.getEpsilonSearch());
+        // FIXME ugly hack because the initial value of steps is somehow not being overtaken ...
+        knobSteps.setValue(model.getSteps() == 0 ? 100 : model.getSteps());
         if (!_default) {
             int index = getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree());
             if (index != -1) {

@@ -28,20 +28,27 @@ import org.deidentifier.arx.gui.view.SWTUtil;
  * This class implements a model for the (e,d)-DP criterion.
  *
  * @author Fabian Prasser
+ * @author Raffael Bild
  */
 public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /** SVUID */
     private static final long        serialVersionUID = 1803345324372136700L;
 
-    /** Epsilon */
-    private double                   epsilon          = 2d;
+    /** Epsilon anon */
+    private double                   epsilonAnon      = 2d;
+    
+    /** Epsilon search */
+    private double                   epsilonSearch    = 0d;
 
     /** Delta */
     private double                   delta            = 0.000001d;
 
     /** Generalization scheme */
     private DataGeneralizationScheme generalization   = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
+    
+    /** Steps */
+    private int                      steps            = 100;
 
     /**
      * Creates a new instance
@@ -52,27 +59,30 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     
     /**
      * Creates a new instance
-     * @param epsilon
+     * @param epsilonAnon
      * @param delta
      */
-	public ModelDifferentialPrivacyCriterion(double epsilon, double delta) {
-        this.epsilon = epsilon;
+	public ModelDifferentialPrivacyCriterion(double epsilonAnon, double delta) {
+        this.epsilonAnon = epsilonAnon;
         this.delta = delta;
     }
 
     @Override
     public ModelDifferentialPrivacyCriterion clone() {
         ModelDifferentialPrivacyCriterion result = new ModelDifferentialPrivacyCriterion();
-        result.epsilon = this.epsilon;
+        result.epsilonAnon = this.epsilonAnon;
+        result.epsilonSearch = this.epsilonSearch;
         result.delta = this.delta;
         result.generalization = this.generalization.clone();
+        result.steps = this.steps;
         result.setEnabled(this.isEnabled());
         return result;
     }
 
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
-		return new EDDifferentialPrivacy(epsilon, delta, generalization);
+		return epsilonSearch > 0d ? new EDDifferentialPrivacy(epsilonAnon, delta, epsilonSearch, steps) :
+		    new EDDifferentialPrivacy(epsilonAnon, delta, generalization);
 	}
 	
     /**
@@ -87,8 +97,16 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      * Getter
      * @return
      */
-    public double getEpsilon() {
-        return epsilon;
+    public double getEpsilonAnon() {
+        return epsilonAnon;
+    }
+    
+    /**
+     * Getter
+     * @return
+     */
+    public double getEpsilonSearch() {
+        return epsilonSearch;
     }
 
     /**
@@ -97,6 +115,14 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      */
     public DataGeneralizationScheme getGeneralization() {
         return generalization;
+    }
+    
+    /**
+     * Getter
+     * @return
+     */
+    public int getSteps() {
+        return steps;
     }
 
     @Override
@@ -110,8 +136,10 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
             return;
         }
         ModelDifferentialPrivacyCriterion other = (ModelDifferentialPrivacyCriterion)criterion;
-        this.epsilon = other.epsilon;
+        this.epsilonAnon = other.epsilonAnon;
+        this.epsilonSearch = other.epsilonSearch;
         this.delta = other.delta;
+        this.steps = other.steps;
         if (!_default) {
             this.generalization = other.generalization.clone();
         }
@@ -130,10 +158,18 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /**
      * Setter
-     * @param epsilon
+     * @param epsilonAnon
      */
-    public void setEpsilon(double epsilon) {
-        this.epsilon = epsilon;
+    public void setEpsilonAnon(double epsilonAnon) {
+        this.epsilonAnon = epsilonAnon;
+    }
+    
+    /**
+     * Setter
+     * @param epsilonSearch
+     */
+    public void setEpsilonSearch(double epsilonSearch) {
+        this.epsilonSearch = epsilonSearch;
     }
 
     /**
@@ -143,9 +179,17 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     public void setGeneralization(DataGeneralizationScheme generalization) {
         this.generalization = generalization;
     }
+    
+    /**
+     * Setter
+     * @param steps
+     */
+    public void setSteps(int steps) {
+        this.steps = steps;
+    }
 
     @Override
     public String toString() {
-        return "(" + SWTUtil.getPrettyString(epsilon) + ", " + SWTUtil.getPrettyString(delta) + ")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
+        return "(" + SWTUtil.getPrettyString(epsilonAnon + epsilonSearch) + ", " + SWTUtil.getPrettyString(delta) + ")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
     }
 }

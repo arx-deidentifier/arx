@@ -42,8 +42,10 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.ILSingleDimensional;
 import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
+import org.deidentifier.arx.metric.v2.MetricMDNMLossPotentiallyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
 import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropy;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPotentiallyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
 
@@ -438,7 +440,7 @@ public class NodeChecker {
             }
             return (double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d);
             
-		} else if (metric instanceof MetricMDNMLoss) {
+		} else if (metric instanceof MetricMDNMLoss || metric instanceof MetricMDNMLossPotentiallyPrecomputed) {
 		    
 		    // Calculate the Loss metric
             Metric<AbstractILMultiDimensional> metricMultiDim = Metric.createLossMetric(AggregateFunction.SUM);
@@ -520,7 +522,7 @@ public class NodeChecker {
             double sensitivity = (k == 1d) ? 5d : k * k / (k - 1d) + 1d;
             return -1d * discernibility / (numRecords * sensitivity);
             
-		} else if (metric instanceof MetricMDNUNMEntropy) {
+		} else if (metric instanceof MetricMDNUNMEntropy || metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed) {
 		    
 		    // Prepare
             double entropy = 0d;
