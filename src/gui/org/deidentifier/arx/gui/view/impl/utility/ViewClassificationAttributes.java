@@ -154,7 +154,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         if (event.part == ModelPart.MODEL) {
            this.model = (Model) event.data;
            update();
-        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES || event.part == ModelPart.ATTRIBUTE_TYPE) {
+        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES || event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.OUTPUT) {
            update();
         }
     }
