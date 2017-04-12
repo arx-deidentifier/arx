@@ -26,7 +26,6 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXOrderedString;
-import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
@@ -46,8 +45,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableItem;
-
-import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 import de.linearbits.swt.table.DynamicTable;
 import de.linearbits.swt.table.DynamicTableColumn;
