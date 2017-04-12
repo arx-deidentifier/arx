@@ -32,6 +32,8 @@ import java.util.Comparator;
 import java.util.Locale;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXOrderedString;
+import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -62,22 +64,22 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
     /** A list control. */
     private List        list;
-    
+
     /** Logo. */
     private Image       image;
-    
+
     /** Controller. */
     private Controller  controller;
-    
+
     /** Elements. */
     private String[]    elements;
-    
+
     /** Type. */
     private DataType<?> type;
-    
+
     /** Combo control. */
     private Combo       combo;
-    
+
     /** Locale. */
     private Locale      locale;
 
@@ -137,23 +139,21 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      * @param label
      * @return
      */
-    private DataTypeDescription<?> getDataType(String label){
-        for (DataTypeDescription<?> desc : DataType.list()){
-            if (label.equals(desc.getLabel())){
-                return desc;
-            }
+    private DataTypeDescription<?> getDataType(String label) {
+        for (DataTypeDescription<?> desc : DataType.list()) {
+            if (label.equals(desc.getLabel())) { return desc; }
         }
-        throw new RuntimeException(Resources.getMessage("DialogOrderSelection.0")+label); //$NON-NLS-1$
+        throw new RuntimeException(Resources.getMessage("DialogOrderSelection.0") + label); //$NON-NLS-1$
     }
-    
+
     /**
      * Returns the labels of all available data types.
      *
      * @return
      */
-    private String[] getDataTypes(){
+    private String[] getDataTypes() {
         ArrayList<String> list = new ArrayList<String>();
-        for (DataTypeDescription<?> desc : DataType.list()){
+        for (DataTypeDescription<?> desc : DataType.list()) {
             if (!desc.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                 list.add(desc.getLabel());
             }
@@ -167,15 +167,14 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      * @param type
      * @return
      */
-    private int getIndexOfDataType(DataType<?> type){
+    private int getIndexOfDataType(DataType<?> type) {
         int idx = 0;
-        for (DataTypeDescription<?> desc : DataType.list()){
-            if (desc.getLabel().equals(type.getDescription().getLabel())) {
-                return idx;
-            }
+        for (DataTypeDescription<?> desc : DataType.list()) {
+            if (desc.getLabel().equals(type.getDescription().getLabel())) { return idx; }
             idx++;
         }
-        throw new RuntimeException(Resources.getMessage("DialogOrderSelection.2")+type.getDescription().getLabel()); //$NON-NLS-1$
+        throw new RuntimeException(Resources.getMessage("DialogOrderSelection.2") + //$NON-NLS-1$
+                                   type.getDescription().getLabel());
     }
 
     /**
@@ -191,12 +190,13 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         }
         return true;
     }
-    
+
     /**
      * Loads the array from a file.
      *
      * @param file
-     * @param charset TODO
+     * @param charset
+     *            TODO
      * @return
      */
     private String[] loadArray(String file, Charset charset) {
@@ -210,13 +210,17 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.3"), Resources.getMessage("DialogOrderSelection.4")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            controller.actionShowInfoDialog(getShell(),
+                                            Resources.getMessage("DialogOrderSelection.3"), //$NON-NLS-1$
+                                            Resources.getMessage("DialogOrderSelection.4") + e.getMessage()); //$NON-NLS-1$
             return null;
         } finally {
             if (reader != null) try {
                 reader.close();
             } catch (IOException e) {
-                controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.5"), Resources.getMessage("DialogOrderSelection.6")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                controller.actionShowInfoDialog(getShell(),
+                                                Resources.getMessage("DialogOrderSelection.5"), //$NON-NLS-1$
+                                                Resources.getMessage("DialogOrderSelection.6") + e.getMessage()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -233,17 +237,21 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         BufferedWriter writer = null;
         try {
             writer = new BufferedWriter(new FileWriter(new File(file)));
-            for (int i=0; i<elements.length; i++) {
+            for (int i = 0; i < elements.length; i++) {
                 writer.write(elements[i]);
-                if (i<elements.length-1) writer.write("\n"); //$NON-NLS-1$
+                if (i < elements.length - 1) writer.write("\n"); //$NON-NLS-1$
             }
         } catch (IOException e) {
-            controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.8"), Resources.getMessage("DialogOrderSelection.9")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            controller.actionShowInfoDialog(getShell(),
+                                            Resources.getMessage("DialogOrderSelection.8"), //$NON-NLS-1$
+                                            Resources.getMessage("DialogOrderSelection.9") + e.getMessage()); //$NON-NLS-1$
         } finally {
             if (writer != null) try {
                 writer.close();
             } catch (IOException e) {
-                controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.10"), Resources.getMessage("DialogOrderSelection.11")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                controller.actionShowInfoDialog(getShell(),
+                                                Resources.getMessage("DialogOrderSelection.10"), //$NON-NLS-1$
+                                                Resources.getMessage("DialogOrderSelection.11") + e.getMessage()); //$NON-NLS-1$
             }
         }
     }
@@ -256,7 +264,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     private void sort(final DataType<?> type) {
         list.removeAll();
         Arrays.sort(elements, new Comparator<String>() {
-            @Override public int compare(final String arg0, final String arg1) {
+            @Override
+            public int compare(final String arg0, final String arg1) {
                 try {
                     return type.compare(arg0, arg1);
                 } catch (final ParseException e) {
@@ -292,26 +301,28 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     @Override
     protected void createButtonsForButtonBar(final Composite parent) {
 
-        parent.setLayoutData(SWTUtil.createFillGridData());
-        
+        parent.setLayoutData(SWTUtil.createFillGridDataButtonBar());
+
+        // Create LOAD button to load ordering from file
         final Button loadButton = createButton(parent,
-                                             Integer.MAX_VALUE-1,
-                                             "Load", false); //$NON-NLS-1$
+                                               Integer.MAX_VALUE - 1,
+                                               Resources.getMessage("DialogOrderSelection.12"), //$NON-NLS-1$
+                                               false);
         loadButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowOpenFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
-                if (file != null){
+                if (file != null) {
                     String[] array = loadArray(file, Charset.defaultCharset());
                     if (array != null) {
-                        
+
                         // Select string
-                        for (int i=0; i<combo.getItems().length; i++){
+                        for (int i = 0; i < combo.getItems().length; i++) {
                             if (combo.getItem(i).equals("String")) { //$NON-NLS-1$
                                 combo.select(i);
                             }
                         }
-                        
+
                         // Set items
                         elements = array;
                         list.setItems(array);
@@ -320,9 +331,11 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             }
         });
 
+        // Create SAVE button to store current ordering to file
         final Button saveButton = createButton(parent,
-                                             Integer.MAX_VALUE-2,
-                                             "Save", false); //$NON-NLS-1$
+                                               Integer.MAX_VALUE - 2,
+                                               Resources.getMessage("DialogOrderSelection.13"), //$NON-NLS-1$
+                                               false);
         saveButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -332,11 +345,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 }
             }
         });
-        
-        // Create OK Button
+
+        // Create OK Button to apply the new ordering
         final Button okButton = createButton(parent,
                                              Window.OK,
-                                             "OK", true); //$NON-NLS-1$
+                                             Resources.getMessage("DialogOrderSelection.14"), //$NON-NLS-1$
+                                             true);
         okButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -345,9 +359,11 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             }
         });
 
+        // Create CANCEL button to abort
         final Button cancelButton = createButton(parent,
                                                  Window.CANCEL,
-                                                 "Cancel", false); //$NON-NLS-1$
+                                                 Resources.getMessage("DialogOrderSelection.15"), //$NON-NLS-1$
+                                                 false);
         cancelButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -359,13 +375,13 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
     @Override
     protected Control createContents(Composite parent) {
-    	Control contents = super.createContents(parent);
+        Control contents = super.createContents(parent);
         setTitle("Specify an order"); //$NON-NLS-1$
         setMessage("Please order the list of data items"); //$NON-NLS-1$
-        if (image!=null) setTitleImage(image); //$NON-NLS-1$
+        if (image != null) setTitleImage(image); // $NON-NLS-1$
         return contents;
     }
-    
+
     @Override
     protected Control createDialogArea(final Composite parent) {
 
@@ -422,27 +438,32 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         combo = new Combo(bottom1, SWT.NONE);
         combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         combo.add(Resources.getMessage("HierarchyWizardPageOrder.8")); //$NON-NLS-1$
-        for (String type : getDataTypes()){
+        for (String type : getDataTypes()) {
             combo.add(type);
         }
         combo.select(0);
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                if (combo.getSelectionIndex() >=0 ){
+                if (combo.getSelectionIndex() >= 0) {
                     DataType<?> type = DialogOrderSelection.this.type;
                     if (combo.getSelectionIndex() > 0) {
                         String label = combo.getItem(combo.getSelectionIndex());
                         DataTypeDescription<?> description = getDataType(label);
-    
+
                         // Open format dialog
                         if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, locale, description, elements);
+                            final String format = controller.actionShowFormatInputDialog(getShell(),
+                                                                                         text1,
+                                                                                         text2,
+                                                                                         locale,
+                                                                                         description,
+                                                                                         elements);
                             if (format == null) {
                                 type = DataType.STRING;
-                                combo.select(getIndexOfDataType(DataType.STRING)+1);
+                                combo.select(getIndexOfDataType(DataType.STRING) + 1);
                             } else {
                                 type = description.newInstance(format, locale);
                             }
@@ -450,20 +471,37 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                             type = description.newInstance();
                             if (!isValidDataType(type, elements)) {
                                 type = DataType.STRING;
-                                combo.select(getIndexOfDataType(DataType.STRING)+1);                        
+                                combo.select(getIndexOfDataType(DataType.STRING) + 1);
                             }
                         }
                     }
                     try {
                         sort(type);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         sort(DataType.STRING);
                     }
                 }
             }
         });
-        sort(this.type);
+
+        // in case of ARXOrderedString and ARXString perform no initial sort, as there maybe an existing ordering present
+        if (isARXOrderedString(this.type) || isARXString(this.type)) {
+            list.removeAll();
+            for (final String s : this.elements) {
+                list.add(s);
+            }
+        } else {
+            sort(this.type);
+        }
         return parent;
+    }
+
+    final private boolean isARXOrderedString(DataType<?> type) {
+        return (type instanceof ARXOrderedString);
+    }
+
+    final private boolean isARXString(DataType<?> type) {
+        return (type instanceof ARXString);
     }
     
     @Override

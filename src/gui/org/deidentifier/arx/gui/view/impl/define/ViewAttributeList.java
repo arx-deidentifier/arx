@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.define;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,6 +26,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXOrderedString;
+import org.deidentifier.arx.DataType.ARXString;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.Controller;
@@ -46,6 +46,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TableItem;
+
+import com.sun.org.apache.bcel.internal.generic.INSTANCEOF;
 
 import de.linearbits.swt.table.DynamicTable;
 import de.linearbits.swt.table.DynamicTableColumn;
@@ -83,19 +85,16 @@ public class ViewAttributeList implements IView {
      * 
      * @param parent
      * @param controller
-     * @param layoutCriteria 
+     * @param layoutCriteria
      */
-    public ViewAttributeList(final Composite parent,
-                             final Controller controller) {
-
+    public ViewAttributeList(final Composite parent, final Controller controller) {
 
         // Load images
         IMAGE_INSENSITIVE = controller.getResources().getManagedImage("bullet_green.png"); //$NON-NLS-1$
         IMAGE_SENSITIVE = controller.getResources().getManagedImage("bullet_purple.png"); //$NON-NLS-1$
         IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
         IMAGE_IDENTIFYING = controller.getResources().getManagedImage("bullet_red.png"); //$NON-NLS-1$
-        
-        
+
         // Controller
         this.controller = controller;
         this.controller.addListener(ModelPart.INPUT, this);
@@ -104,13 +103,11 @@ public class ViewAttributeList implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.dataTypes = getDataTypes();
-        
+
         // Create group
         this.create(parent);
         this.reset();
     }
-    
-    
 
     @Override
     public void dispose() {
@@ -126,10 +123,10 @@ public class ViewAttributeList implements IView {
     @Override
     public void update(final ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
-           this.model = (Model) event.data;
-           updateEntries();
+            this.model = (Model) event.data;
+            updateEntries();
         } else if (event.part == ModelPart.INPUT) {
-           updateEntries();
+            updateEntries();
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             String attribute = (String) event.data;
             updateSelectedAttribute(attribute);
@@ -146,22 +143,66 @@ public class ViewAttributeList implements IView {
     private void actionDataTypeChanged(String label) {
         if (label != null) {
             if ((model != null) && (model.getInputConfig().getInput() != null)) {
-                
+
                 // Obtain type
                 String attribute = model.getSelectedAttribute();
                 DataTypeDescription<?> description = getDataTypeDescription(label);
-                DataType<?> type;
-                
+                DataType<?> type = model.getInputDefinition().getDataType(attribute);
+
                 // Open format dialog
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                            text1, text2, DataType.STRING,
-                                                                            model.getLocale(), getValuesAsArray(attribute));
+
+                    String[] values = getValuesAsArray(attribute);
+
+                    // apply existing ordering if it is present in case of ARXOrderedString
+                    DataType<?> attributeType = model.getInputDefinition().getDataType(attribute);
+                    if (attributeType != null && attributeType instanceof ARXOrderedString) {
+
+                        ARXOrderedString attributeOrderedString = (ARXOrderedString) attributeType;
+                        List<String> attributeElements = attributeOrderedString.getElements();
+                        
+                        ArrayList<String> valuesTemp = new ArrayList<>();
+                        valuesTemp.addAll(Arrays.asList(values));       // required to support 'remove' operation
+                        
+                        String[] valuesPreordered = new String[values.length];
+                        int i = 0;
+                        
+                        // add the distinct values from the input data in the already defined order
+                        for (String v : attributeElements) {
+                            if (valuesTemp.contains(v)) {
+                                valuesPreordered[i++] = v;
+                                valuesTemp.remove(v);
+                            }
+                        }
+
+                        // add remaining values from the input data, which have not been present in the existing order, at the end of the array
+                        for (String newValue : valuesTemp) {
+                            if (i >= valuesPreordered.length) { throw new IllegalStateException("Index out of bounds; distinct value ordering has errors."); }
+                            valuesPreordered[i++] = newValue;
+                        }
+                        
+                        values = valuesPreordered;
+                    }
+
+                    String[] array = controller.actionShowOrderValuesDialog(controller.getResources()
+                                                                                      .getShell(),
+                                                                            text1,
+                                                                            text2,
+                                                                            DataType.STRING,
+                                                                            model.getLocale(),
+                                                                            values);
+
                     if (array == null) {
-                        type = DataType.STRING;
-                    } else {
+                        // do nothing (cancel or dialog aborted)
+                    } else {                        
+                        // remove values that are not present in the input data, which have been added by loading an ordering from a file
+                        ArrayList<String> arrayTemp = new ArrayList<String>();
+                        arrayTemp.addAll(Arrays.asList(array));
+                        arrayTemp.retainAll(Arrays.asList(values));
+                        array = arrayTemp.toArray(new String[0]);
+                        
                         try {
                             type = DataType.createOrderedString(array);
                             if (!isValidDataType(type, getValuesAsList(attribute))) {
@@ -169,15 +210,21 @@ public class ViewAttributeList implements IView {
                             }
                         } catch (Exception e) {
                             controller.actionShowInfoDialog(controller.getResources().getShell(),
-                                                            Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                                                            Resources.getMessage("ViewAttributeDefinition.1"), //$NON-NLS-1$
+                                                            Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$
                             type = DataType.STRING;
                         }
                     }
                 } else if (description.hasFormat()) {
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
-                                                                                 text1, text2, model.getLocale(), description, getValuesAsList(attribute));
+                    final String format = controller.actionShowFormatInputDialog(controller.getResources()
+                                                                                           .getShell(),
+                                                                                 text1,
+                                                                                 text2,
+                                                                                 model.getLocale(),
+                                                                                 description,
+                                                                                 getValuesAsList(attribute));
                     if (format == null) {
                         type = DataType.STRING;
                     } else {
@@ -189,7 +236,7 @@ public class ViewAttributeList implements IView {
                         type = DataType.STRING;
                     }
                 }
-                
+
                 // Set and update
                 this.model.getInputDefinition().setDataType(attribute, type);
                 this.updateDataTypes();
@@ -204,7 +251,8 @@ public class ViewAttributeList implements IView {
      * @param parent
      */
     private void create(final Composite parent) {
-        this.table = SWTUtil.createTableDynamic(parent, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+        this.table = SWTUtil.createTableDynamic(parent,
+                                                SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         this.table.setLayoutData(SWTUtil.createFillGridData());
@@ -224,36 +272,44 @@ public class ViewAttributeList implements IView {
         column1.pack();
         column2.pack();
         column3.pack();
-        
-        this.table.addSelectionListener(new SelectionAdapter(){
-            @Override public void widgetSelected(SelectionEvent arg0) {
-                if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
-                    return;
-                }
+
+        this.table.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (model == null || model.getInputConfig() == null ||
+                    model.getInputConfig().getInput() == null) { return; }
                 int index = table.getSelectionIndex();
-                if (index >= 0 && index <= model.getInputConfig().getInput().getHandle().getNumColumns()) {
-                    String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
+                if (index >= 0 &&
+                    index <= model.getInputConfig().getInput().getHandle().getNumColumns()) {
+                    String attribute = model.getInputConfig()
+                                            .getInput()
+                                            .getHandle()
+                                            .getAttributeName(index);
                     model.setSelectedAttribute(attribute);
-                    controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute));
+                    controller.update(new ModelEvent(this,
+                                                     ModelPart.SELECTED_ATTRIBUTE,
+                                                     attribute));
                 }
             }
         });
-        
+
         // Create menu
         final Menu menu = new Menu(this.table);
         for (final String type : getDataTypes()) {
-            MenuItem item = new MenuItem(menu, SWT.NONE); 
+            MenuItem item = new MenuItem(menu, SWT.NONE);
             item.setText(type);
-            item.addSelectionListener(new SelectionAdapter(){
-                @Override public void widgetSelected(SelectionEvent arg0) {
+            item.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
                     actionDataTypeChanged(type);
                 }
             });
         }
-        
+
         // Trigger menu
-        this.table.addMouseListener(new MouseAdapter(){
-            @Override public void mouseDown(MouseEvent e) {
+        this.table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(MouseEvent e) {
                 if (e.button == 3) {
                     menu.setLocation(table.toDisplay(e.x, e.y));
                     menu.setVisible(true);
@@ -264,6 +320,7 @@ public class ViewAttributeList implements IView {
 
     /**
      * Returns the data type of the attribute
+     * 
      * @param attribute
      * @return
      */
@@ -279,15 +336,14 @@ public class ViewAttributeList implements IView {
      */
     private DataTypeDescription<?> getDataTypeDescription(String label) {
         for (DataTypeDescription<?> desc : DataType.list()) {
-            if (label.equals(desc.getLabel())) {
-                return desc;
-            }
+            if (label.equals(desc.getLabel())) { return desc; }
         }
         throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.5") + label); //$NON-NLS-1$
     }
 
     /**
      * Returns the format of the attribute
+     * 
      * @param attribute
      * @return
      */
@@ -319,7 +375,7 @@ public class ViewAttributeList implements IView {
         }
         return list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * Returns the index of a given data type.
      *
@@ -329,14 +385,13 @@ public class ViewAttributeList implements IView {
     private int getIndexOfDataType(DataType<?> type) {
         int idx = 0;
         for (DataTypeDescription<?> desc : DataType.list()) {
-            if (desc.getLabel().equals(type.getDescription().getLabel())) {
-                return idx;
-            }
+            if (desc.getLabel().equals(type.getDescription().getLabel())) { return idx; }
             idx++;
         }
-        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + type.getDescription().getLabel()); //$NON-NLS-1$
+        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + //$NON-NLS-1$
+                                   type.getDescription().getLabel());
     }
-    
+
     /**
      * Create an array of the values in the column for this attribute.
      *
@@ -365,25 +420,24 @@ public class ViewAttributeList implements IView {
      */
     private boolean isValidDataType(DataType<?> type, Collection<String> values) {
         for (String value : values) {
-            if (!type.isValid(value)) {
-                return false;
-            }
+            if (!type.isValid(value)) { return false; }
         }
         return true;
     }
-  
+
     /**
      * Update
      */
     private void updateAttributeTypes() {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+        if (model != null && model.getInputConfig() != null &&
+            model.getInputConfig().getInput() != null) {
             table.setRedraw(false);
             DataHandle data = model.getInputConfig().getInput().getHandle();
             for (int i = 0; i < data.getNumColumns(); i++) {
                 String attribute = data.getAttributeName(i);
                 AttributeType type = model.getInputDefinition().getAttributeType(attribute);
                 if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_IDENTIFYING);  
+                    table.getItem(i).setImage(0, IMAGE_IDENTIFYING);
                 } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
                     table.getItem(i).setImage(0, IMAGE_SENSITIVE);
                 } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
@@ -401,7 +455,8 @@ public class ViewAttributeList implements IView {
      * Update
      */
     private void updateDataTypes() {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+        if (model != null && model.getInputConfig() != null &&
+            model.getInputConfig().getInput() != null) {
             table.setRedraw(false);
             DataHandle data = model.getInputConfig().getInput().getHandle();
             for (int i = 0; i < data.getNumColumns(); i++) {
@@ -413,7 +468,7 @@ public class ViewAttributeList implements IView {
             SWTUtil.enable(table);
         }
     }
-    
+
     /**
      * Updates the view.
      * 
@@ -422,9 +477,8 @@ public class ViewAttributeList implements IView {
     private void updateEntries() {
 
         // Check
-        if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) { 
-            return; 
-        }
+        if (model == null || model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null) { return; }
 
         table.setRedraw(false);
         table.removeAll();
@@ -432,10 +486,13 @@ public class ViewAttributeList implements IView {
         for (int i = 0; i < data.getNumColumns(); i++) {
             String attribute = data.getAttributeName(i);
             TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", attribute, getDataType(attribute), getDataTypeFormat(attribute) }); //$NON-NLS-1$
+            item.setText(new String[] { "", //$NON-NLS-1$
+                                        attribute,
+                                        getDataType(attribute),
+                                        getDataTypeFormat(attribute) });
             AttributeType type = model.getInputDefinition().getAttributeType(attribute);
             if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-                item.setImage(0, IMAGE_IDENTIFYING);  
+                item.setImage(0, IMAGE_IDENTIFYING);
             } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
                 item.setImage(0, IMAGE_SENSITIVE);
             } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
@@ -443,30 +500,32 @@ public class ViewAttributeList implements IView {
             } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
                 item.setImage(0, IMAGE_INSENSITIVE);
             }
-            if (model.getSelectedAttribute() != null && model.getSelectedAttribute().equals(attribute)) {
+            if (model.getSelectedAttribute() != null &&
+                model.getSelectedAttribute().equals(attribute)) {
                 table.select(i);
             }
         }
-        
+
         table.setRedraw(true);
         SWTUtil.enable(table);
     }
 
     /**
      * Update
+     * 
      * @param attribute
      */
     private void updateSelectedAttribute(String attribute) {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+        if (model != null && model.getInputConfig() != null &&
+            model.getInputConfig().getInput() != null) {
             DataHandle data = model.getInputConfig().getInput().getHandle();
             for (int i = 0; i < data.getNumColumns(); i++) {
                 if (data.getAttributeName(i).equals(attribute)) {
                     table.select(i);
                     break;
                 }
-            }   
+            }
         }
     }
-    
 
 }

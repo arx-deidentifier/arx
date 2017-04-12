@@ -227,22 +227,67 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data.
+     * Creates grid data, features:
+     * <ul>
+     * <li>horizontalSpan = 1</li>
+     * <li>horizontalAlignment = FILL</li>
+     * <li>verticalAlignment = FILL</li>
+     * </ul>
      *
      * @return
      */
     public static GridData createFillGridData() {
         return createFillGridData(1);
     }
-
+    
     /**
-     * Creates grid data.
+     * Creates grid data, features:
+     * <ul>
+     * <li>horizontalSpan = 1</li>
+     * <li>horizontalAlignment = END (right alignment for button bar)</li>
+     * <li>verticalAlignment = FILL</li>
+     * </ul>
+     * 
+     * @param span horizontal span
+     * 
+     * @return
+     */
+    public static GridData createFillGridDataButtonBar() {
+        return createFillGridData(1, SWT.END);
+    }
+    
+    /**
+     * Creates grid data, features:
+     * <ul>
+     * <li>horizontalAlignment = FILL</li>
+     * <li>verticalAlignment = FILL</li>
+     * </ul>
+     * 
+     * @param span horizontal span
      *
      * @return
      */
     public static GridData createFillGridData(int span) {
+        return createFillGridData(span, SWT.FILL);
+    }
+
+    /**
+     * Creates grid data, features:
+     * <ul>
+     * <li>verticalAlignment = FILL</li>
+     * <li>grabExcessHorizontalSpace = true</li>
+     * <li>grabExcessVerticalSpace = true</li>
+     * <li>horizontalIndent = 0</li>
+     * <li>verticalIndent = 0</li>
+     * </ul>
+     *
+     * @param span horizontal span
+     * @param hAlignment horizontal alignment
+     * @return
+     */
+    public static GridData createFillGridData(int span, int hAlignment) {
         final GridData data = new GridData();
-        data.horizontalAlignment = SWT.FILL;
+        data.horizontalAlignment = hAlignment;
         data.verticalAlignment = SWT.FILL;
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = true;
