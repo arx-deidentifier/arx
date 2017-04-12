@@ -315,11 +315,9 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         updateLabel(labelDelta, model.getDelta());
         updateLabel(labelSteps, model.getSteps());
         knobDelta.setValue(model.getDelta());
-        // TODO this is a hack because the initial value of epsilonAnon = 2 is somehow not being overtaken but set to 0
-        knobEpsilonAnon.setValue(model.getEpsilonAnon() == 0d ? 2d : model.getEpsilonAnon());
+        knobEpsilonAnon.setValue(model.getEpsilonAnon());
         knobEpsilonSearch.setValue(model.getEpsilonSearch());
-        // TODO this is a hack because the initial value of steps = 100 is somehow not being overtaken but set to 0
-        knobSteps.setValue(model.getSteps() == 0 ? 100 : model.getSteps());
+        knobSteps.setValue(model.getSteps());
         if (!_default) {
             int index = getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree());
             if (index != -1) {

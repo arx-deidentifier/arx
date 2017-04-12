@@ -35,10 +35,12 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     /** SVUID */
     private static final long        serialVersionUID = 1803345324372136700L;
 
-    /** Epsilon anon */
-    private double                   epsilonAnon      = 2d;
+    /** This is actually the parameter Epsilon Anon.
+     *  We retain the name epsilon internally to facilitate proper de-serialization of projects files created
+     *  with prior versions of ARX which did not support data-dependent DP yet. */
+    private double                   epsilon          = 2d;
     
-    /** Epsilon search */
+    /** Epsilon Search */
     private double                   epsilonSearch    = 0d;
 
     /** Delta */
@@ -63,14 +65,14 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      * @param delta
      */
 	public ModelDifferentialPrivacyCriterion(double epsilonAnon, double delta) {
-        this.epsilonAnon = epsilonAnon;
+        this.epsilon = epsilonAnon;
         this.delta = delta;
     }
 
     @Override
     public ModelDifferentialPrivacyCriterion clone() {
         ModelDifferentialPrivacyCriterion result = new ModelDifferentialPrivacyCriterion();
-        result.epsilonAnon = this.epsilonAnon;
+        result.epsilon = this.epsilon;
         result.epsilonSearch = this.epsilonSearch;
         result.delta = this.delta;
         result.generalization = this.generalization.clone();
@@ -81,8 +83,8 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
 	@Override
 	public PrivacyCriterion getCriterion(Model model) {
-		return epsilonSearch > 0d ? new EDDifferentialPrivacy(epsilonAnon, delta, epsilonSearch, steps) :
-		    new EDDifferentialPrivacy(epsilonAnon, delta, generalization);
+		return epsilonSearch > 0d ? new EDDifferentialPrivacy(epsilon, delta, epsilonSearch, steps) :
+		    new EDDifferentialPrivacy(epsilon, delta, generalization);
 	}
 	
     /**
@@ -98,7 +100,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      * @return
      */
     public double getEpsilonAnon() {
-        return epsilonAnon;
+        return epsilon;
     }
     
     /**
@@ -136,7 +138,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
             return;
         }
         ModelDifferentialPrivacyCriterion other = (ModelDifferentialPrivacyCriterion)criterion;
-        this.epsilonAnon = other.epsilonAnon;
+        this.epsilon = other.epsilon;
         this.epsilonSearch = other.epsilonSearch;
         this.delta = other.delta;
         this.steps = other.steps;
@@ -161,7 +163,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      * @param epsilonAnon
      */
     public void setEpsilonAnon(double epsilonAnon) {
-        this.epsilonAnon = epsilonAnon;
+        this.epsilon = epsilonAnon;
     }
     
     /**
@@ -190,6 +192,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     @Override
     public String toString() {
-        return "(" + SWTUtil.getPrettyString(epsilonAnon + epsilonSearch) + ", " + SWTUtil.getPrettyString(delta) + ")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
+        return "(" + SWTUtil.getPrettyString(epsilon + epsilonSearch) + ", " + SWTUtil.getPrettyString(delta) + ")" + Resources.getMessage("ModelCriterion.2"); //$NON-NLS-1$
     }
 }
