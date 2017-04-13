@@ -132,18 +132,53 @@ public class ViewAttributeList implements IView {
                 // Obtain type
                 String attribute = model.getSelectedAttribute();
                 DataTypeDescription<?> description = getDataTypeDescription(label);
-                DataType<?> type;
+                DataType<?> type = model.getInputDefinition().getDataType(attribute);
                 
                 // Open format dialog
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                    
+                    // in case of ARXOrderedString, apply the existing attribute ordering (if present) to the input data values
+                    String[] values = getValuesAsArray(attribute);
+                    DataType<?> attributeType = model.getInputDefinition().getDataType(attribute);
+                    
+                    if (attributeType != null && attributeType instanceof ARXOrderedString) {
+                        List<String> attributeElements = ((ARXOrderedString) attributeType).getElements();
+                        ArrayList<String> valuesTemp = new ArrayList<>();   // ArrayList supports 'remove' operation
+                        valuesTemp.addAll(Arrays.asList(values));       
+                        
+                        String[] valuesPreordered = new String[values.length];
+                        int i = 0;
+                        
+                        // order the values from the input data according to the existing attribute order
+                        for (String v : attributeElements) {
+                            if (valuesTemp.contains(v)) {
+                                valuesPreordered[i++] = v;
+                                valuesTemp.remove(v);
+                            }
+                        }
+
+                        // add remaining values from the input data, which have not been present in the existing attribute order, at the end of the array
+                        for (String newValue : valuesTemp) {
+                            valuesPreordered[i++] = newValue;
+                        }
+                        
+                        values = valuesPreordered;
+                    }
+                    
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
                                                                             text1, text2, DataType.STRING,
-                                                                            model.getLocale(), getValuesAsArray(attribute));
+                                                                            model.getLocale(), values);
                     if (array == null) {
-                        type = DataType.STRING;
+                        // do nothing, attribute type remains unchanged (cancel button or close dialog)
                     } else {
+                        // remove values that are not present in the input data, which could have been added by loading an ordering from a file
+                        ArrayList<String> arrayTemp = new ArrayList<String>();
+                        arrayTemp.addAll(Arrays.asList(array));
+                        arrayTemp.retainAll(Arrays.asList(values));
+                        array = arrayTemp.toArray(new String[0]);
+                        
                         try {
                             type = DataType.createOrderedString(array);
                             if (!isValidDataType(type, getValuesAsList(attribute))) {
