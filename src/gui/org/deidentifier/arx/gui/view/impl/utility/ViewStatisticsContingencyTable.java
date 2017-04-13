@@ -89,7 +89,7 @@ public class ViewStatisticsContingencyTable extends ViewStatistics<AnalysisConte
         config.setColumnHeaderLayout(CTConfiguration.COLUMN_HEADER_LAYOUT_FILL_EQUAL);
         config.setRowHeaderLayout(CTConfiguration.ROW_HEADER_LAYOUT_DEFAULT);
 
-        this.table = new ComponentTable(parent, SWT.NONE, config);
+        this.table = new ComponentTable(parent, SWT.FULL_SELECTION, config);
         return this.table.getControl();
     }
 
