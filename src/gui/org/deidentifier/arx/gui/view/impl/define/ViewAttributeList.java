@@ -138,9 +138,28 @@ public class ViewAttributeList implements IView {
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                    
+                    // in case of ARXOrderedString, apply the existing attribute ordering (if present) to the values of the attribute's domain
+                    String[] values = getValuesAsArray(attribute);                    
+                    if (DataType.isARXOrderedString(type)) {
+                        List<String> attributeElements = ((ARXOrderedString) type).getElements();
+                        ArrayList<String> valuesTemp = new ArrayList<>();   // ArrayList supports 'remove' operation
+                        valuesTemp.addAll(Arrays.asList(values));       
+                        ArrayList<String> valuesOrdered = new ArrayList<String>();
+
+                        for (String v : attributeElements) {
+                            if (valuesTemp.contains(v)) {
+                                valuesOrdered.add(v);
+                                valuesTemp.remove(v);
+                            }
+                        }
+                        
+                        values = valuesOrdered.toArray(new String[valuesOrdered.size()]);
+                    }
+                    
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                            text1, text2, DataType.STRING,
-                                                                            model.getLocale(), getValuesAsArray(attribute));
+                                                                            text1, text2, type,
+                                                                            model.getLocale(), values);
                     
                     // only in case of changes validate and update the data type
                     if (array != null) {
