@@ -132,7 +132,7 @@ public class ViewAttributeList implements IView {
                 // Obtain type
                 String attribute = model.getSelectedAttribute();
                 DataTypeDescription<?> description = getDataTypeDescription(label);
-                DataType<?> type;
+                DataType<?> type = model.getInputDefinition().getDataType(attribute);
                 
                 // Open format dialog
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
@@ -141,9 +141,9 @@ public class ViewAttributeList implements IView {
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
                                                                             text1, text2, DataType.STRING,
                                                                             model.getLocale(), getValuesAsArray(attribute));
-                    if (array == null) {
-                        type = DataType.STRING;
-                    } else {
+                    
+                    // only in case of changes validate and update the data type
+                    if (array != null) {
                         try {
                             type = DataType.createOrderedString(array);
                             if (!isValidDataType(type, getValuesAsList(attribute))) {
