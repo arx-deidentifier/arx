@@ -129,7 +129,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 
     @Override
     public String getLabel() {
-        return Resources.getMessage("Model.1d"); //$NON-NLS-1$
+        return '\u2113' + Resources.getMessage("Model.1e"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

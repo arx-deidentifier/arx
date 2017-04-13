@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>Serialized Form (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="Style">
@@ -866,17 +866,17 @@
 <li class="blockList">
 <h4>array</h4>
 <pre>long[] array</pre>
-<div class="block">TODO</div>
+<div class="block">Array</div>
 </li>
 <li class="blockList">
 <h4>length</h4>
 <pre>int length</pre>
-<div class="block">TODO</div>
+<div class="block">Length of array</div>
 </li>
 <li class="blockListLast">
 <h4>size</h4>
 <pre>int size</pre>
-<div class="block">TODO</div>
+<div class="block">Number of bits set</div>
 </li>
 </ul>
 </li>
@@ -1487,6 +1487,34 @@
 <dd>-2953252206954936045L</dd>
 </dl>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.BasicBLikeness">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/BasicBLikeness.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.BasicBLikeness</a> extends <a href="org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>2528498679732389575L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>b</h4>
+<pre>double b</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockListLast">
+<h4>distribution</h4>
+<pre>double[] distribution</pre>
+<div class="block">The original distribution.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.DDisclosurePrivacy">
 <!--   -->
 </a>
@@ -1600,6 +1628,34 @@
 <h4>generalization</h4>
 <pre><a href="org/deidentifier/arx/DataGeneralizationScheme.html" title="class in org.deidentifier.arx">DataGeneralizationScheme</a> generalization</pre>
 <div class="block">Parameter</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.EnhancedBLikeness">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/EnhancedBLikeness.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.EnhancedBLikeness</a> extends <a href="org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5319052409590347904L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>b</h4>
+<pre>double b</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockListLast">
+<h4>distribution</h4>
+<pre>double[] distribution</pre>
+<div class="block">The original distribution.</div>
 </li>
 </ul>
 </li>
@@ -2397,6 +2453,11 @@
 <div class="block">Model for a specific privacy criterion.</div>
 </li>
 <li class="blockList">
+<h4>bLikenessModel</h4>
+<pre>java.util.Map&lt;K,V&gt; bLikenessModel</pre>
+<div class="block">Model for a specific privacy criterion.</div>
+</li>
+<li class="blockList">
 <h4>metricConfig</h4>
 <pre><a href="org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a> metricConfig</pre>
 <div class="block">Configuration.</div>
@@ -2482,6 +2543,34 @@
 <h4>replacementString</h4>
 <pre>java.lang.String replacementString</pre>
 <div class="block">The replacement string</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.gui.model.ModelBLikenessCriterion">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/gui/model/ModelBLikenessCriterion.html" title="class in org.deidentifier.arx.gui.model">org.deidentifier.arx.gui.model.ModelBLikenessCriterion</a> extends <a href="org/deidentifier/arx/gui/model/ModelExplicitCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelExplicitCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>2269238032187539934L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>enhanced</h4>
+<pre>boolean enhanced</pre>
+<div class="block">Is this the enhanced variant</div>
+</li>
+<li class="blockListLast">
+<h4>beta</h4>
+<pre>double beta</pre>
+<div class="block">Delta</div>
 </li>
 </ul>
 </li>
@@ -2988,11 +3077,6 @@
 <div class="block">Model</div>
 </li>
 <li class="blockList">
-<h4>useOutputModelIfAvailable</h4>
-<pre>boolean useOutputModelIfAvailable</pre>
-<div class="block">Model</div>
-</li>
-<li class="blockList">
 <h4>riskModelForAttributes</h4>
 <pre><a href="org/deidentifier/arx/gui/model/ModelRisk.RiskModelForAttributes.html" title="enum in org.deidentifier.arx.gui.model">ModelRisk.RiskModelForAttributes</a> riskModelForAttributes</pre>
 <div class="block">Model</div>
@@ -3291,15 +3375,10 @@
 <pre>double precomputationThreshold</pre>
 <div class="block">Precomputation threshold.</div>
 </li>
-<li class="blockList">
+<li class="blockListLast">
 <h4>aggregateFunction</h4>
 <pre><a href="org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a> aggregateFunction</pre>
 <div class="block">Aggregate function.</div>
-</li>
-<li class="blockListLast">
-<h4>attackerModel</h4>
-<pre><a href="org/deidentifier/arx/metric/MetricConfiguration.MetricConfigurationAttackerModel.html" title="enum in org.deidentifier.arx.metric">MetricConfiguration.MetricConfigurationAttackerModel</a> attackerModel</pre>
-<div class="block">Attacker model</div>
 </li>
 </ul>
 </li>

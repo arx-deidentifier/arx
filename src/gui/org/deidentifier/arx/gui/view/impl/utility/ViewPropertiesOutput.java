@@ -24,10 +24,12 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
+import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
@@ -306,21 +308,19 @@ public class ViewPropertiesOutput extends ViewProperties {
                 new Property(n, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(context.config.getPublisherLoss())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryGain())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryCost())}); //$NON-NLS-1$
-                
-                if (context.config.containsCriterion(ProfitabilityProsecutor.class) ||
-                    context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
-                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
-                }
+                 
                 if (context.config.containsCriterion(ProfitabilityJournalist.class) ||
                     context.config.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
                     new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                if (context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
-                    ProfitabilityProsecutorNoAttack model = context.config.getCriterion(ProfitabilityProsecutorNoAttack.class);
-                    new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
-                }
+                } else if (context.config.containsCriterion(ProfitabilityProsecutor.class) ||
+                    context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
+                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
+                } 
                 if (context.config.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
                     ProfitabilityJournalistNoAttack model = context.config.getCriterion(ProfitabilityJournalistNoAttack.class);
+                    new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
+                } else  if (context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
+                    ProfitabilityProsecutorNoAttack model = context.config.getCriterion(ProfitabilityProsecutorNoAttack.class);
                     new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
                 }
             }
@@ -376,6 +376,16 @@ public class ViewPropertiesOutput extends ViewProperties {
                     DDisclosurePrivacy criterion = (DDisclosurePrivacy)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.130") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.131"), new String[] { SWTUtil.getPrettyString(criterion.getD()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
+                } else if (c instanceof BasicBLikeness){
+                    BasicBLikeness criterion = (BasicBLikeness)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.172") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.171"), new String[] { SWTUtil.getPrettyString(criterion.getB()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
+                } else if (c instanceof EnhancedBLikeness){
+                    EnhancedBLikeness criterion = (EnhancedBLikeness)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.173") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.171"), new String[] { SWTUtil.getPrettyString(criterion.getB()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 }
             }

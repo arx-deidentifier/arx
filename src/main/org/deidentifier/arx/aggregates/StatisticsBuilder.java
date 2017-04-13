@@ -475,7 +475,7 @@ public class StatisticsBuilder {
             }
             
             // Handle optimized handles
-            int lower = handle.isOptimized() ? 1 : level;
+            int lower = handle.isOptimized() ? 0 : level;
             int upper = handle.isOptimized() ? hierarchy[0].length: level + 1;
             
             // Build higher level order from base order
@@ -782,12 +782,14 @@ public class StatisticsBuilder {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.NOMINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode())));
             } else if (scale == DataScale.ORDINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.ORDINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -809,6 +811,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.INTERVAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -848,6 +851,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.RATIO,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -1049,7 +1053,10 @@ public class StatisticsBuilder {
                 Integer order1 = order.get(array[arg0]);
                 Integer order2 = order.get(array[arg1]);
                 if (order1 == null || order2 == null) {
-                    throw new RuntimeException("The hierarchy seems to not cover all data values");
+                    String message = "The hierarchy seems to not cover all data values";
+                    message += order1 == null ? " (unknown = "+array[arg0]+")" : "";
+                    message += order2 == null ? " (unknown = "+array[arg1]+")" : "";
+                    throw new RuntimeException(message);
                 } else {
                     return order1.compareTo(order2);
                 }

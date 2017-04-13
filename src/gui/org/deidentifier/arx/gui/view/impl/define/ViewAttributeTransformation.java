@@ -372,10 +372,12 @@ public class ViewAttributeTransformation implements IView {
                     
                     if (model.getLDiversityModel().get(attribute).isEnabled() ||
                         model.getTClosenessModel().get(attribute).isEnabled() ||
+                        model.getBLikenessModel().get(attribute).isEnabled() ||
                         model.getDDisclosurePrivacyModel().get(attribute).isEnabled()) {
                         criteriaDisabled = true;
                     }
                     
+                    model.getBLikenessModel().get(attribute).setEnabled(false);
                     model.getTClosenessModel().get(attribute).setEnabled(false);
                     model.getLDiversityModel().get(attribute).setEnabled(false);
                     model.getDDisclosurePrivacyModel().get(attribute).setEnabled(false);

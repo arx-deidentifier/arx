@@ -16,16 +16,11 @@
  */
 package org.deidentifier.arx.certificate.resources;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
 
-import javax.imageio.ImageIO;
-
+import org.apache.pdfbox.multipdf.Overlay;
 import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.graphics.image.LosslessFactory;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 /**
  * Class for accessing the water mark
@@ -34,8 +29,8 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
  */
 public class Watermark {
     
-    /** Image*/
-    private BufferedImage image;
+    /** Watermark */
+    private PDDocument watermark;
     
     /**
      * Creates a new instance
@@ -43,18 +38,20 @@ public class Watermark {
      * @throws IOException
      */
     public Watermark(PDDocument document) throws IOException {
-        BufferedImage tmp_image = ImageIO.read(Watermark.class.getResourceAsStream("watermark.png"));
-        BufferedImage image = new BufferedImage(tmp_image.getWidth(), tmp_image.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);        
-        image.createGraphics().drawRenderedImage(tmp_image, null);
+        this.watermark = PDDocument.load(Watermark.class.getResourceAsStream("watermark.pdf"));
     }
     
-    @SuppressWarnings("deprecation")
-    public void mark(PDDocument document, int page) throws IOException {   
-
-        PDPage pdPage = (PDPage)document.getDocumentCatalog().getPages().get(page);
-        PDImageXObject xImage = LosslessFactory.createFromImage(document, image);
-        PDPageContentStream contentStream = new PDPageContentStream(document, pdPage, true, true);
-        contentStream.drawXObject(xImage, 10, 10, xImage.getWidth(), xImage.getHeight());
-        contentStream.close();
+    /**
+     * Marks the document
+     * @param document
+     * @throws IOException
+     */
+    public void mark(PDDocument document) throws IOException {   
+        
+        Overlay overlay = new Overlay();
+        overlay.setInputPDF(document);
+        overlay.setAllPagesOverlayPDF(watermark);
+        overlay.setOverlayPosition(Overlay.Position.BACKGROUND);
+        overlay.overlay(new HashMap<Integer, String>());
     }
 }

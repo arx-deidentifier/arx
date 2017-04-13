@@ -166,6 +166,7 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDi
                 
                 createItem(Resources.getMessage("SummaryStatistics.13"), String.valueOf(summary.getScale())); //$NON-NLS-1$
                 createItem(Resources.getMessage("SummaryStatistics.12"), String.valueOf(summary.getNumberOfMeasuresAsString())); //$NON-NLS-1$
+                createItem(Resources.getMessage("SummaryStatistics.15"), String.valueOf(summary.getNumberOfDistinctValuesAsString())); //$NON-NLS-1$
                 
                 if (summary.isModeAvailable()) createItem(Resources.getMessage("SummaryStatistics.2"), summary.getModeAsString()); //$NON-NLS-1$
                 if (summary.isMedianAvailable()) createItem(Resources.getMessage("SummaryStatistics.3"), summary.getMedianAsString()); //$NON-NLS-1$
