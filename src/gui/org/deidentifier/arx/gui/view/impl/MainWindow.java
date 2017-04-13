@@ -515,6 +515,17 @@ public class MainWindow implements IView {
     public void showInfoDialog(final Shell shell, final String header, final String text) {
         MessageDialog.openInformation(getShell(), header, text);
     }
+    
+    /**
+     * Shows an warning dialog.
+     *
+     * @param shell
+     * @param header
+     * @param text
+     */
+    public void showWarningDialog(final Shell shell, final String header, final String text) {
+        MessageDialog.openWarning(getShell(), header, text);
+    }
 
     /**
      * Shows an input dialog.

@@ -199,7 +199,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      * @param charset TODO
      * @return
      */
-    private String[] loadArray(String file, Charset charset) {
+    private ArrayList<String> loadFile(String file, Charset charset) {
         ArrayList<String> list = new ArrayList<String>();
         BufferedReader reader = null;
         try {
@@ -220,7 +220,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 return null;
             }
         }
-        return list.toArray(new String[list.size()]);
+        return list;
     }
 
     /**
@@ -303,19 +303,37 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowOpenFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
                 if (file != null){
-                    String[] array = loadArray(file, Charset.defaultCharset());
-                    if (array != null) {
+                    ArrayList<String> fileData = loadFile(file, Charset.defaultCharset());
+                    long fileDataLines = fileData.size();
+                    if (!fileData.isEmpty()) {
+                        // remove values that are not present in the attribute's domain       
+                        fileData.retainAll(Arrays.asList(elements));
                         
-                        // Select string
-                        for (int i=0; i<combo.getItems().length; i++){
-                            if (combo.getItem(i).equals("String")) { //$NON-NLS-1$
-                                combo.select(i);
-                            }
+                        if(fileData.isEmpty()) {
+                        	// import failed, file contains no values of the attribute's domain 
+                            controller.actionShowWarningDialog(getShell(), Resources.getMessage("DialogOrderSelection.16"), Resources.getMessage("DialogOrderSelection.17")); 
                         }
-                        
-                        // Set items
-                        elements = array;
-                        list.setItems(array);
+                        else if (fileData.size() != elements.length) {
+                        	// import failed, file does not contain all values of the attribute's domain 
+                            controller.actionShowWarningDialog(getShell(), Resources.getMessage("DialogOrderSelection.18"), Resources.getMessage("DialogOrderSelection.19"));  
+                        }
+                        else {
+                        	// info message if file contains more values as in the attribute's domain
+                            if(fileDataLines != fileData.size()) {
+                                controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.20"), Resources.getMessage("DialogOrderSelection.21"));
+                            }
+                            
+                            // Select string
+                            for (int i=0; i<combo.getItems().length; i++){
+                                if (combo.getItem(i).equals("String")) { //$NON-NLS-1$
+                                    combo.select(i);
+                                }
+                            }
+                            
+                            // Set items
+                            elements = fileData.toArray(new String[fileData.size()]);
+                            list.setItems(elements);
+                        }
                     }
                 }
             }
