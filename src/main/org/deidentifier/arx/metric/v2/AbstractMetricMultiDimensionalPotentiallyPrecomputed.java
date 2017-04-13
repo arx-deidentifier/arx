@@ -133,6 +133,11 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     public boolean isPrecomputed() {
         return this.precomputed;
     }
+    
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify) {
+        return defaultMetric.getScore(node, groupify);
+    }
 
     /**
      * Returns the default variant.
@@ -206,10 +211,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
             }
         }
         
-        if (precomputed) {
-            precomputedMetric.initializeInternal(manager, definition, input, ahierarchies, config);
-        } else {
-            defaultMetric.initializeInternal(manager, definition, input, ahierarchies, config);
-        }
+        precomputedMetric.initializeInternal(manager, definition, input, ahierarchies, config);
+        defaultMetric.initializeInternal(manager, definition, input, ahierarchies, config);
     }
 }

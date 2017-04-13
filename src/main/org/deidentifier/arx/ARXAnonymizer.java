@@ -488,22 +488,19 @@ public class ARXAnonymizer {
      * Returns an algorithm for the given problem instance
      * @param config
      * @param manager
-     * @param definition 
      * @param solutionSpace
      * @param checker
      * @return
      */
     private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
                                           final DataManager manager,
-                                          DataDefinition definition,
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
         
         for (PrivacyCriterion c : config.getCriteria()) {
             if (c instanceof EDDifferentialPrivacy && ((EDDifferentialPrivacy)c).isDataDependent()) {
-                return EDDPAlgorithm.create(solutionSpace, checker, -1, definition, config.getMetric(),
-                                            ((EDDifferentialPrivacy)c).isDeterministic(), ((EDDifferentialPrivacy)c).getSteps(),
-                                            ((EDDifferentialPrivacy)c).getEpsilonSearch());
+                return EDDPAlgorithm.create(solutionSpace, checker, config.getMetric(), ((EDDifferentialPrivacy)c).isDeterministic(),
+                                            ((EDDifferentialPrivacy)c).getSteps(), ((EDDifferentialPrivacy)c).getEpsilonSearch());
             }
         }
         
@@ -573,7 +570,6 @@ public class ARXAnonymizer {
         // Create an algorithm instance
         AbstractAlgorithm algorithm = getAlgorithm(config,
                                                    manager,
-                                                   definition,
                                                    solutionSpace,
                                                    checker);
         algorithm.setListener(listener);

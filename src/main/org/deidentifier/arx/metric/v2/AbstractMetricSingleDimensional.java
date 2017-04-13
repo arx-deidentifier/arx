@@ -164,7 +164,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         
-        this.tuples = (double)manager.getDataGeneralized().getDataLength();
+        this.tuples = (double) getNumRecords(config, input);
 
         // Handle microaggregation
         this.microaggregationFunctions = manager.getMicroaggregationFunctions();

@@ -20,7 +20,6 @@ package org.deidentifier.arx.algorithm;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -41,8 +40,6 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
      * Creates a new instance
      * @param solutionSpace
      * @param checker
-     * @param classIndex
-     * @param definition
      * @param metric 
      * @param deterministic 
      * @param steps
@@ -50,10 +47,9 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
      * @param scoreType 
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker, int classIndex,
-                                           DataDefinition definition, Metric<?> metric, boolean deterministic,
-                                           int steps, double epsilonSearch) {
-        return new EDDPAlgorithm(solutionSpace, checker, classIndex, definition, metric, deterministic, steps, epsilonSearch);
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker,
+                                           Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
+        return new EDDPAlgorithm(solutionSpace, checker, metric, deterministic, steps, epsilonSearch);
     }
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -61,12 +57,8 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
     private final int                steps;
     /** Parameter */
     private final double             epsilonSearch;
-    /** Data definition */
-    private final DataDefinition     definition;
     /** The metric */
     private final Metric<?>          metric;
-    /** Parameter */
-    private final int                classIndex;
     /** Parameter */
     private final boolean            deterministic;
     
@@ -74,22 +66,18 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
     * Constructor
     * @param space
     * @param checker
-    * @param classIndex
-    * @param definition
     * @param metric
     * @param deterministic 
     * @param steps
     * @param epsilonSearch
     */
-    private EDDPAlgorithm(SolutionSpace space, NodeChecker checker, int classIndex,
-                          DataDefinition definition, Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
+    private EDDPAlgorithm(SolutionSpace space, NodeChecker checker,
+                          Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.epsilonSearch = epsilonSearch;
-        this.definition = definition;
-        this.classIndex = classIndex;
         this.metric = metric;
         this.deterministic = deterministic;
         this.steps = steps;
@@ -147,7 +135,7 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
      * @return
      */
     private Double getScore(Transformation transformation) {
-        return checker.getScore(definition, transformation, metric, classIndex);
+        return checker.getScore(transformation, metric);
     }
 
     /**

@@ -381,23 +381,10 @@ public class ARXResult {
      * @return
      */
     public double getScore(ARXNode node, Metric<?> metric) {
-        return getScore(node, metric, -1);
-    }
-    
-    /**
-     * Returns a score
-     *  
-     * @param node the transformation
-     * @param metric the metric
-     * @param clazz the index of the class attribute
-     * 
-     * @return
-     */
-    public double getScore(ARXNode node, Metric<?> metric, int clazz) {
         
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
-        return checker.getScore(definition, transformation, metric, clazz);
+        return checker.getScore(transformation, metric);
     }
 
     /**
