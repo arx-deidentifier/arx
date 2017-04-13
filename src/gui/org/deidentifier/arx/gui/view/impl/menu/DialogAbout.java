@@ -69,7 +69,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Sebastian Stammler (performance improvements, l-diversity)\n" + //$NON-NLS-1$
                                                "Maximilian Zitzmann (distinction and separation)\n" + //$NON-NLS-1$
                                                "James Gaupp (game-theoretic privacy)\n" + //$NON-NLS-1$
-                                               "Annika Saken (certificates)"; //$NON-NLS-1$
+                                               "Annika Saken (certificates)\n" + //$NON-NLS-1$
+                                               "Martin Waltl (summary statistics)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;
