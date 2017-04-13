@@ -402,7 +402,6 @@ public class NodeChecker {
      * Calculates a score
      * @param definition 
      * @param transformation
-     * @param score
      * @param metric
      * @param clazz 
      * @return
@@ -422,7 +421,6 @@ public class NodeChecker {
 		if (metric instanceof MetricSDAECS) {
 		    
 		    // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
-		    // TODO off by one in metrik?
             boolean hasSuppressed = false;
             int numberOfNonSuppressedClasses = 0;
             HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();

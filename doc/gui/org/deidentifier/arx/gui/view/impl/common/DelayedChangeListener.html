@@ -94,13 +94,13 @@
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>java.util.EventListener, org.eclipse.swt.events.ModifyListener, org.eclipse.swt.events.SelectionListener, org.eclipse.swt.internal.SWTEventListener, org.eclipse.swt.widgets.Listener</dd>
+<dd>java.util.EventListener, org.eclipse.swt.events.ModifyListener, org.eclipse.swt.events.SelectionListener, org.eclipse.swt.internal.SWTEventListener</dd>
 </dl>
 <hr>
 <br>
 <pre>public abstract class <span class="strong">DelayedChangeListener</span>
 extends java.lang.Object
-implements org.eclipse.swt.events.SelectionListener, org.eclipse.swt.events.ModifyListener, org.eclipse.swt.widgets.Listener</pre>
+implements org.eclipse.swt.events.SelectionListener, org.eclipse.swt.events.ModifyListener</pre>
 <div class="block">A listener that acts as a selection listener and a modify listener which defers change
  events for a given amount of time</div>
 </li>
@@ -148,17 +148,13 @@ implements org.eclipse.swt.events.SelectionListener, org.eclipse.swt.events.Modi
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#handleEvent(org.eclipse.swt.widgets.Event)">handleEvent</a></strong>(org.eclipse.swt.widgets.Event&nbsp;arg0)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#modifyText(org.eclipse.swt.events.ModifyEvent)">modifyText</a></strong>(org.eclipse.swt.events.ModifyEvent&nbsp;arg0)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)">widgetDefaultSelected</a></strong>(org.eclipse.swt.events.SelectionEvent&nbsp;arg0)</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/DelayedChangeListener.html#widgetSelected(org.eclipse.swt.events.SelectionEvent)">widgetSelected</a></strong>(org.eclipse.swt.events.SelectionEvent&nbsp;arg0)</code>&nbsp;</td>
 </tr>
@@ -203,43 +199,6 @@ implements org.eclipse.swt.events.SelectionListener, org.eclipse.swt.events.Modi
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="delayedEvent()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>delayedEvent</h4>
-<pre>public abstract&nbsp;void&nbsp;delayedEvent()</pre>
-<div class="block">Implement this</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>arg0</code> - </dd></dl>
-</li>
-</ul>
-<a name="handleEvent(org.eclipse.swt.widgets.Event)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>handleEvent</h4>
-<pre>public&nbsp;void&nbsp;handleEvent(org.eclipse.swt.widgets.Event&nbsp;arg0)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>handleEvent</code>&nbsp;in interface&nbsp;<code>org.eclipse.swt.widgets.Listener</code></dd>
-</dl>
-</li>
-</ul>
-<a name="modifyText(org.eclipse.swt.events.ModifyEvent)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>modifyText</h4>
-<pre>public&nbsp;void&nbsp;modifyText(org.eclipse.swt.events.ModifyEvent&nbsp;arg0)</pre>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code>modifyText</code>&nbsp;in interface&nbsp;<code>org.eclipse.swt.events.ModifyListener</code></dd>
-</dl>
-</li>
-</ul>
 <a name="widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)">
 <!--   -->
 </a>
@@ -256,7 +215,7 @@ implements org.eclipse.swt.events.SelectionListener, org.eclipse.swt.events.Modi
 <a name="widgetSelected(org.eclipse.swt.events.SelectionEvent)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>widgetSelected</h4>
 <pre>public&nbsp;void&nbsp;widgetSelected(org.eclipse.swt.events.SelectionEvent&nbsp;arg0)</pre>
@@ -264,6 +223,30 @@ implements org.eclipse.swt.events.SelectionListener, org.eclipse.swt.events.Modi
 <dt><strong>Specified by:</strong></dt>
 <dd><code>widgetSelected</code>&nbsp;in interface&nbsp;<code>org.eclipse.swt.events.SelectionListener</code></dd>
 </dl>
+</li>
+</ul>
+<a name="modifyText(org.eclipse.swt.events.ModifyEvent)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>modifyText</h4>
+<pre>public&nbsp;void&nbsp;modifyText(org.eclipse.swt.events.ModifyEvent&nbsp;arg0)</pre>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code>modifyText</code>&nbsp;in interface&nbsp;<code>org.eclipse.swt.events.ModifyListener</code></dd>
+</dl>
+</li>
+</ul>
+<a name="delayedEvent()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>delayedEvent</h4>
+<pre>public abstract&nbsp;void&nbsp;delayedEvent()</pre>
+<div class="block">Implement this</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>arg0</code> - </dd></dl>
 </li>
 </ul>
 </li>

@@ -182,7 +182,7 @@ implements <a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.ht
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html#DomainShareInterval(org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased, int[][], java.lang.String[])">DomainShareInterval</a></strong>(<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html" title="type parameter in DomainShareInterval">T</a>&gt;&nbsp;builder,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html#DomainShareInterval(org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased,%20int[][],%20java.lang.String[])">DomainShareInterval</a></strong>(<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html" title="type parameter in DomainShareInterval">T</a>&gt;&nbsp;builder,
                    int[][]&nbsp;hierarchy,
                    java.lang.String[]&nbsp;dictionary)</code>
 <div class="block">Creates a new set of domain shares derived from the given functional interval-based hierarchy.</div>
@@ -204,20 +204,14 @@ implements <a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.ht
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html" title="class in org.deidentifier.arx.metric.v2">DomainShareInterval</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html" title="type parameter in DomainShareInterval">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html#clone()">clone</a></strong>()</code>
-<div class="block">Clones the share</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html#getDomainSize()">getDomainSize</a></strong>()</code>
 <div class="block">Returns the size of the domain.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html#getShare(int, int)">getShare</a></strong>(int&nbsp;value,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html#getShare(int,%20int)">getShare</a></strong>(int&nbsp;value,
         int&nbsp;level)</code>
 <div class="block">Returns the share of the given value.</div>
 </td>
@@ -228,7 +222,7 @@ implements <a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.ht
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.aggregates.<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a></h3>
-<code><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T, T)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T, T, org.deidentifier.arx.aggregates.AggregateFunction)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T, T, java.lang.String)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#clearIntervals()">clearIntervals</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(org.deidentifier.arx.DataType)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(org.deidentifier.arx.DataType, org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range, org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(java.io.File)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(java.lang.String)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getAdjustedRanges()">getAdjustedRanges</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getIntervals()">getIntervals</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getLowerRange()">getLowerRange</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getUpperRange()">getUpperRange</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#isValid()">isValid</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#prepareGroups()">prepareGroups</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#setData(java.lang.String[])">setData</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#setLevels(java.util.List)">setLevels</a></code></li>
+<code><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T,%20T)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T,%20T,%20org.deidentifier.arx.aggregates.AggregateFunction)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#addInterval(T,%20T,%20java.lang.String)">addInterval</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#clearIntervals()">clearIntervals</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(org.deidentifier.arx.DataType)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(org.deidentifier.arx.DataType,%20org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range,%20org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(java.io.File)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(java.lang.String)">create</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getAdjustedRanges()">getAdjustedRanges</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getIntervals()">getIntervals</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getLowerRange()">getLowerRange</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#getUpperRange()">getUpperRange</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#isValid()">isValid</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#prepareGroups()">prepareGroups</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#setData(java.lang.String[])">setData</a>, <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#setLevels(java.util.List)">setLevels</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased">
@@ -249,7 +243,7 @@ implements <a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.ht
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -286,23 +280,6 @@ implements <a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.ht
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="clone()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>clone</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html" title="class in org.deidentifier.arx.metric.v2">DomainShareInterval</a>&lt;<a href="../../../../../org/deidentifier/arx/metric/v2/DomainShareInterval.html" title="type parameter in DomainShareInterval">T</a>&gt;&nbsp;clone()</pre>
-<div class="block"><strong>Description copied from interface:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html#clone()">DomainShare</a></code></strong></div>
-<div class="block">Clones the share</div>
-<dl>
-<dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html#clone()">clone</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a></code></dd>
-<dt><strong>Overrides:</strong></dt>
-<dd><code>clone</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getDomainSize()">
 <!--   -->
 </a>
@@ -328,7 +305,7 @@ implements <a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.ht
 <div class="block">Returns the share of the given value.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html#getShare(int, int)">getShare</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a></code></dd>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html#getShare(int,%20int)">getShare</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd><dd><code>level</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>

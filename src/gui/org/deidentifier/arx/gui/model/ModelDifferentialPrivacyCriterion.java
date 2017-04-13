@@ -37,7 +37,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /** This is actually the parameter Epsilon Anon.
      *  We retain the name epsilon internally to facilitate proper de-serialization of projects files created
-     *  with prior versions of ARX which did not support data-dependent DP yet. */
+     *  with prior versions of ARX which did not support data-dependent differential privacy yet. */
     private double                   epsilon          = 2d;
     
     /** Epsilon Search */

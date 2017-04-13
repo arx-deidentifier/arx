@@ -31,6 +31,7 @@ import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
+ * This class implements the search algorithm used with data-dependent differential privacy
  * 
  * @author Raffael Bild
  */
@@ -75,10 +76,10 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
     * @param checker
     * @param classIndex
     * @param definition
-     * @param deterministic 
+    * @param metric
+    * @param deterministic 
     * @param steps
     * @param epsilonSearch
-    * @param scoreType 
     */
     private EDDPAlgorithm(SolutionSpace space, NodeChecker checker, int classIndex,
                           DataDefinition definition, Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {

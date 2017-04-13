@@ -549,8 +549,8 @@ implements java.util.concurrent.Callable&lt;<a href="../../../../../../org/deide
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected int[][]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#otherData">otherData</a></strong></code>
-<div class="block">The sensitive values.</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#otherValues">otherValues</a></strong></code>
+<div class="block">The sesitive values.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -694,9 +694,9 @@ implements java.util.concurrent.Callable&lt;<a href="../../../../../../org/deide
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#AbstractTransformer(int[][], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[][], org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.framework.check.distribution.IntArrayDictionary, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal)">AbstractTransformer</a></strong>(int[][]&nbsp;data,
+<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#AbstractTransformer(int[][],%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20int[][],%20org.deidentifier.arx.framework.check.distribution.IntArrayDictionary,%20org.deidentifier.arx.framework.check.distribution.IntArrayDictionary,%20org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal)">AbstractTransformer</a></strong>(int[][]&nbsp;data,
                    <a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies,
-                   int[][]&nbsp;otherData,
+                   int[][]&nbsp;other,
                    <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensValue,
                    <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq,
                    <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config)</code>
@@ -724,7 +724,7 @@ implements java.util.concurrent.Callable&lt;<a href="../../../../../../org/deide
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#init(long, int[], org.deidentifier.arx.framework.check.groupify.HashGroupify, org.deidentifier.arx.framework.check.groupify.HashGroupify, int[], org.deidentifier.arx.framework.check.StateMachine.TransitionType, int, int, int, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry, int[][])">init</a></strong>(long&nbsp;projection,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#init(long,%20int[],%20org.deidentifier.arx.framework.check.groupify.HashGroupify,%20org.deidentifier.arx.framework.check.groupify.HashGroupify,%20int[],%20org.deidentifier.arx.framework.check.StateMachine.TransitionType,%20int,%20int,%20int,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry,%20int[][])">init</a></strong>(long&nbsp;projection,
     int[]&nbsp;state,
     <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;groupify,
     <a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupify</a>&nbsp;source,
@@ -758,7 +758,7 @@ implements java.util.concurrent.Callable&lt;<a href="../../../../../../org/deide
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#updateOutIndices(int[], long)">updateOutIndices</a></strong>(int[]&nbsp;activecolumns,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/transformer/AbstractTransformer.html#updateOutIndices(int[],%20long)">updateOutIndices</a></strong>(int[]&nbsp;activecolumns,
                 long&nbsp;projection)</code>
 <div class="block">Update out indices.</div>
 </td>
@@ -1395,14 +1395,14 @@ implements java.util.concurrent.Callable&lt;<a href="../../../../../../org/deide
 <div class="block">The outtuple.</div>
 </li>
 </ul>
-<a name="otherData">
+<a name="otherValues">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>otherData</h4>
-<pre>protected final&nbsp;int[][] otherData</pre>
-<div class="block">The sensitive values.</div>
+<h4>otherValues</h4>
+<pre>protected final&nbsp;int[][] otherValues</pre>
+<div class="block">The sesitive values.</div>
 </li>
 </ul>
 <a name="snapshot">
@@ -1641,12 +1641,12 @@ implements java.util.concurrent.Callable&lt;<a href="../../../../../../org/deide
 <h4>AbstractTransformer</h4>
 <pre>public&nbsp;AbstractTransformer(int[][]&nbsp;data,
                    <a href="../../../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchies,
-                   int[][]&nbsp;otherData,
+                   int[][]&nbsp;other,
                    <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensValue,
                    <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/IntArrayDictionary.html" title="class in org.deidentifier.arx.framework.check.distribution">IntArrayDictionary</a>&nbsp;dictionarySensFreq,
                    <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config)</pre>
 <div class="block">Instantiates a new abstract transformer.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - the data</dd><dd><code>hierarchies</code> - the hierarchies</dd><dd><code>otherData</code> - </dd><dd><code>dictionarySensValue</code> - </dd><dd><code>dictionarySensFreq</code> - </dd><dd><code>config</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>data</code> - the data</dd><dd><code>hierarchies</code> - the hierarchies</dd><dd><code>other</code> - </dd><dd><code>dictionarySensValue</code> - </dd><dd><code>dictionarySensFreq</code> - </dd><dd><code>config</code> - </dd></dl>
 </li>
 </ul>
 </li>

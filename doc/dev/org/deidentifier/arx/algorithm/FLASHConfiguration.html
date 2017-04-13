@@ -117,7 +117,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHConfiguration</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html#createBinaryPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration, org.deidentifier.arx.framework.check.history.History.StorageStrategy, boolean, boolean)">createBinaryPhaseConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a>&nbsp;config,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html#createBinaryPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration,%20org.deidentifier.arx.framework.check.history.History.StorageStrategy,%20boolean,%20boolean)">createBinaryPhaseConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a>&nbsp;config,
                               <a href="../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history">History.StorageStrategy</a>&nbsp;storageStrategy,
                               boolean&nbsp;pruneWithLowerBounds,
                               boolean&nbsp;anonymityPropertyPredictable)</code>
@@ -126,7 +126,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHConfiguration</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html#createLinearPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration, org.deidentifier.arx.framework.check.history.History.StorageStrategy, boolean, boolean)">createLinearPhaseConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a>&nbsp;config,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html#createLinearPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration,%20org.deidentifier.arx.framework.check.history.History.StorageStrategy,%20boolean,%20boolean)">createLinearPhaseConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a>&nbsp;config,
                               <a href="../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history">History.StorageStrategy</a>&nbsp;storageStrategy,
                               boolean&nbsp;pruneWithLowerBounds,
                               boolean&nbsp;anonymityPropertyPredictable)</code>
@@ -135,7 +135,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHConfiguration</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html#createTwoPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration, org.deidentifier.arx.algorithm.FLASHPhaseConfiguration, org.deidentifier.arx.framework.check.history.History.StorageStrategy, boolean, boolean)">createTwoPhaseConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a>&nbsp;binaryPhaseConfiguration,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/algorithm/FLASHConfiguration.html#createTwoPhaseConfiguration(org.deidentifier.arx.algorithm.FLASHPhaseConfiguration,%20org.deidentifier.arx.algorithm.FLASHPhaseConfiguration,%20org.deidentifier.arx.framework.check.history.History.StorageStrategy,%20boolean,%20boolean)">createTwoPhaseConfiguration</a></strong>(<a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a>&nbsp;binaryPhaseConfiguration,
                            <a href="../../../../org/deidentifier/arx/algorithm/FLASHPhaseConfiguration.html" title="class in org.deidentifier.arx.algorithm">FLASHPhaseConfiguration</a>&nbsp;linearPhaseConfiguration,
                            <a href="../../../../org/deidentifier/arx/framework/check/history/History.StorageStrategy.html" title="enum in org.deidentifier.arx.framework.check.history">History.StorageStrategy</a>&nbsp;storageStrategy,
                            boolean&nbsp;pruneWithLowerBounds,
@@ -286,17 +286,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="isAnonymityPropertyPredicable()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isAnonymityPropertyPredicable</h4>
-<pre>public&nbsp;boolean&nbsp;isAnonymityPropertyPredicable()</pre>
-<div class="block">Returns whether or not the anonymity property is predictable</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="isBinaryPhaseRequired()">
 <!--   -->
 </a>
@@ -322,11 +311,22 @@ extends java.lang.Object</pre>
 <a name="isPruneInsufficientUtility()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>isPruneInsufficientUtility</h4>
 <pre>public&nbsp;boolean&nbsp;isPruneInsufficientUtility()</pre>
 <div class="block">Prune based on lower bounds from monotonic shares of metrics for information loss?.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isAnonymityPropertyPredicable()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>isAnonymityPropertyPredicable</h4>
+<pre>public&nbsp;boolean&nbsp;isAnonymityPropertyPredicable()</pre>
+<div class="block">Returns whether or not the anonymity property is predictable</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

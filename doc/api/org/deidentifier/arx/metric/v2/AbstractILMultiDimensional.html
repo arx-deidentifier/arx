@@ -151,29 +151,25 @@ extends <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#getValue()">getValue</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#getValues()">getValues</a></strong>()</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#max(org.deidentifier.arx.metric.InformationLoss)">max</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</code>
 <div class="block">Retains the maximum of this and other.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#min(org.deidentifier.arx.metric.InformationLoss)">min</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</code>
 <div class="block">Retains the minimum of this and other.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract double</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)">relativeTo</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;min,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#relativeTo(org.deidentifier.arx.metric.InformationLoss,%20org.deidentifier.arx.metric.InformationLoss)">relativeTo</a></strong>(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;min,
           <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;max)</code>
 <div class="block">Returns the value relative to the other instance.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -185,7 +181,7 @@ extends <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.metric.<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a></h3>
-<code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#createInformationLoss(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.Metric, int, int)">createInformationLoss</a>, <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#hashCode()">hashCode</a></code></li>
+<code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#createInformationLoss(org.deidentifier.arx.metric.InformationLoss,%20org.deidentifier.arx.metric.Metric,%20int,%20int)">createInformationLoss</a>, <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#hashCode()">hashCode</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -304,18 +300,18 @@ extends <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html
 <h4>relativeTo</h4>
 <pre>public abstract&nbsp;double&nbsp;relativeTo(<a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;min,
                 <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;max)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)">InformationLoss</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#relativeTo(org.deidentifier.arx.metric.InformationLoss,%20org.deidentifier.arx.metric.InformationLoss)">InformationLoss</a></code></strong></div>
 <div class="block">Returns the value relative to the other instance.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#relativeTo(org.deidentifier.arx.metric.InformationLoss, org.deidentifier.arx.metric.InformationLoss)">relativeTo</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;double[]&gt;</code></dd>
+<dd><code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#relativeTo(org.deidentifier.arx.metric.InformationLoss,%20org.deidentifier.arx.metric.InformationLoss)">relativeTo</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;double[]&gt;</code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="toString()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public abstract&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -325,16 +321,6 @@ extends <a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;double[]&gt;</code></dd>
 </dl>
-</li>
-</ul>
-<a name="getValues()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getValues</h4>
-<pre>public&nbsp;double[]&nbsp;getValues()</pre>
-<dl><dt><span class="strong">Returns:</span></dt><dd>the values</dd></dl>
 </li>
 </ul>
 </li>

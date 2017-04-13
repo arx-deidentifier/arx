@@ -142,8 +142,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[], java.util.Map)">DataManager</a></strong>(<a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-           <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20java.lang.String[],%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20int[],%20java.util.Map,%20java.util.Map,%20int[],%20org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[],%20java.lang.String[],%20int[],%20int,%20int,%20int[])">DataManager</a></strong>(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
            <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
            <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
            java.lang.String[]&nbsp;header,
@@ -157,14 +156,13 @@ extends java.lang.Object</pre>
            int[]&nbsp;microaggregationMap,
            int&nbsp;microaggregationNumAttributes,
            int&nbsp;microaggregationStartIndex,
-           int[]&nbsp;minLevels,
-           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&gt;&nbsp;dataTypesSensitive)</code>
+           int[]&nbsp;minLevels)</code>
 <div class="block">For creating a projected instance</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(java.lang.String[], int[][], org.deidentifier.arx.framework.data.Dictionary, org.deidentifier.arx.DataDefinition, java.util.Set, java.util.Map)">DataManager</a></strong>(java.lang.String[]&nbsp;header,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(java.lang.String[],%20int[][],%20org.deidentifier.arx.framework.data.Dictionary,%20org.deidentifier.arx.DataDefinition,%20java.util.Set,%20java.util.Map)">DataManager</a></strong>(java.lang.String[]&nbsp;header,
            int[][]&nbsp;data,
            <a href="../../../../../org/deidentifier/arx/framework/data/Dictionary.html" title="class in org.deidentifier.arx.framework.data">Dictionary</a>&nbsp;dictionary,
            <a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
@@ -195,40 +193,30 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataDefinition()">getDataDefinition</a></strong>()</code>
-<div class="block">Returns the data definitions</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataGeneralized()">getDataGeneralized</a></strong>()</code>
 <div class="block">Returns the input data that will be generalized.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDataStatic()">getDataStatic</a></strong>()</code>
 <div class="block">Returns the static input data.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDistribution(int[][], int, int)">getDistribution</a></strong>(int[][]&nbsp;data,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDistribution(int[][],%20int,%20int)">getDistribution</a></strong>(int[][]&nbsp;data,
                int&nbsp;index,
                int&nbsp;distinctValues)</code>
 <div class="block">Returns the distribution of the attribute in the data array at the given index.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDistribution(java.lang.String)">getDistribution</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the distribution of the given sensitive attribute in the original dataset.</div>
 </td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getDomainShares()">getDomainShares</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
@@ -293,26 +281,20 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getOrder(java.lang.String)">getOrder</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Returns the order of the given sensitive attribute in the original dataset.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getSubsetInstance(org.deidentifier.arx.RowSet)">getSubsetInstance</a></strong>(<a href="../../../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset)</code>
 <div class="block">Returns an instance of this data manager, that is projected onto the given rowset</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getTree(int[][], int, int[][])">getTree</a></strong>(int[][]&nbsp;data,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getTree(int[][],%20int,%20int[][])">getTree</a></strong>(int[][]&nbsp;data,
        int&nbsp;index,
        int[][]&nbsp;hierarchy)</code>
 <div class="block">Returns a tree for the given attribute at the index within the given data array, using the given hierarchy.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/framework/data/DataManager.html#getTree(java.lang.String)">getTree</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.</div>
@@ -356,14 +338,13 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>header</code> - </dd><dd><code>data</code> - </dd><dd><code>dictionary</code> - </dd><dd><code>definition</code> - </dd><dd><code>criteria</code> - </dd><dd><code>function</code> - </dd></dl>
 </li>
 </ul>
-<a name="DataManager(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[], java.util.Map)">
+<a name="DataManager(org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int, int, int[])">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>DataManager</h4>
-<pre>protected&nbsp;DataManager(<a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-           <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
+<pre>protected&nbsp;DataManager(<a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
            <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
            <a href="../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
            java.lang.String[]&nbsp;header,
@@ -377,10 +358,9 @@ extends java.lang.Object</pre>
            int[]&nbsp;microaggregationMap,
            int&nbsp;microaggregationNumAttributes,
            int&nbsp;microaggregationStartIndex,
-           int[]&nbsp;minLevels,
-           java.util.Map&lt;java.lang.String,<a href="../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&gt;&nbsp;dataTypesSensitive)</pre>
+           int[]&nbsp;minLevels)</pre>
 <div class="block">For creating a projected instance</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>definition</code> - </dd><dd><code>dataAnalyzed</code> - </dd><dd><code>dataGeneralized</code> - </dd><dd><code>dataStatic</code> - </dd><dd><code>header</code> - </dd><dd><code>hierarchiesGeneralized</code> - </dd><dd><code>hierarchiesHeights</code> - </dd><dd><code>hierarchiesSensitive</code> - </dd><dd><code>indexesSensitive</code> - </dd><dd><code>maxLevels</code> - </dd><dd><code>microaggregationFunctions</code> - </dd><dd><code>microaggregationHeader</code> - </dd><dd><code>microaggregationMap</code> - </dd><dd><code>microaggregationNumAttributes</code> - </dd><dd><code>microaggregationStartIndex</code> - </dd><dd><code>minLevels</code> - </dd><dd><code>dataTypesSensitive</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>dataAnalyzed</code> - </dd><dd><code>dataGeneralized</code> - </dd><dd><code>dataStatic</code> - </dd><dd><code>header</code> - </dd><dd><code>hierarchiesGeneralized</code> - </dd><dd><code>hierarchiesHeights</code> - </dd><dd><code>hierarchiesSensitive</code> - </dd><dd><code>indexesSensitive</code> - </dd><dd><code>maxLevels</code> - </dd><dd><code>microaggregationFunctions</code> - </dd><dd><code>microaggregationHeader</code> - </dd><dd><code>microaggregationMap</code> - </dd><dd><code>microaggregationNumAttributes</code> - </dd><dd><code>microaggregationStartIndex</code> - </dd><dd><code>minLevels</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -445,19 +425,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getDistribution</h4>
 <pre>public&nbsp;double[]&nbsp;getDistribution(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Returns the distribution of the given sensitive attribute in the original dataset. 
- Required for t-closeness.</div>
+<div class="block">Returns the distribution of the given sensitive attribute in the original dataset. Required for t-closeness.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>distribution</dd></dl>
-</li>
-</ul>
-<a name="getDomainShares()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getDomainShares</h4>
-<pre>public&nbsp;<a href="../../../../../org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[]&nbsp;getDomainShares()</pre>
 </li>
 </ul>
 <a name="getHeader()">
@@ -572,19 +542,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getOrder(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getOrder</h4>
-<pre>public&nbsp;int[]&nbsp;getOrder(java.lang.String&nbsp;attribute)</pre>
-<div class="block">Returns the order of the given sensitive attribute in the original dataset. 
- Required for t-closeness.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd>distribution</dd></dl>
-</li>
-</ul>
 <a name="getSubsetInstance(org.deidentifier.arx.RowSet)">
 <!--   -->
 </a>
@@ -615,7 +572,7 @@ extends java.lang.Object</pre>
 <a name="getTree(java.lang.String)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>getTree</h4>
 <pre>public&nbsp;int[]&nbsp;getTree(java.lang.String&nbsp;attribute)</pre>
@@ -623,17 +580,6 @@ extends java.lang.Object</pre>
  The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd>tree</dd></dl>
-</li>
-</ul>
-<a name="getDataDefinition()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getDataDefinition</h4>
-<pre>protected&nbsp;<a href="../../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;getDataDefinition()</pre>
-<div class="block">Returns the data definitions</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

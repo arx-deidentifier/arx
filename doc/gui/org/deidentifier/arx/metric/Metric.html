@@ -149,7 +149,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#Metric(boolean, boolean, double)">Metric</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#Metric(boolean,%20boolean,%20double)">Metric</a></strong>(boolean&nbsp;monotonic,
       boolean&nbsp;independent,
       double&nbsp;gsFactor)</code>
 <div class="block">Create a new metric.</div>
@@ -201,19 +201,6 @@ implements java.io.Serializable</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMEntropyBasedInformationLoss</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyBasedInformationLossMetric()">createEntropyBasedInformationLossMetric</a></strong>()</code>
-<div class="block">Creates an instance of the entropy-based information loss metric, which will treat
- generalization and suppression equally.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMEntropyBasedInformationLoss</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyBasedInformationLossMetric(double)">createEntropyBasedInformationLossMetric</a></strong>(double&nbsp;gsFactor)</code>
-<div class="block">Creates an instance of the entropy-based information loss metric.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric()">createEntropyMetric</a></strong>()</code>
 <div class="block">Creates an instance of the non-monotonic non-uniform entropy metric.</div>
@@ -227,14 +214,14 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean, double)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean,%20double)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
                    double&nbsp;gsFactor)</code>
 <div class="block">Creates an instance of the non-uniform entropy metric.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean, double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
                    double&nbsp;gsFactor,
                    <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of the non-uniform entropy metric.</div>
@@ -242,7 +229,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createEntropyMetric(boolean,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createEntropyMetric</a></strong>(boolean&nbsp;monotonic,
                    <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of the non-uniform entropy metric.</div>
 </td>
@@ -285,7 +272,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createLossMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createLossMetric</a></strong>(double&nbsp;gsFactor,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createLossMetric(double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createLossMetric</a></strong>(double&nbsp;gsFactor,
                 <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of the loss metric with factors for weighting generalization and suppression.</div>
 </td>
@@ -304,7 +291,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createMetric(org.deidentifier.arx.metric.Metric, int, int)">createMetric</a></strong>(<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createMetric(org.deidentifier.arx.metric.Metric,%20int,%20int)">createMetric</a></strong>(<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric,
             int&nbsp;minLevel,
             int&nbsp;maxLevel)</code>
 <div class="block">This method supports backwards compatibility.</div>
@@ -342,14 +329,14 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean, double)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean,%20double)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
                      double&nbsp;gsFactor)</code>
 <div class="block">Creates an instance of the precision metric.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean, double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
                      double&nbsp;gsFactor,
                      <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of the precision metric.</div>
@@ -357,7 +344,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(boolean,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(boolean&nbsp;monotonic,
                      <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of the precision metric.</div>
 </td>
@@ -370,7 +357,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(double&nbsp;gsFactor,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecisionMetric(double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecisionMetric</a></strong>(double&nbsp;gsFactor,
                      <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of the non-monotonic precision metric.</div>
 </td>
@@ -389,14 +376,14 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double, boolean)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double,%20boolean)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
                               boolean&nbsp;monotonic)</code>
 <div class="block">Creates a potentially precomputed instance of the non-uniform entropy metric.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double, boolean, double)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double,%20boolean,%20double)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
                               boolean&nbsp;monotonic,
                               double&nbsp;gsFactor)</code>
 <div class="block">Creates a potentially precomputed instance of the non-uniform entropy metric.</div>
@@ -404,7 +391,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double, boolean, double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
                               boolean&nbsp;monotonic,
                               double&nbsp;gsFactor,
                               <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
@@ -413,7 +400,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double, boolean, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double,%20boolean,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
                               boolean&nbsp;monotonic,
                               <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates a potentially precomputed instance of the non-uniform entropy metric.</div>
@@ -421,7 +408,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double, double)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedEntropyMetric(double,%20double)">createPrecomputedEntropyMetric</a></strong>(double&nbsp;threshold,
                               double&nbsp;gsFactor)</code>
 <div class="block">Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric.</div>
 </td>
@@ -435,14 +422,14 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double, double)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double,%20double)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
                            double&nbsp;gsFactor)</code>
 <div class="block">Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double, double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
                            double&nbsp;gsFactor,
                            <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.</div>
@@ -450,7 +437,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedLossMetric(double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedLossMetric</a></strong>(double&nbsp;threshold,
                            <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates a potentially precomputed instance of the loss metric which treats generalization and suppression equally.</div>
 </td>
@@ -463,23 +450,9 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedNormalizedEntropyMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedNormalizedEntropyMetric</a></strong>(double&nbsp;threshold,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPrecomputedNormalizedEntropyMetric(double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createPrecomputedNormalizedEntropyMetric</a></strong>(double&nbsp;threshold,
                                         <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates a potentially precomputed instance of the normalized entropy metric.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMPublisherPayout</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPublisherPayoutMetric(boolean)">createPublisherPayoutMetric</a></strong>(boolean&nbsp;journalistAttackerModel)</code>
-<div class="block">Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game
- which treats generalization and suppression equally.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMPublisherPayout</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createPublisherPayoutMetric(boolean, double)">createPublisherPayoutMetric</a></strong>(boolean&nbsp;journalistAttackerModel,
-                           double&nbsp;gsFactor)</code>
-<div class="block">Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -490,7 +463,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createStaticMetric(java.util.Map, org.deidentifier.arx.metric.Metric.AggregateFunction)">createStaticMetric</a></strong>(java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.Double&gt;&gt;&nbsp;loss,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#createStaticMetric(java.util.Map,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">createStaticMetric</a></strong>(java.util.Map&lt;java.lang.String,java.util.List&lt;java.lang.Double&gt;&gt;&nbsp;loss,
                   <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</code>
 <div class="block">Creates an instance of a metric with statically defined information loss.</div>
 </td>
@@ -533,28 +506,28 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                   org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</code>
 <div class="block">Evaluates the metric for the given node.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLoss(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLoss</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                   org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
 <div class="block">Returns the information loss that would be induced by suppressing the given entry.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected abstract <a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupify)">getInformationLossInternal</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                           org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</code>
 <div class="block">Evaluates the metric for the given node.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected abstract <a href="../../../../org/deidentifier/arx/metric/InformationLossWithBound.html" title="class in org.deidentifier.arx.metric">InformationLossWithBound</a>&lt;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a>&gt;</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getInformationLossInternal(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">getInformationLossInternal</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                           org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry&nbsp;entry)</code>
 <div class="block">Returns the information loss that would be induced by suppressing the given entry.</div>
 </td>
@@ -567,7 +540,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBound(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBound</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
              org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</code>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </td>
@@ -580,7 +553,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected abstract <a href="../../../../org/deidentifier/arx/metric/Metric.html" title="type parameter in Metric">T</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getLowerBoundInternal(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupify)">getLowerBoundInternal</a></strong>(org.deidentifier.arx.framework.lattice.Transformation&nbsp;node,
                      org.deidentifier.arx.framework.check.groupify.HashGroupify&nbsp;groupify)</code>
 <div class="block">Returns a lower bound for the information loss for the given node.</div>
 </td>
@@ -593,7 +566,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getNumRecords(org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.framework.data.Data)">getNumRecords</a></strong>(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#getNumRecords(org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.framework.data.Data)">getNumRecords</a></strong>(<a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
              org.deidentifier.arx.framework.data.Data&nbsp;input)</code>
 <div class="block">Returns the number of records</div>
 </td>
@@ -612,7 +585,7 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initialize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
           <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
           org.deidentifier.arx.framework.data.Data&nbsp;input,
           org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
@@ -622,24 +595,12 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected abstract void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initializeInternal(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.GeneralizationHierarchy[], org.deidentifier.arx.ARXConfiguration)">initializeInternal</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#initializeInternal(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20org.deidentifier.arx.ARXConfiguration)">initializeInternal</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
                   <a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
                   org.deidentifier.arx.framework.data.Data&nbsp;input,
                   org.deidentifier.arx.framework.data.GeneralizationHierarchy[]&nbsp;hierarchies,
                   <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Implement this to initialize the metric.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#isAbleToHandleMicroaggregation()">isAbleToHandleMicroaggregation</a></strong>()</code>
-<div class="block">Returns whether this metric handles microaggregation</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#isGSFactorSupported()">isGSFactorSupported</a></strong>()</code>
-<div class="block">Returns whether a generalization/suppression factor is supported</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -663,29 +624,23 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#isPrecomputed()">isPrecomputed</a></strong>()</code>
-<div class="block">Returns whether the metric is precomputed</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#isWeighted()">isWeighted</a></strong>()</code>
 <div class="block">Returns true if the metric is weighted.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.util.List&lt;<a href="../../../../org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric">MetricDescription</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#list()">list</a></strong>()</code>
 <div class="block">Returns a list of all available metrics for information loss.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#round(double)">round</a></strong>(double&nbsp;value)</code>
 <div class="block">Ignore anything but the first DIGITS digits.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/Metric.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns the name of metric.</div>
@@ -796,35 +751,6 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="createEntropyBasedInformationLossMetric()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createEntropyBasedInformationLossMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMEntropyBasedInformationLoss</a>&nbsp;createEntropyBasedInformationLossMetric()</pre>
-<div class="block">Creates an instance of the entropy-based information loss metric, which will treat
- generalization and suppression equally.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createEntropyBasedInformationLossMetric(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createEntropyBasedInformationLossMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMEntropyBasedInformationLoss</a>&nbsp;createEntropyBasedInformationLossMetric(double&nbsp;gsFactor)</pre>
-<div class="block">Creates an instance of the entropy-based information loss metric.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
-            The default value is 0.5, which means that generalization
-            and suppression will be treated equally. A factor of 0
-            will favor suppression, and a factor of 1 will favor
-            generalization. The values in between can be used for
-            balancing both methods.</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="createEntropyMetric()">
 <!--   -->
 </a>
@@ -866,6 +792,25 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="createEntropyMetric(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createEntropyMetric</h4>
+<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createEntropyMetric(double&nbsp;gsFactor)</pre>
+<div class="block">Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+ which is the sum-function, will be used for comparing results.
+ This metric will respect attribute weights defined in the configuration.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createEntropyMetric(boolean, double)">
 <!--   -->
 </a>
@@ -903,25 +848,6 @@ implements java.io.Serializable</pre>
             will favor suppression, and a factor of 1 will favor
             generalization. The values in between can be used for
             balancing both methods.</dd><dd><code>function</code> - The aggregate function to be used for comparing results</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createEntropyMetric(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createEntropyMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createEntropyMetric(double&nbsp;gsFactor)</pre>
-<div class="block">Creates an instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
- which is the sum-function, will be used for comparing results.
- This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
-            The default value is 0.5, which means that generalization
-            and suppression will be treated equally. A factor of 0
-            will favor suppression, and a factor of 1 will favor
-            generalization. The values in between can be used for
-            balancing both methods.</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -1121,6 +1047,44 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="createPrecisionMetric(double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createPrecisionMetric</h4>
+<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecisionMetric(double&nbsp;gsFactor)</pre>
+<div class="block">Creates an instance of the non-monotonic precision metric.
+ The default aggregate function, which is the arithmetic mean, will be used.
+ This metric will respect attribute weights defined in the configuration.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="createPrecisionMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createPrecisionMetric</h4>
+<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecisionMetric(double&nbsp;gsFactor,
+                                                       <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
+<div class="block">Creates an instance of the non-monotonic precision metric.
+ This metric will respect attribute weights defined in the configuration.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - The aggregate function to use for comparing results</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createPrecisionMetric(boolean, double)">
 <!--   -->
 </a>
@@ -1158,44 +1122,6 @@ implements java.io.Serializable</pre>
             will favor suppression, and a factor of 1 will favor
             generalization. The values in between can be used for
             balancing both methods.</dd><dd><code>function</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createPrecisionMetric(double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createPrecisionMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecisionMetric(double&nbsp;gsFactor)</pre>
-<div class="block">Creates an instance of the non-monotonic precision metric.
- The default aggregate function, which is the arithmetic mean, will be used.
- This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
-            The default value is 0.5, which means that generalization
-            and suppression will be treated equally. A factor of 0
-            will favor suppression, and a factor of 1 will favor
-            generalization. The values in between can be used for
-            balancing both methods.</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createPrecisionMetric(double, org.deidentifier.arx.metric.Metric.AggregateFunction)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createPrecisionMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecisionMetric(double&nbsp;gsFactor,
-                                                       <a href="../../../../org/deidentifier/arx/metric/Metric.AggregateFunction.html" title="enum in org.deidentifier.arx.metric">Metric.AggregateFunction</a>&nbsp;function)</pre>
-<div class="block">Creates an instance of the non-monotonic precision metric.
- This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>function</code> - The aggregate function to use for comparing results</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
-            The default value is 0.5, which means that generalization
-            and suppression will be treated equally. A factor of 0
-            will favor suppression, and a factor of 1 will favor
-            generalization. The values in between can be used for
-            balancing both methods.</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -1246,6 +1172,32 @@ implements java.io.Serializable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="createPrecomputedEntropyMetric(double, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>createPrecomputedEntropyMetric</h4>
+<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecomputedEntropyMetric(double&nbsp;threshold,
+                                                                double&nbsp;gsFactor)</pre>
+<div class="block">Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
+ which is the sum-function, will be used for comparing results.
+ This metric will respect attribute weights defined in the configuration.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if 
+                  #distinctValues / #rows <= threshold for all quasi-identifiers.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="createPrecomputedEntropyMetric(double, boolean, double)">
 <!--   -->
 </a>
@@ -1287,32 +1239,6 @@ implements java.io.Serializable</pre>
             will favor suppression, and a factor of 1 will favor
             generalization. The values in between can be used for
             balancing both methods.</dd><dd><code>function</code> - The aggregate function to be used for comparing results</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createPrecomputedEntropyMetric(double, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createPrecomputedEntropyMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;<a href="../../../../org/deidentifier/arx/metric/v2/AbstractILMultiDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractILMultiDimensional</a>&gt;&nbsp;createPrecomputedEntropyMetric(double&nbsp;threshold,
-                                                                double&nbsp;gsFactor)</pre>
-<div class="block">Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
- which is the sum-function, will be used for comparing results.
- This metric will respect attribute weights defined in the configuration.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if 
-                  #distinctValues / #rows <= threshold for all quasi-identifiers.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
-            The default value is 0.5, which means that generalization
-            and suppression will be treated equally. A factor of 0
-            will favor suppression, and a factor of 1 will favor
-            generalization. The values in between can be used for
-            balancing both methods.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
-            The default value is 0.5, which means that generalization
-            and suppression will be treated equally. A factor of 0
-            will favor suppression, and a factor of 1 will favor
-            generalization. The values in between can be used for
-            balancing both methods.</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -1416,39 +1342,6 @@ implements java.io.Serializable</pre>
  This metric will respect attribute weights defined in the configuration.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>threshold</code> - The precomputed variant of the metric will be used if
             #distinctValues / #rows <= threshold for all quasi-identifiers.</dd><dd><code>function</code> - The aggregate function to use for comparing results</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createPublisherPayoutMetric(boolean)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createPublisherPayoutMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMPublisherPayout</a>&nbsp;createPublisherPayoutMetric(boolean&nbsp;journalistAttackerModel)</pre>
-<div class="block">Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game
- which treats generalization and suppression equally.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>journalistAttackerModel</code> - If set to true, the journalist attacker model will be assumed, 
-                                the prosecutor model will be assumed, otherwise</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="createPublisherPayoutMetric(boolean, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>createPublisherPayoutMetric</h4>
-<pre>public static&nbsp;<a href="../../../../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMPublisherPayout</a>&nbsp;createPublisherPayoutMetric(boolean&nbsp;journalistAttackerModel,
-                                                    double&nbsp;gsFactor)</pre>
-<div class="block">Creates an instance of the  metric for maximizing publisher benefit in the Stackelberg game.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>journalistAttackerModel</code> - If set to true, the journalist attacker model will be assumed, 
-                                the prosecutor model will be assumed, otherwise</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
-            The default value is 0.5, which means that generalization
-            and suppression will be treated equally. A factor of 0
-            will favor suppression, and a factor of 1 will favor
-            generalization. The values in between can be used for
-            balancing both methods.</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -1682,28 +1575,6 @@ implements java.io.Serializable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>manager</code> - </dd><dd><code>definition</code> - </dd><dd><code>input</code> - </dd><dd><code>hierarchies</code> - </dd><dd><code>config</code> - </dd></dl>
 </li>
 </ul>
-<a name="isAbleToHandleMicroaggregation()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isAbleToHandleMicroaggregation</h4>
-<pre>public&nbsp;boolean&nbsp;isAbleToHandleMicroaggregation()</pre>
-<div class="block">Returns whether this metric handles microaggregation</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="isGSFactorSupported()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isGSFactorSupported</h4>
-<pre>public&nbsp;boolean&nbsp;isGSFactorSupported()</pre>
-<div class="block">Returns whether a generalization/suppression factor is supported</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="isIndependent()">
 <!--   -->
 </a>
@@ -1735,17 +1606,6 @@ implements java.io.Serializable</pre>
 <h4>isMultiDimensional</h4>
 <pre>public final&nbsp;boolean&nbsp;isMultiDimensional()</pre>
 <div class="block">Returns true if the metric is multi-dimensional.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="isPrecomputed()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>isPrecomputed</h4>
-<pre>public&nbsp;boolean&nbsp;isPrecomputed()</pre>
-<div class="block">Returns whether the metric is precomputed</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

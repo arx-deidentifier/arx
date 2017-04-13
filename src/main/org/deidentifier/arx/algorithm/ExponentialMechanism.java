@@ -164,7 +164,7 @@ public class ExponentialMechanism<T> {
     }
 
     /**
-     * An implementation of the exponential function
+     * An implementation of the exponential function for the BigDecimal type
      * @param exponent
      * @return
      */

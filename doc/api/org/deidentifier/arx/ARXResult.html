@@ -35,7 +35,7 @@
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../org/deidentifier/arx/ARXPopulationModel.Region.html" title="enum in org.deidentifier.arx"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?org/deidentifier/arx/ARXResult.html" target="_top">Frames</a></li>
@@ -59,7 +59,7 @@
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>
@@ -103,27 +103,6 @@ extends java.lang.Object</pre>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
-<!-- ======== NESTED CLASS SUMMARY ======== -->
-<ul class="blockList">
-<li class="blockList"><a name="nested_class_summary">
-<!--   -->
-</a>
-<h3>Nested Class Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Nested Class Summary table, listing nested classes, and an explanation">
-<caption><span>Nested Classes</span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colFirst" scope="col">Modifier and Type</th>
-<th class="colLast" scope="col">Class and Description</th>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>static class&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx">ARXResult.ScoreType</a></strong></code>
-<div class="block">Score type</div>
-</td>
-</tr>
-</table>
-</li>
-</ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
 <li class="blockList"><a name="constructor_summary">
@@ -136,7 +115,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXLattice,%20int,%20double,%20double,%20org.deidentifier.arx.metric.Metric,%20org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.ARXLattice.ARXNode,%20long,%20org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
          <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
          int&nbsp;historySize,
@@ -209,7 +188,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput(org.deidentifier.arx.ARXLattice.ARXNode, boolean)">getOutput</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput(org.deidentifier.arx.ARXLattice.ARXNode,%20boolean)">getOutput</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
          boolean&nbsp;fork)</code>
 <div class="block">Returns a handle to data obtained by applying the given transformation.</div>
 </td>
@@ -218,21 +197,6 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput(boolean)">getOutput</a></strong>(boolean&nbsp;fork)</code>
 <div class="block">Returns a handle to the data obtained by applying the optimal transformation.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getScore(org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.ARXResult.ScoreType)">getScore</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-        <a href="../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx">ARXResult.ScoreType</a>&nbsp;score)</code>
-<div class="block">Returns a score</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>double</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getScore(org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.ARXResult.ScoreType, int)">getScore</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-        <a href="../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx">ARXResult.ScoreType</a>&nbsp;score,
-        int&nbsp;clazz)</code>
-<div class="block">Returns a score</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -261,14 +225,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle, double)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle,%20double)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
         double&nbsp;gsFactor)</code>
 <div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle, double, org.deidentifier.arx.ARXListener)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle,%20double,%20org.deidentifier.arx.ARXListener)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
         double&nbsp;gsFactor,
         <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
@@ -276,7 +240,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle, double, int, double)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle,%20double,%20int,%20double)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
                  double&nbsp;gsFactor,
                  int&nbsp;maxIterations,
                  double&nbsp;adaptionFactor)</code>
@@ -285,7 +249,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle, double, int, double, org.deidentifier.arx.ARXListener)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle,%20double,%20int,%20double,%20org.deidentifier.arx.ARXListener)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
                  double&nbsp;gsFactor,
                  int&nbsp;maxIterations,
                  double&nbsp;adaptionFactor,
@@ -470,33 +434,6 @@ public&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getScore(org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.ARXResult.ScoreType)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getScore</h4>
-<pre>public&nbsp;double&nbsp;getScore(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-              <a href="../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx">ARXResult.ScoreType</a>&nbsp;score)</pre>
-<div class="block">Returns a score</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - the transformation</dd><dd><code>score</code> - the type of score</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getScore(org.deidentifier.arx.ARXLattice.ARXNode, org.deidentifier.arx.ARXResult.ScoreType, int)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getScore</h4>
-<pre>public&nbsp;double&nbsp;getScore(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
-              <a href="../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx">ARXResult.ScoreType</a>&nbsp;score,
-              int&nbsp;clazz)</pre>
-<div class="block">Returns a score</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - the transformation</dd><dd><code>score</code> - the type of score</dd><dd><code>clazz</code> - the index of the class attribute</dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getTime()">
 <!--   -->
 </a>
@@ -661,7 +598,7 @@ public&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../org/deidentifier/arx/ARXPopulationModel.Region.html" title="enum in org.deidentifier.arx"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../org/deidentifier/arx/ARXResult.ScoreType.html" title="enum in org.deidentifier.arx"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../index.html?org/deidentifier/arx/ARXResult.html" target="_top">Frames</a></li>
@@ -685,7 +622,7 @@ public&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class
 <div>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
-<li><a href="#nested_class_summary">Nested</a>&nbsp;|&nbsp;</li>
+<li>Nested&nbsp;|&nbsp;</li>
 <li>Field&nbsp;|&nbsp;</li>
 <li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
 <li><a href="#method_summary">Method</a></li>

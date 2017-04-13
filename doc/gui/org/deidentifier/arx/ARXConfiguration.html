@@ -124,7 +124,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="altColor">
 <td class="colFirst"><code>static class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></strong></code>
-<div class="block">Class for internal use that provides access to more parameters and functionality.</div>
+<div class="block">Class for internal use that provides access to more details.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -214,7 +214,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create(double, org.deidentifier.arx.metric.Metric)">create</a></strong>(double&nbsp;suppressionLimit,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#create(double,%20org.deidentifier.arx.metric.Metric)">create</a></strong>(double&nbsp;suppressionLimit,
       <a href="../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
 <div class="block">Creates a new configuration that allows the given percentage of outliers and
  thus implements tuple suppression.</div>
@@ -269,35 +269,22 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXFinancialConfiguration.html" title="class in org.deidentifier.arx">ARXFinancialConfiguration</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getFinancialConfiguration()">getFinancialConfiguration</a></strong>()</code>
-<div class="block">Returns the financial configuration</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchThreshold()">getHeuristicSearchThreshold</a></strong>()</code>
 <div class="block">When the size of the solution space exceeds the returned number of transformations,
  ARX will use a heuristic search strategy.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getHeuristicSearchTimeLimit()">getHeuristicSearchTimeLimit</a></strong>()</code>
 <div class="block">The heuristic search algorithm will terminate after the returned number of milliseconds.</div>
 </td>
 </tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getInstanceForLocalRecoding(org.deidentifier.arx.RowSet, double)">getInstanceForLocalRecoding</a></strong>(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
-                           double&nbsp;gsFactor)</code>
-<div class="block">Clones this config and projects everything onto the given subset.</div>
-</td>
-</tr>
 <tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getInternalConfiguration()">getInternalConfiguration</a></strong>()</code>
-<div class="block">Returns an internal variant of the class which provides a broader interface</div>
+<div class="block">TODO: This is a hack and should be removed in future releases.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -315,7 +302,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getMinimalGroupSize()">getMinimalGroupSize</a></strong>()</code>
-<div class="block">Returns the minimal size of an equivalence class induced by the defined privacy models.</div>
+<div class="block">Returns the minimal size of an equivalence class induced by the contained criteria.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -373,91 +360,92 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSubsetInstance(org.deidentifier.arx.RowSet,%20double)">getSubsetInstance</a></strong>(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
+                 double&nbsp;gsFactor)</code>
+<div class="block">Clones this config and projects everything onto the given subset.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#getSuppressedAttributeTypes()">getSuppressedAttributeTypes</a></strong>()</code>
 <div class="block">Returns an integer representing all attribute types that must be suppressed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager)</code>
 <div class="block">Initializes the configuration.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isAttributeTypeSuppressed(org.deidentifier.arx.AttributeType)">isAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type)</code>
 <div class="block">Returns whether values of the given attribute type will be replaced by the suppression 
  string in suppressed tuples.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isHeuristicSearchEnabled()">isHeuristicSearchEnabled</a></strong>()</code>
 <div class="block">Returns whether ARX will use a heuristic search strategy.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isPracticalMonotonicity()">isPracticalMonotonicity</a></strong>()</code>
 <div class="block">Is practical monotonicity assumed.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isSuppressionAlwaysEnabled()">isSuppressionAlwaysEnabled</a></strong>()</code>
 <div class="block">Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUseHeuristicSearchForSampleBasedCriteria()">isUseHeuristicSearchForSampleBasedCriteria</a></strong>()</code>
 <div class="block">Is optimality guaranteed for sample-based criteria?</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#isUtilityBasedMicroaggregation()">isUtilityBasedMicroaggregation</a></strong>()</code>
 <div class="block">Returns whether microaggregation is based on utility measures</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>&lt;T extends <a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&gt;&nbsp;<br>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#removeCriterion(org.deidentifier.arx.criteria.PrivacyCriterion)">removeCriterion</a></strong>(<a href="../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;arg)</code>
 <div class="block">Removes the given criterion.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#requires(int)">requires</a></strong>(int&nbsp;requirement)</code>
 <div class="block">Convenience method for checking the requirements.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType, boolean)">setAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType,%20boolean)">setAttributeTypeSuppressed</a></strong>(<a href="../../../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a>&nbsp;type,
                           boolean&nbsp;enabled)</code>
 <div class="block">Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String, double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String,%20double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String, java.lang.Double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setAttributeWeight(java.lang.String,%20java.lang.Double)">setAttributeWeight</a></strong>(java.lang.String&nbsp;attribute,
                   java.lang.Double&nbsp;weight)</code>
 <div class="block">Sets the weight for the given attribute.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXConfiguration.html#setFinancialConfiguration(org.deidentifier.arx.ARXFinancialConfiguration)">setFinancialConfiguration</a></strong>(<a href="../../../org/deidentifier/arx/ARXFinancialConfiguration.html" title="class in org.deidentifier.arx">ARXFinancialConfiguration</a>&nbsp;config)</code>
-<div class="block">Sets the financial configuration</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -733,16 +721,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getFinancialConfiguration()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getFinancialConfiguration</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXFinancialConfiguration.html" title="class in org.deidentifier.arx">ARXFinancialConfiguration</a>&nbsp;getFinancialConfiguration()</pre>
-<div class="block">Returns the financial configuration</div>
-</li>
-</ul>
 <a name="getHeuristicSearchThreshold()">
 <!--   -->
 </a>
@@ -962,17 +940,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>attribute</code> - </dd><dd><code>weight</code> - </dd></dl>
 </li>
 </ul>
-<a name="setFinancialConfiguration(org.deidentifier.arx.ARXFinancialConfiguration)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>setFinancialConfiguration</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;setFinancialConfiguration(<a href="../../../org/deidentifier/arx/ARXFinancialConfiguration.html" title="class in org.deidentifier.arx">ARXFinancialConfiguration</a>&nbsp;config)</pre>
-<div class="block">Sets the financial configuration</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>config</code> - </dd></dl>
-</li>
-</ul>
 <a name="setHeuristicSearchEnabled(boolean)">
 <!--   -->
 </a>
@@ -1109,23 +1076,6 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getInstanceForLocalRecoding(org.deidentifier.arx.RowSet, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getInstanceForLocalRecoding</h4>
-<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getInstanceForLocalRecoding(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
-                                           double&nbsp;gsFactor)</pre>
-<div class="block">Clones this config and projects everything onto the given subset.<br>
- - All privacy models will be cloned<br>
- - Subsets in d-presence will be projected accordingly<br>
- - Utility measures will be cloned<br>
- - Replaces estimated k-map with according k-anonymity<br></div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getInternalConfiguration()">
 <!--   -->
 </a>
@@ -1133,7 +1083,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getInternalConfiguration</h4>
 <pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;getInternalConfiguration()</pre>
-<div class="block">Returns an internal variant of the class which provides a broader interface</div>
+<div class="block">TODO: This is a hack and should be removed in future releases.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -1144,7 +1094,7 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <li class="blockList">
 <h4>getMinimalGroupSize</h4>
 <pre>protected&nbsp;int&nbsp;getMinimalGroupSize()</pre>
-<div class="block">Returns the minimal size of an equivalence class induced by the defined privacy models.</div>
+<div class="block">Returns the minimal size of an equivalence class induced by the contained criteria.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd>If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
  If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.</dd></dl>
 </li>
@@ -1190,8 +1140,25 @@ implements java.io.Serializable, java.lang.Cloneable</pre>
 <h4>getSubset</h4>
 <pre>protected&nbsp;<a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
 <div class="block">Returns the data subset, if any subset is defined.
- You may only call this, after the configuration has be initialized.</div>
+ You may only call this, after the config has be initialized.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSubsetInstance(org.deidentifier.arx.RowSet, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSubsetInstance</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getSubsetInstance(<a href="../../../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a>&nbsp;rowset,
+                                 double&nbsp;gsFactor)</pre>
+<div class="block">Clones this config and projects everything onto the given subset.<br>
+ - All privacy models will be cloned<br>
+ - Subsets in d-presence will be projected accordingly<br>
+ - Utility measures will be cloned<br>
+ - Replaces estimated k-map with according k-anonymity<br></div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>gsFactor</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getSuppressedAttributeTypes()">

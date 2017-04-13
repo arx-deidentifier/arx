@@ -94,11 +94,9 @@
 <li class="blockList">
 <hr>
 <br>
-<pre>public class <span class="strong">RiskModelAttributes</span>
+<pre>public abstract class <span class="strong">RiskModelAttributes</span>
 extends java.lang.Object</pre>
-<div class="block">A class for analyzing attribute-related risks. Calculates alpha-distinction and
- alpha separation as described in R. Motwani et al.
- "Efficient algorithms for masking and finding quasi-identifiers" Proc. VLDB Conf., 2007.</div>
+<div class="block">A class for attribute-related risks</div>
 </li>
 </ul>
 </div>
@@ -120,7 +118,7 @@ extends java.lang.Object</pre>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes.QuasiIdentifierRisk</a></strong></code>
-<div class="block">Risks associated with a certain quasi-identifier</div>
+<div class="block">Risks associated to a certain quasi-identifier</div>
 </td>
 </tr>
 </table>
@@ -142,6 +140,12 @@ extends java.lang.Object</pre>
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes.QuasiIdentifierRisk</a>[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html#getAttributeRisks()">getAttributeRisks</a></strong>()</code>
 <div class="block">Returns the quasi-identifiers, sorted by risk</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.html#getNumIdentifiers()">getNumIdentifiers</a></strong>()</code>
+<div class="block">Returns the number of identifiers</div>
 </td>
 </tr>
 </table>
@@ -169,11 +173,22 @@ extends java.lang.Object</pre>
 <a name="getAttributeRisks()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getAttributeRisks</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/risk/RiskModelAttributes.QuasiIdentifierRisk.html" title="class in org.deidentifier.arx.risk">RiskModelAttributes.QuasiIdentifierRisk</a>[]&nbsp;getAttributeRisks()</pre>
 <div class="block">Returns the quasi-identifiers, sorted by risk</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getNumIdentifiers()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getNumIdentifiers</h4>
+<pre>public&nbsp;int&nbsp;getNumIdentifiers()</pre>
+<div class="block">Returns the number of identifiers</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
