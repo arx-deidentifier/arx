@@ -138,30 +138,11 @@ public class ViewAttributeList implements IView {
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    
-                    // in case of ARXOrderedString, apply the existing attribute ordering (if present) to the values of the attribute's domain
-                    String[] values = getValuesAsArray(attribute);                    
-                    if (DataType.isARXOrderedString(type)) {
-                        List<String> attributeElements = ((ARXOrderedString) type).getElements();
-                        ArrayList<String> valuesTemp = new ArrayList<>();   // ArrayList supports 'remove' operation
-                        valuesTemp.addAll(Arrays.asList(values));       
-                        ArrayList<String> valuesOrdered = new ArrayList<String>();
-
-                        for (String v : attributeElements) {
-                            if (valuesTemp.contains(v)) {
-                                valuesOrdered.add(v);
-                                valuesTemp.remove(v);
-                            }
-                        }
-                        
-                        values = valuesOrdered.toArray(new String[valuesOrdered.size()]);
-                    }
-                    
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                            text1, text2, type,
-                                                                            model.getLocale(), values);
+                                                                            text1, text2, DataType.STRING,
+                                                                            model.getLocale(), getValuesAsArray(attribute));
                     
-                    // only in case of changes validate and update the data type
+                    // only update the data type of the attribute if an order has been determined
                     if (array != null) {
                         try {
                             type = DataType.createOrderedString(array);
@@ -179,15 +160,16 @@ public class ViewAttributeList implements IView {
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                     final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
                                                                                  text1, text2, model.getLocale(), description, getValuesAsList(attribute));
-                    if (format == null) {
-                        type = DataType.STRING;
-                    } else {
+                    // only update the data type of the attribute if a format is selected
+                    if (format != null) {
+                        // the format input already performs a validity check, hence the returned format is valid
                         type = description.newInstance(format, model.getLocale());
                     }
                 } else {
-                    type = description.newInstance();
-                    if (!isValidDataType(type, getValuesAsList(attribute))) {
-                        type = DataType.STRING;
+                    // only update the data type of the attribute if the selected type is valid
+                    DataType<?> typeTemp = description.newInstance();
+                    if (isValidDataType(typeTemp, getValuesAsList(attribute))) {
+                        type = typeTemp;
                     }
                 }
                 
