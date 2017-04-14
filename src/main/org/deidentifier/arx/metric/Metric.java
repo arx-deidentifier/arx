@@ -1409,6 +1409,16 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Calculates the score.
+     * 
+     * @return
+     */
+    public double getScore(final Transformation node, final HashGroupify groupify) {
+        throw new RuntimeException("Data-dependent differential privacy for the metric "
+            + getName() + " is not yet implemented");
+    }
+    
+    /**
      * Evaluates the metric for the given node.
      *
      * @param node The node for which to compute the information loss

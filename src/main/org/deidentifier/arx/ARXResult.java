@@ -43,16 +43,6 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
-    /**
-     * Score type
-     * @author Fabian Prasser
-     *
-     */
-    public static enum ScoreType {
-        AECS,
-        LOSS,
-    }
-
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -386,28 +376,15 @@ public class ARXResult {
      * Returns a score
      *  
      * @param node the transformation
-     * @param score the type of score
+     * @param metric the metric
      * 
      * @return
      */
-    public double getScore(ARXNode node, ScoreType score) {
-        return getScore(node, score, -1);
-    }
-    
-    /**
-     * Returns a score
-     *  
-     * @param node the transformation
-     * @param score the type of score
-     * @param clazz the index of the class attribute
-     * 
-     * @return
-     */
-    public double getScore(ARXNode node, ScoreType score, int clazz) {
+    public double getScore(ARXNode node, Metric<?> metric) {
         
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
-        return checker.getScore(definition, transformation, score, clazz);
+        return checker.getScore(transformation, metric);
     }
 
     /**

@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.EDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
@@ -33,6 +34,7 @@ import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -494,6 +496,13 @@ public class ARXAnonymizer {
                                           final DataManager manager,
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
+        
+        for (PrivacyCriterion c : config.getCriteria()) {
+            if (c instanceof EDDifferentialPrivacy && ((EDDifferentialPrivacy)c).isDataDependent()) {
+                return EDDPAlgorithm.create(solutionSpace, checker, config.getMetric(), ((EDDifferentialPrivacy)c).isDeterministic(),
+                                            ((EDDifferentialPrivacy)c).getSteps(), ((EDDifferentialPrivacy)c).getEpsilonSearch());
+            }
+        }
         
         if (config.isHeuristicSearchEnabled() ||
             solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {

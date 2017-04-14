@@ -45,67 +45,123 @@ import org.deidentifier.arx.framework.lattice.Transformation;
 public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     
     /** SVUID */
-    private static final long        serialVersionUID = 242579895476272606L;
+    private static final long              serialVersionUID = 242579895476272606L;
 
     /** Parameter */
-    private final double             epsilon;
+    private final double                   epsilonAnon;
     /** Parameter */
-    private final double             delta;
+    private final double                   epsilonSearch;
     /** Parameter */
-    private final int                k;
+    private final int                      steps;
     /** Parameter */
-    private final double             beta;
+    private final double                   delta;
     /** Parameter */
-    private DataSubset               subset;
+    private final int                      k;
     /** Parameter */
-    private transient DataManager    manager;
+    private final double                   beta;
     /** Parameter */
-    private transient boolean        deterministic    = false;
+    private DataSubset                     subset;
     /** Parameter */
-    private DataGeneralizationScheme generalization;
-
+    private transient DataManager          manager;
+    /** Parameter */
+    private transient boolean              deterministic    = false;
+    /** Parameter */
+    private final DataGeneralizationScheme generalization;
+    
     /**
-     * Creates a new instance
-     * @param epsilon
+     * Creates a new instance which performs data-dependent generalization
+     * @param epsilonAnon
      * @param delta
-     * @param generalization
+     * @param epsilonSearch
+     * @param steps
      */
-    public EDDifferentialPrivacy(double epsilon, double delta, 
-                                 DataGeneralizationScheme generalization) {
+    public EDDifferentialPrivacy(double epsilonAnon, double delta,
+                                 double epsilonSearch, int steps) {
         super(false, false);
-        this.epsilon = epsilon;
+        this.epsilonAnon = epsilonAnon;
+        this.epsilonSearch = epsilonSearch;
         this.delta = delta;
-        this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(delta, epsilon, this.beta);
+        this.generalization = null;
+        this.beta = calculateBeta(epsilonAnon);
+        this.k = calculateK(delta, epsilonAnon, this.beta);
         this.deterministic = false;
+        this.steps = steps;
     }
     
     /**
-     * Creates a new instance which may be configured to produce deterministic output.
+     * Creates a new instance which performs data-dependent generalization and
+     * may be configured to produce deterministic output.
      * Note: *never* use this in production. It is implemented for testing purposes, only.
      * 
-     * @param epsilon
+     * @param epsilonAnon
+     * @param delta
+     * @param epsilonSearch
+     * @param steps
+     * @param deterministic
+     */
+    public EDDifferentialPrivacy(double epsilonAnon, double delta,
+                                 double epsilonSearch, int steps, boolean deterministic) {
+        super(false, false);
+        this.epsilonAnon = epsilonAnon;
+        this.epsilonSearch = epsilonSearch;
+        this.delta = delta;
+        this.generalization = null;
+        this.beta = calculateBeta(epsilonAnon);
+        this.k = calculateK(delta, epsilonAnon, this.beta);
+        this.deterministic = true;
+        this.steps = steps;
+    }
+
+    /**
+     * Creates a new instance which performs data-independent generalization
+     * @param epsilonAnon
+     * @param delta
+     * @param generalization
+     */
+    public EDDifferentialPrivacy(double epsilonAnon, double delta, 
+                                 DataGeneralizationScheme generalization) {
+        super(false, false);
+        this.epsilonAnon = epsilonAnon;
+        this.epsilonSearch = 0d;
+        this.delta = delta;
+        this.generalization = generalization;
+        this.beta = calculateBeta(epsilonAnon);
+        this.k = calculateK(delta, epsilonAnon, this.beta);
+        this.deterministic = false;
+        this.steps = -1;
+    }
+    
+    /**
+     * Creates a new instance which performs data-independent generalization and
+     * may be configured to produce deterministic output.
+     * Note: *never* use this in production. It is implemented for testing purposes, only.
+     * 
+     * @param epsilonAnon
      * @param delta
      * @param generalization
      * @param deterministic
      */
-    public EDDifferentialPrivacy(double epsilon, double delta, 
+    public EDDifferentialPrivacy(double epsilonAnon, double delta, 
                                  DataGeneralizationScheme generalization,
                                  boolean deterministic) {
         super(false, false);
-        this.epsilon = epsilon;
+        this.epsilonAnon = epsilonAnon;
+        this.epsilonSearch = 0d;
         this.delta = delta;
         this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(delta, epsilon, this.beta);
+        this.beta = calculateBeta(epsilonAnon);
+        this.k = calculateK(delta, epsilonAnon, this.beta);
         this.deterministic = true;
+        this.steps = -1;
     }
-    
 
     @Override
     public EDDifferentialPrivacy clone() {
-        return new EDDifferentialPrivacy(this.getEpsilon(), this.getDelta(), this.getGeneralizationScheme());
+        if (isDataDependent())
+            return new EDDifferentialPrivacy(this.getEpsilonAnon(), this.getDelta(),
+                                             this.getEpsilonSearch(), this.getSteps());
+        else
+            return new EDDifferentialPrivacy(this.getEpsilonAnon(), this.getDelta(), this.getGeneralizationScheme());
     }
 
     /**
@@ -130,11 +186,27 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     }
 
     /**
-     * Returns the epsilon parameter of (e,d)-DP
+     * Returns the epsilonAnon parameter of (e,d)-DP
      * @return
      */
-    public double getEpsilon() {
-        return epsilon;
+    public double getEpsilonAnon() {
+        return epsilonAnon;
+    }
+    
+    /**
+     * Returns the epsilonSearch parameter of (e,d)-DP
+     * @return
+     */
+    public double getEpsilonSearch() {
+        return epsilonSearch;
+    }
+    
+    /**
+     * Returns the steps parameter of (e,d)-DP
+     * @return
+     */
+    public int getSteps() {
+        return steps;
     }
 
     /**
@@ -151,6 +223,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      */
     public int getK() {
         return k;
+    }
+
+    /**
+     * Returns whether this instance performs data-dependent generalization
+     * @return
+     */
+    public boolean isDataDependent() {
+        return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return this.deterministic;
     }
 
     @Override
@@ -230,28 +318,29 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     
     @Override
     public String toString() {
+        double epsilon = epsilonAnon+epsilonSearch;
         return "("+epsilon+","+delta+")-DP";
     }
 
     /**
      * Calculates a_n
      * @param n
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateA(int n, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
+    private double calculateA(int n, double epsilonAnon, double beta) {
+        double gamma = calculateGamma(epsilonAnon, beta);
         return calculateBinomialSum((int) Math.floor(n * gamma) + 1, n, beta);
     }
 
     /**
      * Calculates beta_max
-     * @param epsilon
+     * @param epsilonAnon
      * @return
      */
-    private double calculateBeta(double epsilon) {
-        return 1.0d - (new Exp()).value(-1.0d * epsilon);
+    private double calculateBeta(double epsilonAnon) {
+        return 1.0d - (new Exp()).value(-1.0d * epsilonAnon);
     }
     
     /**
@@ -275,32 +364,32 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /**
      * Calculates c_n
      * @param n
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateC(int n, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
+    private double calculateC(int n, double epsilonAnon, double beta) {
+        double gamma = calculateGamma(epsilonAnon, beta);
         return (new Exp()).value(-1.0d * n * (gamma * (new Log()).value(gamma / beta) - (gamma - beta)));
     }
 
     /**
      * Calculates delta
      * @param k
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateDelta(int k, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
+    private double calculateDelta(int k, double epsilonAnon, double beta) {
+        double gamma = calculateGamma(epsilonAnon, beta);
         int n_m = (int) Math.ceil((double) k / gamma - 1.0d);
 
         double delta = Double.MIN_VALUE;
         double bound = Double.MAX_VALUE;
 
         for (int n = n_m; delta < bound; ++n) {
-            delta = Math.max(delta, calculateA(n, epsilon, beta));
-            bound = calculateC(n, epsilon, beta);
+            delta = Math.max(delta, calculateA(n, epsilonAnon, beta));
+            bound = calculateC(n, epsilonAnon, beta);
         }
 
         return delta;
@@ -308,27 +397,27 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     /**
      * Calculates gamma
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private double calculateGamma(double epsilon, double beta) {
-        double power = (new Exp()).value(epsilon);
+    private double calculateGamma(double epsilonAnon, double beta) {
+        double power = (new Exp()).value(epsilonAnon);
         return (power - 1.0d + beta) / power;
     }
 
     /**
      * Calculates k
      * @param delta
-     * @param epsilon
+     * @param epsilonAnon
      * @param beta
      * @return
      */
-    private int calculateK(double delta, double epsilon, double beta) {
+    private int calculateK(double delta, double epsilonAnon, double beta) {
         int k = 1;
 
         for (double delta_k = Double.MAX_VALUE; delta_k > delta; ++k) {
-            delta_k = calculateDelta(k, epsilon, beta);
+            delta_k = calculateDelta(k, epsilonAnon, beta);
         }
 
         return k;
