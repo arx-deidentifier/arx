@@ -132,7 +132,7 @@ public class ViewAttributeList implements IView {
                 // Obtain type
                 String attribute = model.getSelectedAttribute();
                 DataTypeDescription<?> description = getDataTypeDescription(label);
-                DataType<?> type;
+                DataType<?> type = model.getInputDefinition().getDataType(attribute);
                 
                 // Open format dialog
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
@@ -141,9 +141,9 @@ public class ViewAttributeList implements IView {
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
                                                                             text1, text2, DataType.STRING,
                                                                             model.getLocale(), getValuesAsArray(attribute));
-                    if (array == null) {
-                        type = DataType.STRING;
-                    } else {
+                    
+                    // only update the data type of the attribute if an order has been determined
+                    if (array != null) {
                         try {
                             type = DataType.createOrderedString(array);
                             if (!isValidDataType(type, getValuesAsList(attribute))) {
@@ -160,15 +160,16 @@ public class ViewAttributeList implements IView {
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                     final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
                                                                                  text1, text2, model.getLocale(), description, getValuesAsList(attribute));
-                    if (format == null) {
-                        type = DataType.STRING;
-                    } else {
+                    // only update the data type of the attribute if a format is selected
+                    if (format != null) {
+                        // the format input already performs a validity check, hence the returned format is valid
                         type = description.newInstance(format, model.getLocale());
                     }
                 } else {
-                    type = description.newInstance();
-                    if (!isValidDataType(type, getValuesAsList(attribute))) {
-                        type = DataType.STRING;
+                    // only update the data type of the attribute if the selected type is valid
+                    DataType<?> typeTemp = description.newInstance();
+                    if (isValidDataType(typeTemp, getValuesAsList(attribute))) {
+                        type = typeTemp;
                     }
                 }
                 
