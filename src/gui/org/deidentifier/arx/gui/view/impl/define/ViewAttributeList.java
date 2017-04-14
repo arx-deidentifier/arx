@@ -53,6 +53,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * This view lists all attributes and their metadata
  * 
  * @author Fabian Prasser
+ * @author Martin Waltl
  */
 public class ViewAttributeList implements IView {
 
@@ -126,54 +127,76 @@ public class ViewAttributeList implements IView {
      * Data type changed
      */
     private void actionDataTypeChanged(String label) {
-        if (label != null) {
-            if ((model != null) && (model.getInputConfig().getInput() != null)) {
-                
-                // Obtain type
-                String attribute = model.getSelectedAttribute();
-                DataTypeDescription<?> description = getDataTypeDescription(label);
-                DataType<?> type = model.getInputDefinition().getDataType(attribute);
-                
+
+        if (label != null && model != null && model.getInputConfig().getInput() != null) {
+
+            // Prepare
+            String attribute = model.getSelectedAttribute();
+            DataTypeDescription<?> description = getDataTypeDescription(label);
+            DataType<?> type = model.getInputDefinition().getDataType(attribute);
+            boolean changed = false;
+
+            try {
                 // Open format dialog
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                            text1, text2, DataType.STRING,
-                                                                            model.getLocale(), getValuesAsArray(attribute));
-                    
-                    // only update the data type of the attribute if an order has been determined
+                                                                            text1,
+                                                                            text2,
+                                                                            DataType.STRING,
+                                                                            model.getLocale(),
+                                                                            getValuesAsArray(attribute));
+
+                    // Only update the data type of the attribute if an order has been determined
                     if (array != null) {
-                        try {
-                            type = DataType.createOrderedString(array);
-                            if (!isValidDataType(type, getValuesAsList(attribute))) {
-                                type = DataType.STRING;
-                            }
-                        } catch (Exception e) {
-                            controller.actionShowInfoDialog(controller.getResources().getShell(),
-                                                            Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-                            type = DataType.STRING;
+
+                        // Only update the data type of the attribute if the selected type is valid
+                        DataType<?> tempType = DataType.createOrderedString(array);
+                        if (isValidDataType(tempType, getValuesAsList(attribute))) {
+                            type = tempType;
+                            changed = true;
                         }
+
                     }
                 } else if (description.hasFormat()) {
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
                     final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
-                                                                                 text1, text2, model.getLocale(), description, getValuesAsList(attribute));
-                    // only update the data type of the attribute if a format is selected
+                                                                                 text1,
+                                                                                 text2,
+                                                                                 model.getLocale(),
+                                                                                 description,
+                                                                                 getValuesAsList(attribute));
+                    
+                    // Only update the data type of the attribute if a format has been selected
                     if (format != null) {
-                        // the format input already performs a validity check, hence the returned format is valid
+                        // The format input already performs a validity check,
+                        // hence the returned format is valid
                         type = description.newInstance(format, model.getLocale());
+                        changed = true;
                     }
                 } else {
-                    // only update the data type of the attribute if the selected type is valid
+                    
+                    // Only update the data type of the attribute if the selected type is valid
                     DataType<?> typeTemp = description.newInstance();
                     if (isValidDataType(typeTemp, getValuesAsList(attribute))) {
                         type = typeTemp;
+                        changed = true;
                     }
                 }
                 
-                // Set and update
+            // Handle unexpected errors
+            } catch (Exception e) {
+                
+                controller.actionShowInfoDialog(controller.getResources().getShell(),
+                                                Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                type = DataType.STRING;
+                changed = true;
+            }
+
+            // Set and update
+            if (changed) {
                 this.model.getInputDefinition().setDataType(attribute, type);
                 this.updateDataTypes();
                 this.controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
@@ -434,6 +457,4 @@ public class ViewAttributeList implements IView {
             }   
         }
     }
-    
-
 }
