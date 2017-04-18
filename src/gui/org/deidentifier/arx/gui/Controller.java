@@ -1647,7 +1647,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-    
     /**
      * Shows an input dialog.
      *
