@@ -78,7 +78,7 @@ public class ViewProperties implements IView {
         root.setLayout(groupNodeGridLayout);
 
         // Create controls
-        table = SWTUtil.createTable(root, SWT.BORDER);
+        table = SWTUtil.createTable(root, SWT.BORDER | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         final GridData gdata = SWTUtil.createFillGridData();

@@ -92,7 +92,7 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDi
 
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
-        this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         this.table.setMenu(new ClipboardHandlerTable(table).getMenu());

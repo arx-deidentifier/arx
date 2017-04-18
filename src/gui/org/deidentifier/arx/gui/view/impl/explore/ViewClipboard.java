@@ -129,7 +129,7 @@ public class ViewClipboard implements IView {
         border.setEnabled(true);
 
         // Create table
-        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
+        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
 
