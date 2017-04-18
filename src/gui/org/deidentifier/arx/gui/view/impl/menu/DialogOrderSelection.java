@@ -305,35 +305,40 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 if (file != null){
                     ArrayList<String> fileData = loadFile(file, Charset.defaultCharset());
                     long fileDataLines = fileData.size();
-                    if (!fileData.isEmpty()) {
-                        // remove values that are not present in the attribute's domain       
+
+                    if (fileDataLines != 0) {
+                        // remove values that are not present in the attribute's domain
                         fileData.retainAll(Arrays.asList(elements));
-                        
-                        if(fileData.isEmpty()) {
-                        	// import failed, file contains no values of the attribute's domain 
-                            controller.actionShowWarningDialog(getShell(), Resources.getMessage("DialogOrderSelection.16"), Resources.getMessage("DialogOrderSelection.17")); 
-                        }
-                        else if (fileData.size() != elements.length) {
-                        	// import failed, file does not contain all values of the attribute's domain 
-                            controller.actionShowWarningDialog(getShell(), Resources.getMessage("DialogOrderSelection.18"), Resources.getMessage("DialogOrderSelection.19"));  
-                        }
-                        else {
-                        	// info message if file contains more values as in the attribute's domain
-                            if(fileDataLines != fileData.size()) {
-                                controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.20"), Resources.getMessage("DialogOrderSelection.21"));
-                            }
-                            
+
+                        if (fileData.isEmpty() || fileData.size() != elements.length) {
+                            // import failed, file contains no or not all of the
+                            // attribute's domain
+                            controller.actionShowInfoDialog(getShell(),
+                                                               Resources.getMessage("DialogOrderSelection.16"),
+                                                               Resources.getMessage("DialogOrderSelection.17"));
+                        } else if (fileDataLines != fileData.size()) {
+                            // import failed, the file contains more values as
+                            // in the attribute's domain
+                            controller.actionShowInfoDialog(getShell(),
+                                                            Resources.getMessage("DialogOrderSelection.18"),
+                                                            Resources.getMessage("DialogOrderSelection.19"));
+                        } else {
                             // Select string
-                            for (int i=0; i<combo.getItems().length; i++){
+                            for (int i = 0; i < combo.getItems().length; i++) {
                                 if (combo.getItem(i).equals("String")) { //$NON-NLS-1$
                                     combo.select(i);
                                 }
                             }
-                            
+
                             // Set items
                             elements = fileData.toArray(new String[fileData.size()]);
                             list.setItems(elements);
                         }
+                    } else {
+                        // the file contains no values (is empty)
+                        controller.actionShowInfoDialog(getShell(),
+                                                        Resources.getMessage("DialogOrderSelection.16"),
+                                                        Resources.getMessage("DialogOrderSelection.17"));
                     }
                 }
             }
