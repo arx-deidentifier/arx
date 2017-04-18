@@ -171,7 +171,7 @@ public class ViewPropertiesInput extends ViewProperties {
 
         root.setLayout(new FillLayout());
         
-        Tree tree = new Tree(root, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        Tree tree = new Tree(root, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
         tree.setHeaderVisible(true);
         
         treeViewer = new TreeViewer(tree);
