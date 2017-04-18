@@ -320,8 +320,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                             // import failed, the file contains more values as
                             // in the attribute's domain
                             controller.actionShowInfoDialog(getShell(),
-                                                            Resources.getMessage("DialogOrderSelection.18"),
-                                                            Resources.getMessage("DialogOrderSelection.19"));
+                                                            Resources.getMessage("DialogOrderSelection.16"),
+                                                            Resources.getMessage("DialogOrderSelection.17"));
                         } else {
                             // Select string
                             for (int i = 0; i < combo.getItems().length; i++) {
