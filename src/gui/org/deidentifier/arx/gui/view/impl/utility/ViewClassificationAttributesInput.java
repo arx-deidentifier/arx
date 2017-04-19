@@ -49,7 +49,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * 
  * @author Fabian Prasser
  */
-public class ViewClassificationAttributes implements IView, ViewStatisticsBasic {
+public class ViewClassificationAttributesInput implements IView, ViewStatisticsBasic {
 
     /** Controller */
     private final Controller   controller;
@@ -70,7 +70,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
      * @param parent
      * @param controller
      */
-    public ViewClassificationAttributes(final Composite parent,
+    public ViewClassificationAttributesInput(final Composite parent,
                                     final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
@@ -189,7 +189,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
                 modified = true;
             }
             if (modified) {
-                controller.update(new ModelEvent(ViewClassificationAttributes.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                controller.update(new ModelEvent(ViewClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
             }
         }
     }
