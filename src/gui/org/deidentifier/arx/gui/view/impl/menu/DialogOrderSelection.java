@@ -465,7 +465,13 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 }
             }
         });
-        sort(this.type);
+        
+        if (DataType.isARXOrderedString(this.type)) {
+            // Use initial attribute ordering
+            list.setItems(this.elements);
+        } else {
+            sort(this.type);
+        }
         return parent;
     }
     

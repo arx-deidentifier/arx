@@ -1639,6 +1639,18 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     }
     
     /**
+     * Checks if type is an instance of <code>ARXOrderedString</code>.
+     * 
+     * @param type
+     *            data type
+     * @return true if type is an instance of <code>ARXOrderedString</code>,
+     *         otherwise false
+     */
+    public static final boolean isARXOrderedString(DataType<?> type) {
+        return (type instanceof ARXOrderedString);
+    }
+    
+    /**
      * Lists all available data types.
      *
      * @return
