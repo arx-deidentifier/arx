@@ -80,7 +80,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     
     /** Locale. */
     private Locale      locale;
-
+   
     /**
      * Creates a new instance.
      *
@@ -193,30 +193,48 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
     
     /**
-     * Loads the array from a file.
+     * Loads the array from a file. If the file contains more values (lines)
+     * than values present in the attribute's domain, the loading is aborted and
+     * an <code>IllegalStateException</code> is thrown.
      *
      * @param file
-     * @param charset TODO
+     * @param charset
+     *            TODO
      * @return
+     * @throws IllegalStateException
+     *             The input file contains more values (lines) than values
+     *             present in the attribute's domain.
      */
-    private ArrayList<String> loadFile(String file, Charset charset) {
-        ArrayList<String> list = new ArrayList<String>();
+    private java.util.List<String> loadFile(String file,
+                                            Charset charset) throws IllegalStateException {
+        java.util.List<String> list = new ArrayList<String>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
             String line = reader.readLine();
             while (line != null) {
                 list.add(line);
+                if (list.size() > elements.length) {
+                    // The files contains more values than present in the attribute's domain.
+                    throw new IllegalStateException();
+                }
+
                 line = reader.readLine();
             }
         } catch (IOException e) {
-            controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.3"), Resources.getMessage("DialogOrderSelection.4")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            controller.actionShowInfoDialog(getShell(),
+                                            Resources.getMessage("DialogOrderSelection.3"), //$NON-NLS-1$
+                                            Resources.getMessage("DialogOrderSelection.4") + e.getMessage()); //$NON-NLS-1$
             return null;
+        } catch (IllegalStateException e) {
+            throw e;
         } finally {
             if (reader != null) try {
                 reader.close();
             } catch (IOException e) {
-                controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.5"), Resources.getMessage("DialogOrderSelection.6")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                controller.actionShowInfoDialog(getShell(),
+                                                Resources.getMessage("DialogOrderSelection.5"), //$NON-NLS-1$
+                                                Resources.getMessage("DialogOrderSelection.6") + e.getMessage()); //$NON-NLS-1$
                 return null;
             }
         }
@@ -302,40 +320,35 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowOpenFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
-                if (file != null){
-                    ArrayList<String> fileData = loadFile(file, Charset.defaultCharset());
-                    long fileDataLines = fileData.size();
 
-                    if (fileDataLines != 0) {
-                        // remove values that are not present in the attribute's domain
+                if (file != null) {
+                    try {
+                        java.util.List<String> fileData = loadFile(file, Charset.defaultCharset());
+                        // Remove values that are not present in the attribute's domain.
                         fileData.retainAll(Arrays.asList(elements));
 
-                        if (fileData.isEmpty() || fileData.size() != elements.length) {
-                            // import failed, file contains no or not all of the
-                            // attribute's domain
-                            controller.actionShowInfoDialog(getShell(),
-                                                               Resources.getMessage("DialogOrderSelection.16"),
-                                                               Resources.getMessage("DialogOrderSelection.17"));
-                        } else if (fileDataLines != fileData.size()) {
-                            // import failed, the file contains more values as
-                            // in the attribute's domain
-                            controller.actionShowInfoDialog(getShell(),
-                                                            Resources.getMessage("DialogOrderSelection.16"),
-                                                            Resources.getMessage("DialogOrderSelection.17"));
-                        } else {
-                            // Select string
-                            for (int i = 0; i < combo.getItems().length; i++) {
-                                if (combo.getItem(i).equals("String")) { //$NON-NLS-1$
-                                    combo.select(i);
+                        if (fileData != null) {
+                            if (fileData.size() == elements.length) {
+                                // Select "Custom"
+                                for (int i = 0; i < combo.getItems().length; i++) {
+                                    if (combo.getItem(i)
+                                             .equals(Resources.getMessage("HierarchyWizardPageOrder.8"))) { //$NON-NLS-1$
+                                        combo.select(i);
+                                    }
                                 }
-                            }
 
-                            // Set items
-                            elements = fileData.toArray(new String[fileData.size()]);
-                            list.setItems(elements);
+                                // Set items
+                                elements = fileData.toArray(new String[fileData.size()]);
+                                list.setItems(elements);
+                            } else {
+                                controller.actionShowInfoDialog(getShell(),
+                                                                Resources.getMessage("DialogOrderSelection.16"),
+                                                                Resources.getMessage("DialogOrderSelection.17"));
+                            }
                         }
-                    } else {
-                        // the file contains no values (is empty)
+                    } catch (IllegalStateException excp) {
+                        // The input file contains more values (lines) than
+                        // present in the attribute's domain.
                         controller.actionShowInfoDialog(getShell(),
                                                         Resources.getMessage("DialogOrderSelection.16"),
                                                         Resources.getMessage("DialogOrderSelection.17"));
