@@ -29,7 +29,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
@@ -193,17 +195,17 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
     
     /**
-     * Loads the array from a file. If the file contains more values (lines)
-     * than values present in the attribute's domain, the loading is aborted and
-     * an <code>IllegalStateException</code> is thrown.
+     * Loads the array from a file. If the file contains more or additional
+     * values (lines) than present in the attribute's domain, the loading is
+     * aborted and an <code>IllegalStateException</code> is thrown.
      *
      * @param file
      * @param charset
      *            TODO
      * @return
      * @throws IllegalStateException
-     *             The input file contains more values (lines) than values
-     *             present in the attribute's domain.
+     *             The file contains more or additional values (lines) than
+     *             present in the attribute's domain
      */
     private java.util.List<String> loadFile(String file,
                                             Charset charset) throws IllegalStateException {
@@ -212,10 +214,14 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
             String line = reader.readLine();
+            Set<String> _elements = new HashSet<String>();
+            _elements.addAll(Arrays.asList(elements));
+
             while (line != null) {
                 list.add(line);
-                if (list.size() > elements.length) {
-                    // The files contains more values than present in the attribute's domain.
+                if (list.size() > _elements.size() || !_elements.contains(line)) {
+                    // The file contains more or additional values (lines) than
+                    // present in the attribute's domain
                     throw new IllegalStateException();
                 }
 
@@ -324,8 +330,6 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                 if (file != null) {
                     try {
                         java.util.List<String> fileData = loadFile(file, Charset.defaultCharset());
-                        // Remove values that are not present in the attribute's domain.
-                        fileData.retainAll(Arrays.asList(elements));
 
                         if (fileData != null) {
                             if (fileData.size() == elements.length) {
@@ -347,8 +351,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                             }
                         }
                     } catch (IllegalStateException excp) {
-                        // The input file contains more values (lines) than
-                        // present in the attribute's domain.
+                        // The input file contains more or additional values
+                        // (lines) than present in the attribute's domain.
                         controller.actionShowInfoDialog(getShell(),
                                                         Resources.getMessage("DialogOrderSelection.16"),
                                                         Resources.getMessage("DialogOrderSelection.17"));
