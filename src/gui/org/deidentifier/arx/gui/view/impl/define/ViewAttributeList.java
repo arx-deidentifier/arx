@@ -141,28 +141,12 @@ public class ViewAttributeList implements IView {
                 if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    
-                    // Apply an existing attribute ordering (if present) to the values of the attribute's domain in case of ARXOrderedString data type.
-                    String[] values = getValuesAsArray(attribute);                    
-                    if (DataType.isARXOrderedString(type)) {
-                        List<String> attributeElements = ((ARXOrderedString) type).getElements();
-                        List<String> valuesAsList = Arrays.asList(values);
-                        List<String> valuesOrdered = new ArrayList<String>();
-
-                        for (String v : attributeElements) {
-                            if (valuesAsList.contains(v)) {
-                                valuesOrdered.add(v);
-                            }
-                        }
-                        values = valuesOrdered.toArray(new String[valuesOrdered.size()]);
-                    }
-                    
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
                                                                             text1,
                                                                             text2,
-                                                                            DataType.ORDERED_STRING,
+                                                                            type,
                                                                             model.getLocale(),
-                                                                            values);
+                                                                            getValuesAsArray(attribute));
 
                     // Only update the data type of the attribute if an order has been determined
                     if (array != null) {
