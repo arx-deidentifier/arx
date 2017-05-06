@@ -32,6 +32,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
@@ -52,7 +53,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -63,7 +63,7 @@ import org.eclipse.swt.widgets.Shell;
 public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
     /** A list control. */
-    private List        list;
+    private org.eclipse.swt.widgets.List        list;
     
     /** Logo. */
     private Image       image;
@@ -207,9 +207,8 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      *             The file contains more or additional values (lines) than
      *             present in the attribute's domain
      */
-    private java.util.List<String> loadFile(String file,
-                                            Charset charset) throws IllegalStateException {
-        java.util.List<String> list = new ArrayList<String>();
+    private List<String> loadFile(String file, Charset charset) {
+        List<String> list = new ArrayList<String>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
@@ -220,20 +219,27 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             while (line != null) {
                 list.add(line);
                 if (list.size() > _elements.size() || !_elements.contains(line)) {
-                    // The file contains more or additional values (lines) than
-                    // present in the attribute's domain
-                    throw new IllegalStateException();
+                    // The file contains more or additional values (lines) than present in the attribute's domain
+                	controller.actionShowInfoDialog(getShell(),
+                            Resources.getMessage("DialogOrderSelection.16"),
+                            Resources.getMessage("DialogOrderSelection.17"));
+                	return null;
                 }
-
                 line = reader.readLine();
+            }
+            
+            if (list.size() != _elements.size()) {
+            	// The file contains less values (lines) than present in the attribute's domain
+                controller.actionShowInfoDialog(getShell(),
+                                                Resources.getMessage("DialogOrderSelection.16"),
+                                                Resources.getMessage("DialogOrderSelection.17"));
+                return null;
             }
         } catch (IOException e) {
             controller.actionShowInfoDialog(getShell(),
                                             Resources.getMessage("DialogOrderSelection.3"), //$NON-NLS-1$
                                             Resources.getMessage("DialogOrderSelection.4") + e.getMessage()); //$NON-NLS-1$
             return null;
-        } catch (IllegalStateException e) {
-            throw e;
         } finally {
             if (reader != null) try {
                 reader.close();
@@ -327,37 +333,21 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowOpenFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
 
-                if (file != null) {
-                    try {
-                        java.util.List<String> fileData = loadFile(file, Charset.defaultCharset());
+				if (file != null) {
+					List<String> fileData = loadFile(file, Charset.defaultCharset());
+					if (fileData != null) {
+						// Select "Custom"
+						for (int i = 0; i < combo.getItems().length; i++) {
+							if (combo.getItem(i).equals(Resources.getMessage("HierarchyWizardPageOrder.8"))) { //$NON-NLS-1$
+								combo.select(i);
+							}
+						}
 
-                        if (fileData != null) {
-                            if (fileData.size() == elements.length) {
-                                // Select "Custom"
-                                for (int i = 0; i < combo.getItems().length; i++) {
-                                    if (combo.getItem(i)
-                                             .equals(Resources.getMessage("HierarchyWizardPageOrder.8"))) { //$NON-NLS-1$
-                                        combo.select(i);
-                                    }
-                                }
-
-                                // Set items
-                                elements = fileData.toArray(new String[fileData.size()]);
-                                list.setItems(elements);
-                            } else {
-                                controller.actionShowInfoDialog(getShell(),
-                                                                Resources.getMessage("DialogOrderSelection.16"),
-                                                                Resources.getMessage("DialogOrderSelection.17"));
-                            }
-                        }
-                    } catch (IllegalStateException excp) {
-                        // The input file contains more or additional values
-                        // (lines) than present in the attribute's domain.
-                        controller.actionShowInfoDialog(getShell(),
-                                                        Resources.getMessage("DialogOrderSelection.16"),
-                                                        Resources.getMessage("DialogOrderSelection.17"));
-                    }
-                }
+						// Set items
+						elements = fileData.toArray(new String[fileData.size()]);
+						list.setItems(elements);
+					}
+				}
             }
         });
 
@@ -415,7 +405,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         final GridLayout compositeLayout = new GridLayout();
         compositeLayout.numColumns = 1;
         parent.setLayout(compositeLayout);
-        list = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        list = new org.eclipse.swt.widgets.List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
 
         // Limit to 10 entries
         final int itemHeight = list.getItemHeight();
