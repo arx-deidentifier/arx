@@ -144,7 +144,7 @@ public class ViewAttributeList implements IView {
                     String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
                                                                             text1,
                                                                             text2,
-                                                                            DataType.STRING,
+                                                                            type,
                                                                             model.getLocale(),
                                                                             getValuesAsArray(attribute));
 
