@@ -87,7 +87,7 @@ public class ExhaustiveSearch {
 
                 if (!set.isEmpty()) {
 
-                    // Count number of occurences
+                    // Count number of occurrences
                     if (!counts.containsKey(set)) {
                         counts.put(set, 1);
                     } else {
@@ -146,7 +146,7 @@ public class ExhaustiveSearch {
 
         System.out.println(" - Current size: " + result.size());
 
-        SUDA2Result _result = new SUDA2Result(this.columns, this.columns);
+        SUDA2Result _result = new SUDA2Result(this.data.length, this.columns, this.columns);
         for (Set<SUDA2Item> msu : result) {
             _result.registerMSU(msu);
         }

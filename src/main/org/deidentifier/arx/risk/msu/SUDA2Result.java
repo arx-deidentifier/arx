@@ -27,30 +27,43 @@ import java.util.Set;
  */
 public class SUDA2Result {
 
-    /** Num columns */
-    private final int   columns;
+    /** Num. columns */
+    private final int        rows;
+    /** Num. columns */
+    private final int        columns;
     /** Maximal size of an MSU considered */
-    private final int   maxK;
+    private final int        maxK;
     /** The number of MSUs */
-    private int         numMSUs = 0;
+    private int              numMSUs   = 0;
     /** Contributions of each column */
-    private final int[] columnKeyContributions;
+    private final int[]      columnKeyContributions;
     /** Contributions of each column */
-    private final int[] columnKeyMinSize;
+    private final int[]      columnKeyMinSize;
     /** Contributions of each column */
-    private final int[] columnKeyMaxSize;
+    private final int[]      columnKeyMaxSize;
     /** Contributions of each column */
-    private final int[] columnKeyAverageSize;
+    private final int[]      columnKeyAverageSize;
     /** Distribution of sizes of MSUs */
-    private final int[] sizeDistribution;
+    private final int[]      sizeDistribution;
+    /** Risk distribution */
+    private final double[]   riskDistributionRow;
+    /** Risk distribution */
+    private final double[]   riskDistributionColumn;
+    /** Risk distribution */
+    private double           riskTotal = 0d;
+    /** Contribution matrix */
+    private final double[][] contributionPercent;
     
     /**
      * Creates a new instance
      * @param columns
      * @param maxK
      */
-    SUDA2Result(int columns, int maxK) {
+    SUDA2Result(int rows, int columns, int maxK) {
         this.columns = columns;
+        this.rows = rows;
+        this.riskDistributionRow = new double[this.rows];
+        this.riskDistributionColumn = new double[this.columns];
         this.columnKeyContributions = new int[columns];
         this.columnKeyMinSize = new int[columns];
         Arrays.fill(columnKeyMinSize, columns);
@@ -58,6 +71,10 @@ public class SUDA2Result {
         this.columnKeyAverageSize = new int[columns];
         this.maxK = maxK;
         this.sizeDistribution = new int[maxK];
+        this.contributionPercent = new double[columns][maxK];
+        for (int i = 0; i < contributionPercent.length; i++) {
+            this.contributionPercent[i] = new double[maxK];
+        }
     }
     
     @Override
@@ -112,6 +129,39 @@ public class SUDA2Result {
      */
     public int[] getKeySizeDistribution() {
         return this.sizeDistribution;
+    }
+    
+    /**
+     * Returns the contributions of columns to record-level risks
+     * @return
+     */
+    public double[] getColumnRisks() {
+        double[] result = Arrays.copyOf(riskDistributionColumn, riskDistributionColumn.length);
+        for (int i = 0; i < result.length; i++) {
+            result[i] /= riskTotal;
+        }
+        return result;
+    }
+
+    /**
+     * Returns the distribution of record-level risks.
+     * First bucket is zero risk, second bucket 0% > risk <= 10%, 10% > risk <= 20%, 
+     * @return
+     */
+    public double[] getRowRisksDistribution() {
+        double[] result = new double[11];
+//        for (double risk : this.riskDistributionRow) {
+//            if (risk == 0d) {
+//                result[0]++;
+//            } else {
+//                int index = (int) Math.floor(risk / 0.1d);
+//                result[index + 1]++;
+//            }
+//        }
+//        for (int i = 0; i < result.length; i++) {
+//            result[i] /= (double)this.riskDistributionRow.length;
+//        }
+        return result;
     }
     
     /**
@@ -181,6 +231,12 @@ public class SUDA2Result {
         builder.append(toString("     ", columnKeyAverageSize, totalAvgSize, 0, false, true));
         builder.append(" - Size distribution\n");
         builder.append(toString("     ", sizeDistribution, totalsSize, 1, true, true));
+        builder.append(" - Risks (record-level)\n");
+        builder.append(toString("     ", getRowRisksDistribution()));
+        builder.append(" - Risks (column-level)\n");
+        builder.append(toString("     ", riskDistributionColumn, riskTotal));
+        builder.append(" - SUDA SCORE PER RECORD ***REMOVE***\n");
+        builder.append(toString("     ", riskDistributionRow));
         return builder.toString();
     }
 
@@ -188,12 +244,107 @@ public class SUDA2Result {
      * Registers an MSU with a column
      * @param column
      * @param size
+     * @param score
      */
-    private void registerColumn(int column, int size) {
+    private void registerColumn(int column, int size, double score) {
         this.columnKeyContributions[column]++;
         this.columnKeyMinSize[column] = Math.min(this.columnKeyMinSize[column], size);
         this.columnKeyMaxSize[column] = Math.max(this.columnKeyMaxSize[column], size);
         this.columnKeyAverageSize[column] += size;
+        this.riskDistributionColumn[column] += score;
+        this.contributionPercent[column][size]++;
+    }
+    
+    /**
+     * Returns the intermediate SUDA score for a MSU of a given size
+     * @param size
+     * @return
+     */
+    private double getIntermediateScore(int size) {
+        // TODO: Improve
+        double score = 1d;
+        for (int i = size; i < maxK; i++) {
+            score *= (double) (maxK - i); // 'maxK' in sdcMicro handbook, 'columns' in 2005 SUDA paper
+        }
+//        for (int i = 2; i <= columns; i++) {
+//            score /= (double) i;
+//        }
+        return score;
+    }
+
+    /**
+     * Registers the row to this result object
+     * @param row
+     * @param size
+     * @param score
+     */
+    private void registerRow(int row, int size, double score) {
+        System.out.println(row+"/"+size+"/"+score);
+        riskDistributionRow[row] += score;
+        riskTotal += score;
+    }
+
+    /**
+     * Renders a distribution
+     * @param intent
+     * @param array
+     * @return
+     */
+    private String toString(String intent, double[] array) {
+        StringBuilder builder = new StringBuilder();
+        DecimalFormat doubleFormat = new DecimalFormat("###.###");
+        final int VALUE_WIDTH = 7;
+        builder.append(intent).append("|");
+        for (int index = 0; index < array.length; index++) {
+            builder.append(toString(doubleFormat.format(index), VALUE_WIDTH)).append("|");
+        }
+        int width = builder.length() - intent.length();
+        builder.append("\n");
+        builder.append(intent);
+        for (int i = 0; i < width; i++) {
+            builder.append("-");
+        }
+        builder.append("\n");
+        builder.append(intent).append("|");
+        for (double val : array) {
+            String value = doubleFormat.format(val);
+            builder.append(toString(value, VALUE_WIDTH)).append("|");
+        }
+        builder.append("\n");
+
+        return builder.toString();
+    }
+
+    /**
+     * Renders a distribution
+     * @param intent
+     * @param array
+     * @param total
+     * @return
+     */
+    private String toString(String intent, double[] array, double total) {
+        StringBuilder builder = new StringBuilder();
+        DecimalFormat doubleFormat = new DecimalFormat("###.###");
+        final int VALUE_WIDTH = 7;
+        builder.append(intent).append("|");
+        for (int index = 0; index < array.length; index++) {
+            builder.append(toString(doubleFormat.format(index), VALUE_WIDTH)).append("|");
+        }
+        int width = builder.length() - intent.length();
+        builder.append("\n");
+        builder.append(intent);
+        for (int i = 0; i < width; i++) {
+            builder.append("-");
+        }
+        builder.append("\n");
+        builder.append(intent).append("|");
+        for (double val : array) {
+            String value = doubleFormat.format(val / total);
+            builder.append(toString(value, VALUE_WIDTH)).append("|");
+        }
+        builder.append("\n");
+
+        return builder.toString();
     }
 
     /**
@@ -270,7 +421,7 @@ public class SUDA2Result {
         this.sizeDistribution[set.size() - 1]++;
         for (SUDA2Item item : set) {
             int column = item.getColumn();
-            registerColumn(column, set.size());
+            registerColumn(column, set.size(), 0d);
         }
     }
 
@@ -283,11 +434,20 @@ public class SUDA2Result {
         this.numMSUs++;
         this.sizeDistribution[set.size()]++;
         int size = set.size();
+        double score = getIntermediateScore(size + 1);
         for (int i = 0; i < size; i++) {
             int column = set.get(i).getColumn();
-            registerColumn(column, set.size() + 1);
+            registerColumn(column, set.size() + 1, score);
         }
-        registerColumn(item.getColumn(), set.size() + 1);
+
+        registerColumn(item.getColumn(), set.size() + 1, score);
+        
+        // We still need to calculate the specific row for this MSU
+        SUDA2Item temp = item;
+        for (int i = 0; i < size; i++) {
+            temp = temp.getProjection(set.get(i).getRows());
+        }
+        registerRow(temp.getRows().iterator().next().value, set.size() + 1, score);
     }
 
     /**
@@ -298,9 +458,12 @@ public class SUDA2Result {
         this.numMSUs++;
         this.sizeDistribution[set.size()-1]++;
         int size = set.size();
+        double score = getIntermediateScore(size);
         for (int i = 0; i < size; i++) {
             int column = set.get(i).getColumn();
-            registerColumn(column, set.size());
+            registerColumn(column, set.size(), score);
         }
+        // The one specific row has been calculated already
+        registerRow(set.get(0).getRows().iterator().next().value, set.size(), score);
     }
 }

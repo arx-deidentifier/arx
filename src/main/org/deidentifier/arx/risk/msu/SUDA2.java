@@ -72,7 +72,7 @@ public class SUDA2 {
         
         // Execute
         this.calls = 0;
-        this.result = new SUDA2Result(this.columns, maxK);
+        this.result = new SUDA2Result(this.data.length, this.columns, maxK);
         this.suda2(maxK, this.getItems().getItemList(), data.length);
         
         // Return
