@@ -92,6 +92,6 @@ public class Example60 extends Example {
         long time = System.currentTimeMillis();
         RiskModelMSU risks = data.getHandle().getRiskEstimator(ARXPopulationModel.create(Region.USA)).getMSUStatistics();
         System.out.println("Time: " + (System.currentTimeMillis() - time));
-        System.out.println(risks.getNumMSUs());
+        System.out.println(risks.getNumKeys());
     }
 }

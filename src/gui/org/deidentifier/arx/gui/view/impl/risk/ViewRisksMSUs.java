@@ -33,7 +33,6 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelMSU;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -41,7 +40,6 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -93,13 +91,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     private Composite           rootChart;
 
     /** View */
-    private Composite           rootTable;
-
-    /** View */
     private Composite           root;
-
-    /** View */
-    private SashForm            sash;
 
     /** View */
     private DynamicTable        tableAttributes;
@@ -184,7 +176,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         }
         chart = new Chart(rootChart, SWT.NONE);
         chart.setOrientation(SWT.HORIZONTAL);
-        chart.setLayoutData(SWTUtil.createFillGridData(0));
+        chart.setLayoutData(SWTUtil.createFillGridData());
         
         // Show/Hide axis
         chart.addControlListener(new ControlAdapter(){
@@ -282,36 +274,25 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
         // Root
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
+        this.root.setLayout(SWTUtil.createGridLayout(1));
         
-        // Sash
-        sash = new SashForm(this.root, SWT.VERTICAL);
-
         // Chart
-        this.rootChart = new Composite(sash, SWT.NONE);
+        this.rootChart = new Composite(root, SWT.NONE);
         this.rootChart.setLayout(SWTUtil.createGridLayout(1));
-        
+        this.rootChart.setLayoutData(SWTUtil.createFillGridData());
         ComponentTitledSeparator separator1 = new ComponentTitledSeparator(rootChart, SWT.NONE);
         separator1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         separator1.setText(LABEL_DISTRIBUTION);
-        
-        this.rootChart = new Composite(rootChart, SWT.NONE);
-        this.rootChart.setLayoutData(SWTUtil.createFillGridData(0));
-        this.rootChart.setLayout(SWTUtil.createGridLayout(1));
         this.resetChart();
 
         // Table
-        this.rootTable = new Composite(sash, SWT.NONE);
-        this.rootTable.setLayout(SWTUtil.createGridLayout(1));
-
-        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(rootTable, SWT.NONE);
+        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(root, SWT.NONE);
         separator2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         separator2.setText(LABEL_COLUMN_PROPERTIES);
+        this.tableAttributes = createTable(root, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
+        this.tableAttributes.setLayoutData(SWTUtil.createFillGridData());
         
-        this.tableAttributes = createTable(rootTable, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
-
         // Configure & return
-        sash.setWeights(new int[] {2, 2});
         root.layout();
         return this.root;
     }
@@ -375,11 +356,8 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
                 // Disable redraw
                 root.setRedraw(false);
-                
-                // Clear table
-                clearTable(tableAttributes);
-
-                // Fill table
+                                
+                // Fill chart
                 ISeriesSet seriesSet = chart.getSeriesSet();
                 IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR, LABEL_SIZE); //$NON-NLS-1$
                 series.getLabel().setVisible(false);
@@ -403,7 +381,6 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 // X-axis
                 IAxis yAxis = axisSet.getYAxis(0);
                 yAxis.setRange(new Range(0d, 100d));
-                yAxis.adjustRange();
 
                 // X-axis
                 IAxis xAxis = axisSet.getXAxis(0);
@@ -411,11 +388,10 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 xAxis.adjustRange();
                 updateCategories();
 
-                // Update
-                chart.updateLayout();
-                chart.update();
+                // Clear table
+                clearTable(tableAttributes);
 
-                // Create entries for attributes
+                // Create entries for table
                 for (int i=0; i<columnContribution.length; i++) {
                     TableItem item = new TableItem(tableAttributes, SWT.NONE);
                     item.setText(0, attributes[i]);
@@ -432,9 +408,8 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 }
                 
                 // Enable
-                root.setRedraw(true);
                 root.layout();
-                sash.setWeights(new int[] {2, 2});
+                root.setRedraw(true);
                 setStatusDone();
             }
 
@@ -457,9 +432,9 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 RiskModelMSU model = builder.getMSUStatistics();
 
                 // Create array
-                msuSizeDistribution = model.getMSUSizeDistribution();
+                msuSizeDistribution = model.getKeySizeDistribution();
                 columnContribution = model.getColumnKeyContributions();
-                columnAverageKeySize = model.getColumnKeyAverageSize();
+                columnAverageKeySize = model.getColumnAverageKeySize();
                 attributes = model.getAttributes();
               
                 // Our users are patient

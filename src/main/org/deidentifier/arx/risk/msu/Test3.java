@@ -16,10 +16,7 @@
  */
 package org.deidentifier.arx.risk.msu;
 
-import java.util.Random;
-
 import org.apache.mahout.math.Arrays;
-
 
 public class Test3 {
 
@@ -38,10 +35,8 @@ public class Test3 {
         };
         print(data);
         System.out.println("\n-----\n"); 
-        SUDA2Result result1 = new SUDA2(data).suda2(0);
+        SUDA2Result result1 = new SUDA2(data).suda2(5);
         System.out.println(result1.toString());
-        System.out.println(Arrays.toString(result1.getRowRisksDistribution()));
-        System.out.println(Arrays.toString(result1.getColumnRisks()));
         System.out.println("\n-----\n");
         SUDA2Result result2 = new ExhaustiveSearch(data).exhaustive();
         System.out.println(result2.toString());
@@ -54,29 +49,6 @@ public class Test3 {
     private static void print(int[][] data) {
         for (int[] row : data) {
             System.out.println(" - " + Arrays.toString(row));
-        }
-    }
-
-    /**
-     * Permutes the data
-     * @param data
-     * @param numPermutations
-     */
-    private static void permute(int[][] data, int numPermutations) {
-
-        Random random = new Random();
-        for (int i=0; i < numPermutations; i++) {
-            
-            // Select
-            int x1 = random.nextInt(data.length);
-            int x2 = random.nextInt(data.length);
-            int y1 = random.nextInt(data[0].length);
-            int y2 = random.nextInt(data[0].length);
-            
-            // Swap
-            int temp = data[x1][y1];
-            data[x1][y1] = data[x2][y2];
-            data[x2][y2] = temp;
         }
     }
 }

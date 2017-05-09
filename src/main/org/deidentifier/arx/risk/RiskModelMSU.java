@@ -30,7 +30,6 @@ import org.deidentifier.arx.risk.msu.SUDA2Result;
 /**
  * A risk model based on MSUs in the data set
  * @author Fabian Prasser
- *
  */
 public class RiskModelMSU {
 
@@ -38,19 +37,17 @@ public class RiskModelMSU {
     private final WrappedInteger progress;
     /** Progress stuff */
     private final WrappedBoolean stop;
-    /** Maximal size of an MSU considered */
-    private final int            maxK;
-    /** The number of MSUs */
-    private int                  numMSUs = 0;
+    /** Maximal size of keys considered */
+    private final int            maxKeyLength;
+    /** The number of keys */
+    private final long           numKeys;
+    /** The average size of keys */
+    private final double         averageKeySize;
     /** Contributions of each column */
-    private final double[]       columnKeyContributions;
+    private final double[]       columnContributions;
+    /** Distribution of sizes of keys */
+    private final double[]       columnAverageKeySize;
     /** Contributions of each column */
-    private final int[]          columnKeyMinSize;
-    /** Contributions of each column */
-    private final int[]          columnKeyMaxSize;
-    /** Contributions of each column */
-    private final double[]       columnKeyAverageSize;
-    /** Distribution of sizes of MSUs */
     private final double[]       sizeDistribution;
     /** Attributes */
     private final String[]       attributes;
@@ -99,34 +96,12 @@ public class RiskModelMSU {
         });
         suda2.setStopFlag(stop);
         SUDA2Result result = suda2.suda2(maxK);
-        this.maxK = result.getMaxK();
-        this.numMSUs = result.getNumMSUs();
-        
-        int[] _columnKeyContributions = result.getColumnKeyContributions();
-        int[] _sizeDistribution = result.getKeySizeDistribution();
-        int[] _columnKeyAverageSize = result.getColumnKeyAverageSize();
-
-        // Key contributions
-        this.columnKeyContributions = new double[_columnKeyContributions.length];
-        for (int i=0; i < this.columnKeyContributions.length; i++) {
-            this.columnKeyContributions[i] = (double)_columnKeyContributions[i] / (double)this.numMSUs;
-        }
-        
-        // Average size
-        this.columnKeyAverageSize = new double[_columnKeyAverageSize.length];
-        for (int i=0; i < this.columnKeyAverageSize.length; i++) {
-            this.columnKeyAverageSize[i] = (double)_columnKeyAverageSize[i] / (double)_columnKeyContributions[i];
-        }
-
-        // Size distribution
-        this.sizeDistribution = new double[_sizeDistribution.length];
-        for (int i=0; i < this.sizeDistribution.length; i++) {
-            this.sizeDistribution[i] = (double)_sizeDistribution[i] / (double)this.numMSUs;
-        }
-        
-        // Others
-        this.columnKeyMinSize = result.getColumnKeyMinSize();
-        this.columnKeyMaxSize = result.getColumnKeyMaxSize();
+        this.maxKeyLength = result.getMaxKeyLength();
+        this.numKeys = result.getNumKeys();
+        this.columnContributions = result.getColumnKeyContributions();
+        this.sizeDistribution = result.getKeySizeDistribution();
+        this.columnAverageKeySize = result.getColumnAverageKeySize();
+        this.averageKeySize = result.getAverageKeySize();
     }
     
     /**
@@ -138,59 +113,52 @@ public class RiskModelMSU {
     }
 
     /**
-     * @return the columnKeyAverageSize
+     * Returns the average key size
+     * @return
      */
-    public double[] getColumnKeyAverageSize() {
-        return columnKeyAverageSize;
+    public double getAverageKeySize() {
+        return averageKeySize;
     }
 
     /**
+     * Returns the average key size per column
+     * @return 
+     */
+    public double[] getColumnAverageKeySize() {
+        return columnAverageKeySize;
+    }
+
+    /**
+     * Returns the contribution of each columns to the total SUDA score.
+     * Calculated as described in: IHSN - STATISTICAL DISCLOSURE CONTROL FOR MICRODATA: A PRACTICE GUIDE
      * @return the columnKeyContributions
      */
     public double[] getColumnKeyContributions() {
-        return columnKeyContributions;
+        return columnContributions;
     }
 
     /**
-     * @return the columnKeyMaxSize
+     * Returns the distribution of sizes of keys found
+     * @return
      */
-    public int[] getColumnKeyMaxSize() {
-        return columnKeyMaxSize;
-    }
-
-    /**
-     * @return the columnKeyMinSize
-     */
-    public int[] getColumnKeyMinSize() {
-        return columnKeyMinSize;
-    }
-
-    /**
-     * @return the maxK
-     */
-    public int getMaxK() {
-        return maxK;
-    }
-
-    /**
-     * @return the sizeDistribution
-     */
-    public double[] getMSUSizeDistribution() {
+    public double[] getKeySizeDistribution() {
         return sizeDistribution;
     }
 
     /**
-     * @return the numMSUs
+     * Returns the maximal length of keys searched for
+     * @return
      */
-    public int getNumMSUs() {
-        return numMSUs;
+    public int getMaxKeyLength() {
+        return maxKeyLength;
     }
-
+    
     /**
-     * @param numMSUs the numMSUs to set
+     * Returns the number of keys found
+     * @return
      */
-    public void setNumMSUs(int numMSUs) {
-        this.numMSUs = numMSUs;
+    public long getNumKeys() {
+        return numKeys;
     }
 
     /**
