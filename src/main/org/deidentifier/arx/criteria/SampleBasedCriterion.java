@@ -22,7 +22,8 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
- * An abstract base class for sample-based privacy criteria.
+ * An abstract base class for privacy models based on distributions of sizes of
+ * equivalence classes.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
