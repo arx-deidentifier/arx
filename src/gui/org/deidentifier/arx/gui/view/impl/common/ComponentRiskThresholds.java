@@ -277,12 +277,11 @@ public class ComponentRiskThresholds {
      * @param span
      */
     private void createSeparator(Composite root, String text, int span) {
-        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
+        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, text);
         GridData data = SWTUtil.createFillHorizontallyGridData(true,  span);
         data.horizontalIndent = 0;
         data.verticalIndent = 0;
         separator.setLayoutData(data);
-        separator.setText(text);
     }
 
     /**

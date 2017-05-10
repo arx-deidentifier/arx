@@ -33,6 +33,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelMSU;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -40,6 +41,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -91,7 +93,13 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     private Composite           rootChart;
 
     /** View */
+    private Composite           rootTable;
+
+    /** View */
     private Composite           root;
+
+    /** View */
+    private SashForm            sash;
 
     /** View */
     private DynamicTable        tableAttributes;
@@ -145,7 +153,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
      * @return
      */
     private DynamicTable createTable(Composite root, String[] columns, String[] bars) {
-        DynamicTable table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        DynamicTable table = SWTUtil.createTableDynamic(root, SWT.BORDER);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -161,7 +169,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
-        table.setLayoutData(SWTUtil.createFillGridData(0));
+        table.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         SWTUtil.createGenericTooltip(table);
         return table;
     }
@@ -169,12 +177,9 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     /**
      * Resets the chart
      */
-    private void resetChart() {
+    private Chart createChart() {
         
-        if (chart != null) {
-            chart.dispose();
-        }
-        chart = new Chart(rootChart, SWT.NONE);
+        Chart chart = new Chart(rootChart, SWT.NONE);
         chart.setOrientation(SWT.HORIZONTAL);
         chart.setLayoutData(SWTUtil.createFillGridData());
         
@@ -246,7 +251,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         ITitle yAxisTitle = yAxis.getTitle();
         yAxisTitle.setText(LABEL_FRACTION);
         chart.setEnabled(false);
-        updateCategories();
+        return chart;
     }
 
     /**
@@ -274,26 +279,31 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
         // Root
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(SWTUtil.createGridLayout(1));
+        this.root.setLayout(new FillLayout());
+        
+        // Sash
+        sash = new SashForm(this.root, SWT.VERTICAL);
+
         
         // Chart
-        this.rootChart = new Composite(root, SWT.NONE);
+        this.rootChart = new Composite(sash, SWT.NONE);
         this.rootChart.setLayout(SWTUtil.createGridLayout(1));
-        this.rootChart.setLayoutData(SWTUtil.createFillGridData());
-        ComponentTitledSeparator separator1 = new ComponentTitledSeparator(rootChart, SWT.NONE);
+        ComponentTitledSeparator separator1 = new ComponentTitledSeparator(rootChart, LABEL_DISTRIBUTION);
         separator1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        separator1.setText(LABEL_DISTRIBUTION);
-        this.resetChart();
+        this.chart = this.createChart();
+        this.updateCategories();
 
         // Table
-        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(root, SWT.NONE);
+        this.rootTable = new Composite(sash, SWT.NONE);
+        this.rootTable.setLayout(SWTUtil.createGridLayout(1));
+        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(rootTable, LABEL_COLUMN_PROPERTIES);
         separator2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        separator2.setText(LABEL_COLUMN_PROPERTIES);
-        this.tableAttributes = createTable(root, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
+        this.tableAttributes = createTable(rootTable, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
         this.tableAttributes.setLayoutData(SWTUtil.createFillGridData());
         
         // Configure & return
-        root.layout();
+        sash.setWeights(new int[] {2, 2});
+        this.root.layout();
         return this.root;
     }
 
@@ -308,7 +318,9 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
             this.manager.stop();
         }
         root.setRedraw(false);
-        this.resetChart();
+        if (this.chart.getSeriesSet().getSeries(LABEL_SIZE) != null) {
+            this.chart.getSeriesSet().deleteSeries(LABEL_SIZE);
+        }
         this.clearTable(tableAttributes);
         root.setRedraw(true);
         setStatusEmpty();
@@ -387,6 +399,8 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 xAxis.setCategorySeries(labels);
                 xAxis.adjustRange();
                 updateCategories();
+                chart.updateLayout();
+                chart.update();
 
                 // Clear table
                 clearTable(tableAttributes);
