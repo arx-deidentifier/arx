@@ -30,7 +30,6 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.MetricConfiguration;
-import org.deidentifier.arx.metric.MetricConfiguration.MetricConfigurationAttackerModel;
 import org.deidentifier.arx.risk.RiskModelCostBenefit;
 
 /**
@@ -121,9 +120,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
                                        super.getGeneralizationSuppressionFactor(), // gs-factor
                                        false, 
                                        0.0d, 
-                                       this.getAggregateFunction(),
-                                       this.journalistAttackerModel ? MetricConfigurationAttackerModel.JOURNALIST : 
-                                                                      MetricConfigurationAttackerModel.PROSECUTOR);
+                                       this.getAggregateFunction());
     }
     
     /**
@@ -166,10 +163,11 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
     @Override
     public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Average equivalence class size");
+        ElementData result = new ElementData("Publisher payout");
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
+        result.addProperty("Attacker model", (journalistAttackerModel ? "Journalist" : "Prosecutor"));
         if (this.config != null) {
             result.addProperty("Adversary cost", this.config.getAdversaryCost());
             result.addProperty("Adversary gain", this.config.getAdversaryGain());

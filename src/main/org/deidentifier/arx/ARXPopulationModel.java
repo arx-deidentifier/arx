@@ -29,15 +29,12 @@ public class ARXPopulationModel implements Serializable {
     public static enum Region implements Serializable{
 
         NONE("None", 0l),
-
         AFRICA("Africa", 1100000000l),
         AUSTRALIA("Australia", 23130900l),
-        EUROPE("European Union", 740000000l),
+        EUROPE("Europe", 740000000l),
         NORTH_AMERICA("North America", 565265000l),
         SOUTH_AMERICA("South America", 385742554l),
-
         EUROPEAN_UNION("European Union", 507420000l),
-        
         BRASIL("Brasil", 202656788l),
         CANADA("Canada", 34834841l),
         CHINA("China (PRC)", 1366040000l),

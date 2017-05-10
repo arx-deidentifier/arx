@@ -74,7 +74,7 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.100")); //$NON-NLS-1$
 
         labelD = createLabel(group);
-        knobD = createKnobDouble(group, 0.000001d, 10d);
+        knobD = createKnobDouble(group, 0.000001d, 1000000d);
         updateLabel(labelD, knobD.getValue());
         knobD.addSelectionListener(new SelectionAdapter() {
             @Override

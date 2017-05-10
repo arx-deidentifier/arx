@@ -101,7 +101,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     @Override
     public String getLabel() {
-        return Resources.getMessage("ModelCriterion.3"); //$NON-NLS-1$
+        return "(" + '\u03B5' + ", " + '\u03B4' + ")" + Resources.getMessage("ModelCriterion.3"); //$NON-NLS-1$
     }
 
     @Override

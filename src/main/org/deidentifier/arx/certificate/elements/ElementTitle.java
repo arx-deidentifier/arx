@@ -52,6 +52,6 @@ public class ElementTitle implements Element {
         };
         paragraph.setAlignment(style.getTitleAlignment());
         paragraph.addText(text, style.getTitleSize(), style.getTitleFont().getBoldFont());
-        target.add(paragraph, VerticalLayoutHint.CENTER);
+        target.add(paragraph, VerticalLayoutHint.LEFT);
     }
 }

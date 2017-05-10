@@ -32,6 +32,9 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +47,10 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.criteria.BasicBLikeness;
+import org.deidentifier.arx.criteria.DDisclosurePrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
@@ -69,30 +76,32 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
-        
+
         /** Random test variable */
-        private static int      counter;
+        private static int                      counter;
         /** Random test variable */
-        public final int        id          = counter++;
+        public final int                        id          = counter++;
         /** Random test variable */
-        public ARXConfiguration config;
+        public ARXConfiguration                 config;
         /** Random test variable */
-        public String           dataset;
+        public String                           dataset;
         /** Random test variable */
-        public String           sensitiveAttribute;
+        public String                           sensitiveAttribute;
         /** Random test variable */
-        public String           optimalInformationLoss;
+        public String                           optimalInformationLoss;
         /** Random test variable */
-        public int[]            optimalTransformation;
+        public int[]                            optimalTransformation;
         /** Random test variable */
-        public boolean          practical;
+        public boolean                          practical;
         /** Random test variable */
-        public int[]            statistics;
+        public int[]                            statistics;
         /** Random test variable */
-        public int              hashcode    = -1;
+        public int                              hashcode    = -1;
         /** Random test variable */
-        public boolean          optimizable = false;
-                                            
+        public boolean                          optimizable = false;
+        /** Hierarchy builders */
+        public Map<String, HierarchyBuilder<?>> builders;
+                                 
         /**
          * Creates a new instance.
          *
@@ -238,6 +247,25 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             this.hashcode = hashcode;
         }
         
+        /**
+         * Creates a new test case with hierarchy builders
+         * @param config
+         * @param dataset
+         * @param hierarchyBuilders
+         * @param informationLoss
+         * @param transformation
+         * @param practicalMonotonicity
+         */
+        public ARXAnonymizationTestCase(ARXConfiguration config,
+                                        String dataset,
+                                        Map<String, HierarchyBuilder<?>> hierarchyBuilders,
+                                        double informationLoss,
+                                        int[] transformation,
+                                        boolean practicalMonotonicity) {
+            this(config, dataset, informationLoss, transformation, practicalMonotonicity);
+            this.builders = hierarchyBuilders;
+        }
+
         @Override
         public String toString() {
             return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
@@ -305,11 +333,31 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
+                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || 
+                        testCase.config.isPrivacyModelSpecified(TCloseness.class) || 
+                        testCase.config.isPrivacyModelSpecified(DDisclosurePrivacy.class) ||
+                        testCase.config.isPrivacyModelSpecified(BasicBLikeness.class) ||
+                        testCase.config.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
                 
+            }
+        }
+        
+        if (testCase.builders != null) {
+
+            // Remove all QIs
+            Set<String> qis = data.getDefinition().getQuasiIdentifyingAttributes();
+            for (String qi : qis) {
+                data.getDefinition().resetHierarchy(qi);
+                data.getDefinition().setAttributeType(qi, AttributeType.INSENSITIVE_ATTRIBUTE);
+            }
+            
+            // Set only builders as QIs
+            for (Entry<String, HierarchyBuilder<?>> entry : testCase.builders.entrySet()){
+                data.getDefinition().setAttributeType(entry.getKey(), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+                data.getDefinition().setHierarchy(entry.getKey(), entry.getValue());
             }
         }
         
@@ -433,7 +481,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             assertEquals("Hash code not equal", hashcode, testCase.hashcode);
             return;
         }
-        
+
         // Check if no solution
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);

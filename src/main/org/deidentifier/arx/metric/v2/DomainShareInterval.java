@@ -136,7 +136,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                             share = toDouble(dataType.subtract(interval.getMax(), interval.getMin())) / domainSize;
                         }
                     } else { 
-                     // Special case, '*' at the end
+                        // Special case, '*' at the end
                         share = 1d;
                     }
                 }

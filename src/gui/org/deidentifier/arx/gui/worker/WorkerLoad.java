@@ -263,7 +263,7 @@ public class WorkerLoad extends Worker<Model> {
             readDefinition(config, output, model.getInputDefinition(), prefix, zip);
             
             // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
-            if (model.getInputPopulationModel() != null) {
+            if (model.getInputConfig().getInput() != null && model.getInputPopulationModel() != null) {
                 model.getInputPopulationModel().makeBackwardsCompatible(config.getInput().getHandle().getNumRows());
             }
         } else {

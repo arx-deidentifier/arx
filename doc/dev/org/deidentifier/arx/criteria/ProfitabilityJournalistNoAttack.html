@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>ProfitabilityJournalistNoAttack (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -208,7 +208,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecut
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
            <a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>
 <div class="block">Implement this, to enforce the criterion.</div>
 </td>
@@ -232,6 +232,12 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecut
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/certificate/elements/ElementData.html" title="class in org.deidentifier.arx.certificate.elements">ElementData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html#render()">render</a></strong>()</code>
+<div class="block">Renders the privacy model</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -243,7 +249,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecut
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#getK()">getK</a>, <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">initialize</a>, <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#toString(java.lang.String)">toString</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#getConfiguration()">getConfiguration</a>, <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#getK()">getK</a>, <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#initialize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.ARXConfiguration)">initialize</a>, <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#toString(java.lang.String)">toString</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_org.deidentifier.arx.criteria.PrivacyCriterion">
@@ -420,11 +426,11 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecut
 <h4>isAnonymous</h4>
 <pre>public&nbsp;boolean&nbsp;isAnonymous(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
                   <a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">PrivacyCriterion</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">PrivacyCriterion</a></code></strong></div>
 <div class="block">Implement this, to enforce the criterion.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a></code></dd>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - TODO</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -471,6 +477,21 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecut
 <dl>
 <dt><strong>Overrides:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#isSubsetAvailable()">isSubsetAvailable</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="render()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>render</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/certificate/elements/ElementData.html" title="class in org.deidentifier.arx.certificate.elements">ElementData</a>&nbsp;render()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#render()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Renders the privacy model</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html#render()">render</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

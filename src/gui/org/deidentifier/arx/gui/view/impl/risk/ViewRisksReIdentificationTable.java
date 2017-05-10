@@ -123,7 +123,7 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(SWTUtil.createGridLayout(1));
         
-        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());

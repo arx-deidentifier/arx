@@ -836,11 +836,6 @@ public class ARXLattice implements Serializable {
      */
     public void expand(ARXNode center) {
         
-        // Break
-        if (this.isComplete()) {
-            return;
-        }
- 
         // Initialize
         int[] indices = center.getTransformation();
         Transformation transformation = solutions.getTransformation(indices);
@@ -922,7 +917,9 @@ public class ARXLattice implements Serializable {
         }
         
         // Update information loss
-        this.estimateInformationLoss();
+        if (!missing.isEmpty()) {
+            this.estimateInformationLoss();
+        }
     }
     
     /**
@@ -1013,6 +1010,8 @@ public class ARXLattice implements Serializable {
 
     /**
      * Returns whether the search space has been characterized completely
+     * (i.e. whether an optimal solution has been determined, *not* whether
+     * all transformations have been materialized).
      * @return
      */
     public boolean isComplete() {

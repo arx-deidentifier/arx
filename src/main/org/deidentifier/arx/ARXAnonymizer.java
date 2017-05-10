@@ -29,8 +29,10 @@ import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
+import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -332,6 +334,20 @@ public class ARXAnonymizer {
                 }
             }
         }
+        if (config.isPrivacyModelSpecified(BasicBLikeness.class)){
+            for (BasicBLikeness c : config.getPrivacyModels(BasicBLikeness.class)){
+                if (c.getB() <= 0) { 
+                    throw new IllegalArgumentException("Parameter b (" + c.getB() + ") must be positive and larger than 0"); 
+                }
+            }
+        }
+        if (config.isPrivacyModelSpecified(EnhancedBLikeness.class)){
+            for (EnhancedBLikeness c : config.getPrivacyModels(EnhancedBLikeness.class)){
+                if (c.getB() <= 0) { 
+                    throw new IllegalArgumentException("Parameter b (" + c.getB() + ") must be positive and larger than 0"); 
+                }
+            }
+        }
         
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
@@ -396,6 +412,22 @@ public class ARXAnonymizer {
                 }
             }
             if (!found) {
+                for (BasicBLikeness c : config.getPrivacyModels(BasicBLikeness.class)) {
+                    if (c.getAttribute().equals(attr)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                for (EnhancedBLikeness c : config.getPrivacyModels(EnhancedBLikeness.class)) {
+                    if (c.getAttribute().equals(attr)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
                 throw new IllegalArgumentException("No privacy model specified for sensitive attribute: '"+attr+"'!");
             }
         }
@@ -407,6 +439,21 @@ public class ARXAnonymizer {
         for (TCloseness c : config.getPrivacyModels(TCloseness.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
                 throw new RuntimeException("T-Closeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (DDisclosurePrivacy c : config.getPrivacyModels(DDisclosurePrivacy.class)) {
+            if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("D-Disclosure privacy model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (BasicBLikeness c : config.getPrivacyModels(BasicBLikeness.class)) {
+            if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("Basic-b-likeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (EnhancedBLikeness c : config.getPrivacyModels(EnhancedBLikeness.class)) {
+            if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("Enhanced-b-likeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
             }
         }
 

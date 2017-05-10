@@ -311,7 +311,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         this.sash = new SashForm(this.root, SWT.VERTICAL);
 
         // Table
-        this.table = SWTUtil.createTableDynamic(this.sash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        this.table = SWTUtil.createTableDynamic(this.sash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         this.table.setMenu(new ClipboardHandlerTable(table).getMenu());

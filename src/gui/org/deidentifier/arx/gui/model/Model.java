@@ -239,11 +239,15 @@ public class Model implements Serializable {
     private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
 
     /** Model for a specific privacy criterion. */
-    private ModelProfitabilityCriterion              stackelbergPrivacyModel         = new ModelProfitabilityCriterion();
+    private ModelProfitabilityCriterion                   stackelbergPrivacyModel         = new ModelProfitabilityCriterion();
+
+    /** Model for a specific privacy criterion. */
+    private Map<String, ModelBLikenessCriterion>          bLikenessModel                  = new HashMap<String, ModelBLikenessCriterion>();
 
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
+    
     /** Configuration. */
     private MetricConfiguration                   metricConfig                    = null;
     
@@ -448,6 +452,13 @@ public class Model implements Serializable {
             }
         }
         
+        for (Entry<String, ModelBLikenessCriterion> entry : this.bLikenessModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
+        
         for (ModelRiskBasedCriterion entry : this.riskBasedModel){
             if (entry != null && entry.isEnabled()) {
                 PrivacyCriterion criterion = entry.getCriterion(this);
@@ -574,6 +585,23 @@ public class Model implements Serializable {
             }
         }
         return dDisclosurePrivacyModel;
+    }
+
+    /**
+     * Returns the b-Likeness privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
+        if (this.bLikenessModel == null) {
+            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
+            }
+        }
+        return bLikenessModel;
     }
 
     /**
@@ -1253,6 +1281,7 @@ public class Model implements Serializable {
             lDiversityModel.put(attribute, new ModelLDiversityCriterion(attribute));
             tClosenessModel.put(attribute, new ModelTClosenessCriterion(attribute));
             dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
+            bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
         }
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
