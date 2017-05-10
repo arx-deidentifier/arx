@@ -82,10 +82,13 @@ public class SUDA2Result {
         if (getClass() != obj.getClass()) return false;
         SUDA2Result other = (SUDA2Result) obj;
         if (!Arrays.equals(columnKeyContributions, other.columnKeyContributions)) return false;
-        if (columns != other.columns) return false;
+        if (!Arrays.equals(columnKeyCounts, other.columnKeyCounts)) return false;
+        if (!Arrays.equals(columnKeyTotals, other.columnKeyTotals)) return false;
         if (maxK != other.maxK) return false;
         if (numMSUs != other.numMSUs) return false;
         if (!Arrays.equals(sizeDistribution, other.sizeDistribution)) return false;
+        if (totalMSUs != other.totalMSUs) return false;
+        if (Double.doubleToLongBits(totalScore) != Double.doubleToLongBits(other.totalScore)) return false;
         return true;
     }
 
@@ -108,7 +111,7 @@ public class SUDA2Result {
         }
         return result;
     }
-    
+
     /**
      * Returns the contributions of each column
      * @return
@@ -156,16 +159,21 @@ public class SUDA2Result {
     public long getNumKeys() {
         return this.numMSUs;
     }
-
+    
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + Arrays.hashCode(columnKeyContributions);
-        result = prime * result + columns;
+        result = prime * result + Arrays.hashCode(columnKeyCounts);
+        result = prime * result + Arrays.hashCode(columnKeyTotals);
         result = prime * result + maxK;
-        result = prime * result + (int)numMSUs;
+        result = prime * result + (int) (numMSUs ^ (numMSUs >>> 32));
         result = prime * result + Arrays.hashCode(sizeDistribution);
+        result = prime * result + (int) (totalMSUs ^ (totalMSUs >>> 32));
+        long temp;
+        temp = Double.doubleToLongBits(totalScore);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
 
