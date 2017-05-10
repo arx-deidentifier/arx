@@ -31,7 +31,7 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
     /** SVUID */
     private static final long serialVersionUID = -2711630526630937284L;
     /** The threshold */
-    private final double    threshold;
+    private final double      threshold;
 
     /**
      * Creates a new instance of this criterion.
