@@ -48,14 +48,13 @@ public class DataMatrix {
      * @param columns
      * @param rows Can be null
      */
-     
     DataMatrix(int[] inverseMap,
-                      int[][][] inverseData,
-                      Dictionary[] inverseDictionaries,
-                      Data outputGeneralized,
-                      int suppressedAttributeTypes, 
-                      int[] columns,
-                      int[] rows) {
+               int[][][] inverseData,
+               Dictionary[] inverseDictionaries,
+               Data outputGeneralized,
+               int suppressedAttributeTypes,
+               int[] columns,
+               int[] rows) {
 
         // Prepare
         this.columns = columns.length;

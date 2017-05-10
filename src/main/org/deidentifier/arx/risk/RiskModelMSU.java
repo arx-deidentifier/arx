@@ -58,13 +58,13 @@ public class RiskModelMSU {
      * @param identifiers
      * @param stop 
      * @param progress 
-     * @param maxK
+     * @param maxKeyLength
      */
     RiskModelMSU(DataHandleInternal handle, 
                  Set<String> identifiers, 
                  WrappedInteger progress, 
                  WrappedBoolean stop,
-                 int maxK) {
+                 int maxKeyLength) {
 
         // Store
         this.stop = stop;
@@ -95,7 +95,7 @@ public class RiskModelMSU {
             }
         });
         suda2.setStopFlag(stop);
-        SUDA2Result result = suda2.suda2(maxK);
+        SUDA2Result result = suda2.suda2(maxKeyLength);
         this.maxKeyLength = result.getMaxKeyLength();
         this.numKeys = result.getNumKeys();
         this.columnContributions = result.getColumnKeyContributions();
