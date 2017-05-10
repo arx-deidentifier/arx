@@ -202,6 +202,14 @@ public abstract class PrivacyCriterion implements Serializable{
     }
 
     /**
+     * Is this criterion based on the overall dataset
+     * @return
+     */
+    public boolean isMatrixBased() {
+        return false;
+    }
+
+    /**
      * If a privacy model uses a data subset, it must overwrite this method
      * @return
      */
