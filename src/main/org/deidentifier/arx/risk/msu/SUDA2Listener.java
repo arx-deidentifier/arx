@@ -19,33 +19,36 @@ package org.deidentifier.arx.risk.msu;
 import java.util.Set;
 
 /**
- * The result of executing SUDA2
+ * Listener for MSU discoveries
  * 
  * @author Fabian Prasser
  */
-public class SUDA2Threshold extends SUDA2Result {
-    
+public abstract class SUDA2Listener extends SUDA2Result {
+
     /**
-     * Exception thrown in thresholds are not met
-     * @author Fabian Prasser
-     *
+     * A MSU has been discovered
+     * 
+     * @param row
+     * @param size
      */
-    public static final class SUDA2ThresholdException extends RuntimeException {
-        private static final long serialVersionUID = 2705587022766447851L;        
-    }
+    public abstract void msuFound(int row, int size);
 
     @Override
     void registerMSU(Set<SUDA2Item> set) {
-        throw new SUDA2ThresholdException();
+        throw new UnsupportedOperationException("");
     }
 
     @Override
     void registerMSU(SUDA2Item item, SUDA2ItemSet set) {
-        throw new SUDA2ThresholdException();
+        SUDA2Item temp = item;
+        for (int i = 0; i < set.size(); i++) {
+            temp = temp.getProjection(set.get(i).getRows());
+        }
+        msuFound(temp.getRows().iterator().next().value, set.size() + 1);
     }
 
     @Override
     void registerMSU(SUDA2ItemSet set) {
-        throw new SUDA2ThresholdException();
+        msuFound(set.get(0).getRows().iterator().next().value, set.size());
     }
 }

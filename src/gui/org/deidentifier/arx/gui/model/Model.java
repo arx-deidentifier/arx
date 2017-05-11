@@ -244,6 +244,9 @@ public class Model implements Serializable {
     /** Model for a specific privacy criterion. */
     private Map<String, ModelBLikenessCriterion>          bLikenessModel                  = new HashMap<String, ModelBLikenessCriterion>();
 
+    /** Model for a specific privacy criterion. */
+    private ModelMinimumKeySizeCriterion                  minimumKeySizeModel             = new ModelMinimumKeySizeCriterion();
+
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
@@ -422,7 +425,11 @@ public class Model implements Serializable {
             this.stackelbergPrivacyModel.isEnabled()) {
             config.addCriterion(this.stackelbergPrivacyModel.getCriterion(this));
         }
-        
+        if (this.minimumKeySizeModel != null &&
+                this.minimumKeySizeModel.isEnabled()) {
+                config.addCriterion(this.minimumKeySizeModel.getCriterion(this));
+            }
+            
         for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
             if (entry.getValue() != null &&
                 entry.getValue().isEnabled()) {
@@ -536,6 +543,23 @@ public class Model implements Serializable {
     }
 
     /**
+     * Returns the b-Likeness privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
+        if (this.bLikenessModel == null) {
+            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
+            }
+        }
+        return bLikenessModel;
+    }
+    
+    /**
      * Returns the classification model
      * @return
      */
@@ -545,7 +569,7 @@ public class Model implements Serializable {
         }
         return this.classificationModel;
     }
-    
+
     /**
      * Returns the clipboard.
      *
@@ -585,23 +609,6 @@ public class Model implements Serializable {
             }
         }
         return dDisclosurePrivacyModel;
-    }
-
-    /**
-     * Returns the b-Likeness privacy model.
-     *
-     * @return
-     */
-    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
-        if (this.bLikenessModel == null) {
-            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
-            DataHandle handle = inputConfig.getInput().getHandle();
-            for (int col = 0; col < handle.getNumColumns(); col++) {
-                String attribute = handle.getAttributeName(col);
-                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
-            }
-        }
-        return bLikenessModel;
     }
 
     /**
@@ -708,7 +715,6 @@ public class Model implements Serializable {
     public ModelKAnonymityCriterion getKAnonymityModel() {
         return kAnonymityModel;
     }
-    
     /**
      * Returns the k-map model.
      *
@@ -732,7 +738,7 @@ public class Model implements Serializable {
             }
         return lDiversityModel;
     }
-
+    
     /**
      * Returns the project locale.
      *
@@ -808,6 +814,18 @@ public class Model implements Serializable {
             }
         }
         return this.metricDescription;
+    }
+
+    /**
+     * Returns the minimum key size model.
+     *
+     * @return
+     */
+    public ModelMinimumKeySizeCriterion getMinimumKeySizeModel() {
+        if (this.minimumKeySizeModel == null) {
+            this.minimumKeySizeModel = new ModelMinimumKeySizeCriterion();
+        }
+        return minimumKeySizeModel;
     }
 
     /**
@@ -1274,7 +1292,9 @@ public class Model implements Serializable {
         lDiversityModel.clear();
         tClosenessModel.clear();
         riskBasedModel.clear();
+        bLikenessModel.clear();
         dDisclosurePrivacyModel.clear();
+        minimumKeySizeModel = new ModelMinimumKeySizeCriterion();
         DataHandle handle = inputConfig.getInput().getHandle();
         for (int col = 0; col < handle.getNumColumns(); col++) {
             String attribute = handle.getAttributeName(col);

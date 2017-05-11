@@ -449,37 +449,43 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 root.setRedraw(false);
                                 
                 // Fill chart
-                ISeriesSet seriesSet = chart.getSeriesSet();
-                IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR, LABEL_SIZE); //$NON-NLS-1$
-                series.getLabel().setVisible(false);
-                series.getLabel().setFont(chart.getFont());
-                series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-                String[] labels = new String[msuSizeDistribution.length];
-                for (int i = 0; i < msuSizeDistribution.length; i++) {
-                    if (Double.isNaN(msuSizeDistribution[i])) {
-                        msuSizeDistribution[i] = 0d;
-                    } else {
-                        msuSizeDistribution[i] *= 100d;
+                if (msuSizeDistribution.length == 0) {
+                    if (chart.getSeriesSet().getSeries(LABEL_SIZE) != null) {
+                        chart.getSeriesSet().deleteSeries(LABEL_SIZE);
                     }
-                    labels[i] = String.valueOf(i + 1);
+                } else {
+                    ISeriesSet seriesSet = chart.getSeriesSet();
+                    IBarSeries series = (IBarSeries) seriesSet.createSeries(SeriesType.BAR, LABEL_SIZE); //$NON-NLS-1$
+                    series.getLabel().setVisible(false);
+                    series.getLabel().setFont(chart.getFont());
+                    series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+                    String[] labels = new String[msuSizeDistribution.length];
+                    for (int i = 0; i < msuSizeDistribution.length; i++) {
+                        if (Double.isNaN(msuSizeDistribution[i])) {
+                            msuSizeDistribution[i] = 0d;
+                        } else {
+                            msuSizeDistribution[i] *= 100d;
+                        }
+                        labels[i] = String.valueOf(i + 1);
+                    }
+                    series.setYSeries(msuSizeDistribution);
+                    
+                    // Configure
+                    chart.getLegend().setVisible(false);
+                    IAxisSet axisSet = chart.getAxisSet();
+    
+                    // X-axis
+                    IAxis yAxis = axisSet.getYAxis(0);
+                    yAxis.setRange(new Range(0d, 100d));
+    
+                    // X-axis
+                    IAxis xAxis = axisSet.getXAxis(0);
+                    xAxis.setCategorySeries(labels);
+                    xAxis.adjustRange();
+                    updateCategories();
+                    chart.updateLayout();
+                    chart.update();
                 }
-                series.setYSeries(msuSizeDistribution);
-                
-                // Configure
-                chart.getLegend().setVisible(false);
-                IAxisSet axisSet = chart.getAxisSet();
-
-                // X-axis
-                IAxis yAxis = axisSet.getYAxis(0);
-                yAxis.setRange(new Range(0d, 100d));
-
-                // X-axis
-                IAxis xAxis = axisSet.getXAxis(0);
-                xAxis.setCategorySeries(labels);
-                xAxis.adjustRange();
-                updateCategories();
-                chart.updateLayout();
-                chart.update();
 
                 // Clear table
                 clearTable(tableAttributes);

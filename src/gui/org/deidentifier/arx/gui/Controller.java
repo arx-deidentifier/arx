@@ -253,6 +253,9 @@ public class Controller implements IView {
         if (!model.getStackelbergModel().isEnabled()) {
         	criteria.add(model.getStackelbergModel());
         }
+        if (!model.getMinimumKeySizeModel().isEnabled()) {
+            criteria.add(model.getMinimumKeySizeModel());
+        }
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
         
@@ -331,6 +334,9 @@ public class Controller implements IView {
         }
         if (model.getStackelbergModel().isEnabled()) {
         	criteria.add(model.getStackelbergModel());
+        }
+        if (model.getMinimumKeySizeModel().isEnabled()) {
+            criteria.add(model.getMinimumKeySizeModel());
         }
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();

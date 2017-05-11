@@ -17,16 +17,18 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyMatrix;
 import org.deidentifier.arx.risk.msu.SUDA2;
+import org.deidentifier.arx.risk.msu.SUDA2Listener;
 
 /**
  * This criterion ensures that all keys are at least of a given size
  * 
  * @author Fabian Prasser
  */
-public class MinimalKeySize extends KeyBasedCriterion{
+public class MinimumKeySize extends MatrixBasedCriterion {
 
     /** SVUID */
     private static final long serialVersionUID = 4317638260873614586L;
@@ -36,17 +38,41 @@ public class MinimalKeySize extends KeyBasedCriterion{
 
     /**
      * Creates a new instance of this criterion.
-     *  
+     * 
      * @param minKeySize
      */
-    public MinimalKeySize(int minKeySize){
+    public MinimumKeySize(int minKeySize) {
         super(false, true);
         this.minKeySize = minKeySize;
     }
-    
+
     @Override
-    public MinimalKeySize clone() {
-        return new MinimalKeySize(this.minKeySize);
+    public MinimumKeySize clone() {
+        return new MinimumKeySize(this.minKeySize);
+    }
+
+    @Override
+    public void enforce(final HashGroupifyMatrix matrix, int numMaxSuppressedOutliers) {
+        new SUDA2(matrix.getMatrix().getMatrix()).findKeys(minKeySize - 1, new SUDA2Listener() {
+            @Override
+            public void msuFound(int row, int size) {
+                matrix.suppress(row);
+            }
+        });
+    }
+    
+    /**
+     * Returns the risk threshold
+     * @return
+     */
+    public int getMinimumKeySize() {
+        return this.minKeySize;
+    }
+
+    @Override
+    public int getRequirements() {
+        // Requires only one counter
+        return ARXConfiguration.REQUIREMENT_COUNTER;
     }
 
     @Override
@@ -56,18 +82,13 @@ public class MinimalKeySize extends KeyBasedCriterion{
 
     @Override
     public ElementData render() {
-        ElementData result = new ElementData("Minimal key size");
+        ElementData result = new ElementData("Minimum key size");
         result.addProperty("Threshold", minKeySize);
         return result;
     }
 
     @Override
     public String toString() {
-        return "("+minKeySize+")-minimal-key-size";
-    }
-
-    @Override
-    protected boolean isFulfilled(HashGroupifyMatrix matrix) {
-        return new SUDA2(matrix.getMatrix().getMatrix()).isKeyPresent(minKeySize);
+        return "(" + minKeySize + ")-minimum-key-size";
     }
 }

@@ -557,15 +557,14 @@ public class HashGroupify {
      * @return
      */
     private void analyzeMatrixBasedCriteria(Transformation transformation, boolean earlyAbort) {
-        
+
         // Nothing to do
         if (this.matrixBasedCriteria.length == 0) {
             return;
         }
         
         // Build a distribution
-        HashGroupifyMatrix matrix = new HashGroupifyMatrix(heuristicForSampleBasedCriteria ? null : utilityMeasure,
-                                                           transformation, this.hashTableFirstEntry);
+        HashGroupifyMatrix matrix = new HashGroupifyMatrix(this.hashTableFirstEntry);
         
         // For each criterion
         for (MatrixBasedCriterion criterion : this.matrixBasedCriteria) {
@@ -590,7 +589,7 @@ public class HashGroupify {
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
         
         // Abort early, if only k-anonymity was specified
-        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0) {
+        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0 && matrixBasedCriteria.length == 0) {
             privacyModelFulfilled = minimalClassSizeFulfilled;
             return;
         }

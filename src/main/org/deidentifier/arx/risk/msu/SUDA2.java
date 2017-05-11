@@ -23,7 +23,6 @@ import java.util.List;
 
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
-import org.deidentifier.arx.risk.msu.SUDA2Threshold.SUDA2ThresholdException;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
 
@@ -33,7 +32,7 @@ import com.carrotsearch.hppc.IntOpenHashSet;
  * @author Fabian Prasser
  */
 public class SUDA2 {
-
+    
     /** The data */
     private final int[][]         data;
     /** Number of columns */
@@ -56,7 +55,7 @@ public class SUDA2 {
         
         // Init
         this.data = data;
-        this.columns = data[0].length;
+        this.columns = data.length == 0 ? 0 : data[0].length;
     }
 
     /**
@@ -72,6 +71,12 @@ public class SUDA2 {
         
         // Execute
         this.result = new SUDA2Statistics(this.data.length, this.columns, maxKeyLength);
+        
+        // Check
+        if (this.data.length == 0 || this.data[0].length == 0) {
+            return (SUDA2Statistics)this.result;
+        }
+        
         this.suda2(maxKeyLength, this.getItems().getItemList(), data.length);
         
         // Return
@@ -84,23 +89,19 @@ public class SUDA2 {
      * @param maxKeyLength If maxKeyLength <= 0, maxKeyLength will be set to the number of columns
      * @return
      */
-    public boolean isKeyPresent(int maxKeyLength) {
+    public void findKeys(int maxKeyLength, SUDA2Listener listener) {
 
         // If maxK <= 0, maxK will be set to the number of columns
         maxKeyLength = maxKeyLength > 0 ? maxKeyLength : columns;
-        
-        // Execute
-        try {
-            this.result = new SUDA2Threshold();
-            this.suda2(maxKeyLength, this.getItems().getItemList(), data.length);
-        } catch (SUDA2ThresholdException e) {
-            
-            // Return
-            return true;
+
+        // Check
+        if (this.data.length == 0 || this.data[0].length == 0) {
+            return;
         }
         
-        // Return
-        return false;
+        // Execute
+        this.result = listener;
+        this.suda2(maxKeyLength, this.getItems().getItemList(), data.length);
     }
 
     /**
@@ -110,9 +111,6 @@ public class SUDA2 {
     private void check(int[][] data) {
         if (data == null) {
             throw new NullPointerException("Data must not be null");
-        }
-        if (data.length == 0 || data[0] == null || data[0].length == 0) {
-            throw new IllegalArgumentException("Data must not be empty");
         }
     }
         

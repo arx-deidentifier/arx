@@ -518,6 +518,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.relMaxOutliers = this.relMaxOutliers;
         result.absMaxOutliers = this.absMaxOutliers;
         result.aCriteria = this.aCriteria.clone();
+        result.bCriteria = this.bCriteria.clone();
+        result.mCriteria = this.mCriteria.clone();
         result.criteria = new HashSet<PrivacyCriterion>(this.criteria);
         result.requirements = this.requirements;
         result.metric = this.metric;
