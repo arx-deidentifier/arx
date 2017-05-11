@@ -111,6 +111,11 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
     }
     
     @Override
+    public boolean isClassBasedInformationLossAvailable() {
+        return true;
+    }
+
+    @Override
     public boolean isGSFactorSupported() {
         return true;
     }

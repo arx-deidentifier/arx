@@ -199,10 +199,15 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     }
 
     @Override
-    public boolean isGSFactorSupported() {
+    public boolean isClassBasedInformationLossAvailable() {
         return true;
     }
 
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+    
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Entropy-based information loss");
@@ -211,7 +216,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
     }
-    
+
     @Override
     public String toString() {
         return "EntropyBasedInformationLoss";

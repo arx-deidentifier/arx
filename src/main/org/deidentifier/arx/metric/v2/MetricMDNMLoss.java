@@ -136,10 +136,15 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    public boolean isGSFactorSupported() {
+    public boolean isClassBasedInformationLossAvailable() {
         return true;
     }
 
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+    
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Loss");
@@ -149,7 +154,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
     }
-    
+
     @Override
     public String toString() {
         return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
@@ -211,7 +216,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                                                super.createInformationLoss(bound));
         
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
 
@@ -246,7 +251,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify g) {
         
@@ -290,7 +295,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     protected DomainShare[] getShares(){
         return this.shares;
     }
-
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 

@@ -94,12 +94,17 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public boolean isClassBasedInformationLossAvailable() {
+        return true;
+    }
+
+    @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Ambiguity");
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         return result;
     }
-
+    
     @Override
     public String toString() {
         return "Ambiguity";
@@ -138,7 +143,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensionalWithBound(result, bound);
     }
-    
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
 

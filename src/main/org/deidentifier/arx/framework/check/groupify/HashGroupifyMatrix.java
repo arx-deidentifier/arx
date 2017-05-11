@@ -28,31 +28,18 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyMatrix.PrivacyC
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricMDHeight;
-import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
-import org.deidentifier.arx.metric.v2.MetricMDNUEntropy;
-import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPotentiallyPrecomputed;
-import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
-import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropy;
-import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPotentiallyPrecomputed;
-import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed;
-import org.deidentifier.arx.metric.v2.MetricMDPrecision;
-import org.deidentifier.arx.metric.v2.MetricMDStatic;
-import org.deidentifier.arx.metric.v2.MetricSDAECS;
-import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
-import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
 import org.deidentifier.arx.risk.RiskModelHistogram;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
- * A matrix for key-based models
+ * A matrix containing only sample uniques to be used by key-based models
  * @author Fabian Prasser
  */
 public class HashGroupifyMatrix {
 
     /**
-     * A condition that may or may not be fulfilled for the matrix
+     * A condition that may or may not be fulfilled by the data in the matrix
      * @author Fabian Prasser
      */
     public static interface PrivacyCondition {
@@ -113,20 +100,7 @@ public class HashGroupifyMatrix {
         
         // Blacklist metrics for which information loss of individual entries
         // is equal to the size of the class
-        if ((metric == null) ||
-            (metric instanceof MetricMDHeight) ||
-            (metric instanceof MetricMDNMPrecision) ||
-            (metric instanceof MetricMDNUEntropy) ||
-            (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||
-            (metric instanceof MetricMDNUEntropyPrecomputed) ||
-            (metric instanceof MetricMDNUNMEntropy) ||
-            (metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed) ||
-            (metric instanceof MetricMDNUNMEntropyPrecomputed) ||
-            (metric instanceof MetricMDPrecision) ||
-            (metric instanceof MetricMDStatic) ||
-            (metric instanceof MetricSDAECS) ||
-            (metric instanceof MetricSDDiscernability) ||
-            (metric instanceof MetricSDNMDiscernability)) {
+        if (metric == null || !metric.isClassBasedInformationLossAvailable()) {
             
             // Create comparator
             comparator = new Comparator<HashGroupifyEntry>(){

@@ -1393,6 +1393,16 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
+     * Overwrite this and return true if class-based IL can be
+     * calculated using the model
+     * 
+     * @return
+     */
+    public boolean isClassBasedInformationLossAvailable() {
+       return false; 
+    }
+
+    /**
      * Returns whether a generalization/suppression factor is supported
      * @return
      */
@@ -1400,7 +1410,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         // TODO: This information is redundant to data in MetricConfiguration
         return false;
     }
-
+    
+    
     /**
      * Returns whether this metric requires the transformed data or groups to
      * determine information loss.
@@ -1410,8 +1421,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public boolean isIndependent() {
         return independent;
     }
-    
-    
+
     /**
      * Returns whether this model is monotonic under the given suppression limit.
      * Note: The suppression limit may be relative or absolute.
@@ -1428,7 +1438,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
             return this.isMonotonicWithSuppression();
         } 
     }
-
+    
     /**
      * Returns false if the metric is non-monotonic when using generalization.
      * 

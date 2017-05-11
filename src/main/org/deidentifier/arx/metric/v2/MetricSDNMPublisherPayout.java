@@ -141,6 +141,11 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public boolean isClassBasedInformationLossAvailable() {
+        return true;
+    }
+
+    @Override
     public boolean isGSFactorSupported() {
         return true;
     }
@@ -197,7 +202,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private double getSuccessProbability(HashGroupifyEntry entry) {
         return !journalistAttackerModel || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify groupify) {
         
@@ -238,7 +243,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         result.getInformationLoss().addMetadata(maximalPayout);
         return result;
     }
-    
+
     @Override
     protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation, HashGroupifyEntry entry) {
 

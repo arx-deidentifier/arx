@@ -92,6 +92,11 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
+    public boolean isClassBasedInformationLossAvailable() {
+        return true;
+    }
+
+    @Override
     public boolean isGSFactorSupported() {
         return true;
     }
