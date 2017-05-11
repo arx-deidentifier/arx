@@ -57,7 +57,7 @@ public class Test {
 //            permute(data, 100);
 //        }
 //        
-        SUDA2Result result1 = new SUDA2(data).suda2(0);
+        SUDA2Statistics result1 = new SUDA2(data).getStatistics(0);
         System.out.println(result1.toString());
         result1.getColumnKeyContributions(); // Attribute / variable contribution
         

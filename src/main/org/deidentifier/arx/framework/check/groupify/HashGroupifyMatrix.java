@@ -17,20 +17,20 @@
 
 package org.deidentifier.arx.framework.check.groupify;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.DataMatrix;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyMatrix.PrivacyCondition.State;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.risk.RiskModelHistogram;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import cern.colt.GenericSorting;
+import cern.colt.Swapper;
+import cern.colt.function.IntComparator;
 
 /**
  * A matrix containing only sample uniques to be used by key-based models
@@ -62,16 +62,14 @@ public class HashGroupifyMatrix {
         public State isFulfilled(HashGroupifyMatrix matrix);
     }
 
-    /** The backing map */
-    private IntIntOpenHashMap   distribution = new IntIntOpenHashMap();
     /** The number of suppressed tuples */
-    private int                 numSuppressed   = 0;
+    private int                     numSuppressedRecords = 0;
+    /** The number of suppressed entries */
+    private int                     numSuppressedEntries = 0;
     /** Entries that can be suppressed */
-    private HashGroupifyEntry[] entries;
-    /** Number of tuples in the data set */
-    private double              numRecords    = 0;
-    /** Number of classes in the data set */
-    private double              numClasses   = 0;
+    private List<HashGroupifyEntry> entries;
+    /** Matrix of entries that can be suppressed */
+    private List<int[]>             matrix;
 
     /**
      * Creates a new instance
@@ -85,13 +83,12 @@ public class HashGroupifyMatrix {
                        HashGroupifyEntry entry) {
         
         // Initialize
-        List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();
         while(entry != null) {
-            if (entry.isNotOutlier && entry.count > 0) {
-                addToDistribution(entry.count);
-                list.add(entry);
+            if (entry.isNotOutlier && entry.count == 1) {
+                matrix.add(entry.key);
+                entries.add(entry);
             } else {
-                this.numSuppressed += entry.count;
+                this.numSuppressedRecords += entry.count;
             }
             entry = entry.nextOrdered;
         }
@@ -143,48 +140,52 @@ public class HashGroupifyMatrix {
         }
             
         // Sort & store suppresseable entries
-        Collections.sort(list, comparator);
-        this.entries = list.toArray(new HashGroupifyEntry[list.size()]);
+        final Comparator<HashGroupifyEntry> _comparator = comparator;
+        GenericSorting.quickSort(0, entries.size(), new IntComparator() {
+            @Override
+            public int compare(int arg0, int arg1) {
+                
+                // Delegate to comparator
+                return _comparator.compare(entries.get(arg0), entries.get(arg1));
+            }
+        }, new Swapper() {
+            @Override
+            public void swap(int arg0, int arg1) {
+                
+                // Swap in entries
+                HashGroupifyEntry entry0 = entries.get(arg0);
+                entries.set(arg0, entries.get(arg1));
+                entries.set(arg1, entry0);
+                
+                // Swap in matrix
+                int[] line0 = matrix.get(arg0);
+                matrix.set(arg0, matrix.get(arg1));
+                matrix.set(arg1, line0);
+            }
+        });
+        this.numSuppressedEntries = 0;
     }
     
-    /**
-     * Returns the average class size
-     * @return
-     */
-    public double getAverageClassSize() {
-        return numRecords / numClasses;
-    }
-
-    /**
-     * Returns the fraction of tuples that are in classes of the given size
-     * @param size
-     * @return
-     */
-    public double getFractionOfRecordsInClassesOfSize(int size) {
-        return (double)distribution.get(size) * (double)size / numRecords;
-    }
-
     /**
      * Returns a set of classes as an input for the risk model
      */
-    public RiskModelHistogram getHistogram() {
-        return new RiskModelHistogram(this.distribution);
+    public DataMatrix getMatrix() {
+        int[][] result = new int[this.entries.size() - this.numSuppressedEntries][];
+        int index = 0;
+        for (int i=0; i<matrix.size(); i++) {
+            if (matrix.get(i) != null) {
+                result[index++] = matrix.get(i);
+            }
+        }
+        return new DataMatrix(result);
     }
 
-    /**
-     * Returns the number of records
-     * @return
-     */
-    public int getNumRecords() {
-        return (int)this.numRecords;
-    }
-    
     /**
      * Returns the number of suppressed records
      * @return
      */
     public int getNumSuppressedRecords() {
-        return this.numSuppressed;
+        return this.numSuppressedRecords;
     }
     
 
@@ -196,20 +197,20 @@ public class HashGroupifyMatrix {
     public int suppressWhileNotFulfilledBinary(PrivacyCondition condition) {
         
         // Nothing to suppress
-        if (entries.length == 0) {
-            return this.numSuppressed;
+        if (entries.size() == 0) {
+            return this.numSuppressedRecords;
         }
 
         // Start parameters
         int low = 0;
-        int high = entries.length - 1;
+        int high = entries.size() - 1;
         int mid = (low + high) / 2;
-        int initiallySuppressed = this.numSuppressed;
+        int initiallySuppressed = this.numSuppressedRecords;
         State state = State.ABORT;
 
         // Initially suppress from low to mid
         for (int i=low; i <= mid; i++) {
-            suppressEntry(entries[i]);
+            suppressEntry(i);
         }
 
         // While not done
@@ -224,8 +225,8 @@ public class HashGroupifyMatrix {
                 mid = (low + high) / 2;
                 
                 // Clear suppression from mid
-                for (int i = mid + 1; i < entries.length && !entries[i].isNotOutlier; i++) {
-                    unSuppressEntry(entries[i]);
+                for (int i = mid + 1; i < entries.size() && !entries.get(i).isNotOutlier; i++) {
+                    unSuppressEntry(i);
                 }
                 
             } else { // state == State.NOT_FULFILLED
@@ -235,7 +236,7 @@ public class HashGroupifyMatrix {
                 
                 // Suppress from low to mid
                 for (int i=low; i <= mid; i++) {
-                    suppressEntry(entries[i]);
+                    suppressEntry(i);
                 }
             }
         }
@@ -243,12 +244,12 @@ public class HashGroupifyMatrix {
         // Finally check mid+1
         if (state != State.ABORT) {
             state = condition.isFulfilled(this);
-            if (state == State.NOT_FULFILLED && mid + 1 < entries.length && entries[mid + 1].isNotOutlier) {
-                suppressEntry(entries[mid + 1]);
+            if (state == State.NOT_FULFILLED && mid + 1 < entries.size() && entries.get(mid + 1).isNotOutlier) {
+                suppressEntry(mid + 1);
             }
         }
 
-        return this.numSuppressed - initiallySuppressed;
+        return this.numSuppressedRecords - initiallySuppressed;
     }
 
     /**
@@ -258,67 +259,45 @@ public class HashGroupifyMatrix {
      */
     public int suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
 
-        int initiallySuppressed = this.numSuppressed;
+        int initiallySuppressed = this.numSuppressedRecords;
 
-        for (int i=0; i<entries.length; i++) {
+        for (int i=0; i<entries.size(); i++) {
             State state = condition.isFulfilled(this);
             if (state == State.NOT_FULFILLED) {
-                suppressEntry(entries[i]);
+                suppressEntry(i);
             } else { 
                 // State.FULFILLED || State.ABORT
                 break;
             }
         }
         
-        return this.numSuppressed - initiallySuppressed;
-    }
-
-    /**
-     * Adds an entry
-     * @param size
-     */
-    private void addToDistribution(int size) {
-        this.numClasses++;
-        this.numRecords += size;
-        this.distribution.putOrAdd(size, 1, 1);   
-    }
-
-    /**
-     * Removes an entry
-     * @param size
-     */
-    private void removeFromDistribution(int size) {
-        this.numClasses--;
-        this.numRecords -= size;
-        int previous = distribution.remove(size);
-        if (previous != 1) {
-            distribution.put(size, previous - 1);
-        }
+        return this.numSuppressedRecords - initiallySuppressed;
     }
 
     /**
      * Suppresses the given entry
-     * @param entry
+     * @param index
      */
-    private void suppressEntry(HashGroupifyEntry entry) {
+    private void suppressEntry(int index) {
+        HashGroupifyEntry entry = entries.get(index);
         entry.isNotOutlier = false;
-        removeFromDistribution(entry.count);
-        this.numSuppressed += entry.count;
-        // No need to adjust "numRecords", because this is done in "removeFromDistribution"
+        this.numSuppressedRecords += entry.count;
+        this.matrix.set(index, null);
+        this.numSuppressedEntries++;
     }
 
     /**
      * Unsuppresses the given entry
-     * @param entry
+     * @param index
      */
-    private void unSuppressEntry(HashGroupifyEntry entry) {
-        
-        if (this.numSuppressed == 0 || entry.isNotOutlier) {
-            throw new IllegalStateException("Internal error. There are not suppressed entries.");
+    private void unSuppressEntry(int index) {
+        HashGroupifyEntry entry = entries.get(index);
+        if (this.numSuppressedRecords == 0 || entry.isNotOutlier) {
+            throw new IllegalStateException("Internal error. There are no suppressed entries.");
         }
         entry.isNotOutlier = true;
-        this.numSuppressed -= entry.count;
-        addToDistribution(entry.count);
-        // No need to adjust "numRecords", because this is done in "addToDistribution"
+        this.numSuppressedRecords -= entry.count;
+        this.numSuppressedEntries--;
+        this.matrix.set(index, entry.key);
     }
 }

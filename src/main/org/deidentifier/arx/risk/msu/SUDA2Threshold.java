@@ -19,29 +19,33 @@ package org.deidentifier.arx.risk.msu;
 import java.util.Set;
 
 /**
- * Abstract base class for results of the SUDA2 algorithm
+ * The result of executing SUDA2
  * 
  * @author Fabian Prasser
  */
-public abstract class SUDA2Result {
-
+public class SUDA2Threshold extends SUDA2Result {
+    
     /**
-     * Registers an MSU
-     * @param set
+     * Exception thrown in thresholds are not met
+     * @author Fabian Prasser
+     *
      */
-    abstract void registerMSU(Set<SUDA2Item> set);
+    public static final class SUDA2ThresholdException extends RuntimeException {
+        private static final long serialVersionUID = 2705587022766447851L;        
+    }
 
-    /**
-     * Registers an MSU
-     * @param item
-     * @param set
-     */
-    abstract void registerMSU(SUDA2Item item, SUDA2ItemSet set);
+    @Override
+    void registerMSU(Set<SUDA2Item> set) {
+        throw new SUDA2ThresholdException();
+    }
 
-    /**
-     * Registers an MSU
-     * @param set
-     */
-    abstract void registerMSU(SUDA2ItemSet set);
+    @Override
+    void registerMSU(SUDA2Item item, SUDA2ItemSet set) {
+        throw new SUDA2ThresholdException();
+    }
 
+    @Override
+    void registerMSU(SUDA2ItemSet set) {
+        throw new SUDA2ThresholdException();
+    }
 }

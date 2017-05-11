@@ -25,7 +25,7 @@ import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 import org.deidentifier.arx.risk.msu.SUDA2;
 import org.deidentifier.arx.risk.msu.SUDA2ProgressListener;
-import org.deidentifier.arx.risk.msu.SUDA2Result;
+import org.deidentifier.arx.risk.msu.SUDA2Statistics;
 
 /**
  * A risk model based on MSUs in the data set
@@ -95,7 +95,7 @@ public class RiskModelMSU {
             }
         });
         suda2.setStopFlag(stop);
-        SUDA2Result result = suda2.suda2(maxKeyLength);
+        SUDA2Statistics result = suda2.getStatistics(maxKeyLength);
         this.maxKeyLength = result.getMaxKeyLength();
         this.numKeys = result.getNumKeys();
         this.columnContributions = result.getColumnKeyContributions();

@@ -35,7 +35,7 @@ public class Test3 {
         };
         print(data);
         System.out.println("\n-----\n"); 
-        SUDA2Result result1 = new SUDA2(data).suda2(5);
+        SUDA2Result result1 = new SUDA2(data).getStatistics(5);
         System.out.println(result1.toString());
         System.out.println("\n-----\n");
         SUDA2Result result2 = new ExhaustiveSearch(data).exhaustive();

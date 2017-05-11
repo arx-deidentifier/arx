@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
+import org.deidentifier.arx.risk.msu.SUDA2Threshold.SUDA2ThresholdException;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
 
@@ -59,22 +60,47 @@ public class SUDA2 {
     }
 
     /**
-     * Executes the SUDA2 algorithm
+     * Executes the SUDA2 algorithm.
      * 
-     * @param maxK If maxK <= 0, maxK will be set to the number of columns
+     * @param maxKeyLength If maxKeyLength <= 0, maxKeyLength will be set to the number of columns
      * @return
      */
-    public SUDA2Result suda2(int maxK) {
+    public SUDA2Statistics getStatistics(int maxKeyLength) {
         
         // If maxK <= 0, maxK will be set to the number of columns
-        maxK = maxK > 0 ? maxK : columns;
+        maxKeyLength = maxKeyLength > 0 ? maxKeyLength : columns;
         
         // Execute
-        this.result = new SUDA2Result(this.data.length, this.columns, maxK);
-        this.suda2(maxK, this.getItems().getItemList(), data.length);
+        this.result = new SUDA2Statistics(this.data.length, this.columns, maxKeyLength);
+        this.suda2(maxKeyLength, this.getItems().getItemList(), data.length);
         
         // Return
-        return this.result;
+        return (SUDA2Statistics)this.result;
+    }
+    
+    /**
+     * Executes the SUDA2 algorithm.
+     * 
+     * @param maxKeyLength If maxKeyLength <= 0, maxKeyLength will be set to the number of columns
+     * @return
+     */
+    public boolean isKeyPresent(int maxKeyLength) {
+
+        // If maxK <= 0, maxK will be set to the number of columns
+        maxKeyLength = maxKeyLength > 0 ? maxKeyLength : columns;
+        
+        // Execute
+        try {
+            this.result = new SUDA2Threshold();
+            this.suda2(maxKeyLength, this.getItems().getItemList(), data.length);
+        } catch (SUDA2ThresholdException e) {
+            
+            // Return
+            return true;
+        }
+        
+        // Return
+        return false;
     }
 
     /**
