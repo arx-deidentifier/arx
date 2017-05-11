@@ -314,7 +314,7 @@ public class HashGroupifyDistribution {
     private void unSuppressEntry(HashGroupifyEntry entry) {
         
         if (this.numSuppressed == 0 || entry.isNotOutlier) {
-            throw new IllegalStateException("Internal error. There are not suppressed entries.");
+            throw new IllegalStateException("Internal error. There are no suppressed entries.");
         }
         entry.isNotOutlier = true;
         this.numSuppressed -= entry.count;

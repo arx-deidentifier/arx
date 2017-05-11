@@ -39,6 +39,22 @@ public class DataMatrix {
     private final int     columns;
 
     /**
+     * Creates a new matrix from the given list
+     * @param matrix
+     */
+    public DataMatrix(int[][] matrix) {
+        if (matrix == null || matrix.length == 0) {
+            this.rows = 0;
+            this.columns = 0;
+            this.matrix = new int[0][0];
+        } else {
+            this.rows = matrix.length;
+            this.columns = matrix[0].length;
+            this.matrix = matrix;
+        }
+    }
+
+    /**
      * Creates a data matrix for output data
      * @param inverseMap
      * @param inverseData
