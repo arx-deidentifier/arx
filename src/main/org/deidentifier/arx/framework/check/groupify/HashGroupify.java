@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
+import org.deidentifier.arx.criteria.MatrixBasedCriterion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
@@ -85,6 +86,9 @@ public class HashGroupify {
     
     /** Criteria. */
     private final SampleBasedCriterion[] sampleBasedCriteria;
+
+    /** Criteria. */
+    private final MatrixBasedCriterion[] matrixBasedCriteria;
     
     /** Allowed tuple outliers. */
     private final int                    suppressionLimit;
@@ -122,6 +126,7 @@ public class HashGroupify {
         // Extract criteria
         this.classBasedCriteria = config.getClassBasedPrivacyModelsAsArray();
         this.sampleBasedCriteria = config.getSampleBasedPrivacyModelsAsArray();
+        this.matrixBasedCriteria = config.getMatrixBasedPrivacyModelsAsArray();
         this.minimalClassSize = config.getMinimalGroupSize();
         
         // Sanity check: by convention, d-presence must be the first criterion
@@ -509,6 +514,7 @@ public class HashGroupify {
         }
         
         this.analyzeSampleBasedCriteria(transformation, false);
+        this.analyzeMatrixBasedCriteria(transformation, false);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
     }
     
@@ -543,7 +549,37 @@ public class HashGroupify {
             }
         }
     }
-    
+
+    /**
+     * Analyze matrix-based criteria
+     * @param transformation
+     * @param earlyAbort May we perform an early abort, if we reach the threshold
+     * @return
+     */
+    private void analyzeMatrixBasedCriteria(Transformation transformation, boolean earlyAbort) {
+        
+        // Nothing to do
+        if (this.matrixBasedCriteria.length == 0) {
+            return;
+        }
+        
+        // Build a distribution
+        HashGroupifyMatrix matrix = new HashGroupifyMatrix(heuristicForSampleBasedCriteria ? null : utilityMeasure,
+                                                           transformation, this.hashTableFirstEntry);
+        
+        // For each criterion
+        for (MatrixBasedCriterion criterion : this.matrixBasedCriteria) {
+            
+            // Enforce
+            criterion.enforce(matrix, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
+            
+            // Early abort
+            this.currentNumOutliers = matrix.getNumSuppressedRecords();
+            if (earlyAbort && currentNumOutliers > suppressionLimit) {
+                return;
+            }
+        }
+    }
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
@@ -608,6 +644,12 @@ public class HashGroupify {
         }
         
         this.analyzeSampleBasedCriteria(transformation, true);
+        this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
+        if (!this.privacyModelFulfilled) {
+            // Early abort
+            return;
+        }
+        this.analyzeMatrixBasedCriteria(transformation, true);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
     

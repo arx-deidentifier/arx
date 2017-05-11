@@ -37,6 +37,7 @@ import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.MatrixBasedCriterion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.ProfitabilityJournalist;
 import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
@@ -140,6 +141,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return config.getQualityModel();
         }
 
+        /**
+         * Returns matrix-based criteria
+         * @return
+         */
+        public MatrixBasedCriterion[] getMatrixBasedPrivacyModelsAsArray() {
+            return config.getMatrixBasedPrivacyModelsAsArray();
+        }
+        
         /**
          * Returns the minimal size of an equivalence class induced by the contained criteria.
          * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
@@ -282,6 +291,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return new ARXConfiguration();
     }
 
+
     /**
      * Creates a new configuration that allows the given percentage of outliers and
      * thus implements tuple suppression.
@@ -323,6 +333,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Criteria. */
     private SampleBasedCriterion[]             bCriteria                                        = new SampleBasedCriterion[0];
+
+    /** Criteria. */
+    private MatrixBasedCriterion[]             mCriteria                                        = new MatrixBasedCriterion[0];
 
     /** A map of weights per attribute. */
     private Map<String, Double>                attributeWeights                                 = null;
@@ -1241,6 +1254,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Returns all matrix-based criteria as an array. Only used internally.
+     * @return
+     */
+    protected MatrixBasedCriterion[] getMatrixBasedPrivacyModelsAsArray() {
+        return this.mCriteria;
+    }
+    
+    /**
      * Returns the minimal size of an equivalence class induced by the defined privacy models.
      * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
      * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
@@ -1278,7 +1299,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected SampleBasedCriterion[] getSampleBasedPrivacyModelsAsArray() {
         return this.bCriteria;
     }
-    
+
     /**
      * Returns the specific length of each entry in a snapshot.
      *
@@ -1402,6 +1423,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.bCriteria = this.getPrivacyModels(SampleBasedCriterion.class).toArray(new SampleBasedCriterion[0]);
         }
 
+        // Compute array of matrix-based criteria
+        this.mCriteria = new MatrixBasedCriterion[0];
+        if (this.isPrivacyModelSpecified(MatrixBasedCriterion.class)) {
+            this.mCriteria = this.getPrivacyModels(MatrixBasedCriterion.class).toArray(new MatrixBasedCriterion[0]);
+        }
+        
         // Compute snapshot length
         this.snapshotLength = 2;
         if (this.requires(REQUIREMENT_DISTRIBUTION)) {
