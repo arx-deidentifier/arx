@@ -329,7 +329,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     
     /**
      * Creates an instance of the loss metric which treats generalization and suppression equally.
-     * The default aggregate function, which is the rank function, will be used.
+     * The default aggregate function, which is the geometric mean, will be used.
      * This metric will respect attribute weights defined in the configuration.
      *
      * @return
