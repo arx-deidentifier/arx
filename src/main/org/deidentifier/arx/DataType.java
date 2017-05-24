@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,9 +31,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilder;
@@ -1728,7 +1731,28 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         result.add("#,##0");
         result.add("#,##0.###");
         result.add("#,##0%");
-        result.add("¤#,##0.00;(¤#,##0.00)");
+        result.add("#,##0.00");
+        
+        // Create list of common patterns
+        Set<String> set = new HashSet<String>();
+        set.addAll(result);
+        for (Locale locale: NumberFormat.getAvailableLocales()) {
+            for (NumberFormat format : new NumberFormat[] { NumberFormat.getNumberInstance(locale),
+                                                            NumberFormat.getIntegerInstance(locale),
+                                                            NumberFormat.getCurrencyInstance(locale),
+                                                            NumberFormat.getPercentInstance(locale) }) {
+
+                // Add pattern
+                if (format instanceof DecimalFormat) {
+                    String pattern = ((DecimalFormat)format).toPattern();
+                    if (!set.contains(pattern)) {
+                        set.add(pattern);
+                        result.add(pattern);
+                    }
+                }
+            }
+            
+        }
         return result;
     }
     
