@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,22 +47,22 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     public class IndexNode implements Serializable {
 
         /** SVUID */
-        private static final long   serialVersionUID = 5985820929677249525L;
+        private static final long serialVersionUID = 5985820929677249525L;
 
         /** Children. */
-        private final IndexNode[]   children;
+        final IndexNode[]         children;
 
         /** IsLeaf. */
-        private final boolean       isLeaf;
+        final boolean             isLeaf;
 
         /** Leafs. */
-        private final Interval<T>[] leafs;
+        final Interval<T>[]       leafs;
 
         /** Max is exclusive. */
-        private final T             max;
+        final T                   max;
 
         /** Min is inclusive. */
-        private final T             min;
+        final T                   min;
 
         /**
          * Creates a new instance. Min is inclusive, max is exclusive
@@ -139,17 +140,17 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      */
     public static class Interval<T> extends AbstractGroup {
 
-        /** TODO */
+        /** SVUID */
         private static final long                      serialVersionUID = 5985820929677249525L;
 
         /** The function. */
         private final AggregateFunction<T>             function;
 
         /** Max is exclusive. */
-        private final T                                max;
+        final T                                        max;
 
         /** Min is inclusive. */
-        private final T                                min;
+        final T                                        min;
 
         /** The builder. */
         private final HierarchyBuilderGroupingBased<T> builder;
@@ -197,7 +198,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
          * @param max
          * @param function
          */
-        private Interval(HierarchyBuilderGroupingBased<T> builder, DataType<T> type, T min, T max, AggregateFunction<T> function) {
+        Interval(HierarchyBuilderGroupingBased<T> builder, DataType<T> type, T min, T max, AggregateFunction<T> function) {
             super(function.aggregate(new String[]{type.format(min), type.format(max)}));
             this.builder = builder;
             this.min = min;
@@ -395,8 +396,14 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param type
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type) {
-        return new HierarchyBuilderIntervalBased<T>(type);
+        
+        if (type == DataType.DATE) {
+            return (HierarchyBuilderIntervalBased<T>) new HierarchyBuilderDateTime();
+        } else {
+            return new HierarchyBuilderIntervalBased<T>(type);
+        }
     }
     
     /**
@@ -408,8 +415,13 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param upperRange
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static <T> HierarchyBuilderIntervalBased<T> create(DataType<T> type, Range<T> lowerRange, Range<T> upperRange) {
-        return new HierarchyBuilderIntervalBased<T>(type, lowerRange, upperRange);
+        if (type == DataType.DATE) {
+            return (HierarchyBuilderIntervalBased<T>) new HierarchyBuilderDateTime((Range<Date>)lowerRange, (Range<Date>)upperRange);
+        } else {
+            return new HierarchyBuilderIntervalBased<T>(type, lowerRange, upperRange);
+        }
     }
     
     /**
@@ -453,7 +465,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
     private Range<T>          upperRange;
 
     /** Defined intervals. */
-    private List<Interval<T>> intervals = new ArrayList<Interval<T>>();
+    protected List<Interval<T>> intervals = new ArrayList<Interval<T>>();
 
     /**
      * Creates a new instance. Snapping is disabled. Repetition is disabled. Bound is determined dynamically.
@@ -680,7 +692,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @return
      */
     @SuppressWarnings("unchecked")
-    private Interval<T> getInterval(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
+    protected Interval<T> getInterval(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
 
         // Find interval
         int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
@@ -703,7 +715,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @param value
      * @return
      */
-    private Interval<T> getInterval(IndexNode node, T value) {
+    protected Interval<T> getInterval(IndexNode node, T value) {
         @SuppressWarnings("unchecked")
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
         if (node.isLeaf) {
@@ -731,7 +743,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @return
      */
     @SuppressWarnings("unchecked")
-    private Interval<T> getIntervalUpperSnap(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
+    protected Interval<T> getIntervalUpperSnap(IndexNode index, DataTypeWithRatioScale<T> type, T tValue) {
 
         // Find interval
         double shift = Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
