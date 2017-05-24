@@ -975,23 +975,8 @@ public class Model implements Serializable {
      * @return
      */
     public Set<String> getSelectedClasses() {
-
         if (this.selectedClasses == null) {
-
-            // Add attributes
-            if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
-                DataHandle handle = this.getInputConfig().getInput().getHandle();
-
-                this.selectedClasses = new HashSet<String>();
-                for (int i = 0; i < handle.getNumColumns(); i++) {
-                    this.selectedClasses.add(handle.getAttributeName(i));
-                }
-
-            } else {
-
-                // Return empty set
-                return new HashSet<String>();
-            }
+            this.selectedClasses = new HashSet<String>();
         }
         return this.selectedClasses;
     }
@@ -1001,23 +986,8 @@ public class Model implements Serializable {
      * @return
      */
     public Set<String> getSelectedFeatures() {
-
         if (this.selectedFeatures == null) {
-
-            // Add attributes
-            if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
-                DataHandle handle = this.getInputConfig().getInput().getHandle();
-
-                this.selectedFeatures = new HashSet<String>();
-                for (int i = 0; i < handle.getNumColumns(); i++) {
-                    this.selectedFeatures.add(handle.getAttributeName(i));
-                }
-
-            } else {
-
-                // Return empty set
-                return new HashSet<String>();
-            }
+            this.selectedFeatures = new HashSet<String>();
         }
         return this.selectedFeatures;
     }
