@@ -1275,6 +1275,7 @@ public class Model implements Serializable {
         tClosenessModel.clear();
         riskBasedModel.clear();
         dDisclosurePrivacyModel.clear();
+        bLikenessModel.clear();
         DataHandle handle = inputConfig.getInput().getHandle();
         for (int col = 0; col < handle.getNumColumns(); col++) {
             String attribute = handle.getAttributeName(col);
