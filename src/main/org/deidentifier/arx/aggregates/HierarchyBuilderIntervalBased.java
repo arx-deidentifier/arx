@@ -44,22 +44,22 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @author Fabian Prasser
      */
     public class IndexNode implements Serializable {
-        
-        /**  TODO */
-        private static final long serialVersionUID = 5985820929677249525L;
+
+        /** SVUID */
+        private static final long   serialVersionUID = 5985820929677249525L;
 
         /** Children. */
         private final IndexNode[]   children;
-        
+
         /** IsLeaf. */
         private final boolean       isLeaf;
-        
+
         /** Leafs. */
         private final Interval<T>[] leafs;
-        
+
         /** Max is exclusive. */
         private final T             max;
-        
+
         /** Min is inclusive. */
         private final T             min;
 
