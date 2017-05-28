@@ -304,7 +304,8 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
             
             // Features
             String attribute = state.attributes.get(i);
-            Image image = controller.getResources().getImage(state.types.get(i));
+            AttributeType type = state.types.get(i);
+            Image image = controller.getResources().getImage(type);
             TableItem itemF = new TableItem(features, SWT.NONE);
             itemF.setText(new String[] { "", attribute } );
             itemF.setImage(0, image);
