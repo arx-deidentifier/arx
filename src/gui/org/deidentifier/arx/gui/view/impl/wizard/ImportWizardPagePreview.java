@@ -152,7 +152,7 @@ public class ImportWizardPagePreview extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
-        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
         tableViewer.setContentProvider(new ArrayContentProvider());
 
         table = tableViewer.getTable();
@@ -197,9 +197,9 @@ public class ImportWizardPagePreview extends WizardPage {
                                              column.getDataType());
                 tblclmnColumn.setWidth(100);
                 tblclmnColumn.setText(column.getAliasName());
-
-                ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
             }
+
+            ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
 
             /* Apply input to tableViewer */
             tableViewer.setInput(wizardImport.getData().getPreviewData());
