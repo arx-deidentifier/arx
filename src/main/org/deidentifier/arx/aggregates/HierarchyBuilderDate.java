@@ -230,7 +230,17 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         
         // Check
         if (this.result == null) {
-            prepareResult(data);
+
+            // Build result
+            this.result = new String[data.length][granularities.length + 1];
+            for (int i=0; i<data.length; i++){
+                result[i] = new String[granularities.length + 1];
+                result[i][0] = data[i];
+                for (int j=0; j<granularities.length; j++){
+                    String output = generalize(data[i], granularities[j]);
+                    result[i][j+1] = output;
+                }
+            }
         }
         
         // Compute
@@ -268,25 +278,6 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      */
     public void setTimeZone(TimeZone outputTimeZone) {
         this.outputTimeZone = outputTimeZone;
-    }
-
-    /**
-     * Computes the hierarchy.
-     *
-     * @param data
-     */
-    private void prepareResult(String[] data){
-
-        // Build result
-        this.result = new String[data.length][granularities.length + 1];
-        for (int i=0; i<data.length; i++){
-            result[i] = new String[granularities.length + 1];
-            result[i][0] = data[i];
-            for (int j=0; j<granularities.length; j++){
-                String output = generalize(data[i], granularities[j]);
-                result[i][j+1] = output;
-            }
-        }
     }
 
     /**
