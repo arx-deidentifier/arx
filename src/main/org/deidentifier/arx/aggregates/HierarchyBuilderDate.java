@@ -34,6 +34,8 @@ import java.util.Set;
 import java.util.TimeZone;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXDate;
 
 /**
  * This class enables building hierarchies for dates.
@@ -58,7 +60,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         /**
          * Default format
          */
-        private Format() {
+        public Format() {
             map.put(Granularity.SECOND_MINUTE_HOUR_DAY_MONTH_YEAR, "dd.MM.yyyy-HH:mm:ss");
             map.put(Granularity.MINUTE_HOUR_DAY_MONTH_YEAR, "dd.MM.yyyy-HH:mm");
             map.put(Granularity.HOUR_DAY_MONTH_YEAR, "dd.MM.yyyy-HH:00");
@@ -87,30 +89,11 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         }
 
         /**
-         * Sets a form
-         * @param granularity
-         * @param format
-         */
-        public void set(Granularity granularity, String format) {
-            if (granularity == null || format == null) {
-                throw new IllegalArgumentException("Argument must not be null");
-            }
-            if (granularity == Granularity.YEAR || granularity == Granularity.DECADE || 
-                granularity == Granularity.CENTURY || granularity == Granularity.MILLENIUM) {
-                throw new IllegalArgumentException("Granularity must not be 'year', 'decade', 'century' or 'millenium'");
-            }
-            if (!isValid(format, granularity.format)) {
-                throw new IllegalArgumentException("Illegal format string: '" + format + "'");
-            }
-            map.put(granularity, format);
-        }
-
-        /**
          * Checks whether the input string adheres to the pattern
          * @param input
          * @param pattern
          */
-        private boolean isValid(String input, String pattern) {
+        public boolean isValid(String input, String pattern) {
             
             // Check for null
             if (input == null) {
@@ -151,6 +134,24 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             
             // Return
             return true;
+        }
+
+        /**
+         * Sets a form
+         * @param granularity
+         * @param format
+         */
+        public void set(Granularity granularity, String format) {
+            if (granularity == null || format == null) {
+                throw new IllegalArgumentException("Argument must not be null");
+            }
+            if (!granularity.isFormatSupported()) {
+                throw new IllegalArgumentException("Format not supported for this granularity");
+            }
+            if (!isValid(format, granularity.format)) {
+                throw new IllegalArgumentException("Illegal format string: '" + format + "'");
+            }
+            map.put(granularity, format);
         }
     }
     
@@ -194,6 +195,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         private Granularity(String format) {
             this(format, null);
         }
+        
         /**
          * Creates a new instance
          * @param format
@@ -202,6 +204,22 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         private Granularity(String format, Integer range) {
             this.format = format;
             this.range = range;
+        }
+        
+        /**
+         * Returns the default format
+         * @return
+         */
+        public String getDefaultFormat() {
+            return this.format;
+        }
+        
+        /**
+         * Returns whether a format-string is supported by this granularity
+         * @return
+         */
+        public boolean isFormatSupported() {
+            return range == null;
         }
     }
 
@@ -233,25 +251,28 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     /**
      * Creates an hierarchy reflecting the given granularities
      *
+     * @param type
      * @param granularities
      * @return
      */
-    public static HierarchyBuilder<Date> create(Granularity... granularities){
-        return new HierarchyBuilderDate(null, new Format(), granularities);
+    public static HierarchyBuilder<Date> create(DataType<Date> type, Granularity... granularities){
+        return create(type, null, new Format(), granularities);
     }
 
     /**
      * Creates an hierarchy reflecting the given granularities
      *
+     * @param type
      * @param timeZone
      * @param outputLocale
      * @param granularities
      * @return
      */
-    public static HierarchyBuilder<Date> create(TimeZone timeZone,
+    public static HierarchyBuilder<Date> create(DataType<Date> type,
+                                                TimeZone timeZone,
                                                 Format format,
                                                 Granularity... granularities){
-        return new HierarchyBuilderDate(timeZone, format, granularities);
+        return new HierarchyBuilderDate(type, timeZone, format, granularities);
     }
 
     /** Result */
@@ -259,21 +280,26 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     /** Granularities */
     private Granularity[]        granularities;
     /** Timezones */
-    private TimeZone             timeZone;
+    private TimeZone             timeZone = TimeZone.getDefault();
     /** Format */
-    private Format               format = new Format();
+    private Format               format   = new Format();
+    /** Type */
+    private final DataType<Date> datatype;
 
     /**
      * Creates an hierarchy reflecting the given granularities
      * 
+     * @param type
      * @param timeZone
      * @param format
      * @param granularities
      */
-    private HierarchyBuilderDate(TimeZone timeZone,
+    private HierarchyBuilderDate(DataType<Date> type,
+                                 TimeZone timeZone,
                                  Format format,
                                  Granularity... granularities){
         super(Type.DATE_BASED);
+        this.datatype = type;
         this.granularities = granularities;
         this.timeZone = timeZone;
         this.format = format;
@@ -399,6 +425,11 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      */
     private String generalize(String input, Granularity granularity) {
         
+        // Null to null
+        if (ARXDate.isNull(input)) {
+            return ARXDate.NULL_VALUE;
+        }
+        
         // Format
         String _format = (format != null && format.contains(granularity)) ? format.get(granularity) : granularity.format;
         Integer _range = granularity.range;
@@ -409,11 +440,13 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             sdf.setTimeZone(this.timeZone);
         }
         
+        Date date = datatype.parse(input);
+        
         // Range mapping
         if (_range == null) {
-            return sdf.format(input);
+            return sdf.format(date);
         } else {
-            int year = Integer.valueOf(sdf.format(input));
+            int year = Integer.valueOf(sdf.format(date));
             int lower = (year / _range) * _range;
             int upper = ((year / _range) + 1) * _range;
             return "[" + lower + ", " + upper + "[";
