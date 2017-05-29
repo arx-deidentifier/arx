@@ -17,11 +17,15 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.deidentifier.arx.aggregates.HierarchyBuilderDate.Format;
 import org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -97,9 +101,11 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         
         DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
         column1.setWidth("100%", "40px");
-    
+
+        //Create items
         createItems(table);
         
+        // Update
         table.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 
@@ -124,12 +130,13 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
                 }
                 
                 // Update granularities
-                model.getGranularities().clear();
+                List<Granularity> granularities = new ArrayList<>();
                 for (TableItem item : table.getItems()) {
                     if (item.getChecked()) {
-                        model.getGranularities().add((Granularity)item.getData());
+                        granularities.add((Granularity)item.getData());
                     }
                 }
+                model.setGranularities(granularities);
             }
         });
     
@@ -142,7 +149,39 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         text = new Text(group2, SWT.BORDER);
         text.setLayoutData(SWTUtil.createFillGridData());
 
-        decorateAndStore(text);
+        // Update
+        text.addModifyListener(new ModifyListener(){
+            ControlDecoration decoration = new ControlDecoration(text, SWT.RIGHT);
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                
+                // Extract granularity
+                Granularity g = null;
+                if (table.getSelection() != null && table.getSelection().length != 0) {
+                    g = (Granularity)table.getSelection()[0].getData();
+                }
+                
+                // Check
+                if (g.isFormatSupported()) {
+                    String formatString = text.getText();
+                    if (g != null && model.getFormat().isValid(formatString, g.getDefaultFormat())) {
+                        decoration.hide();
+                        Format format = model.getFormat();
+                        format.set((Granularity)table.getSelection()[0].getData(), formatString);
+                        model.setFormat(format);
+                    } else {
+                        decoration.setDescriptionText(Resources.getMessage("HierarchyWizardPageDate.5")); //$NON-NLS-1$
+                        Image image = FieldDecorationRegistry.getDefault()
+                              .getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
+                              .getImage();
+                        decoration.setImage(image);
+                        decoration.show();
+                    }
+                } else {
+                    decoration.hide();
+                }
+            }
+        });
         
         // Time zones
         Group group3 = new Group(composite, SWT.SHADOW_ETCHED_IN);
@@ -153,8 +192,10 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         combo = new Combo(group3, SWT.SINGLE);
         combo.setLayoutData(SWTUtil.createFillGridData());
 
+        //Create items
         createItems(combo);
     
+        // Update
         combo.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 
@@ -212,12 +253,11 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         Set<String> items = new HashSet<String>();
         String[] ids = TimeZone.getAvailableIDs();
         for (String id : ids) {
-            String name = TimeZone.getTimeZone(id).getDisplayName();
-            if (!items.contains(name)) {
-                combo.add(name);
-                items.add(name);
-            }
+            items.add(TimeZone.getTimeZone(id).getDisplayName());
         }
+        List<String> _items = new ArrayList<String>(items);
+        Collections.sort(_items);
+        combo.setItems(_items.toArray(new String[_items.size()]));
     }
     
     /**
@@ -231,43 +271,5 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
             item.setText(Resources.getMessage("HierarchyWizardPageDate." + g.toString())); //$NON-NLS-1$
             item.setData(g);
         }
-    }
-    
-    /**
-     * Decorates a text field for domain properties.
-     *
-     * @param text
-     */
-    private void decorateAndStore(final Text text) {
-        final ControlDecoration decoration = new ControlDecoration(text, SWT.RIGHT);
-        text.addModifyListener(new ModifyListener(){
-            @Override
-            public void modifyText(ModifyEvent arg0) {
-                
-                // Extract granularity
-                Granularity g = null;
-                if (table.getSelection() != null && table.getSelection().length != 0) {
-                    g = (Granularity)table.getSelection()[0].getData();
-                }
-                
-                // Check
-                if (g.isFormatSupported()) {
-                    String formatString = text.getText();
-                    if (g != null && model.getFormat().isValid(formatString, g.getDefaultFormat())) {
-                        decoration.hide();
-                        model.getFormat().set((Granularity)table.getSelection()[0].getData(), formatString);
-                    } else {
-                        decoration.setDescriptionText(Resources.getMessage("HierarchyWizardPageDate.5")); //$NON-NLS-1$
-                        Image image = FieldDecorationRegistry.getDefault()
-                              .getFieldDecoration(FieldDecorationRegistry.DEC_ERROR)
-                              .getImage();
-                        decoration.setImage(image);
-                        decoration.show();
-                    }
-                } else {
-                    decoration.hide();
-                }
-            }
-        });
     }
 }
