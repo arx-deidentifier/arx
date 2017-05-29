@@ -737,6 +737,13 @@ public class Controller implements IView {
                              .getHandle()
                              .getStatistics()
                              .getDistinctValues(index);
+        
+        if (data.length == 1) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.18"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.157")); //$NON-NLS-1$
+            return;
+        }
 
         HierarchyBuilder<?> builder = model.getInputConfig().getHierarchyBuilder(attr);
         @SuppressWarnings({ "unchecked", "rawtypes" })
