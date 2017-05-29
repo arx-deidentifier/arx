@@ -859,7 +859,13 @@ public class Model implements Serializable {
      * @return
      */
     public DataDefinition getOutputDefinition(){
-        if (this.output == null) return null;
+        if (this.output == null){
+            if (this.result != null) {
+                return this.result.getDataDefinition();
+            } else {
+                return null;
+            }
+        }
         else return this.output.getDefinition();
     }
 
@@ -1463,8 +1469,9 @@ public class Model implements Serializable {
     public void setResult(final ARXResult result) {
         this.result = result;
         if ((result != null) && (result.getGlobalOptimum() != null)) {
-            optimalNodeAsString = Arrays.toString(result.getGlobalOptimum()
-                    .getTransformation());
+            optimalNodeAsString = Arrays.toString(result.getGlobalOptimum().getTransformation());
+        } else {
+            optimalNodeAsString = null;
         }
         setModified();
     }
