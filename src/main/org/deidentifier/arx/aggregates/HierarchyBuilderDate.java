@@ -21,10 +21,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
@@ -39,22 +43,134 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Serializable {
 
     /**
+     * A format-class for localization
+     * 
+     * @author Fabian Prasser
+     */
+    public static class Format implements Serializable {
+
+        /** SVUID */
+        private static final long        serialVersionUID = -4412882420968107563L;
+
+        /** Map */
+        private Map<Granularity, String> map              = new HashMap<Granularity, String>();
+        
+        /**
+         * Default format
+         */
+        private Format() {
+            map.put(Granularity.SECOND_MINUTE_HOUR_DAY_MONTH_YEAR, "dd.MM.yyyy-HH:mm:ss");
+            map.put(Granularity.MINUTE_HOUR_DAY_MONTH_YEAR, "dd.MM.yyyy-HH:mm");
+            map.put(Granularity.HOUR_DAY_MONTH_YEAR, "dd.MM.yyyy-HH:00");
+            map.put(Granularity.DAY_MONTH_YEAR, "dd.MM.yyyy");
+            map.put(Granularity.WEEK_MONTH_YEAR, "W/MM.yyyy");
+            map.put(Granularity.WEEK_YEAR, "ww/yyyy");
+            map.put(Granularity.MONTH_YEAR, "MM/yyyy");
+        }
+
+        /**
+         * Returns whether a format for the given granularity is set
+         * @param granularity
+         * @return
+         */
+        public boolean contains(Granularity granularity) {
+            return map.containsKey(granularity);
+        }
+
+        /**
+         * Returns the format for the given granularity
+         * @param granularity
+         * @return
+         */
+        public String get(Granularity granularity) {
+            return map.get(granularity);
+        }
+
+        /**
+         * Sets a form
+         * @param granularity
+         * @param format
+         */
+        public void set(Granularity granularity, String format) {
+            if (granularity == null || format == null) {
+                throw new IllegalArgumentException("Argument must not be null");
+            }
+            if (granularity == Granularity.YEAR || granularity == Granularity.DECADE || 
+                granularity == Granularity.CENTURY || granularity == Granularity.MILLENIUM) {
+                throw new IllegalArgumentException("Granularity must not be 'year', 'decade', 'century' or 'millenium'");
+            }
+            if (!isValid(format, granularity.format)) {
+                throw new IllegalArgumentException("Illegal format string: '" + format + "'");
+            }
+            map.put(granularity, format);
+        }
+
+        /**
+         * Checks whether the input string adheres to the pattern
+         * @param input
+         * @param pattern
+         */
+        private boolean isValid(String input, String pattern) {
+            
+            // Check for null
+            if (input == null) {
+                return false;
+            }
+            
+            // Lists
+            List<Character> listInput = new ArrayList<Character>();
+            List<Character> listPattern = new ArrayList<Character>();
+            
+            // Input and pattern
+            for (char c : input.toCharArray()) {
+                if (Character.isLetter(c)) {
+                    listInput.add(new Character(c));
+                }
+            }
+            for (char c : pattern.toCharArray()) {
+                if (Character.isLetter(c)) {
+                    listPattern.add(new Character(c));
+                }
+            }
+            
+            // Sort
+            Collections.sort(listInput);
+            Collections.sort(listPattern);
+            
+            // Compare
+            if (!listInput.equals(listPattern)) {
+                return false;
+            }
+            
+            // Check if valid
+            try {
+                new SimpleDateFormat(input);
+            } catch (Exception e) {
+                return false;
+            }
+            
+            // Return
+            return true;
+        }
+    }
+    
+    /**
      * Granularity
      */
     public static enum Granularity {
         
         /**  Granularity */
-        SECOND_MINUTE_HOUR_DAY_MONTH_YEAR("dd.MM.yyyy 'at' HH:mm:ss"),
+        SECOND_MINUTE_HOUR_DAY_MONTH_YEAR("dd.MM.yyyy-HH:mm:ss"),
         /**  Granularity */
-        MINUTE_HOUR_DAY_MONTH_YEAR("dd.MM.yyyy 'at' HH:mm"),
+        MINUTE_HOUR_DAY_MONTH_YEAR("dd.MM.yyyy-HH:mm"),
         /**  Granularity */
-        HOUR_DAY_MONTH_YEAR("dd.MM.yyyy 'at' HH"),
+        HOUR_DAY_MONTH_YEAR("dd.MM.yyyy-HH:00"),
         /**  Granularity */
         DAY_MONTH_YEAR("dd.MM.yyyy"),
         /**  Granularity */
-        WEEK_MONTH_YEAR("W/MM.yyyy '(week)'"),
+        WEEK_MONTH_YEAR("W/MM.yyyy"),
         /**  Granularity */
-        WEEK_YEAR("ww/yyyy '(week)'"),
+        WEEK_YEAR("ww/yyyy"),
         /**  Granularity */
         MONTH_YEAR("MM/yyyy"),
         /**  Granularity */
@@ -88,54 +204,9 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             this.range = range;
         }
     }
-    
-    /**
-     * A format-class for localization
-     * 
-     * @author Fabian Prasser
-     */
-    public static class Format {
-        
-        /** Map */
-        private Map<Granularity, String> map = new HashMap<Granularity, String>();
-        
-        /**
-         * Sets a form
-         * @param granularity
-         * @param format
-         */
-        public void set(Granularity granularity, String format) {
-            if (granularity == null || format == null) {
-                throw new IllegalArgumentException("Argument must not be null");
-            }
-            if (granularity == Granularity.YEAR || granularity == Granularity.DECADE || 
-                granularity == Granularity.CENTURY || granularity == Granularity.MILLENIUM) {
-                throw new IllegalArgumentException("Granularity must not be year, decade, century or millenium");
-            }
-            map.put(granularity, format);
-        }
-
-        /**
-         * Returns whether a format for the given granularity is set
-         * @param granularity
-         * @return
-         */
-        public boolean contains(Granularity granularity) {
-            return map.containsKey(granularity);
-        }
-
-        /**
-         * Returns the format for the given granularity
-         * @param granularity
-         * @return
-         */
-        public String get(Granularity granularity) {
-            return map.get(granularity);
-        }
-    }
 
     /** SVUID */
-    private static final long serialVersionUID = 6294885577802586286L;
+    private static final long    serialVersionUID = 6294885577802586286L;
 
     /**
      * Loads a builder specification from the given file.
@@ -158,7 +229,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             if (ois != null) ois.close();
         }
     }
-
+    
     /**
      * Creates an hierarchy reflecting the given granularities
      *
@@ -168,7 +239,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     public static HierarchyBuilder<Date> create(Granularity... granularities){
         return new HierarchyBuilderDate(null, new Format(), granularities);
     }
-    
+
     /**
      * Creates an hierarchy reflecting the given granularities
      *
@@ -190,7 +261,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     /** Timezones */
     private TimeZone             timeZone;
     /** Format */
-    private Format               format;
+    private Format               format = new Format();
 
     /**
      * Creates an hierarchy reflecting the given granularities
@@ -239,18 +310,18 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     }
 
     /**
+     * @return the format
+     */
+    public Format getFormat() {
+        return format;
+    }
+
+    /**
      * Returns the granularities
      * @return the granularities
      */
     public Granularity[] getGranularities() {
         return granularities;
-    }
-
-    /**
-     * @return the format
-     */
-    public Format getFormat() {
-        return format;
     }
 
     /**
@@ -298,19 +369,19 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     }
 
     /**
+     * @param format the format to set
+     */
+    public void setFormat(Format format) {
+        this.format = format;
+    }
+
+    /**
      * Sets the granularities
      * @param granularities
      */
     public void setGranularities(Granularity[] granularities) {
         this.granularities = granularities;
         Arrays.sort(this.granularities);
-    }
-
-    /**
-     * @param format the format to set
-     */
-    public void setFormat(Format format) {
-        this.format = format;
     }
     
     /**
@@ -327,8 +398,25 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @return
      */
     private String generalize(String input, Granularity granularity) {
+        
+        // Format
         String _format = (format != null && format.contains(granularity)) ? format.get(granularity) : granularity.format;
         Integer _range = granularity.range;
-        return null;
+        
+        // Init
+        SimpleDateFormat sdf = new SimpleDateFormat(_format);
+        if (this.timeZone != null) {
+            sdf.setTimeZone(this.timeZone);
+        }
+        
+        // Range mapping
+        if (_range == null) {
+            return sdf.format(input);
+        } else {
+            int year = Integer.valueOf(sdf.format(input));
+            int lower = (year / _range) * _range;
+            int upper = ((year / _range) + 1) * _range;
+            return "[" + lower + ", " + upper + "[";
+        }
     }
 }
