@@ -270,6 +270,7 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
             TableItem item = new TableItem(table, SWT.CHECK);
             item.setText(Resources.getMessage("HierarchyWizardPageDate." + g.toString())); //$NON-NLS-1$
             item.setData(g);
+            item.setChecked(model.getGranularities().contains(g));
         }
     }
 }
