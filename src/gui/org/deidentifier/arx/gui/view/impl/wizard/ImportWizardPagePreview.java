@@ -152,14 +152,6 @@ public class ImportWizardPagePreview extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
-        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
-        tableViewer.setContentProvider(new ArrayContentProvider());
-
-        table = tableViewer.getTable();
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        table.setLinesVisible(true);
-        table.setHeaderVisible(true);
-
         setPageComplete(false);
     }
 
@@ -179,12 +171,18 @@ public class ImportWizardPagePreview extends WizardPage {
         if (visible) {
 
             /* Disable rendering until everything is finished */
-            table.setRedraw(false);
-
-            /* Remove old columns */
-            while (table.getColumnCount() > 0) {
-                table.getColumns()[0].dispose();
+            getControl().setRedraw(false);
+            
+            // Dispose and recreate
+            if (tableViewer != null) {
+                tableViewer.getTable().dispose();
             }
+            tableViewer = SWTUtil.createTableViewer((Composite)getControl(), SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
+            tableViewer.setContentProvider(new ArrayContentProvider());
+            table = tableViewer.getTable();
+            table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+            table.setLinesVisible(true);
+            table.setHeaderVisible(true);
 
             /* Add enabled columns with appropriate label providers */
             for (ImportColumn column : wizardImport.getData().getEnabledColumns()) {
@@ -206,8 +204,8 @@ public class ImportWizardPagePreview extends WizardPage {
 
             /* Make table visible again */
             table.layout();
-            table.setRedraw(true);
-
+            getControl().setRedraw(true);
+            
             setPageComplete(true);
 
         } else {
