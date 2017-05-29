@@ -101,24 +101,9 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             }
             
             // Lists
-            List<Character> listInput = new ArrayList<Character>();
-            List<Character> listPattern = new ArrayList<Character>();
+            List<Character> listInput = patternAsList(input);
+            List<Character> listPattern = patternAsList(pattern);
             
-            // Input and pattern
-            for (char c : input.toCharArray()) {
-                if (Character.isLetter(c)) {
-                    listInput.add(new Character(c));
-                }
-            }
-            for (char c : pattern.toCharArray()) {
-                if (Character.isLetter(c)) {
-                    listPattern.add(new Character(c));
-                }
-            }
-            
-            // Sort
-            Collections.sort(listInput);
-            Collections.sort(listPattern);
             
             // Compare
             if (!listInput.equals(listPattern)) {
@@ -134,6 +119,30 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             
             // Return
             return true;
+        }
+
+        /**
+         * Helper function
+         * @param input
+         * @return
+         */
+        private List<Character> patternAsList(String input) {
+            // Init
+            List<Character> list = new ArrayList<>(); 
+            
+            // Input and pattern
+            boolean ignore = false;
+            for (char c : input.toCharArray()) {
+                if (c == '\'') {
+                    ignore = !ignore;
+                } else if (!ignore && Character.isLetter(c)) {
+                    list.add(new Character(c));
+                }
+            }
+            
+            // Sort and return
+            Collections.sort(list);
+            return list;
         }
 
         /**
@@ -174,6 +183,12 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         WEEK_YEAR("ww/yyyy"),
         /**  Granularity */
         MONTH_YEAR("MM/yyyy"),
+        /**  Granularity */
+        WEEKDAY("u"),
+        /**  Granularity */
+        WEEK("W"),
+        /**  Granularity */
+        QUARTER("MM", 4),
         /**  Granularity */
         YEAR("yyyy"),
         /**  Granularity */
