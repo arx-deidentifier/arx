@@ -169,6 +169,7 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
                         Format format = model.getFormat();
                         format.set((Granularity)table.getSelection()[0].getData(), formatString);
                         model.setFormat(format);
+                        text.setData(true);
                     } else {
                         decoration.setDescriptionText(Resources.getMessage("HierarchyWizardPageDate.5")); //$NON-NLS-1$
                         Image image = FieldDecorationRegistry.getDefault()
@@ -176,10 +177,13 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
                               .getImage();
                         decoration.setImage(image);
                         decoration.show();
+                        text.setData(null);
                     }
                 } else {
                     decoration.hide();
+                    text.setData(true);
                 }
+                HierarchyWizardPageDate.this.setPageComplete(HierarchyWizardPageDate.this.isPageComplete());
             }
         });
         
@@ -218,6 +222,11 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
        
         updatePage();
         setControl(composite);
+    }
+    
+    @Override
+    public boolean isPageComplete() {
+        return text.getData() != null;
     }
 
     @Override
