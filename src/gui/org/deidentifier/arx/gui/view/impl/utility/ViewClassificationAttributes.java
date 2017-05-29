@@ -306,10 +306,6 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
             return;
         }
 
-        // Prepare
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        root.setRedraw(false);
-        
         // Clear
         root.setRedraw(false);        
 
@@ -317,14 +313,14 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
             item.dispose();
         }
         
-        for (int i = 0; i < handle.getNumColumns(); i++) {
+        for (int i = 0; i < state.attributes.size(); i++) {
 
             // Features
             final String attribute = state.attributes.get(i);
             AttributeType type = state.types.get(i);
             Image image = controller.getResources().getImage(type);
             TableItem itemF = new TableItem(features, SWT.NONE);
-            itemF.setText(new String[] { "", attribute } );
+            itemF.setText(new String[] { "", attribute, ""} );
             itemF.setImage(0, image);
             itemF.setChecked(model.getSelectedFeatures().contains(attribute));
 
@@ -366,7 +362,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
                 }   
             });
             editor.grabHorizontal = true;
-            editor.setEditor(combo, itemF, 1);
+            editor.setEditor(combo, itemF, 2);
             String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(attribute);
             if (function == null || function.equals("")) {
                 function = LABEL_CATEGORICAL;
@@ -376,6 +372,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         }
         
         // Finish
+        features.layout();
         root.setRedraw(true);
         SWTUtil.enable(root);
     }
