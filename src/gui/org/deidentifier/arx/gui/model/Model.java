@@ -239,11 +239,15 @@ public class Model implements Serializable {
     private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
 
     /** Model for a specific privacy criterion. */
-    private ModelProfitabilityCriterion              stackelbergPrivacyModel         = new ModelProfitabilityCriterion();
+    private ModelProfitabilityCriterion                   stackelbergPrivacyModel         = new ModelProfitabilityCriterion();
+
+    /** Model for a specific privacy criterion. */
+    private Map<String, ModelBLikenessCriterion>          bLikenessModel                  = new HashMap<String, ModelBLikenessCriterion>();
 
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
+    
     /** Configuration. */
     private MetricConfiguration                   metricConfig                    = null;
     
@@ -448,6 +452,13 @@ public class Model implements Serializable {
             }
         }
         
+        for (Entry<String, ModelBLikenessCriterion> entry : this.bLikenessModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
+        
         for (ModelRiskBasedCriterion entry : this.riskBasedModel){
             if (entry != null && entry.isEnabled()) {
                 PrivacyCriterion criterion = entry.getCriterion(this);
@@ -574,6 +585,23 @@ public class Model implements Serializable {
             }
         }
         return dDisclosurePrivacyModel;
+    }
+
+    /**
+     * Returns the b-Likeness privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
+        if (this.bLikenessModel == null) {
+            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
+            }
+        }
+        return bLikenessModel;
     }
 
     /**
@@ -831,7 +859,13 @@ public class Model implements Serializable {
      * @return
      */
     public DataDefinition getOutputDefinition(){
-        if (this.output == null) return null;
+        if (this.output == null){
+            if (this.result != null) {
+                return this.result.getDataDefinition();
+            } else {
+                return null;
+            }
+        }
         else return this.output.getDefinition();
     }
 
@@ -948,23 +982,8 @@ public class Model implements Serializable {
      * @return
      */
     public Set<String> getSelectedClasses() {
-
         if (this.selectedClasses == null) {
-
-            // Add attributes
-            if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
-                DataHandle handle = this.getInputConfig().getInput().getHandle();
-
-                this.selectedClasses = new HashSet<String>();
-                for (int i = 0; i < handle.getNumColumns(); i++) {
-                    this.selectedClasses.add(handle.getAttributeName(i));
-                }
-
-            } else {
-
-                // Return empty set
-                return new HashSet<String>();
-            }
+            this.selectedClasses = new HashSet<String>();
         }
         return this.selectedClasses;
     }
@@ -974,23 +993,8 @@ public class Model implements Serializable {
      * @return
      */
     public Set<String> getSelectedFeatures() {
-
         if (this.selectedFeatures == null) {
-
-            // Add attributes
-            if (this.getInputConfig() != null && this.getInputConfig().getInput() != null) {
-                DataHandle handle = this.getInputConfig().getInput().getHandle();
-
-                this.selectedFeatures = new HashSet<String>();
-                for (int i = 0; i < handle.getNumColumns(); i++) {
-                    this.selectedFeatures.add(handle.getAttributeName(i));
-                }
-
-            } else {
-
-                // Return empty set
-                return new HashSet<String>();
-            }
+            this.selectedFeatures = new HashSet<String>();
         }
         return this.selectedFeatures;
     }
@@ -1248,12 +1252,14 @@ public class Model implements Serializable {
         tClosenessModel.clear();
         riskBasedModel.clear();
         dDisclosurePrivacyModel.clear();
+        bLikenessModel.clear();
         DataHandle handle = inputConfig.getInput().getHandle();
         for (int col = 0; col < handle.getNumColumns(); col++) {
             String attribute = handle.getAttributeName(col);
             lDiversityModel.put(attribute, new ModelLDiversityCriterion(attribute));
             tClosenessModel.put(attribute, new ModelTClosenessCriterion(attribute));
             dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
+            bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
         }
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
@@ -1464,8 +1470,9 @@ public class Model implements Serializable {
     public void setResult(final ARXResult result) {
         this.result = result;
         if ((result != null) && (result.getGlobalOptimum() != null)) {
-            optimalNodeAsString = Arrays.toString(result.getGlobalOptimum()
-                    .getTransformation());
+            optimalNodeAsString = Arrays.toString(result.getGlobalOptimum().getTransformation());
+        } else {
+            optimalNodeAsString = null;
         }
         setModified();
     }

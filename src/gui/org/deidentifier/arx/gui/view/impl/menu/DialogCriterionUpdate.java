@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelDPresenceCriterion;
@@ -28,8 +29,8 @@ import org.deidentifier.arx.gui.model.ModelDifferentialPrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelKAnonymityCriterion;
 import org.deidentifier.arx.gui.model.ModelKMapCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
-import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.model.ModelProfitabilityCriterion;
+import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.model.ModelTClosenessCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -164,6 +165,8 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
                 editor = new EditorCriterionTCloseness(root, (ModelTClosenessCriterion)selection);
             } else if (selection instanceof ModelDDisclosurePrivacyCriterion) {
                 editor = new EditorCriterionDDisclosurePrivacy(root, (ModelDDisclosurePrivacyCriterion)selection);
+            } else if (selection instanceof ModelBLikenessCriterion) {
+                editor = new EditorCriterionBLikeness(root, (ModelBLikenessCriterion)selection);
             } else if (selection instanceof ModelKAnonymityCriterion) {
                 editor = new EditorCriterionKAnonymity(root, (ModelKAnonymityCriterion)selection);
             } else if (selection instanceof ModelKMapCriterion) {
@@ -270,6 +273,7 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
         Image symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
         Image symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
         Image symbolG = controller.getResources().getManagedImage("symbol_gt.png"); //$NON-NLS-1$
+        Image symbolB = controller.getResources().getManagedImage("symbol_b.png"); //$NON-NLS-1$
         
         for (ModelCriterion c : elements) {
 
@@ -284,6 +288,9 @@ public class DialogCriterionUpdate extends TitleAreaDialog implements IDialog {
             } else if (c instanceof ModelDDisclosurePrivacyCriterion) {
                 item.setText(new String[] { "", c.getLabel(), ((ModelDDisclosurePrivacyCriterion)c).getAttribute() }); //$NON-NLS-1$
                 item.setImage(0, symbolD);
+            } else if (c instanceof ModelBLikenessCriterion) {
+                item.setText(new String[] { "", c.getLabel(), ((ModelBLikenessCriterion)c).getAttribute() }); //$NON-NLS-1$
+                item.setImage(0, symbolB);
             } else if (c instanceof ModelKAnonymityCriterion) {
                 item.setText(new String[] { "", c.getLabel(), "" }); //$NON-NLS-1$ //$NON-NLS-2$
                 item.setImage(0, symbolK);

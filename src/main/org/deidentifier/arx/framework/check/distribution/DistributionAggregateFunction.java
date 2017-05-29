@@ -742,7 +742,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
     public abstract <T> double getError(Distribution distribution);
     
     /**
-     * This will return the normalized numer of aggregated values in range [1/#distinct-values, 1].
+     * This will return the normalized number of aggregated values in range [1/#distinct-values, 1].
      * 
      * @param distribution
      * @return

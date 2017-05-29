@@ -226,7 +226,7 @@ public class MainToolBar extends AbstractMenu {
             if (this.optimum != null) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
                   .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
-                  .append(SWTUtil.getPrettyString(this.heuristic))
+                  .append(SWTUtil.getPrettyString(!this.heuristic))
                   .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
                   .append(Arrays.toString(this.optimum.getTransformation()));
                 sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$

@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -30,9 +31,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilder;
@@ -1260,6 +1263,10 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             return label;
         }
         
+        /**
+         * Scale
+         * @return
+         */
         public DataScale getScale() {
             return scale;
         }
@@ -1315,11 +1322,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static interface DataTypeWithFormat {
         
         /**
+         * Format
+         * 
          * @return
          */
         public abstract String getFormat();
         
         /**
+         * Locale
+         * 
          * @return
          */
         public abstract Locale getLocale();
@@ -1334,7 +1345,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
     public static interface DataTypeWithRatioScale<T> {
         
         /**
-         * 
+         * Add
          *
          * @param augend
          * @param addend
@@ -1343,7 +1354,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T add(T augend, T addend);
 
         /**
-         * 
+         * Compare
          *
          * @param s1
          * @param s2
@@ -1355,7 +1366,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                                                                  ParseException;
 
         /**
-         * 
+         * Compare
          *
          * @param t1
          * @param t2
@@ -1364,7 +1375,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract int compare(T t1, T t2);
 
         /**
-         * 
+         * Divide
          *
          * @param dividend
          * @param divisor
@@ -1373,7 +1384,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract String divide(String dividend, String divisor);
         
         /**
-         * 
+         * Divide
          *
          * @param dividend
          * @param divisor
@@ -1382,7 +1393,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T divide(T dividend, T divisor);
         
         /**
-         * 
+         * Format
          *
          * @param t
          * @return
@@ -1398,28 +1409,28 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T fromDouble(Double d);
 
         /**
-         * 
+         * Description
          *
          * @return
          */
         public abstract DataTypeDescription<T> getDescription();
 
         /**
-         * 
+         * Maximum
          *
          * @return
          */
         public T getMaximum();
         
         /**
-         * 
+         * Minimum
          *
          * @return
          */
         public T getMinimum();
 
         /**
-         * 
+         * Valid
          *
          * @param s
          * @return
@@ -1427,7 +1438,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract boolean isValid(String s);
 
         /**
-         * 
+         * Multiply
          *
          * @param multiplicand
          * @param multiplicator
@@ -1437,7 +1448,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                                         String multiplicator);
 
         /**
-         * 
+         * Multiply
          *
          * @param multiplicand
          * @param multiplicator
@@ -1446,7 +1457,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T multiply(T multiplicand, double multiplicator);
 
         /**
-         * 
+         * Multiply
          *
          * @param multiplicand
          * @param multiplicator
@@ -1455,7 +1466,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T multiply(T multiplicand, int multiplicator);
 
         /**
-         * 
+         * Multiply
          *
          * @param multiplicand
          * @param multiplicator
@@ -1464,7 +1475,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T multiply(T multiplicand, T multiplicator);
         
         /**
-         * 
+         * Parse
          *
          * @param s
          * @return
@@ -1472,7 +1483,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract T parse(String s);
 
         /**
-         * 
+         * Divide
          *
          * @param dividend
          * @param divisor
@@ -1481,7 +1492,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         public abstract double ratio(T dividend, T divisor);
         
         /**
-         * 
+         * Subtract
          *
          * @param minuend
          * @param subtrahend
@@ -1728,7 +1739,28 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         result.add("#,##0");
         result.add("#,##0.###");
         result.add("#,##0%");
-        result.add("¤#,##0.00;(¤#,##0.00)");
+        result.add("#,##0.00");
+        
+        // Create list of common patterns
+        Set<String> set = new HashSet<String>();
+        set.addAll(result);
+        for (Locale locale: NumberFormat.getAvailableLocales()) {
+            for (NumberFormat format : new NumberFormat[] { NumberFormat.getNumberInstance(locale),
+                                                            NumberFormat.getIntegerInstance(locale),
+                                                            NumberFormat.getCurrencyInstance(locale),
+                                                            NumberFormat.getPercentInstance(locale) }) {
+
+                // Add pattern
+                if (format instanceof DecimalFormat) {
+                    String pattern = ((DecimalFormat)format).toPattern();
+                    if (!set.contains(pattern)) {
+                        set.add(pattern);
+                        result.add(pattern);
+                    }
+                }
+            }
+            
+        }
         return result;
     }
     

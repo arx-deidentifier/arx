@@ -219,14 +219,19 @@ public class ARXCertificate {
             element.render(document, 0, this.style);
         }
         
-        PDDocument pdDocument = document.getPDDocument();
+        // Save to temp file
+        File tmp = File.createTempFile("arx", "certificate");
+        document.save(tmp);
+        
+        // Load and watermark
+        PDDocument pdDocument = PDDocument.load(tmp);
         Watermark watermark = new Watermark(pdDocument);
-        for (int page = 0; page < pdDocument.getNumberOfPages(); page++) {
-            watermark.mark(pdDocument, page);
-        }
+        watermark.mark(pdDocument);
         
         // Save
-        document.save(stream);
+        pdDocument.save(stream);
+        pdDocument.close();
+        tmp.delete();
     }
     
 	/**

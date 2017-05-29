@@ -86,16 +86,16 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
      * @param <U>
      */
     public static class HierarchyWizardGroupingInterval<U> {
-        
-        /**  TODO */
-        public U min;
-        
-        /**  TODO */
-        public U max;
-        
-        /**  TODO */
+
+        /** Min */
+        public U                    min;
+
+        /** Max */
+        public U                    max;
+
+        /** Functio */
         public AggregateFunction<U> function;
-        
+
         /**
          * 
          *
@@ -128,16 +128,16 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
      * @param <U>
      */
     public static class HierarchyWizardGroupingRange<U> {
-        
-        /**  TODO */
+
+        /** Repeat */
         public U repeat;
-        
-        /**  TODO */
+
+        /** Snap */
         public U snap;
-        
-        /**  TODO */
+
+        /** Label */
         public U label;
-        
+
         /**
          * 
          *

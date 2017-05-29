@@ -484,7 +484,6 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                e.printStackTrace();
                 throw new InterruptedException("Interrupted by exception: " + e.getMessage());
             }
         }

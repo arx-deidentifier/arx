@@ -31,7 +31,7 @@ import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
 public class ModelClassification implements Serializable {
 
     /** SVUID */
-    private static final long serialVersionUID         = 5361564507029617616L;
+    private static final long                  serialVersionUID = 5361564507029617616L;
 
     /** Modified */
     private boolean                            modified         = false;

@@ -34,7 +34,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply the d-presence criterion
+ * This class implements an example on how to apply the d-presence privacy model
  * and create a research subset by providing a complex data selector.
  *
  * @author Fabian Prasser

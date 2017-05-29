@@ -29,9 +29,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.LDiversity;
@@ -441,16 +443,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 
         // Check models for which only one instance is supported
         if ((c instanceof DPresence) && this.isPrivacyModelSpecified(DPresence.class)) {
-            throw new RuntimeException("You must not add more than one d-presence criterion");
+            throw new IllegalArgumentException("You must not add more than one instance of the d-presence model");
         }
         if ((c instanceof KMap) && this.isPrivacyModelSpecified(KMap.class)) { 
-            throw new RuntimeException("You must not add more than one k-map criterion"); 
+            throw new IllegalArgumentException("You must not add more than one instance of the k-map model"); 
         } 
         if ((c instanceof KAnonymity) && this.isPrivacyModelSpecified(KAnonymity.class)) { 
-               throw new RuntimeException("You must not add more than one k-anonymity criterion"); 
+               throw new IllegalArgumentException("You must not add more than one instance of the k-anonymity model"); 
         }
         if ((c instanceof EDDifferentialPrivacy) && this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) { 
-            throw new RuntimeException("You must not add more than one differential privacy criterion"); 
+            throw new IllegalArgumentException("You must not add more than one instance of the differential privacy model"); 
         }
         
         // Check whether different subsets have been defined
@@ -503,6 +505,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.relMaxOutliers = this.relMaxOutliers;
         result.absMaxOutliers = this.absMaxOutliers;
         result.aCriteria = this.aCriteria.clone();
+        result.bCriteria = this.bCriteria.clone();
         result.criteria = new HashSet<PrivacyCriterion>(this.criteria);
         result.requirements = this.requirements;
         result.metric = this.metric;
@@ -1367,6 +1370,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         if (this.isPrivacyModelSpecified(DDisclosurePrivacy.class)) {
             list.addAll(this.getPrivacyModels(DDisclosurePrivacy.class));
+        }
+        if (this.isPrivacyModelSpecified(BasicBLikeness.class)) {
+            list.addAll(this.getPrivacyModels(BasicBLikeness.class));
+        }
+        if (this.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
+            list.addAll(this.getPrivacyModels(EnhancedBLikeness.class));
         }
         if (this.isPrivacyModelSpecified(LDiversity.class)) {
             list.addAll(this.getPrivacyModels(LDiversity.class));

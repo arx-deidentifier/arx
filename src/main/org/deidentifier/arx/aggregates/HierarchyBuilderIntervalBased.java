@@ -44,22 +44,22 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @author Fabian Prasser
      */
     public class IndexNode implements Serializable {
-        
-        /**  TODO */
-        private static final long serialVersionUID = 5985820929677249525L;
+
+        /** SVUID */
+        private static final long   serialVersionUID = 5985820929677249525L;
 
         /** Children. */
         private final IndexNode[]   children;
-        
+
         /** IsLeaf. */
         private final boolean       isLeaf;
-        
+
         /** Leafs. */
         private final Interval<T>[] leafs;
-        
+
         /** Max is exclusive. */
         private final T             max;
-        
+
         /** Min is inclusive. */
         private final T             min;
 
@@ -203,7 +203,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.min = min;
             this.max = max;
             this.function = function;
-            this.lower = false;
+            this.lower = null;
         }
         
         @Override
@@ -649,9 +649,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         try {
             cmp = type.compare(type.format(min), type.format(max));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid data item "+min+" or "+max);
+            throw new IllegalArgumentException("Invalid data item " + min + " or " + max);
         }
-        if (cmp >= 0) throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
+        if (cmp >= 0) throw new IllegalArgumentException("Min (" + min + ") must be lower than max (" + max + ")");
     }
 
     /**

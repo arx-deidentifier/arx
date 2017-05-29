@@ -130,11 +130,11 @@ public class LayoutRisks implements ILayout {
                 layoutBottomRight.setSelectionIdex(layoutBottomLeft.getSelectionIndex());
                 
                 // Synchronize "Quasi-identifiers"
-                if (layoutBottomLeft.getSelectionIndex() == 3) {
+                if (layoutBottomLeft.getSelectionIndex() == 2) {
                     layoutTopLeft.setSelectionIdex(2);
                     layoutTopRight.setSelectionIdex(2);
                     
-                // Synchronize "re-identification risks"
+                // Synchronize "Re-identification risks"
                 } else if (layoutBottomLeft.getSelectionIndex() == 0) {
                     layoutTopLeft.setSelectionIdex(3);
                     layoutTopRight.setSelectionIdex(3);
@@ -150,7 +150,7 @@ public class LayoutRisks implements ILayout {
                 // Synchronize left and right side
                 layoutBottomLeft.setSelectionIdex(layoutBottomRight.getSelectionIndex());
                 
-                // Synchronize "re-identification risks"
+                // Synchronize "Re-identification risks"
                 if (layoutBottomRight.getSelectionIndex() == 0) {
                     layoutTopLeft.setSelectionIdex(3);
                     layoutTopRight.setSelectionIdex(3);
@@ -169,9 +169,9 @@ public class LayoutRisks implements ILayout {
 
                 // Synchronize "Quasi-identifiers"
                 if (layoutTopLeft.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(3);
+                    layoutBottomLeft.setSelectionIdex(2);
 
-                // Synchronize "re-identification risks"
+                // Synchronize "Re-identification risks"
                 } else if (layoutTopLeft.getSelectionIndex() == 3) {
                     layoutBottomLeft.setSelectionIdex(0);
                     layoutBottomRight.setSelectionIdex(0);
@@ -189,10 +189,10 @@ public class LayoutRisks implements ILayout {
 
                 // Synchronize "Quasi-identifiers"
                 if (layoutTopRight.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(3);
+                    layoutBottomLeft.setSelectionIdex(2);
                     
 
-                // Synchronize "re-identification risks"
+                // Synchronize "Re-identification risks"
                 } else if (layoutTopRight.getSelectionIndex() == 3) {
                     layoutBottomLeft.setSelectionIdex(0);
                     layoutBottomRight.setSelectionIdex(0);
