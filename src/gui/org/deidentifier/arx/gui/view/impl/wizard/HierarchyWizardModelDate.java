@@ -67,12 +67,15 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
 
     @Override
     public HierarchyBuilderDate getBuilder(boolean serializable) {
-        
+
         // Create
-        HierarchyBuilder<Date> builder = HierarchyBuilderDate.create(this.dataType, timeZone, format, granularities.toArray(new Granularity[0]));
-        
+        HierarchyBuilder<Date> builder = HierarchyBuilderDate.create(this.dataType,
+                                                                     this.timeZone,
+                                                                     this.format,
+                                                                     this.granularities.toArray(new Granularity[0]));
+
         // Return
-        return (HierarchyBuilderDate)builder;
+        return (HierarchyBuilderDate) builder;
     }
 
     /**
