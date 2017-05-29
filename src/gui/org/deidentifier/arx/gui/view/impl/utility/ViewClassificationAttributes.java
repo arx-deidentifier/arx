@@ -218,6 +218,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
+        state = null;
         SWTUtil.disable(root);
     }
 
