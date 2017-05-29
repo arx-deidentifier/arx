@@ -23,12 +23,13 @@ import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
-import org.apache.commons.math3.geometry.partitioning.BSPTreeVisitor.Order;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 
 /**
@@ -44,19 +45,19 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     public static enum Granularity {
         
         /**  Granularity */
-        SECOND_MINUTE_HOUR_DAY_MONTH_YEAR("yyyy-MM-dd 'at' HH:mm:ss"),
+        SECOND_MINUTE_HOUR_DAY_MONTH_YEAR("dd.MM.yyyy 'at' HH:mm:ss"),
         /**  Granularity */
-        MINUTE_HOUR_DAY_MONTH_YEAR("yyyy-MM-dd 'at' HH:mm"),
+        MINUTE_HOUR_DAY_MONTH_YEAR("dd.MM.yyyy 'at' HH:mm"),
         /**  Granularity */
-        HOUR_DAY_MONTH_YEAR("yyyy-MM-dd 'at' HH"),
+        HOUR_DAY_MONTH_YEAR("dd.MM.yyyy 'at' HH"),
         /**  Granularity */
-        DAY_MONTH_YEAR("yyyy-MM-dd"),
+        DAY_MONTH_YEAR("dd.MM.yyyy"),
         /**  Granularity */
-        WEEK_MONTH_YEAR("yyyy-MM-W '(week)'"),
+        WEEK_MONTH_YEAR("W/MM.yyyy '(week)'"),
         /**  Granularity */
-        WEEK_YEAR("yyyy-ww '(week)'"),
+        WEEK_YEAR("ww/yyyy '(week)'"),
         /**  Granularity */
-        MONTH_YEAR("yyyy-MM"),
+        MONTH_YEAR("MM/yyyy"),
         /**  Granularity */
         YEAR("yyyy"),
         /**  Granularity */
@@ -89,9 +90,49 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         }
     }
     
-    public static enum Locale {
-        EN,
-        EU
+    /**
+     * A format-class for localization
+     * 
+     * @author Fabian Prasser
+     */
+    public static class Format {
+        
+        /** Map */
+        private Map<Granularity, String> map = new HashMap<Granularity, String>();
+        
+        /**
+         * Sets a form
+         * @param granularity
+         * @param format
+         */
+        public void set(Granularity granularity, String format) {
+            if (granularity == null || format == null) {
+                throw new IllegalArgumentException("Argument must not be null");
+            }
+            if (granularity == Granularity.YEAR || granularity == Granularity.DECADE || 
+                granularity == Granularity.CENTURY || granularity == Granularity.MILLENIUM) {
+                throw new IllegalArgumentException("Granularity must not be year, decade, century or millenium");
+            }
+            map.put(granularity, format);
+        }
+
+        /**
+         * Returns whether a format for the given granularity is set
+         * @param granularity
+         * @return
+         */
+        public boolean contains(Granularity granularity) {
+            return map.containsKey(granularity);
+        }
+
+        /**
+         * Returns the format for the given granularity
+         * @param granularity
+         * @return
+         */
+        public String get(Granularity granularity) {
+            return map.get(granularity);
+        }
     }
 
     /** SVUID */
@@ -126,21 +167,21 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @return
      */
     public static HierarchyBuilder<Date> create(Granularity... granularities){
-        return new HierarchyBuilderDate(null, null, granularities);
+        return new HierarchyBuilderDate(null, new Format(), granularities);
     }
     
     /**
      * Creates an hierarchy reflecting the given granularities
      *
-     * @param outputTimeZone
+     * @param timeZone
      * @param outputLocale
      * @param granularities
      * @return
      */
-    public static HierarchyBuilder<Date> create(TimeZone outputTimeZone,
-                                                Locale outputLocale,
+    public static HierarchyBuilder<Date> create(TimeZone timeZone,
+                                                Format format,
                                                 Granularity... granularities){
-        return new HierarchyBuilderDate(outputTimeZone, outputLocale, granularities);
+        return new HierarchyBuilderDate(timeZone, format, granularities);
     }
 
     /** Result */
@@ -148,24 +189,24 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     /** Granularities */
     private Granularity[]        granularities;
     /** Timezones */
-    private TimeZone             outputTimeZone;
-    /** Locales */
-    private Locale               outputLocale;
+    private TimeZone             timeZone;
+    /** Format */
+    private Format               format;
 
     /**
      * Creates an hierarchy reflecting the given granularities
      * 
-     * @param outputTimeZone
-     * @param outputLocale
+     * @param timeZone
+     * @param format
      * @param granularities
      */
-    private HierarchyBuilderDate(TimeZone outputTimeZone,
-                                 Locale outputLocale,
+    private HierarchyBuilderDate(TimeZone timeZone,
+                                 Format format,
                                  Granularity... granularities){
         super(Type.DATE_BASED);
         this.granularities = granularities;
-        this.outputTimeZone = outputTimeZone;
-        this.outputLocale = outputLocale;
+        this.timeZone = timeZone;
+        this.format = format;
         Arrays.sort(this.granularities);
     }
     
@@ -207,17 +248,17 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     }
 
     /**
-     * @return the outputLocale
+     * @return the format
      */
-    public Locale getLocale() {
-        return outputLocale;
+    public Format getFormat() {
+        return format;
     }
 
     /**
      * @return the outputTimeZone
      */
     public TimeZone getTimeZone() {
-        return outputTimeZone;
+        return timeZone;
     }
 
     /**
@@ -267,17 +308,17 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     }
 
     /**
-     * @param outputLocale the outputLocale to set
+     * @param format the format to set
      */
-    public void setLocale(Locale outputLocale) {
-        this.outputLocale = outputLocale;
+    public void setFormat(Format format) {
+        this.format = format;
     }
     
     /**
-     * @param outputTimeZone the outputTimeZone to set
+     * @param timeZone the time zone to set
      */
-    public void setTimeZone(TimeZone outputTimeZone) {
-        this.outputTimeZone = outputTimeZone;
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 
     /**
@@ -287,8 +328,8 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @return
      */
     private String generalize(String input, Granularity granularity) {
-        String format = granularity.format;
-        Integer range = granularity.range;
+        String _format = (format != null && format.contains(granularity)) ? format.get(granularity) : granularity.format;
+        Integer _range = granularity.range;
         return null;
     }
 }
