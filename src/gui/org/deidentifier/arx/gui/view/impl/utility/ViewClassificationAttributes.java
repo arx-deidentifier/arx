@@ -143,7 +143,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
      * @param controller
      */
     public ViewClassificationAttributes(final Composite parent,
-                                    final Controller controller) {
+                                        final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
