@@ -302,11 +302,18 @@ public class ViewAttributeList implements IView {
         DataType<?> dtype = model.getInputDefinition().getDataType(attribute);
         if (!(dtype instanceof ARXOrderedString) && dtype.getDescription().hasFormat()) {
             DataTypeWithFormat dtwf = (DataTypeWithFormat) dtype;
+            String locale = dtwf.getLocale() != null ? dtwf.getLocale().getLanguage() : null;
             String format = dtwf.getFormat();
+            String result = "";
             if (format == null) {
-                return Resources.getMessage("ViewAttributeDefinition.7"); //$NON-NLS-1$
+                result = Resources.getMessage("ViewAttributeDefinition.7"); //$NON-NLS-1$
             } else {
-                return format;
+                result = format;
+            }
+            if (locale == null) {
+                return result;
+            } else {
+                return result +  " (" + locale.toUpperCase() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else {
             return Resources.getMessage("ViewAttributeDefinition.8"); //$NON-NLS-1$
