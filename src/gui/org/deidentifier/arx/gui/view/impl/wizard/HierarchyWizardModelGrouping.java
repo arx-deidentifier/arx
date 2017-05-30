@@ -164,9 +164,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
          * @param range
          */
         public HierarchyWizardGroupingRange(Range<U> range) {
-            this.repeat = range.getRepeatBound();
-            this.snap = range.getSnapBound();
-            this.label = range.getLabelBound();
+            this.repeat = range.getSnapFrom();
+            this.snap = range.getBottomTopCodingFrom();
+            this.label = range.getMinMaxValue();
         }
         
         /**
@@ -503,12 +503,12 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     public void parse(HierarchyBuilderIntervalBased<T> builder){
         this.type = builder.getDataType();
         this.showIntervals = true;
-        this.lower.label = builder.getLowerRange().getLabelBound();
-        this.lower.repeat = builder.getLowerRange().getRepeatBound();
-        this.lower.snap = builder.getLowerRange().getSnapBound();
-        this.upper.label = builder.getUpperRange().getLabelBound();
-        this.upper.repeat = builder.getUpperRange().getRepeatBound();
-        this.upper.snap = builder.getUpperRange().getSnapBound();
+        this.lower.label = builder.getLowerRange().getMinMaxValue();
+        this.lower.repeat = builder.getLowerRange().getSnapFrom();
+        this.lower.snap = builder.getLowerRange().getBottomTopCodingFrom();
+        this.upper.label = builder.getUpperRange().getMinMaxValue();
+        this.upper.repeat = builder.getUpperRange().getSnapFrom();
+        this.upper.snap = builder.getUpperRange().getBottomTopCodingFrom();
         this.function = builder.getDefaultFunction();
         this.intervals.clear();
         this.groups.clear();
