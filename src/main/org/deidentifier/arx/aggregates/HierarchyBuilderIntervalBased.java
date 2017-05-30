@@ -914,11 +914,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             if (value == null) {
                 interval = new Interval<T>(this);
             } else if (type.compare(value, tempLower.labelBound) < 0) {
-                throw new IllegalArgumentException(type.format(value)+ " is < lower label bound");
+                throw new IllegalArgumentException(type.format(value) + " is < lower label bound (" + type.format(tempLower.labelBound) + ")");
             } else if (type.compare(value, tempLower.snapBound) < 0) {
                 interval = new Interval<T>(this, true, tempLower.snapBound);
             } else if (type.compare(value, tempUpper.labelBound) >= 0) {
-                throw new IllegalArgumentException(type.format(value)+ " is >= upper label bound");
+                throw new IllegalArgumentException(type.format(value)+ " is >= upper label bound (" + type.format(tempUpper.labelBound) + ")");
             } else if (type.compare(value, tempUpper.snapBound) >= 0) {
                 interval = new Interval<T>(this, false, tempUpper.snapBound);
             } else {
