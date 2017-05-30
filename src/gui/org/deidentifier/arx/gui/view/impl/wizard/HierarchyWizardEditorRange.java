@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
-import java.text.ParseException;
-
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -81,15 +79,15 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
         this.model.register(this);
         if (!lower) {
             this.range = model.getUpperRange();
-            createRepeat(model, lower, range);
             createSnap(model, lower, range);
-            createLabel(model, lower, range);
+            createTopBottomCoding(model, lower, range);
+            createMinMax(model, lower, range);
         }
         else {
             this.range = model.getLowerRange();
-            createLabel(model, lower, range);
+            createMinMax(model, lower, range);
+            createTopBottomCoding(model, lower, range);
             createSnap(model, lower, range);
-            createRepeat(model, lower, range);
         }
     }
 
@@ -124,11 +122,11 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
      * @param adjustment
      * @param bottom
      */
-    private void createLabel(final HierarchyWizardModelGrouping<T> model,
+    private void createMinMax(final HierarchyWizardModelGrouping<T> model,
                              final boolean lower,
                              final HierarchyWizardGroupingRange<T> adjustment) {
-        createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.7") : //$NON-NLS-1$
-                                       Resources.getMessage("HierarchyWizardEditorRange.8")); //$NON-NLS-1$
+        createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.10") : //$NON-NLS-1$
+                                       Resources.getMessage("HierarchyWizardEditorRange.11")); //$NON-NLS-1$
         label = new EditorString(composite) {
             
             @Override
@@ -146,31 +144,8 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                try {
-                    if (type.compare(type.format(value), 
-                                     type.format(adjustment.label)) != 0){
-                        adjustment.label = value;
-                        if (lower){
-                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
-                                adjustment.snap = adjustment.label;
-                            }
-                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                        } else {
-                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
-                                adjustment.snap = adjustment.label;
-                            }
-                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                        }
-                        
-                        model.update();
-                    }
-                } catch (NumberFormatException | ParseException e) {
-                    // Ignore
-                }
+                adjustment.label = value;
+                model.update();
             }
         };
     }
@@ -182,7 +157,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
      * @param lower
      * @param adjustment
      */
-    private void createRepeat(final HierarchyWizardModelGrouping<T> model,
+    private void createSnap(final HierarchyWizardModelGrouping<T> model,
                               final boolean lower,
                               final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.4")); //$NON-NLS-1$
@@ -203,32 +178,8 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                try {
-                    if (type.compare(type.format(value), 
-                                     type.format(adjustment.repeat)) != 0){
-                         
-                        adjustment.repeat = value;
-                        if (lower){
-                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
-                                adjustment.snap = adjustment.repeat;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        } else {
-                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
-                                adjustment.snap = adjustment.repeat;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        }
-                        
-                        model.update();
-                    }
-                } catch (NumberFormatException | ParseException e) {
-                    // Ignore
-                }
+                adjustment.repeat = value;
+                model.update();
             }
         };
     }
@@ -240,10 +191,13 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
      * @param lower
      * @param adjustment
      */
-    private void createSnap(final HierarchyWizardModelGrouping<T> model,
+    private void createTopBottomCoding(final HierarchyWizardModelGrouping<T> model,
                             final boolean lower,
                             final HierarchyWizardGroupingRange<T> adjustment) {
-        createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.6")); //$NON-NLS-1$
+        
+        createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.7") //$NON-NLS-1$
+                                     : Resources.getMessage("HierarchyWizardEditorRange.8")); //$NON-NLS-1$
+
         snap = new EditorString(composite) {
             
             @Override
@@ -261,32 +215,8 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                try {
-                    if (type.compare(type.format(value), 
-                                     type.format(adjustment.snap)) != 0){
-                        
-                        adjustment.snap = value;
-                        if (lower){
-                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        } else {
-                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        }
-                        
-                        model.update();
-                    }
-                } catch (NumberFormatException | ParseException e) {
-                    // Ignore
-                }
+                adjustment.snap = value;
+                model.update();
             }
         };
     }
