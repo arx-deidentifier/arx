@@ -1747,10 +1747,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     private static List<String> listDecimalFormats(){
         List<String> result = new ArrayList<String>();
-        result.add("#,##0");
+        result.add("0.###");
+        result.add("0.00");
         result.add("#,##0.###");
-        result.add("#,##0%");
         result.add("#,##0.00");
+        result.add("#,##0");
+        result.add("#,##0%");
         
         // Create list of common patterns
         Set<String> set = new HashSet<String>();
