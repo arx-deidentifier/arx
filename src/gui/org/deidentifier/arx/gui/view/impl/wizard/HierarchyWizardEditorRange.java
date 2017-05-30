@@ -136,7 +136,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
             @Override
             public String getValue() {
-                T value = adjustment.label;
+                T value = adjustment.minMaxBound;
                 if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
@@ -144,7 +144,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                adjustment.label = value;
+                adjustment.minMaxBound = value;
                 model.update();
             }
         };
@@ -170,7 +170,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
             @Override
             public String getValue() {
-                T value = adjustment.repeat;
+                T value = adjustment.snapBound;
                 if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
@@ -178,7 +178,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                adjustment.repeat = value;
+                adjustment.snapBound = value;
                 model.update();
             }
         };
@@ -207,7 +207,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
             @Override
             public String getValue() {
-                T value = adjustment.snap;
+                T value = adjustment.bottomTopCodingBound;
                 if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
@@ -215,7 +215,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                adjustment.snap = value;
+                adjustment.bottomTopCodingBound = value;
                 model.update();
             }
         };
