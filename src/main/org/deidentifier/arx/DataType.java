@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -300,7 +301,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return null;
             }
         	try {
-				return format.parse(s);
+        	    ParsePosition pos = new ParsePosition(0);
+                Date parsed = format.parse(s, pos);
+                if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
+                    throw new IllegalArgumentException("Parse error");
+                }
+                return parsed;
         	} catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
@@ -583,7 +589,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 if (format == null) {
                     return Double.valueOf(s);
                 } else {
-                    return format.parse(s).doubleValue();
+                    ParsePosition pos = new ParsePosition(0);
+                    double parsed = format.parse(s, pos).doubleValue();
+                    if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
+                        throw new IllegalArgumentException("Parse error");
+                    }
+                    return parsed;
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
