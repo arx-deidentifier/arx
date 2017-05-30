@@ -147,6 +147,14 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
                 adjustment.minMaxBound = value;
                 model.update();
             }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
+            }
         };
     }
 
@@ -180,6 +188,14 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
                 T value = type.parse(s);
                 adjustment.snapBound = value;
                 model.update();
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
             }
         };
     }
@@ -217,6 +233,14 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
                 T value = type.parse(s);
                 adjustment.bottomTopCodingBound = value;
                 model.update();
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
             }
         };
     }

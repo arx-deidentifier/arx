@@ -136,7 +136,7 @@ public abstract class EditorString implements IEditor<String> {
     public void update(){
         if (text != null) {
             String value = getValue();
-            if (!text.getText().equals(value)) {
+            if (isDifferent(text.getText(), value)) {
                 text.setText(value);
             }
         }

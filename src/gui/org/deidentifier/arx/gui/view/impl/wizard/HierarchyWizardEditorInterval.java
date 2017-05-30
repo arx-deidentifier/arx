@@ -100,6 +100,14 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
                     }
                 }
             }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
+            }
         };
         
         createLabel(composite, Resources.getMessage("HierarchyWizardEditorInterval.2")); //$NON-NLS-1$
@@ -128,6 +136,14 @@ public class HierarchyWizardEditorInterval<T> implements HierarchyWizardView, IH
                         model.update(HierarchyWizardEditorInterval.this);
                     }
                 }
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
             }
         };
     }
