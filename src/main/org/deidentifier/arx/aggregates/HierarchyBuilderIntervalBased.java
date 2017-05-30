@@ -605,31 +605,31 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         if (lowerRange.getRepeatBound() != null && 
             upperRange.getRepeatBound() != null && 
             type.compare(lowerRange.getRepeatBound(), upperRange.getRepeatBound()) > 0){
-                return "Lower repeat bound must be < upper repeat bound"; 
+            return "Lower repeat bound (" + lowerRange.getRepeatBound() + ") must be < upper repeat bound (" + upperRange.getRepeatBound() + ")"; 
         }
         
         if (lowerRange.getSnapBound() != null &&
             lowerRange.getRepeatBound() != null &&
             type.compare(lowerRange.getSnapBound(), lowerRange.getRepeatBound()) > 0){
-                return "Lower snap bound must be <= lower repeat bound"; 
+            return "Lower snap bound (" + lowerRange.getSnapBound() + ") must be <= lower repeat bound (" + lowerRange.getRepeatBound() + ")"; 
         }
         
         if (lowerRange.getLabelBound() != null &&
             lowerRange.getSnapBound() != null && 
             type.compare(lowerRange.getLabelBound(), lowerRange.getSnapBound()) > 0){
-                return "Lower label bound must be <= lower snap bound"; 
+            return "Lower label bound (" + lowerRange.getLabelBound() + ") must be <= lower snap bound (" + lowerRange.getSnapBound() + ")"; 
         }
         
         if (upperRange.getRepeatBound() != null &&
             upperRange.getSnapBound() != null && 
             type.compare(upperRange.getSnapBound(), upperRange.getRepeatBound()) < 0){
-                return "Upper snap bound must be >= upper repeat bound"; 
+            return "Upper snap bound (" + upperRange.getSnapBound() + ") must be >= upper repeat bound (" + upperRange.getRepeatBound() + ")"; 
         }
         
         if (lowerRange.getLabelBound() != null && 
             upperRange.getSnapBound() != null && 
             type.compare(upperRange.getLabelBound(), upperRange.getSnapBound()) < 0){
-                return "Upper label bound must be >= upper snap bound"; 
+            return "Upper label bound (" + upperRange.getLabelBound() + ") must be >= upper snap bound (" + upperRange.getSnapBound() + ")"; 
         }
 
         return null;
