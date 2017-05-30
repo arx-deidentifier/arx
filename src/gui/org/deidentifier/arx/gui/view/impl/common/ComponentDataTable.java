@@ -82,22 +82,22 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class ComponentDataTable implements IComponent {
 
-    /**  TODO */
+    /**  View */
     private NatTable                table;
     
-    /**  TODO */
+    /**  View */
     private DataTableContext        context;
     
-    /**  TODO */
+    /**  View */
     private DataTableBodyLayerStack bodyLayer;
     
-    /**  TODO */
+    /**  View */
     private DataTableGridLayer      gridLayer;
     
-    /**  TODO */
+    /**  View */
     private Font                    font;
     
-    /**  TODO */
+    /**  View */
     private Control                 parent;
 
     /**
