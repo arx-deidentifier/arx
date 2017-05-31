@@ -603,7 +603,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public double ratio(Double dividend, Double divisor) {
-            return parse(format(dividend / divisor));
+            return dividend / divisor;
         }
 
         @Override
