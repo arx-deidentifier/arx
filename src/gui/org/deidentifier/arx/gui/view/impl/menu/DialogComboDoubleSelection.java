@@ -18,9 +18,9 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.def.IValidator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -43,60 +43,77 @@ import org.eclipse.swt.widgets.Text;
  * 
  * @author Fabian Prasser
  */
-public class DialogComboSelection extends Dialog {
+public class DialogComboDoubleSelection extends Dialog {
     
     /** The title of the dialog. */
-    private String          title;
+    private String               title;
 
     /** The message to display, or <code>null</code> if none. */
-    private String          message;
+    private String               message;
 
     /** The input value; the empty string by default. */
-    private String          value = "";       //$NON-NLS-1$
+    private String               value1 = "";     //$NON-NLS-1$
+
+    /** The input value; the empty string by default. */
+    private String               value2 = "";     //$NON-NLS-1$
 
     /** The input validator, or <code>null</code> if none. */
-    private IInputValidator validator;
+    private IValidator<String[]> validator;
 
     /** Ok button widget. */
-    private Button          okButton;
+    private Button               okButton;
 
     /** Choices for combo widget. */
-    private String[]        choices;
+    private String[]             choices1;
 
-    /**
-     * Input combo widget.
-     */
-    private Combo           combo;
+    /** Choices for combo widget. */
+    private String[]             choices2;
+
+    /** Input combo widget. */
+    private Combo                combo1;
+
+    /** Input combo widget. */
+    private Combo                combo2;
 
     /** Error message label widget. */
-    private Text            errorMessageText;
+    private Text                 errorMessageText;
 
     /** Error message string. */
-    private String          errorMessage;
+    private String               errorMessage;
 
     /**
      * Creates a new instance
      * @param parentShell
      * @param dialogTitle
      * @param dialogMessage
-     * @param choices
-     * @param initialValue
+     * @param choices1
+     * @param initialValue1
+     * @param choices2
+     * @param initialValue2
      * @param validator
      */
-    public DialogComboSelection(Shell parentShell,
+    public DialogComboDoubleSelection(Shell parentShell,
                                 String dialogTitle,
                                 String dialogMessage,
-                                String[] choices,
-                                String initialValue,
-                                IInputValidator validator) {
+                                String[] choices1,
+                                String initialValue1,
+                                String[] choices2,
+                                String initialValue2,
+                                IValidator<String[]> validator) {
         super(parentShell);
         this.title = dialogTitle;
         message = dialogMessage;
-        this.choices = choices;
-        if (initialValue == null) {
-            value = "";//$NON-NLS-1$
+        this.choices1 = choices1;
+        this.choices2 = choices2;
+        if (initialValue1 == null) {
+            value1 = "";//$NON-NLS-1$
         } else {
-            value = initialValue;
+            value1 = initialValue1;
+        }
+        if (initialValue2 == null) {
+            value2 = "";//$NON-NLS-1$
+        } else {
+            value2 = initialValue2;
         }
         this.validator = validator;
     }
@@ -106,10 +123,18 @@ public class DialogComboSelection extends Dialog {
      * 
      * @return the input string
      */
-    public String getValue() {
-        return value;
+    public String getValue1() {
+        return value1;
     }
 
+    /**
+     * Returns the string typed into this input dialog.
+     * 
+     * @return the input string
+     */
+    public String getValue2() {
+        return value2;
+    }
     /**
      * Sets or clears the error message. If not <code>null</code>, the OK button
      * is disabled.
@@ -141,9 +166,11 @@ public class DialogComboSelection extends Dialog {
     @Override
     protected void buttonPressed(int buttonId) {
         if (buttonId == IDialogConstants.OK_ID) {
-            value = combo.getText();
+            value1 = combo1.getText();
+            value2 = combo2.getText();
         } else {
-            value = null;
+            value1 = null;
+            value2 = null;
         }
         super.buttonPressed(buttonId);
     }
@@ -163,9 +190,13 @@ public class DialogComboSelection extends Dialog {
         okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
         createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
         // do this here because setting the text will set enablement on the ok button
-        combo.setFocus();
-        if (value != null) {
-            combo.setText(value);
+        combo1.setFocus();
+        if (value1 != null) {
+            combo1.setText(value1);
+        }
+        combo2.setFocus();
+        if (value2 != null) {
+            combo2.setText(value2);
         }
     }
 
@@ -183,10 +214,19 @@ public class DialogComboSelection extends Dialog {
             label.setLayoutData(data);
             label.setFont(parent.getFont());
         }
-        combo = new Combo(composite, SWT.NONE);
-        combo.setItems(choices);
-        combo.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-        combo.addModifyListener(new ModifyListener() {
+        combo1 = new Combo(composite, SWT.NONE);
+        combo1.setItems(choices1);
+        combo1.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        combo1.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent e) {
+                validateInput();
+            }
+        });
+        combo2 = new Combo(composite, SWT.NONE);
+        combo2.setItems(choices2);
+        combo2.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
+        combo2.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
                 validateInput();
@@ -201,15 +241,6 @@ public class DialogComboSelection extends Dialog {
 
         applyDialogFont(composite);
         return composite;
-    }
-
-    /**
-     * Returns the combo.
-     * 
-     * @return the combo
-     */
-    protected Combo getCombo() {
-        return combo;
     }
 
     /**
@@ -232,15 +263,6 @@ public class DialogComboSelection extends Dialog {
     }
 
     /**
-     * Returns the validator.
-     * 
-     * @return the validator
-     */
-    protected IInputValidator getValidator() {
-        return validator;
-    }
-
-    /**
      * Validates the input.
      * <p>
      * The default implementation of this framework method delegates the request
@@ -252,7 +274,7 @@ public class DialogComboSelection extends Dialog {
     protected void validateInput() {
         String errorMsg = null;
         if (validator != null) {
-            errorMsg = validator.isValid(combo.getText());
+            errorMsg = validator.isValid(new String[]{combo1.getText(), combo2.getText()});
         }
         // Bug 16256: important not to treat "" (blank error) the same as null
         // (no error)

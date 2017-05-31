@@ -1581,7 +1581,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1602,7 +1602,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1612,29 +1612,6 @@ public class Controller implements IView {
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
     
-    /**
-     * Shows a dialog for selecting a format string for a data type.
-     *
-     * @param shell The parent shell
-     * @param title The dialog's title
-     * @param text The dialog's text
-     * @param preselected A preselected format string
-     * @param locale The locale
-     * @param type The description of the data type for which to choose a format string
-     * @param values The values to check the format string against
-     * @return The format string, or <code>null</code> if no format was (or could be) selected
-     */
-    public String actionShowFormatInputDialog(final Shell shell,
-                                              final String title,
-                                              final String text,
-                                              final String preselected,
-                                              final Locale locale,
-                                              final DataTypeDescription<?> type,
-                                              final Collection<String> values) {
-
-        return main.showFormatInputDialog(shell, title, text, preselected, locale, type, values);
-    }
-
     /**
      * Shows a help dialog.
      *

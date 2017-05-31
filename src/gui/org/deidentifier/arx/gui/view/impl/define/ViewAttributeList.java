@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
@@ -162,7 +163,7 @@ public class ViewAttributeList implements IView {
                 } else if (description.hasFormat()) {
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
+                    final String[] format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
                                                                                  text1,
                                                                                  text2,
                                                                                  model.getLocale(),
@@ -170,10 +171,10 @@ public class ViewAttributeList implements IView {
                                                                                  getValuesAsList(attribute));
                     
                     // Only update the data type of the attribute if a format has been selected
-                    if (format != null) {
+                    if (format != null && format[0] != null) {
                         // The format input already performs a validity check,
                         // hence the returned format is valid
-                        type = description.newInstance(format, model.getLocale());
+                        type = description.newInstance(format[0], format[1] != null ? getLocale(format[1]) : model.getLocale());
                         changed = true;
                     }
                 } else {
@@ -319,7 +320,7 @@ public class ViewAttributeList implements IView {
             return Resources.getMessage("ViewAttributeDefinition.8"); //$NON-NLS-1$
         }
     }
-
+    
     /**
      * Returns the labels of all available data types.
      *
@@ -332,7 +333,7 @@ public class ViewAttributeList implements IView {
         }
         return list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * Returns the index of a given data type.
      *
@@ -348,6 +349,20 @@ public class ViewAttributeList implements IView {
             idx++;
         }
         throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + type.getDescription().getLabel()); //$NON-NLS-1$
+    }
+    
+    /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
     }
     
     /**
