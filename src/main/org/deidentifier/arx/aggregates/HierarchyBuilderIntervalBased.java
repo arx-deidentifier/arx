@@ -701,7 +701,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         Interval<T> interval = getInterval(index, type.subtract(tValue, offset));
 
         // Check
-        if (interval == null) { throw new IllegalStateException("No interval found for: " + type.format(tValue)); }
+        if (interval == null) {
+            throw new IllegalStateException("No interval found for: " + type.format(tValue));
+        }
         
         // Create first result interval
         T lower = type.add(interval.min, offset);
@@ -732,7 +734,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 }
             }
         }
-        throw new IllegalStateException("No interval found for: "+type.format(value));
+        return null;
     }
 
     /**
