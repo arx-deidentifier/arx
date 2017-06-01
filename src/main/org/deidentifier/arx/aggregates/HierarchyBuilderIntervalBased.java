@@ -698,7 +698,14 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         // Find interval
         int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
         T offset = type.multiply(type.subtract(index.max, index.min), shift);
-        Interval<T> interval = getInterval(index, type.subtract(tValue, offset));
+        T shifted = type.subtract(tValue, offset);
+        
+        // Fix case when shifted value equals interval-max
+        if (type.compare(shifted, index.max) == 0) {
+            offset = type.multiply(type.subtract(index.max, index.min), shift + 1);
+            shifted = index.min;
+        }
+        Interval<T> interval = getInterval(index, shifted);
 
         // Check
         if (interval == null) {
