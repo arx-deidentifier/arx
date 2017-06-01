@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -269,6 +272,7 @@ public class ViewPropertiesInput extends ViewProperties {
         root.setRedraw(false);
         
         // Clear
+        List<Property> previous = new ArrayList<Property>(roots);
         roots.clear();
         
         // Print basic properties
@@ -405,7 +409,9 @@ public class ViewPropertiesInput extends ViewProperties {
         }
 
         // Refresh and initialize
-        refresh();
+        if (!previous.equals(roots)) {
+            refresh();
+        }
 
         // Redraw
         root.setRedraw(true);

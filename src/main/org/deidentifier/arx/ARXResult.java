@@ -200,6 +200,14 @@ public class ARXResult {
     }
 
     /**
+     * Returns the data definition
+     * @return
+     */
+    public DataDefinition getDataDefinition() {
+        return this.definition;
+    }
+
+    /**
      * Gets the global optimum.
      * 
      * @return the global optimum
@@ -238,7 +246,7 @@ public class ARXResult {
     public DataHandle getHandle(ARXNode node) {
         return getOutput(node, false);
     }
-
+    
     /**
      * Returns the lattice.
      *
@@ -356,7 +364,7 @@ public class ARXResult {
         // Return
         return result;
     }
-    
+
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -380,7 +388,7 @@ public class ARXResult {
     public long getTime() {
         return duration;
     }
-
+    
     /**
      * Returns whether local recoding can be applied to the given handle
      * @param handle
@@ -429,7 +437,7 @@ public class ARXResult {
         // Yes, we probably can do this
         return true;
     }
-    
+
     /**
      * Indicates if a result is available.
      *
@@ -610,7 +618,7 @@ public class ARXResult {
             throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
         }
     }
-
+    
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -636,7 +644,7 @@ public class ARXResult {
             }
         });
     }
-    
+
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -702,7 +710,7 @@ public class ARXResult {
             iterations++;
         }
     }
-
+    
     /**
      * Returns a map of all microaggregation functions
      * @param definition
@@ -715,7 +723,7 @@ public class ARXResult {
         }
         return result;
     }
-    
+
     /**
      * Releases the buffer.
      *

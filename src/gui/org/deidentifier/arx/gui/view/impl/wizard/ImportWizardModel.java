@@ -64,10 +64,10 @@ public class ImportWizardModel {
     }
 
     /** Maximum number of lines to be loaded for preview purposes. */
-    public static final int PREVIEW_MAX_LINES = 25;
-    
+    public static final int               PREVIEW_MAX_LINES      = 25;
+
     /** Maximum number of chars to be loaded for detecting separators. */
-    public static final int DETECT_MAX_CHARS  = 100000;;
+    public static final int               DETECT_MAX_CHARS       = 100000;
 
     /** Actual source data should be imported from. */
     private SourceType                    sourceType;
@@ -169,19 +169,19 @@ public class ImportWizardModel {
     }
 
     /**
-         * @return {@link #csvEscape}
-         */
-        public char getCsvEscape() {
-            return csvEscape;
-        }
+     * @return {@link #csvEscape}
+     */
+    public char getCsvEscape() {
+        return csvEscape;
+    }
 
-   /**
- * Getter
- * @return
- */
-public char[] getCsvLinebreak() {
-    return csvLinebreak;
-}
+    /**
+     * Getter
+     * @return
+     */
+    public char[] getCsvLinebreak() {
+        return csvLinebreak;
+    }
 
     /**
      * Getter

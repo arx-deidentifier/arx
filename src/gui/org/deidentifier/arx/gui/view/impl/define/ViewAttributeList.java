@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataHandle;
@@ -162,7 +163,7 @@ public class ViewAttributeList implements IView {
                 } else if (description.hasFormat()) {
                     final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                     final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
+                    final String[] format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
                                                                                  text1,
                                                                                  text2,
                                                                                  model.getLocale(),
@@ -170,10 +171,10 @@ public class ViewAttributeList implements IView {
                                                                                  getValuesAsList(attribute));
                     
                     // Only update the data type of the attribute if a format has been selected
-                    if (format != null) {
+                    if (format != null && format[0] != null) {
                         // The format input already performs a validity check,
                         // hence the returned format is valid
-                        type = description.newInstance(format, model.getLocale());
+                        type = description.newInstance(format[0], format[1] != null ? getLocale(format[1]) : model.getLocale());
                         changed = true;
                     }
                 } else {
@@ -217,16 +218,16 @@ public class ViewAttributeList implements IView {
         SWTUtil.createGenericTooltip(table);
         DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.NONE);
         column0.setText(""); //$NON-NLS-1$
-        column0.setWidth("4%", "25px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column0.setWidth("5%", "25px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
         column1.setText(Resources.getMessage("ViewAttributeList.0")); //$NON-NLS-1$
-        column1.setWidth("32%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column1.setWidth("45%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.NONE);
         column2.setText(Resources.getMessage("ViewAttributeList.1")); //$NON-NLS-1$
-        column2.setWidth("32%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column2.setWidth("25%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.NONE);
         column3.setText(Resources.getMessage("ViewAttributeList.2")); //$NON-NLS-1$
-        column3.setWidth("32%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column3.setWidth("25%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         column1.pack();
         column2.pack();
         column3.pack();
@@ -302,17 +303,24 @@ public class ViewAttributeList implements IView {
         DataType<?> dtype = model.getInputDefinition().getDataType(attribute);
         if (!(dtype instanceof ARXOrderedString) && dtype.getDescription().hasFormat()) {
             DataTypeWithFormat dtwf = (DataTypeWithFormat) dtype;
+            String locale = dtwf.getLocale() != null ? dtwf.getLocale().getLanguage() : null;
             String format = dtwf.getFormat();
+            String result = "";
             if (format == null) {
-                return Resources.getMessage("ViewAttributeDefinition.7"); //$NON-NLS-1$
+                result = Resources.getMessage("ViewAttributeDefinition.7"); //$NON-NLS-1$
             } else {
-                return format;
+                result = format;
+            }
+            if (locale == null) {
+                return result;
+            } else {
+                return result +  " (" + locale.toUpperCase() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
             }
         } else {
             return Resources.getMessage("ViewAttributeDefinition.8"); //$NON-NLS-1$
         }
     }
-
+    
     /**
      * Returns the labels of all available data types.
      *
@@ -325,7 +333,7 @@ public class ViewAttributeList implements IView {
         }
         return list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * Returns the index of a given data type.
      *
@@ -341,6 +349,20 @@ public class ViewAttributeList implements IView {
             idx++;
         }
         throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.6") + type.getDescription().getLabel()); //$NON-NLS-1$
+    }
+    
+    /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
     }
     
     /**

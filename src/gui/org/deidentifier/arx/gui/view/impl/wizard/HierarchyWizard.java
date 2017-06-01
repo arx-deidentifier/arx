@@ -17,10 +17,12 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.util.Date;
 import java.util.Locale;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilder.Type;
@@ -52,14 +54,14 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
      */
     public static class HierarchyWizardResult<T> {
 
-        /**  TODO */
-        public final Hierarchy hierarchy;
-        
-        /**  TODO */
+        /** Hierarchy */
+        public final Hierarchy           hierarchy;
+
+        /** Builder */
         public final HierarchyBuilder<T> builder;
-        
+
         /**
-         * 
+         * Creates a new instance
          *
          * @param hierarchy
          * @param builder
@@ -96,6 +98,9 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     /** Var. */
     private final ARXWizardButton           buttonSave;
 
+    /** Var. */
+    private HierarchyWizardPageDate         pageDate;
+    
     /** Var. */
     private HierarchyWizardPageIntervals<T> pageIntervals;
 
@@ -164,7 +169,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         // Initialize window
         this.setWindowTitle(Resources.getMessage("HierarchyWizard.0")); //$NON-NLS-1$
         this.setDefaultPageImageDescriptor(ImageDescriptor.createFromImage(controller.getResources()
-                                                                                .getManagedImage("hierarchy.png"))); //$NON-NLS-1$
+                                                                                     .getManagedImage("hierarchy.png"))); //$NON-NLS-1$
         
         // Initialize buttons
         this.buttonLoad = new ARXWizardButton(Resources.getMessage("HierarchyWizard.1"), new SelectionAdapter(){ //$NON-NLS-1$
@@ -194,9 +199,17 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         } else {
             pageIntervals = null;
         }
+        if (model.getDateModel() != null) {
+            pageDate = new HierarchyWizardPageDate(controller, 
+                                                   (HierarchyWizard<Date>)this, 
+                                                   (HierarchyWizardModel<Date>)model, 
+                                                   (HierarchyWizardPageFinal<Date>)pageFinal);
+        } else {
+            pageDate = null;
+        }
         pageOrder = new HierarchyWizardPageOrder<T>(controller, this, model, pageFinal);
         pageRedaction = new HierarchyWizardPageRedaction<T>(controller, this, model, pageFinal);
-        pageType = new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction);
+        pageType = new HierarchyWizardPageType<T>(this, model, pageIntervals, pageOrder, pageRedaction, pageDate);
     }
     
     @Override
@@ -208,6 +221,9 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         addPage(pageFinal);
         if (pageIntervals != null) {
             addPage(pageIntervals);
+        }
+        if (pageDate != null) {
+            addPage(pageDate);
         }
     }
 
@@ -246,6 +262,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         final String ERROR_RATIO_TEXT = Resources.getMessage("HierarchyWizard.7"); //$NON-NLS-1$
         final String ERROR_TYPE_TEXT = Resources.getMessage("HierarchyWizard.8"); //$NON-NLS-1$
         final String ERROR_APPLY_TEXT = Resources.getMessage("HierarchyWizard.9"); //$NON-NLS-1$
+        final String ERROR_DATE_TEXT = Resources.getMessage("HierarchyWizard.10"); //$NON-NLS-1$
         
         // Dialog
         String file = controller.actionShowOpenFileDialog(getShell(), "*.ahs"); //$NON-NLS-1$
@@ -262,7 +279,12 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         
         // Checks
         if (builder == null) return;
-        else if (builder.getType() == Type.INTERVAL_BASED) {
+        else if (builder.getType() == Type.DATE_BASED) {
+            if (!(model.getDataType() instanceof ARXDate)) {
+                controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_DATE_TEXT);
+                return;
+            }
+        } else if (builder.getType() == Type.INTERVAL_BASED) {
             if (!(model.getDataType() instanceof DataTypeWithRatioScale)) {
                 controller.actionShowInfoDialog(getShell(), ERROR_HEADER, ERROR_RATIO_TEXT);
                 return;
@@ -287,6 +309,12 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         
         // Update views
         switch (builder.getType()) {
+        case DATE_BASED:
+            this.pageDate.updatePage();
+            this.model.setType(Type.DATE_BASED);
+            this.pageType.updatePage();
+            this.getContainer().showPage(pageDate);
+            break;
         case INTERVAL_BASED:
             this.pageIntervals.updatePage();
             this.model.setType(Type.INTERVAL_BASED);
@@ -311,6 +339,7 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
     /**
      * Saves the current specification.
      */
+    @SuppressWarnings("unchecked")
     private void save(){
         
         final String ERROR_HEADER = Resources.getMessage("HierarchyWizard.11"); //$NON-NLS-1$
@@ -324,7 +353,9 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
         try {
             // Select
             HierarchyBuilder<T> builder = null;
-            if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageOrder){
+            if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageDate){
+                builder = (HierarchyBuilder<T>) model.getDateModel().getBuilder(true);
+            } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageOrder){
                 builder = model.getOrderModel().getBuilder(true);
             } else if (getDialog().getCurrentPage()  instanceof HierarchyWizardPageIntervals){
                 builder = model.getIntervalModel().getBuilder(true);

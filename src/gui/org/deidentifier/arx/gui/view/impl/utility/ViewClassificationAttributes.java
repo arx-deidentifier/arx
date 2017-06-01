@@ -18,9 +18,12 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
@@ -50,19 +53,88 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  */
 public class ViewClassificationAttributes implements IView, ViewStatisticsBasic {
+    
+    /**
+     * Internal state management
+     * 
+     * @author Fabian Prasser
+     */
+    private class State {
+
+        /** Data */
+        private final List<String>        attributes = new ArrayList<String>();
+        /** Data */
+        private final List<AttributeType> types      = new ArrayList<AttributeType>();
+        /** Data */
+        private final Set<String>         features   = new HashSet<String>();
+        /** Data */
+        private final Set<String>         classes    = new HashSet<String>();
+
+        /**
+         * Creates a new instance
+         * 
+         * @param model
+         * @param handle
+         * @param definition
+         */
+        private State(Model model, DataHandle handle, DataDefinition definition) {
+
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                attributes.add(attribute);
+                types.add(definition.getAttributeType(attribute));
+            }
+            features.addAll(model.getSelectedFeatures());
+            classes.addAll(model.getSelectedClasses());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            State other = (State) obj;
+            if (attributes == null) {
+                if (other.attributes != null) return false;
+            } else if (!attributes.equals(other.attributes)) return false;
+            if (classes == null) {
+                if (other.classes != null) return false;
+            } else if (!classes.equals(other.classes)) return false;
+            if (features == null) {
+                if (other.features != null) return false;
+            } else if (!features.equals(other.features)) return false;
+            if (types == null) {
+                if (other.types != null) return false;
+            } else if (!types.equals(other.types)) return false;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+            result = prime * result + ((classes == null) ? 0 : classes.hashCode());
+            result = prime * result + ((features == null) ? 0 : features.hashCode());
+            result = prime * result + ((types == null) ? 0 : types.hashCode());
+            return result;
+        }
+    }
 
     /** Controller */
     private final Controller   controller;
-    
+
     /** View */
     private final Composite    root;
     /** View */
     private final DynamicTable features;
     /** View */
-    private final Table classes;
-    
+    private final Table        classes;
+
     /** Model */
     private Model              model;
+    /** State */
+    private State              state;
 
     /**
      * Creates a new instance.
@@ -71,7 +143,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
      * @param controller
      */
     public ViewClassificationAttributes(final Composite parent,
-                                    final Controller controller) {
+                                        final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
@@ -146,6 +218,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
+        state = null;
         SWTUtil.disable(root);
     }
 
@@ -201,15 +274,25 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
      */
     private void update() {
 
-        if (model == null || model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null) {
+        // Check
+        if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
             return;
         }
         
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-
-        root.setRedraw(false);
+        // Create state
+        State state = new State(model, 
+                                model.getInputConfig().getInput().getHandle(), 
+                                model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition());
         
+        // Check again
+        if (this.state == null || !this.state.equals(state)) {
+            this.state = state;
+        } else {
+            return;
+        }
+
+        // Clear
+        root.setRedraw(false);        
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
@@ -217,12 +300,13 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
             item.dispose();
         }
         
-        for (int col = 0; col < handle.getNumColumns(); col++) {
-            String attribute = handle.getAttributeName(col);
-            DataDefinition def = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
-            Image image = controller.getResources().getImage(def.getAttributeType(attribute));
+        // Add
+        for (int i = 0; i < state.attributes.size(); i++) {
             
             // Features
+            String attribute = state.attributes.get(i);
+            AttributeType type = state.types.get(i);
+            Image image = controller.getResources().getImage(type);
             TableItem itemF = new TableItem(features, SWT.NONE);
             itemF.setText(new String[] { "", attribute } );
             itemF.setImage(0, image);
@@ -237,5 +321,4 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         root.setRedraw(true);
         SWTUtil.enable(root);
     }    
-
 }
