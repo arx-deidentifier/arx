@@ -159,10 +159,11 @@ public class LayoutTransformationModel implements ILayout, IView {
      * Shows the settings for the attribute weights.
      */
     private void showSettingsAttributeWeights(){
-        if (this.viewAttributeWeights != null) return;
-        Composite composite1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
-        composite1.setLayout(new FillLayout());
-        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
+        if (this.viewAttributeWeights == null) {
+            Composite composite1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
+            composite1.setLayout(new FillLayout());
+            this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
+        }
         this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
     }
 
@@ -170,10 +171,11 @@ public class LayoutTransformationModel implements ILayout, IView {
      * Shows the settings for the coding model.
      */
     private void showSettingsCodingModel(){
-        if (this.viewCodingModel != null) return;
-        Composite composite2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
-        composite2.setLayout(new FillLayout());
-        this.viewCodingModel = new ViewCodingModel(composite2, controller);
+        if (this.viewCodingModel == null) {
+            Composite composite2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
+            composite2.setLayout(new FillLayout());
+            this.viewCodingModel = new ViewCodingModel(composite2, controller);
+        }
         this.viewCodingModel.update(new ModelEvent(this, ModelPart.MODEL, this.model));
     }
 

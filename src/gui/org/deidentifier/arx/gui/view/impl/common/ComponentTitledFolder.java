@@ -253,6 +253,12 @@ public class ComponentTitledFolder implements IComponent {
     public void disposeItem(String text) {
         for (CTabItem item : folder.getItems()) {
             if (item.getText().equals(text)) {
+                Iterator<TitledFolderEntry> iter = this.entries.iterator();
+                while (iter.hasNext()) {
+                    if (iter.next().control == item.getControl()) {
+                        iter.remove();
+                    }
+                }
                 item.dispose();
             }
         }
