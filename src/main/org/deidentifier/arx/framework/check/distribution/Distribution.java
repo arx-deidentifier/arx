@@ -31,19 +31,19 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
 public class Distribution {
 
     /** The size. */
-    private int                 size;
-    
+    private int                size;
+
     /** The threshold used for rehashing. */
-    private int                 threshold;
+    private int                threshold;
 
     /** The elements. Even index contains value, odd index contains frequency */
-    private int[]               elements;
-    
+    private int[]              elements;
+
     /** The loadfactor. */
-    private final static float  LOADFACTOR       = 0.75f;
+    private final static float LOADFACTOR       = 0.75f;
 
     /** The initial default capacity of the hashtable. */
-    private static final int    DEFAULT_CAPACITY = 8;          // power of two
+    private static final int   DEFAULT_CAPACITY = 8;    // power of two
 
     /**
      * Default constructor.

@@ -103,7 +103,11 @@ public class ViewAttributeList implements IView {
 
     @Override
     public void reset() {
-        table.clearAll();
+        table.setRedraw(false);
+        for (TableItem item : table.getItems()) {
+            item.dispose();
+        }
+        table.setRedraw(true);
         SWTUtil.disable(table);
     }
 
