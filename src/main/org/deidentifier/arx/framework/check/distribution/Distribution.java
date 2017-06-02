@@ -31,25 +31,19 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
 public class Distribution {
 
     /** The size. */
-    private int                 size;
-    
+    private int                size;
+
     /** The threshold used for rehashing. */
-    private int                 threshold;
+    private int                threshold;
 
     /** The elements. Even index contains value, odd index contains frequency */
-    private int[]               elements;
-    
-    /** The sorted element array - used for history entries only. */
-    private int[]               packedElements;
-    
-    /** The sorted frequency array - used for history entries only. */
-    private int[]               packedFrequencies;
+    private int[]              elements;
 
     /** The loadfactor. */
-    private final static float  LOADFACTOR       = 0.75f;
+    private final static float LOADFACTOR       = 0.75f;
 
     /** The initial default capacity of the hashtable. */
-    private static final int    DEFAULT_CAPACITY = 8;          // power of two
+    private static final int   DEFAULT_CAPACITY = 8;    // power of two
 
     /**
      * Default constructor.
@@ -114,24 +108,6 @@ public class Distribution {
     }
 
     /**
-     * Gets all elements of the packed table.
-     *
-     * @return
-     */
-    public int[] getPackedElements() {
-        return packedElements;
-    }
-
-    /**
-     * Gets the frequency of the packed table.
-     *
-     * @return
-     */
-    public int[] getPackedFrequency() {
-        return packedFrequencies;
-    }
-
-    /**
      * Merges two frequency sets.
      * 
      * @param other
@@ -162,9 +138,9 @@ public class Distribution {
     /**
      * Packs the frequency table; removes null values and generates
      * sortedElements and sortedFrequency arrays. In case a collission occured
-     * this method also sorts the elements.
+     * this method also sorts the elements. First entry is elements, second entry is frequencies.
      */
-    public void pack() {
+    public int[][] pack() {
         final int[] sortedelements = new int[size];
         final int[] sortedfrequency = new int[size];
         if (size > 0) {
@@ -178,9 +154,7 @@ public class Distribution {
                 }
             }
         }
-        this.packedElements = sortedelements;
-        this.packedFrequencies = sortedfrequency;
-
+        return new int[][]{sortedelements, sortedfrequency};
     }
 
     /**
