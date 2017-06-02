@@ -116,17 +116,17 @@ public class ARXAnonymizer {
          * @param handle
          * @return
          */
-		public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
+        public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
 
-		    // Create lattice
-	        final ARXLattice lattice = new ARXLattice(solutionSpace,
-	                                                  (algorithm instanceof FLASHAlgorithmImpl),
-	                                                  optimum,
-	                                                  manager.getDataGeneralized().getHeader(),
-	                                                  config.getInternalConfiguration());
+            // Create lattice
+            final ARXLattice lattice = new ARXLattice(solutionSpace,
+                                                      (algorithm instanceof FLASHAlgorithmImpl),
+                                                      optimum,
+                                                      manager.getDataGeneralized().getHeader(),
+                                                      config.getInternalConfiguration());
 
-			// Create output handle
-	        ((DataHandleInput)handle).setLocked(true);
+            // Create output handle
+            ((DataHandleInput)handle).setLocked(true);
             return new ARXResult(handle.getRegistry(),
                                  this.manager,
                                  this.checker,
@@ -135,7 +135,7 @@ public class ARXAnonymizer {
                                  lattice,
                                  System.currentTimeMillis() - time,
                                  solutionSpace);      
-		}
+        }
     }
 
     /** History size. */
@@ -322,9 +322,9 @@ public class ARXAnonymizer {
         if (config.isPrivacyModelSpecified(LDiversity.class)){
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)){
                 // TODO: getDataGeneralized().getDataLength() does not consider data subsets
-	            if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
-	            }
+                if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
+                    throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+                }
             }
         }
         if (config.isPrivacyModelSpecified(DDisclosurePrivacy.class)){
@@ -618,9 +618,8 @@ public class ARXAnonymizer {
         final long time = System.currentTimeMillis();
         algorithm.traverse();
         
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
+        // Free resources
+        checker.reset();
         
         // Return the result
         return new Result(config.getQualityModel(), checker, solutionSpace, manager, algorithm, time);
