@@ -92,15 +92,6 @@ public class Data implements Cloneable{
     }
 
     /**
-     * Returns the data.
-     *
-     * @return
-     */
-    public int[][] getData() {
-        return data;
-    }
-
-    /**
      * Returns the number of rows.
      * 
      * @return the data length

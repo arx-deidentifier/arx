@@ -417,7 +417,7 @@ public class DataHandleOutput extends DataHandle {
         
         // Init
         String[] header = output.getHeader();
-        int[][] data = output.getData();
+        int[][] data = output.getArray();
         Dictionary dictionary = output.getDictionary();
         
         // De-finalize
