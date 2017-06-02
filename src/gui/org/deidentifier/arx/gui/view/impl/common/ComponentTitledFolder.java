@@ -93,7 +93,7 @@ public class ComponentTitledFolder implements IComponent {
     private final CTabFolder           folder;
 
     /** Flag */
-    private final boolean              supportsHidingElements;
+    private final boolean              hasHidingMenu;
 
     /** Listener */
     private SelectionListener          itemVisibilityListener;
@@ -149,6 +149,7 @@ public class ComponentTitledFolder implements IComponent {
      * @param bar
      * @param id
      * @param bottom
+     * @param hasHidingMenu
      */
     public ComponentTitledFolder(Composite parent, 
                                  Controller controller, 
@@ -156,13 +157,13 @@ public class ComponentTitledFolder implements IComponent {
                                  String id, 
                                  Map<Composite, String> helpids,
                                  boolean bottom,
-                                 boolean supportsHidingElements){
+                                 boolean hasHidingMenu){
 
         int flags = SWT.BORDER | SWT.FLAT;
         if (bottom) flags |= SWT.BOTTOM;
         else flags |= SWT.TOP;
         
-        this.supportsHidingElements = supportsHidingElements;
+        this.hasHidingMenu = hasHidingMenu;
         
         this.folder = new CTabFolder(parent, flags);
         this.folder.setUnselectedCloseVisible(false);
@@ -391,6 +392,25 @@ public class ComponentTitledFolder implements IComponent {
     }
 
     /**
+     * Sets the according item visible
+     * @param item
+     * @param visible
+     */
+    public void setVisible(String item, boolean visible) {
+        boolean changed = false;
+        if (visible) {
+            changed = this.setVisible(item);
+        } else {
+            changed = this.setInvisible(item);
+        }
+        if (changed && this.itemVisibilityListener != null) {
+            Event event = new Event();
+            event.widget = this.folder;
+            this.itemVisibilityListener.widgetSelected(new SelectionEvent(event));
+        }
+    }
+
+    /**
      * Sets the given items as visible
      * @param item
      */
@@ -400,12 +420,12 @@ public class ComponentTitledFolder implements IComponent {
         
         for (String item : getAllHideableItems()) {
             if (items.contains(item)) {
-                changed |= setVisible(item, true);
+                changed |= setVisible(item);
                 if (this.folder.getItemCount() == 1) {
                     this.folder.setSelection(0);
                 }
             } else {
-                changed |= setVisible(item, false);
+                changed |= setInvisible(item);
             }
         }
         
@@ -427,7 +447,7 @@ public class ComponentTitledFolder implements IComponent {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
         folder.setTopRight( toolbar, SWT.RIGHT );
 
-        if (this.supportsHidingElements) {
+        if (this.hasHidingMenu) {
 
             ToolItem item = new ToolItem( toolbar, SWT.PUSH );
             item.setImage(controller.getResources().getManagedImage("manage.png"));  //$NON-NLS-1$
@@ -484,7 +504,7 @@ public class ComponentTitledFolder implements IComponent {
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
     }
-
+    
     /**
      * Returns all items
      * @return
@@ -498,7 +518,7 @@ public class ComponentTitledFolder implements IComponent {
         }
         return result;
     }
-    
+
     /**
      * Returns a list of all invisible entries
      * @return
@@ -516,7 +536,7 @@ public class ComponentTitledFolder implements IComponent {
         }
         return result;
     }
-
+    
     /**
      * Sets the given item invisible
      * @param item
@@ -535,7 +555,7 @@ public class ComponentTitledFolder implements IComponent {
         }
         return false;
     }
-    
+
     /**
      * Sets an entry visible
      * @return
@@ -565,21 +585,5 @@ public class ComponentTitledFolder implements IComponent {
             }
         }
         return false;
-    }
-
-    /**
-     * Sets the according item visible
-     * @param item
-     * @param visible
-     */
-    private boolean setVisible(String item, boolean visible) {
-        if (!supportsHidingElements) {
-            return false;
-        }
-        if (visible) {
-            return this.setVisible(item);
-        } else {
-            return this.setInvisible(item);
-        }
     }
 }

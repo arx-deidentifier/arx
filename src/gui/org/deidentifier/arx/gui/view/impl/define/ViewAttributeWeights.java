@@ -124,14 +124,10 @@ public class ViewAttributeWeights implements IView {
     @Override
     public void dispose() {
         controller.removeListener(this);
-        root.dispose();
     }
 
     @Override
     public void reset() {
-        if (root.isDisposed()) {
-            return;
-        }
         root.setRedraw(false);
         if (panel != null) {
             panel.dispose();
