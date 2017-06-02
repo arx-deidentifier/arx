@@ -42,6 +42,16 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
+    public void and(int row, long value) {
+        matrix.and(subset[row], value);
+    }
+
+    @Override
+    public DataMatrix clone() {
+        return matrix.clone(this.subset);
+    }
+
+    @Override
     public boolean equals(int row1, int row2) {
         return matrix.equals(subset[row1], subset[row2]);
     }
@@ -50,7 +60,7 @@ public class DataMatrixSubset extends DataMatrix {
     public void free() {
         // Nothing to do
     }
-
+    
     @Override
     public int get(int row, int col) {
         return matrix.get(subset[row], col);
@@ -59,11 +69,6 @@ public class DataMatrixSubset extends DataMatrix {
     @Override
     public ExclusiveRowIterator getExclusiveIterator(int row) {
        return new ExclusiveRowIterator(subset[row]); 
-    }
-    
-    @Override
-    public long getOffHeapByteSize() {
-        return 0;
     }
 
     @Override
@@ -74,6 +79,11 @@ public class DataMatrixSubset extends DataMatrix {
     @Override
     public int getNumRows() {
         return subset.length;
+    }
+
+    @Override
+    public long getOffHeapByteSize() {
+        return 0;
     }
 
     @Override
@@ -121,6 +131,36 @@ public class DataMatrixSubset extends DataMatrix {
         matrix.iterator2_write(value);
     }
 
+    @Override
+    public void or(int row, long value) {
+        matrix.or(subset[row], value);
+    }
+
+    @Override
+    public void set(int row, int column, int value) {
+        matrix.set(subset[row], column, value);
+    }
+
+    @Override
+    public void setRow(int row) {
+       matrix.setRow(this.subset[row]);
+    }
+
+    @Override
+    public void setRow(int row, int[] data) {
+        matrix.setRow(subset[row], data);
+    }
+
+    @Override
+    public void setValueAtColumn(int column, int value) {
+        matrix.setValueAtColumn(column, value);
+    }
+
+    @Override
+    public void swap(int row1, int row2) {
+        matrix.swap(subset[row1], subset[row2]);
+    }
+    
     @Override
     protected void finalize() throws Throwable {
         // Nothing to do

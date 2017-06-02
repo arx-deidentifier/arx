@@ -29,6 +29,7 @@ import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataManager.AttributeTypeInternal;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
@@ -52,7 +53,7 @@ public class DataHandleOutput extends DataHandle {
         
         @Override
         public boolean hasNext() {
-            return row < outputGeneralized.getArray().length;
+            return row < outputGeneralized.getArray().getNumRows();
         }
         
         @Override
@@ -91,12 +92,13 @@ public class DataHandleOutput extends DataHandle {
     private Data         inputStatic;
 
     /** An inverse map to data arrays. */
-    private int[][][]    inverseData;
+    private DataMatrix[] inverseData;
 
     /** An inverse map to dictionaries. */
     private Dictionary[] inverseDictionaries;
 
-    /** An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
+    /**
+     * An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
     private int[]        inverseMap;
 
     /** The start index of the MA attributes in the dataDI */
@@ -190,7 +192,7 @@ public class DataHandleOutput extends DataHandle {
         }
         
         // Build inverse data array
-        this.inverseData = new int[5][][];
+        this.inverseData = new DataMatrix[5];
         this.inverseData[AttributeTypeInternal.INSENSITIVE] = this.inputStatic.getArray();
         this.inverseData[AttributeTypeInternal.SENSITIVE] = this.inputAnalyzed.getArray();
         this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.outputGeneralized.getArray();
@@ -338,11 +340,11 @@ public class DataHandleOutput extends DataHandle {
 
             // Mark as not outlier from previous to index
             for (int i = previous; i < index; i++) {
-                outputGeneralized.getArray()[i][0] &= Data.REMOVE_OUTLIER_MASK;
+                outputGeneralized.getArray().and(i, Data.REMOVE_OUTLIER_MASK_LONG);
             }
 
             // Mark index as outlier
-            outputGeneralized.getArray()[index][0] |= Data.OUTLIER_MASK;
+            outputGeneralized.getArray().or(index, Data.OUTLIER_MASK_LONG);
 
             // Update
             previous = index + 1;
@@ -350,7 +352,7 @@ public class DataHandleOutput extends DataHandle {
         
         // Mark as not outlier from previous to num rows
         for (int i = previous; i < this.getNumRows(); i++) {
-            outputGeneralized.getArray()[i][0] &= Data.REMOVE_OUTLIER_MASK;
+            outputGeneralized.getArray().and(i, Data.REMOVE_OUTLIER_MASK_LONG);
         }
                 
         // Update data types
@@ -417,7 +419,7 @@ public class DataHandleOutput extends DataHandle {
         
         // Init
         String[] header = output.getHeader();
-        int[][] data = output.getArray();
+        DataMatrix data = output.getArray();
         Dictionary dictionary = output.getDictionary();
         
         // De-finalize
@@ -435,9 +437,10 @@ public class DataHandleOutput extends DataHandle {
                 // Update
                 for (int row = previous; row < index; row++) {
                     
+                    // TODO row-oriented access would be more efficient for the matrix
                     String value = input.internalGetValue(row, columnindex, false);
                     int identifier = dictionary.register(column, value);
-                    data[row][column] = identifier;                    
+                    data.set(row, column, identifier);                    
                 }
 
                 // Update
@@ -447,9 +450,10 @@ public class DataHandleOutput extends DataHandle {
             // Update remaining tuples
             for (int row = previous; row < input.getNumRows(); row++) {
                 
+                // TODO row-oriented access would be more efficient for the matrix
                 String value = input.internalGetValue(row, columnindex, false);
                 int identifier = dictionary.register(column, value);
-                data[row][column] = identifier;                    
+                data.set(row, column, identifier);                    
             }
         }
         
@@ -558,7 +562,7 @@ public class DataHandleOutput extends DataHandle {
      * Returns the input buffer
      * @return
      */
-    protected int[][] getInputBuffer() {
+    protected DataMatrix getInputBuffer() {
         checkRegistry();
         return registry.getInputHandle().getInputBuffer();
     }

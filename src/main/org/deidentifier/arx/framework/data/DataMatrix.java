@@ -132,9 +132,12 @@ public class DataMatrix {
 
     /** Iterate */
     private int                 iterator_2_i       = 0;
-    
+
     /** Iterate */
     private long                iterator_2_address = 0;
+
+    /** Write access */
+    private long                writeBaseAddress   = 0;
 
     /**
      * Instantiates a new memory.
@@ -169,6 +172,23 @@ public class DataMatrix {
         this.unsafe.setMemory(baseAddress, size, (byte) 0);
     }
 
+    /**
+     * ANDs the first value of the row with the given value
+     * @param row
+     * @param value
+     */
+    public void and(int row, long value) {
+        long address = this.baseAddress + row * this.rowSizeInBytes;
+        unsafe.putLong(address, unsafe.getLong(address) & value);
+    }
+
+    @Override
+    public DataMatrix clone() {
+        DataMatrix result = new DataMatrix(this.rows, this.columns);
+        unsafe.copyMemory(this.baseAddress, result.baseAddress, this.size);
+        return result;
+    }
+    
     /**
      * Compares two rows for equality
      * @param row1
@@ -244,7 +264,7 @@ public class DataMatrix {
         unsafe.freeMemory(baseAddress);
         MATRICES.remove(this);
     }
-    
+
     /**
      * Returns the specified value
      * @param row
@@ -265,7 +285,7 @@ public class DataMatrix {
     public ExclusiveRowIterator getExclusiveIterator(int row) {
        return new ExclusiveRowIterator(row); 
     }
-
+    
     /**
      * Returns the number of columns
      * @return
@@ -281,7 +301,7 @@ public class DataMatrix {
     public int getNumRows() {
         return rows;
     }
-    
+
     /**
      * Returns the size in bytes
      * @return
@@ -305,7 +325,7 @@ public class DataMatrix {
         }
         return result;        
     }
-
+    
     /**
      * First iterator
      * @param row
@@ -322,7 +342,7 @@ public class DataMatrix {
     public boolean iterator1_hasNext() {
         return iterator_1_i < columns;
     }
-    
+
     /**
      * First iterator
      * @return
@@ -344,7 +364,7 @@ public class DataMatrix {
         iterator_1_address += 4;
         iterator_1_i++;
     }
-
+    
     /**
      * First iterator
      * @param row
@@ -353,7 +373,7 @@ public class DataMatrix {
         iterator_2_address = baseAddress + row * rowSizeInBytes;
         iterator_2_i = 0;
     }
-
+    
     /**
      * First iterator
      * @return
@@ -361,7 +381,7 @@ public class DataMatrix {
     public boolean iterator2_hasNext() {
         return iterator_2_i < columns;
     }
-    
+
     /**
      * First iterator
      * @return
@@ -372,7 +392,7 @@ public class DataMatrix {
         iterator_2_i++;
         return result;
     }
-    
+
     /**
      * First iterator
      * @param value
@@ -382,6 +402,75 @@ public class DataMatrix {
         unsafe.putInt(iterator_2_address, value);
         iterator_2_address += 4;
         iterator_2_i++;
+    }
+    
+    /**
+     * ORs the first value of the row with the given value
+     * @param row
+     * @param removeOutlierMaskLong
+     */
+    public void or(int row, long value) {
+        long address = this.baseAddress + row * this.rowSizeInBytes;
+        unsafe.putLong(address, unsafe.getLong(address) | value);
+    }
+
+    /**
+     * Sets a value
+     * @param row
+     * @param column
+     * @param value
+     */
+    public void set(int row, int column, int value) {
+        long address = this.baseAddress + row * this.rowSizeInBytes + column * 4;
+        unsafe.putInt(address, value);
+    }
+
+    /**
+     * Sets the row index for data access
+     * @param row
+     */
+    public void setRow(int row) {
+        this.writeBaseAddress = this.baseAddress + row * this.rowSizeInBytes;
+    }
+
+    /**
+     * Sets the data for one row
+     * @param row
+     * @param data
+     */
+    public void setRow(int row, int[] data) {
+        long address = this.baseAddress + row * this.rowSizeInBytes;
+        for (int i = 0; i < data.length; i++) {
+            unsafe.putInt(address, data[i]);
+            address += 4;
+        }
+    }
+
+    /**
+     * Sets the value in the given column for the row which
+     * has been set via setRow(row).
+     * @param column
+     * @param value
+     */
+    public void setValueAtColumn(int column, int value) {
+        this.unsafe.putInt(this.writeBaseAddress + column << 2, value);
+    }
+
+    /**
+     * Swaps the data in both rows
+     * @param row1
+     * @param row2
+     */
+    public void swap(int row1, int row2) {
+        long address1 = this.baseAddress + row1 * this.rowSizeInBytes;
+        long address2 = this.baseAddress + row2 * this.rowSizeInBytes;
+        for (int i = 0; i < this.columns; i++) {
+            long temp = unsafe.getLong(address1);
+            unsafe.putLong(address1, unsafe.getLong(address2));
+            unsafe.putLong(address2, temp);
+            address1 += 8;
+            address2 += 8;
+        }
     }
 
     /**
@@ -396,6 +485,31 @@ public class DataMatrix {
         } catch (Exception e) {
             throw new IllegalStateException("Error accessing off-heap memory!", e);
         }
+    }
+
+    /**
+     * Clones only a subset of the records
+     * @param subset
+     * @return
+     */
+    protected DataMatrix clone(int[] subset) {
+        
+        // Create instance
+        DataMatrix result = new DataMatrix(subset.length, this.columns);
+        
+        // Copy subset
+        int target = 0;
+        for (int source : subset) {
+            this.iterator1(source);
+            result.iterator1(target);
+            while (this.iterator1_hasNext()) {
+                result.iterator1_write(this.iterator1_next());
+            }
+            target++;
+        }
+        
+        // Return
+        return result;
     }
 
     @Override
