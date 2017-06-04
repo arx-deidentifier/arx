@@ -657,14 +657,14 @@ public class DataHandleOutput extends DataHandle {
             return DataType.ANY_VALUE;
         default:
             final int index = inverseMap[key + 1];
-            final int[][] data = inverseData[type];
+            final DataMatrix data = inverseData[type];
             
             if (!ignoreSuppression && (suppressedAttributeTypes & (1 << type)) != 0 &&
-                ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
+                ((outputGeneralized.getArray().get(row, 0) & Data.OUTLIER_MASK) != 0)) {
                 return DataType.ANY_VALUE;
             }
             
-            final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;
+            final int value = data.get(row, index) & Data.REMOVE_OUTLIER_MASK;
             final String[][] dictionary = inverseDictionaries[type].getMapping();
             return dictionary[index][value];
         }
@@ -677,7 +677,7 @@ public class DataHandleOutput extends DataHandle {
      * @return
      */
     protected boolean internalIsOutlier(final int row) {
-        return ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
+        return ((outputGeneralized.getArray().get(row, 0) & Data.OUTLIER_MASK) != 0);
     }
     
     @Override
@@ -717,16 +717,13 @@ public class DataHandleOutput extends DataHandle {
      *            the row2
      */
     protected void internalSwap(final int row1, final int row2) {
+        
         // Swap GH
-        int[] temp = outputGeneralized.getArray()[row1];
-        outputGeneralized.getArray()[row1] = outputGeneralized.getArray()[row2];
-        outputGeneralized.getArray()[row2] = temp;
+        outputGeneralized.getArray().swap(row1, row2);
         
         // Swap OT
-        if (outputMicroaggregated.getArray().length != 0) {
-            temp = outputMicroaggregated.getArray()[row1];
-            outputMicroaggregated.getArray()[row1] = outputMicroaggregated.getArray()[row2];
-            outputMicroaggregated.getArray()[row2] = temp;
+        if (outputMicroaggregated.getArray().getNumRows() != 0) {
+            outputMicroaggregated.getArray().swap(row1, row2);
         }
     }
     

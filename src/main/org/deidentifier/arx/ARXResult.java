@@ -30,6 +30,7 @@ import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -112,7 +113,7 @@ public class ARXResult {
 
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final DataMatrix dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
         final DataManager manager = new DataManager(header,
                                                     dataArray,
@@ -581,10 +582,10 @@ public class ARXResult {
         // Else, merge the results back into the given handle
         TransformedData data = result.checker.applyTransformation(result.optimum, output.getOutputBufferMicroaggregated().getDictionary());
         int newIndex = -1;
-        int[][] oldGeneralized = output.getOutputBufferGeneralized().getArray();
-        int[][] oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
-        int[][] newGeneralized = data.bufferGeneralized.getArray();
-        int[][] newMicroaggregated = data.bufferMicroaggregated.getArray();
+        DataMatrix oldGeneralized = output.getOutputBufferGeneralized().getArray();
+        DataMatrix oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
+        DataMatrix newGeneralized = data.bufferGeneralized.getArray();
+        DataMatrix newMicroaggregated = data.bufferMicroaggregated.getArray();
         
         try {
             
@@ -592,12 +593,12 @@ public class ARXResult {
             for (int oldIndex = 0; oldIndex < rowset.length(); oldIndex++) {
                 if (rowset.contains(oldIndex)) {
                     newIndex++;
-                    if (oldGeneralized != null && oldGeneralized.length != 0) {
-                        System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
-                        optimized += (newGeneralized[newIndex][0] & Data.OUTLIER_MASK) != 0 ? 0 : 1;
+                    if (oldGeneralized != null && oldGeneralized.getNumRows() != 0) {
+                        oldGeneralized.copyFrom(oldIndex, newGeneralized, newIndex);
+                        optimized += (newGeneralized.get(newIndex, 0) & Data.OUTLIER_MASK) != 0 ? 0 : 1;
                     }
-                    if (oldMicroaggregated != null && oldMicroaggregated.length != 0) {
-                        System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
+                    if (oldMicroaggregated != null && oldMicroaggregated.getNumRows() != 0) {
+                        oldMicroaggregated.copyFrom(oldIndex, newMicroaggregated, newIndex);
                     }
                 }
             }

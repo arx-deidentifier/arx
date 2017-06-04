@@ -190,6 +190,18 @@ public class DataMatrix {
     }
     
     /**
+     * Copies a row from the given matrix into this matrix
+     * @param row
+     * @param sourceMatrix
+     * @param sourceRow
+     */
+    public void copyFrom(int row, DataMatrix sourceMatrix, int sourceRow) {
+        unsafe.copyMemory(sourceMatrix.baseAddress + sourceRow * this.rowSizeInBytes, 
+                          this.baseAddress + row * this.rowSizeInBytes, 
+                          this.rowSizeInBytes);
+    }
+
+    /**
      * Compares two rows for equality
      * @param row1
      * @param row2
@@ -274,7 +286,7 @@ public class DataMatrix {
     public int get(final int row, final int col) {
         return unsafe.getInt((row * rowSizeInBytes) + col * 4);
     }
-
+    
     /**
      * This returns an iterator for parallel access, e.g. in
      * multithreaded environments
@@ -285,7 +297,7 @@ public class DataMatrix {
     public ExclusiveRowIterator getExclusiveIterator(int row) {
        return new ExclusiveRowIterator(row); 
     }
-    
+
     /**
      * Returns the number of columns
      * @return
@@ -309,6 +321,16 @@ public class DataMatrix {
     public long getOffHeapByteSize() {
         return this.size;
     }
+    
+    /**
+     * Sets the value in the given column for the row which
+     * has been set via setRow(row).
+     * @param column
+     * @param value
+     */
+    public int getValueAtColumn(int column) {
+        return this.unsafe.getInt(this.writeBaseAddress + column << 2);
+    }
 
     /**
      * Returns an hashcode for the given row
@@ -325,7 +347,7 @@ public class DataMatrix {
         }
         return result;        
     }
-    
+
     /**
      * First iterator
      * @param row
@@ -342,7 +364,7 @@ public class DataMatrix {
     public boolean iterator1_hasNext() {
         return iterator_1_i < columns;
     }
-
+    
     /**
      * First iterator
      * @return
@@ -353,7 +375,7 @@ public class DataMatrix {
         iterator_1_i++;
         return result;
     }
-
+    
     /**
      * First iterator
      * @param value
@@ -364,7 +386,7 @@ public class DataMatrix {
         iterator_1_address += 4;
         iterator_1_i++;
     }
-    
+
     /**
      * First iterator
      * @param row
@@ -373,7 +395,7 @@ public class DataMatrix {
         iterator_2_address = baseAddress + row * rowSizeInBytes;
         iterator_2_i = 0;
     }
-    
+
     /**
      * First iterator
      * @return
@@ -381,7 +403,7 @@ public class DataMatrix {
     public boolean iterator2_hasNext() {
         return iterator_2_i < columns;
     }
-
+    
     /**
      * First iterator
      * @return
@@ -403,7 +425,7 @@ public class DataMatrix {
         iterator_2_address += 4;
         iterator_2_i++;
     }
-    
+
     /**
      * ORs the first value of the row with the given value
      * @param row

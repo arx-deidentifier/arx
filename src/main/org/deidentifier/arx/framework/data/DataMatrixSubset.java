@@ -87,6 +87,11 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
+    public int getValueAtColumn(int column) {
+        return matrix.getValueAtColumn(column);
+    }
+
+    @Override
     public int hashCode(int row) {
         return matrix.hashCode(subset[row]);
     }
@@ -155,7 +160,7 @@ public class DataMatrixSubset extends DataMatrix {
     public void setValueAtColumn(int column, int value) {
         matrix.setValueAtColumn(column, value);
     }
-
+    
     @Override
     public void swap(int row1, int row2) {
         matrix.swap(subset[row1], subset[row2]);

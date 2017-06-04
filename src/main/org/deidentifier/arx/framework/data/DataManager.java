@@ -146,7 +146,7 @@ public class DataManager {
      * @param function
      */
     public DataManager(final String[] header,
-                       final int[][] data,
+                       final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
                        final Set<PrivacyCriterion> criteria,
@@ -899,7 +899,7 @@ public class DataManager {
      * @param headerStatic
      * @return
      */
-    private Data[] encode(final int[][] data,
+    private Data[] encode(final DataMatrix data,
                           final int[] map,
                           final int[] mapGeneralized,
                           final int[] mapAnalyzed,
@@ -912,42 +912,43 @@ public class DataManager {
                           final String[] headerStatic) {
 
         // Parse the dataset
-        final DataMatrix valsGH = headerGeneralized.length == 0 ? null : new DataMatrix(data.length, headerGeneralized.length);
-        final DataMatrix valsDI = headerAnalyzed.length == 0 ? null : new DataMatrix(data.length, headerAnalyzed.length);
-        final DataMatrix valsIS = headerStatic.length == 0 ? null : new DataMatrix(data.length, headerStatic.length);
+        final DataMatrix valsGH = headerGeneralized.length == 0 ? null : new DataMatrix(data.getNumRows(), headerGeneralized.length);
+        final DataMatrix valsDI = headerAnalyzed.length == 0 ? null : new DataMatrix(data.getNumRows(), headerAnalyzed.length);
+        final DataMatrix valsIS = headerStatic.length == 0 ? null : new DataMatrix(data.getNumRows(), headerStatic.length);
 
-        int index = 0;
-        for (final int[] tuple : data) {
-
+        for (int index = 0; index < data.getNumRows(); index++) {
+            
             valsGH.setRow(index);
             valsDI.setRow(index);
             valsIS.setRow(index);
-            
-            for (int i = 0; i < tuple.length; i++) {
+
+            data.iterator1(index);
+            int i = 0;
+            while (data.iterator1_hasNext()) {
                 
                 final int idx = i * 2;
                 int aType = map[idx];
                 final int iPos = map[idx + 1];
+                final int iValue = data.iterator1_next();
                 switch (aType) {
                 case AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED:
-                    valsGH.setValueAtColumn(iPos, tuple[i]);
+                    valsGH.setValueAtColumn(iPos, iValue);
                     break;
                 case AttributeTypeInternal.IDENTIFYING:
                     // Ignore
                     break;
                 case AttributeTypeInternal.INSENSITIVE:
-                    valsIS.setValueAtColumn(iPos, tuple[i]);
+                    valsIS.setValueAtColumn(iPos, iValue);
                     break;
                 case AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED:
-                    valsDI.setValueAtColumn(iPos, tuple[i]);
+                    valsDI.setValueAtColumn(iPos, iValue);
                     break;
                 case AttributeTypeInternal.SENSITIVE:
-                    valsDI.setValueAtColumn(iPos, tuple[i]);
+                    valsDI.setValueAtColumn(iPos, iValue);
                     break;
                 }
+                i++;
             }
-            
-            index++;
         }
 
         // Build data object

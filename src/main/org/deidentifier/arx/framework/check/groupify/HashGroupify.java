@@ -26,6 +26,7 @@ import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
@@ -144,7 +145,10 @@ public class HashGroupify {
      * @param count
      * @param pcount
      */
-    public void addFromBuffer(int[] generalized, int[] other, int representative, int count, int pcount) {
+    public void addFromBuffer(int generalized, int other, int representative, int count, int pcount) {
+        
+        // Generalized: Pointer to row in generalized data
+        // Other: Pointer to row in analyzed data (field "otherData" in AbstractTransformer): -1 indicates "null"
         
         // Add
         final int hash = HashTableUtil.hashcode(generalized);
@@ -180,7 +184,9 @@ public class HashGroupify {
      * @param count
      * @param pcount
      */
-    public void addFromGroupify(int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
+    public void addFromGroupify(int generalized, Distribution[] distributions, int representative, int count, int pcount) {
+
+        // Generalized: Pointer to row in generalized data
         
         // Add
         final int hash = HashTableUtil.hashcode(generalized);
@@ -209,7 +215,9 @@ public class HashGroupify {
      * @param count
      * @param pcount
      */
-    public void addFromSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
+    public void addFromSnapshot(int generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
+
+        // Generalized: Pointer to row in generalized data
         
         // Add
         final int hash = HashTableUtil.hashcode(generalized);
@@ -241,6 +249,7 @@ public class HashGroupify {
      * @return
      */
     public HashGroupifyEntry getEntry(int[] tuple) {
+        // Special function for providing extra tuples, e.g. for use by KL-Divergence metric.
         final int hash = HashTableUtil.hashcode(tuple);
         int index = hash & (hashTableBuckets.length - 1);
         return findEntry(tuple, index, hash);
@@ -289,7 +298,7 @@ public class HashGroupify {
      * @param dictionary
      * @return
      */
-    public Data performMicroaggregation(int[][] data,
+    public Data performMicroaggregation(DataMatrix data,
                                         int start,
                                         int num,
                                         DistributionAggregateFunction[] functions,
@@ -298,16 +307,17 @@ public class HashGroupify {
                                         Dictionary dictionary) {
         
         // Prepare result
-        Data result = new Data(new int[data.length][num], header, map, dictionary);
+        Data result = new Data(new DataMatrix(data.getNumRows(), num), header, map, dictionary);
 
         // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
         ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
-        for (int row = 0; row < data.length; row++) {
+        for (int row = 0; row < data.getNumRows(); row++) {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
                 final int[] key = data[row];
                 final int hash = HashTableUtil.hashcode(key);
                 final int index = hash & (hashTableBuckets.length - 1);
                 HashGroupifyEntry m = hashTableBuckets[index];
+                // if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) 
                 while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
                     m = m.next;
                 }
@@ -337,14 +347,15 @@ public class HashGroupify {
      * Marks all outliers in the given (generalized subset of the) input datasets
      * @param data
      */
-    public void performSuppression(final int[][] data) {
+    public void performSuppression(final DataMatrix data) {
         
-        for (int row = 0; row < data.length; row++) {
+        for (int row = 0; row < data.getNumRows(); row++) {
             final int[] key = data[row];
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
                 final int hash = HashTableUtil.hashcode(key);
                 final int index = hash & (hashTableBuckets.length - 1);
                 HashGroupifyEntry m = hashTableBuckets[index];
+                // if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) 
                 while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
                     m = m.next;
                 }
@@ -640,22 +651,6 @@ public class HashGroupify {
     }
     
     /**
-     * TODO: Ugly!.
-     *
-     * @param a
-     * @param a2
-     * @return
-     */
-    private boolean equalsIgnoringOutliers(final int[] a, final int[] a2) {
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    /**
      * Returns the according entry.
      * 
      * @param key
@@ -715,5 +710,13 @@ public class HashGroupify {
         }
         hashTableBuckets = newData;
         hashTableThreshold = HashTableUtil.calculateThreshold(hashTableBuckets.length, hashTableLoadFactor);
+    }
+
+    /**
+     * Returns the input data matrix
+     * @return
+     */
+    public DataMatrix getInputData() {
+        
     }
 }

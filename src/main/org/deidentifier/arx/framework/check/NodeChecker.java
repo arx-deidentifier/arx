@@ -26,6 +26,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -165,7 +166,7 @@ public class NodeChecker {
             dictionarySensFreq = new IntArrayDictionary(0);
         }
         
-        this.history = new History(manager.getDataGeneralized().getArray().length,
+        this.history = new History(manager.getDataGeneralized().getArray().getNumRows(),
                                    historyMaxSize,
                                    snapshotSizeDataset,
                                    snapshotSizeSnapshot,
@@ -222,7 +223,7 @@ public class NodeChecker {
         }
         
         // Prepare buffers
-        Data microaggregatedOutput = new Data(new int[0][0], new String[0], new int[0], new Dictionary(0));
+        Data microaggregatedOutput = new Data(new DataMatrix(0,0), new String[0], new int[0], new Dictionary(0));
         Data generalizedOutput = new Data(transformer.getBuffer(), dataGeneralized.getHeader(), dataGeneralized.getMap(), dataGeneralized.getDictionary());
         
         // Perform microaggregation. This has to be done before suppression.
@@ -336,7 +337,7 @@ public class NodeChecker {
      * Returns the input buffer
      * @return
      */
-    public int[][] getInputBuffer() {
+    public DataMatrix getInputBuffer() {
         return this.dataGeneralized.getArray();
     }
     

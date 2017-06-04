@@ -40,6 +40,7 @@ import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -565,7 +566,7 @@ public class ARXAnonymizer {
 
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final DataMatrix dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
         final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getPrivacyModels(), getAggregateFunctions(definition));
         return manager;
