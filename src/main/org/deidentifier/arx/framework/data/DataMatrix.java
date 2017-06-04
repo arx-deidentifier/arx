@@ -208,66 +208,37 @@ public class DataMatrix {
      * @return
      */
     public boolean equals(final int row1, final int row2) {
-        
-        final long base1 = baseAddress + (row1 * rowSizeInBytes);
-        final long base2 = baseAddress + (row2 * rowSizeInBytes);
+        return equals(row1, row2, ~0L);
+    }
 
-        switch (rowSizeInLongs) {
-        case 10:
-            if (unsafe.getLong(base1 + 72) != unsafe.getLong(base2 + 72)) {
+    /**
+     * Returns whether the given row has the given data
+     * @param row
+     * @param data
+     * @return
+     */
+    public boolean equals(int row, int[] data) {
+        long address = this.baseAddress + row * this.rowSizeInBytes;
+        for (int i = 0; i < data.length; i++) {
+            if (unsafe.getInt(address) != data[i]) {
                 return false;
-            }
-        case 9:
-            if (unsafe.getLong(base1 + 64) != unsafe.getLong(base2 + 64)) {
-                return false;
-            }
-        case 8:
-            if (unsafe.getLong(base1 + 56) != unsafe.getLong(base2 + 56)) {
-                return false;
-            }
-        case 7:
-            if (unsafe.getLong(base1 + 48) != unsafe.getLong(base2 + 48)) {
-                return false;
-            }
-        case 6:
-            if (unsafe.getLong(base1 + 40) != unsafe.getLong(base2 + 40)) {
-                return false;
-            }
-        case 5:
-            if (unsafe.getLong(base1 + 32) != unsafe.getLong(base2 + 32)) {
-                return false;
-            }
-        case 4:
-            if (unsafe.getLong(base1 + 24) != unsafe.getLong(base2 + 24)) {
-                return false;
-            }
-        case 3:
-            if (unsafe.getLong(base1 + 16) != unsafe.getLong(base2 + 16)) {
-                return false;
-            }
-        case 2:
-            if (unsafe.getLong(base1 + 8) != unsafe.getLong(base2 + 8)) {
-                return false;
-            }
-        case 1:
-            if (unsafe.getLong(base1) != unsafe.getLong(base2)) {
-                return false;
-            }
-            break;
-        default:
-            final long end1 = base1 + rowSizeInBytes;
-            long address2 = base2;
-
-            for (long address = base1; address < end1; address += 8) {
-                if (unsafe.getLong(address) != unsafe.getLong(address2)) {
-                    return false;
-                }
-                address2 += 8;
+            } else {
+                address += 4;
             }
         }
         return true;
     }
 
+    /**
+     * Equals ignoring outliers
+     * @param row1
+     * @param row2
+     * @return
+     */
+    public boolean equalsIgnoringOutliers(int row1, int row2) {
+        return this.equals(row1, row2, Data.REMOVE_OUTLIER_MASK_LONG);
+    }
+    
     /**
      * Frees the backing off-heap memory
      */
@@ -286,7 +257,7 @@ public class DataMatrix {
     public int get(final int row, final int col) {
         return unsafe.getInt((row * rowSizeInBytes) + col * 4);
     }
-    
+
     /**
      * This returns an iterator for parallel access, e.g. in
      * multithreaded environments
@@ -305,7 +276,7 @@ public class DataMatrix {
     public int getNumColumns() {
         return columns;
     }
-
+    
     /**
      * Returns the number of rows
      * @return
@@ -321,7 +292,7 @@ public class DataMatrix {
     public long getOffHeapByteSize() {
         return this.size;
     }
-    
+
     /**
      * Sets the value in the given column for the row which
      * has been set via setRow(row).
@@ -347,7 +318,32 @@ public class DataMatrix {
         }
         return result;        
     }
-
+    
+    /**
+     * Computes a hashcode for an integer array, partially unrolled.
+     * 
+     * @param array
+     * @return the hashcode
+     */
+    public final int hashCode(final int[] array) {
+        final int len = array.length;
+        int result = 23;
+        int i = 0;
+        // Do blocks of four ints unrolled.
+        for (; (i + 3) < len; i += 4) {
+            result = (1874161 * result) + // 37 * 37 * 37 * 37 
+                     (50653 * array[i]) + // 37 * 37 * 37
+                     (1369 * array[i + 1]) + // 37 * 37
+                     (37 * array[i + 2]) +
+                     array[i + 3];
+        }
+        // Do the rest
+        for (; i < len; i++) {
+            result = (37 * result) + array[i];
+        }
+        return result;
+    }
+    
     /**
      * First iterator
      * @param row
@@ -364,7 +360,7 @@ public class DataMatrix {
     public boolean iterator1_hasNext() {
         return iterator_1_i < columns;
     }
-    
+
     /**
      * First iterator
      * @return
@@ -403,7 +399,7 @@ public class DataMatrix {
     public boolean iterator2_hasNext() {
         return iterator_2_i < columns;
     }
-    
+
     /**
      * First iterator
      * @return
@@ -477,6 +473,7 @@ public class DataMatrix {
     public void setValueAtColumn(int column, int value) {
         this.unsafe.putInt(this.writeBaseAddress + column << 2, value);
     }
+    
 
     /**
      * Swaps the data in both rows
@@ -493,6 +490,82 @@ public class DataMatrix {
             address1 += 8;
             address2 += 8;
         }
+    }
+
+    /**
+     * Internal equals
+     * @param row1
+     * @param row2
+     * @param flag
+     * @return
+     */
+    private boolean equals(int row1, int row2, long flag) {
+
+        long base1 = baseAddress + (row1 * rowSizeInBytes);
+        long base2 = baseAddress + (row2 * rowSizeInBytes);
+
+        switch (rowSizeInLongs) {
+        case 10:
+            if (unsafe.getLong(base1 + 72) != unsafe.getLong(base2 + 72)) {
+                return false;
+            }
+        case 9:
+            if (unsafe.getLong(base1 + 64) != unsafe.getLong(base2 + 64)) {
+                return false;
+            }
+        case 8:
+            if (unsafe.getLong(base1 + 56) != unsafe.getLong(base2 + 56)) {
+                return false;
+            }
+        case 7:
+            if (unsafe.getLong(base1 + 48) != unsafe.getLong(base2 + 48)) {
+                return false;
+            }
+        case 6:
+            if (unsafe.getLong(base1 + 40) != unsafe.getLong(base2 + 40)) {
+                return false;
+            }
+        case 5:
+            if (unsafe.getLong(base1 + 32) != unsafe.getLong(base2 + 32)) {
+                return false;
+            }
+        case 4:
+            if (unsafe.getLong(base1 + 24) != unsafe.getLong(base2 + 24)) {
+                return false;
+            }
+        case 3:
+            if (unsafe.getLong(base1 + 16) != unsafe.getLong(base2 + 16)) {
+                return false;
+            }
+        case 2:
+            if (unsafe.getLong(base1 + 8) != unsafe.getLong(base2 + 8)) {
+                return false;
+            }
+        case 1:
+            if ((unsafe.getLong(base1) & flag) != (unsafe.getLong(base2) & flag)) {
+                return false;
+            }
+            break;
+        default:
+            final long end1 = base1 + rowSizeInBytes;
+
+            // Check with flag
+            if ((unsafe.getLong(base1) & flag) != (unsafe.getLong(base2) & flag)) {
+                return false;
+            }
+            base1 += 8;
+            base2 += 8;
+            
+            // Check without flag
+            long address2 = base2;
+            for (long address = base1; address < end1; address += 8) {
+                if (unsafe.getLong(address) != unsafe.getLong(address2)) {
+                    return false;
+                }
+                address2 += 8;
+            }
+        }
+        return true;
     }
 
     /**

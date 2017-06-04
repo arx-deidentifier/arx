@@ -120,8 +120,9 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
                 double classResult = 1d;
                 double classBound = 1d;
                 // Compute
+                m.read();
                 for (int dimension = 0; dimension < transformation.length; dimension++) {
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = shares[dimension].getShare(value, level);
                     classResult *= (m.isNotOutlier ? share : 1d) * shares[dimension].getDomainSize();
@@ -147,8 +148,9 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         double result = 1d;
 
         // Compute
+        entry.read();
         for (int dimension = 0; dimension < transformation.length; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.next();
             int level = transformation[dimension];
             result *= shares[dimension].getShare(value, level) * shares[dimension].getDomainSize();
         }
@@ -178,8 +180,9 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
             if (m.count>0) {
                 double classResult = 1d;
                 // Compute
+                m.read();
                 for (int dimension = 0; dimension < transformation.length; dimension++) {
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = shares[dimension].getShare(value, level);
                     classResult *= share * shares[dimension].getDomainSize();

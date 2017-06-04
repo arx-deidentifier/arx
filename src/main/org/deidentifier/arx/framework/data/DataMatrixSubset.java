@@ -57,10 +57,20 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
+    public boolean equals(int row, int[] data) {
+        return matrix.equals(subset[row], data);
+    }
+    
+    @Override
+    public boolean equalsIgnoringOutliers(int row1, int row2) {
+        return matrix.equalsIgnoringOutliers(subset[row1], subset[row2]);
+    }
+
+    @Override
     public void free() {
         // Nothing to do
     }
-    
+
     @Override
     public int get(int row, int col) {
         return matrix.get(subset[row], col);
@@ -150,7 +160,7 @@ public class DataMatrixSubset extends DataMatrix {
     public void setRow(int row) {
        matrix.setRow(this.subset[row]);
     }
-
+    
     @Override
     public void setRow(int row, int[] data) {
         matrix.setRow(subset[row], data);
@@ -160,12 +170,11 @@ public class DataMatrixSubset extends DataMatrix {
     public void setValueAtColumn(int column, int value) {
         matrix.setValueAtColumn(column, value);
     }
-    
     @Override
     public void swap(int row1, int row2) {
         matrix.swap(subset[row1], subset[row2]);
     }
-    
+
     @Override
     protected void finalize() throws Throwable {
         // Nothing to do

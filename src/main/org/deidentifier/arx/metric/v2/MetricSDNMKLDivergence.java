@@ -170,12 +170,13 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
      * @param generalization
      * @return
      */
-    private double getArea(int[] output, int[] generalization) {
+    private double getArea(HashGroupifyEntry entry, int[] generalization) {
         
         double result = 1d;
-        for (int dimension = 0; dimension < output.length; dimension++) {
+        entry.read();
+        for (int dimension = 0; dimension < generalization.length; dimension++) {
             DomainShare share = this.shares[dimension];
-            result *= share.getShare(output[dimension], generalization[dimension]) * share.getDomainSize();
+            result *= share.getShare(entry.next(), generalization[dimension]) * share.getDomainSize();
         }
         return result;
     }
@@ -207,7 +208,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
                 HashGroupifyEntry entry = this.matcher.getEntry(row, generalization, g);
                 double outputFrequency = entry.isNotOutlier ? entry.count : outliers;
                 outputFrequency /= this.tuples;
-                outputFrequency /= entry.isNotOutlier ? getArea(entry.key, generalization) : maximalArea;
+                outputFrequency /= entry.isNotOutlier ? getArea(entry, generalization) : maximalArea;
                 
                 // Compute KL-Divergence
                 result += inputFrequency * log2(inputFrequency / outputFrequency);

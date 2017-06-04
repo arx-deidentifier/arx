@@ -176,14 +176,20 @@ public class NodeChecker {
                                    solutionSpace);
         
         this.stateMachine = new StateMachine(history);
-        this.currentGroupify = new HashGroupify(initialSize, config);
-        this.lastGroupify = new HashGroupify(initialSize, config);
         this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
                                            manager.getDataAnalyzed().getArray(),
                                            manager.getHierarchies(),
                                            config,
                                            dictionarySensValue,
                                            dictionarySensFreq);
+        this.currentGroupify = new HashGroupify(initialSize, config,
+                                                manager.getDataGeneralized().getArray(),
+                                                transformer.getBuffer(),
+                                                manager.getDataAnalyzed().getArray());
+        this.lastGroupify = new HashGroupify(initialSize, config,
+                                             manager.getDataGeneralized().getArray(),
+                                             transformer.getBuffer(),
+                                             manager.getDataAnalyzed().getArray());
     }
 
     
@@ -228,8 +234,7 @@ public class NodeChecker {
         
         // Perform microaggregation. This has to be done before suppression.
         if (microaggregationFunctions.length > 0) {
-            microaggregatedOutput = currentGroupify.performMicroaggregation(transformer.getBuffer(), 
-                                                                            microaggregationStartIndex,
+            microaggregatedOutput = currentGroupify.performMicroaggregation(microaggregationStartIndex,
                                                                             microaggregationNumAttributes,
                                                                             microaggregationFunctions,
                                                                             microaggregationMap,
@@ -239,7 +244,7 @@ public class NodeChecker {
         
         // Perform suppression
         if (config.getAbsoluteMaxOutliers() != 0 || !currentGroupify.isPrivacyModelFulfilled()) {
-            currentGroupify.performSuppression(transformer.getBuffer());
+            currentGroupify.performSuppression();
         }
         
         // Return the buffer
