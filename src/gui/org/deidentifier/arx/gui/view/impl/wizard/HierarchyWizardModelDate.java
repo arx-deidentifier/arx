@@ -28,7 +28,6 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.aggregates.HierarchyBuilderDate;
 import org.deidentifier.arx.aggregates.HierarchyBuilderDate.Format;
 import org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity;
-import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
 
 /**
@@ -153,14 +152,14 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
         try {
             super.groupsizes = builder.prepare(data);
         } catch(Exception e){
-            super.error = Resources.getMessage("HierarchyWizardModelRedaction.0"); //$NON-NLS-1$
+            super.error = e.getMessage();
             return;
         }
         
         try {
             super.hierarchy = builder.build();
         } catch(Exception e){
-            super.error = Resources.getMessage("HierarchyWizardModelRedaction.1"); //$NON-NLS-1$
+            super.error = e.getMessage();
             return;
         }
     }
