@@ -255,7 +255,7 @@ public class DataMatrix {
      * @return
      */
     public int get(final int row, final int col) {
-        return unsafe.getInt((row * rowSizeInBytes) + col * 4);
+        return unsafe.getInt(this.baseAddress + (row * this.rowSizeInBytes) + (col << 2));
     }
 
     /**
@@ -300,7 +300,7 @@ public class DataMatrix {
      * @param value
      */
     public int getValueAtColumn(int column) {
-        return this.unsafe.getInt(this.writeBaseAddress + column << 2);
+        return this.unsafe.getInt(this.writeBaseAddress + (column << 2));
     }
 
     /**
@@ -471,7 +471,7 @@ public class DataMatrix {
      * @param value
      */
     public void setValueAtColumn(int column, int value) {
-        this.unsafe.putInt(this.writeBaseAddress + column << 2, value);
+        this.unsafe.putInt(this.writeBaseAddress + (column << 2), value);
     }
     
 
