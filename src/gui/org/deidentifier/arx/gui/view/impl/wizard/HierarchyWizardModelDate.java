@@ -38,11 +38,15 @@ import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizard
 public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date> {
     
     /** Granularities */
-    private List<Granularity>    granularities = new ArrayList<Granularity>();
+    private List<Granularity>    granularities     = new ArrayList<Granularity>();
     /** Format */
-    private Format               format        = new Format();
+    private Format               format            = new Format();
     /** Time zone */
-    private TimeZone             timeZone      = TimeZone.getDefault();
+    private TimeZone             timeZone          = TimeZone.getDefault();
+    /** Top/bottom coding */
+    private Date                 bottomCodingBound = null;
+    /** Top/bottom coding */
+    private Date                 topCodingBound    = null;
     /** Data type */
     private final DataType<Date> dataType;
 
@@ -64,6 +68,14 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
         this.update();
     }
 
+    /**
+     * Returns the bottom coding bound
+     * @return
+     */
+    public Date getBottomCodingBound() {
+        return this.bottomCodingBound;
+    }
+
     @Override
     public HierarchyBuilderDate getBuilder(boolean serializable) {
 
@@ -71,10 +83,19 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
         HierarchyBuilder<Date> builder = HierarchyBuilderDate.create(this.dataType,
                                                                      this.timeZone,
                                                                      this.format,
+                                                                     this.bottomCodingBound,
+                                                                     this.topCodingBound,
                                                                      this.granularities.toArray(new Granularity[0]));
 
         // Return
         return (HierarchyBuilderDate) builder;
+    }
+
+    /**
+     * @return the dataType
+     */
+    public DataType<Date> getDataType() {
+        return dataType;
     }
 
     /**
@@ -98,6 +119,14 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
         return timeZone;
     }
 
+    /**
+     * Returns the top-coding bound
+     * @return
+     */
+    public Date getTopCodingBound() {
+        return this.topCodingBound;
+    }
+
     @Override
     public void parse(HierarchyBuilder<Date> _builder) {
         
@@ -108,7 +137,16 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
         this.granularities = new ArrayList<>(Arrays.asList(builder.getGranularities()));
         this.format = builder.getFormat();
         this.timeZone = builder.getTimeZone();
+        this.topCodingBound = builder.getTopCodingBound();
+        this.bottomCodingBound = builder.getBottomCodingBound();
         this.update();
+    }
+
+    /**
+     * @param bottomCodingBound the bottomCodingBound to set
+     */
+    public void setBottomCodingBound(Date bottomCodingBound) {
+        this.bottomCodingBound = bottomCodingBound;
     }
 
     /**
@@ -133,6 +171,13 @@ public class HierarchyWizardModelDate extends HierarchyWizardModelAbstract<Date>
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
         this.update();
+    }
+
+    /**
+     * @param topCodingBound the topCodingBound to set
+     */
+    public void setTopCodingBound(Date topCodingBound) {
+        this.topCodingBound = topCodingBound;
     }
 
     @Override

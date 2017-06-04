@@ -122,6 +122,24 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         }
 
         /**
+         * Sets a form
+         * @param granularity
+         * @param format
+         */
+        public void set(Granularity granularity, String format) {
+            if (granularity == null || format == null) {
+                throw new IllegalArgumentException("Argument must not be null");
+            }
+            if (!granularity.isFormatSupported()) {
+                throw new IllegalArgumentException("Format not supported for this granularity");
+            }
+            if (!isValid(format, granularity.format)) {
+                throw new IllegalArgumentException("Illegal format string: '" + format + "'");
+            }
+            map.put(granularity, format);
+        }
+
+        /**
          * Helper function
          * @param input
          * @return
@@ -143,24 +161,6 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             // Sort and return
             Collections.sort(list);
             return list;
-        }
-
-        /**
-         * Sets a form
-         * @param granularity
-         * @param format
-         */
-        public void set(Granularity granularity, String format) {
-            if (granularity == null || format == null) {
-                throw new IllegalArgumentException("Argument must not be null");
-            }
-            if (!granularity.isFormatSupported()) {
-                throw new IllegalArgumentException("Format not supported for this granularity");
-            }
-            if (!isValid(format, granularity.format)) {
-                throw new IllegalArgumentException("Illegal format string: '" + format + "'");
-            }
-            map.put(granularity, format);
         }
     }
     
@@ -242,6 +242,51 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     private static final long    serialVersionUID = 6294885577802586286L;
 
     /**
+     * Creates an hierarchy reflecting the given granularities
+     *
+     * @param type
+     * @param granularities
+     * @return
+     */
+    public static HierarchyBuilder<Date> create(DataType<Date> type, Granularity... granularities){
+        return create(type, null, new Format(), granularities);
+    }
+    
+    /**
+     * Creates an hierarchy reflecting the given granularities
+     *
+     * @param type
+     * @param timeZone
+     * @param granularities
+     * @return
+     */
+    public static HierarchyBuilder<Date> create(DataType<Date> type,
+                                                TimeZone timeZone,
+                                                Format format,
+                                                Granularity... granularities){
+        return new HierarchyBuilderDate(type, timeZone, format, null, null, granularities);
+    }
+
+    /**
+     * Creates an hierarchy reflecting the given granularities
+     *
+     * @param type
+     * @param timeZone
+     * @param bottomCoding
+     * @param topCoding
+     * @param granularities
+     * @return
+     */
+    public static HierarchyBuilder<Date> create(DataType<Date> type,
+                                                TimeZone timeZone,
+                                                Format format,
+                                                Date bottomCoding,
+                                                Date topCoding,
+                                                Granularity... granularities){
+        return new HierarchyBuilderDate(type, timeZone, format, bottomCoding, topCoding, granularities);
+    }
+
+    /**
      * Loads a builder specification from the given file.
      *
      * @param <T>
@@ -262,44 +307,21 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
             if (ois != null) ois.close();
         }
     }
-    
-    /**
-     * Creates an hierarchy reflecting the given granularities
-     *
-     * @param type
-     * @param granularities
-     * @return
-     */
-    public static HierarchyBuilder<Date> create(DataType<Date> type, Granularity... granularities){
-        return create(type, null, new Format(), granularities);
-    }
-
-    /**
-     * Creates an hierarchy reflecting the given granularities
-     *
-     * @param type
-     * @param timeZone
-     * @param outputLocale
-     * @param granularities
-     * @return
-     */
-    public static HierarchyBuilder<Date> create(DataType<Date> type,
-                                                TimeZone timeZone,
-                                                Format format,
-                                                Granularity... granularities){
-        return new HierarchyBuilderDate(type, timeZone, format, granularities);
-    }
 
     /** Result */
     private transient String[][] result;
     /** Granularities */
     private Granularity[]        granularities;
     /** Timezones */
-    private TimeZone             timeZone = TimeZone.getDefault();
+    private TimeZone             timeZone     = TimeZone.getDefault();
     /** Format */
-    private Format               format   = new Format();
+    private Format               format       = new Format();
     /** Type */
-    private final DataType<Date> datatype;
+    private final ARXDate        datatype;
+    /** Top coding */
+    private Date                 topCoding    = null;
+    /** Bottom coding */
+    private Date                 bottomCoding = null;
 
     /**
      * Creates an hierarchy reflecting the given granularities
@@ -307,17 +329,23 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
      * @param type
      * @param timeZone
      * @param format
+     * @param bottomCoding
+     * @param topCoding
      * @param granularities
      */
     private HierarchyBuilderDate(DataType<Date> type,
                                  TimeZone timeZone,
                                  Format format,
+                                 Date bottomCoding,
+                                 Date topCoding,
                                  Granularity... granularities){
         super(Type.DATE_BASED);
-        this.datatype = type;
+        this.datatype = (ARXDate)type;
         this.granularities = granularities;
         this.timeZone = timeZone;
         this.format = format;
+        this.bottomCoding = bottomCoding;
+        this.topCoding = topCoding;
         Arrays.sort(this.granularities);
     }
     
@@ -351,6 +379,13 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     }
 
     /**
+     * @return the bottomCoding
+     */
+    public Date getBottomCodingBound() {
+        return bottomCoding;
+    }
+
+    /**
      * @return the format
      */
     public Format getFormat() {
@@ -373,6 +408,13 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     }
 
     /**
+     * @return the topCoding
+     */
+    public Date getTopCodingBound() {
+        return topCoding;
+    }
+
+    /**
      * Prepares the builder. Returns a list of the number of equivalence classes per level
      *
      * @param data
@@ -381,20 +423,23 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
     public int[] prepare(String[] data){
         
         // Check
-        if (this.result == null) {
-
-            // Build result
-            this.result = new String[data.length][granularities.length + 1];
-            for (int i=0; i<data.length; i++){
-                result[i] = new String[granularities.length + 1];
-                result[i][0] = data[i];
-                for (int j=0; j<granularities.length; j++){
-                    String output = generalize(data[i], granularities[j]);
-                    result[i][j+1] = output;
-                }
+        if (this.bottomCoding != null && this.topCoding != null) {
+            if (!this.bottomCoding.before(this.topCoding)) {
+                throw new IllegalArgumentException("Bottom coding bound must be lower than top coding bound");
             }
         }
         
+        // Build result
+        this.result = new String[data.length][granularities.length + 1];
+        for (int i = 0; i < data.length; i++) {
+            result[i] = new String[granularities.length + 1];
+            result[i][0] = data[i];
+            for (int j = 0; j < granularities.length; j++) {
+                String output = generalize(data[i], granularities[j]);
+                result[i][j + 1] = output;
+            }
+        }
+
         // Compute
         int[] sizes = new int[this.result[0].length];
         for (int i=0; i < sizes.length; i++){
@@ -407,6 +452,13 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         
         // Return
         return sizes;
+    }
+
+    /**
+     * @param bottomCoding the bottomCoding to set
+     */
+    public void setBottomCodingBound(Date bottomCoding) {
+        this.bottomCoding = bottomCoding;
     }
 
     /**
@@ -424,12 +476,19 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         this.granularities = granularities;
         Arrays.sort(this.granularities);
     }
-    
+
     /**
      * @param timeZone the time zone to set
      */
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
+    }
+    
+    /**
+     * @param topCoding the topCoding to set
+     */
+    public void setTopCodingBound(Date topCoding) {
+        this.topCoding = topCoding;
     }
 
     /**
@@ -456,6 +515,20 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
         }
         
         Date date = datatype.parse(input);
+
+        // Bottom coding
+        if (bottomCoding != null) {
+            if (date.before(bottomCoding)) {
+                return "<" + datatype.format(bottomCoding, this.timeZone);
+            }
+        }
+
+        // Top coding
+        if (topCoding != null) {
+            if (date.after(topCoding) || date.equals(topCoding)) {
+                return ">=" + datatype.format(topCoding, this.timeZone);
+            }
+        }
         
         // Range mapping
         if (_range == null) {

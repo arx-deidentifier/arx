@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilder;
@@ -201,6 +202,27 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return NULL_VALUE;
             }
         	return format.format(s);
+        }
+        
+        /**
+         * Format with timezone
+         */
+        public String format(Date s, TimeZone zone){
+            
+            // Check
+            if (s == null) {
+                return NULL_VALUE;
+            }
+            
+            // Prepare
+            SimpleDateFormat sdf = format;
+            if (zone != null) {
+                sdf = (SimpleDateFormat) format.clone();   
+                sdf.setTimeZone(zone);
+            }
+            
+            // Format
+            return sdf.format(s);
         }
 
         @Override
