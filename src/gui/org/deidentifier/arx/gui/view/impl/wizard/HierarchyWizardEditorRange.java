@@ -50,13 +50,13 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     private final HierarchyWizardGroupingRange<T> range;
     
     /** Var. */
-    private EditorString                          repeat;
+    private EditorString                          editorSnap;
     
     /** Var. */
-    private EditorString                          snap;
+    private EditorString                          editorTopBottomCoding;
     
     /** Var. */
-    private EditorString                          label;
+    private EditorString                          editorMinMax;
 
     /**
      * Creates a new instance.
@@ -93,9 +93,9 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
     @Override
     public void update() {
-        repeat.update();
-        snap.update();
-        label.update();
+        editorSnap.update();
+        editorTopBottomCoding.update();
+        editorMinMax.update();
     }
 
     /**
@@ -127,7 +127,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
                              final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.10") : //$NON-NLS-1$
                                        Resources.getMessage("HierarchyWizardEditorRange.11")); //$NON-NLS-1$
-        label = new EditorString(composite) {
+        editorMinMax = new EditorString(composite) {
             
             @Override
             public boolean accepts(final String s) {
@@ -169,7 +169,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
                               final boolean lower,
                               final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.4")); //$NON-NLS-1$
-        repeat = new EditorString(composite) {
+        editorSnap = new EditorString(composite) {
             
             @Override
             public boolean accepts(final String s) {
@@ -214,7 +214,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
         createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.7") //$NON-NLS-1$
                                      : Resources.getMessage("HierarchyWizardEditorRange.8")); //$NON-NLS-1$
 
-        snap = new EditorString(composite) {
+        editorTopBottomCoding = new EditorString(composite) {
             
             @Override
             public boolean accepts(final String s) {
