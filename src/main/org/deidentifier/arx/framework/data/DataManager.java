@@ -919,8 +919,8 @@ public class DataManager {
         for (int index = 0; index < data.getNumRows(); index++) {
             
             valsGH.setRow(index);
-            valsDI.setRow(index);
-            valsIS.setRow(index);
+            if (valsDI != null) valsDI.setRow(index);
+            if (valsIS != null) valsIS.setRow(index);
 
             data.iterator1(index);
             int i = 0;
