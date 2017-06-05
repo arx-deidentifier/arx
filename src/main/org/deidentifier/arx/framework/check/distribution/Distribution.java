@@ -33,6 +33,12 @@ public class Distribution {
     /** Static return value */
     private static final long[] RETURN_VALUE     = new long[2];
 
+    /** The load factor. */
+    private final static float  LOADFACTOR       = 0.75f;
+
+    /** The initial default capacity of the hash table. */
+    private static final int    DEFAULT_CAPACITY = 8;          // power of two
+
     /** The size. */
     private int                 size;
 
@@ -41,12 +47,6 @@ public class Distribution {
 
     /** The elements. Even index contains value, odd index contains frequency */
     private int[]               elements;
-
-    /** The loadfactor. */
-    private final static float  LOADFACTOR       = 0.75f;
-
-    /** The initial default capacity of the hashtable. */
-    private static final int    DEFAULT_CAPACITY = 8;          // power of two
 
     /**
      * Default constructor.
