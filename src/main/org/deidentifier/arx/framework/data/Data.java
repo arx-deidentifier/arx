@@ -36,10 +36,10 @@ public class Data implements Cloneable{
     public static final long REMOVE_OUTLIER_MASK_LONG = ~OUTLIER_MASK_LONG;
 
     /** The outliers mask. */
-    public static final int  OUTLIER_MASK        = 1 << 31;
+    public static final int  OUTLIER_MASK             = 1 << 31;
 
     /** The inverse outliers mask. */
-    public static final int  REMOVE_OUTLIER_MASK = ~OUTLIER_MASK;
+    public static final int  REMOVE_OUTLIER_MASK      = ~OUTLIER_MASK;
 
     /** Row, Dimension. */
     private final DataMatrix data;
