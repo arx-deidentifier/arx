@@ -79,6 +79,9 @@ public class DataMatrix {
             i++;
         }
     }
+    
+    /** Debugging flag*/
+    private static final boolean DEBUG = false;
 
     /** The base address of the memory field in bytes. */
     private final long          baseAddress;
@@ -117,7 +120,7 @@ public class DataMatrix {
     private long                writeBaseAddress   = 0;
 
     /**
-     * Instantiates a new memory.
+     * Instantiates a new memory block. The block will *not* be initialized.
      *
      * @param rows the num rows
      * @param columns the num columns
@@ -143,9 +146,6 @@ public class DataMatrix {
         this.rowSizeInBytes = rowSizeInLongs * 8;
         this.size = rowSizeInBytes * rows;
         this.baseAddress = MemoryManager.allocateMemory(size);
-        
-        // TODO: May not be needed
-        MemoryManager.setMemory(baseAddress, size, (byte) 0);
     }
 
     /**
@@ -154,6 +154,7 @@ public class DataMatrix {
      * @param value
      */
     public void and(int row, long value) {
+        checkRow(row);
         long address = this.baseAddress + row * this.rowSizeInBytes;
         MemoryManager.putLong(address, MemoryManager.getLong(address) & value);
     }
@@ -172,6 +173,8 @@ public class DataMatrix {
      * @param sourceRow
      */
     public void copyFrom(int row, DataMatrix sourceMatrix, int sourceRow) {
+        checkRow(row);
+        checkRow(sourceRow);
         MemoryManager.copyMemory(sourceMatrix.baseAddress + sourceRow * this.rowSizeInBytes, 
                           this.baseAddress + row * this.rowSizeInBytes, 
                           this.rowSizeInBytes);
@@ -184,6 +187,8 @@ public class DataMatrix {
      * @return
      */
     public boolean equals(final int row1, final int row2) {
+        checkRow(row1);
+        checkRow(row2);
         return equals(row1, row2, ~0L);
     }
 
@@ -194,6 +199,8 @@ public class DataMatrix {
      * @return
      */
     public boolean equals(int row, int[] data) {
+        checkRow(row);
+        checkColumn(data.length - 1);
         long address = this.baseAddress + row * this.rowSizeInBytes;
         for (int i = 0; i < data.length; i++) {
             if (MemoryManager.getInt(address) != data[i]) {
@@ -212,6 +219,8 @@ public class DataMatrix {
      * @return
      */
     public boolean equalsIgnoringOutliers(int row1, int row2) {
+        checkRow(row1);
+        checkRow(row2);
         return this.equals(row1, row2, Data.REMOVE_OUTLIER_MASK_LONG);
     }
     
@@ -230,6 +239,8 @@ public class DataMatrix {
      * @return
      */
     public int get(final int row, final int col) {
+        checkRow(row);
+        checkColumn(col);
         return MemoryManager.getInt(this.baseAddress + (row * this.rowSizeInBytes) + (col << 2));
     }
 
@@ -241,6 +252,7 @@ public class DataMatrix {
      * @return
      */
     public ExclusiveRowIterator getExclusiveIterator(int row) {
+        checkRow(row);
        return new ExclusiveRowIterator(row); 
     }
 
@@ -267,6 +279,7 @@ public class DataMatrix {
      * @param value
      */
     public int getValueAtColumn(int column) {
+        checkColumn(column);
         return MemoryManager.getInt(this.writeBaseAddress + (column << 2));
     }
 
@@ -276,6 +289,7 @@ public class DataMatrix {
      * @return
      */
     public int hashCode(final int row) {
+        checkRow(row);
         long address = baseAddress + row * rowSizeInBytes;
         int result = 23;
         
@@ -316,6 +330,7 @@ public class DataMatrix {
      * @param row
      */
     public void iterator1(int row) {
+        checkRow(row);
         iterator_1_address = baseAddress + row * rowSizeInBytes;
         iterator_1_i = 0;
     }
@@ -355,6 +370,7 @@ public class DataMatrix {
      * @param row
      */
     public void iterator2(int row) {
+        checkRow(row);
         iterator_2_address = baseAddress + row * rowSizeInBytes;
         iterator_2_i = 0;
     }
@@ -395,6 +411,7 @@ public class DataMatrix {
      * @param removeOutlierMaskLong
      */
     public void or(int row, long value) {
+        checkRow(row);
         long address = this.baseAddress + row * this.rowSizeInBytes;
         MemoryManager.putLong(address, MemoryManager.getLong(address) | value);
     }
@@ -406,6 +423,8 @@ public class DataMatrix {
      * @param value
      */
     public void set(int row, int column, int value) {
+        checkRow(row);
+        checkColumn(column);
         long address = this.baseAddress + row * this.rowSizeInBytes + column * 4;
         MemoryManager.putInt(address, value);
     }
@@ -415,6 +434,7 @@ public class DataMatrix {
      * @param row
      */
     public void setRow(int row) {
+        checkRow(row);
         this.writeBaseAddress = this.baseAddress + row * this.rowSizeInBytes;
     }
 
@@ -424,6 +444,7 @@ public class DataMatrix {
      * @param data
      */
     public void setRow(int row, int[] data) {
+        checkRow(row);
         long address = this.baseAddress + row * this.rowSizeInBytes;
         for (int i = 0; i < data.length; i++) {
             MemoryManager.putInt(address, data[i]);
@@ -438,9 +459,9 @@ public class DataMatrix {
      * @param value
      */
     public void setValueAtColumn(int column, int value) {
+        checkColumn(column);
         MemoryManager.putInt(this.writeBaseAddress + (column << 2), value);
     }
-    
 
     /**
      * Swaps the data in both rows
@@ -448,9 +469,11 @@ public class DataMatrix {
      * @param row2
      */
     public void swap(int row1, int row2) {
+        checkRow(row1);
+        checkRow(row2);
         long address1 = this.baseAddress + row1 * this.rowSizeInBytes;
         long address2 = this.baseAddress + row2 * this.rowSizeInBytes;
-        for (int i = 0; i < this.columns; i++) {
+        for (int i = 0; i < this.rowSizeInLongs; i++) {
             long temp = MemoryManager.getLong(address1);
             MemoryManager.putLong(address1, MemoryManager.getLong(address2));
             MemoryManager.putLong(address2, temp);
@@ -459,6 +482,28 @@ public class DataMatrix {
         }
     }
 
+    /**
+     * Parameter check
+     * @param column
+     */
+    @SuppressWarnings("unused")
+    private void checkColumn(int column) {
+        if (DEBUG && (column < 0 || column > columns -1)) {
+            throw new IllegalArgumentException("Column out of bounds: " + column + " max: " + columns);
+        }    
+    }
+
+    /**
+     * Parameter check
+     * @param row
+     */
+    @SuppressWarnings("unused")
+    private void checkRow(int row) {
+        if (DEBUG && (row < 0 || row > rows -1)) {
+            throw new IllegalArgumentException("Row out of bounds: " + row + " max: " + rows);
+        }    
+    }
+ 
     /**
      * Internal equals
      * @param row1
@@ -546,14 +591,11 @@ public class DataMatrix {
         DataMatrix result = new DataMatrix(subset.length, this.columns);
         
         // Copy subset
-        int target = 0;
+        long targetAddress = result.baseAddress;
         for (int source : subset) {
-            this.iterator1(source);
-            result.iterator1(target);
-            while (this.iterator1_hasNext()) {
-                result.iterator1_write(this.iterator1_next());
-            }
-            target++;
+            long sourceAddress = this.baseAddress + source * rowSizeInBytes;
+            MemoryManager.copyMemory(sourceAddress, targetAddress, rowSizeInBytes);
+            targetAddress += rowSizeInBytes;
         }
         
         // Return
