@@ -92,25 +92,25 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     }
 
     /** Total number of tuples, depends on existence of research subset. */
-    private Double              tuples            = null;
+    private Double                 tuples            = null;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]       shares;
+    private DomainShare[]          shares;
 
     /** Maximum value */
-    private Double              max               = null;
+    private Double                 max               = null;
 
     /** Tuple matcher */
-    private TupleMatcher        matcher           = null;
+    private transient TupleMatcher matcher           = null;
 
     /** Distribution */
-    private double[]            inputDistribution = null;
+    private double[]               inputDistribution = null;
 
     /** Log 2. */
-    private static final double LOG2              = Math.log(2);
+    private static final double    LOG2              = Math.log(2);
 
     /** Maximal area */
-    private double              maximalArea       = 0d;
+    private double                 maximalArea       = 0d;
 
     /**
      * Default constructor.
