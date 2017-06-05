@@ -20,7 +20,7 @@ package org.deidentifier.arx.framework.check.distribution;
 import org.deidentifier.arx.framework.MemoryManager;
 
 /**
- * Implements an entry.
+ * Implements an entry stored in off-heap memory.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -36,11 +36,18 @@ public class IntArrayDictionaryEntry {
      * field-5: 4 bytes: int array-length
      * field-6: 4*x bytes: array: array-length * int 
      */
+    
+    /** Offset*/
     private static final int HASHCODE_OFFSET     = 0;
+    /** Offset*/
     private static final int VALUE_OFFSET        = 4;
+    /** Offset*/
     private static final int REFCOUNT_OFFSET     = 8;
+    /** Offset*/
     private static final int NEXT_OFFSET         = 12;
+    /** Offset*/
     private static final int ARRAY_LENGTH_OFFSET = 20;
+    /** Offset*/
     private static final int ARRAY_OFFSET        = 24;
 
     /**
@@ -54,55 +61,36 @@ public class IntArrayDictionaryEntry {
         MemoryManager.putInt(address + REFCOUNT_OFFSET, 1);
         return address;
     }
-    
-    public static int getHashCode(long address) {
-        return MemoryManager.getInt(address + HASHCODE_OFFSET);
-    }
-    
-    public static int getValue(long address) {
-        return MemoryManager.getInt(address + VALUE_OFFSET);
+
+    /**
+     * Tests two entries for equality
+     * 
+     * @param address1
+     * @param address2
+     * @return
+     */
+    public static boolean arrayEquals(long address1, long address2) {
+        int length1 = getArrayLength(address1);
+        int length2 = getArrayLength(address2);
+        if (length1 != length2) {
+            return false;
+        }
+        address1 += ARRAY_OFFSET;
+        address2 += ARRAY_OFFSET;
+        for (int i = 0; i < length1; i++) {
+            if (MemoryManager.getInt(address1) != MemoryManager.getInt(address2)) {
+                return false;
+            }
+            address1 +=4;
+            address2 +=4;
+        }
+        return true;
     }
 
-    public static void setValue(long address, int value) {
-        MemoryManager.putInt(address + VALUE_OFFSET, value);
-    }
-    
-    public static void incRefCount(long address) {
-        MemoryManager.putInt(address + REFCOUNT_OFFSET, MemoryManager.getInt(address + REFCOUNT_OFFSET) + 1);
-    }
-
-    public static int decRefCount(long address) {
-        int value = MemoryManager.getInt(address + REFCOUNT_OFFSET) - 1;
-        MemoryManager.putInt(address + REFCOUNT_OFFSET, value);
-        return value;
-    }
-    
-    public static long getNext(long address) {
-        return MemoryManager.getLong(address + NEXT_OFFSET);
-    }
-
-    public static void setNext(long address, long value) {
-        MemoryManager.putLong(address + NEXT_OFFSET, value);
-    }
-    
-    public static int getArrayLength(long address) {
-        return MemoryManager.getInt(address + ARRAY_LENGTH_OFFSET);
-    }
-    
-    public static long getArrayAddress(long address) {
-        return address + ARRAY_OFFSET;
-    }
-    
-    public static long setArrayEntry(long address, int value) {
-        MemoryManager.putInt(address, value);
-        address += 4;
-        return address;
-    }
-    
-    public static int getArray(long address, int index) {
-        return MemoryManager.getInt(address + ARRAY_OFFSET + (index << 2));
-    }
-    
+    /**
+     * Calculates and stores the hash code
+     * @param address
+     */
     public static void calculateHashCode(long address) {
 
         int h1 = 0;
@@ -130,31 +118,18 @@ public class IntArrayDictionaryEntry {
 
         MemoryManager.putInt(address + HASHCODE_OFFSET, h1);
     }
-
+    
     /**
-     * Equals
-     * @param address1
-     * @param address2
+     * Decrements the reference counter
+     * @param address
      * @return
      */
-    public static boolean arrayEquals(long address1, long address2) {
-        int length1 = getArrayLength(address1);
-        int length2 = getArrayLength(address2);
-        if (length1 != length2) {
-            return false;
-        }
-        address1 += ARRAY_OFFSET;
-        address2 += ARRAY_OFFSET;
-        for (int i = 0; i < length1; i++) {
-            if (MemoryManager.getInt(address1) != MemoryManager.getInt(address2)) {
-                return false;
-            }
-            address1 +=4;
-            address2 +=4;
-        }
-        return true;
+    public static int decRefCount(long address) {
+        int value = MemoryManager.getInt(address + REFCOUNT_OFFSET) - 1;
+        MemoryManager.putInt(address + REFCOUNT_OFFSET, value);
+        return value;
     }
-
+    
     /**
      * Free
      * @param address
@@ -162,5 +137,98 @@ public class IntArrayDictionaryEntry {
     public static void free(long address) {
         long size = ARRAY_OFFSET + (getArrayLength(address) << 2);
         MemoryManager.freeMemory(address, size);
+    }
+
+    /**
+     * Returns a value from the array
+     * @param address
+     * @param index
+     * @return
+     */
+    public static int getArray(long address, int index) {
+        return MemoryManager.getInt(address + ARRAY_OFFSET + (index << 2));
+    }
+    
+    /**
+     * Returns the array address
+     * @param address
+     * @return
+     */
+    public static long getArrayAddress(long address) {
+        return address + ARRAY_OFFSET;
+    }
+
+    /**
+     * Returns the array length
+     * @param address
+     * @return
+     */
+    public static int getArrayLength(long address) {
+        return MemoryManager.getInt(address + ARRAY_LENGTH_OFFSET);
+    }
+    
+    /**
+     * Returns the hash code
+     * @param address
+     * @return
+     */
+    public static int getHashCode(long address) {
+        return MemoryManager.getInt(address + HASHCODE_OFFSET);
+    }
+    
+    /**
+     * Returns the next entry
+     * @param address
+     * @return
+     */
+    public static long getNext(long address) {
+        return MemoryManager.getLong(address + NEXT_OFFSET);
+    }
+    
+    /**
+     * Gets the associated index
+     * @param address
+     * @return
+     */
+    public static int getValue(long address) {
+        return MemoryManager.getInt(address + VALUE_OFFSET);
+    }
+    
+    /**
+     * Increments the reference counter
+     * @param address
+     */
+    public static void incRefCount(long address) {
+        MemoryManager.putInt(address + REFCOUNT_OFFSET, MemoryManager.getInt(address + REFCOUNT_OFFSET) + 1);
+    }
+    
+    /**
+     * Sets an array entry. Returns a pointer to the next array slot.
+     * @param address
+     * @param value
+     * @return
+     */
+    public static long setArrayEntry(long address, int value) {
+        MemoryManager.putInt(address, value);
+        address += 4;
+        return address;
+    }
+
+    /**
+     * Sets the next entry
+     * @param address
+     * @param value
+     */
+    public static void setNext(long address, long value) {
+        MemoryManager.putLong(address + NEXT_OFFSET, value);
+    }
+
+    /**
+     * Sets the associated index
+     * @param address
+     * @param value
+     */
+    public static void setValue(long address, int value) {
+        MemoryManager.putInt(address + VALUE_OFFSET, value);
     }
 }
