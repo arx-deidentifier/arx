@@ -376,8 +376,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         this.data = data;
         this.hierarchies = hierarchies;
         this.otherData = otherData;
-        this.referenceToFrequencies = new long[otherData.getNumColumns()];
-        this.referenceToValues = new long[otherData.getNumColumns()];
+        this.referenceToFrequencies = new long[otherData != null ? otherData.getNumColumns() : 0];
+        this.referenceToValues = new long[otherData != null ? otherData.getNumColumns() : 0];
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
         this.ssStepWidth = config.getSnapshotLength();
