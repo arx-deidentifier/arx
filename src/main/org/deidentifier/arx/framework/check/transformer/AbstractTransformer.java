@@ -78,17 +78,14 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
             
             // TODO: Improve!
-            int[][] values = new int[otherData.getNumColumns()][];
-            int[][] frequencies = new int[otherData.getNumColumns()][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
             for (int j = offset; j < offset + length; j += 2) {
-                values[index] = dictionarySensValue.get(snapshot[j]);
-                frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
+                referenceToValues[index] = dictionarySensValue.get(snapshot[j]);
+                referenceToFrequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
-            
-            groupify.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], -1);
+            groupify.addFromSnapshot(outtuple, referenceToValues, referenceToFrequencies, snapshot[i], snapshot[i + 1], -1);
         }
     }
 
@@ -135,17 +132,15 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[otherData.getNumColumns()][];
-            int[][] frequencies = new int[otherData.getNumColumns()][];
             int index = 0;
             int offset = i + 3;
             int length = config.getSnapshotLength() - 1 - 3;
             for (int j = offset; j < offset + length; j += 2) {
-                values[index] = dictionarySensValue.get(snapshot[j]);
-                frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
+                referenceToValues[index] = dictionarySensValue.get(snapshot[j]);
+                referenceToFrequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
 
-            groupify.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], snapshot[i + 2]);
+            groupify.addFromSnapshot(outtuple, referenceToValues, referenceToFrequencies, snapshot[i], snapshot[i + 1], snapshot[i + 2]);
         }
     }
 
@@ -170,17 +165,15 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[otherData.getNumColumns()][];
-            int[][] frequencies = new int[otherData.getNumColumns()][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
             for (int j = offset; j < offset + length; j += 2) {
-                values[index] = dictionarySensValue.get(snapshot[j]);
-                frequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
+                referenceToValues[index] = dictionarySensValue.get(snapshot[j]);
+                referenceToFrequencies[index++] = dictionarySensFreq.get(snapshot[j + 1]);
             }
 
-            groupify.addFromSnapshot(outtuple, values, frequencies, snapshot[i], snapshot[i + 1], -1);
+            groupify.addFromSnapshot(outtuple, referenceToValues, referenceToFrequencies, snapshot[i], snapshot[i + 1], -1);
         }
     }
 
@@ -297,9 +290,13 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     protected int                             outindex9;
     /** The sensitive values. */
     protected final DataMatrix                otherData;
+    /** The sensitive values. */
+    protected final long[]                    referenceToValues;
+    /** The sensitive values. */
+    protected final long[]                    referenceToFrequencies;
     /** The snapshot. */
     protected int[]                           snapshot;
-    
+
     /** The size of one snapshopt entry *. */
     protected final int                       ssStepWidth;
     /** The start index. */
@@ -379,6 +376,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         this.data = data;
         this.hierarchies = hierarchies;
         this.otherData = otherData;
+        this.referenceToFrequencies = new long[otherData.getNumColumns()];
+        this.referenceToValues = new long[otherData.getNumColumns()];
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
         this.ssStepWidth = config.getSnapshotLength();

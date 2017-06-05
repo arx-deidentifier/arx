@@ -17,9 +17,11 @@
 
 package org.deidentifier.arx.framework.check.distribution;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
+
+import com.carrotsearch.hppc.LongArrayList;
 
 /**
  * A hash groupify operator.
@@ -29,54 +31,20 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  */
 public class IntArrayDictionary {
 
-    /**
-     * Calculates the MURMUR v3 hashcode.
-     *
-     * @param key
-     * @return
-     */
-    private static final int hashCodeMURMUR(final int[] key) {
-
-        int h1 = 0;
-
-        for (int i = 0; i < key.length; i++) {
-            int k1 = key[i];
-            k1 *= 0xcc9e2d51;
-            k1 = (k1 << 15) | (k1 >>> -15);
-            k1 *= 0x1b873593;
-
-            h1 ^= k1;
-            h1 = (h1 << 13) | (h1 >>> -13);
-            h1 = (h1 * 5) + 0xe6546b64;
-        }
-
-        h1 ^= (2 * key.length);
-        h1 ^= h1 >>> 16;
-        h1 *= 0x85ebca6b;
-        h1 ^= h1 >>> 13;
-        h1 *= 0xc2b2ae35;
-        h1 ^= h1 >>> 16;
-
-        return h1;
-    }
-
     /** The entry array. */
-    private IntArrayDictionaryEntry[]                buckets;
+    private long[]              buckets;
 
     /** Current number of elements. */
-    private int                                      elementCount;
+    private int                 elementCount;
 
     /** The list. */
-    private final ArrayList<IntArrayDictionaryEntry> list;
+    private final LongArrayList list;
 
     /** Load factor. */
-    private final float                              loadFactor;
+    private final float         loadFactor;
 
-    /**
-     * maximum number of elements that can be put in this map before having to
-     * rehash.
-     */
-    private int                                      threshold;
+    /** Maximum number of elements that can be put in this map before having to rehash. */
+    private int                 threshold;
 
     /**
      * Constructs a new dictionary.
@@ -84,14 +52,14 @@ public class IntArrayDictionary {
      * @param capacity the capacity
      */
     public IntArrayDictionary(int capacity) {
-        list = new ArrayList<IntArrayDictionaryEntry>();
+        list = new LongArrayList(capacity);
         if ((capacity >= 0) && (0.75f > 0)) {
             capacity = HashTableUtil.calculateCapacity(capacity);
             elementCount = 0;
-            buckets = new IntArrayDictionaryEntry[capacity];
+            buckets = new long[capacity];
+            Arrays.fill(buckets, -1);
             loadFactor = 0.75f;
-            threshold = HashTableUtil.calculateThreshold(buckets.length,
-                                                         loadFactor);
+            threshold = HashTableUtil.calculateThreshold(buckets.length, loadFactor);
         } else {
             throw new IllegalArgumentException();
         }
@@ -103,7 +71,14 @@ public class IntArrayDictionary {
     public void clear() {
         if (elementCount > 0) {
             elementCount = 0;
-            HashTableUtil.nullifyArray(buckets);
+            for (long address : buckets) {
+                while (address != -1) {
+                    long next = IntArrayDictionaryEntry.getNext(address);
+                    IntArrayDictionaryEntry.free(address);
+                    address = next;
+                }
+            }
+            Arrays.fill(buckets, -1);
             list.clear();
         }
     }
@@ -115,31 +90,29 @@ public class IntArrayDictionary {
      */
     public void decrementRefCount(final int index) {
 
-        final IntArrayDictionaryEntry entry = list.get(index);
-        final int refCount = entry.decRefCount();
+        final long entry = list.get(index);
+        final int refCount = IntArrayDictionaryEntry.decRefCount(entry);
 
         if (refCount == 0) { // entry no longer needed remove
 
-            list.set(index, null);
-
-            final int bucketIndex = entry.getHashcode() & (buckets.length - 1);
-            IntArrayDictionaryEntry prev = buckets[bucketIndex];
-            IntArrayDictionaryEntry e = prev;
-
-            while (e != null) {
-                final IntArrayDictionaryEntry next = e.getNext();
+            list.set(index, -1);
+            final int bucketIndex = IntArrayDictionaryEntry.getHashCode(entry) & (buckets.length - 1);
+            long prev = buckets[bucketIndex];
+            long e = prev;
+            while (e != -1) {
+                final long next = IntArrayDictionaryEntry.getNext(e);
                 if (e == entry) { // found element
                     elementCount--;
                     if (prev == e) {
                         buckets[bucketIndex] = next;
                     } else {
-                        prev.setNext(next);
+                        IntArrayDictionaryEntry.setNext(prev, next);
                     }
                 }
                 prev = e;
                 e = next;
             }
-
+            IntArrayDictionaryEntry.free(entry);
         }
     }
 
@@ -149,34 +122,33 @@ public class IntArrayDictionary {
      * @param index
      * @return
      */
-    public int[] get(final int index) {
-        return list.get(index).getKey();
+    public long get(final int index) {
+        return list.get(index);
     }
 
     /**
-     * Probes the dictionary and either inserts a new entry index or returns the
+     * Probes the dictionary and either inserts a new entry or returns the
      * corresponding entry index.
      *
-     * @param key the key
+     * @param address Address of the entry to insert
      * @return
      */
-    public int probe(final int[] key) {
+    public int probe(final long address) {
 
-        final int hash = hashCodeMURMUR(key);
-
+        int hash = IntArrayDictionaryEntry.getHashCode(address);
         int index = hash & (buckets.length - 1);
-        IntArrayDictionaryEntry entry = findEntry(key, index, hash);
-        if (entry == null) {
+        long entry = findEntry(address, index, hash);
+        if (entry == -1) {
             if (++elementCount > threshold) {
                 rehash();
                 index = hash & (buckets.length - 1);
             }
-            entry = createEntry(key, index, hash);
+            entry = createEntry(address, index, hash);
         } else {
-            entry.incRefCount();
+            IntArrayDictionaryEntry.free(address);
+            IntArrayDictionaryEntry.incRefCount(entry);
         }
-        return entry.getValue();
-
+        return IntArrayDictionaryEntry.getValue(entry);
     }
 
     /**
@@ -191,43 +163,37 @@ public class IntArrayDictionary {
     /**
      * Creates a new entry.
      *
-     * @param key the key
+     * @param address the address
      * @param index the index
      * @param hash the hash
      * @return the hash groupify entry
      */
-    private IntArrayDictionaryEntry createEntry(final int[] key,
-                                                final int index,
-                                                final int hash) {
-        final IntArrayDictionaryEntry entry = new IntArrayDictionaryEntry(key,
-                                                                          hash,
-                                                                          list.size());
-        entry.setNext(buckets[index]);
-        buckets[index] = entry;
-        list.add(entry);
-        return entry;
+    private long createEntry(final long address,
+                             final int index,
+                             final int hash) {
+        IntArrayDictionaryEntry.setValue(address, list.size());
+        IntArrayDictionaryEntry.setNext(address, buckets[index]);
+        buckets[index] = address;
+        list.add(address);
+        return address;
     }
 
     /**
      * Returns the according entry.
      * 
-     * @param key
-     *            the key
-     * @param index
-     *            the index
-     * @param keyHash
-     *            the key hash
+     * @param address the address
+     * @param index the index
+     * @param keyHash the key hash
      * @return the hash entry
      */
-    private final IntArrayDictionaryEntry findEntry(final int[] key,
-                                                    final int index,
-                                                    final int keyHash) {
-        IntArrayDictionaryEntry m = buckets[index];
-        while ((m != null) &&
-               ((m.getHashcode() != keyHash) ||
-                (key.length != m.getKey().length) || !HashTableUtil.equals(key,
-                                                                           m.getKey()))) {
-            m = m.getNext();
+    private long findEntry(final long address,
+                                 final int index,
+                                 final int keyHash) {
+        long m = buckets[index];
+        while ((m != -1) &&
+               ((IntArrayDictionaryEntry.getHashCode(m) != keyHash) ||
+               (!IntArrayDictionaryEntry.arrayEquals(m, address)))) {
+            m = IntArrayDictionaryEntry.getNext(m);
         }
         return m;
     }
@@ -237,15 +203,15 @@ public class IntArrayDictionary {
      */
     private void rehash() {
 
-        final int length = HashTableUtil.calculateCapacity((buckets.length == 0 ? 1
-                : buckets.length << 1));
-        final IntArrayDictionaryEntry[] newData = new IntArrayDictionaryEntry[length];
+        final int length = HashTableUtil.calculateCapacity((buckets.length == 0 ? 1 : buckets.length << 1));
+        final long[] newData = new long[length];
+        Arrays.fill(newData, -1);
         for (int i = 0; i < buckets.length; i++) {
-            IntArrayDictionaryEntry entry = buckets[i];
-            while (entry != null) {
-                final IntArrayDictionaryEntry next = entry.getNext();
-                final int index = entry.getHashcode() & (length - 1);
-                entry.setNext(newData[index]);
+            long entry = buckets[i];
+            while (entry != -1) {
+                final long next = IntArrayDictionaryEntry.getNext(entry);
+                final int index = IntArrayDictionaryEntry.getHashCode(entry) & (length - 1);
+                IntArrayDictionaryEntry.setNext(entry, newData[index]);
                 newData[index] = entry;
                 entry = next;
             }

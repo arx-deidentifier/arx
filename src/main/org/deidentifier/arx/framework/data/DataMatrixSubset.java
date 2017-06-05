@@ -92,11 +92,6 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
-    public long getOffHeapByteSize() {
-        return 0;
-    }
-
-    @Override
     public int getValueAtColumn(int column) {
         return matrix.getValueAtColumn(column);
     }

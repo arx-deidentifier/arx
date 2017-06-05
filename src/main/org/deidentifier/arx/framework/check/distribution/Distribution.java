@@ -30,50 +30,51 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  */
 public class Distribution {
 
+    /** Static return value */
+    private static final long[] RETURN_VALUE     = new long[2];
+
     /** The size. */
-    private int                size;
+    private int                 size;
 
     /** The threshold used for rehashing. */
-    private int                threshold;
+    private int                 threshold;
 
     /** The elements. Even index contains value, odd index contains frequency */
-    private int[]              elements;
+    private int[]               elements;
 
     /** The loadfactor. */
-    private final static float LOADFACTOR       = 0.75f;
+    private final static float  LOADFACTOR       = 0.75f;
 
     /** The initial default capacity of the hashtable. */
-    private static final int   DEFAULT_CAPACITY = 8;    // power of two
+    private static final int    DEFAULT_CAPACITY = 8;          // power of two
 
     /**
      * Default constructor.
      */
     public Distribution() {
-        this(DEFAULT_CAPACITY);
+        init(DEFAULT_CAPACITY);
     }
 
     /**
      * Constructor used to create frequency set from a history entry.
      *
-     * @param element
-     * @param frequency
+     * @param referenceToValues
+     * @param referenceToFrequencies
      */
-    public Distribution(final int[] element, final int[] frequency) {
-        this(element.length);
-        for (int i = 0; i < element.length; i++) {
-            if (element[i] != -1) {
-                this.add(element[i], frequency[i]);
-            }
+    public Distribution(final long referenceToValues, final long referenceToFrequencies) {
+        int length = IntArrayDictionaryEntry.getArrayLength(referenceToValues);
+        init(length);
+        for (int i = 0; i < length; i++) {
+            this.add(IntArrayDictionaryEntry.getArray(referenceToValues, i), 
+                     IntArrayDictionaryEntry.getArray(referenceToFrequencies, i));
         }
     }
 
     /**
-     * Constructor using next power of two starting at capacity as initial
-     * capacity.
-     * 
+     * Initialize
      * @param capacity
      */
-    private Distribution(int capacity) {
+    private void init(int capacity) {
         capacity = HashTableUtil.calculateCapacity(capacity);
         size = 0;
         elements = new int[capacity << 1];
@@ -124,14 +125,15 @@ public class Distribution {
     /**
      * Merge a frequency set with a history entry.
      *
-     * @param elements
-     * @param frequency
+     * @param referenceToValues
+     * @param referenceToFrequencies
      */
-    public void merge(final int[] elements, final int[] frequency) {
-        for (int i = 0; i < elements.length; i++) {
-            if (elements[i] != -1) {
-                this.add(elements[i], frequency[i]);
-            }
+    public void merge(final long referenceToValues, final long referenceToFrequencies) {
+        
+        int length = IntArrayDictionaryEntry.getArrayLength(referenceToValues);
+        for (int i = 0; i < length; i++) {
+            this.add(IntArrayDictionaryEntry.getArray(referenceToValues, i), 
+                     IntArrayDictionaryEntry.getArray(referenceToFrequencies, i));
         }
     }
 
@@ -140,21 +142,26 @@ public class Distribution {
      * sortedElements and sortedFrequency arrays. In case a collission occured
      * this method also sorts the elements. First entry is elements, second entry is frequencies.
      */
-    public int[][] pack() {
-        final int[] sortedelements = new int[size];
-        final int[] sortedfrequency = new int[size];
+    public long[] pack() {
+        long sortedElements = IntArrayDictionaryEntry.allocate(size);
+        long sortedFrequencies = IntArrayDictionaryEntry.allocate(size);
+        long addressElements = IntArrayDictionaryEntry.getArrayAddress(sortedElements);
+        long addressFrequencies = IntArrayDictionaryEntry.getArrayAddress(sortedFrequencies);
         if (size > 0) {
-            // compress & copy
-            int count = 0;
+            
+            // Compress & copy
             for (int i = 0; i < elements.length; i += 2) {
-                if (elements[i] != -1) { // bucket not empty
-                    sortedelements[count] = elements[i];
-                    sortedfrequency[count] = elements[i + 1];
-                    count++;
+                if (elements[i] != -1) { // Bucket not empty
+                    addressElements = IntArrayDictionaryEntry.setArrayEntry(addressElements, elements[i]);
+                    addressFrequencies = IntArrayDictionaryEntry.setArrayEntry(addressFrequencies, elements[i + 1]);
                 }
             }
         }
-        return new int[][]{sortedelements, sortedfrequency};
+        IntArrayDictionaryEntry.calculateHashCode(sortedElements);
+        IntArrayDictionaryEntry.calculateHashCode(sortedFrequencies);
+        RETURN_VALUE[0] = sortedElements;
+        RETURN_VALUE[1] = sortedFrequencies; 
+        return RETURN_VALUE;
     }
 
     /**

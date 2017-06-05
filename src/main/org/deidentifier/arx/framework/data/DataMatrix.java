@@ -17,13 +17,9 @@
 
 package org.deidentifier.arx.framework.data;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import sun.misc.Unsafe;
+import org.deidentifier.arx.framework.MemoryManager;
 
 /**
  * A fast implementation of an array of arrays of equal size
@@ -66,7 +62,7 @@ public class DataMatrix {
          * @return
          */
         public int next() {
-            int result = unsafe.getInt(address);
+            int result = MemoryManager.getInt(address);
             address += 4;
             i++;
             return result;
@@ -78,30 +74,11 @@ public class DataMatrix {
          * @return
          */
         public void write(int value) {
-            unsafe.putInt(address, value);
+            MemoryManager.putInt(address, value);
             address += 4;
             i++;
         }
     }
-
-    private static final List<DataMatrix> MATRICES = Collections.synchronizedList(new ArrayList<DataMatrix>());
-    
-    /**
-     * Returns the total off-heap memory
-     * @return
-     */
-    public static long getTotalOffHeapMemory() {
-        long result = 0L;
-        synchronized(MATRICES) {
-            for (DataMatrix matrix : MATRICES) {
-                result += matrix.getOffHeapByteSize();
-            }
-        }
-        return result;
-    }
-
-    /** The unsafe. */
-    private final Unsafe        unsafe             = getUnsafe();
 
     /** The base address of the memory field in bytes. */
     private final long          baseAddress;
@@ -159,17 +136,16 @@ public class DataMatrix {
             return;
         }
         
-        // Register
-        MATRICES.add(this);
-
         // Initialize
         this.columns = columns;
         this.rows = rows;
         this.rowSizeInLongs = (int) (Math.ceil(columns / 2d));
         this.rowSizeInBytes = rowSizeInLongs * 8;
         this.size = rowSizeInBytes * rows;
-        this.baseAddress = unsafe.allocateMemory(size);
-        this.unsafe.setMemory(baseAddress, size, (byte) 0);
+        this.baseAddress = MemoryManager.allocateMemory(size);
+        
+        // TODO: May not be needed
+        MemoryManager.setMemory(baseAddress, size, (byte) 0);
     }
 
     /**
@@ -179,13 +155,13 @@ public class DataMatrix {
      */
     public void and(int row, long value) {
         long address = this.baseAddress + row * this.rowSizeInBytes;
-        unsafe.putLong(address, unsafe.getLong(address) & value);
+        MemoryManager.putLong(address, MemoryManager.getLong(address) & value);
     }
 
     @Override
     public DataMatrix clone() {
         DataMatrix result = new DataMatrix(this.rows, this.columns);
-        unsafe.copyMemory(this.baseAddress, result.baseAddress, this.size);
+        MemoryManager.copyMemory(this.baseAddress, result.baseAddress, this.size);
         return result;
     }
     
@@ -196,7 +172,7 @@ public class DataMatrix {
      * @param sourceRow
      */
     public void copyFrom(int row, DataMatrix sourceMatrix, int sourceRow) {
-        unsafe.copyMemory(sourceMatrix.baseAddress + sourceRow * this.rowSizeInBytes, 
+        MemoryManager.copyMemory(sourceMatrix.baseAddress + sourceRow * this.rowSizeInBytes, 
                           this.baseAddress + row * this.rowSizeInBytes, 
                           this.rowSizeInBytes);
     }
@@ -220,7 +196,7 @@ public class DataMatrix {
     public boolean equals(int row, int[] data) {
         long address = this.baseAddress + row * this.rowSizeInBytes;
         for (int i = 0; i < data.length; i++) {
-            if (unsafe.getInt(address) != data[i]) {
+            if (MemoryManager.getInt(address) != data[i]) {
                 return false;
             } else {
                 address += 4;
@@ -244,8 +220,7 @@ public class DataMatrix {
      */
     public void free() {
         if (!freed.compareAndSet(false, true)) return;
-        unsafe.freeMemory(baseAddress);
-        MATRICES.remove(this);
+        MemoryManager.freeMemory(baseAddress, size);
     }
 
     /**
@@ -255,7 +230,7 @@ public class DataMatrix {
      * @return
      */
     public int get(final int row, final int col) {
-        return unsafe.getInt(this.baseAddress + (row * this.rowSizeInBytes) + (col << 2));
+        return MemoryManager.getInt(this.baseAddress + (row * this.rowSizeInBytes) + (col << 2));
     }
 
     /**
@@ -286,21 +261,13 @@ public class DataMatrix {
     }
 
     /**
-     * Returns the size in bytes
-     * @return
-     */
-    public long getOffHeapByteSize() {
-        return this.size;
-    }
-
-    /**
      * Sets the value in the given column for the row which
      * has been set via setRow(row).
      * @param column
      * @param value
      */
     public int getValueAtColumn(int column) {
-        return this.unsafe.getInt(this.writeBaseAddress + (column << 2));
+        return MemoryManager.getInt(this.writeBaseAddress + (column << 2));
     }
 
     /**
@@ -313,7 +280,7 @@ public class DataMatrix {
         int result = 23;
         
         for (int i = 0; i < columns; i++) {
-            result = (37 * result) + unsafe.getInt(address);
+            result = (37 * result) + MemoryManager.getInt(address);
             address += 4;
         }
         return result;        
@@ -366,7 +333,7 @@ public class DataMatrix {
      * @return
      */
     public int iterator1_next() {
-        int result = unsafe.getInt(iterator_1_address);
+        int result = MemoryManager.getInt(iterator_1_address);
         iterator_1_address += 4;
         iterator_1_i++;
         return result;
@@ -378,7 +345,7 @@ public class DataMatrix {
      * @return
      */
     public void iterator1_write(int value) {
-        unsafe.putInt(iterator_1_address, value);
+        MemoryManager.putInt(iterator_1_address, value);
         iterator_1_address += 4;
         iterator_1_i++;
     }
@@ -405,7 +372,7 @@ public class DataMatrix {
      * @return
      */
     public int iterator2_next() {
-        int result = unsafe.getInt(iterator_2_address);
+        int result = MemoryManager.getInt(iterator_2_address);
         iterator_2_address += 4;
         iterator_2_i++;
         return result;
@@ -417,7 +384,7 @@ public class DataMatrix {
      * @return
      */
     public void iterator2_write(int value) {
-        unsafe.putInt(iterator_2_address, value);
+        MemoryManager.putInt(iterator_2_address, value);
         iterator_2_address += 4;
         iterator_2_i++;
     }
@@ -429,7 +396,7 @@ public class DataMatrix {
      */
     public void or(int row, long value) {
         long address = this.baseAddress + row * this.rowSizeInBytes;
-        unsafe.putLong(address, unsafe.getLong(address) | value);
+        MemoryManager.putLong(address, MemoryManager.getLong(address) | value);
     }
 
     /**
@@ -440,7 +407,7 @@ public class DataMatrix {
      */
     public void set(int row, int column, int value) {
         long address = this.baseAddress + row * this.rowSizeInBytes + column * 4;
-        unsafe.putInt(address, value);
+        MemoryManager.putInt(address, value);
     }
 
     /**
@@ -459,7 +426,7 @@ public class DataMatrix {
     public void setRow(int row, int[] data) {
         long address = this.baseAddress + row * this.rowSizeInBytes;
         for (int i = 0; i < data.length; i++) {
-            unsafe.putInt(address, data[i]);
+            MemoryManager.putInt(address, data[i]);
             address += 4;
         }
     }
@@ -471,7 +438,7 @@ public class DataMatrix {
      * @param value
      */
     public void setValueAtColumn(int column, int value) {
-        this.unsafe.putInt(this.writeBaseAddress + (column << 2), value);
+        MemoryManager.putInt(this.writeBaseAddress + (column << 2), value);
     }
     
 
@@ -484,9 +451,9 @@ public class DataMatrix {
         long address1 = this.baseAddress + row1 * this.rowSizeInBytes;
         long address2 = this.baseAddress + row2 * this.rowSizeInBytes;
         for (int i = 0; i < this.columns; i++) {
-            long temp = unsafe.getLong(address1);
-            unsafe.putLong(address1, unsafe.getLong(address2));
-            unsafe.putLong(address2, temp);
+            long temp = MemoryManager.getLong(address1);
+            MemoryManager.putLong(address1, MemoryManager.getLong(address2));
+            MemoryManager.putLong(address2, temp);
             address1 += 8;
             address2 += 8;
         }
@@ -506,43 +473,43 @@ public class DataMatrix {
 
         switch (rowSizeInLongs) {
         case 10:
-            if (unsafe.getLong(base1 + 72) != unsafe.getLong(base2 + 72)) {
+            if (MemoryManager.getLong(base1 + 72) != MemoryManager.getLong(base2 + 72)) {
                 return false;
             }
         case 9:
-            if (unsafe.getLong(base1 + 64) != unsafe.getLong(base2 + 64)) {
+            if (MemoryManager.getLong(base1 + 64) != MemoryManager.getLong(base2 + 64)) {
                 return false;
             }
         case 8:
-            if (unsafe.getLong(base1 + 56) != unsafe.getLong(base2 + 56)) {
+            if (MemoryManager.getLong(base1 + 56) != MemoryManager.getLong(base2 + 56)) {
                 return false;
             }
         case 7:
-            if (unsafe.getLong(base1 + 48) != unsafe.getLong(base2 + 48)) {
+            if (MemoryManager.getLong(base1 + 48) != MemoryManager.getLong(base2 + 48)) {
                 return false;
             }
         case 6:
-            if (unsafe.getLong(base1 + 40) != unsafe.getLong(base2 + 40)) {
+            if (MemoryManager.getLong(base1 + 40) != MemoryManager.getLong(base2 + 40)) {
                 return false;
             }
         case 5:
-            if (unsafe.getLong(base1 + 32) != unsafe.getLong(base2 + 32)) {
+            if (MemoryManager.getLong(base1 + 32) != MemoryManager.getLong(base2 + 32)) {
                 return false;
             }
         case 4:
-            if (unsafe.getLong(base1 + 24) != unsafe.getLong(base2 + 24)) {
+            if (MemoryManager.getLong(base1 + 24) != MemoryManager.getLong(base2 + 24)) {
                 return false;
             }
         case 3:
-            if (unsafe.getLong(base1 + 16) != unsafe.getLong(base2 + 16)) {
+            if (MemoryManager.getLong(base1 + 16) != MemoryManager.getLong(base2 + 16)) {
                 return false;
             }
         case 2:
-            if (unsafe.getLong(base1 + 8) != unsafe.getLong(base2 + 8)) {
+            if (MemoryManager.getLong(base1 + 8) != MemoryManager.getLong(base2 + 8)) {
                 return false;
             }
         case 1:
-            if ((unsafe.getLong(base1) & flag) != (unsafe.getLong(base2) & flag)) {
+            if ((MemoryManager.getLong(base1) & flag) != (MemoryManager.getLong(base2) & flag)) {
                 return false;
             }
             break;
@@ -550,7 +517,7 @@ public class DataMatrix {
             final long end1 = base1 + rowSizeInBytes;
 
             // Check with flag
-            if ((unsafe.getLong(base1) & flag) != (unsafe.getLong(base2) & flag)) {
+            if ((MemoryManager.getLong(base1) & flag) != (MemoryManager.getLong(base2) & flag)) {
                 return false;
             }
             base1 += 8;
@@ -559,27 +526,13 @@ public class DataMatrix {
             // Check without flag
             long address2 = base2;
             for (long address = base1; address < end1; address += 8) {
-                if (unsafe.getLong(address) != unsafe.getLong(address2)) {
+                if (MemoryManager.getLong(address) != MemoryManager.getLong(address2)) {
                     return false;
                 }
                 address2 += 8;
             }
         }
         return true;
-    }
-
-    /**
-     * Access unsafe
-     * @return
-     */
-    private Unsafe getUnsafe() {
-        try {
-            Field f = Unsafe.class.getDeclaredField("theUnsafe");
-            f.setAccessible(true);
-            return (Unsafe) f.get(null);
-        } catch (Exception e) {
-            throw new IllegalStateException("Error accessing off-heap memory!", e);
-        }
     }
 
     /**
