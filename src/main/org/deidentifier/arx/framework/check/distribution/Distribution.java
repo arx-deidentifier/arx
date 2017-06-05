@@ -71,18 +71,6 @@ public class Distribution {
     }
 
     /**
-     * Initialize
-     * @param capacity
-     */
-    private void init(int capacity) {
-        capacity = HashTableUtil.calculateCapacity(capacity);
-        size = 0;
-        elements = new int[capacity << 1];
-        Arrays.fill(elements, -1);
-        threshold = HashTableUtil.calculateThreshold(capacity, LOADFACTOR);
-    }
-
-    /**
      * Adds a element to the hashtable. Frequency value 1.
      * 
      * @param element
@@ -98,7 +86,7 @@ public class Distribution {
         Arrays.fill(elements, -1);
         size = 0;
     }
-    
+
     /**
      * Gets all buckets of the hash table.
      *
@@ -107,7 +95,7 @@ public class Distribution {
     public int[] getBuckets() {
         return elements;
     }
-
+    
     /**
      * Merges two frequency sets.
      * 
@@ -217,6 +205,18 @@ public class Distribution {
             index = (index + 2) & mask; // next bucket
         }
 
+    }
+
+    /**
+     * Initialize
+     * @param capacity
+     */
+    private void init(int capacity) {
+        capacity = HashTableUtil.calculateCapacity(capacity);
+        size = 0;
+        elements = new int[capacity << 1];
+        Arrays.fill(elements, -1);
+        threshold = HashTableUtil.calculateThreshold(capacity, LOADFACTOR);
     }
 
     /**
