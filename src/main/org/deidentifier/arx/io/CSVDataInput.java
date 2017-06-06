@@ -373,9 +373,10 @@ public class CSVDataInput {
         reader.close();
     }
 
+
     /**
-     * Returns an iterator.
-     *
+     * Returns an iterator. <b>You must iterate trough all elements to prevent resource leaks!</b>
+     * 
      * @return the iterator
      */
     public Iterator<String[]> iterator() {
@@ -383,27 +384,37 @@ public class CSVDataInput {
         return new Iterator<String[]>() {
 
             // Next tuple
-            CsvParser parser = null;
-            String[] next = null;
-            
+            boolean   initialized = false;
+            CsvParser parser      = null;
+            String[]  next        = null;
+
             @Override
             public boolean hasNext() {
+
                 initParser();
-                return next != null;
+                boolean result = next != null;
+                if (!result && parser != null) {
+                    parser.stopParsing();
+                    parser = null;
+                }
+                return result;
             }
 
             @Override
             public String[] next() {
-                
+
+                // Init
                 initParser();
                 String[] result = next;
                 next = parser.parseNext();
 
                 // Replace each non matching value with the special NULL string
                 if (cleansing) {
+
                     if (result.length != datatypes.length) {
                         throw new IllegalArgumentException("More columns available in CSV file than data types specified!");
                     }
+
                     for (int i = 0; i < result.length; i++) {
                         if (!datatypes[i].isValid(result[i])) {
                             result[i] = DataType.NULL_VALUE;
@@ -418,12 +429,14 @@ public class CSVDataInput {
                 throw new UnsupportedOperationException("Not implemented");
             }
 
-            /** Initializes the parser*/
+            /** Initializes the parser */
+
             private void initParser() {
-                if (parser == null) {
+                if (!initialized) {
                     parser = new CsvParser(settings);
                     parser.beginParsing(reader);
                     next = parser.parseNext();
+                    initialized = true;
                 }
             }
         };
