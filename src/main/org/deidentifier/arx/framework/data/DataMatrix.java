@@ -28,58 +28,6 @@ import org.deidentifier.arx.framework.MemoryManager;
  */
 public class DataMatrix {
     
-    /**
-     * An exclusive row iterator
-     * 
-     * @author Fabian Prasser
-     */
-    public class ExclusiveRowIterator {
-        
-        /** Iterate */
-        private int                 i       = 0;
-        /** Iterate */
-        private long                address = 0; 
-
-        /**
-         * Creates a new instance
-         * @param row
-         */
-        ExclusiveRowIterator(int row) {
-            address = baseAddress + row * rowSizeInBytes;
-            i = 0;
-        }
-
-        /**
-         * First iterator
-         * @return
-         */
-        public boolean hasNext() {
-            return i < columns;
-        }
-        
-        /**
-         * First iterator
-         * @return
-         */
-        public int next() {
-            int result = MemoryManager.getInt(address);
-            address += 4;
-            i++;
-            return result;
-        }
-        
-        /**
-         * First iterator
-         * @param value
-         * @return
-         */
-        public void write(int value) {
-            MemoryManager.putInt(address, value);
-            address += 4;
-            i++;
-        }
-    }
-    
     /** Debugging flag*/
     private static final boolean DEBUG = false;
 
@@ -242,18 +190,6 @@ public class DataMatrix {
         checkRow(row);
         checkColumn(col);
         return MemoryManager.getInt(this.baseAddress + (row * this.rowSizeInBytes) + (col << 2));
-    }
-
-    /**
-     * This returns an iterator for parallel access, e.g. in
-     * multithreaded environments
-     * 
-     * @param row
-     * @return
-     */
-    public ExclusiveRowIterator getExclusiveIterator(int row) {
-        checkRow(row);
-       return new ExclusiveRowIterator(row); 
     }
 
     /**

@@ -77,11 +77,6 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
-    public ExclusiveRowIterator getExclusiveIterator(int row) {
-       return new ExclusiveRowIterator(subset[row]); 
-    }
-
-    @Override
     public int getNumColumns() {
         return matrix.getNumColumns();
     }
