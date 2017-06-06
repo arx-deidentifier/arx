@@ -373,6 +373,7 @@ public class CSVDataInput {
         reader.close();
     }
 
+
     /**
      * Returns an iterator. <b>You must iterate trough all elements to prevent resource leaks!</b>
      * 
