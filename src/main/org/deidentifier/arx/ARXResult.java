@@ -322,6 +322,7 @@ public class ARXResult {
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformedData information = checker.applyTransformation(transformation);
+        checker.reset();
         transformation.setChecked(information.properties);
 
         // Store

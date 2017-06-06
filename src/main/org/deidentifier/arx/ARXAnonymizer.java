@@ -618,9 +618,8 @@ public class ARXAnonymizer {
         final long time = System.currentTimeMillis();
         algorithm.traverse();
         
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
+        // Free resources
+        checker.reset();
         
         // Return the result
         return new Result(config.getQualityModel(), checker, solutionSpace, manager, algorithm, time);
