@@ -50,14 +50,10 @@ public class Data implements Cloneable{
     /**
      * Creates a new data object.
      * 
-     * @param data
-     *            The int array
-     * @param header
-     *            The header
-     * @param map
-     *            The map
-     * @param dictionary
-     *            The dictionary
+     * @param data The int array
+     * @param header The header
+     * @param map The map
+     * @param dictionary The dictionary
      */
     public Data(final DataMatrix data,
                 final String[] header,
