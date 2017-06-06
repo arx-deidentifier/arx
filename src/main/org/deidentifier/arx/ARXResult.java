@@ -578,7 +578,7 @@ public class ARXResult {
             result = anonymizer.anonymize(manager, definition, config);
         } catch (IOException e) {
             // This should not happen at this point in time, as data has already been read from the source
-            throw new RuntimeException("Internal error");
+            throw new RuntimeException("Internal error: unexpected IO issue");
         }
         
         // Break, if no solution has been found
