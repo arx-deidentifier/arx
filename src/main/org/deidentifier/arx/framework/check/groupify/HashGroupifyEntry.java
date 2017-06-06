@@ -75,7 +75,7 @@ public class HashGroupifyEntry {
      * Initialize iterator
      */
     public void read() {
-        matrix.iterator1(row);
+        matrix.iterator(row);
     }
     
     /**
@@ -83,6 +83,6 @@ public class HashGroupifyEntry {
      * @return
      */
     public int next() {
-        return matrix.iterator1_next();
+        return matrix.iterator_next();
     }
 }

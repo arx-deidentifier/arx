@@ -53,16 +53,10 @@ public class DataMatrix {
     private final int           columns;
 
     /** Iterate */
-    private int                 iterator_1_i       = 0;
+    private int                 iterator_i       = 0;
 
     /** Iterate */
-    private long                iterator_1_address = 0;
-
-    /** Iterate */
-    private int                 iterator_2_i       = 0;
-
-    /** Iterate */
-    private long                iterator_2_address = 0;
+    private long                iterator_address = 0;
 
     /** Write access */
     private long                writeBaseAddress   = 0;
@@ -265,28 +259,28 @@ public class DataMatrix {
      * First iterator
      * @param row
      */
-    public void iterator1(int row) {
+    public void iterator(int row) {
         checkRow(row);
-        iterator_1_address = baseAddress + row * rowSizeInBytes;
-        iterator_1_i = 0;
+        iterator_address = baseAddress + row * rowSizeInBytes;
+        iterator_i = 0;
     }
 
     /**
      * First iterator
      * @return
      */
-    public boolean iterator1_hasNext() {
-        return iterator_1_i < columns;
+    public boolean iterator_hasNext() {
+        return iterator_i < columns;
     }
 
     /**
      * First iterator
      * @return
      */
-    public int iterator1_next() {
-        int result = MemoryManager.getInt(iterator_1_address);
-        iterator_1_address += 4;
-        iterator_1_i++;
+    public int iterator_next() {
+        int result = MemoryManager.getInt(iterator_address);
+        iterator_address += 4;
+        iterator_i++;
         return result;
     }
     
@@ -295,50 +289,10 @@ public class DataMatrix {
      * @param value
      * @return
      */
-    public void iterator1_write(int value) {
-        MemoryManager.putInt(iterator_1_address, value);
-        iterator_1_address += 4;
-        iterator_1_i++;
-    }
-
-    /**
-     * First iterator
-     * @param row
-     */
-    public void iterator2(int row) {
-        checkRow(row);
-        iterator_2_address = baseAddress + row * rowSizeInBytes;
-        iterator_2_i = 0;
-    }
-
-    /**
-     * First iterator
-     * @return
-     */
-    public boolean iterator2_hasNext() {
-        return iterator_2_i < columns;
-    }
-
-    /**
-     * First iterator
-     * @return
-     */
-    public int iterator2_next() {
-        int result = MemoryManager.getInt(iterator_2_address);
-        iterator_2_address += 4;
-        iterator_2_i++;
-        return result;
-    }
-
-    /**
-     * First iterator
-     * @param value
-     * @return
-     */
-    public void iterator2_write(int value) {
-        MemoryManager.putInt(iterator_2_address, value);
-        iterator_2_address += 4;
-        iterator_2_i++;
+    public void iterator_write(int value) {
+        MemoryManager.putInt(iterator_address, value);
+        iterator_address += 4;
+        iterator_i++;
     }
 
     /**

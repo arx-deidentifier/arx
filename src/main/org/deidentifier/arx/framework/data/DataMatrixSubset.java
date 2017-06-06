@@ -97,43 +97,23 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
-    public void iterator1(int row) {
-        matrix.iterator1(subset[row]);
+    public void iterator(int row) {
+        matrix.iterator(subset[row]);
     }
 
     @Override
-    public boolean iterator1_hasNext() {
-        return matrix.iterator1_hasNext();
+    public boolean iterator_hasNext() {
+        return matrix.iterator_hasNext();
     }
 
     @Override
-    public int iterator1_next() {
-        return matrix.iterator1_next();
+    public int iterator_next() {
+        return matrix.iterator_next();
     }
 
     @Override
-    public void iterator1_write(int value) {
-        matrix.iterator1_write(value);
-    }
-
-    @Override
-    public void iterator2(int row) {
-        matrix.iterator2(subset[row]);
-    }
-
-    @Override
-    public boolean iterator2_hasNext() {
-        return matrix.iterator2_hasNext();
-    }
-
-    @Override
-    public int iterator2_next() {
-        return matrix.iterator2_next();
-    }
-
-    @Override
-    public void iterator2_write(int value) {
-        matrix.iterator2_write(value);
+    public void iterator_write(int value) {
+        matrix.iterator_write(value);
     }
 
     @Override

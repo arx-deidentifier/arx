@@ -66,9 +66,9 @@ public class TupleMatcher implements Serializable {
         
         // Transform the tuple
         DataMatrix data = groupify.getInputData();
-        data.iterator2(row);
+        data.iterator(row);
         for (int dimension = 0; dimension < tuple.length; dimension++) {
-            tuple[dimension] = hierarchies[dimension][data.iterator2_next()][generalization[dimension]];
+            tuple[dimension] = hierarchies[dimension][data.iterator_next()][generalization[dimension]];
         }
         
         // Return

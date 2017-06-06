@@ -187,9 +187,9 @@ public class HashGroupify {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
                 
                 // TODO: Improve!
-                dataAnalyzed.iterator2(other);
+                dataAnalyzed.iterator(other);
                 for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].add(dataAnalyzed.iterator2_next());
+                    entry.distributions[i].add(dataAnalyzed.iterator_next());
                 }
             }
         }
@@ -353,14 +353,14 @@ public class HashGroupify {
                 }
                 if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before microaggregation!"); }
                 int dimension = 0;
-                result.getArray().iterator1(row);
+                result.getArray().iterator(row);
                 for (int i = start; i < start + num; i++) {
                     if (!cache.containsKey(m.distributions[i])) {
                         String value = functions[dimension].aggregate(m.distributions[i]);
                         int code = result.getDictionary().register(dimension, value);
                         cache.put(m.distributions[i], code);
                     }
-                    result.getArray().iterator1_write(cache.get(m.distributions[i]));
+                    result.getArray().iterator_write(cache.get(m.distributions[i]));
                     dimension++;
                 }
             }

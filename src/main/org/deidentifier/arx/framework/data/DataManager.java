@@ -922,14 +922,14 @@ public class DataManager {
             if (valsDI != null) valsDI.setRow(index);
             if (valsIS != null) valsIS.setRow(index);
 
-            data.iterator1(index);
+            data.iterator(index);
             int i = 0;
-            while (data.iterator1_hasNext()) {
+            while (data.iterator_hasNext()) {
                 
                 final int idx = i * 2;
                 int aType = map[idx];
                 final int iPos = map[idx + 1];
-                final int iValue = data.iterator1_next();
+                final int iValue = data.iterator_next();
                 switch (aType) {
                 case AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED:
                     valsGH.setValueAtColumn(iPos, iValue);
