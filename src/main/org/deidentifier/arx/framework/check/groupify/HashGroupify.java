@@ -226,33 +226,33 @@ public class HashGroupify {
     /**
      * Adds a class from a snapshot
      * @param generalized
-     * @param referenceToValues
-     * @param referenceToFrequencies
+     * @param elements
+     * @param frequencies
      * @param representative
      * @param count
      * @param pcount
      */
-    public void addFromSnapshot(int generalized, long[] referenceToValues, long[] referenceToFrequencies, int representative, int count, int pcount) {
+    public void addFromSnapshot(int generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
 
         // Add
         final int hash = dataOutput.hashCode(generalized);
         final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
         // Is a distribution provided
-        if (referenceToValues != null) {
+        if (elements != null) {
             if (entry.distributions == null) {
                 
-                entry.distributions = new Distribution[referenceToValues.length];
+                entry.distributions = new Distribution[elements.length];
                 
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i] = new Distribution(referenceToValues[i], referenceToFrequencies[i]);
+                    entry.distributions[i] = new Distribution(elements[i], frequencies[i]);
                 }
             } else {
                 
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].merge(referenceToValues[i], referenceToFrequencies[i]);
+                    entry.distributions[i].merge(elements[i], frequencies[i]);
                 }
             }
         }

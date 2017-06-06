@@ -30,9 +30,6 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  */
 public class Distribution {
 
-    /** Static return value */
-    private static final long[] RETURN_VALUE     = new long[2];
-
     /** The load factor. */
     private final static float  LOADFACTOR       = 0.75f;
 
@@ -40,10 +37,10 @@ public class Distribution {
     private static final int    DEFAULT_CAPACITY = 8;          // power of two
 
     /** The size. */
-    private int                 size;
+    private int                size;
 
     /** The threshold used for rehashing. */
-    private int                 threshold;
+    private int                threshold;
 
     /** The elements. Even index contains value, odd index contains frequency */
     private int[]               elements;
@@ -52,22 +49,36 @@ public class Distribution {
      * Default constructor.
      */
     public Distribution() {
-        init(DEFAULT_CAPACITY);
+        this(DEFAULT_CAPACITY);
     }
 
     /**
      * Constructor used to create frequency set from a history entry.
      *
-     * @param referenceToValues
-     * @param referenceToFrequencies
+     * @param element
+     * @param frequency
      */
-    public Distribution(final long referenceToValues, final long referenceToFrequencies) {
-        int length = IntArrayDictionaryEntry.getArrayLength(referenceToValues);
-        init(length);
-        for (int i = 0; i < length; i++) {
-            this.add(IntArrayDictionaryEntry.getArray(referenceToValues, i), 
-                     IntArrayDictionaryEntry.getArray(referenceToFrequencies, i));
+    public Distribution(final int[] element, final int[] frequency) {
+        this(element.length);
+        for (int i = 0; i < element.length; i++) {
+            if (element[i] != -1) {
+                this.add(element[i], frequency[i]);
+            }
         }
+    }
+
+    /**
+     * Constructor using next power of two starting at capacity as initial
+     * capacity.
+     * 
+     * @param capacity
+     */
+    private Distribution(int capacity) {
+        capacity = HashTableUtil.calculateCapacity(capacity);
+        size = 0;
+        elements = new int[capacity << 1];
+        Arrays.fill(elements, -1);
+        threshold = HashTableUtil.calculateThreshold(capacity, LOADFACTOR);
     }
 
     /**
@@ -113,15 +124,14 @@ public class Distribution {
     /**
      * Merge a frequency set with a history entry.
      *
-     * @param referenceToValues
-     * @param referenceToFrequencies
+     * @param elements
+     * @param frequency
      */
-    public void merge(final long referenceToValues, final long referenceToFrequencies) {
-        
-        int length = IntArrayDictionaryEntry.getArrayLength(referenceToValues);
-        for (int i = 0; i < length; i++) {
-            this.add(IntArrayDictionaryEntry.getArray(referenceToValues, i), 
-                     IntArrayDictionaryEntry.getArray(referenceToFrequencies, i));
+    public void merge(final int[] elements, final int[] frequency) {
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i] != -1) {
+                this.add(elements[i], frequency[i]);
+            }
         }
     }
 
@@ -130,26 +140,21 @@ public class Distribution {
      * sortedElements and sortedFrequency arrays. In case a collission occured
      * this method also sorts the elements. First entry is elements, second entry is frequencies.
      */
-    public long[] pack() {
-        long sortedElements = IntArrayDictionaryEntry.allocate(size);
-        long sortedFrequencies = IntArrayDictionaryEntry.allocate(size);
-        long addressElements = IntArrayDictionaryEntry.getArrayAddress(sortedElements);
-        long addressFrequencies = IntArrayDictionaryEntry.getArrayAddress(sortedFrequencies);
+    public int[][] pack() {
+        final int[] sortedelements = new int[size];
+        final int[] sortedfrequency = new int[size];
         if (size > 0) {
-            
-            // Compress & copy
+            // compress & copy
+            int count = 0;
             for (int i = 0; i < elements.length; i += 2) {
-                if (elements[i] != -1) { // Bucket not empty
-                    addressElements = IntArrayDictionaryEntry.setArrayEntry(addressElements, elements[i]);
-                    addressFrequencies = IntArrayDictionaryEntry.setArrayEntry(addressFrequencies, elements[i + 1]);
+                if (elements[i] != -1) { // bucket not empty
+                    sortedelements[count] = elements[i];
+                    sortedfrequency[count] = elements[i + 1];
+                    count++;
                 }
             }
         }
-        IntArrayDictionaryEntry.calculateHashCode(sortedElements);
-        IntArrayDictionaryEntry.calculateHashCode(sortedFrequencies);
-        RETURN_VALUE[0] = sortedElements;
-        RETURN_VALUE[1] = sortedFrequencies; 
-        return RETURN_VALUE;
+        return new int[][]{sortedelements, sortedfrequency};
     }
 
     /**
@@ -205,18 +210,6 @@ public class Distribution {
             index = (index + 2) & mask; // next bucket
         }
 
-    }
-
-    /**
-     * Initialize
-     * @param capacity
-     */
-    private void init(int capacity) {
-        capacity = HashTableUtil.calculateCapacity(capacity);
-        size = 0;
-        elements = new int[capacity << 1];
-        Arrays.fill(elements, -1);
-        threshold = HashTableUtil.calculateThreshold(capacity, LOADFACTOR);
     }
 
     /**

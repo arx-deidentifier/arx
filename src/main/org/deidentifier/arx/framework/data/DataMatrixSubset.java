@@ -16,7 +16,6 @@
  */
 package org.deidentifier.arx.framework.data;
 
-
 /**
  * A subset of a data matrix
  * 

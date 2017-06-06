@@ -342,7 +342,7 @@ public class History {
                 data[index + 2] = m.pcount;
                 for (int i=0; i<m.distributions.length; i++) {
                     Distribution distribution = m.distributions[i];
-                    long[] distributionData = distribution.pack();
+                    int[][] distributionData = distribution.pack();
                     data[index + 3 + i * 2] = dictionarySensValue.probe(distributionData[0]);
                     data[index + 4 + i * 2] = dictionarySensFreq.probe(distributionData[1]);
                 }
@@ -352,7 +352,7 @@ public class History {
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 for (int i=0; i<m.distributions.length; i++) {
                     Distribution distribution = m.distributions[i];
-                    long[] distributionData = distribution.pack();
+                    int[][] distributionData = distribution.pack();
                     data[index + 2 + i * 2] = dictionarySensValue.probe(distributionData[0]);
                     data[index + 3 + i * 2] = dictionarySensFreq.probe(distributionData[1]);
                 }
