@@ -44,6 +44,9 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
+    /** Anonymizer */
+    private ARXAnonymizer          anonymizer;
+
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -160,6 +163,7 @@ public class ARXResult {
     /**
      * Creates a new instance.
      *
+     * @param anonymizer
      * @param registry
      * @param manager
      * @param checker
@@ -169,7 +173,8 @@ public class ARXResult {
      * @param duration
      * @param solutionSpace
      */
-    protected ARXResult(DataRegistry registry,
+    protected ARXResult(ARXAnonymizer anonymizer,
+                        DataRegistry registry,
                         DataManager manager,
                         NodeChecker checker,
                         DataDefinition definition,
@@ -178,6 +183,7 @@ public class ARXResult {
                         long duration,
                         SolutionSpace solutionSpace) {
 
+        this.anonymizer = anonymizer;
         this.registry = registry;
         this.manager = manager;
         this.checker = checker;
@@ -561,9 +567,11 @@ public class ARXResult {
         DataManager manager = this.manager.getSubsetInstance(rowset);
         
         // Create an anonymizer
-        // TODO: May this object stores some values that should be transferred?
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setListener(listener);
+        if (this.anonymizer != null) {
+            anonymizer.parse(this.anonymizer);
+        }
         
         // Anonymize
         Result result = null;
@@ -571,7 +579,7 @@ public class ARXResult {
             result = anonymizer.anonymize(manager, definition, config);
         } catch (IOException e) {
             // This should not happen at this point in time, as data has already been read from the source
-            throw new RuntimeException("Internal error");
+            throw new RuntimeException("Internal error: unexpected IO issue");
         }
         
         // Break, if no solution has been found

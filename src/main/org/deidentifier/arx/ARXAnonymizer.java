@@ -126,9 +126,10 @@ public class ARXAnonymizer {
                                                       manager.getDataGeneralized().getHeader(),
                                                       config.getInternalConfiguration());
 
-            // Create output handle
-            ((DataHandleInput)handle).setLocked(true);
-            return new ARXResult(handle.getRegistry(),
+			// Create output handle
+	        ((DataHandleInput)handle).setLocked(true);
+            return new ARXResult(ARXAnonymizer.this,
+                                 handle.getRegistry(),
                                  this.manager,
                                  this.checker,
                                  handle.getDefinition(),
@@ -624,5 +625,16 @@ public class ARXAnonymizer {
         
         // Return the result
         return new Result(config.getQualityModel(), checker, solutionSpace, manager, algorithm, time);
+    }
+
+    /**
+     * Parses the settings provided by the given instance
+     * @param anonymizer
+     */
+    protected void parse(ARXAnonymizer anonymizer) {
+        this.historySize = anonymizer.historySize;
+        this.snapshotSizeDataset = anonymizer.snapshotSizeDataset;
+        this.snapshotSizeSnapshot = anonymizer.snapshotSizeSnapshot;
+        this.maxQuasiIdentifiers = anonymizer.maxQuasiIdentifiers;
     }
 }
