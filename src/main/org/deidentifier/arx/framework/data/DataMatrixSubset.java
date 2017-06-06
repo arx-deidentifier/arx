@@ -42,7 +42,7 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
-    public void and(int row, long value) {
+    public void and(int row, int value) {
         matrix.and(subset[row], value);
     }
 
@@ -64,11 +64,6 @@ public class DataMatrixSubset extends DataMatrix {
     @Override
     public boolean equalsIgnoringOutliers(int row1, int row2) {
         return matrix.equalsIgnoringOutliers(subset[row1], subset[row2]);
-    }
-
-    @Override
-    public void free() {
-        // Nothing to do
     }
 
     @Override
@@ -117,7 +112,7 @@ public class DataMatrixSubset extends DataMatrix {
     }
 
     @Override
-    public void or(int row, long value) {
+    public void or(int row, int value) {
         matrix.or(subset[row], value);
     }
 
@@ -143,10 +138,5 @@ public class DataMatrixSubset extends DataMatrix {
     @Override
     public void swap(int row1, int row2) {
         matrix.swap(subset[row1], subset[row2]);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        // Nothing to do
     }
 }

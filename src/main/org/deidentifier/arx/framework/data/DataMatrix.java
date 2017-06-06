@@ -17,9 +17,6 @@
 
 package org.deidentifier.arx.framework.data;
 
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import org.deidentifier.arx.framework.MemoryManager;
 
 /**
  * A fast implementation of an array of arrays of equal size
@@ -28,38 +25,23 @@ import org.deidentifier.arx.framework.MemoryManager;
  */
 public class DataMatrix {
     
-    /** Debugging flag*/
-    private static final boolean DEBUG = false;
-
-    /** The base address of the memory field in bytes. */
-    private final long          baseAddress;
-
-    /** The size in bytes of one row. */
-    private final long          rowSizeInBytes;
-
-    /** The size in longs of one row. */
-    private final int           rowSizeInLongs;
-
-    /** The total size of the allocated memory. */
-    private final long          size;
-
-    /** Flag to indicate if the allocated memory has been freed. */
-    private final AtomicBoolean freed              = new AtomicBoolean(false);
+    /** Backing array */
+    private final int[]          array;
 
     /** The number of rows. */
-    private final int           rows;
+    private final int            rows;
 
     /** The number of columns. */
-    private final int           columns;
+    private final int            columns;
 
     /** Iterate */
-    private int                 iterator_i       = 0;
+    private int                  iteratorI = 0;
+    
+    /** Iterate */
+    private int                  iteratorOffset = 0;
 
     /** Iterate */
-    private long                iterator_address = 0;
-
-    /** Write access */
-    private long                writeBaseAddress   = 0;
+    private int                  baseOffset   = 0;
 
     /**
      * Instantiates a new memory block. The block will *not* be initialized.
@@ -68,26 +50,9 @@ public class DataMatrix {
      * @param columns the num columns
      */
     public DataMatrix(final int rows, final int columns) {
-        
-        // Special case
-        if (rows == 0 && columns == 0) {
-            freed.set(true);
-            this.columns = 0;
-            this.rows = 0;
-            this.rowSizeInLongs = 0;
-            this.rowSizeInBytes = 0;
-            this.size = 0;
-            this.baseAddress = -1;
-            return;
-        }
-        
-        // Initialize
         this.columns = columns;
         this.rows = rows;
-        this.rowSizeInLongs = (int) (Math.ceil(columns / 2d));
-        this.rowSizeInBytes = rowSizeInLongs * 8;
-        this.size = rowSizeInBytes * rows;
-        this.baseAddress = MemoryManager.allocateMemory(size);
+        this.array = new int[columns * rows];
     }
 
     /**
@@ -95,16 +60,14 @@ public class DataMatrix {
      * @param row
      * @param value
      */
-    public void and(int row, long value) {
-        checkRow(row);
-        long address = this.baseAddress + row * this.rowSizeInBytes;
-        MemoryManager.putLong(address, MemoryManager.getLong(address) & value);
+    public void and(int row, int value) {
+        array[row * columns] &= value;
     }
 
     @Override
     public DataMatrix clone() {
         DataMatrix result = new DataMatrix(this.rows, this.columns);
-        MemoryManager.copyMemory(this.baseAddress, result.baseAddress, this.size);
+        System.arraycopy(this.array, 0, result.array, 0, this.array.length);
         return result;
     }
     
@@ -115,11 +78,9 @@ public class DataMatrix {
      * @param sourceRow
      */
     public void copyFrom(int row, DataMatrix sourceMatrix, int sourceRow) {
-        checkRow(row);
-        checkRow(sourceRow);
-        MemoryManager.copyMemory(sourceMatrix.baseAddress + sourceRow * this.rowSizeInBytes, 
-                          this.baseAddress + row * this.rowSizeInBytes, 
-                          this.rowSizeInBytes);
+        int sourceOffset = sourceRow * columns;
+        int thisOffset = row * columns;
+        System.arraycopy(sourceMatrix.array, sourceOffset, this.array, thisOffset, columns);
     }
 
     /**
@@ -129,9 +90,7 @@ public class DataMatrix {
      * @return
      */
     public boolean equals(final int row1, final int row2) {
-        checkRow(row1);
-        checkRow(row2);
-        return equals(row1, row2, ~0L);
+        return equals(row1, row2, ~0);
     }
 
     /**
@@ -141,14 +100,10 @@ public class DataMatrix {
      * @return
      */
     public boolean equals(int row, int[] data) {
-        checkRow(row);
-        checkColumn(data.length - 1);
-        long address = this.baseAddress + row * this.rowSizeInBytes;
-        for (int i = 0; i < data.length; i++) {
-            if (MemoryManager.getInt(address) != data[i]) {
-                return false;
-            } else {
-                address += 4;
+        int offset = row * columns;
+        for (int i = 0; i < columns; i++) {
+            if (this.array[offset++] != data[i]) { 
+                return false; 
             }
         }
         return true;
@@ -161,19 +116,9 @@ public class DataMatrix {
      * @return
      */
     public boolean equalsIgnoringOutliers(int row1, int row2) {
-        checkRow(row1);
-        checkRow(row2);
-        return this.equals(row1, row2, Data.REMOVE_OUTLIER_MASK_LONG);
+        return this.equals(row1, row2, Data.REMOVE_OUTLIER_MASK);
     }
     
-    /**
-     * Frees the backing off-heap memory
-     */
-    public void free() {
-        if (!freed.compareAndSet(false, true)) return;
-        MemoryManager.freeMemory(baseAddress, size);
-    }
-
     /**
      * Returns the specified value
      * @param row
@@ -181,9 +126,7 @@ public class DataMatrix {
      * @return
      */
     public int get(final int row, final int col) {
-        checkRow(row);
-        checkColumn(col);
-        return MemoryManager.getInt(this.baseAddress + (row * this.rowSizeInBytes) + (col << 2));
+        return this.array[row * columns + col];
     }
 
     /**
@@ -203,14 +146,13 @@ public class DataMatrix {
     }
 
     /**
-     * Sets the value in the given column for the row which
+     * Gets the value in the given column for the row which
      * has been set via setRow(row).
      * @param column
      * @param value
      */
     public int getValueAtColumn(int column) {
-        checkColumn(column);
-        return MemoryManager.getInt(this.writeBaseAddress + (column << 2));
+        return this.array[baseOffset + column];
     }
 
     /**
@@ -219,13 +161,10 @@ public class DataMatrix {
      * @return
      */
     public int hashCode(final int row) {
-        checkRow(row);
-        long address = baseAddress + row * rowSizeInBytes;
+        int offset = row * columns;
         int result = 23;
-        
         for (int i = 0; i < columns; i++) {
-            result = (37 * result) + MemoryManager.getInt(address);
-            address += 4;
+            result = (37 * result) + this.array[offset++];
         }
         return result;        
     }
@@ -260,9 +199,8 @@ public class DataMatrix {
      * @param row
      */
     public void iterator(int row) {
-        checkRow(row);
-        iterator_address = baseAddress + row * rowSizeInBytes;
-        iterator_i = 0;
+        iteratorOffset = row * columns;
+        iteratorI = 0;
     }
 
     /**
@@ -270,7 +208,7 @@ public class DataMatrix {
      * @return
      */
     public boolean iterator_hasNext() {
-        return iterator_i < columns;
+        return iteratorI < columns;
     }
 
     /**
@@ -278,9 +216,8 @@ public class DataMatrix {
      * @return
      */
     public int iterator_next() {
-        int result = MemoryManager.getInt(iterator_address);
-        iterator_address += 4;
-        iterator_i++;
+        int result = this.array[iteratorOffset++];
+        iteratorI++;
         return result;
     }
     
@@ -290,20 +227,17 @@ public class DataMatrix {
      * @return
      */
     public void iterator_write(int value) {
-        MemoryManager.putInt(iterator_address, value);
-        iterator_address += 4;
-        iterator_i++;
+        this.array[iteratorOffset++] = value;
+        iteratorI++;
     }
 
     /**
      * ORs the first value of the row with the given value
      * @param row
-     * @param removeOutlierMaskLong
+     * @param value
      */
-    public void or(int row, long value) {
-        checkRow(row);
-        long address = this.baseAddress + row * this.rowSizeInBytes;
-        MemoryManager.putLong(address, MemoryManager.getLong(address) | value);
+    public void or(int row, int value) {
+        array[row * columns] |= value;
     }
 
     /**
@@ -313,10 +247,7 @@ public class DataMatrix {
      * @param value
      */
     public void set(int row, int column, int value) {
-        checkRow(row);
-        checkColumn(column);
-        long address = this.baseAddress + row * this.rowSizeInBytes + column * 4;
-        MemoryManager.putInt(address, value);
+        this.array[row * columns + column] = value;
     }
 
     /**
@@ -324,8 +255,7 @@ public class DataMatrix {
      * @param row
      */
     public void setRow(int row) {
-        checkRow(row);
-        this.writeBaseAddress = this.baseAddress + row * this.rowSizeInBytes;
+        this.baseOffset = row * columns;
     }
 
     /**
@@ -334,11 +264,9 @@ public class DataMatrix {
      * @param data
      */
     public void setRow(int row, int[] data) {
-        checkRow(row);
-        long address = this.baseAddress + row * this.rowSizeInBytes;
+        int offset = row * columns;
         for (int i = 0; i < data.length; i++) {
-            MemoryManager.putInt(address, data[i]);
-            address += 4;
+            this.array[offset++] = data[i];
         }
     }
 
@@ -349,8 +277,7 @@ public class DataMatrix {
      * @param value
      */
     public void setValueAtColumn(int column, int value) {
-        checkColumn(column);
-        MemoryManager.putInt(this.writeBaseAddress + (column << 2), value);
+        this.array[baseOffset + column] = value;
     }
 
     /**
@@ -359,41 +286,17 @@ public class DataMatrix {
      * @param row2
      */
     public void swap(int row1, int row2) {
-        checkRow(row1);
-        checkRow(row2);
-        long address1 = this.baseAddress + row1 * this.rowSizeInBytes;
-        long address2 = this.baseAddress + row2 * this.rowSizeInBytes;
-        for (int i = 0; i < this.rowSizeInLongs; i++) {
-            long temp = MemoryManager.getLong(address1);
-            MemoryManager.putLong(address1, MemoryManager.getLong(address2));
-            MemoryManager.putLong(address2, temp);
-            address1 += 8;
-            address2 += 8;
+        int offset1 = row1 * columns;
+        int offset2 = row2 * columns;
+        for (int i = 0; i < this.columns; i++) {
+            int temp = this.array[offset1];
+            this.array[offset1] = this.array[offset2];
+            this.array[offset2] = temp;
+            offset1 ++;
+            offset2 ++;
         }
     }
 
-    /**
-     * Parameter check
-     * @param column
-     */
-    @SuppressWarnings("unused")
-    private void checkColumn(int column) {
-        if (DEBUG && (column < 0 || column > columns -1)) {
-            throw new IllegalArgumentException("Column out of bounds: " + column + " max: " + columns);
-        }    
-    }
-
-    /**
-     * Parameter check
-     * @param row
-     */
-    @SuppressWarnings("unused")
-    private void checkRow(int row) {
-        if (DEBUG && (row < 0 || row > rows -1)) {
-            throw new IllegalArgumentException("Row out of bounds: " + row + " max: " + rows);
-        }    
-    }
- 
     /**
      * Internal equals
      * @param row1
@@ -401,70 +304,101 @@ public class DataMatrix {
      * @param flag
      * @return
      */
-    private boolean equals(int row1, int row2, long flag) {
+    private boolean equals(int row1, int row2, int flag) {
 
-        long base1 = baseAddress + (row1 * rowSizeInBytes);
-        long base2 = baseAddress + (row2 * rowSizeInBytes);
+        int offset1 = row1 * columns;
+        int offset2 = row2 * columns;
 
-        switch (rowSizeInLongs) {
+        switch (columns) {
+        case 20:
+            if (this.array[offset1 + 19] != this.array[offset2 + 19]) {
+                return false;
+            }
+        case 19:
+            if (this.array[offset1 + 18] != this.array[offset2 + 18]) {
+                return false;
+            }
+        case 18:
+            if (this.array[offset1 + 17] != this.array[offset2 + 17]) {
+                return false;
+            }
+        case 17:
+            if (this.array[offset1 + 16] != this.array[offset2 + 16]) {
+                return false;
+            }
+        case 16:
+            if (this.array[offset1 + 15] != this.array[offset2 + 15]) {
+                return false;
+            }
+        case 15:
+            if (this.array[offset1 + 14] != this.array[offset2 + 14]) {
+                return false;
+            }
+        case 14:
+            if (this.array[offset1 + 13] != this.array[offset2 + 13]) {
+                return false;
+            }
+        case 13:
+            if (this.array[offset1 + 12] != this.array[offset2 + 12]) {
+                return false;
+            }
+        case 12:
+            if (this.array[offset1 + 11] != this.array[offset2 + 11]) {
+                return false;
+            }
+        case 11:
+            if (this.array[offset1 + 10] != this.array[offset2 + 10]) {
+                return false;
+            }
         case 10:
-            if (MemoryManager.getLong(base1 + 72) != MemoryManager.getLong(base2 + 72)) {
+            if (this.array[offset1 + 9] != this.array[offset2 + 9]) {
                 return false;
             }
         case 9:
-            if (MemoryManager.getLong(base1 + 64) != MemoryManager.getLong(base2 + 64)) {
+            if (this.array[offset1 + 8] != this.array[offset2 + 8]) {
                 return false;
             }
         case 8:
-            if (MemoryManager.getLong(base1 + 56) != MemoryManager.getLong(base2 + 56)) {
+            if (this.array[offset1 + 7] != this.array[offset2 + 7]) {
                 return false;
             }
         case 7:
-            if (MemoryManager.getLong(base1 + 48) != MemoryManager.getLong(base2 + 48)) {
+            if (this.array[offset1 + 6] != this.array[offset2 + 6]) {
                 return false;
             }
         case 6:
-            if (MemoryManager.getLong(base1 + 40) != MemoryManager.getLong(base2 + 40)) {
+            if (this.array[offset1 + 5] != this.array[offset2 + 5]) {
                 return false;
             }
         case 5:
-            if (MemoryManager.getLong(base1 + 32) != MemoryManager.getLong(base2 + 32)) {
+            if (this.array[offset1 + 4] != this.array[offset2 + 4]) {
                 return false;
             }
         case 4:
-            if (MemoryManager.getLong(base1 + 24) != MemoryManager.getLong(base2 + 24)) {
+            if (this.array[offset1 + 3] != this.array[offset2 + 3]) {
                 return false;
             }
         case 3:
-            if (MemoryManager.getLong(base1 + 16) != MemoryManager.getLong(base2 + 16)) {
+            if (this.array[offset1 + 2] != this.array[offset2 + 2]) {
                 return false;
             }
         case 2:
-            if (MemoryManager.getLong(base1 + 8) != MemoryManager.getLong(base2 + 8)) {
+            if (this.array[offset1 + 1] != this.array[offset2 + 1]) {
                 return false;
             }
         case 1:
-            if ((MemoryManager.getLong(base1) & flag) != (MemoryManager.getLong(base2) & flag)) {
+            if ((this.array[offset1 + 0] & flag) != (this.array[offset2 + 0] & flag)) {
                 return false;
             }
             break;
         default:
-            final long end1 = base1 + rowSizeInBytes;
-
-            // Check with flag
-            if ((MemoryManager.getLong(base1) & flag) != (MemoryManager.getLong(base2) & flag)) {
+            if ((this.array[offset1] & flag) != (this.array[offset2] & flag)) {
                 return false;
             }
-            base1 += 8;
-            base2 += 8;
-            
-            // Check without flag
-            long address2 = base2;
-            for (long address = base1; address < end1; address += 8) {
-                if (MemoryManager.getLong(address) != MemoryManager.getLong(address2)) {
+            for (int i = 1; i < columns; i++) {
+                if (this.array[offset1 + i] != this.array[offset2 + i]) {
                     return false;
                 }
-                address2 += 8;
             }
         }
         return true;
@@ -481,19 +415,14 @@ public class DataMatrix {
         DataMatrix result = new DataMatrix(subset.length, this.columns);
         
         // Copy subset
-        long targetAddress = result.baseAddress;
+        int targetOffset = 0;
         for (int source : subset) {
-            long sourceAddress = this.baseAddress + source * rowSizeInBytes;
-            MemoryManager.copyMemory(sourceAddress, targetAddress, rowSizeInBytes);
-            targetAddress += rowSizeInBytes;
+            int sourceOffset = source * columns;
+            System.arraycopy(this.array, sourceOffset, result.array, targetOffset, columns);
+            targetOffset += columns;
         }
         
         // Return
         return result;
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        free();
     }
 }

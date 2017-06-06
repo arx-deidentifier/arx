@@ -390,10 +390,10 @@ public class HashGroupify {
                     throw new RuntimeException("Invalid state! Groupify the data before marking outliers!");
                 }
                 if (!m.isNotOutlier) {
-                    dataOutput.or(row, Data.OUTLIER_MASK_LONG);
+                    dataOutput.or(row, Data.OUTLIER_MASK);
                 }
             } else {
-                dataOutput.or(row, Data.OUTLIER_MASK_LONG);
+                dataOutput.or(row, Data.OUTLIER_MASK);
             }
         }
     }

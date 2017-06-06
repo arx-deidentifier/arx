@@ -30,12 +30,6 @@ import org.deidentifier.arx.RowSet;
 public class Data implements Cloneable{
 
     /** The outliers mask. */
-    public static final long OUTLIER_MASK_LONG        = 1 << 63;
-
-    /** The inverse outliers mask. */
-    public static final long REMOVE_OUTLIER_MASK_LONG = ~OUTLIER_MASK_LONG;
-
-    /** The outliers mask. */
     public static final int  OUTLIER_MASK             = 1 << 31;
 
     /** The inverse outliers mask. */

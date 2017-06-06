@@ -340,11 +340,11 @@ public class DataHandleOutput extends DataHandle {
 
             // Mark as not outlier from previous to index
             for (int i = previous; i < index; i++) {
-                outputGeneralized.getArray().and(i, Data.REMOVE_OUTLIER_MASK_LONG);
+                outputGeneralized.getArray().and(i, Data.REMOVE_OUTLIER_MASK);
             }
 
             // Mark index as outlier
-            outputGeneralized.getArray().or(index, Data.OUTLIER_MASK_LONG);
+            outputGeneralized.getArray().or(index, Data.OUTLIER_MASK);
 
             // Update
             previous = index + 1;
@@ -352,7 +352,7 @@ public class DataHandleOutput extends DataHandle {
         
         // Mark as not outlier from previous to num rows
         for (int i = previous; i < this.getNumRows(); i++) {
-            outputGeneralized.getArray().and(i, Data.REMOVE_OUTLIER_MASK_LONG);
+            outputGeneralized.getArray().and(i, Data.REMOVE_OUTLIER_MASK);
         }
                 
         // Update data types
