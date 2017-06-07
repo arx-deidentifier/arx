@@ -568,7 +568,9 @@ public class ARXResult {
         
         // Create an anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setListener(listener);
+        if (listener != null) {
+            anonymizer.setListener(listener);
+        }
         if (this.anonymizer != null) {
             anonymizer.parse(this.anonymizer);
         }
@@ -684,41 +686,37 @@ public class ARXResult {
         if (maxIterations <= 0) {
             throw new IllegalArgumentException("Max. iterations must be > zero");
         }
+        
+        // Progress
+        listener.progress(0d);
 
         // Outer loop
-        int iterations = 0;
-        int optimized = Integer.MAX_VALUE;
-        double totalAdaption = 0d;
-        final double max = maxIterations != Integer.MAX_VALUE ? maxIterations : (1d - gsFactor) / adaptionFactor;
-        while (isOptimizable(handle) && iterations < maxIterations && optimized > 0) {
-
-            // Create a wrapped listener
-            final double base = maxIterations != Integer.MAX_VALUE ? iterations : totalAdaption / adaptionFactor;
-            ARXListener wrapper = new ARXListener() {
-                @Override
-                public void progress(double progress) {
-                    double _max = (max > 1d && !Double.isInfinite(max) && !Double.isNaN(max) ? max : 1d);
-                    double _base = (base > 0d && !Double.isInfinite(base) && !Double.isNaN(base)? base : 0d);
-                    double value = (progress + _base) / _max;
-                    listener.progress(value);
-                }
-            };
+        int optimizedTotal = 0;
+        int iterationsTotal = 0;
+        int optimizedCurrent = Integer.MAX_VALUE;
+        while (isOptimizable(handle) && iterationsTotal < maxIterations && optimizedCurrent > 0) {
 
             // Perform individual optimization
-            optimized = optimize(handle, gsFactor, wrapper);
+            optimizedCurrent = optimize(handle, gsFactor);
+            optimizedTotal += optimizedCurrent;
             
             // Try to adapt, if possible
-            if (optimized == 0 && adaptionFactor > 0d) {
+            if (optimizedCurrent == 0 && adaptionFactor > 0d) {
                 gsFactor += adaptionFactor;
-                totalAdaption += adaptionFactor;
                 
                 // If valid, try again
                 if (gsFactor <= 1d) {
-                    optimized = Integer.MAX_VALUE;
+                    optimizedCurrent = Integer.MAX_VALUE;
                 }
             }
-            iterations++;
+            iterationsTotal++;
+
+            // Progress
+            double progress1 = (double)optimizedTotal / (double)handle.getNumRows();
+            double progress2 = (double)iterationsTotal / (double)maxIterations;
+            listener.progress(Math.max(progress1, progress2));
         }
+        listener.progress(1d);
     }
     
     /**

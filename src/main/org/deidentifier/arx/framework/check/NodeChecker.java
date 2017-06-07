@@ -358,6 +358,7 @@ public class NodeChecker {
      * Frees memory
      */
     public void reset() {
+        stateMachine.reset();
         history.reset();
         history.setSize(0);
         currentGroupify.stateClear();
