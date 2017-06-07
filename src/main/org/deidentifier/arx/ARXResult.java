@@ -715,6 +715,8 @@ public class ARXResult {
             double progress2 = (double)iterationsTotal / (double)maxIterations;
             listener.progress(Math.max(progress1, progress2));
         }
+
+        // Progress
         listener.progress(1d);
     }
     
