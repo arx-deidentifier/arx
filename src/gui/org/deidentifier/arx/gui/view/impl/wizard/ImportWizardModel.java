@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014-2015 Karol Babioch, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,10 +64,10 @@ public class ImportWizardModel {
     }
 
     /** Maximum number of lines to be loaded for preview purposes. */
-    public static final int PREVIEW_MAX_LINES = 25;
-    
+    public static final int               PREVIEW_MAX_LINES      = 25;
+
     /** Maximum number of chars to be loaded for detecting separators. */
-    public static final int DETECT_MAX_CHARS  = 100000;;
+    public static final int               DETECT_MAX_CHARS       = 100000;
 
     /** Actual source data should be imported from. */
     private SourceType                    sourceType;
@@ -169,19 +169,19 @@ public class ImportWizardModel {
     }
 
     /**
-         * @return {@link #csvEscape}
-         */
-        public char getCsvEscape() {
-            return csvEscape;
-        }
+     * @return {@link #csvEscape}
+     */
+    public char getCsvEscape() {
+        return csvEscape;
+    }
 
-   /**
- * Getter
- * @return
- */
-public char[] getCsvLinebreak() {
-    return csvLinebreak;
-}
+    /**
+     * Getter
+     * @return
+     */
+    public char[] getCsvLinebreak() {
+        return csvLinebreak;
+    }
 
     /**
      * Getter

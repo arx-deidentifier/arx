@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -45,7 +46,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
      * Creates a new instance.
      */
     protected MetricMDHeight() {
-        super(true, true, AggregateFunction.SUM);
+        super(true, true, true, AggregateFunction.SUM);
     }
 
     /**
@@ -54,9 +55,9 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
      * @param function
      */
     protected MetricMDHeight(AggregateFunction function) {
-        super(true, true, function);
+        super(true, true, true, function);
     }
-  
+
     /**
      * Returns the configuration of this metric.
      *
@@ -70,7 +71,7 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
                                        this.getAggregateFunction() // aggregate function
                                        );
     }
-
+  
     /**
      * For backwards compatibility only.
      *
@@ -81,6 +82,14 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
         super.initialize(1);
         setMin(new double[]{minHeight});
         setMax(new double[]{maxHeight});
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Height");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
     }
     
     @Override

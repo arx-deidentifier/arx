@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,7 +129,7 @@ public class ModelLDiversityCriterion extends ModelExplicitCriterion{
 
     @Override
     public String getLabel() {
-        return Resources.getMessage("Model.1d"); //$NON-NLS-1$
+        return '\u2113' + Resources.getMessage("Model.1e"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**

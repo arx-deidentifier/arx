@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -107,6 +108,15 @@ public class OrderedDistanceTCloseness extends TCloseness {
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("t-Closeness");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (t)", this.t);
+        result.addProperty("Distance", "Ordered");
+        return result;
     }
 
     @Override

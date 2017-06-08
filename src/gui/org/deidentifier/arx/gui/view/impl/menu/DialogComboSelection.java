@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,29 +44,20 @@ import org.eclipse.swt.widgets.Text;
  * @author Fabian Prasser
  */
 public class DialogComboSelection extends Dialog {
-    /**
-     * The title of the dialog.
-     */
+    
+    /** The title of the dialog. */
     private String          title;
 
-    /**
-     * The message to display, or <code>null</code> if none.
-     */
+    /** The message to display, or <code>null</code> if none. */
     private String          message;
 
-    /**
-     * The input value; the empty string by default.
-     */
+    /** The input value; the empty string by default. */
     private String          value = "";       //$NON-NLS-1$
 
-    /**
-     * The input validator, or <code>null</code> if none.
-     */
+    /** The input validator, or <code>null</code> if none. */
     private IInputValidator validator;
 
-    /**
-     * Ok button widget.
-     */
+    /** Ok button widget. */
     private Button          okButton;
 
     /** Choices for combo widget. */
@@ -77,37 +68,20 @@ public class DialogComboSelection extends Dialog {
      */
     private Combo           combo;
 
-    /**
-     * Error message label widget.
-     */
+    /** Error message label widget. */
     private Text            errorMessageText;
 
-    /**
-     * Error message string.
-     */
+    /** Error message string. */
     private String          errorMessage;
 
     /**
-     * Creates an input dialog with OK and Cancel buttons. Note that the dialog
-     * will have no visual representation (no widgets) until it is told to open.
-     * <p>
-     * Note that the <code>open</code> method blocks for input dialogs.
-     * </p>
-     * 
+     * Creates a new instance
      * @param parentShell
-     *            the parent shell, or <code>null</code> to create a top-level
-     *            shell
      * @param dialogTitle
-     *            the dialog title, or <code>null</code> if none
      * @param dialogMessage
-     *            the dialog message, or <code>null</code> if none
      * @param choices
-     *            choices for combo widget
      * @param initialValue
-     *            the initial input value, or <code>null</code> if none
-     *            (equivalent to the empty string)
      * @param validator
-     *            an input validator, or <code>null</code> if none
      */
     public DialogComboSelection(Shell parentShell,
                                 String dialogTitle,

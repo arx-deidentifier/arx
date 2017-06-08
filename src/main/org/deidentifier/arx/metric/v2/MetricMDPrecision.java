@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -41,7 +43,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      * Creates a new instance.
      */
     protected MetricMDPrecision() {
-        super(true, true, AggregateFunction.ARITHMETIC_MEAN);
+        super(true, true, true, AggregateFunction.ARITHMETIC_MEAN);
     }
 
     /**
@@ -50,7 +52,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      * @param function
      */
     protected MetricMDPrecision(AggregateFunction function){
-        super(true, true, function);
+        super(true, true, true, function);
     }
     /**
      * Creates a new instance.
@@ -58,7 +60,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      * @param function
      */
     protected MetricMDPrecision(double gsFactor, AggregateFunction function){
-        super(true, true, gsFactor, function);
+        super(true, true, true, gsFactor, function);
     }
 
     /**
@@ -67,11 +69,11 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0.0d,                       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
+        return new MetricConfiguration(true,                                      // monotonic
+                                       this.getGeneralizationSuppressionFactor(), // gs-factor
+                                       false,                                     // precomputed
+                                       0.0d,                                      // precomputation threshold
+                                       this.getAggregateFunction()                // aggregate function
                                        );
     }
 
@@ -83,6 +85,16 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     @Override
     public boolean isGSFactorSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Precision");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
     }
 
     @Override

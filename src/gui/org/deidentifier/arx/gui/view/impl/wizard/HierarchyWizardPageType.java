@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,28 +38,34 @@ public class HierarchyWizardPageType<T> extends WizardPage {
 
     /** Var. */
     private final HierarchyWizardModel<T>         model;
-    
+
     /** Var. */
     private Button                                interval;
-    
+
     /** Var. */
     private Button                                order;
-    
+
     /** Var. */
     private Button                                redaction;
-    
+
+    /** Var. */
+    private Button                                date;
+
     /** Var. */
     private IWizardPage                           next;
-    
+
     /** Var. */
     private final HierarchyWizardPageIntervals<T> intervalPage;
-    
+
     /** Var. */
     private final HierarchyWizardPageOrder<T>     orderPage;
-    
+
     /** Var. */
     private final HierarchyWizardPageRedaction<T> redactionPage;
-    
+
+    /** Var. */
+    private final HierarchyWizardPageDate         datePage;
+
     /** Var. */
     private final HierarchyWizard<T>              wizard;
     
@@ -71,18 +77,21 @@ public class HierarchyWizardPageType<T> extends WizardPage {
      * @param intervalPage
      * @param orderPage
      * @param redactionPage
+     * @param datePage
      */
     public HierarchyWizardPageType(final HierarchyWizard<T> wizard,
                                    final HierarchyWizardModel<T> model,
                                    final HierarchyWizardPageIntervals<T> intervalPage,
                                    final HierarchyWizardPageOrder<T> orderPage,
-                                   final HierarchyWizardPageRedaction<T> redactionPage) {
+                                   final HierarchyWizardPageRedaction<T> redactionPage,
+                                   final HierarchyWizardPageDate datePage) {
         
         super(""); //$NON-NLS-1$
         this.wizard = wizard;
         this.redactionPage = redactionPage;
         this.orderPage = orderPage;
         this.intervalPage = intervalPage;
+        this.datePage = datePage;
         this.model = model;
         this.next = intervalPage;
         setTitle(Resources.getMessage("HierarchyWizardPageType.0")); //$NON-NLS-1$
@@ -100,6 +109,10 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         final Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayoutData(SWTUtil.createFillGridData());
         composite.setLayout(SWTUtil.createGridLayout(1, false));
+
+        this.date = new Button(composite, SWT.RADIO);
+        this.date.setText(Resources.getMessage("HierarchyWizardPageType.5")); //$NON-NLS-1$
+        this.date.setEnabled(model.getDateModel() != null);
         
         this.interval = new Button(composite, SWT.RADIO);
         this.interval.setText(Resources.getMessage("HierarchyWizardPageType.2")); //$NON-NLS-1$
@@ -112,6 +125,15 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         this.redaction = new Button(composite, SWT.RADIO);
         this.redaction.setText(Resources.getMessage("HierarchyWizardPageType.4")); //$NON-NLS-1$
         this.redaction.setEnabled(true);
+
+        this.date.addSelectionListener(new SelectionAdapter(){
+            @Override public void widgetSelected(SelectionEvent arg0) {
+                if (date.getSelection()) {
+                    next = datePage;
+                    model.setType(Type.DATE_BASED);
+                }
+            }
+        });
         
         this.interval.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
@@ -140,11 +162,13 @@ public class HierarchyWizardPageType<T> extends WizardPage {
             }
         });
         
+        date.setSelection(model.getType() == Type.DATE_BASED);
         interval.setSelection(model.getType() == Type.INTERVAL_BASED);
         order.setSelection(model.getType() == Type.ORDER_BASED);
         redaction.setSelection(model.getType() == Type.REDACTION_BASED);
         
         switch (model.getType()){
+        case DATE_BASED:      next = datePage;      break;
         case INTERVAL_BASED:  next = intervalPage;  break;
         case ORDER_BASED:     next = orderPage;     break;
         case REDACTION_BASED: next = redactionPage; break;
@@ -184,10 +208,12 @@ public class HierarchyWizardPageType<T> extends WizardPage {
         interval.setSelection(model.getType() == Type.INTERVAL_BASED);
         order.setSelection(model.getType() == Type.ORDER_BASED);
         redaction.setSelection(model.getType() == Type.REDACTION_BASED);
+        date.setSelection(model.getType() == Type.DATE_BASED);
         switch (model.getType()){
             case INTERVAL_BASED:  next = intervalPage;  break;
             case ORDER_BASED:     next = orderPage;     break;
             case REDACTION_BASED: next = redactionPage; break;
+            case DATE_BASED:      next = datePage;      break;
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class HashGroupify {
         // Set params
         this.currentNumOutliers = 0;
         this.suppressionLimit = config.getAbsoluteMaxOutliers();
-        this.utilityMeasure = config.getMetric();
+        this.utilityMeasure = config.getQualityModel();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
         // Extract research subset
@@ -120,8 +120,8 @@ public class HashGroupify {
         }
         
         // Extract criteria
-        this.classBasedCriteria = config.getClassBasedCriteriaAsArray();
-        this.sampleBasedCriteria = config.getSampleBasedCriteriaAsArray();
+        this.classBasedCriteria = config.getClassBasedPrivacyModelsAsArray();
+        this.sampleBasedCriteria = config.getSampleBasedPrivacyModelsAsArray();
         this.minimalClassSize = config.getMinimalGroupSize();
         
         // Sanity check: by convention, d-presence must be the first criterion

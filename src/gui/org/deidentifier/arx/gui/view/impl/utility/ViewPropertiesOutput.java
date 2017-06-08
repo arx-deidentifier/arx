@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,22 +24,24 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
+import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
-import org.deidentifier.arx.criteria.FinancialJournalistNoAttackPrivacy;
-import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
-import org.deidentifier.arx.criteria.FinancialProsecutorNoAttackPrivacy;
-import org.deidentifier.arx.criteria.FinancialProsecutorPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
 import org.deidentifier.arx.criteria.PopulationUniqueness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.criteria.ProfitabilityJournalist;
+import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
 import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.criteria.RiskBasedCriterion;
 import org.deidentifier.arx.criteria.SampleUniqueness;
@@ -49,6 +51,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTree;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisData;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -186,7 +189,7 @@ public class ViewPropertiesOutput extends ViewProperties {
 
         root.setLayout(new FillLayout());
         
-        final Tree tree = new Tree(root, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        final Tree tree = new Tree(root, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION);
         tree.setHeaderVisible(true);
         
         treeViewer = new TreeViewer(tree);
@@ -228,7 +231,7 @@ public class ViewPropertiesOutput extends ViewProperties {
         if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
             part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
             part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE ||
-            part == ModelPart.FINANCIAL_MODEL) {
+            part == ModelPart.COST_BENEFIT_MODEL) {
             return;
         }
         
@@ -242,14 +245,20 @@ public class ViewPropertiesOutput extends ViewProperties {
         // Clear
         roots.clear();
         
-        // Print information loss
-        if (node.getMaximumInformationLoss().getValue().equals( 
-            node.getMinimumInformationLoss().getValue())) {
+        // Print score
+        if (node.getHighestScore().getValue().equals( 
+            node.getLowestScore().getValue())) {
             
-            final String infoloss = node.getMinimumInformationLoss().toString() +
-                                    " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
-            new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
+            final String infoloss = node.getLowestScore().toString() +
+                                    " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+            Property score = new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
 
+            // Print metadata
+            if (node.isChecked()) {
+                for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+                    new Property(score, metadata.getParameter(), new String[] { SWTUtil.getPrettyString(metadata.getValue()) });
+                }
+            }
         } 
         
         // Print basic info on neighboring nodes
@@ -289,31 +298,29 @@ public class ViewPropertiesOutput extends ViewProperties {
                 }
             }
             // Print info about game-theoretic privacy
-            if (context.config.containsCriterion(FinancialProsecutorPrivacy.class) ||
-                context.config.containsCriterion(FinancialJournalistPrivacy.class) ||
-                context.config.containsCriterion(FinancialProsecutorNoAttackPrivacy.class) ||
-                context.config.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
+            if (context.config.containsCriterion(ProfitabilityProsecutor.class) ||
+                context.config.containsCriterion(ProfitabilityJournalist.class) ||
+                context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class) ||
+                context.config.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
                 
                 Property n = new Property(Resources.getMessage("PropertiesView.51"), new String[] { Resources.getMessage("PropertiesView.134") }); //$NON-NLS-1$ //$NON-NLS-2$
                 new Property(n, Resources.getMessage("PropertiesView.135"), new String[] { SWTUtil.getPrettyString(context.config.getPublisherBenefit())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.136"), new String[] { SWTUtil.getPrettyString(context.config.getPublisherLoss())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.137"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryGain())}); //$NON-NLS-1$
                 new Property(n, Resources.getMessage("PropertiesView.138"), new String[] { SWTUtil.getPrettyString(context.config.getAdversaryCost())}); //$NON-NLS-1$
-                
-                if (context.config.containsCriterion(FinancialProsecutorPrivacy.class) ||
-                    context.config.containsCriterion(FinancialProsecutorNoAttackPrivacy.class)) {
-                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                if (context.config.containsCriterion(FinancialJournalistPrivacy.class) ||
-                    context.config.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
+                 
+                if (context.config.containsCriterion(ProfitabilityJournalist.class) ||
+                    context.config.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
                     new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.161") }); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                if (context.config.containsCriterion(FinancialProsecutorNoAttackPrivacy.class)) {
-                    FinancialProsecutorNoAttackPrivacy model = context.config.getCriterion(FinancialProsecutorNoAttackPrivacy.class);
+                } else if (context.config.containsCriterion(ProfitabilityProsecutor.class) ||
+                    context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
+                    new Property(n, Resources.getMessage("PropertiesView.139"), new String[] { Resources.getMessage("PropertiesView.160") }); //$NON-NLS-1$ //$NON-NLS-2$
+                } 
+                if (context.config.containsCriterion(ProfitabilityJournalistNoAttack.class)) {
+                    ProfitabilityJournalistNoAttack model = context.config.getCriterion(ProfitabilityJournalistNoAttack.class);
                     new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
-                }
-                if (context.config.containsCriterion(FinancialJournalistNoAttackPrivacy.class)) {
-                    FinancialJournalistNoAttackPrivacy model = context.config.getCriterion(FinancialJournalistNoAttackPrivacy.class);
+                } else  if (context.config.containsCriterion(ProfitabilityProsecutorNoAttack.class)) {
+                    ProfitabilityProsecutorNoAttack model = context.config.getCriterion(ProfitabilityProsecutorNoAttack.class);
                     new Property(n, Resources.getMessage("PropertiesView.162"), new String[] { SWTUtil.getPrettyString(model.getK()) }); //$NON-NLS-1$
                 }
             }
@@ -369,6 +376,16 @@ public class ViewPropertiesOutput extends ViewProperties {
                     DDisclosurePrivacy criterion = (DDisclosurePrivacy)c;
                     Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.130") }); //$NON-NLS-1$ //$NON-NLS-2$
                     new Property(n, Resources.getMessage("PropertiesView.131"), new String[] { SWTUtil.getPrettyString(criterion.getD()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
+                } else if (c instanceof BasicBLikeness){
+                    BasicBLikeness criterion = (BasicBLikeness)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.172") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.171"), new String[] { SWTUtil.getPrettyString(criterion.getB()) }); //$NON-NLS-1$
+                    new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
+                } else if (c instanceof EnhancedBLikeness){
+                    EnhancedBLikeness criterion = (EnhancedBLikeness)c;
+                    Property n = new Property(Resources.getMessage("PropertiesView.83"), new String[] { Resources.getMessage("PropertiesView.173") }); //$NON-NLS-1$ //$NON-NLS-2$
+                    new Property(n, Resources.getMessage("PropertiesView.171"), new String[] { SWTUtil.getPrettyString(criterion.getB()) }); //$NON-NLS-1$
                     new Property(n, Resources.getMessage("PropertiesView.100"), new String[] { criterion.getAttribute() }); //$NON-NLS-1$
                 }
             }

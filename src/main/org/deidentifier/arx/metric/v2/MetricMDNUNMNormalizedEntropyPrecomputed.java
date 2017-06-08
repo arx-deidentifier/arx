@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -87,10 +88,18 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Normalized non-uniform entropy");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Normalized non-uniform entropy";
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -108,7 +117,7 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
         return new ILMultiDimensionalWithBound(super.createInformationLoss(loss),
                                                super.createInformationLoss(bound));
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return super.getInformationLossInternal(node, entry);

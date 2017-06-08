@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,10 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Locale;
+import java.util.Set;
+import java.util.List;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
@@ -50,7 +53,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -61,7 +63,7 @@ import org.eclipse.swt.widgets.Shell;
 public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
     /** A list control. */
-    private List        list;
+    private org.eclipse.swt.widgets.List        list;
     
     /** Logo. */
     private Image       image;
@@ -80,7 +82,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     
     /** Locale. */
     private Locale      locale;
-
+   
     /**
      * Creates a new instance.
      *
@@ -179,6 +181,20 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
+    }
+    
+    /**
      * Checks whether the data type is valid.
      *
      * @param type
@@ -193,34 +209,62 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
     
     /**
-     * Loads the array from a file.
+     * Loads the array from a file. If the file contains more or additional
+     * values (lines) than present in the attribute's domain, the loading is
+     * aborted and an <code>IllegalStateException</code> is thrown.
      *
      * @param file
-     * @param charset TODO
+     * @param charset
+     *            TODO
      * @return
+     * @throws IllegalStateException
+     *             The file contains more or additional values (lines) than
+     *             present in the attribute's domain
      */
-    private String[] loadArray(String file, Charset charset) {
-        ArrayList<String> list = new ArrayList<String>();
+    private List<String> loadFile(String file, Charset charset) {
+        List<String> list = new ArrayList<String>();
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
             String line = reader.readLine();
+            Set<String> _elements = new HashSet<String>();
+            _elements.addAll(Arrays.asList(elements));
+
             while (line != null) {
                 list.add(line);
+                if (list.size() > _elements.size() || !_elements.contains(line)) {
+                    // The file contains more or additional values (lines) than present in the attribute's domain
+                	controller.actionShowInfoDialog(getShell(),
+                            Resources.getMessage("DialogOrderSelection.16"),
+                            Resources.getMessage("DialogOrderSelection.17"));
+                	return null;
+                }
                 line = reader.readLine();
             }
+            
+            if (list.size() != _elements.size()) {
+            	// The file contains less values (lines) than present in the attribute's domain
+                controller.actionShowInfoDialog(getShell(),
+                                                Resources.getMessage("DialogOrderSelection.16"),
+                                                Resources.getMessage("DialogOrderSelection.17"));
+                return null;
+            }
         } catch (IOException e) {
-            controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.3"), Resources.getMessage("DialogOrderSelection.4")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+            controller.actionShowInfoDialog(getShell(),
+                                            Resources.getMessage("DialogOrderSelection.3"), //$NON-NLS-1$
+                                            Resources.getMessage("DialogOrderSelection.4") + e.getMessage()); //$NON-NLS-1$
             return null;
         } finally {
             if (reader != null) try {
                 reader.close();
             } catch (IOException e) {
-                controller.actionShowInfoDialog(getShell(), Resources.getMessage("DialogOrderSelection.5"), Resources.getMessage("DialogOrderSelection.6")+e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                controller.actionShowInfoDialog(getShell(),
+                                                Resources.getMessage("DialogOrderSelection.5"), //$NON-NLS-1$
+                                                Resources.getMessage("DialogOrderSelection.6") + e.getMessage()); //$NON-NLS-1$
                 return null;
             }
         }
-        return list.toArray(new String[list.size()]);
+        return list;
     }
 
     /**
@@ -294,36 +338,38 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
         parent.setLayoutData(SWTUtil.createFillGridData());
         
-        final Button loadButton = createButton(parent,
+        // Create IMPORT Button
+        final Button importButton = createButton(parent,
                                              Integer.MAX_VALUE-1,
-                                             "Load", false); //$NON-NLS-1$
-        loadButton.addSelectionListener(new SelectionAdapter() {
+                                             Resources.getMessage("DialogOrderSelection.12"), false); //$NON-NLS-1$
+        importButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowOpenFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
-                if (file != null){
-                    String[] array = loadArray(file, Charset.defaultCharset());
-                    if (array != null) {
-                        
-                        // Select string
-                        for (int i=0; i<combo.getItems().length; i++){
-                            if (combo.getItem(i).equals("String")) { //$NON-NLS-1$
-                                combo.select(i);
-                            }
-                        }
-                        
-                        // Set items
-                        elements = array;
-                        list.setItems(array);
-                    }
-                }
+
+				if (file != null) {
+					List<String> fileData = loadFile(file, Charset.defaultCharset());
+					if (fileData != null) {
+						// Select "Custom"
+						for (int i = 0; i < combo.getItems().length; i++) {
+							if (combo.getItem(i).equals(Resources.getMessage("HierarchyWizardPageOrder.8"))) { //$NON-NLS-1$
+								combo.select(i);
+							}
+						}
+
+						// Set items
+						elements = fileData.toArray(new String[fileData.size()]);
+						list.setItems(elements);
+					}
+				}
             }
         });
 
-        final Button saveButton = createButton(parent,
+        // Create EXPORT Button
+        final Button exportButton = createButton(parent,
                                              Integer.MAX_VALUE-2,
-                                             "Save", false); //$NON-NLS-1$
-        saveButton.addSelectionListener(new SelectionAdapter() {
+                                             Resources.getMessage("DialogOrderSelection.13"), false); //$NON-NLS-1$
+        exportButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowSaveFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
@@ -336,7 +382,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         // Create OK Button
         final Button okButton = createButton(parent,
                                              Window.OK,
-                                             "OK", true); //$NON-NLS-1$
+                                             Resources.getMessage("DialogOrderSelection.14"), true); //$NON-NLS-1$
         okButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -345,9 +391,10 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             }
         });
 
+        // Create CANCEL Button
         final Button cancelButton = createButton(parent,
                                                  Window.CANCEL,
-                                                 "Cancel", false); //$NON-NLS-1$
+                                                 Resources.getMessage("DialogOrderSelection.15"), false); //$NON-NLS-1$
         cancelButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -372,7 +419,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         final GridLayout compositeLayout = new GridLayout();
         compositeLayout.numColumns = 1;
         parent.setLayout(compositeLayout);
-        list = new List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
+        list = new org.eclipse.swt.widgets.List(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL);
 
         // Limit to 10 entries
         final int itemHeight = list.getItemHeight();
@@ -439,12 +486,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                         if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, locale, description, elements);
-                            if (format == null) {
+                            final String format[] = controller.actionShowFormatInputDialog(getShell(), text1, text2, locale, description, elements);
+                            if (format == null || format[0] == null) {
                                 type = DataType.STRING;
-                                combo.select(getIndexOfDataType(DataType.STRING)+1);
+                                combo.select(getIndexOfDataType(DataType.STRING) + 1);
                             } else {
-                                type = description.newInstance(format, locale);
+                                type = description.newInstance(format[0], format[1] != null ? getLocale(format[1]) : locale);
                             }
                         } else {
                             type = description.newInstance();

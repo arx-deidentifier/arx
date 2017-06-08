@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>InformationLoss (ARX API Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -153,33 +153,41 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#equals(java.lang.Object)">equals</a></strong>(java.lang.Object&nbsp;obj)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>abstract <a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="type parameter in InformationLoss">T</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#getValue()">getValue</a></strong>()</code>&nbsp;</td>
+<td class="colFirst"><code>java.util.List&lt;<a href="../../../../org/deidentifier/arx/metric/v2/QualityMetadata.html" title="class in org.deidentifier.arx.metric.v2">QualityMetadata</a>&lt;?&gt;&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#getMetadata()">getMetadata</a></strong>()</code>
+<div class="block">Adds new metadata</div>
+</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>abstract <a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="type parameter in InformationLoss">T</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#getValue()">getValue</a></strong>()</code>
+<div class="block">Returns the value</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>abstract int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#hashCode()">hashCode</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#max(org.deidentifier.arx.metric.InformationLoss)">max</a></strong>(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</code>
 <div class="block">Retains the maximum of this and other.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#min(org.deidentifier.arx.metric.InformationLoss)">min</a></strong>(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;other)</code>
 <div class="block">Retains the minimum of this and other.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>abstract double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#relativeTo(org.deidentifier.arx.metric.InformationLoss,%20org.deidentifier.arx.metric.InformationLoss)">relativeTo</a></strong>(<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;min,
           <a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;max)</code>
 <div class="block">Returns the value relative to the other instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/InformationLoss.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -265,6 +273,18 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 </dl>
 </li>
 </ul>
+<a name="getMetadata()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMetadata</h4>
+<pre>public&nbsp;java.util.List&lt;<a href="../../../../org/deidentifier/arx/metric/v2/QualityMetadata.html" title="class in org.deidentifier.arx.metric.v2">QualityMetadata</a>&lt;?&gt;&gt;&nbsp;getMetadata()</pre>
+<div class="block">Adds new metadata</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>metadata</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getValue()">
 <!--   -->
 </a>
@@ -272,6 +292,7 @@ implements java.lang.Comparable&lt;<a href="../../../../org/deidentifier/arx/met
 <li class="blockList">
 <h4>getValue</h4>
 <pre>public abstract&nbsp;<a href="../../../../org/deidentifier/arx/metric/InformationLoss.html" title="type parameter in InformationLoss">T</a>&nbsp;getValue()</pre>
+<div class="block">Returns the value</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

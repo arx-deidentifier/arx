@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,12 +46,12 @@ public class HierarchyWizardModelIntervals<T> extends HierarchyWizardModelGroupi
     @Override
     public HierarchyBuilderIntervalBased<T> getBuilder(boolean serializable) throws Exception{
         HierarchyBuilderIntervalBased<T> builder = HierarchyBuilderIntervalBased.create(super.getDataType(),
-                                                    new Range<T>(super.getLowerRange().repeat,
-                                                                 super.getLowerRange().snap,
-                                                                 super.getLowerRange().label),
-                                                    new Range<T>(super.getUpperRange().repeat,
-                                                                 super.getUpperRange().snap,
-                                                                 super.getUpperRange().label));
+                                                    new Range<T>(super.getLowerRange().snapBound,
+                                                                 super.getLowerRange().bottomTopCodingBound,
+                                                                 super.getLowerRange().minMaxBound),
+                                                    new Range<T>(super.getUpperRange().snapBound,
+                                                                 super.getUpperRange().bottomTopCodingBound,
+                                                                 super.getUpperRange().minMaxBound));
         
         builder.setAggregateFunction(this.getDefaultFunction());
 

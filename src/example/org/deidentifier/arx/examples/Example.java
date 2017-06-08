@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,7 +131,7 @@ public abstract class Example {
         final List<String> qis = new ArrayList<String>(data.getDefinition().getQuasiIdentifyingAttributes());
 
         if (optimum == null) {
-            System.out.println(" - Criteria cannot be enforced!");
+            System.out.println(" - No solution found!");
             return;
         }
 
@@ -162,7 +162,7 @@ public abstract class Example {
         }
 
         // Print
-        System.out.println(" - Information loss: " + result.getGlobalOptimum().getMinimumInformationLoss() + " / " + result.getGlobalOptimum().getMaximumInformationLoss());
+        System.out.println(" - Information loss: " + result.getGlobalOptimum().getLowestScore() + " / " + result.getGlobalOptimum().getHighestScore());
         System.out.println(" - Optimal generalization");
         for (int i = 0; i < qis.size(); i++) {
             System.out.println("   * " + identifiers[i] + ": " + generalizations[i]);

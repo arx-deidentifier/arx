@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,22 +44,22 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      * @author Fabian Prasser
      */
     public class IndexNode implements Serializable {
-        
-        /**  TODO */
-        private static final long serialVersionUID = 5985820929677249525L;
+
+        /** SVUID */
+        private static final long   serialVersionUID = 5985820929677249525L;
 
         /** Children. */
         private final IndexNode[]   children;
-        
+
         /** IsLeaf. */
         private final boolean       isLeaf;
-        
+
         /** Leafs. */
         private final Interval<T>[] leafs;
-        
+
         /** Max is exclusive. */
         private final T             max;
-        
+
         /** Min is inclusive. */
         private final T             min;
 
@@ -139,7 +139,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      */
     public static class Interval<T> extends AbstractGroup {
 
-        /** TODO */
+        /** SVUID */
         private static final long                      serialVersionUID = 5985820929677249525L;
 
         /** The function. */
@@ -203,7 +203,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.min = min;
             this.max = max;
             this.function = function;
-            this.lower = false;
+            this.lower = null;
         }
         
         @Override
@@ -301,88 +301,101 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
      */
     public static class Range<U> implements Serializable {
         
-        /**  TODO */
+        /**  SVUID */
         private static final long serialVersionUID = -5385139177770612960L;
         
-        /** Bound. */
+        /** Snap from. */
         private U repeatBound;
         
-        /** Bound. */
+        /** Bottom/top coding from. */
         private U snapBound;
         
-        /** Bound. */
+        /** Minimum / maximum value. */
         private U labelBound;
             
         /**
          * Creates a new instance.
          *
-         * @param repeatBound
-         * @param snapBound
-         * @param labelBound
+         * @param snapFrom
+         * @param bottomTopCodingFrom
+         * @param minMaxValue
          */
-        public Range(U repeatBound, U snapBound, U labelBound) {
+        public Range(U snapFrom, U bottomTopCodingFrom, U minMaxValue) {
 
-            if (!(repeatBound == null && snapBound == null && labelBound == null)) {
-                if (repeatBound == null || snapBound == null || labelBound == null) { 
+            if (!(snapFrom == null && bottomTopCodingFrom == null && minMaxValue == null)) {
+                if (snapFrom == null || bottomTopCodingFrom == null || minMaxValue == null) { 
                     throw new IllegalArgumentException("Value must not be null"); 
                 }
             }
             
-            this.repeatBound = repeatBound;
-            this.snapBound = snapBound;
-            this.labelBound = labelBound;
+            this.repeatBound = snapFrom;
+            this.snapBound = bottomTopCodingFrom;
+            this.labelBound = minMaxValue;
         }
 
         /**
-         * @return the labelBound
+         * If a value is discovered which is smaller/larger than this value
+         * an exception will be raised.
+         * 
+         * @return
          */
-        public U getLabelBound() {
+        public U getMinMaxValue() {
             return labelBound;
         }
 
         /**
-         * @return the repeatBound
+         * Intervals will snap to lower/higher values from this value.
+         * 
+         * @return
          */
-        public U getRepeatBound() {
+        public U getSnapFrom() {
             return repeatBound;
         }
 
         /**
-         * @return the snapBound
+         * Bottom/top coding will start from this value.
+         * 
+         * @return
          */
-        public U getSnapBound() {
+        public U getBottomTopCodingFrom() {
             return snapBound;
         }
 
         @Override
         public String toString() {
-            return "Range [repeat=" + repeatBound + ", snap=" +
-                   snapBound + ", label=" + labelBound + "]";
+            return "Range [snap=" + repeatBound + ", coding=" + snapBound + ", extreme=" + labelBound + "]";
         }
 
         /**
-         * @param labelBound the labelBound to set
+         * If a value is discovered which is smaller/larger than this value
+         * an exception will be raised.
+         * 
+         * @param minMaxValue
          */
-        private void setLabelBound(U labelBound) {
-            this.labelBound = labelBound;
+        private void setMinMaxValue(U minMaxValue) {
+            this.labelBound = minMaxValue;
         }
 
         /**
-         * @param repeatBound the repeatBound to set
+         * Intervals will snap to lower/higher values from this value.
+         * 
+         * @param snapValue
          */
-        private void setRepeatBound(U repeatBound) {
-            this.repeatBound = repeatBound;
+        private void setSnapFrom(U snapValue) {
+            this.repeatBound = snapValue;
         }
 
         /**
-         * @param snapBound the snapBound to set
+         * Bottom/top coding will start from this value.
+         * 
+         * @param bottomTopCodingValue
          */
-        private void setSnapBound(U snapBound) {
-            this.snapBound = snapBound;
+        private void setBottomTopCodingFrom(U bottomTopCodingValue) {
+            this.snapBound = bottomTopCodingValue;
         }
     }
 
-    /** TODO: Is this parameter OK?. */
+    /** Fanout */
     private static final int               INDEX_FANOUT     = 2;
 
     /** SVUID. */
@@ -602,34 +615,34 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         }
         
         DataTypeWithRatioScale<T> type = (DataTypeWithRatioScale<T>)getDataType();
-        if (lowerRange.getRepeatBound() != null && 
-            upperRange.getRepeatBound() != null && 
-            type.compare(lowerRange.getRepeatBound(), upperRange.getRepeatBound()) > 0){
-                return "Lower repeat bound must be < upper repeat bound"; 
+        if (lowerRange.getSnapFrom() != null && 
+            upperRange.getSnapFrom() != null && 
+            type.compare(lowerRange.getSnapFrom(), upperRange.getSnapFrom()) > 0){
+            return "Lower snap bound (" + lowerRange.getSnapFrom() + ") must be < upper snap bound (" + upperRange.getSnapFrom() + ")"; 
         }
         
-        if (lowerRange.getSnapBound() != null &&
-            lowerRange.getRepeatBound() != null &&
-            type.compare(lowerRange.getSnapBound(), lowerRange.getRepeatBound()) > 0){
-                return "Lower snap bound must be <= lower repeat bound"; 
+        if (lowerRange.getBottomTopCodingFrom() != null &&
+            lowerRange.getSnapFrom() != null &&
+            type.compare(lowerRange.getBottomTopCodingFrom(), lowerRange.getSnapFrom()) > 0){
+            return "Bottom coding bound (" + lowerRange.getBottomTopCodingFrom() + ") must be <= lower snap bound (" + lowerRange.getSnapFrom() + ")"; 
         }
         
-        if (lowerRange.getLabelBound() != null &&
-            lowerRange.getSnapBound() != null && 
-            type.compare(lowerRange.getLabelBound(), lowerRange.getSnapBound()) > 0){
-                return "Lower label bound must be <= lower snap bound"; 
+        if (lowerRange.getMinMaxValue() != null &&
+            lowerRange.getBottomTopCodingFrom() != null && 
+            type.compare(lowerRange.getMinMaxValue(), lowerRange.getBottomTopCodingFrom()) > 0){
+            return "Minimal value (" + lowerRange.getMinMaxValue() + ") must be <= bottom coding bound (" + lowerRange.getBottomTopCodingFrom() + ")"; 
         }
         
-        if (upperRange.getRepeatBound() != null &&
-            upperRange.getSnapBound() != null && 
-            type.compare(upperRange.getSnapBound(), upperRange.getRepeatBound()) < 0){
-                return "Upper snap bound must be >= upper repeat bound"; 
+        if (upperRange.getSnapFrom() != null &&
+            upperRange.getBottomTopCodingFrom() != null && 
+            type.compare(upperRange.getBottomTopCodingFrom(), upperRange.getSnapFrom()) < 0){
+            return "Upper snap bound (" + upperRange.getBottomTopCodingFrom() + ") must be <= top coding bound (" + upperRange.getSnapFrom() + ")"; 
         }
         
-        if (lowerRange.getLabelBound() != null && 
-            upperRange.getSnapBound() != null && 
-            type.compare(upperRange.getLabelBound(), upperRange.getSnapBound()) < 0){
-                return "Upper label bound must be >= upper snap bound"; 
+        if (lowerRange.getMinMaxValue() != null && 
+            upperRange.getBottomTopCodingFrom() != null && 
+            type.compare(upperRange.getMinMaxValue(), upperRange.getBottomTopCodingFrom()) < 0){
+            return "Maximum value (" + upperRange.getMinMaxValue() + ") must be >= top coding bound (" + upperRange.getBottomTopCodingFrom() + ")"; 
         }
 
         return null;
@@ -649,9 +662,9 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         try {
             cmp = type.compare(type.format(min), type.format(max));
         } catch (Exception e) {
-            throw new IllegalArgumentException("Invalid data item "+min+" or "+max);
+            throw new IllegalArgumentException("Invalid data item " + min + " or " + max);
         }
-        if (cmp >= 0) throw new IllegalArgumentException("Min ("+min+") must be lower than max ("+max+")");
+        if (cmp >= 0) throw new IllegalArgumentException("Min (" + min + ") must be lower than max (" + max + ")");
     }
 
     /**
@@ -685,10 +698,19 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         // Find interval
         int shift = (int)Math.floor(type.ratio(type.subtract(tValue, index.min), type.subtract(index.max, index.min)));
         T offset = type.multiply(type.subtract(index.max, index.min), shift);
-        Interval<T> interval = getInterval(index, type.subtract(tValue, offset));
+        T shifted = type.subtract(tValue, offset);
+        
+        // Fix case when shifted value equals interval-max
+        if (type.compare(shifted, index.max) == 0) {
+            offset = type.multiply(type.subtract(index.max, index.min), shift + 1);
+            shifted = index.min;
+        }
+        Interval<T> interval = getInterval(index, shifted);
 
         // Check
-        if (interval == null) { throw new IllegalStateException("No interval found for: " + type.format(tValue)); }
+        if (interval == null) {
+            throw new IllegalStateException("No interval found for: " + type.format(tValue));
+        }
         
         // Create first result interval
         T lower = type.add(interval.min, offset);
@@ -719,7 +741,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
                 }
             }
         }
-        throw new IllegalStateException("No interval found for: "+type.format(value));
+        return null;
     }
 
     /**
@@ -800,35 +822,35 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
         // Create adjustments
         Range<T> tempLower = new Range<T>(null, null, null);
         Range<T> tempUpper = new Range<T>(null, null, null);
-        if (lowerRange.getRepeatBound() != null) {
-            tempLower.setRepeatBound(lowerRange.getRepeatBound());
+        if (lowerRange.getSnapFrom() != null) {
+            tempLower.setSnapFrom(lowerRange.getSnapFrom());
         } else {
-            tempLower.setRepeatBound(intervals.get(0).min);
+            tempLower.setSnapFrom(intervals.get(0).min);
         }
-        if (lowerRange.getSnapBound() != null) {
-            tempLower.setSnapBound(lowerRange.getSnapBound());
+        if (lowerRange.getBottomTopCodingFrom() != null) {
+            tempLower.setBottomTopCodingFrom(lowerRange.getBottomTopCodingFrom());
         } else {
-            tempLower.setSnapBound(tempLower.getRepeatBound());
+            tempLower.setBottomTopCodingFrom(tempLower.getSnapFrom());
         }
-        if (lowerRange.getLabelBound() != null) {
-            tempLower.setLabelBound(lowerRange.getLabelBound());
+        if (lowerRange.getMinMaxValue() != null) {
+            tempLower.setMinMaxValue(lowerRange.getMinMaxValue());
         } else {
-            tempLower.setLabelBound(tempLower.getSnapBound());
+            tempLower.setMinMaxValue(tempLower.getBottomTopCodingFrom());
         }
-        if (upperRange.getRepeatBound() != null) {
-            tempUpper.setRepeatBound(upperRange.getRepeatBound());
+        if (upperRange.getSnapFrom() != null) {
+            tempUpper.setSnapFrom(upperRange.getSnapFrom());
         } else {
-            tempUpper.setRepeatBound(intervals.get(intervals.size()-1).max);
+            tempUpper.setSnapFrom(intervals.get(intervals.size()-1).max);
         }
-        if (upperRange.getSnapBound() != null) {
-            tempUpper.setSnapBound(upperRange.getSnapBound());
+        if (upperRange.getBottomTopCodingFrom() != null) {
+            tempUpper.setBottomTopCodingFrom(upperRange.getBottomTopCodingFrom());
         } else {
-            tempUpper.setSnapBound(tempUpper.getRepeatBound());
+            tempUpper.setBottomTopCodingFrom(tempUpper.getSnapFrom());
         }
-        if (upperRange.getLabelBound() != null) {
-            tempUpper.setLabelBound(upperRange.getLabelBound());
+        if (upperRange.getMinMaxValue() != null) {
+            tempUpper.setMinMaxValue(upperRange.getMinMaxValue());
         } else {
-            tempUpper.setLabelBound(tempUpper.getSnapBound());
+            tempUpper.setMinMaxValue(tempUpper.getBottomTopCodingFrom());
         }
         return new Range[]{tempLower, tempUpper};
     }
@@ -914,11 +936,11 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             if (value == null) {
                 interval = new Interval<T>(this);
             } else if (type.compare(value, tempLower.labelBound) < 0) {
-                throw new IllegalArgumentException(type.format(value)+ " is < lower label bound");
+                throw new IllegalArgumentException("Data item " + type.format(value) + " is < minim value (" + type.format(tempLower.labelBound) + ")");
             } else if (type.compare(value, tempLower.snapBound) < 0) {
                 interval = new Interval<T>(this, true, tempLower.snapBound);
             } else if (type.compare(value, tempUpper.labelBound) >= 0) {
-                throw new IllegalArgumentException(type.format(value)+ " is >= upper label bound");
+                throw new IllegalArgumentException("Data item " + type.format(value)+ " is >= maximum value (" + type.format(tempUpper.labelBound) + ")");
             } else if (type.compare(value, tempUpper.snapBound) >= 0) {
                 interval = new Interval<T>(this, false, tempUpper.snapBound);
             } else {

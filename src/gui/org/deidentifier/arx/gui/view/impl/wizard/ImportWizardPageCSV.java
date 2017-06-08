@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014-2015 Karol Babioch, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -550,7 +550,7 @@ public class ImportWizardPageCSV extends WizardPage {
         new Label(container, SWT.NONE);
 
         /* Preview table viewer */
-        tableViewerPreview = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewerPreview = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
         tableViewerPreview.setContentProvider(new ArrayContentProvider());
 
         /* Actual table for {@link #tableViewerPreview} */
@@ -825,8 +825,9 @@ public class ImportWizardPageCSV extends WizardPage {
                 tableColumn.setText(column.getColumn().getAliasName());
                 tableColumn.setToolTipText(Resources.getMessage("ImportWizardPageCSV.19") + ((ImportColumnCSV) column.getColumn()).getIndex()); //$NON-NLS-1$
             }
-            ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
         }
+
+        ColumnViewerToolTipSupport.enableFor(tableViewerPreview, ToolTip.NO_RECREATE);
 
         /* Setup preview table */
         tableViewerPreview.setInput(previewData);
