@@ -29,7 +29,7 @@
             <filename name="**/poi-ooxml-3.10-FINAL-20140208.jar" />
             <filename name="**/poi-ooxml-schemas-3.10-FINAL-20140208.jar" />
             <filename name="**/hppc-0.6.0.jar" />
-            <filename name="**/univocity-parsers-1.3.1.jar" />
+            <filename name="**/univocity-parsers-2.4.1.jar" />
             <filename name="**/newtonraphson-0.0.1.jar" />
             <filename name="**/jhpl-0.0.1.jar" />
             <filename name="**/mahout-core-0.9.jar" />

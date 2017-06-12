@@ -61,12 +61,21 @@ public class StatisticsClassification {
         private final double[]        precision             = new double[CONFIDENCE_THRESHOLDS.length];
         /** Recall */
         private final double[]        recall                = new double[CONFIDENCE_THRESHOLDS.length];
+        /** F-Score */
+        private final double[]        fscore                = new double[CONFIDENCE_THRESHOLDS.length];
 
         /**
          * @return the confidence thresholds
          */
         public double[] getConfidenceThresholds() {
             return CONFIDENCE_THRESHOLDS;
+        }
+        
+        /**
+         * @return the f-score
+         */
+        public double[] getFscore(){
+            return fscore;
         }
         
         /**
@@ -112,6 +121,7 @@ public class StatisticsClassification {
                     precision[i] /= recall[i];
                     recall[i] /= measurements;
                 }
+                fscore[i] = 2 * (precision[i] * recall[i]) / (precision[i] + recall[i]);
             }
         }
     }

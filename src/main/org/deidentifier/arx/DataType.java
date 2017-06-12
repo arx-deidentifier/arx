@@ -25,6 +25,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.deidentifier.arx.aggregates.AggregateFunction;
 import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilder;
@@ -201,6 +203,27 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
             }
         	return format.format(s);
         }
+        
+        /**
+         * Format with timezone
+         */
+        public String format(Date s, TimeZone zone){
+            
+            // Check
+            if (s == null) {
+                return NULL_VALUE;
+            }
+            
+            // Prepare
+            SimpleDateFormat sdf = format;
+            if (zone != null) {
+                sdf = (SimpleDateFormat) format.clone();   
+                sdf.setTimeZone(zone);
+            }
+            
+            // Format
+            return sdf.format(s);
+        }
 
         @Override
         public Date fromDouble(Double d) {
@@ -300,7 +323,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 return null;
             }
         	try {
-				return format.parse(s);
+        	    ParsePosition pos = new ParsePosition(0);
+                Date parsed = format.parse(s, pos);
+                if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
+                    throw new IllegalArgumentException("Parse error");
+                }
+                return parsed;
         	} catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
             }
@@ -583,7 +611,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
                 if (format == null) {
                     return Double.valueOf(s);
                 } else {
-                    return format.parse(s).doubleValue();
+                    ParsePosition pos = new ParsePosition(0);
+                    double parsed = format.parse(s, pos).doubleValue();
+                    if (pos.getIndex() != s.length() || pos.getErrorIndex() != -1) {
+                        throw new IllegalArgumentException("Parse error");
+                    }
+                    return parsed;
                 }
             } catch (Exception e) {
                 throw new IllegalArgumentException(e.getMessage() + ": " + s, e);
@@ -592,7 +625,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public double ratio(Double dividend, Double divisor) {
-            return parse(format(dividend / divisor));
+            return dividend / divisor;
         }
 
         @Override
@@ -1720,6 +1753,8 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         result.add("dd.MM.yyyy'T'HH:mm:ssz");
         result.add("dd.MM.yyyy'T'HH:mm:ss");
         result.add("dd.MM.yyyy'T'HH:mm:ssZZ");
+        result.add("dd.MM.yyyy hh:mm");
+        result.add("dd.MM.yyyy HH:mm");
         result.add("dd/MM/yyyy");
         result.add("dd/MM/yy");
         result.add("MM/dd/yyyy");
@@ -1736,10 +1771,12 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
      */
     private static List<String> listDecimalFormats(){
         List<String> result = new ArrayList<String>();
-        result.add("#,##0");
+        result.add("0.###");
+        result.add("0.00");
         result.add("#,##0.###");
-        result.add("#,##0%");
         result.add("#,##0.00");
+        result.add("#,##0");
+        result.add("#,##0%");
         
         // Create list of common patterns
         Set<String> set = new HashSet<String>();

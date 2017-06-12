@@ -129,14 +129,14 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
      */
     public static class HierarchyWizardGroupingRange<U> {
 
-        /** Repeat */
-        public U repeat;
-
         /** Snap */
-        public U snap;
+        public U snapBound;
 
-        /** Label */
-        public U label;
+        /** Coding */
+        public U bottomTopCodingBound;
+
+        /** Extreme */
+        public U minMaxBound;
 
         /**
          * 
@@ -148,13 +148,13 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
         public HierarchyWizardGroupingRange(DataType<U> type, boolean lower){
             DataTypeWithRatioScale<U> dtype = (DataTypeWithRatioScale<U>)type;
             if (lower){
-                this.repeat = dtype.getMinimum();
-                this.snap = dtype.getMinimum();
-                this.label = dtype.getMinimum();
+                this.snapBound = dtype.getMinimum();
+                this.bottomTopCodingBound = dtype.getMinimum();
+                this.minMaxBound = dtype.getMinimum();
             } else {
-                this.repeat = dtype.getMaximum();
-                this.snap = dtype.getMaximum();
-                this.label = dtype.getMaximum();
+                this.snapBound = dtype.getMaximum();
+                this.bottomTopCodingBound = dtype.getMaximum();
+                this.minMaxBound = dtype.getMaximum();
             }
         }
 
@@ -164,22 +164,22 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
          * @param range
          */
         public HierarchyWizardGroupingRange(Range<U> range) {
-            this.repeat = range.getRepeatBound();
-            this.snap = range.getSnapBound();
-            this.label = range.getLabelBound();
+            this.snapBound = range.getSnapFrom();
+            this.bottomTopCodingBound = range.getBottomTopCodingFrom();
+            this.minMaxBound = range.getMinMaxValue();
         }
         
         /**
          * 
          *
-         * @param repeat
-         * @param snap
-         * @param label
+         * @param snapBound
+         * @param bottomTopCodingBound
+         * @param minMaxBound
          */
-        public HierarchyWizardGroupingRange(U repeat, U snap, U label) {
-            this.repeat = repeat;
-            this.snap = snap;
-            this.label = label;
+        public HierarchyWizardGroupingRange(U snapBound, U bottomTopCodingBound, U minMaxBound) {
+            this.snapBound = snapBound;
+            this.bottomTopCodingBound = bottomTopCodingBound;
+            this.minMaxBound = minMaxBound;
         }
     }
 
@@ -258,12 +258,12 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
                     max = dtype.add(max, (T)new Date(3600l * 1000l)); // Add 1 day
                 }
                 
-                this.lower.label = min;
-                this.lower.repeat = min;
-                this.lower.snap = min;
-                this.upper.label = max;
-                this.upper.repeat = max;
-                this.upper.snap = max;
+                this.lower.minMaxBound = min;
+                this.lower.snapBound = min;
+                this.lower.bottomTopCodingBound = min;
+                this.upper.minMaxBound = max;
+                this.upper.snapBound = max;
+                this.upper.bottomTopCodingBound = max;
                 this.intervals.add(new HierarchyWizardGroupingInterval<T>(min, max, this.function));
             } else {
                 this.intervals.add(new HierarchyWizardGroupingInterval<T>(dtype.getMinimum(), dtype.getMaximum(), this.function));
@@ -503,12 +503,12 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
     public void parse(HierarchyBuilderIntervalBased<T> builder){
         this.type = builder.getDataType();
         this.showIntervals = true;
-        this.lower.label = builder.getLowerRange().getLabelBound();
-        this.lower.repeat = builder.getLowerRange().getRepeatBound();
-        this.lower.snap = builder.getLowerRange().getSnapBound();
-        this.upper.label = builder.getUpperRange().getLabelBound();
-        this.upper.repeat = builder.getUpperRange().getRepeatBound();
-        this.upper.snap = builder.getUpperRange().getSnapBound();
+        this.lower.minMaxBound = builder.getLowerRange().getMinMaxValue();
+        this.lower.snapBound = builder.getLowerRange().getSnapFrom();
+        this.lower.bottomTopCodingBound = builder.getLowerRange().getBottomTopCodingFrom();
+        this.upper.minMaxBound = builder.getUpperRange().getMinMaxValue();
+        this.upper.snapBound = builder.getUpperRange().getSnapFrom();
+        this.upper.bottomTopCodingBound = builder.getUpperRange().getBottomTopCodingFrom();
         this.function = builder.getDefaultFunction();
         this.intervals.clear();
         this.groups.clear();

@@ -76,7 +76,7 @@ import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
-import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
+import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.wizard.ARXWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardResult;
@@ -1243,10 +1243,10 @@ public class Controller implements IView {
         if (path != null) {
 
             // Determine separator
-            DialogSeparator dialog = null;
+            DialogOpenHierarchy dialog = null;
 
             try {
-                dialog = new DialogSeparator(main.getShell(), this, path, false);
+                dialog = new DialogOpenHierarchy(main.getShell(), this, path, false);
                 dialog.create();
                 if (dialog.open() == Window.CANCEL) {
                     return;
@@ -1260,15 +1260,14 @@ public class Controller implements IView {
                 if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
                     main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.37"), error.getMessage()); //$NON-NLS-1$
                 } else {
-                    main.showErrorDialog(main.getShell(),
-                                         Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
+                    main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
                 }
                 return;
             }
 
             // Load hierarchy
             final char separator = dialog.getSeparator();
-            final Charset charset = Charset.defaultCharset();
+            final Charset charset = dialog.getCharset();
             final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
             if (hierarchy != null) {
                 String attr = model.getSelectedAttribute();
@@ -1581,7 +1580,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1602,7 +1601,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1612,29 +1611,6 @@ public class Controller implements IView {
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
     
-    /**
-     * Shows a dialog for selecting a format string for a data type.
-     *
-     * @param shell The parent shell
-     * @param title The dialog's title
-     * @param text The dialog's text
-     * @param preselected A preselected format string
-     * @param locale The locale
-     * @param type The description of the data type for which to choose a format string
-     * @param values The values to check the format string against
-     * @return The format string, or <code>null</code> if no format was (or could be) selected
-     */
-    public String actionShowFormatInputDialog(final Shell shell,
-                                              final String title,
-                                              final String text,
-                                              final String preselected,
-                                              final Locale locale,
-                                              final DataTypeDescription<?> type,
-                                              final Collection<String> values) {
-
-        return main.showFormatInputDialog(shell, title, text, preselected, locale, type, values);
-    }
-
     /**
      * Shows a help dialog.
      *

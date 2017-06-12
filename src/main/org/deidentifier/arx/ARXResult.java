@@ -43,6 +43,9 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
+    /** Anonymizer */
+    private ARXAnonymizer          anonymizer;
+
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -159,6 +162,7 @@ public class ARXResult {
     /**
      * Creates a new instance.
      *
+     * @param anonymizer
      * @param registry
      * @param manager
      * @param checker
@@ -168,7 +172,8 @@ public class ARXResult {
      * @param duration
      * @param solutionSpace
      */
-    protected ARXResult(DataRegistry registry,
+    protected ARXResult(ARXAnonymizer anonymizer,
+                        DataRegistry registry,
                         DataManager manager,
                         NodeChecker checker,
                         DataDefinition definition,
@@ -177,6 +182,7 @@ public class ARXResult {
                         long duration,
                         SolutionSpace solutionSpace) {
 
+        this.anonymizer = anonymizer;
         this.registry = registry;
         this.manager = manager;
         this.checker = checker;
@@ -322,6 +328,7 @@ public class ARXResult {
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformedData information = checker.applyTransformation(transformation);
+        checker.reset();
         transformation.setChecked(information.properties);
 
         // Store
@@ -482,10 +489,57 @@ public class ARXResult {
             }
         });
     }
+    
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *                 The default value is 0.5, which means that generalization
+     *                 and suppression will be treated equally. A factor of 0
+     *                 will favor suppression, and a factor of 1 will favor
+     *                 generalization. The values in between can be used for
+     *                 balancing both methods.
+     * @param listener 
+     * @return The number of optimized records
+     */
+    public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
+        return optimizeFast(handle, gsFactor, Double.NaN, listener);
+    }
 
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
+     * @param records A fraction [0,1] of records that need to be optimized.
+     * @return The number of optimized records
+     */
+    public int optimizeFast(DataHandle handle, 
+                            double records) throws RollbackRequiredException {
+        return optimizeFast(handle, records, Double.NaN, new ARXListener(){
+            @Override
+            public void progress(double progress) {
+                // Empty by design
+            }
+        });
+    }
+
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param records A fraction [0,1] of records that need to be optimized.
+     * @param listener 
+     * @return The number of optimized records
+     */
+    public int optimizeFast(DataHandle handle, 
+                            double records, 
+                            ARXListener listener) throws RollbackRequiredException {
+        return optimizeFast(handle, records, Double.NaN, listener);
+    }
+    
+    
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param records A fraction [0,1] of records that need to be optimized.
      * @param gsFactor A factor [0,1] weighting generalization and suppression.
      *            The default value is 0.5, which means that generalization
      *            and suppression will be treated equally. A factor of 0
@@ -495,7 +549,10 @@ public class ARXResult {
      * @param listener 
      * @return The number of optimized records
      */
-    public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
+    public int optimizeFast(DataHandle handle, 
+                            double records, 
+                            double gsFactor, 
+                            ARXListener listener) throws RollbackRequiredException {
         
         // Check if null
         if (listener == null) {
@@ -508,7 +565,12 @@ public class ARXResult {
         }
 
         // Check bounds
-        if (gsFactor < 0d || gsFactor > 1d) {
+        if (!Double.isNaN(records) && (records < 0d || records > 1d)) {
+            throw new IllegalArgumentException("Number of records to optimize must be in [0, 1]");
+        }
+        
+        // Check bounds
+        if (!Double.isNaN(gsFactor) && (gsFactor < 0d || gsFactor > 1d)) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
         }
         
@@ -548,7 +610,14 @@ public class ARXResult {
         // - Subsets will be projected accordingly
         // - Utility measures will be cloned
         ARXConfiguration config = this.config.getInstanceForLocalRecoding(rowset, gsFactor);
-
+        if (!Double.isNaN(records)) {
+            double absoluteRecords = records * handle.getNumRows();
+            double relativeRecords = absoluteRecords / (double)rowset.size();
+            relativeRecords = relativeRecords < 0d ? 0d : relativeRecords;
+            relativeRecords = relativeRecords > 1d ? 1d : relativeRecords;
+            config.setMaxOutliers(1d - relativeRecords);
+        }
+        
         // In the data definition, only microaggregation functions maintain a state, but these 
         // are cloned, when cloning the definition
         // TODO: This is probably not necessary, because they are used from the data manager,
@@ -559,9 +628,13 @@ public class ARXResult {
         DataManager manager = this.manager.getSubsetInstance(rowset);
         
         // Create an anonymizer
-        // TODO: May this object stores some values that should be transferred?
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setListener(listener);
+        if (listener != null) {
+            anonymizer.setListener(listener);
+        }
+        if (this.anonymizer != null) {
+            anonymizer.parse(this.anonymizer);
+        }
         
         // Anonymize
         Result result = null;
@@ -569,7 +642,7 @@ public class ARXResult {
             result = anonymizer.anonymize(manager, definition, config);
         } catch (IOException e) {
             // This should not happen at this point in time, as data has already been read from the source
-            throw new RuntimeException("Internal error");
+            throw new RuntimeException("Internal error: unexpected IO issue");
         }
         
         // Break, if no solution has been found
@@ -630,7 +703,6 @@ public class ARXResult {
      *            balancing both methods.
      * @param maxIterations The maximal number of iterations to perform
      * @param adaptionFactor Is added to the gsFactor when reaching a fixpoint 
-     * @param listener 
      * @throws RollbackRequiredException 
      */
     public void optimizeIterative(DataHandle handle,
@@ -674,41 +746,134 @@ public class ARXResult {
         if (maxIterations <= 0) {
             throw new IllegalArgumentException("Max. iterations must be > zero");
         }
+        
+        // Prepare 
+        int iterationsTotal = 0;
+        int optimizedCurrent = Integer.MAX_VALUE;
+        int optimizedTotal = 0;
+        int optimizedGoal = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            optimizedGoal += handle.isOutlier(row) ? 1 : 0;
+        }
 
+        // Progress
+        listener.progress(0d);
+        
         // Outer loop
-        int iterations = 0;
-        int optimized = Integer.MAX_VALUE;
-        double totalAdaption = 0d;
-        final double max = maxIterations != Integer.MAX_VALUE ? maxIterations : (1d - gsFactor) / adaptionFactor;
-        while (isOptimizable(handle) && iterations < maxIterations && optimized > 0) {
-
-            // Create a wrapped listener
-            final double base = maxIterations != Integer.MAX_VALUE ? iterations : totalAdaption / adaptionFactor;
-            ARXListener wrapper = new ARXListener() {
-                @Override
-                public void progress(double progress) {
-                    double _max = (max > 1d && !Double.isInfinite(max) && !Double.isNaN(max) ? max : 1d);
-                    double _base = (base > 0d && !Double.isInfinite(base) && !Double.isNaN(base)? base : 0d);
-                    double value = (progress + _base) / _max;
-                    listener.progress(value);
-                }
-            };
+        while (isOptimizable(handle) && iterationsTotal < maxIterations && optimizedCurrent > 0) {
 
             // Perform individual optimization
-            optimized = optimize(handle, gsFactor, wrapper);
+            optimizedCurrent = optimize(handle, gsFactor);
+            optimizedTotal += optimizedCurrent;
             
             // Try to adapt, if possible
-            if (optimized == 0 && adaptionFactor > 0d) {
+            if (optimizedCurrent == 0 && adaptionFactor > 0d) {
                 gsFactor += adaptionFactor;
-                totalAdaption += adaptionFactor;
                 
                 // If valid, try again
                 if (gsFactor <= 1d) {
-                    optimized = Integer.MAX_VALUE;
+                    optimizedCurrent = Integer.MAX_VALUE;
                 }
             }
-            iterations++;
+            iterationsTotal++;
+
+            // Progress
+            double progress1 = (double)optimizedTotal / (double)optimizedGoal;
+            double progress2 = (double)iterationsTotal / (double)maxIterations;
+            listener.progress(Math.max(progress1, progress2));
         }
+
+        // Progress
+        listener.progress(1d);
+    }
+
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param records A fraction [0,1] of records that need to be optimized in each step.
+     * @throws RollbackRequiredException 
+     */
+    public void optimizeIterativeFast(DataHandle handle,
+                                      double records) throws RollbackRequiredException {
+        this.optimizeIterativeFast(handle, records, Double.NaN, new ARXListener(){
+            @Override
+            public void progress(double progress) {
+                // Empty by design
+            }
+        });
+    }
+
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param records A fraction [0,1] of records that need to be optimized in each step.
+     * @param listener
+     * @throws RollbackRequiredException 
+     */
+    public void optimizeIterativeFast(DataHandle handle,
+                                      double records,
+                                      ARXListener listener) throws RollbackRequiredException {
+        this.optimizeIterativeFast(handle, records, Double.NaN, listener);
+    }
+    
+    /**
+     * This method optimizes the given data output with local recoding to improve its utility
+     * @param handle
+     * @param records A fraction [0,1] of records that need to be optimized in each step.
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods. 
+     * @param listener 
+     * @throws RollbackRequiredException 
+     */
+    public void optimizeIterativeFast(final DataHandle handle,
+                                      double records,
+                                      double gsFactor,
+                                      final ARXListener listener) throws RollbackRequiredException {
+        
+        if (!Double.isNaN(gsFactor) && (gsFactor < 0d || gsFactor > 1d)) {
+            throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
+        }
+        if (records < 0d || records > 1d) {
+            throw new IllegalArgumentException("Number of records to optimize must be in [0, 1]");
+        }
+
+        // Prepare 
+        int optimizedCurrent = Integer.MAX_VALUE;
+        int optimizedTotal = 0;
+        int optimizedGoal = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            optimizedGoal += handle.isOutlier(row) ? 1 : 0;
+        }
+
+        // Progress
+        listener.progress(0d);
+        
+        // Outer loop
+        while (isOptimizable(handle) && optimizedCurrent > 0) {
+
+            // Progress
+            final double minProgress = (double)optimizedTotal / (double)optimizedGoal;
+            final double maxProgress = minProgress + records;
+            
+            // Perform individual optimization
+            optimizedCurrent = optimizeFast(handle, records, gsFactor, new ARXListener() {
+                @Override
+                public void progress(double progress) {
+                    listener.progress(minProgress + progress * (maxProgress - minProgress));
+                }
+            });
+            optimizedTotal += optimizedCurrent;
+            
+            // Progress
+            listener.progress((double)optimizedTotal / (double)optimizedGoal);
+        }
+
+        // Progress
+        listener.progress(1d);
     }
     
     /**

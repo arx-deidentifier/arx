@@ -232,10 +232,12 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         String[] xAxisLabels = new String[matrix.getConfidenceThresholds().length];
         double[] ySeriesPrecision = new double[matrix.getConfidenceThresholds().length];
         double[] ySeriesRecall = new double[matrix.getConfidenceThresholds().length];
+        double[] ySeriesFscore = new double[matrix.getConfidenceThresholds().length];
         for (int i = 0; i < xAxisLabels.length; i++) {
             xAxisLabels[i] = SWTUtil.getPrettyString(matrix.getConfidenceThresholds()[i] * 100d);
             ySeriesPrecision[i] = matrix.getPrecision()[i] * 100d;
             ySeriesRecall[i] = matrix.getRecall()[i] * 100d;
+            ySeriesFscore[i] = matrix.getFscore()[i] * 100d;
         }
         
         chart.setRedraw(false);
@@ -258,6 +260,14 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         series2.setYSeries(ySeriesRecall);
         series2.setSymbolType(PlotSymbolType.NONE);
         series2.enableArea(true);
+        
+        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.18")); //$NON-NLS-1$
+        series3.getLabel().setVisible(false);
+        series3.getLabel().setFont(chart.getFont());
+        series3.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
+        series3.setYSeries(ySeriesFscore);
+        series3.setSymbolType(PlotSymbolType.NONE);
+        series3.enableArea(true);
         
         seriesSet.bringToFront(Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
         

@@ -23,10 +23,13 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.Data;
@@ -44,12 +47,14 @@ import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.resources.Charsets;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.def.IValidator;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
+import org.deidentifier.arx.gui.view.impl.menu.DialogComboDoubleSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionUpdate;
@@ -427,8 +432,8 @@ public class MainWindow implements IView {
      * @param values
      * @return
      */
-    public String showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final Locale locale, final DataTypeDescription<?> description, final Collection<String> values) {
-
+    public String[] showFormatInputDialog(final Shell shell, final String header, final String text, final String preselected, final Locale locale, final DataTypeDescription<?> description, final Collection<String> values) {
+        
         // Check
         if (!description.hasFormat()) {
             throw new RuntimeException(Resources.getMessage("MainWindow.6")); //$NON-NLS-1$
@@ -436,17 +441,17 @@ public class MainWindow implements IView {
 
         // Init
         final String DEFAULT = Resources.getMessage("MainWindow.7"); //$NON-NLS-1$
-
+        
         // Validator
-        final IInputValidator validator = new IInputValidator() {
+        final IValidator<String[]> validator = new IValidator<String[]>() {
             @Override
-            public String isValid(final String arg0) {
+            public String isValid(final String[] state) {
                 DataType<?> type;
                 try {
-                    if (arg0.equals(DEFAULT)) {
+                    if (state[0].equals(DEFAULT) || state[1] == null) {
                         type = description.newInstance();
                     } else {
-                        type = description.newInstance(arg0, locale);
+                        type = description.newInstance(state[0], getLocale(state[1]));
                     }
                 } catch (final Exception e) {
                     return Resources.getMessage("MainWindow.11"); //$NON-NLS-1$
@@ -461,36 +466,47 @@ public class MainWindow implements IView {
         };
 
         // Try to find a valid formatter
-        String initial = ""; //$NON-NLS-1$
-        if (preselected != null && validator.isValid(preselected) == null) {
-            initial = preselected;
-        } else if (validator.isValid(DEFAULT) == null) {
-            initial = DEFAULT;
+        String initial1 = ""; //$NON-NLS-1$
+        String initial2 = locale == null ? "" : locale.getLanguage().toUpperCase();
+        if (preselected != null && validator.isValid(new String[]{preselected, initial2}) == null) {
+            initial1 = preselected;
+        } else if (validator.isValid(new String[]{DEFAULT, initial2}) == null) {
+            initial1 = DEFAULT;
         } else {
             for (final String format : description.getExampleFormats()) {
-                if (validator.isValid(format) == null) {
-                    initial = format;
+                if (validator.isValid(new String[]{format, initial2}) == null) {
+                    initial1 = format;
                     break;
                 }
             }
         }
-
         // Extract list of formats
         List<String> formats = new ArrayList<String>();
         formats.add(DEFAULT);
         formats.addAll(description.getExampleFormats());
+        
+        // Extract list of locales
+        Set<String> set = new HashSet<String>();
+        for (Locale _locale : Locale.getAvailableLocales()) {
+            set.add(_locale.getLanguage().toUpperCase());
+        }
+        List<String> locales = new ArrayList<>(set);
+        Collections.sort(locales);
 
-        // Open dialog
-        final DialogComboSelection dlg = new DialogComboSelection(shell, header, text, formats.toArray(new String[] {}), initial, validator);
+        // Create dialog
+        DialogComboDoubleSelection dlg = new DialogComboDoubleSelection(shell, header, text, 
+                                                                        formats.toArray(new String[] {}), initial1, 
+                                                                        locales.toArray(new String[] {}), initial2,
+                                                                        validator);
 
-        // Return value
+        // Open and return value
         if (dlg.open() == Window.OK) {
-            return dlg.getValue();
+            return new String[]{dlg.getValue1(), dlg.getValue2()};
         } else {
             return null;
         }
     }
-    
+
     /**
      * Shows a help dialog.
      *
@@ -504,7 +520,7 @@ public class MainWindow implements IView {
     		this.showErrorDialog(Resources.getMessage("MainWindow.12"), e); //$NON-NLS-1$
     	}
     }
-
+    
     /**
      * Shows an info dialog.
      *
@@ -547,6 +563,7 @@ public class MainWindow implements IView {
             return null;
         }
     }
+
     /**
      * Shows a dialog that allows selecting multiple elements
      * @param shell
@@ -570,7 +587,6 @@ public class MainWindow implements IView {
             return null;
         }
     }
-
     /**
      * Shows a file open dialog.
      *
@@ -705,7 +721,7 @@ public class MainWindow implements IView {
         dialog.open();
         return dialog.getValue();
     }
-    
+
     @Override
     public void update(final ModelEvent event) {
 
@@ -716,6 +732,20 @@ public class MainWindow implements IView {
             root.setEnabled(true);
             menu.update(event);
         }
+    }
+    
+    /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
     }
     
 

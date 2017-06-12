@@ -69,4 +69,12 @@ public interface IEditor<T> {
      * @param t
      */
     public void setValue(T t);
+    
+    /**
+     * Checks whether the two values are different
+     * @param value1
+     * @param value2
+     * @return
+     */
+    public boolean isDifferent(T value1, T value2);
 }

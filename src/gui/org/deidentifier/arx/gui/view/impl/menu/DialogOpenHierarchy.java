@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.resources.Charsets;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
@@ -56,24 +57,28 @@ import org.eclipse.swt.widgets.TableItem;
 /**
  * 
  */
-public class DialogSeparator extends TitleAreaDialog implements IDialog {
+public class DialogOpenHierarchy extends TitleAreaDialog implements IDialog {
 
-    /**  Constant */
-    private static final int        LINES      = 5;
-    
-    /**  View */
-    private Table                   table;
-    
-    /**  Model */
-    private int                     selection;
-    /**  Model */
-    private final char[]            separators = { ';', ',', '|', '\t' };    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    /**  Model */
-    private final String[]          labels     = { ";", ",", "|", "Tab" };    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    /**  Model */
-    private final String            file;
-    /**  Model */
-    private final boolean           data;
+    /** Constant */
+    private static final int LINES      = 5;
+
+    /** View */
+    private Table            table;
+
+    /** Model */
+    private int              selectionSeparator;
+    /** Model */
+    private int              selectionCharset;
+    /** Model */
+    private final char[]     separators = { ';', ',', '|', '\t' };               //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    /** Model */
+    private final String[]   labels     = { ";", ",", "|", "Tab" };              //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+    /** Model */
+    private final String[]   charsets   = Charsets.getNamesOfAvailableCharsets();
+    /** Model */
+    private final String     file;
+    /** Model */
+    private final boolean    data;
 
     /**
      * 
@@ -83,7 +88,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
      * @param file
      * @param data
      */
-    public DialogSeparator(final Shell parent,
+    public DialogOpenHierarchy(final Shell parent,
                            final Controller controller,
                            final String file,
                            boolean data) {
@@ -103,24 +108,31 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
     }
     
     /**
-     * 
+     * Returns the selected charset
+     */
+    public Charset getCharset() {
+        return Charsets.getCharsetForName(charsets[selectionCharset]);
+    }
+    
+    /**
+     * Returns the selected separator 
      *
      * @return
      */
     public char getSeparator() {
-        return separators[selection];
+        return separators[selectionSeparator];
     }
 
     /**
      * Detects the most frequent separator in the first few lines.
      *
      * @param file
-     * @param charset TODO
      * @throws IOException
      */
-    private void detect(final String file, Charset charset) throws IOException {
+    private void detect(final String file) throws IOException {
 
         // Open file
+        final Charset charset = Charsets.getCharsetForName(charsets[selectionCharset]);
         final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 
         // Count chars
@@ -152,9 +164,24 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         for (final int key : map.keySet()) {
             if (map.get(key) > max) {
                 max = map.get(key);
-                selection = key;
+                selectionSeparator = key;
             }
         }
+    }
+
+    /**
+     * Returns the index of the default charset
+     * @return
+     */
+    private int getIndexOfDefaultCharset() {
+        int index = 0;
+        for (String charset : charsets) {
+            if (charset.equals(Charsets.getNameOfDefaultCharset())) {
+                return index;
+            }
+            index++;
+        }
+        return index;
     }
 
     /**
@@ -163,10 +190,13 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
      * @param file
      * @throws IOException
      */
-    private void read(final String file, final Charset charset) throws IOException {
+    private void read(final String file) throws IOException {
 
+        // Charset
+        final Charset charset = Charsets.getCharsetForName(charsets[selectionCharset]);
+        
         // Read the first few lines
-        final CSVDataInput in = new CSVDataInput(file, charset, separators[selection]);
+        final CSVDataInput in = new CSVDataInput(file, charset, separators[selectionSeparator]);
         final Iterator<String[]> it = in.iterator();
         final List<String[]> data = new ArrayList<String[]>();
 
@@ -274,8 +304,9 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         table.setLinesVisible(true);
 
         try {
-            detect(file, Charset.defaultCharset());
-            read(file, Charset.defaultCharset());
+            this.selectionCharset = getIndexOfDefaultCharset();
+            detect(file);
+            read(file);
         } catch (final Exception e) {
             if (e instanceof RuntimeException){
                 throw (RuntimeException)e;
@@ -291,7 +322,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         for (final String s : labels) {
             combo.add(s);
         }
-        combo.select(selection);
+        combo.select(selectionSeparator);
         combo.pack();
         combo.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -299,8 +330,35 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
 
                 try {
                     if (combo.getSelectionIndex() == -1) { return; }
-                    selection = combo.getSelectionIndex();
-                    read(file, Charset.defaultCharset());
+                    selectionSeparator = combo.getSelectionIndex();
+                    read(file);
+                } catch (final Exception e) {
+                    if (e instanceof RuntimeException){
+                        throw (RuntimeException)e;
+                    } else {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+
+        final Combo combo2 = new Combo(parent, SWT.NONE);
+        d = SWTUtil.createFillHorizontallyGridData();
+        d.horizontalSpan = 2;
+        combo2.setLayoutData(d);
+        for (final String s : charsets) {
+            combo2.add(s);
+        }
+        combo2.select(getIndexOfDefaultCharset());
+        combo2.pack();
+        combo2.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+
+                try {
+                    if (combo2.getSelectionIndex() == -1) { return; }
+                    selectionCharset = combo2.getSelectionIndex();
+                    read(file);
                 } catch (final Exception e) {
                     if (e instanceof RuntimeException){
                         throw (RuntimeException)e;

@@ -25,11 +25,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.HierarchyBuilderDate.Format;
 import org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.menu.EditorString;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
@@ -38,9 +40,11 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
@@ -66,6 +70,19 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
     /** View */
     private Combo                          combo;
 
+    /** View */
+    private EditorString                   editorBottomCoding;
+
+    /** View */
+    private EditorString                   editorTopCoding;
+
+    /** State */
+    private boolean                        formatOK       = false;
+    /** State */
+    private boolean                        topCodingOK    = true;
+    /** State */
+    private boolean                        bottomCodingOK = true;
+
     /**
      * Creates a new instance.
      *
@@ -90,6 +107,9 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(SWTUtil.createGridLayout(1, false));
+        
+        // Top/bottom coding
+        createTopBottomCoding(composite);
         
         // List of granularities
         Group group1 = new Group(composite, SWT.SHADOW_ETCHED_IN);
@@ -169,7 +189,7 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
                         Format format = model.getFormat();
                         format.set((Granularity)table.getSelection()[0].getData(), formatString);
                         model.setFormat(format);
-                        text.setData(true);
+                        formatOK = true;
                     } else {
                         decoration.setDescriptionText(Resources.getMessage("HierarchyWizardPageDate.5")); //$NON-NLS-1$
                         Image image = FieldDecorationRegistry.getDefault()
@@ -177,11 +197,11 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
                               .getImage();
                         decoration.setImage(image);
                         decoration.show();
-                        text.setData(null);
+                        formatOK = false;
                     }
                 } else {
                     decoration.hide();
-                    text.setData(true);
+                    formatOK = true;
                 }
                 HierarchyWizardPageDate.this.setPageComplete(HierarchyWizardPageDate.this.isPageComplete());
             }
@@ -193,7 +213,7 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         group3.setLayout(SWTUtil.createGridLayout(2, false));
         group3.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
-        combo = new Combo(group3, SWT.SINGLE);
+        combo = new Combo(group3, SWT.SINGLE | SWT.READ_ONLY);
         combo.setLayoutData(SWTUtil.createFillGridData());
 
         //Create items
@@ -226,7 +246,7 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
     
     @Override
     public boolean isPageComplete() {
-        return text.getData() != null;
+        return formatOK && topCodingOK && bottomCodingOK;
     }
 
     @Override
@@ -247,6 +267,10 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
         
         // Format string
         text.setText(model.getFormat().get((Granularity)table.getItem(0).getData()));
+        
+        // Top/bottom coding
+        editorBottomCoding.update();
+        editorTopCoding.update();
 
         // Timezone
         combo.removeAll();
@@ -281,5 +305,128 @@ public class HierarchyWizardPageDate extends HierarchyWizardPageBuilder<Date> {
             item.setData(g);
             item.setChecked(model.getGranularities().contains(g));
         }
+    }
+
+    /**
+     * Creates a label.
+     *
+     * @param composite
+     * @param string
+     * @return
+     */
+    private Label createLabel(Composite composite, String string) {
+        Label label = new Label(composite, SWT.NONE);
+        label.setText(string);
+        GridData data = SWTUtil.createFillVerticallyGridData();
+        data.verticalAlignment = SWT.CENTER;
+        label.setLayoutData(data);
+        return label;
+    }
+
+    /**
+     * Create the top/bottom coding editor
+     *
+     * @param parent
+     * @param lower
+     */
+    private void createTopBottomCoding(final Composite parent) {
+        
+        Composite base = new Composite(parent, SWT.NONE);
+        base.setLayoutData(SWTUtil.createFillHorizontallyGridData(true));
+        base.setLayout(SWTUtil.createGridLayout(4));
+        
+        createLabel(base, Resources.getMessage("HierarchyWizardEditorRange.7")); //$NON-NLS-1$
+
+        editorBottomCoding = new EditorString(base) {
+            
+            @Override
+            public boolean accepts(String s) {
+                if (s == null || s.length() == 0) {
+                    s = DataType.NULL_VALUE;
+                }
+                bottomCodingOK = model.getDataType().isValid(s);
+                setPageComplete(isPageComplete());
+                return bottomCodingOK;
+            }
+
+            @Override
+            public String getValue() {
+                Date value = model.getBottomCodingBound();
+                if (value == null) return ""; //$NON-NLS-1$
+                else return model.getDataType().format(value);
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (value1 == null || value1.length() == 0) {
+                    value1 = DataType.NULL_VALUE;
+                }
+                if (value2 == null || value2.length() == 0) {
+                    value2 = DataType.NULL_VALUE;
+                }
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return model.getDataType().compare(model.getDataType().parse(value1), 
+                                                   model.getDataType().parse(value2)) != 0;
+            }
+
+            @Override
+            public void setValue(String s) {
+                if (s == null || s.length() == 0) {
+                    s = DataType.NULL_VALUE;
+                }
+                Date value = model.getDataType().parse(s);
+                model.setBottomCodingBound(value);
+                model.update();
+            }
+        };
+        
+        createLabel(base, Resources.getMessage("HierarchyWizardEditorRange.8")); //$NON-NLS-1$
+
+        editorTopCoding = new EditorString(base) {
+            
+            @Override
+            public boolean accepts(String s) {
+                if (s == null || s.length() == 0) {
+                    s = DataType.NULL_VALUE;
+                }
+                topCodingOK = model.getDataType().isValid(s);
+                setPageComplete(isPageComplete());
+                return topCodingOK;
+            }
+
+            @Override
+            public String getValue() {
+                Date value = model.getTopCodingBound();
+                if (value == null) return ""; //$NON-NLS-1$
+                else return model.getDataType().format(value);
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (value1 == null || value1.length() == 0) {
+                    value1 = DataType.NULL_VALUE;
+                }
+                if (value2 == null || value2.length() == 0) {
+                    value2 = DataType.NULL_VALUE;
+                }
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return model.getDataType().compare(model.getDataType().parse(value1), 
+                                                   model.getDataType().parse(value2)) != 0;
+            }
+
+            @Override
+            public void setValue(String s) {
+                if (s == null || s.length() == 0) {
+                    s = DataType.NULL_VALUE;
+                }
+                Date value = model.getDataType().parse(s);
+                model.setTopCodingBound(value);
+                model.update();
+            }
+        };
     }
 }

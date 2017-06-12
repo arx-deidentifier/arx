@@ -55,6 +55,7 @@ public class ViewCodingModel implements IView {
         // Register
         this.controller = controller;
         this.controller.addListener(ModelPart.MODEL, this);
+        this.controller.addListener(ModelPart.METRIC, this);
         
         this.slider = new ComponentGSSlider(parent);
         this.slider.addSelectionListener(new SelectionAdapter(){

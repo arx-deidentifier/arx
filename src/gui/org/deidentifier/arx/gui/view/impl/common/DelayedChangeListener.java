@@ -49,19 +49,6 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
      */
     public DelayedChangeListener(long delay) {
         this.delay = delay;
-        
-        // Create repeating task
-        final Display display = Display.getCurrent();
-        display.timerExec(TICK, new Runnable() {
-            @Override
-            public void run() {
-                if (event && System.currentTimeMillis() > time) {
-                    delayedEvent();
-                    event = false;
-                }
-                display.timerExec(TICK, this);
-            }
-        });
     }
     
     /**
@@ -72,8 +59,7 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
 
     @Override
     public void handleEvent(Event arg0) {
-        this.event = true;
-        this.time = System.currentTimeMillis() + delay;
+        fire();
     }
 
     @Override
@@ -90,19 +76,43 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
 
     @Override
     public void modifyText(ModifyEvent arg0) {
-        this.event = true;
-        this.time = System.currentTimeMillis() + delay;
+        fire();
     }
 
     @Override
     public void widgetDefaultSelected(SelectionEvent arg0) {
-        this.event = true;
-        this.time = System.currentTimeMillis() + delay;
+        fire();
     }
 
     @Override
     public void widgetSelected(SelectionEvent arg0) {
-        this.event = true;
+        fire();
+    }
+
+    /**
+     * Generic fire event
+     */
+    private void fire() {
+
         this.time = System.currentTimeMillis() + delay;
+            
+        if (!event) {
+            
+            this.event = true;
+    
+            // Create repeating task
+            final Display display = Display.getCurrent();
+            display.timerExec(TICK, new Runnable() {
+                @Override
+                public void run() {
+                    if (event && System.currentTimeMillis() > time) {
+                        delayedEvent();
+                        event = false;
+                        return;
+                    }
+                    display.timerExec(TICK, this);
+                }
+            });
+        }
     }
 }
