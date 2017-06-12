@@ -1222,7 +1222,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.aCriteria = null;
         result.criteria = criteria;
         MetricConfiguration utilityConfig = result.getQualityModel().getConfiguration();
-        utilityConfig.setGsFactor(gsFactor);
+        if (!Double.isNaN(gsFactor)) {
+            utilityConfig.setGsFactor(gsFactor);
+        }
         result.metric = result.getQualityModel().getDescription().createInstance(utilityConfig);
         
         // Return
