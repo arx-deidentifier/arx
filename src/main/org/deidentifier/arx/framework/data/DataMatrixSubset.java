@@ -72,7 +72,7 @@ public class DataMatrixSubset extends DataMatrix {
 
     @Override
     public int getNumColumns() {
-        return matrix.getNumColumns();
+        return (matrix == null) ?  0 : matrix.getNumColumns();
     }
 
     @Override
@@ -92,7 +92,9 @@ public class DataMatrixSubset extends DataMatrix {
 
     @Override
     public void iterator(int row) {
-        matrix.iterator(subset[row]);
+        if (matrix != null) {
+            matrix.iterator(subset[row]);
+        }
     }
 
     @Override
