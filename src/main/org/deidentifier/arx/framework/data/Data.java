@@ -130,4 +130,12 @@ public class Data implements Cloneable{
         }
         return new Data(new DataMatrixSubset(data, rows), header, map, dictionary);
     }
+
+    /**
+     * Returns whether this object is empty
+     * @return
+     */
+    public boolean isEmpty() {
+        return header == null || header.length == 0;
+    }
 }
