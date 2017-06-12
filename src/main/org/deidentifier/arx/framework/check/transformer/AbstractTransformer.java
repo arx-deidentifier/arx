@@ -389,12 +389,12 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         if (this.dimensions > arraySizes) {
             arraySizes = this.dimensions;
         }
-        generalizationIndexArray = new int[arraySizes];
-        columnIndexArray = new int[arraySizes];
-        columnMapArray = new int[arraySizes][][];
-        map = new int[hierarchies.length][][];
+        this.generalizationIndexArray = new int[arraySizes];
+        this.columnIndexArray = new int[arraySizes];
+        this.columnMapArray = new int[arraySizes][][];
+        this.map = new int[hierarchies.length][][];
         for (int i = 0; i < hierarchies.length; i++) {
-            map[i] = hierarchies[i].getArray();
+            this.map[i] = hierarchies[i].getArray();
         }
 
         // Prepare delegate

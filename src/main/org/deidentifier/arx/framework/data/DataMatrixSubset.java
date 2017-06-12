@@ -92,9 +92,9 @@ public class DataMatrixSubset extends DataMatrix {
 
     @Override
     public void iterator(int row) {
-        if (matrix != null) {
+//        if (matrix != null) {
             matrix.iterator(subset[row]);
-        }
+//        }
     }
 
     @Override
