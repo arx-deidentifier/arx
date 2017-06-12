@@ -19,7 +19,9 @@ package org.deidentifier.arx.aggregates;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import org.deidentifier.arx.ARXFeatureScaling;
@@ -41,7 +43,7 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * @author Fabian Prasser
  */
 public class StatisticsClassification {
-    
+
     /**
      * A matrix mapping confidence thresholds to precision and recall
      * 
@@ -50,11 +52,6 @@ public class StatisticsClassification {
      */
     public static class PrecisionRecallMatrix {
         
-        /** Confidence thresholds*/
-        private static final double[] CONFIDENCE_THRESHOLDS = new double[]{
-            0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1d
-        };
-
         /** Measurements */
         private double                measurements          = 0d;
         /** Precision */
@@ -126,6 +123,78 @@ public class StatisticsClassification {
         }
     }
 
+    /**
+     * A ROC curve
+     * 
+     * @author Fabian Prasser
+     *
+     */
+    public static class ROCCurve {
+
+        /** Precision */
+        private final double[] truePositive  = new double[CONFIDENCE_THRESHOLDS.length];
+        /** Recall */
+        private final double[] falsePositive = new double[CONFIDENCE_THRESHOLDS.length];
+
+        /**
+         * @return the confidence thresholds
+         */
+        public double[] getConfidenceThresholds() {
+            return CONFIDENCE_THRESHOLDS;
+        }
+
+        /**
+         * @return the falsePositive
+         */
+        public double[] getFalsePositiveRate() {
+            return falsePositive;
+        }
+
+        /**
+         * @return the truePositive
+         */
+        public double[] getTruePositiveRate() {
+            return truePositive;
+        }
+
+        /**
+         * Adds a new value
+         * @param confidence
+         * @param correct
+         */
+        void add(double confidence, boolean correct) {
+            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
+                if (confidence >= CONFIDENCE_THRESHOLDS[i]) {
+                    falsePositive[i]++;
+                    truePositive[i] += correct ? 1d : 0d;
+                }
+            }
+        }
+
+        /**
+         * Packs the results
+         */
+        void pack() {
+            // Pack
+            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
+                
+                if (falsePositive[i] == 0d) {
+                    truePositive[i] = 0d;
+                } else {
+                    double total = falsePositive[i];
+                    falsePositive[i] -= truePositive[i];
+                    falsePositive[i] /= total;
+                    truePositive[i] /= total;
+                }
+            }
+        }
+    }
+    
+    /** Confidence thresholds*/
+    private static final double[] CONFIDENCE_THRESHOLDS = new double[]{
+        0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1d
+    };
+
     /** Accuracy */
     private double                accuracy;
     /** Average error */
@@ -135,7 +204,9 @@ public class StatisticsClassification {
     /** Interrupt flag */
     private final WrappedInteger  progress;
     /** Precision/recall matrix */
-    private PrecisionRecallMatrix matrix         = new PrecisionRecallMatrix();
+    private PrecisionRecallMatrix matrix                = new PrecisionRecallMatrix();
+    /** ROC curve */
+    private Map<String, ROCCurve> rocCurves             = new HashMap<>();
     /** Num classes */
     private int                   numClasses;
     /** Original accuracy */
@@ -143,7 +214,9 @@ public class StatisticsClassification {
     /** Original accuracy */
     private double                originalAverageError;
     /** Precision/recall matrix */
-    private PrecisionRecallMatrix originalMatrix = new PrecisionRecallMatrix();
+    private PrecisionRecallMatrix originalMatrix        = new PrecisionRecallMatrix();
+    /** ROC curve */
+    private Map<String, ROCCurve> originalRocCurves     = new HashMap<>();
     /** Random */
     private final Random          random;
     /** ZeroR accuracy */
@@ -203,6 +276,12 @@ public class StatisticsClassification {
                                                                                             clazz,
                                                                                             interrupt);
         
+        // Initialize ROC curves
+        for (String classValue : specification.classMap.keySet()) {
+            rocCurves.put(classValue, new ROCCurve());
+            originalRocCurves.put(classValue, new ROCCurve());
+        }
+        
         // Train and evaluate
         int k = inputHandle.getNumRows() > config.getNumFolds() ? config.getNumFolds() : inputHandle.getNumRows();
         List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), k);
@@ -211,7 +290,7 @@ public class StatisticsClassification {
         int classifications = 0;
         double total = 100d / ((double)inputHandle.getNumRows() * (double)folds.size());
         double done = 0d;
-        
+                
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
@@ -277,6 +356,7 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
+                        this.originalRocCurves.get(actualValue).add(resultInputLR.confidence(), correct);
 
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -284,9 +364,9 @@ public class StatisticsClassification {
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
                             this.matrix.add(resultOutputLR.confidence(), correct);
+                            this.rocCurves.get(actualValue).add(resultOutputLR.confidence(), correct);
                         }
                     }
-                    
                     this.progress.value = (int)((++done) * total);
                 }
             } catch (Exception e) {
@@ -303,6 +383,15 @@ public class StatisticsClassification {
         this.originalAverageError /= (double)classifications;
         this.originalAccuracy /= (double)classifications;
         this.originalMatrix.pack();
+        
+        // ROCCurves
+        for (ROCCurve curve : this.rocCurves.values()) {
+            curve.pack();
+        }
+        // ROCCurves
+        for (ROCCurve curve : this.originalRocCurves.values()) {
+            curve.pack();
+        }
 
         // Maintain data about outputLR                        
         if (inputHandle != outputHandle) {
@@ -384,6 +473,16 @@ public class StatisticsClassification {
     }
     
     /**
+     * Returns the ROC curve for this class value calculated using a
+     * one-vs-all approach.
+     * @param clazz
+     * @return
+     */
+    public ROCCurve getOriginalROCCurve(String clazz) {
+        return this.originalRocCurves.get(clazz);
+    }
+    
+    /**
      * Returns a precision/recall matrix
      * @return
      */
@@ -391,6 +490,16 @@ public class StatisticsClassification {
         return this.matrix;
     }
 
+    /**
+     * Returns the ROC curve for this class value calculated using a
+     * one-vs-all approach.
+     * @param clazz
+     * @return
+     */
+    public ROCCurve getROCCurve(String clazz) {
+        return this.rocCurves.get(clazz);
+    }
+    
     /**
      * Returns the minimal accuracy. Obtained by training a
      * ZeroR classifier on the input dataset.
