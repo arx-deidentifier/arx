@@ -347,4 +347,15 @@ public class NodeChecker {
     public Metric<?> getMetric() {
         return metric;
     }
+
+    /**
+     * Frees resources
+     */
+    public void reset() {
+        stateMachine.reset();
+        history.reset();
+        history.setSize(0);
+        currentGroupify.stateClear();
+        lastGroupify.stateClear();
+    }
 }

@@ -82,22 +82,22 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class ComponentDataTable implements IComponent {
 
-    /**  TODO */
+    /**  View */
     private NatTable                table;
     
-    /**  TODO */
+    /**  View */
     private DataTableContext        context;
     
-    /**  TODO */
+    /**  View */
     private DataTableBodyLayerStack bodyLayer;
     
-    /**  TODO */
+    /**  View */
     private DataTableGridLayer      gridLayer;
     
-    /**  TODO */
+    /**  View */
     private Font                    font;
     
-    /**  TODO */
+    /**  View */
     private Control                 parent;
 
     /**
@@ -274,11 +274,31 @@ public class ComponentDataTable implements IComponent {
      * @param attribute
      */
     public void setSelectedAttribute(String attribute) {
+        
+        // Select
         int index = -1;
         if (context.getHandle()!=null) {
             index = context.getHandle().getColumnIndexOf(attribute);
         }
         this.context.setSelectedIndex(index);
+        
+        // Check
+        if (index == -1 || index == 0) {
+            this.getViewportLayer().setOriginX(0);
+            return;
+        }
+        
+        // Scroll to column
+        int width = this.table.getBounds().width - this.table.getVerticalBar().getSize().x;
+        int rowHeaderWidth = gridLayer.getRowHeaderLayer().getClientAreaProvider().getClientArea().width;
+        int originX = this.getViewportLayer().getOrigin().getX();
+        int columnPositionX = this.getViewportLayer().getStartXOfColumnPosition(this.getViewportLayer().getColumnPositionByIndex(index + 1));
+        int positionX = originX + (columnPositionX + rowHeaderWidth);
+        if (positionX < originX || positionX > originX + width) {
+            this.getViewportLayer().setOriginX(positionX - rowHeaderWidth);
+        }
+        
+        // Redraw
         this.redraw();
     }
 

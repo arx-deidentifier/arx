@@ -43,6 +43,9 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
+    /** Anonymizer */
+    private ARXAnonymizer          anonymizer;
+
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -159,6 +162,7 @@ public class ARXResult {
     /**
      * Creates a new instance.
      *
+     * @param anonymizer
      * @param registry
      * @param manager
      * @param checker
@@ -168,7 +172,8 @@ public class ARXResult {
      * @param duration
      * @param solutionSpace
      */
-    protected ARXResult(DataRegistry registry,
+    protected ARXResult(ARXAnonymizer anonymizer,
+                        DataRegistry registry,
                         DataManager manager,
                         NodeChecker checker,
                         DataDefinition definition,
@@ -177,6 +182,7 @@ public class ARXResult {
                         long duration,
                         SolutionSpace solutionSpace) {
 
+        this.anonymizer = anonymizer;
         this.registry = registry;
         this.manager = manager;
         this.checker = checker;
@@ -197,6 +203,14 @@ public class ARXResult {
      */
     public ARXConfiguration getConfiguration() {
         return config;
+    }
+
+    /**
+     * Returns the data definition
+     * @return
+     */
+    public DataDefinition getDataDefinition() {
+        return this.definition;
     }
 
     /**
@@ -238,7 +252,7 @@ public class ARXResult {
     public DataHandle getHandle(ARXNode node) {
         return getOutput(node, false);
     }
-
+    
     /**
      * Returns the lattice.
      *
@@ -314,6 +328,7 @@ public class ARXResult {
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformedData information = checker.applyTransformation(transformation);
+        checker.reset();
         transformation.setChecked(information.properties);
 
         // Store
@@ -356,7 +371,7 @@ public class ARXResult {
         // Return
         return result;
     }
-    
+
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -380,7 +395,7 @@ public class ARXResult {
     public long getTime() {
         return duration;
     }
-
+    
     /**
      * Returns whether local recoding can be applied to the given handle
      * @param handle
@@ -429,7 +444,7 @@ public class ARXResult {
         // Yes, we probably can do this
         return true;
     }
-    
+
     /**
      * Indicates if a result is available.
      *
@@ -551,9 +566,13 @@ public class ARXResult {
         DataManager manager = this.manager.getSubsetInstance(rowset);
         
         // Create an anonymizer
-        // TODO: May this object stores some values that should be transferred?
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        anonymizer.setListener(listener);
+        if (listener != null) {
+            anonymizer.setListener(listener);
+        }
+        if (this.anonymizer != null) {
+            anonymizer.parse(this.anonymizer);
+        }
         
         // Anonymize
         Result result = null;
@@ -561,7 +580,7 @@ public class ARXResult {
             result = anonymizer.anonymize(manager, definition, config);
         } catch (IOException e) {
             // This should not happen at this point in time, as data has already been read from the source
-            throw new RuntimeException("Internal error");
+            throw new RuntimeException("Internal error: unexpected IO issue");
         }
         
         // Break, if no solution has been found
@@ -610,7 +629,7 @@ public class ARXResult {
             throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
         }
     }
-
+    
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -636,7 +655,7 @@ public class ARXResult {
             }
         });
     }
-    
+
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -666,43 +685,41 @@ public class ARXResult {
         if (maxIterations <= 0) {
             throw new IllegalArgumentException("Max. iterations must be > zero");
         }
+        
+        // Progress
+        listener.progress(0d);
 
         // Outer loop
-        int iterations = 0;
-        int optimized = Integer.MAX_VALUE;
-        double totalAdaption = 0d;
-        final double max = maxIterations != Integer.MAX_VALUE ? maxIterations : (1d - gsFactor) / adaptionFactor;
-        while (isOptimizable(handle) && iterations < maxIterations && optimized > 0) {
-
-            // Create a wrapped listener
-            final double base = maxIterations != Integer.MAX_VALUE ? iterations : totalAdaption / adaptionFactor;
-            ARXListener wrapper = new ARXListener() {
-                @Override
-                public void progress(double progress) {
-                    double _max = (max > 1d && !Double.isInfinite(max) && !Double.isNaN(max) ? max : 1d);
-                    double _base = (base > 0d && !Double.isInfinite(base) && !Double.isNaN(base)? base : 0d);
-                    double value = (progress + _base) / _max;
-                    listener.progress(value);
-                }
-            };
+        int optimizedTotal = 0;
+        int iterationsTotal = 0;
+        int optimizedCurrent = Integer.MAX_VALUE;
+        while (isOptimizable(handle) && iterationsTotal < maxIterations && optimizedCurrent > 0) {
 
             // Perform individual optimization
-            optimized = optimize(handle, gsFactor, wrapper);
+            optimizedCurrent = optimize(handle, gsFactor);
+            optimizedTotal += optimizedCurrent;
             
             // Try to adapt, if possible
-            if (optimized == 0 && adaptionFactor > 0d) {
+            if (optimizedCurrent == 0 && adaptionFactor > 0d) {
                 gsFactor += adaptionFactor;
-                totalAdaption += adaptionFactor;
                 
                 // If valid, try again
                 if (gsFactor <= 1d) {
-                    optimized = Integer.MAX_VALUE;
+                    optimizedCurrent = Integer.MAX_VALUE;
                 }
             }
-            iterations++;
-        }
-    }
+            iterationsTotal++;
 
+            // Progress
+            double progress1 = (double)optimizedTotal / (double)handle.getNumRows();
+            double progress2 = (double)iterationsTotal / (double)maxIterations;
+            listener.progress(Math.max(progress1, progress2));
+        }
+
+        // Progress
+        listener.progress(1d);
+    }
+    
     /**
      * Returns a map of all microaggregation functions
      * @param definition
@@ -715,7 +732,7 @@ public class ARXResult {
         }
         return result;
     }
-    
+
     /**
      * Releases the buffer.
      *

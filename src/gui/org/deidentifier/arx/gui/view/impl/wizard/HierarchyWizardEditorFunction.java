@@ -143,6 +143,14 @@ public class HierarchyWizardEditorFunction<T> {
                 HierarchyWizardEditorFunction.this.update();
                 parent.setFunction(function);
             }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return value1.equals(value2);
+            }
         };
 
         createLabel(composite, Resources.getMessage("HierarchyWizardEditorFunction.4")); //$NON-NLS-1$
@@ -175,6 +183,14 @@ public class HierarchyWizardEditorFunction<T> {
                     function = ((AggregateFunctionWithParameter<T>)function).newInstance(s);
                     parent.setFunction(function);
                 }
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return value1.equals(value2);
             }
         };
     }

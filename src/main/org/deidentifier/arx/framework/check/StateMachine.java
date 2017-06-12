@@ -33,7 +33,7 @@ public class StateMachine {
      * The resulting transition.
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     public static class Transition {
 
@@ -51,7 +51,7 @@ public class StateMachine {
      * The possible transition type.
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     public static enum TransitionType {
 
@@ -102,7 +102,7 @@ public class StateMachine {
     }
 
     /**
-     * 
+     * Returns the last transition.
      *
      * @return
      */
@@ -121,8 +121,7 @@ public class StateMachine {
     /**
      * Computes the best state transition.
      * 
-     * @param currentNode
-     *            the current node
+     * @param currentNode the current node
      * @return the transition
      */
     public Transition transition(final int[] currentNode) {
@@ -180,8 +179,7 @@ public class StateMachine {
      * Returns the projection. All bits are set for the columns that don't need
      * to be checked
      * 
-     * @param currentNode
-     *            the current node
+     * @param currentNode the current node
      * @return the projection
      */
     private long getProjection(final int[] currentNode) {
@@ -206,14 +204,12 @@ public class StateMachine {
             if (currentNode[i] < lastNode[i]) { return false; }
         }
         return true;
-
     }
 
     /**
      * Is a snapshot optimization possible.
      * 
-     * @param currentNode
-     *            the current node
+     * @param currentNode the current node
      * @return true, if is possible snapshot
      */
     private boolean isPossibleSnapshot(final int[] currentNode) {
