@@ -162,10 +162,18 @@ public class LayoutUtility implements ILayout {
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
         new ViewStatisticsLogisticRegressionInput(classificationInput, controller);
+
+        Composite classificationInputROCCurves = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
+        classificationInputROCCurves.setLayout(new FillLayout());
+        new ViewStatisticsLogisticRegressionInputROCCurves(classificationInputROCCurves, controller);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
         new ViewStatisticsLogisticRegressionOutput(classificationOutput, controller);
+
+        Composite classificationOutputROCCurves = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
+        classificationOutputROCCurves.setLayout(new FillLayout());
+        new ViewStatisticsLogisticRegressionOutputROCCurves(classificationOutputROCCurves, controller);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
