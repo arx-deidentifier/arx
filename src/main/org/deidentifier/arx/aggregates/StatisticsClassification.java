@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
@@ -74,6 +75,7 @@ public class StatisticsClassification {
         private final double[]        fscore                = new double[CONFIDENCE_THRESHOLDS.length];
 
         /**
+         * Cut-off points
          * @return the confidence thresholds
          */
         public double[] getConfidenceThresholds() {
@@ -81,6 +83,7 @@ public class StatisticsClassification {
         }
         
         /**
+         * F-scores
          * @return the f-score
          */
         public double[] getFscore(){
@@ -88,6 +91,7 @@ public class StatisticsClassification {
         }
         
         /**
+         * Precision
          * @return the precision
          */
         public double[] getPrecision() {
@@ -95,6 +99,7 @@ public class StatisticsClassification {
         }
 
         /**
+         * Recall
          * @return the recall
          */
         public double[] getRecall() {
@@ -147,10 +152,10 @@ public class StatisticsClassification {
         private double[] truePositive  = new double[CONFIDENCE_THRESHOLDS.length];
         /** Recall */
         private double[] falsePositive = new double[CONFIDENCE_THRESHOLDS.length];
+        /** Recall */
+        private int[]    exists        = new int[CONFIDENCE_THRESHOLDS.length];
         /** AUC */
         private double   AUC           = 0d;
-        /** Exists */
-        private double   exists        = 0d;
 
         /**
          * Returns the AUC
@@ -192,21 +197,28 @@ public class StatisticsClassification {
         
         /**
          * This value actually exists
+         * @param confidence
          */
-        void exists() {
-            exists++;
+        void exists(double confidence) {
+            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
+                if (confidence >= CONFIDENCE_THRESHOLDS[i]) {
+                    exists[i] ++;
+                }
+            }
         }
 
         /**
          * Packs the results
          * @param classifications 
          */
-        void pack(int classifications) {
+        void pack(int[] classifications) {
             
             // Pack
             for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                truePositive[i] /= (double)exists;
-                falsePositive[i] /= (double) (classifications - exists);
+                if (exists[i] != 0 && classifications[i] != 0) {
+                    truePositive[i] /= (double)exists[i];
+                    falsePositive[i] /= (double) (classifications[i] - exists[i]);
+                }
             }
 
             // Sort
@@ -229,18 +241,48 @@ public class StatisticsClassification {
                 }
             });
             
+            // Remove duplicates
+            int shift = trim(truePositive, falsePositive);
+            truePositive = Arrays.copyOf(truePositive, truePositive.length - shift);
+            falsePositive = Arrays.copyOf(falsePositive, falsePositive.length - shift);
+            
             // Make sane
-            if (truePositive[0] != 0 && falsePositive[0] != 0) {
+            if (truePositive[0] != 0d && falsePositive[0] != 0d) {
                 truePositive = insert(truePositive, 0, 0d);
                 falsePositive = insert(falsePositive, 0, 0d);
             }
-            if (truePositive[truePositive.length - 1] != 1 && falsePositive[falsePositive.length - 1] != 1) {
+            if (truePositive[truePositive.length - 1] != 1d && falsePositive[falsePositive.length - 1] != 1d) {
                 truePositive = insert(truePositive, truePositive.length, 1d);
                 falsePositive = insert(falsePositive, falsePositive.length, 1d);
             }
             
-            // Calculate AUC
-            // TODO
+            // Calculate AUC: trapezoidal rule
+            for (int i=0; i<truePositive.length-1; i++) {
+                double minX = Math.min(falsePositive[i], falsePositive[i + 1]);
+                double maxX = Math.max(falsePositive[i], falsePositive[i + 1]);
+                double minY = Math.min(truePositive[i], truePositive[i + 1]);
+                double maxY = Math.max(truePositive[i], truePositive[i + 1]);
+                AUC += (maxX - minX) * (minY + maxY) / 2d;
+            }
+        }
+
+        /**
+         * Removes duplicates
+         * @param array1
+         * @param array2
+         * @return The number of elements removed
+         */
+        private int trim(double[] array1, double[] array2) {
+            int trim = 0;
+            int len = array1.length - 1;
+            for (int i = 0; i < len; i++) {
+                if (array1[i] == array1[i + 1] && array2[i] == array2[i + 1]) {
+                    System.arraycopy(array1, i+1, array1, i, array1.length - i - 1);
+                    System.arraycopy(array2, i+1, array2, i, array2.length - i - 1);
+                    trim++; i--; len--;
+                }
+            }
+            return trim;
         }
 
         /**
@@ -362,6 +404,8 @@ public class StatisticsClassification {
         List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), k);
 
         // Track
+        int[] classificationsOriginal = new int[CONFIDENCE_THRESHOLDS.length];
+        int[] classificationsOutput = new int[CONFIDENCE_THRESHOLDS.length];
         int classifications = 0;
         double total = 100d / ((double)inputHandle.getNumRows() * (double)folds.size());
         double done = 0d;
@@ -431,17 +475,32 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
-                        this.originalROC.get(actualValue).exists(); // TODO: Consider cut-off here?
+                        this.originalROC.get(actualValue).exists(resultInputLR.confidence());
                         this.originalROC.get(specification.classMapInverse.get(resultInputLR.index())).add(resultInputLR.confidence(), correct);
-
+                        
+                        // Count
+                        for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
+                            if (resultInputLR.confidence() >= CONFIDENCE_THRESHOLDS[i]) {
+                                classificationsOriginal[i] ++;
+                            }
+                        }
+                        
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
                             correct = resultOutputLR.correct(actualValue);
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
                             this.matrix.add(resultOutputLR.confidence(), correct);
-                            this.ROC.get(actualValue).exists(); // TODO: Consider cut-off here?
+                            this.ROC.get(actualValue).exists(resultOutputLR.confidence());
                             this.ROC.get(specification.classMapInverse.get(resultOutputLR.index())).add(resultOutputLR.confidence(), correct);
+
+                            // Count
+                            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
+                                if (resultOutputLR.confidence() >= CONFIDENCE_THRESHOLDS[i]) {
+                                    classificationsOutput[i] ++;
+                                }
+                            }
+                            
                         }
                     }
                     this.progress.value = (int)((++done) * total);
@@ -462,11 +521,11 @@ public class StatisticsClassification {
         
         // ROCCurves
         for (ROCCurve curve : this.ROC.values()) {
-            curve.pack(classifications);
+            curve.pack(classificationsOutput);
         }
         // ROCCurves
         for (ROCCurve curve : this.originalROC.values()) {
-            curve.pack(classifications);
+            curve.pack(classificationsOriginal);
         }
 
         // Maintain data about outputLR                        
