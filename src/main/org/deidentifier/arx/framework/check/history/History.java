@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -342,9 +342,9 @@ public class History {
                 data[index + 2] = m.pcount;
                 for (int i=0; i<m.distributions.length; i++) {
                     Distribution distribution = m.distributions[i];
-                    distribution.pack();
-                    data[index + 3 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
-                    data[index + 4 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                    int[][] distributionData = distribution.pack();
+                    data[index + 3 + i * 2] = dictionarySensValue.probe(distributionData[0]);
+                    data[index + 4 + i * 2] = dictionarySensFreq.probe(distributionData[1]);
                 }
                 break;
             // TODO: If we only need a distribution, we should get rid of the primary counter
@@ -352,9 +352,9 @@ public class History {
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 for (int i=0; i<m.distributions.length; i++) {
                     Distribution distribution = m.distributions[i];
-                    distribution.pack();
-                    data[index + 2 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
-                    data[index + 3 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                    int[][] distributionData = distribution.pack();
+                    data[index + 2 + i * 2] = dictionarySensValue.probe(distributionData[0]);
+                    data[index + 3 + i * 2] = dictionarySensFreq.probe(distributionData[1]);
                 }
                 break;
             default:

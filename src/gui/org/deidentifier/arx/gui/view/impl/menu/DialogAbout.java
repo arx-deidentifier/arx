@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,9 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "David Gassmann (HIPAA identifiers)\n" + //$NON-NLS-1$
                                                "Sebastian Stammler (performance improvements, l-diversity)\n" + //$NON-NLS-1$
                                                "Maximilian Zitzmann (distinction and separation)\n" + //$NON-NLS-1$
-                                               "James Gaupp (game-theoretic privacy)"; //$NON-NLS-1$
+                                               "James Gaupp (game-theoretic privacy)\n" + //$NON-NLS-1$
+                                               "Annika Saken (certificates)\n" + //$NON-NLS-1$
+                                               "Martin Waltl (summary statistics)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;

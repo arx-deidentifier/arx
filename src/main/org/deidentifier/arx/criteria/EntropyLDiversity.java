@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.deidentifier.arx.criteria;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -280,10 +281,19 @@ public class EntropyLDiversity extends LDiversity {
     }
     
     @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Entropy l-diversity");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (l)", this.l);
+        result.addProperty("Entropy estimator", this.estimator.toString());
+        return result;
+    }
+    
+    @Override
 	public String toString() {
         return estimator.toString().toLowerCase() + "-entropy-" + l + "-diversity for attribute '" + attribute + "'";
 	}
-    
+
     /**
      * Custom de-serialization
      * 

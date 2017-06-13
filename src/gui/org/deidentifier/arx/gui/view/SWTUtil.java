@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -657,6 +657,24 @@ public class SWTUtil {
         return String.valueOf(value);
     }
 
+    /**
+     * Fallback for objects of unknown type
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(Object value) {
+        if (value instanceof Boolean) {
+            return SWTUtil.getPrettyString(((Boolean)value).booleanValue());
+        } else if (value instanceof Double) {
+            return SWTUtil.getPrettyString(((Double)value).doubleValue());
+        } if (value instanceof Integer) {
+            return SWTUtil.getPrettyString(((Integer)value).intValue());
+        } if (value instanceof Long) {
+            return SWTUtil.getPrettyString(((Long)value).longValue());
+        }
+        return String.valueOf(value);
+    }
+    
     /**
      * Converts the integer value to a slider selection.
      *

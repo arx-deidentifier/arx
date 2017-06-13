@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>M-Index (ARX API Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../stylesheet.css" title="Style">
@@ -69,6 +69,10 @@
 <dd>
 <div class="block"><span class="strong">Deprecated.</span></div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/resources/Watermark.html#mark(org.apache.pdfbox.pdmodel.PDDocument)">mark(PDDocument)</a></span> - Method in class org.deidentifier.arx.certificate.resources.<a href="../org/deidentifier/arx/certificate/resources/Watermark.html" title="class in org.deidentifier.arx.certificate.resources">Watermark</a></dt>
+<dd>
+<div class="block">Marks the document</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/InformationLoss.html#max(org.deidentifier.arx.metric.InformationLoss)">max(InformationLoss&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a></dt>
 <dd>
 <div class="block">Retains the maximum of this and other.</div>
@@ -109,7 +113,7 @@
 <dd>
 <div class="block">This class provides an abstract skeleton for the implementation of metrics.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricDefault.html#MetricDefault(boolean,%20boolean)">MetricDefault(boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricDefault.html" title="class in org.deidentifier.arx.metric">MetricDefault</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricDefault.html#MetricDefault(boolean,%20boolean,%20boolean)">MetricDefault(boolean, boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricDefault.html" title="class in org.deidentifier.arx.metric">MetricDefault</a></dt>
 <dd>&nbsp;</dd>
 <dt><a href="../org/deidentifier/arx/metric/MetricDescription.html" title="class in org.deidentifier.arx.metric"><span class="strong">MetricDescription</span></a> - Class in <a href="../org/deidentifier/arx/metric/package-summary.html">org.deidentifier.arx.metric</a></dt>
 <dd>
@@ -165,7 +169,7 @@
 <dd>
 <div class="block">This class provides an implementation of a weighted precision metric as 
  proposed in: <br>
- Sweeney, L. (2002).</div>
+ Sweeney, L.</div>
 </dd>
 <dt><a href="../org/deidentifier/arx/metric/v2/MetricMDNUEntropy.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">MetricMDNUEntropy</span></a> - Class in <a href="../org/deidentifier/arx/metric/v2/package-summary.html">org.deidentifier.arx.metric.v2</a></dt>
 <dd>
@@ -182,7 +186,7 @@
 <div class="block">This class provides an efficient implementation of the non-uniform entropy
  metric.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#MetricMDNUEntropyPrecomputed(boolean,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNUEntropyPrecomputed(boolean, boolean, double, Metric.AggregateFunction)</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html#MetricMDNUEntropyPrecomputed(boolean,%20boolean,%20boolean,%20double,%20org.deidentifier.arx.metric.Metric.AggregateFunction)">MetricMDNUEntropyPrecomputed(boolean, boolean, boolean, double, Metric.AggregateFunction)</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricMDNUEntropyPrecomputed.html" title="class in org.deidentifier.arx.metric.v2">MetricMDNUEntropyPrecomputed</a></dt>
 <dd>
 <div class="block">Precomputed.</div>
 </dd>
@@ -221,7 +225,7 @@
 <dd>
 <div class="block">This class provides an implementation of a weighted precision metric as 
  proposed in: <br>
- Sweeney, L. (2002).</div>
+ Sweeney, L.</div>
 </dd>
 <dt><a href="../org/deidentifier/arx/metric/v2/MetricMDStatic.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">MetricMDStatic</span></a> - Class in <a href="../org/deidentifier/arx/metric/v2/package-summary.html">org.deidentifier.arx.metric.v2</a></dt>
 <dd>
@@ -237,7 +241,7 @@
 <dd>
 <div class="block">This class provides an implementation of a weighted precision metric as 
  proposed in: <br>
- Sweeney, L. (2002).</div>
+ Sweeney, L.</div>
 </dd>
 <dt><a href="../org/deidentifier/arx/metric/MetricPrecision.html" title="class in org.deidentifier.arx.metric"><span class="strong">MetricPrecision</span></a> - Class in <a href="../org/deidentifier/arx/metric/package-summary.html">org.deidentifier.arx.metric</a></dt>
 <dd>
@@ -263,6 +267,19 @@
 <dd>
 <div class="block">This class provides an implementation of the non-monotonic DM metric.</div>
 </dd>
+<dt><a href="../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">MetricSDNMEntropyBasedInformationLoss</span></a> - Class in <a href="../org/deidentifier/arx/metric/v2/package-summary.html">org.deidentifier.arx.metric.v2</a></dt>
+<dd>
+<div class="block">This class implements a the entropy-based information loss model proposed in:<br>
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html#MetricSDNMEntropyBasedInformationLoss()">MetricSDNMEntropyBasedInformationLoss()</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMEntropyBasedInformationLoss</a></dt>
+<dd>
+<div class="block">Creates a new instance.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html#MetricSDNMEntropyBasedInformationLoss(double)">MetricSDNMEntropyBasedInformationLoss(double)</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMEntropyBasedInformationLoss</a></dt>
+<dd>
+<div class="block">Creates a new instance.</div>
+</dd>
 <dt><a href="../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">MetricSDNMKLDivergence</span></a> - Class in <a href="../org/deidentifier/arx/metric/v2/package-summary.html">org.deidentifier.arx.metric.v2</a></dt>
 <dd>
 <div class="block">This class implements the KL Divergence metric.</div>
@@ -270,6 +287,19 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html#MetricSDNMKLDivergence()">MetricSDNMKLDivergence()</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDNMKLDivergence.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMKLDivergence</a></dt>
 <dd>
 <div class="block">Default constructor.</div>
+</dd>
+<dt><a href="../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2"><span class="strong">MetricSDNMPublisherPayout</span></a> - Class in <a href="../org/deidentifier/arx/metric/v2/package-summary.html">org.deidentifier.arx.metric.v2</a></dt>
+<dd>
+<div class="block">This class implements a model which maximizes publisher benefit according to the model proposed in:<br>
+ A Game Theoretic Framework for Analyzing Re-Identification Risk.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html#MetricSDNMPublisherPayout(boolean)">MetricSDNMPublisherPayout(boolean)</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMPublisherPayout</a></dt>
+<dd>
+<div class="block">Creates a new instance.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html#MetricSDNMPublisherPayout(boolean,%20double)">MetricSDNMPublisherPayout(boolean, double)</a></span> - Constructor for class org.deidentifier.arx.metric.v2.<a href="../org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2">MetricSDNMPublisherPayout</a></dt>
+<dd>
+<div class="block">Creates a new instance</div>
 </dd>
 <dt><a href="../org/deidentifier/arx/metric/MetricStatic.html" title="class in org.deidentifier.arx.metric"><span class="strong">MetricStatic</span></a> - Class in <a href="../org/deidentifier/arx/metric/package-summary.html">org.deidentifier.arx.metric</a></dt>
 <dd>
@@ -280,7 +310,7 @@
 <dd>
 <div class="block">This class provides an abstract skeleton for the implementation of weighted metrics.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricWeighted.html#MetricWeighted(boolean,%20boolean)">MetricWeighted(boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricWeighted.html" title="class in org.deidentifier.arx.metric">MetricWeighted</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricWeighted.html#MetricWeighted(boolean,%20boolean,%20boolean)">MetricWeighted(boolean, boolean, boolean)</a></span> - Constructor for class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricWeighted.html" title="class in org.deidentifier.arx.metric">MetricWeighted</a></dt>
 <dd>
 <div class="block">Constructor.</div>
 </dd>

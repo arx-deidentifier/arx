@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -39,7 +41,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
      * Creates a new instance.
      */
     protected MetricSDAECS() {
-        super(false, false);
+        super(true, false, false);
     }
 
     /**
@@ -48,7 +50,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
      * @param gsFactor
      */
     protected MetricSDAECS(double gsFactor) {
-        super(false, false, gsFactor);
+        super(true, false, false, gsFactor);
     }
 
     /**
@@ -57,7 +59,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
      * @param rowCount
      */
     protected MetricSDAECS(int rowCount) {
-        super(false, false);
+        super(true, false, false);
         super.setNumTuples((double)rowCount);
     }
     
@@ -93,6 +95,15 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     @Override
     public boolean isGSFactorSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Average equivalence class size");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
     }
 
     @Override

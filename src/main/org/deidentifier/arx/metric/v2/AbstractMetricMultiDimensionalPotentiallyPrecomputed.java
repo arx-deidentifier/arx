@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,9 +64,20 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
                                                          AbstractMetricMultiDimensional precomputedMetric,
                                                          double threshold) {
 
-        super(defaultMetric.isMonotonic(), false, defaultMetric.getAggregateFunction());
-        if (defaultMetric.getAggregateFunction() != precomputedMetric.getAggregateFunction()) { throw new IllegalArgumentException("Aggregate function does not match"); }
-        if (defaultMetric.isMonotonic() != precomputedMetric.isMonotonic()) { throw new IllegalArgumentException("Monotonicity does not match"); }
+        super(defaultMetric.isMonotonicWithGeneralization(), 
+              defaultMetric.isMonotonicWithSuppression(),
+              false, defaultMetric.getAggregateFunction());
+        
+        // Sanity checks
+        if (defaultMetric.getAggregateFunction() != precomputedMetric.getAggregateFunction()) {
+            throw new IllegalArgumentException("Aggregate function does not match");
+        }
+        if (defaultMetric.isMonotonicWithSuppression() != precomputedMetric.isMonotonicWithSuppression()) {
+            throw new IllegalArgumentException("Monotonicity does not match");
+        }
+        if (defaultMetric.isMonotonicWithGeneralization() != precomputedMetric.isMonotonicWithGeneralization()) {
+            throw new IllegalArgumentException("Monotonicity does not match");
+        }
 
         // Default is non-precomputed
         this.threshold = threshold;

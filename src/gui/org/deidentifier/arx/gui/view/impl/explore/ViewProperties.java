@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.deidentifier.arx.metric.InformationLoss;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -77,7 +78,7 @@ public class ViewProperties implements IView {
         root.setLayout(groupNodeGridLayout);
 
         // Create controls
-        table = SWTUtil.createTable(root, SWT.BORDER);
+        table = SWTUtil.createTable(root, SWT.BORDER | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         final GridData gdata = SWTUtil.createFillGridData();
@@ -155,15 +156,15 @@ public class ViewProperties implements IView {
     }
 
     /**
-     * Converts an information loss into a relative value in percent.
+     * Converts a score into a relative value in percent.
      * 
      * @param infoLoss
      * @return
      */
     private double asRelativeValue(final InformationLoss<?> infoLoss) {
         if (result == null) return 0;
-        return infoLoss.relativeTo(result.getLattice().getMinimumInformationLoss(),
-                                   result.getLattice().getMaximumInformationLoss()) * 100d;
+        return infoLoss.relativeTo(result.getLattice().getLowestScore(),
+                                   result.getLattice().getHighestScore()) * 100d;
     }
 
     /**
@@ -184,20 +185,30 @@ public class ViewProperties implements IView {
         c.setText(1, String.valueOf(node.getAnonymity()));
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
-        if (node.getMinimumInformationLoss() != null) {
-            c.setText(1, node.getMinimumInformationLoss().toString() +
-                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMinimumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (node.getLowestScore() != null) {
+            c.setText(1, node.getLowestScore().toString() +
+                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
         }
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
-        if (node.getMaximumInformationLoss() != null) {
-            c.setText(1, node.getMaximumInformationLoss().toString() +
-                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getMaximumInformationLoss())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+        if (node.getHighestScore() != null) {
+            c.setText(1, node.getHighestScore().toString() +
+                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
             c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
         }
+        
+        // Print metadata
+        if (node.isChecked()) {
+            for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+                c = new TableItem(table, SWT.NONE);
+                c.setText(0, metadata.getParameter());
+                c.setText(1, SWTUtil.getPrettyString(metadata.getValue()));
+            }
+        }
+        
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.27")); //$NON-NLS-1$
         c.setText(1, String.valueOf(node.getSuccessors().length));

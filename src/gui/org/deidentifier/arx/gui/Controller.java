@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@
 
 package org.deidentifier.arx.gui;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -61,6 +62,7 @@ import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -74,13 +76,14 @@ import org.deidentifier.arx.gui.view.impl.MainWindow;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
-import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
+import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.wizard.ARXWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardResult;
 import org.deidentifier.arx.gui.view.impl.wizard.ImportWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
+import org.deidentifier.arx.gui.worker.WorkerCreateCertificate;
 import org.deidentifier.arx.gui.worker.WorkerExport;
 import org.deidentifier.arx.gui.worker.WorkerImport;
 import org.deidentifier.arx.gui.worker.WorkerLoad;
@@ -269,6 +272,11 @@ public class Controller implements IView {
                 explicit.add(other);
             }
         }
+        for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
+            if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
         Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
             public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
                 return o1.getAttribute().compareTo(o2.getAttribute());
@@ -339,6 +347,11 @@ public class Controller implements IView {
             }
         }
         for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+            if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
+        for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
             if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
                 explicit.add(other);
             }
@@ -414,6 +427,12 @@ public class Controller implements IView {
                     others.add((ModelExplicitCriterion) other);
                 }
             }
+        } else if (criterion instanceof ModelBLikenessCriterion) {
+            for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
+                if (!other.equals(criterion) && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion) other);
+                }
+            }
         } else {
             throw new RuntimeException(Resources.getMessage("Controller.1")); //$NON-NLS-1$
         }
@@ -461,6 +480,12 @@ public class Controller implements IView {
                 }
             } else if (criterion instanceof ModelDDisclosurePrivacyCriterion) {
                 for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+                    if (!other.equals(criterion) && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion) criterion);
+                    }
+                }
+            } else if (criterion instanceof ModelBLikenessCriterion) {
+                for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
                     if (!other.equals(criterion) && other.isEnabled()) {
                         other.pull((ModelExplicitCriterion) criterion);
                     }
@@ -712,6 +737,13 @@ public class Controller implements IView {
                              .getHandle()
                              .getStatistics()
                              .getDistinctValues(index);
+        
+        if (data.length == 1) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.18"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.157")); //$NON-NLS-1$
+            return;
+        }
 
         HierarchyBuilder<?> builder = model.getInputConfig().getHierarchyBuilder(attr);
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -955,6 +987,72 @@ public class Controller implements IView {
     }
 
     /**
+     * Creates and displays a certificate
+     */
+    public void actionMenuFileCreateCertificate() {
+        
+        if (model == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.30"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.31")); //$NON-NLS-1$
+            return;
+        } else if (model.getOutput() == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.32"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.33")); //$NON-NLS-1$
+            return;
+        }
+
+        // Check node
+        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+            if (!main.showQuestionDialog(main.getShell(),
+                                         Resources.getMessage("Controller.34"), //$NON-NLS-1$
+                                         Resources.getMessage("Controller.156"))) //$NON-NLS-1$
+            {
+                return;
+            }
+        }
+
+        // Ask for file
+        String file = main.showSaveFileDialog(main.getShell(), "*.pdf"); //$NON-NLS-1$
+        if (file == null) {
+            return;
+        }
+        if (!file.endsWith(".pdf")) { //$NON-NLS-1$
+            file = file + ".pdf"; //$NON-NLS-1$
+        }
+
+        // Export
+        final WorkerCreateCertificate worker = new WorkerCreateCertificate(file,
+                                                                           model.getCSVSyntax(),
+                                                                           model.getInputConfig().getInput().getHandle(),
+                                                                           model.getOutputDefinition(),
+                                                                           model.getOutputConfig().getConfig(),
+                                                                           model.getResult(),
+                                                                           model.getOutputNode(),
+                                                                           model.getOutput(),
+                                                                           model);
+
+        main.showProgressDialog(Resources.getMessage("Controller.154"), worker); //$NON-NLS-1$
+
+        if (worker.getError() != null) {
+            main.showErrorDialog(main.getShell(),
+                                 Resources.getMessage("Controller.155"), //$NON-NLS-1$
+                                 worker.getError());
+            return;
+        }
+
+        // Open
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(worker.getResult());
+            } catch (Exception e) {
+                // Drop silently
+            }
+        }
+    }
+
+    /**
      * File->exit.
      */
     public void actionMenuFileExit() {
@@ -1145,10 +1243,10 @@ public class Controller implements IView {
         if (path != null) {
 
             // Determine separator
-            DialogSeparator dialog = null;
+            DialogOpenHierarchy dialog = null;
 
             try {
-                dialog = new DialogSeparator(main.getShell(), this, path, false);
+                dialog = new DialogOpenHierarchy(main.getShell(), this, path, false);
                 dialog.create();
                 if (dialog.open() == Window.CANCEL) {
                     return;
@@ -1162,15 +1260,14 @@ public class Controller implements IView {
                 if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
                     main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.37"), error.getMessage()); //$NON-NLS-1$
                 } else {
-                    main.showErrorDialog(main.getShell(),
-                                         Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
+                    main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
                 }
                 return;
             }
 
             // Load hierarchy
             final char separator = dialog.getSeparator();
-            final Charset charset = Charset.defaultCharset();
+            final Charset charset = dialog.getCharset();
             final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
             if (hierarchy != null) {
                 String attr = model.getSelectedAttribute();
@@ -1483,7 +1580,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1504,7 +1601,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1512,29 +1609,6 @@ public class Controller implements IView {
                                               final String[] values) {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
-    }
-
-    /**
-     * Shows a dialog for selecting a format string for a data type.
-     *
-     * @param shell The parent shell
-     * @param title The dialog's title
-     * @param text The dialog's text
-     * @param preselected A preselected format string
-     * @param locale The locale
-     * @param type The description of the data type for which to choose a format string
-     * @param values The values to check the format string against
-     * @return The format string, or <code>null</code> if no format was (or could be) selected
-     */
-    public String actionShowFormatInputDialog(final Shell shell,
-                                              final String title,
-                                              final String text,
-                                              final String preselected,
-                                              final Locale locale,
-                                              final DataTypeDescription<?> type,
-                                              final Collection<String> values) {
-
-        return main.showFormatInputDialog(shell, title, text, preselected, locale, type, values);
     }
     
     /**
@@ -1556,7 +1630,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1572,6 +1645,7 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1658,7 +1732,6 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
-
     /**
      * Shows a question dialog.
      *
@@ -1670,6 +1743,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(this.main.getShell(), header, text);
     }
+    
     /**
      * Internal method for showing a "save file" dialog.
      *
@@ -1680,7 +1754,7 @@ public class Controller implements IView {
     public String actionShowSaveFileDialog(final Shell shell, String filter) {
         return main.showSaveFileDialog(shell, filter);
     }
-    
+
     /**
      * Includes all tuples in the research subset.
      */
@@ -1819,7 +1893,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Registers a listener at the controller.
      *
@@ -1832,7 +1906,7 @@ public class Controller implements IView {
         }
         listeners.get(target).add(listener);
     }
-    
+
     @Override
     public void dispose() {
         for (final Set<IView> listeners : getListeners().values()) {

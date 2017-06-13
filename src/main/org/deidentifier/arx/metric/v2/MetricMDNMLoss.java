@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -83,7 +84,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * @param function
      */
     public MetricMDNMLoss(double gsFactor, AggregateFunction function){
-        super(false, false, function);
+        super(true, false, false, function);
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Parameter must be in [0, 1]");
         }
@@ -140,10 +141,20 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Loss");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+    
+    @Override
     public String toString() {
         return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
@@ -172,7 +183,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 }
                 for (int dimension=0; dimension<dimensionsAggregated; dimension++){
                     
-                    double share = (double)m.count * microaggregationFunctions[dimension].getMeanError(m.distributions[microaggregationStart + dimension]);
+                    double share = (double)m.count * super.getError(microaggregationFunctions[dimension],
+                                                                    m.distributions[microaggregationStart + dimension]);
                     result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
                                          (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
                     // Note: we ignore a bound for microaggregation, as we cannot compute it
@@ -222,13 +234,14 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
         // Compute
         for (int dimension=0; dimension<dimensionsAggregated; dimension++){
-            result[dimensionsGeneralized + dimension] = (double)entry.count * microaggregationFunctions[dimension].getMeanError(entry.distributions[microaggregationStart + dimension]);
+            result[dimensionsGeneralized + dimension] = (double)entry.count * super.getError(microaggregationFunctions[dimension],
+                                                                                             entry.distributions[microaggregationStart + dimension]); 
         }
         
         // Return
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
@@ -268,7 +281,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Return
         return super.createInformationLoss(bound);
     }
-    
+
     /**
      * For subclasses.
      *

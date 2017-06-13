@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,28 +52,33 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     /** The microaggregation functions. */
     private DistributionAggregateFunction[] microaggregationFunctions;
 
-    /** The start index of the attributes with microaggregation in the data array */
+    /** The start index of the attributes with microaggregation in the data array (dataAnalyzed) */
     private int                             microaggregationStartIndex;
+
+    /** Domain size for each microaggregated attribute */
+    private int[]                           microaggregationDomainSizes;
 
     /**
      * Creates a new instance.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      */
-    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent, 0.5d);
+    protected AbstractMetricSingleDimensional(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent) {
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, 0.5d);
     }
 
     /**
      * Creates a new instance.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      * @param gsFactor
      */
-    protected AbstractMetricSingleDimensional(final boolean monotonic, final boolean independent, final double gsFactor) {
-        super(monotonic, independent, gsFactor);
+    protected AbstractMetricSingleDimensional(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent, final double gsFactor) {
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor);
     }
     
     /**
@@ -136,6 +141,14 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      * Needed for microaggregation
      * @return
      */
+    protected int[] getMicroaggregationDomainSizes() {
+        return microaggregationDomainSizes;
+    }
+    
+    /**
+     * Needed for microaggregation
+     * @return
+     */
     protected DistributionAggregateFunction[] getMicroaggregationFunctions() {
         return microaggregationFunctions;
     }
@@ -147,7 +160,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     protected int getMicroaggregationStartIndex() {
         return microaggregationStartIndex;
     }
-    
+
     /**
      * Returns the number of rows in the dataset or subset.
      *
@@ -169,8 +182,10 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         // Handle microaggregation
         this.microaggregationFunctions = manager.getMicroaggregationFunctions();
         this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
+        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
         if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
             this.microaggregationFunctions = new DistributionAggregateFunction[0];
+            this.microaggregationDomainSizes = new int[0];
         }
         
         // Initialize dimensions

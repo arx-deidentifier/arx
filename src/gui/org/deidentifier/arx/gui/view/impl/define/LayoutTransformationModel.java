@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,6 @@ public class LayoutTransformationModel implements ILayout, IView {
     private ComponentTitledFolder folder;
 
     /** View. */
-    private IView                 viewCodingModel;
-
-    /** View. */
-    private IView                 viewAttributeWeights;
-
-    /** View. */
     private Composite             root;
 
     /**
@@ -63,8 +57,7 @@ public class LayoutTransformationModel implements ILayout, IView {
      * @param parent
      * @param controller
      */
-    public LayoutTransformationModel(final Composite parent,
-                                        final Controller controller) {
+    public LayoutTransformationModel(final Composite parent, final Controller controller) {
 
         this.controller = controller;
         
@@ -72,7 +65,7 @@ public class LayoutTransformationModel implements ILayout, IView {
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.METRIC, this);
-                
+
         this.root = build(parent);
     }
 
@@ -83,23 +76,16 @@ public class LayoutTransformationModel implements ILayout, IView {
 
     @Override
     public void reset() {
-        hideSettingsAttributeWeights();
-        hideSettingsCodingModel();
+        folder.setVisible(Resources.getMessage("CriterionDefinitionView.63"), false); //$NON-NLS-1$
+        folder.setVisible(Resources.getMessage("CriterionDefinitionView.65"), false); //$NON-NLS-1$ 
     }
     
     @Override
     public void update(ModelEvent event) {
-        
         if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
-            updateControls();
         } 
-        
-        if (event.part == ModelPart.ATTRIBUTE_TYPE ||
-            event.part == ModelPart.INPUT ||
-            event.part == ModelPart.METRIC) {
-            updateControls();
-        }
+        updateControls();
     }
 
     /**
@@ -127,56 +113,21 @@ public class LayoutTransformationModel implements ILayout, IView {
         composite1.setLayout(new FillLayout());
         new ViewUtilityMeasures(composite1, controller);
         
+        // Coding model
+        Composite composite4 = folder.createItem(Resources.getMessage("CriterionDefinitionView.65"), null, true);  //$NON-NLS-1$
+        composite4.setLayout(new FillLayout());
+        new ViewCodingModel(composite4, controller);
+        
+        // Attribute weights
+        Composite composite3 = folder.createItem(Resources.getMessage("CriterionDefinitionView.63"), null, true);  //$NON-NLS-1$
+        composite3.setLayout(new FillLayout());
+        new ViewAttributeWeights(composite3, controller);
+        
         // Select first and finish
         folder.setSelection(0);
         return group;
     }
   
-    /**
-     * Hides the settings for the attribute weights.
-     */
-    private void hideSettingsAttributeWeights(){
-
-        if (this.viewAttributeWeights != null) {
-            this.viewAttributeWeights.dispose();
-            this.viewAttributeWeights = null;
-            folder.disposeItem(Resources.getMessage("CriterionDefinitionView.63"));  //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Hides the settings for the coding model.
-     */
-    private void hideSettingsCodingModel(){
-        if (this.viewCodingModel != null) {
-            this.viewCodingModel.dispose();
-            this.viewCodingModel = null;
-            folder.disposeItem(Resources.getMessage("CriterionDefinitionView.65"));  //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Shows the settings for the attribute weights.
-     */
-    private void showSettingsAttributeWeights(){
-        if (this.viewAttributeWeights != null) return;
-        Composite composite1 = folder.createItem(Resources.getMessage("CriterionDefinitionView.63"), null);  //$NON-NLS-1$
-        composite1.setLayout(new FillLayout());
-        this.viewAttributeWeights = new ViewAttributeWeights(composite1, controller);
-        this.viewAttributeWeights.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-    }
-
-    /**
-     * Shows the settings for the coding model.
-     */
-    private void showSettingsCodingModel(){
-        if (this.viewCodingModel != null) return;
-        Composite composite2 = folder.createItem(Resources.getMessage("CriterionDefinitionView.65"), null);  //$NON-NLS-1$
-        composite2.setLayout(new FillLayout());
-        this.viewCodingModel = new ViewCodingModel(composite2, controller);
-        this.viewCodingModel.update(new ModelEvent(this, ModelPart.MODEL, this.model));
-    }
-
     /**
      * This method updates the view
      */
@@ -190,18 +141,14 @@ public class LayoutTransformationModel implements ILayout, IView {
         if (config != null && description != null) {
 
             if (model == null || model.getInputDefinition() == null || model.getInputConfig() == null ||
-                model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() ||
-                !description.isAttributeWeightsSupported()) {
-                hideSettingsAttributeWeights();
+                model.getInputDefinition().getQuasiIdentifyingAttributes().isEmpty() || !description.isAttributeWeightsSupported()) {
+                folder.setVisible(Resources.getMessage("CriterionDefinitionView.63"), false); //$NON-NLS-1$
             } else {
-                showSettingsAttributeWeights();
+                folder.setVisible(Resources.getMessage("CriterionDefinitionView.63"), true); //$NON-NLS-1$
             }
             
-            if (description.isConfigurableCodingModelSupported()) {
-                showSettingsCodingModel();
-            } else {
-                hideSettingsCodingModel();
-            }
+            folder.setVisible(Resources.getMessage("CriterionDefinitionView.65"), //$NON-NLS-1$ 
+                              description.isConfigurableCodingModelSupported()); 
         }
 
         root.setRedraw(true);        

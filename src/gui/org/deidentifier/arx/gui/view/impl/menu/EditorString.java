@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,27 +30,29 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
 /**
+ * String editor
  * 
+ * @author prasser Fabian Prasser
  */
 public abstract class EditorString implements IEditor<String> {
 
-    /**  TODO */
+    /**  Category */
     private final String  category;
     
-    /**  TODO */
+    /**  Label */
     private final String  label;
     
-    /**  TODO */
+    /**  Combo */
     private final boolean multi;
     
-    /**  TODO */
+    /**  OK */
     private final Button  ok;
     
-    /**  TODO */
+    /**  Text */
     private Text text;
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param composite
      */
@@ -63,7 +65,7 @@ public abstract class EditorString implements IEditor<String> {
     }
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param category
      * @param label
@@ -74,6 +76,7 @@ public abstract class EditorString implements IEditor<String> {
                         final String label,
                         final Button ok,
                         final boolean multi) {
+        
         this.category = category;
         this.label = label;
         this.multi = multi;
@@ -114,7 +117,7 @@ public abstract class EditorString implements IEditor<String> {
     }
 
     /**
-     * 
+     * Returns the control
      *
      * @return
      */
@@ -131,9 +134,9 @@ public abstract class EditorString implements IEditor<String> {
      * Update.
      */
     public void update(){
-        if (text!=null){
+        if (text != null) {
             String value = getValue();
-            if (!text.getText().equals(value)) {
+            if (isDifferent(text.getText(), value)) {
                 text.setText(value);
             }
         }

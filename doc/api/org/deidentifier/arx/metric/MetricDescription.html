@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>MetricDescription (ARX API Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -145,23 +145,27 @@ implements java.io.Serializable</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isAttributeWeightsSupported()">isAttributeWeightsSupported</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isAttackerModelSupported()">isAttackerModelSupported</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isConfigurableCodingModelSupported()">isConfigurableCodingModelSupported</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isAttributeWeightsSupported()">isAttributeWeightsSupported</a></strong>()</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isConfigurableCodingModelSupported()">isConfigurableCodingModelSupported</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>abstract boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isInstance(org.deidentifier.arx.metric.Metric)">isInstance</a></strong>(<a href="../../../../org/deidentifier/arx/metric/Metric.html" title="class in org.deidentifier.arx.metric">Metric</a>&lt;?&gt;&nbsp;metric)</code>
 <div class="block">Returns whether the given metric is an instance of this description.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isMonotonicVariantSupported()">isMonotonicVariantSupported</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/metric/MetricDescription.html#isPrecomputationSupported()">isPrecomputationSupported</a></strong>()</code>&nbsp;</td>
 </tr>
@@ -229,6 +233,16 @@ implements java.io.Serializable</pre>
 <pre>public&nbsp;boolean&nbsp;isAggregateFunctionSupported()</pre>
 <div class="block">Returns whether an aggregate function is supported by the metric.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isAttackerModelSupported()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isAttackerModelSupported</h4>
+<pre>public&nbsp;boolean&nbsp;isAttackerModelSupported()</pre>
+<dl><dt><span class="strong">Returns:</span></dt><dd>the attackerModelSupported</dd></dl>
 </li>
 </ul>
 <a name="isAttributeWeightsSupported()">

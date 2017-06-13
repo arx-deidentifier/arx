@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>SWTUtil (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
@@ -352,20 +352,32 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(boolean)">getPrettyString</a></strong>(boolean&nbsp;value)</code>
+<div class="block">Converts a boolean into a pretty string</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(double)">getPrettyString</a></strong>(double&nbsp;value)</code>
 <div class="block">Returns a pretty string representing the given double</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(int)">getPrettyString</a></strong>(int&nbsp;value)</code>
 <div class="block">Returns a pretty string representing the given value</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(long)">getPrettyString</a></strong>(long&nbsp;value)</code>
 <div class="block">Returns a pretty string representing the given value</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/view/SWTUtil.html#getPrettyString(java.lang.Object)">getPrettyString</a></strong>(java.lang.Object&nbsp;value)</code>
+<div class="block">Fallback for objects of unknown type</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -813,6 +825,18 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>sash</code> - </dd></dl>
 </li>
 </ul>
+<a name="getPrettyString(boolean)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrettyString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getPrettyString(boolean&nbsp;value)</pre>
+<div class="block">Converts a boolean into a pretty string</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getPrettyString(double)">
 <!--   -->
 </a>
@@ -845,6 +869,18 @@ extends java.lang.Object</pre>
 <h4>getPrettyString</h4>
 <pre>public static&nbsp;java.lang.String&nbsp;getPrettyString(long&nbsp;value)</pre>
 <div class="block">Returns a pretty string representing the given value</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getPrettyString(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPrettyString</h4>
+<pre>public static&nbsp;java.lang.String&nbsp;getPrettyString(java.lang.Object&nbsp;value)</pre>
+<div class="block">Fallback for objects of unknown type</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>value</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>

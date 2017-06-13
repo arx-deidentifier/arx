@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.layer.config.DefaultColumnHeaderStyleConfiguration;
-import org.eclipse.nebula.widgets.nattable.painter.cell.BackgroundImagePainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.ICellPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.decorator.CellPainterDecorator;
@@ -38,13 +37,13 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyleConfiguration {
 
-    /**  TODO */
-    private final Image            IMAGE_COL_BACK;
-    
-    /**  TODO */
-    private final Image            IMAGE_COL_SELECT;
-    
-    /**  TODO */
+    /** Image */
+    private final Image            defaultBackground;
+
+    /** Image */
+    private final Image            selectedBackground;
+
+    /** Context */
     private final DataTableContext context;
 
     /**
@@ -55,8 +54,8 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
     public DataTableColumnHeaderConfiguration(DataTableContext context) {
         this.context = context;
         this.font = context.getFont();
-        IMAGE_COL_BACK   = context.getController().getResources().getManagedImage("column_header_bg.png"); //$NON-NLS-1$
-        IMAGE_COL_SELECT = context.getController().getResources().getManagedImage("selected_column_header_bg.png"); //$NON-NLS-1$
+        this.defaultBackground   = context.getController().getResources().getManagedImage("column_header_bg.png"); //$NON-NLS-1$
+        this.selectedBackground = context.getController().getResources().getManagedImage("selected_column_header_bg.png"); //$NON-NLS-1$
     }
 
     @Override
@@ -73,10 +72,10 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
      */
     private void addNormalModeStyling(final IConfigRegistry configRegistry) {
 
-        final TextPainter txtPainter = new TextPainter(false, false);
-        final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter,
-                                                                       IMAGE_COL_BACK,
-                                                                       GUIHelper.getColor(192, 192, 192));
+        final TextPainter txtPainter = new TextPainter(false, false, true, true);
+        final ICellPainter bgImagePainter = new DataTableBackgroundImagePainter(txtPainter,
+                                                                                defaultBackground,
+                                                                                GUIHelper.getColor(192, 192, 192));
         final SortableHeaderTextPainter headerBasePainter = new SortableHeaderTextPainter(bgImagePainter, false, true);
 
         final CellPainterDecorator headerPainter = new CellPainterDecorator(headerBasePainter,
@@ -100,10 +99,10 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
      */
     private void addSelectedModeStyling(final IConfigRegistry configRegistry) {
 
-        final TextPainter txtPainter = new TextPainter(false, false);
-        final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
-                                                                            IMAGE_COL_SELECT,
-                                                                            GUIHelper.getColor(192, 192, 192));
+        final TextPainter txtPainter = new TextPainter(false, false, true, true);
+        final ICellPainter selectedCellPainter = new DataTableBackgroundImagePainter(txtPainter,
+                                                                                     selectedBackground,
+                                                                                     GUIHelper.getColor(192, 192, 192));
 
         final CellPainterDecorator selectedHeaderPainter = new CellPainterDecorator(selectedCellPainter,
                                                                                     CellEdgeEnum.LEFT,

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,17 +28,6 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
  */
 public class MetricConfiguration implements Serializable {
 
-    /**
-     * Attacker model used by the metric
-     * 
-     * @author Fabian Prasser
-     * 
-     */
-    public static enum MetricConfigurationAttackerModel {
-        PROSECUTOR,
-        JOURNALIST
-    }
-
     /** SVUID. */
     private static final long                serialVersionUID        = 871854276489749340L;
 
@@ -57,27 +46,6 @@ public class MetricConfiguration implements Serializable {
     /** Aggregate function. */
     private AggregateFunction                aggregateFunction       = AggregateFunction.GEOMETRIC_MEAN;
 
-    /** Attacker model */
-    private MetricConfigurationAttackerModel attackerModel           = MetricConfigurationAttackerModel.PROSECUTOR;
-
-    /**
-     * Constructs a new instance.
-     *
-     * @param monotonic
-     * @param gsFactor
-     * @param precomputed
-     * @param precomputationThreshold
-     * @param aggregateFunction
-     */
-    public MetricConfiguration(boolean monotonic,
-                               double gsFactor,
-                               boolean precomputed,
-                               double precomputationThreshold,
-                               AggregateFunction aggregateFunction) {
-        this(monotonic, gsFactor, precomputed, precomputationThreshold, aggregateFunction, 
-             MetricConfigurationAttackerModel.PROSECUTOR);
-    }
-    
     /**
      * Constructs a new instance.
      *
@@ -92,14 +60,12 @@ public class MetricConfiguration implements Serializable {
                                double gsFactor,
                                boolean precomputed,
                                double precomputationThreshold,
-                               AggregateFunction aggregateFunction, 
-                               MetricConfigurationAttackerModel attackerModel) {
+                               AggregateFunction aggregateFunction) {
         this.monotonic = monotonic;
         this.gsFactor = gsFactor;
         this.precomputed = precomputed;
         this.precomputationThreshold = precomputationThreshold;
         this.aggregateFunction = aggregateFunction;
-        this.attackerModel = attackerModel;
     }
 
     /**
@@ -107,16 +73,6 @@ public class MetricConfiguration implements Serializable {
      */
     public AggregateFunction getAggregateFunction() {
         return aggregateFunction;
-    }
-    
-    /**
-     * @return the attackerModel
-     */
-    public MetricConfigurationAttackerModel getAttackerModel() {
-        if (this.attackerModel == null) {
-            this.attackerModel = MetricConfigurationAttackerModel.PROSECUTOR;
-        }
-        return this.attackerModel;
     }
     
     /**
@@ -152,13 +108,6 @@ public class MetricConfiguration implements Serializable {
      */
     public void setAggregateFunction(AggregateFunction aggregateFunction) {
         this.aggregateFunction = aggregateFunction;
-    }
-    
-    /**
-     * @param attackerModel the attackerModel to set
-     */
-    public void setAttackerModel(MetricConfigurationAttackerModel attackerModel) {
-        this.attackerModel = attackerModel;
     }
     
     /**

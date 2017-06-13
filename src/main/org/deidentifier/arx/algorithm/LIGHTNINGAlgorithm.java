@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -181,14 +181,17 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @return
     */
     private boolean prune(Transformation transformation) {
-        // A Transformation (and it's direct and indirect successors, respectively) can be pruned if
-        // the information loss is monotonic and the nodes's IL is greater or equal than the IL of the
-        // global maximum (regardless of the anonymity criterion's monotonicity)
-        boolean metricMonotonic = checker.getMetric().isMonotonic() || checker.getConfiguration().getAbsoluteMaxOutliers() == 0;
         // Depending on monotony of metric we choose to compare either IL or monotonic subset with the global optimum
         boolean prune = false;
         if (getGlobalOptimum() != null) {
-            if (metricMonotonic) prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
+            
+            // A Transformation (and it's direct and indirect successors, respectively) can be pruned if
+            // the information loss is monotonic and the nodes's IL is greater or equal than the IL of the
+            // global maximum (regardless of the anonymity criterion's monotonicity)
+            // TODO: We could use this for predictive tagging as well!
+            if (checker.getMetric().isMonotonic(checker.getConfiguration().getMaxOutliers())) {
+                prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
+            }
         }
         return (prune || transformation.hasProperty(propertyExpanded));
     }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -112,7 +112,7 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
 
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
-        this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         this.table.setMenu(new ClipboardHandlerTable(table).getMenu());
