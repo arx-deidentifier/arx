@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsLogisticRegressionOutputROCCurves  extends ViewStatisticsLogisticRegression {
+public class ViewStatisticsLogisticRegressionOutputROCCurves  extends ViewStatisticsLogisticRegressionROCCurves {
 
     /**
      * Creates a new instance.

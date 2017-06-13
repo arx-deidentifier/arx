@@ -23,7 +23,7 @@ import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsClassification;
-import org.deidentifier.arx.aggregates.StatisticsClassification.PrecisionRecallMatrix;
+import org.deidentifier.arx.aggregates.StatisticsClassification.ROCCurve;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -129,8 +129,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
             for (TableItem item : table.getItems()) {
                 if (item.getText(0).equals(super.getModel().getSelectedAttribute())) {
                     table.select(index);
-                    if (item.getData() != null && item.getData() instanceof PrecisionRecallMatrix) {
-                        setChartSeries((PrecisionRecallMatrix) item.getData());
+                    if (item.getData() != null && item.getData() instanceof ROCCurve) {
+                        setChartSeries(item.getText(0), (ROCCurve) item.getData());
                     }
                     return;
                 }
@@ -216,8 +216,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
 
         // Initialize axes
         ITitle yAxisTitle = yAxis.getTitle();
-        yAxisTitle.setText(Resources.getMessage("ViewStatisticsClassificationInput.17")); //$NON-NLS-1$
-        xAxisTitle.setText(Resources.getMessage("ViewStatisticsClassificationInput.14")); //$NON-NLS-1$
+        yAxisTitle.setText(Resources.getMessage("ViewStatisticsClassificationInput.19")); //$NON-NLS-1$
+        xAxisTitle.setText(Resources.getMessage("ViewStatisticsClassificationInput.20")); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
     }
@@ -226,50 +226,33 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
      * Updates the chart with a new matrix
      * @param matrix
      */
-    private void setChartSeries(PrecisionRecallMatrix matrix) {
+    private void setChartSeries(String classValue, ROCCurve rocCurve) {
         
         // Init data
-        String[] xAxisLabels = new String[matrix.getConfidenceThresholds().length];
-        double[] ySeriesPrecision = new double[matrix.getConfidenceThresholds().length];
-        double[] ySeriesRecall = new double[matrix.getConfidenceThresholds().length];
-        double[] ySeriesFscore = new double[matrix.getConfidenceThresholds().length];
-        for (int i = 0; i < xAxisLabels.length; i++) {
-            xAxisLabels[i] = SWTUtil.getPrettyString(matrix.getConfidenceThresholds()[i] * 100d);
-            ySeriesPrecision[i] = matrix.getPrecision()[i] * 100d;
-            ySeriesRecall[i] = matrix.getRecall()[i] * 100d;
-            ySeriesFscore[i] = matrix.getFscore()[i] * 100d;
+        
+        double[] xSeries = new double[rocCurve.getFalsePositiveRate().length];
+        double[] ySeries = new double[rocCurve.getTruePositiveRate().length];
+        
+        for(int i=0; i<xSeries.length; i++){
+            xSeries[i] = rocCurve.getFalsePositiveRate()[i] * 100d;
+            ySeries[i] = rocCurve.getTruePositiveRate()[i] * 100d;
         }
+       
         
         chart.setRedraw(false);
 
         ISeriesSet seriesSet = chart.getSeriesSet();
 
-        ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.15")); //$NON-NLS-1$
-        series1.getLabel().setVisible(false);
-        series1.getLabel().setFont(chart.getFont());
-        series1.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-        series1.setYSeries(ySeriesPrecision);
-        series1.setAntialias(SWT.ON);
-        series1.setSymbolType(PlotSymbolType.NONE);
-        series1.enableArea(true);
+        ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, classValue); //$NON-NLS-1$
+        series.getLabel().setVisible(false);
+        series.getLabel().setFont(chart.getFont());
+        series.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+        series.setXSeries(xSeries);
+        series.setYSeries(ySeries);
+        series.setAntialias(SWT.ON);
+        series.setSymbolType(PlotSymbolType.NONE);
+        series.enableArea(true);
         
-        ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
-        series2.getLabel().setVisible(false);
-        series2.getLabel().setFont(chart.getFont());
-        series2.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-        series2.setYSeries(ySeriesRecall);
-        series2.setSymbolType(PlotSymbolType.NONE);
-        series2.enableArea(true);
-        
-        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.18")); //$NON-NLS-1$
-        series3.getLabel().setVisible(false);
-        series3.getLabel().setFont(chart.getFont());
-        series3.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
-        series3.setYSeries(ySeriesFscore);
-        series3.setSymbolType(PlotSymbolType.NONE);
-        series3.enableArea(true);
-        
-        seriesSet.bringToFront(Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
         
         chart.getLegend().setVisible(true);
         chart.getLegend().setPosition(SWT.TOP);
@@ -280,9 +263,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         yAxis.setRange(new Range(0d, 100d));
 
         IAxis xAxis = axisSet.getXAxis(0);
-        xAxis.setCategorySeries(xAxisLabels);
-        xAxis.adjustRange();
-        updateCategories();
+        xAxis.setRange(new Range(0d, 100d));
 
         chart.setRedraw(true);
         chart.updateLayout();
@@ -403,8 +384,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
                             if (item.getData() != null &&
-                                item.getData() instanceof PrecisionRecallMatrix) {
-                                setChartSeries((PrecisionRecallMatrix) item.getData());
+                                item.getData() instanceof ROCCurve) {
+                                setChartSeries(item.getText(0), (ROCCurve) item.getData());
                             }
                             getModel().setSelectedAttribute(item.getText(0));
                             getController().update(new ModelEvent(ViewStatisticsLogisticRegressionROCCurves.this,
@@ -464,17 +445,18 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         // Create an analysis
         Analysis analysis = new Analysis(){
 
-            private boolean                     stopped    = false;
-            private List<List<Double>>          values     = new ArrayList<>();
-            private List<Integer>               numClasses = new ArrayList<>();
-            private List<PrecisionRecallMatrix> matrixes   = new ArrayList<>();
-            private int                         progress   = 0;
+            private boolean                     stopped     = false;
+            private List<List<Double>>          values      = new ArrayList<>();
+            private List<Integer>               numClasses  = new ArrayList<>();
+            private List<String>                classValues = new ArrayList<>();
+            private List<ROCCurve>              rocCurves   = new ArrayList<>();
+            private int                         progress    = 0;
 
             @Override
             public int getProgress() {
                 
                 double result = 0d;
-                double perBatch = 100d / (double)classes.length;
+                double perBatch = 100d / (double)classValues.size();
                 result += (double)progress * perBatch;
                 result += (double)builder.getProgress() / 100d * perBatch;
                 result = result <= 100d ? result : 100d;
@@ -501,19 +483,19 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                 }
 
                 // Create entries
-                for (int i = 0; i < classes.length; i++) {
+                for (int i = 0; i < classValues.size(); i++) {
                     TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(0, classes[i]);
-                    item.setText(1, String.valueOf(numClasses.get(i)));
-                    for (int j = 0; j<values.get(i).size(); j++) {
-                        item.setData(String.valueOf(2+j), values.get(i).get(j));    
+                    item.setText(0, classValues.get(i));
+                    item.setText(1, String.valueOf(numClasses.get(0)));
+                    for (int j = 0; j<values.get(0).size(); j++) {
+                        item.setData(String.valueOf(2+j), values.get(0).get(j));    
                     }
-                    item.setData(matrixes.get(i));
+                    item.setData(rocCurves.get(i));
                 }
 
                 table.setFocus();
                 table.select(0);
-                setChartSeries(matrixes.get(0));
+                setChartSeries(classValues.get(0), rocCurves.get(0));
 
                 // Status
                 root.layout();
@@ -550,7 +532,10 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                     }
                     numClasses.add(result.getNumClasses());
                     values.add(getColumnValues(result));
-                    matrixes.add(result.getPrecisionRecall());
+                    classValues = result.getClassValues();
+                    for( String c : classValues) {
+                        rocCurves.add(result.getROCCurve(c));
+                    }
                 }
 
                 // Our users are patient
