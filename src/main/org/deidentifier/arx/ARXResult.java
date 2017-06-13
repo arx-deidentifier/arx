@@ -43,19 +43,6 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
-    /** Anonymizer */
-    private ARXAnonymizer          anonymizer;
-
-    /**
-     * Score type
-     * @author Fabian Prasser
-     *
-     */
-    public static enum ScoreType {
-        AECS,
-        LOSS,
-    }
-
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -395,34 +382,6 @@ public class ARXResult {
     public DataHandle getOutput(boolean fork) {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, fork);
-    }
-    
-    /**
-     * Returns a score
-     *  
-     * @param node the transformation
-     * @param score the type of score
-     * 
-     * @return
-     */
-    public double getScore(ARXNode node, ScoreType score) {
-        return getScore(node, score, -1);
-    }
-    
-    /**
-     * Returns a score
-     *  
-     * @param node the transformation
-     * @param score the type of score
-     * @param clazz the index of the class attribute
-     * 
-     * @return
-     */
-    public double getScore(ARXNode node, ScoreType score, int clazz) {
-        
-        // Apply the transformation
-        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
-        return checker.getScore(definition, transformation, score, clazz);
     }
 
     /**

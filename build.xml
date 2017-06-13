@@ -16,7 +16,7 @@
         <or>
             <filename name="**/colt-1.2.0.jar" />
             <filename name="**/commons-lang-2.6.jar" />
-            <filename name="**/commons-math3-3.1.1.jar" />
+            <filename name="**/commons-math3-3.6.1.jar" />
             <filename name="**/objectselector-0.1-lib.jar" />
             <filename name="**/commons-io-2.4.jar" />
             <filename name="**/commons-codec-1.5.jar" />
