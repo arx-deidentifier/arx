@@ -44,6 +44,10 @@ import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
+import cern.colt.GenericSorting;
+import cern.colt.Swapper;
+import cern.colt.function.IntComparator;
+
 /**
  * Statistics representing the prediction accuracy of a data mining
  * classification operator
@@ -140,25 +144,32 @@ public class StatisticsClassification {
     public static class ROCCurve {
 
         /** Precision */
-        private final double[] truePositive  = new double[CONFIDENCE_THRESHOLDS.length];
+        private double[] truePositive  = new double[CONFIDENCE_THRESHOLDS.length];
         /** Recall */
-        private final double[] falsePositive = new double[CONFIDENCE_THRESHOLDS.length];
+        private double[] falsePositive = new double[CONFIDENCE_THRESHOLDS.length];
+        /** AUC */
+        private double   AUC           = 0d;
+        /** Exists */
+        private double   exists        = 0d;
 
         /**
-         * @return the confidence thresholds
+         * Returns the AUC
+         * @return
          */
-        public double[] getConfidenceThresholds() {
-            return CONFIDENCE_THRESHOLDS;
+        public double getAUC() {
+            return AUC;
         }
 
         /**
+         * Returns false-positive rates for all cut-off points
          * @return the falsePositive
          */
         public double[] getFalsePositiveRate() {
             return falsePositive;
         }
-
+        
         /**
+         * Returns true-positive rates for all cut-off points
          * @return the truePositive
          */
         public double[] getTruePositiveRate() {
@@ -173,28 +184,84 @@ public class StatisticsClassification {
         void add(double confidence, boolean correct) {
             for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
                 if (confidence >= CONFIDENCE_THRESHOLDS[i]) {
-                    falsePositive[i]++;
+                    falsePositive[i] += correct ? 0d : 1d;
                     truePositive[i] += correct ? 1d : 0d;
                 }
             }
         }
+        
+        /**
+         * This value actually exists
+         */
+        void exists() {
+            exists++;
+        }
 
         /**
          * Packs the results
+         * @param classifications 
          */
-        void pack() {
+        void pack(int classifications) {
+            
             // Pack
             for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                
-                if (falsePositive[i] == 0d) {
-                    truePositive[i] = 0d;
+                truePositive[i] /= (double)exists;
+                falsePositive[i] /= (double) (classifications - exists);
+            }
+
+            // Sort
+            GenericSorting.mergeSort(0, falsePositive.length, new IntComparator() {
+                @Override
+                public int compare(int arg0, int arg1) {
+                    return Double.compare(falsePositive[arg0], falsePositive[arg1]);
+                }
+            }, new Swapper() {
+                @Override
+                public void swap(int arg0, int arg1) {
+                    // Swap FP
+                    double temp = falsePositive[arg0];
+                    falsePositive[arg0] = falsePositive[arg1];
+                    falsePositive[arg1] = temp;
+                    // Swap TP
+                    temp = truePositive[arg0];
+                    truePositive[arg0] = truePositive[arg1];
+                    truePositive[arg1] = temp;
+                }
+            });
+            
+            // Make sane
+            if (truePositive[0] != 0 && falsePositive[0] != 0) {
+                truePositive = insert(truePositive, 0, 0d);
+                falsePositive = insert(falsePositive, 0, 0d);
+            }
+            if (truePositive[truePositive.length - 1] != 1 && falsePositive[falsePositive.length - 1] != 1) {
+                truePositive = insert(truePositive, truePositive.length, 1d);
+                falsePositive = insert(falsePositive, falsePositive.length, 1d);
+            }
+            
+            // Calculate AUC
+            // TODO
+        }
+
+        /**
+         * Inserts an element into the array
+         * @param array
+         * @param index
+         * @param value
+         * @return
+         */
+        private double[] insert(double[] array, int index, double value) {
+            double[] result = new double[array.length + 1];
+            for (int i = 0; i < result.length; i++) {
+                if (i < index) {
+                    result[i] = array[i];
+                } else if (i == index) {
+                    result[i] = value;
                 } else {
-                    double total = falsePositive[i];
-                    falsePositive[i] -= truePositive[i];
-                    falsePositive[i] /= total;
-                    truePositive[i] /= total;
+                    result[i] = array[i - 1];
                 }
             }
+            return result;
         }
     }
     
@@ -214,7 +281,7 @@ public class StatisticsClassification {
     /** Precision/recall matrix */
     private PrecisionRecallMatrix matrix                = new PrecisionRecallMatrix();
     /** ROC curve */
-    private Map<String, ROCCurve> rocCurves             = new HashMap<>();
+    private Map<String, ROCCurve> ROC                   = new HashMap<>();
     /** Num classes */
     private int                   numClasses;
     /** Original accuracy */
@@ -224,7 +291,7 @@ public class StatisticsClassification {
     /** Precision/recall matrix */
     private PrecisionRecallMatrix originalMatrix        = new PrecisionRecallMatrix();
     /** ROC curve */
-    private Map<String, ROCCurve> originalRocCurves     = new HashMap<>();
+    private Map<String, ROCCurve> originalROC           = new HashMap<>();
     /** Random */
     private final Random          random;
     /** ZeroR accuracy */
@@ -286,8 +353,8 @@ public class StatisticsClassification {
         
         // Initialize ROC curves
         for (String classValue : specification.classMap.keySet()) {
-            rocCurves.put(classValue, new ROCCurve());
-            originalRocCurves.put(classValue, new ROCCurve());
+            ROC.put(classValue, new ROCCurve());
+            originalROC.put(classValue, new ROCCurve());
         }
         
         // Train and evaluate
@@ -364,7 +431,8 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
-                        this.originalRocCurves.get(actualValue).add(resultInputLR.confidence(), correct);
+                        this.originalROC.get(actualValue).exists(); // TODO: Consider cut-off here?
+                        this.originalROC.get(specification.classMapInverse.get(resultInputLR.index())).add(resultInputLR.confidence(), correct);
 
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -372,7 +440,8 @@ public class StatisticsClassification {
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
                             this.matrix.add(resultOutputLR.confidence(), correct);
-                            this.rocCurves.get(actualValue).add(resultOutputLR.confidence(), correct);
+                            this.ROC.get(actualValue).exists(); // TODO: Consider cut-off here?
+                            this.ROC.get(specification.classMapInverse.get(resultOutputLR.index())).add(resultOutputLR.confidence(), correct);
                         }
                     }
                     this.progress.value = (int)((++done) * total);
@@ -392,12 +461,12 @@ public class StatisticsClassification {
         this.originalMatrix.pack();
         
         // ROCCurves
-        for (ROCCurve curve : this.rocCurves.values()) {
-            curve.pack();
+        for (ROCCurve curve : this.ROC.values()) {
+            curve.pack(classifications);
         }
         // ROCCurves
-        for (ROCCurve curve : this.originalRocCurves.values()) {
-            curve.pack();
+        for (ROCCurve curve : this.originalROC.values()) {
+            curve.pack(classifications);
         }
 
         // Maintain data about outputLR                        
@@ -440,7 +509,7 @@ public class StatisticsClassification {
      * @return
      */
     public Set<String> getClassValues() {
-        return this.rocCurves.keySet();
+        return this.ROC.keySet();
     }
 
     /**
@@ -488,13 +557,12 @@ public class StatisticsClassification {
     }
     
     /**
-     * Returns the ROC curve for this class value calculated using a
-     * one-vs-all approach.
+     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
      * @param clazz
      * @return
      */
     public ROCCurve getOriginalROCCurve(String clazz) {
-        return this.originalRocCurves.get(clazz);
+        return this.originalROC.get(clazz);
     }
     
     /**
@@ -506,13 +574,12 @@ public class StatisticsClassification {
     }
 
     /**
-     * Returns the ROC curve for this class value calculated using a
-     * one-vs-all approach.
+     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
      * @param clazz
      * @return
      */
     public ROCCurve getROCCurve(String clazz) {
-        return this.rocCurves.get(clazz);
+        return this.ROC.get(clazz);
     }
     
     /**
