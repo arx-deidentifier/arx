@@ -205,6 +205,11 @@ public class DataHandleSubset extends DataHandle {
     }
     
     @Override
+    protected int internalGetEncodedValue(int row, int col, boolean ignoreSuppression) {
+        return source.internalGetEncodedValue(this.subset.getArray()[row], col, ignoreSuppression);
+    }
+
+    @Override
     protected String internalGetValue(int row, int col, boolean ignoreSuppression) {
         return source.internalGetValue(this.subset.getArray()[row], col, ignoreSuppression);
     }

@@ -960,6 +960,15 @@ public abstract class DataHandle {
     }
 
     /**
+     * Internal representation of get encoded value. Returns -1 for suppressed values.
+     *
+     * @param row the row
+     * @param col the col
+     * @return the value
+     */
+    protected abstract int internalGetEncodedValue(int row, int col, boolean ignoreSuppression);
+
+    /**
      * Internal representation of get value.
      *
      * @param row the row

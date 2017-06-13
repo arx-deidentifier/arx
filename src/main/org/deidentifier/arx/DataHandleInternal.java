@@ -169,6 +169,13 @@ public class DataHandleInternal {
     }
     
     /**
+     * Gets the encoded value. Returns -1 for suppressed values.
+     */
+    public int getEncodedValue(final int row, final int col, final boolean ignoreSuppression) {
+        return handle.internalGetEncodedValue(row, col, ignoreSuppression);
+    }
+
+    /**
      * Method
      * @param attribute
      * @return
@@ -207,7 +214,7 @@ public class DataHandleInternal {
     public StatisticsBuilder getStatisticsBuilder() {
         return this.handle.getStatistics();
     }
-
+  
     /**
      * Returns the superset, if this handle is a subset
      * @return
@@ -219,7 +226,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-  
+
     /**
      * Method
      * @param row

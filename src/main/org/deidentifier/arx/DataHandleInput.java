@@ -249,6 +249,11 @@ public class DataHandleInput extends DataHandle {
     }
     
     @Override
+    protected int internalGetEncodedValue(final int row, final int column, final boolean ignoreSuppression) {
+        return data[row][column];
+    }
+
+    @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
         return dictionary.getMapping()[column][data[row][column]];
     }
