@@ -26,6 +26,7 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -37,7 +38,15 @@ import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -121,18 +130,22 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         }
     }
 
+    /** Label */
+    private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
+    /** Delay */
+    private static final int    DELAY             = 1000;
+
     /** Controller */
-    private final Controller   controller;
+    private final Controller    controller;
 
     /** View */
     private final Composite    root;
     /** View */
     private final DynamicTable features;
     /** View */
-    private final Table        classes;
-
+    private final Table         classes;
     /** Model */
-    private Model              model;
+    private Model               model;
     /** State */
     private State              state;
 
@@ -167,22 +180,24 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         // Create table
         features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        features.addSelectionListener(new DelayedChangeListener(1000) {
+        DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
+        column0.setWidth("10%", "40px");
+        DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
+        column1.setWidth("45%");
+        DynamicTableColumn column2 = new DynamicTableColumn(features, SWT.NONE);
+        column2.setWidth("45%");
+        
+        features.addSelectionListener(new DelayedChangeListener(DELAY) {
             @Override
             public void delayedEvent() {
                 fireEvent();
             }
         });
-        DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
-        column0.setWidth("10%", "40px");
-        DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
-        column1.setWidth("90%", "40px");
-        
         
         // Create button
         classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        classes.addSelectionListener(new DelayedChangeListener(1000) {
+        classes.addSelectionListener(new DelayedChangeListener(DELAY) {
             public void delayedEvent() {
                 fireEvent();
             }   
@@ -293,22 +308,19 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
 
         // Clear
         root.setRedraw(false);        
+
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
-        for (TableItem item : classes.getItems()) {
-            item.dispose();
-        }
         
-        // Add
         for (int i = 0; i < state.attributes.size(); i++) {
-            
+
             // Features
-            String attribute = state.attributes.get(i);
+            final String attribute = state.attributes.get(i);
             AttributeType type = state.types.get(i);
             Image image = controller.getResources().getImage(type);
             TableItem itemF = new TableItem(features, SWT.NONE);
-            itemF.setText(new String[] { "", attribute } );
+            itemF.setText(new String[] { "", attribute, ""} );
             itemF.setImage(0, image);
             itemF.setChecked(model.getSelectedFeatures().contains(attribute));
 
@@ -316,9 +328,87 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
             TableItem itemC = new TableItem(classes, SWT.NONE);
             itemC.setText(attribute);
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
+            
+            TableEditor editor = new TableEditor(features);
+            final CCombo combo = new CCombo(features, SWT.NONE);
+            final Color defaultColor = combo.getForeground();
+            combo.add("x");
+            combo.add("x^2");
+            combo.add("sqrt(x)");
+            combo.add("log(x)");
+            combo.add("2^x");
+            combo.add("1/x");
+            combo.add(LABEL_CATEGORICAL);
+            combo.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    updateCombo(attribute, combo, defaultColor);
+                }
+            });
+            combo.addSelectionListener(new DelayedChangeListener(DELAY) {
+                public void delayedEvent() {
+                    updateFunction(attribute, combo);
+                }   
+            });
+            combo.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(KeyEvent arg0) {
+                    updateCombo(attribute, combo, defaultColor);
+                }
+            });
+            combo.addKeyListener(new DelayedChangeListener(DELAY) {
+                public void delayedEvent() {
+                    updateFunction(attribute, combo);
+                }   
+            });
+            editor.grabHorizontal = true;
+            editor.setEditor(combo, itemF, 2);
+            String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(attribute);
+            if (function == null || function.equals("")) {
+                function = LABEL_CATEGORICAL;
+            }
+            combo.setText(function);
+        
         }
         
+        // Finish
+        features.layout();
         root.setRedraw(true);
         SWTUtil.enable(root);
-    }    
+    }
+    
+    /**
+     * Updates the combo
+     * @param attribute
+     * @param combo
+     * @param defaultColor 
+     */
+    private void updateCombo(String attribute, CCombo combo, Color defaultColor) {
+        String function = combo.getText();
+        if (function.equals(LABEL_CATEGORICAL)) {
+            combo.setForeground(defaultColor);
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
+                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+            combo.setForeground(GUIHelper.COLOR_RED);
+        } else {
+            combo.setForeground(defaultColor);
+        }
+    }
+
+    /**
+     * Updates the function
+     * @param attribute
+     * @param combo
+     */
+    private void updateFunction(String attribute, CCombo combo) {
+        String function = combo.getText();
+        if (function.equals(LABEL_CATEGORICAL)) {
+            model.getClassificationModel().setScalingFunction(attribute, null);
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
+                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+            model.getClassificationModel().setScalingFunction(attribute, null);
+        } else {
+            model.getClassificationModel().setScalingFunction(attribute, function);
+        }
+    }
 }

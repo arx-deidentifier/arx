@@ -88,13 +88,6 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
         // Prepare encoders
         this.interceptEncoder = new ConstantValueEncoder("intercept");
         this.wordEncoder = new StaticWordValueEncoder("feature");
-        
-        // Configure
-        this.lr.learningRate(1);
-        this.lr.alpha(1);
-        this.lr.lambda(0.000001);
-        this.lr.stepOffset(10000);
-        this.lr.decayExponent(0.2);
     }
 
     @Override
@@ -140,15 +133,20 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
             return vector;
         }
         
-        // TODO: Consider difference between continuous and categorical
-        
         // For each attribute
+        int count = 0;
         for (int index : specification.featureIndices) {
             
             // Obtain data
-            String name = "Attribute-"+index;
+            ClassificationFeatureMetadata metadata = specification.featureMetadata[count];
             String value = handle.getValue(row, index, true);
-            wordEncoder.addToVector(name + ":" + value, 1, vector);
+            Double numeric = metadata.getNumericValue(value);
+            if (Double.isNaN(numeric)) {    
+                wordEncoder.addToVector("Attribute-" + index + ":" + value, 1, vector);
+            } else {
+                wordEncoder.addToVector("Attribute-" + index, numeric, vector);
+            }
+            count++;
         }
         
         // Return
