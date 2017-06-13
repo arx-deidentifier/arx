@@ -28,12 +28,14 @@ import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXNaiveBayesConfiguration;
+import org.deidentifier.arx.ARXSVMConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
 import org.deidentifier.arx.aggregates.classification.ClassificationMethod;
 import org.deidentifier.arx.aggregates.classification.ClassificationResult;
 import org.deidentifier.arx.aggregates.classification.MultiClassLogisticRegression;
 import org.deidentifier.arx.aggregates.classification.MultiClassNaiveBayes;
+import org.deidentifier.arx.aggregates.classification.MultiClassSVM;
 import org.deidentifier.arx.aggregates.classification.MultiClassZeroR;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
@@ -377,7 +379,6 @@ public class StatisticsClassification {
             }
         }
         
-        
         // Maintain data about inputZR
         this.zeroRAverageError /= (double)classifications;
         this.zeroRAccuracy/= (double)classifications;
@@ -562,6 +563,8 @@ public class StatisticsClassification {
             return new MultiClassLogisticRegression(specification, (ARXLogisticRegressionConfiguration)config);
         } else if (config instanceof ARXNaiveBayesConfiguration) {
             return new MultiClassNaiveBayes(specification, (ARXNaiveBayesConfiguration)config);
+        } else if (config instanceof ARXSVMConfiguration) {
+            return new MultiClassSVM(specification, (ARXSVMConfiguration)config);
         } else {
             throw new IllegalArgumentException("Unknown type of configuration");
         }

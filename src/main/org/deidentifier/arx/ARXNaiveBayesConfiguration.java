@@ -25,7 +25,7 @@ import java.io.Serializable;
 public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration implements Serializable {
 
     /** 
-     * Prior function for regularization
+     * Type of bayes classifier
      */
     public static enum Type {
         MULTINOMIAL,
