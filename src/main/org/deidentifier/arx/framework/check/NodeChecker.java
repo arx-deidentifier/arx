@@ -144,8 +144,6 @@ public class NodeChecker {
         // Initialize all operators
         this.metric = metric;
         this.config = config;
-        
-        
         this.dataGeneralized = manager.getDataGeneralized();
         this.microaggregationFunctions = manager.getMicroaggregationFunctions();
         this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
@@ -348,5 +346,16 @@ public class NodeChecker {
      */
     public Metric<?> getMetric() {
         return metric;
+    }
+
+    /**
+     * Frees resources
+     */
+    public void reset() {
+        stateMachine.reset();
+        history.reset();
+        history.setSize(0);
+        currentGroupify.stateClear();
+        lastGroupify.stateClear();
     }
 }
