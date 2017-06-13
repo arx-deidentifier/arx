@@ -358,4 +358,19 @@ public class NodeChecker {
         currentGroupify.stateClear();
         lastGroupify.stateClear();
     }
+    
+    /**
+     * Calculates a score
+     * @param transformation
+     * @param metric
+     * @return
+     */
+    public double getScore(Transformation transformation, Metric<?> metric) {
+
+        // Apply transition and groupify
+        currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
+        currentGroupify.stateAnalyze(transformation, true);
+        
+        return metric.getScore(transformation, currentGroupify);
+    }
 }

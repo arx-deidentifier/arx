@@ -386,6 +386,21 @@ public class ARXResult {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, fork);
     }
+    
+    /**
+     * Returns a score
+     *  
+     * @param node the transformation
+     * @param metric the metric
+     * 
+     * @return
+     */
+    public double getScore(ARXNode node, Metric<?> metric) {
+        
+        // Apply the transformation
+        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
+        return checker.getScore(transformation, metric);
+    }
 
     /**
      * Returns the execution time (wall clock).
