@@ -19,13 +19,10 @@ package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
-import org.deidentifier.arx.ARXResult.ScoreType;
-import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -35,8 +32,6 @@ import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.Metric.AggregateFunction;
-import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 
 /**
  * This class orchestrates the process of transforming and analyzing a dataset.
@@ -356,61 +351,5 @@ public class NodeChecker {
      */
     public Metric<?> getMetric() {
         return metric;
-    }
-
-    /**
-     * Calculates a score
-     * @param definition 
-     * @param transformation
-     * @param score
-     * @param clazz 
-     * @return
-     */
-    public double getScore(DataDefinition definition, Transformation transformation, ScoreType score, int clazz) {
-
-        // Apply transition and groupify
-        currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
-        currentGroupify.stateAnalyze(transformation, true);
-        currentGroupify.prepareScore();
-        
-        switch (score) {
-            case AECS:
-                return currentGroupify.getNumberOfEquivalenceClasses();
-            case LOSS:
-                Metric<AbstractILMultiDimensional> metric = Metric.createLossMetric(AggregateFunction.SUM);
-                metric.initialize(manager, 
-                                  definition, 
-                                  manager.getDataGeneralized(), 
-                                  manager.getHierarchies(), 
-                                  config.getParent());
-                double[] lossAttrs = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss().getValue();
-                double loss = 0d;
-                for (int i = 0; i < lossAttrs.length; i++) {
-                    double min = (double)manager.getDataGeneralized().getDataLength() / 
-                                 (double)manager.getHierarchies()[i].getArray().length;
-                    double max = (double)manager.getDataGeneralized().getDataLength();
-                    loss += lossAttrs[i] * (max - min) + min;
-                }
-                loss *= -1d / ((double) lossAttrs.length);
-                loss /= ((double) (config.getMinimalGroupSize() + 1));
-                return loss;
-                
-            default:
-                // Example how to iterate over all equivalence classes
-                HashGroupifyEntry entry = currentGroupify.getFirstEquivalenceClass();
-                while (entry != null) {
-                    
-                    // Properties of the group
-                    int[] record = entry.key; // Only use this, when the group is not suppressed!
-                    int count = entry.count;
-                    boolean suppressed = !entry.isNotOutlier;
-                    
-                    // Next group
-                    entry = entry.nextOrdered;
-                }
-                
-                // Return dummy data
-                return 0;
-        }
     }
 }
