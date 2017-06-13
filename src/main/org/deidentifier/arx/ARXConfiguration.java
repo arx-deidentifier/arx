@@ -244,10 +244,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public boolean requires(int requirement) {
             return config.requires(requirement);
         }
-
-        public ARXConfiguration getParent() {
-            return config;
-        }
     }
 
     /**
