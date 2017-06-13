@@ -20,9 +20,9 @@ package org.deidentifier.arx.aggregates;
 import java.text.ParseException;
 import java.util.Map;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -55,7 +55,7 @@ public class StatisticsBuilderInterruptible {
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 ARXLogisticRegressionConfiguration config) throws InterruptedException {
+                                                                 ARXClassificationConfiguration config) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(clazz, config);
         } catch (Exception e) {
@@ -76,7 +76,7 @@ public class StatisticsBuilderInterruptible {
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXLogisticRegressionConfiguration config) throws InterruptedException {
+                                                                 ARXClassificationConfiguration config) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(features, clazz, config);
         } catch (Exception e) {
@@ -98,7 +98,7 @@ public class StatisticsBuilderInterruptible {
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXLogisticRegressionConfiguration config,
+                                                                 ARXClassificationConfiguration config,
                                                                  ARXFeatureScaling scaling) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(features, clazz, config, scaling);

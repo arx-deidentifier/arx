@@ -30,8 +30,8 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataScale;
@@ -82,7 +82,7 @@ public class StatisticsBuilder {
      * @param config - The configuration
      * @throws ParseException
      */
-    public StatisticsClassification getClassificationPerformance(String clazz, ARXLogisticRegressionConfiguration config) throws ParseException {
+    public StatisticsClassification getClassificationPerformance(String clazz, ARXClassificationConfiguration config) throws ParseException {
         return getClassificationPerformance(new String[] {}, clazz, config);
     }
 
@@ -95,7 +95,7 @@ public class StatisticsBuilder {
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXLogisticRegressionConfiguration config) throws ParseException {
+                                                                 ARXClassificationConfiguration config) throws ParseException {
     
         // Return
         return getClassificationPerformance(features, clazz, config, null);
@@ -111,7 +111,7 @@ public class StatisticsBuilder {
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXLogisticRegressionConfiguration config,
+                                                                 ARXClassificationConfiguration config,
                                                                  ARXFeatureScaling scaling) throws ParseException {
     
         // Reset stop flag

@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.ARXNaiveBayesConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -111,9 +112,6 @@ public class Example39 extends Example {
         data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setDataType("age", DataType.INTEGER);
         
-        System.out.println("Input dataset");
-        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
-        
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
@@ -121,8 +119,10 @@ public class Example39 extends Example {
         config.setQualityModel(Metric.createLossMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
-        System.out.println("5-anonymous dataset");
+        System.out.println("5-anonymous dataset (logistic regression)");
         System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
+        System.out.println("5-anonymous dataset (naive bayes)");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXNaiveBayesConfiguration.create()));
         
     }
 }

@@ -119,7 +119,7 @@ public class ModelClassification implements Serializable {
      * @return
      * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getSeed()
      */
-    public Integer getSeed() {
+    public Long getSeed() {
         return getConfig().getSeed();
     }
 

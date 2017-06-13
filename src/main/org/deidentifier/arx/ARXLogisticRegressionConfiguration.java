@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Configuration for logistic regression
  * @author Fabian Prasser
  */
-public class ARXLogisticRegressionConfiguration implements Serializable {
+public class ARXLogisticRegressionConfiguration extends ARXClassificationConfiguration implements Serializable {
 
     /** 
      * Prior function for regularization
@@ -126,7 +126,7 @@ public class ARXLogisticRegressionConfiguration implements Serializable {
     /**
      * @return the seed
      */
-    public int getSeed() {
+    public long getSeed() {
         return seed;
     }
 
