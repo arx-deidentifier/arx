@@ -121,8 +121,6 @@ public class NodeChecker {
 
     /** Is a minimal class size required */
     private final boolean                         minimalClassSizeRequired;
-    
-    private final DataManager manager;
 
     /**
      * Creates a new NodeChecker instance.
@@ -146,7 +144,6 @@ public class NodeChecker {
         // Initialize all operators
         this.metric = metric;
         this.config = config;
-        this.manager = manager;
         
         
         this.dataGeneralized = manager.getDataGeneralized();
