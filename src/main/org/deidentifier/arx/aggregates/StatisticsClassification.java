@@ -23,11 +23,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXNaiveBayesConfiguration;
+import org.deidentifier.arx.ARXRandomForestConfiguration;
 import org.deidentifier.arx.ARXSVMConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
@@ -35,6 +37,7 @@ import org.deidentifier.arx.aggregates.classification.ClassificationMethod;
 import org.deidentifier.arx.aggregates.classification.ClassificationResult;
 import org.deidentifier.arx.aggregates.classification.MultiClassLogisticRegression;
 import org.deidentifier.arx.aggregates.classification.MultiClassNaiveBayes;
+import org.deidentifier.arx.aggregates.classification.MultiClassRandomForest;
 import org.deidentifier.arx.aggregates.classification.MultiClassSVM;
 import org.deidentifier.arx.aggregates.classification.MultiClassZeroR;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -433,13 +436,21 @@ public class StatisticsClassification {
     }
     
     /**
+     * Returns the set of class attributes
+     * @return
+     */
+    public Set<String> getClassValues() {
+        return this.rocCurves.keySet();
+    }
+
+    /**
      * Returns the number of classes
      * @return
      */
     public int getNumClasses() {
         return this.numClasses;
     }
-
+    
     /**
      * Returns the number of measurements
      * @return
@@ -457,7 +468,7 @@ public class StatisticsClassification {
     public double getOriginalAccuracy() {
         return this.originalAccuracy;
     }
-    
+
     /**
      * Returns the average error, defined as avg(1d-probability-of-correct-result) for
      * each classification event.
@@ -475,7 +486,7 @@ public class StatisticsClassification {
     public PrecisionRecallMatrix getOriginalPrecisionRecall() {
         return this.originalMatrix;
     }
-
+    
     /**
      * Returns the ROC curve for this class value calculated using a
      * one-vs-all approach.
@@ -493,7 +504,7 @@ public class StatisticsClassification {
     public PrecisionRecallMatrix getPrecisionRecall() {
         return this.matrix;
     }
-    
+
     /**
      * Returns the ROC curve for this class value calculated using a
      * one-vs-all approach.
@@ -503,7 +514,7 @@ public class StatisticsClassification {
     public ROCCurve getROCCurve(String clazz) {
         return this.rocCurves.get(clazz);
     }
-
+    
     /**
      * Returns the minimal accuracy. Obtained by training a
      * ZeroR classifier on the input dataset.
@@ -523,7 +534,7 @@ public class StatisticsClassification {
     public double getZeroRAverageError() {
         return this.zeroRAverageError;
     }
-    
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -550,7 +561,7 @@ public class StatisticsClassification {
             throw new ComputationInterruptedException("Interrupted");
         }
     }
-
+    
     /**
      * Returns the classification method for the given config
      * @param specification
@@ -562,14 +573,19 @@ public class StatisticsClassification {
         if (config instanceof ARXLogisticRegressionConfiguration) {
             return new MultiClassLogisticRegression(specification, (ARXLogisticRegressionConfiguration)config);
         } else if (config instanceof ARXNaiveBayesConfiguration) {
+            System.setProperty("smile.threads", "1");
             return new MultiClassNaiveBayes(specification, (ARXNaiveBayesConfiguration)config);
         } else if (config instanceof ARXSVMConfiguration) {
+            System.setProperty("smile.threads", "1");
             return new MultiClassSVM(specification, (ARXSVMConfiguration)config);
+        } else if (config instanceof ARXRandomForestConfiguration) {
+            System.setProperty("smile.threads", "1");
+            return new MultiClassRandomForest(specification, (ARXRandomForestConfiguration)config);
         } else {
             throw new IllegalArgumentException("Unknown type of configuration");
         }
     }
-    
+
     /**
      * Creates the folds
      * @param length
