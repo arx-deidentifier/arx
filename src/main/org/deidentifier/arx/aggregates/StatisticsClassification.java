@@ -113,12 +113,9 @@ public class StatisticsClassification {
          */
         void add(double confidence, boolean correct) {
             
-            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                if (confidence >= CONFIDENCE_THRESHOLDS[i]) {
-                    recall[i]++;
-                    precision[i] += correct ? 1d : 0d;
-                }
-            }
+            int index = (int)(confidence * (CONFIDENCE_THRESHOLDS.length - 1d));
+            recall[index]++;
+            precision[index] += correct ? 1d : 0d;
             measurements++;
         }
 
@@ -126,9 +123,13 @@ public class StatisticsClassification {
          * Packs the results
          */
         void pack() {
+            
             // Pack
+            packConfidence(precision);
+            packConfidence(recall);
+            
+            // Calculate
             for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                
                 if (recall[i] == 0d) {
                     precision[i] = 1d;
                 } else {
@@ -182,29 +183,65 @@ public class StatisticsClassification {
         }
 
         /**
+         * Inserts an element into the array
+         * @param array
+         * @param index
+         * @param value
+         * @return
+         */
+        private double[] insert(double[] array, int index, double value) {
+            double[] result = new double[array.length + 1];
+            for (int i = 0; i < result.length; i++) {
+                if (i < index) {
+                    result[i] = array[i];
+                } else if (i == index) {
+                    result[i] = value;
+                } else {
+                    result[i] = array[i - 1];
+                }
+            }
+            return result;
+        }
+        
+        /**
+         * Removes duplicates
+         * @param array1
+         * @param array2
+         * @return The number of elements removed
+         */
+        private int trim(double[] array1, double[] array2) {
+            int trim = 0;
+            int len = array1.length - 1;
+            for (int i = 0; i < len; i++) {
+                if (array1[i] == array1[i + 1] && array2[i] == array2[i + 1]) {
+                    System.arraycopy(array1, i+1, array1, i, array1.length - i - 1);
+                    System.arraycopy(array2, i+1, array2, i, array2.length - i - 1);
+                    trim++; i--; len--;
+                }
+            }
+            return trim;
+        }
+
+        /**
          * Adds a new value
          * @param confidence
          * @param correct
          */
         void add(double confidence, boolean correct) {
-            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                if (confidence >= CONFIDENCE_THRESHOLDS[i]) {
-                    falsePositive[i] += correct ? 0d : 1d;
-                    truePositive[i] += correct ? 1d : 0d;
-                }
-            }
+
+            // Count
+            int index = (int)(confidence * (CONFIDENCE_THRESHOLDS.length - 1d));
+            falsePositive[index] += correct ? 0d : 1d;
+            truePositive[index] += correct ? 1d : 0d;
         }
-        
+
         /**
          * This value actually exists
          * @param confidence
          */
         void exists(double confidence) {
-            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                if (confidence >= CONFIDENCE_THRESHOLDS[i]) {
-                    exists[i] ++;
-                }
-            }
+            int index = (int)(confidence * (CONFIDENCE_THRESHOLDS.length - 1d));
+            exists[index] ++;
         }
 
         /**
@@ -212,8 +249,13 @@ public class StatisticsClassification {
          * @param classifications 
          */
         void pack(int[] classifications) {
-            
+
             // Pack
+            packConfidence(exists);
+            packConfidence(truePositive);
+            packConfidence(falsePositive);
+            
+            // Calculate
             for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
                 if (exists[i] != 0 && classifications[i] != 0) {
                     truePositive[i] /= (double)exists[i];
@@ -265,53 +307,57 @@ public class StatisticsClassification {
                 AUC += (maxX - minX) * (minY + maxY) / 2d;
             }
         }
-
-        /**
-         * Removes duplicates
-         * @param array1
-         * @param array2
-         * @return The number of elements removed
-         */
-        private int trim(double[] array1, double[] array2) {
-            int trim = 0;
-            int len = array1.length - 1;
-            for (int i = 0; i < len; i++) {
-                if (array1[i] == array1[i + 1] && array2[i] == array2[i + 1]) {
-                    System.arraycopy(array1, i+1, array1, i, array1.length - i - 1);
-                    System.arraycopy(array2, i+1, array2, i, array2.length - i - 1);
-                    trim++; i--; len--;
-                }
-            }
-            return trim;
-        }
-
-        /**
-         * Inserts an element into the array
-         * @param array
-         * @param index
-         * @param value
-         * @return
-         */
-        private double[] insert(double[] array, int index, double value) {
-            double[] result = new double[array.length + 1];
-            for (int i = 0; i < result.length; i++) {
-                if (i < index) {
-                    result[i] = array[i];
-                } else if (i == index) {
-                    result[i] = value;
-                } else {
-                    result[i] = array[i - 1];
-                }
-            }
-            return result;
-        }
     }
     
-    /** Confidence thresholds*/
-    private static final double[] CONFIDENCE_THRESHOLDS = new double[]{
+    /** Confidence thresholds: only change together with thresholds, steps and num*/
+    private static final double[] CONFIDENCE_THRESHOLDS   = new double[]{
         0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1d
     };
 
+    /**
+     * Returns the classification method for the given config
+     * @param specification
+     * @param config
+     * @return
+     */
+    private static ClassificationMethod getClassifier(ClassificationDataSpecification specification,
+                                                      ARXClassificationConfiguration config) {
+        if (config instanceof ARXLogisticRegressionConfiguration) {
+            return new MultiClassLogisticRegression(specification, (ARXLogisticRegressionConfiguration)config);
+        } else if (config instanceof ARXNaiveBayesConfiguration) {
+            System.setProperty("smile.threads", "1");
+            return new MultiClassNaiveBayes(specification, (ARXNaiveBayesConfiguration)config);
+        } else if (config instanceof ARXSVMConfiguration) {
+            System.setProperty("smile.threads", "1");
+            return new MultiClassSVM(specification, (ARXSVMConfiguration)config);
+        } else if (config instanceof ARXRandomForestConfiguration) {
+            System.setProperty("smile.threads", "1");
+            return new MultiClassRandomForest(specification, (ARXRandomForestConfiguration)config);
+        } else {
+            throw new IllegalArgumentException("Unknown type of configuration");
+        }
+    }
+    
+    /**
+     * Packs an array that is based on confidence intervals
+     * @param array
+     */
+    private static void packConfidence(double[] array) {
+        for (int i = array.length - 1; i > 0; i--) {
+            array[i - 1] += array[i];
+        }
+    }
+    
+    /**
+     *  Packs an array that is based on confidence intervals
+     * @param array
+     */
+    private static void packConfidence(int[] array) {
+        for (int i = array.length - 1; i > 0; i--) {
+            array[i - 1] += array[i];
+        }
+    }
+    
     /** Accuracy */
     private double                accuracy;
     /** Average error */
@@ -336,10 +382,13 @@ public class StatisticsClassification {
     private Map<String, ROCCurve> originalROC           = new HashMap<>();
     /** Random */
     private final Random          random;
+
     /** ZeroR accuracy */
     private double                zeroRAccuracy;
+
     /** ZeroR accuracy */
     private double                zeroRAverageError;
+    
     /** Measurements */
     private int                   numMeasurements;
 
@@ -479,11 +528,8 @@ public class StatisticsClassification {
                         this.originalROC.get(specification.classMapInverse.get(resultInputLR.index())).add(resultInputLR.confidence(), correct);
                         
                         // Count
-                        for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                            if (resultInputLR.confidence() >= CONFIDENCE_THRESHOLDS[i]) {
-                                classificationsOriginal[i] ++;
-                            }
-                        }
+                        int confidenceIndex = (int)(resultInputLR.confidence() * (CONFIDENCE_THRESHOLDS.length - 1d));
+                        classificationsOriginal[confidenceIndex] ++;
                         
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -495,12 +541,8 @@ public class StatisticsClassification {
                             this.ROC.get(specification.classMapInverse.get(resultOutputLR.index())).add(resultOutputLR.confidence(), correct);
 
                             // Count
-                            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                                if (resultOutputLR.confidence() >= CONFIDENCE_THRESHOLDS[i]) {
-                                    classificationsOutput[i] ++;
-                                }
-                            }
-                            
+                            confidenceIndex = (int)(resultOutputLR.confidence() * (CONFIDENCE_THRESHOLDS.length - 1d));
+                            classificationsOutput[confidenceIndex]++;
                         }
                     }
                     this.progress.value = (int)((++done) * total);
@@ -519,13 +561,14 @@ public class StatisticsClassification {
         this.originalAccuracy /= (double)classifications;
         this.originalMatrix.pack();
         
+        // Pack confidence array
+        packConfidence(classificationsOutput);
+        packConfidence(classificationsOriginal);
+        
         // ROCCurves
-        for (ROCCurve curve : this.ROC.values()) {
-            curve.pack(classificationsOutput);
-        }
-        // ROCCurves
-        for (ROCCurve curve : this.originalROC.values()) {
-            curve.pack(classificationsOriginal);
+        for (String attr : getClassValues()) {
+            ROC.get(attr).pack(classificationsOutput);
+            originalROC.get(attr).pack(classificationsOriginal);
         }
 
         // Maintain data about outputLR                        
@@ -552,7 +595,7 @@ public class StatisticsClassification {
     public double getAccuracy() {
         return this.accuracy;
     }
-
+    
     /**
      * Returns the average error, defined as avg(1d-probability-of-correct-result) for
      * each classification event.
@@ -562,7 +605,7 @@ public class StatisticsClassification {
     public double getAverageError() {
         return this.averageError;
     }
-    
+
     /**
      * Returns the set of class attributes
      * @return
@@ -570,7 +613,7 @@ public class StatisticsClassification {
     public Set<String> getClassValues() {
         return this.ROC.keySet();
     }
-
+    
     /**
      * Returns the number of classes
      * @return
@@ -586,7 +629,7 @@ public class StatisticsClassification {
     public int getNumMeasurements() {
         return this.numMeasurements;
     }
-    
+
     /**
      * Returns the maximal accuracy. Obtained by training a
      * Logistic Regression classifier on the input dataset.
@@ -606,7 +649,7 @@ public class StatisticsClassification {
     public double getOriginalAverageError() {
         return this.originalAverageError;
     }
-
+    
     /**
      * Returns a precision/recall matrix for LogisticRegression on input
      * @return
@@ -623,7 +666,7 @@ public class StatisticsClassification {
     public ROCCurve getOriginalROCCurve(String clazz) {
         return this.originalROC.get(clazz);
     }
-    
+
     /**
      * Returns a precision/recall matrix
      * @return
@@ -631,7 +674,7 @@ public class StatisticsClassification {
     public PrecisionRecallMatrix getPrecisionRecall() {
         return this.matrix;
     }
-
+    
     /**
      * Returns the ROC curve for this class value calculated using the one-vs-all approach.
      * @param clazz
@@ -650,7 +693,7 @@ public class StatisticsClassification {
     public double getZeroRAccuracy() {
         return this.zeroRAccuracy;
     }
-    
+
     /**
      * Returns the average error, defined as avg(1d-probability-of-correct-result) for
      * each classification event.
@@ -678,37 +721,13 @@ public class StatisticsClassification {
         builder.append("}");
         return builder.toString();
     }
-
+    
     /**
      * Checks whether an interruption happened.
      */
     private void checkInterrupt() {
         if (interrupt.value) {
             throw new ComputationInterruptedException("Interrupted");
-        }
-    }
-    
-    /**
-     * Returns the classification method for the given config
-     * @param specification
-     * @param config
-     * @return
-     */
-    private ClassificationMethod getClassifier(ClassificationDataSpecification specification,
-                                               ARXClassificationConfiguration config) {
-        if (config instanceof ARXLogisticRegressionConfiguration) {
-            return new MultiClassLogisticRegression(specification, (ARXLogisticRegressionConfiguration)config);
-        } else if (config instanceof ARXNaiveBayesConfiguration) {
-            System.setProperty("smile.threads", "1");
-            return new MultiClassNaiveBayes(specification, (ARXNaiveBayesConfiguration)config);
-        } else if (config instanceof ARXSVMConfiguration) {
-            System.setProperty("smile.threads", "1");
-            return new MultiClassSVM(specification, (ARXSVMConfiguration)config);
-        } else if (config instanceof ARXRandomForestConfiguration) {
-            System.setProperty("smile.threads", "1");
-            return new MultiClassRandomForest(specification, (ARXRandomForestConfiguration)config);
-        } else {
-            throw new IllegalArgumentException("Unknown type of configuration");
         }
     }
 
