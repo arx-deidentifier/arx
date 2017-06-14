@@ -16,13 +16,8 @@
  */
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -42,33 +37,4 @@ public class ViewStatisticsLogisticRegressionOutputROCCurves  extends ViewStatis
                                          final Controller controller) {
         super(parent, controller, ModelPart.OUTPUT);
     }
-
-    @Override
-    protected String[] getColumnHeaders() {
-        return new String[] {
-                Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.7"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.12") //$NON-NLS-1$
-        };
-    }
-    
-    @Override
-    protected List<Double> getColumnValues(StatisticsClassification result) {
-        List<Double> list = new ArrayList<Double>();
-        list.add(result.getZeroRAccuracy());
-        list.add(result.getOriginalAccuracy());
-        list.add(result.getAccuracy());
-        if (result.getOriginalAccuracy() - result.getZeroRAccuracy() == 0d) {
-            list.add(result.getAccuracy() / result.getZeroRAccuracy());
-        } else {
-            list.add((result.getAccuracy() - result.getZeroRAccuracy()) / (result.getOriginalAccuracy() - result.getZeroRAccuracy()));
-        }
-        list.add(result.getAverageError());
-        list.add(result.getAverageError()-result.getOriginalAverageError());
-        return list;
-    }
-
 }

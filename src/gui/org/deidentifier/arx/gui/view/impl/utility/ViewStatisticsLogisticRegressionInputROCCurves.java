@@ -16,13 +16,8 @@
  */
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -41,25 +36,5 @@ public class ViewStatisticsLogisticRegressionInputROCCurves extends ViewStatisti
     public ViewStatisticsLogisticRegressionInputROCCurves(final Composite parent,
                                          final Controller controller) {
         super(parent, controller, ModelPart.INPUT);
-    }
-
-    @Override
-    protected String[] getColumnHeaders() {
-        return new String[] {
-                Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.11"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.7") //$NON-NLS-1$
-        };
-    }
-    
-    @Override
-    protected List<Double> getColumnValues(StatisticsClassification result) {
-        List<Double> list = new ArrayList<Double>();
-        list.add(result.getZeroRAccuracy());
-        list.add(result.getOriginalAccuracy());
-        list.add(result.getOriginalAccuracy()-result.getZeroRAccuracy());
-        list.add(result.getOriginalAverageError());
-        return list;
     }
 }

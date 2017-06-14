@@ -353,16 +353,10 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         String width = String.valueOf(Math.round(100d / ((double) columns.length + 2) * 100d) / 100d) + "%"; //$NON-NLS-1$
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.22")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$ 
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.2")); //$NON-NLS-1$
-        for (String column : columns) {
-            c = new DynamicTableColumn(table, SWT.LEFT);
-            SWTUtil.createColumnWithBarCharts(table, c);
-            c.setWidth(width, "100px"); //$NON-NLS-1$ 
-            c.setText(column);
-        }
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.23")); //$NON-NLS-1$
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -515,8 +509,6 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         Analysis analysis = new Analysis(){
 
             private boolean                     stopped     = false;
-            private List<List<Double>>          values      = new ArrayList<>();
-            private List<Integer>               numClasses  = new ArrayList<>();
             private List<String>                classValues = new ArrayList<>();
             private List<ROCCurve>              rocCurves   = new ArrayList<>();
             private int                         progress    = 0;
@@ -559,10 +551,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                 for (int i = 0; i < classValues.size(); i++) {
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, classValues.get(i));
-                    item.setText(1, String.valueOf(numClasses.get(0)));
-                    for (int j = 0; j<values.get(0).size(); j++) {
-                        item.setData(String.valueOf(2+j), values.get(0).get(j));    
-                    }
+                    item.setText(1, String.valueOf(rocCurves.get(i).getAUC()));
                     item.setData(rocCurves.get(i));
                 }
 
@@ -603,11 +592,9 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                     if (stopped) {
                         break;
                     }
-                    numClasses.add(result.getNumClasses());
-                    values.add(getColumnValues(result));
                     classValues = new ArrayList<String>(result.getClassValues());
                     Collections.sort(classValues);
-                    for( String c : classValues) {
+                    for (String c : classValues) {
                         rocCurves.add(result.getROCCurve(c));
                     }
                 }
@@ -632,14 +619,12 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
      * Returns all column headers
      * @return
      */
-    protected abstract String[] getColumnHeaders();
-
-    /**
-     * Returns all values for one row
-     * @param result
-     * @return
-     */
-    protected abstract List<Double> getColumnValues(StatisticsClassification result);
+    protected String[] getColumnHeaders(){
+        return new String[] {
+                             Resources.getMessage("ViewStatisticsClassificationInput.22"), //$NON-NLS-1$
+                             Resources.getMessage("ViewStatisticsClassificationInput.23"), //$NON-NLS-1$
+                     };
+    }
 
     @Override
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
