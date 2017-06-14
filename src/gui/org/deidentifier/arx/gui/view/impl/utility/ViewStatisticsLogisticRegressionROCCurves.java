@@ -237,8 +237,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         double[] ySeries = new double[rocCurve.getTruePositiveRate().length];
 
         for (int i = 0; i < xSeries.length; i++) {
-            xSeries[i] = rocCurve.getFalsePositiveRate()[i] * 100d;
-            ySeries[i] = rocCurve.getTruePositiveRate()[i] * 100d;
+            xSeries[i] = rocCurve.getFalsePositiveRate()[i];
+            ySeries[i] = rocCurve.getTruePositiveRate()[i];
         }
 
         chart.setRedraw(false);
@@ -266,12 +266,11 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         IAxisSet axisSet = chart.getAxisSet();
 
         IAxis yAxis = axisSet.getYAxis(0);
-        yAxis.setRange(new Range(0d, 100d));
+        yAxis.setRange(new Range(0d, 1d));
 
         IAxis xAxis = axisSet.getXAxis(0);
-        xAxis.setRange(new Range(0d, 100d));
+        xAxis.setRange(new Range(0d, 1d));
         xAxis.adjustRange();
-        updateCategories();
 
         chart.setRedraw(true);
         chart.updateLayout();
@@ -349,24 +348,26 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                     IAxisSet axisSet = chart.getAxisSet();
                     if (axisSet != null) {
                         IAxis xAxis = axisSet.getXAxis(0);
-                        if (xAxis != null) {
+                        IAxis yAxis = axisSet.getYAxis(0);
+                        if (xAxis != null && yAxis != null) {
                             Point cursor = chart.getPlotArea().toControl(Display.getCurrent().getCursorLocation());
-                            if (cursor.x >= 0 && cursor.x < chart.getPlotArea().getSize().x && 
-                                cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
-                                String[] series = xAxis.getCategorySeries();
+                            if (cursor.x >= 0 && cursor.x < chart.getPlotArea().getSize().x && cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
                                 ISeries[] data = chart.getSeriesSet().getSeries();
-                                if (data != null && data.length>0 && series != null) {
-                                    int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
-                                    if (x >= 0 && x < series.length && !series[x].equals("")) {
+                                if (data != null && data.length > 0) {
+                                    double x = getClosestValue(data[0].getXSeries(), xAxis.getDataCoordinate(cursor.x));
+                                    double y = getClosestValue(data[0].getYSeries(), yAxis.getDataCoordinate(cursor.y));
+
+                                    if (x >= 0 && y >= 0) {
                                         builder.setLength(0);
                                         builder.append("("); //$NON-NLS-1$
-                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.14")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
-                                        builder.append(series[x]);
-                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.15")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(data[0].getYSeries()[x]));
-                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.16")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(data[1].getYSeries()[x]));
-                                        builder.append("%)"); //$NON-NLS-1$
+                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.20")) //$NON-NLS-1$
+                                               .append(": "); //$NON-NLS-1$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(x));
+                                        builder.append(", ") //$NON-NLS-1$
+                                               .append(Resources.getMessage("ViewStatisticsClassificationInput.19")) //$NON-NLS-1$
+                                               .append(": "); //$NON-NLS-1$
+                                        builder.append(SWTUtil.getPrettyString(y));
+                                        builder.append(")"); //$NON-NLS-1$
                                         sash.setToolTipText(builder.toString());
                                         return;
                                     }
@@ -412,6 +413,20 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         });
 
         return this.root;
+    }
+    
+    /**
+     * Returns the value contained in the series that is closest to valueClicked while being greater.
+     */
+    private double getClosestValue(double[] series, double valueClicked){
+        double closest = Double.MAX_VALUE;
+        for(int i = 0; i < series.length; i++){
+            double value = series[i];
+            if(valueClicked > value && Math.abs(value - valueClicked) < Math.abs(closest - valueClicked)){
+                closest = value;
+            }
+        }
+        return closest;
     }
     
     @Override
