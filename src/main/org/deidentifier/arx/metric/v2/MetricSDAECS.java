@@ -164,4 +164,28 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
         return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
     }
+    
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
+        boolean hasSuppressed = false;
+        int numberOfNonSuppressedClasses = 0;
+        
+        HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
+        while (entry != null) {
+            if (!entry.isNotOutlier && entry.count > 0 || entry.pcount > entry.count) {
+                // The equivalence class is suppressed or contains records removed by sampling
+                hasSuppressed = true;
+            }
+            if (entry.isNotOutlier && entry.count > 0) {
+                // The equivalence class contains records which are not suppressed
+                numberOfNonSuppressedClasses++;
+            }
+            // Next group
+            entry = entry.nextOrdered;
+        }
+        
+        return (double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d);
+    }
 }

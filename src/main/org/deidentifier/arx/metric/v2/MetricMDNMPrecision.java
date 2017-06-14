@@ -21,6 +21,8 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -41,6 +43,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
@@ -49,6 +52,15 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     /** Row count. */
     private double            rowCount;
+    
+    /** Total number of records */
+    double                    numRecords;
+    
+    /** Total number of attributes (having a generalization hierarchy) */
+    double                    numAttrs;
+    
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    double                    k;
 
     /** Hierarchy heights. */
     private int[]             heights;
@@ -261,6 +273,41 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    public double getScore(final Transformation node, final HashGroupify g) {
+        
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        
+        int suppressedTuples = 0;
+        int unsuppressedTuples = 0;
+        
+        // For each group
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
+        while (m != null) {
+            
+            // Calculate number of affected records
+            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
+            suppressedTuples += m.isNotOutlier ? 0 : m.count;
+            suppressedTuples += m.pcount - m.count;
+
+            // Next group
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        double score = 0d;
+        for (int i = 0; i<numAttrs; i++) {
+            double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
+            score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
+        }
+        score *= -1d / numAttrs;
+        if (k > 1) score /= k - 1d;
+        
+        // Return
+        return score;
+    }
+    
+    @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
                                       final Data input, 
@@ -281,6 +328,20 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         
         // Store row count
         rowCount = (double)super.getNumRecords(config, input);
+        
+        // Store total number of records
+        numRecords = manager.getDataGeneralized().getDataLength();
+        
+        // Store number of attributes
+        numAttrs = manager.getHierarchies().length;
+        
+        // Store minimal size of equivalence classes
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
+            if (c instanceof EDDifferentialPrivacy) {
+                k = c.getMinimalClassSize();
+                break;
+            }
+        }
         
         // Store heights
         this.heights = new int[hierarchies.length];
