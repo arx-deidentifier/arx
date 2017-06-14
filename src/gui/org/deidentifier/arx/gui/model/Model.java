@@ -173,6 +173,9 @@ public class Model implements Serializable {
     private String                                outputNodeAsString;
     
     /** Current selection. */
+    private String                                selectedClassValue              = null;
+    
+    /** Current selection. */
     private String                                selectedAttribute               = null;
     
     /** Enable/disable. */
@@ -975,6 +978,15 @@ public class Model implements Serializable {
     public String getSelectedAttribute() {
         return selectedAttribute;
     }
+    
+    /**
+     * Returns the currently selected class value.
+     * 
+     * @return
+     */
+    public String getSelectedClassValue() {
+        return selectedClassValue;
+    }
 
     
     /**
@@ -1506,6 +1518,14 @@ public class Model implements Serializable {
         }
 
         setModified();
+    }
+    
+    /**
+     * Sets the selected class value.
+     * @param classValue
+     */
+    public void setSelectedClassValue(final String classValue) {
+        selectedClassValue = classValue;
     }
 
     /**

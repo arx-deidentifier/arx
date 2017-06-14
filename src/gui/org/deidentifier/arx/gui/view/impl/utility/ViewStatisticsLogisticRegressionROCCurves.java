@@ -17,6 +17,7 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.deidentifier.arx.ARXFeatureScaling;
@@ -34,6 +35,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressPro
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
@@ -104,7 +106,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
-        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        controller.addListener(ModelPart.SELECTED_CLASS_VALUE, this);
     }
     
     @Override
@@ -124,10 +126,10 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                 triggerUpdate();
             }
         }
-        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+        if (event.part == ModelPart.SELECTED_CLASS_VALUE) {
             int index = 0;
             for (TableItem item : table.getItems()) {
-                if (item.getText(0).equals(super.getModel().getSelectedAttribute())) {
+                if (item.getText(0).equals(super.getModel().getSelectedClassValue())) {
                     table.select(index);
                     if (item.getData() != null && item.getData() instanceof ROCCurve) {
                         setChartSeries(item.getText(0), (ROCCurve) item.getData());
@@ -223,37 +225,41 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
     }
     
     /**
-     * Updates the chart with a new matrix
+     * Updates the chart with a new rocCurve
+     * 
      * @param matrix
      */
     private void setChartSeries(String classValue, ROCCurve rocCurve) {
-        
+
         // Init data
-        
+
         double[] xSeries = new double[rocCurve.getFalsePositiveRate().length];
         double[] ySeries = new double[rocCurve.getTruePositiveRate().length];
-        
-        for(int i=0; i<xSeries.length; i++){
+
+        for (int i = 0; i < xSeries.length; i++) {
             xSeries[i] = rocCurve.getFalsePositiveRate()[i] * 100d;
             ySeries[i] = rocCurve.getTruePositiveRate()[i] * 100d;
         }
-       
-        
+
         chart.setRedraw(false);
 
         ISeriesSet seriesSet = chart.getSeriesSet();
+        ISeries[] seriesArray = seriesSet.getSeries();
+        for (ISeries s : seriesArray) {
+            chart.getSeriesSet().deleteSeries(s.getId());
+        }
 
-        ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, classValue); //$NON-NLS-1$
+        ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, classValue); // $NON-NLS-1$
         series.getLabel().setVisible(false);
         series.getLabel().setFont(chart.getFont());
         series.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
         series.setXSeries(xSeries);
         series.setYSeries(ySeries);
         series.setAntialias(SWT.ON);
-        series.setSymbolType(PlotSymbolType.NONE);
+        series.setSymbolType(PlotSymbolType.CIRCLE);
+        series.setSymbolColor(GUIHelper.getColor(255, 32, 32));
         series.enableArea(true);
-        
-        
+
         chart.getLegend().setVisible(true);
         chart.getLegend().setPosition(SWT.TOP);
 
@@ -264,6 +270,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
 
         IAxis xAxis = axisSet.getXAxis(0);
         xAxis.setRange(new Range(0d, 100d));
+        xAxis.adjustRange();
+        updateCategories();
 
         chart.setRedraw(true);
         chart.updateLayout();
@@ -387,9 +395,9 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                                 item.getData() instanceof ROCCurve) {
                                 setChartSeries(item.getText(0), (ROCCurve) item.getData());
                             }
-                            getModel().setSelectedAttribute(item.getText(0));
+                            getModel().setSelectedClassValue(item.getText(0));
                             getController().update(new ModelEvent(ViewStatisticsLogisticRegressionROCCurves.this,
-                                                                  ModelPart.SELECTED_ATTRIBUTE,
+                                                                  ModelPart.SELECTED_CLASS_VALUE,
                                                                   item.getText(0)));
                             return;
                         }
@@ -456,7 +464,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
             public int getProgress() {
                 
                 double result = 0d;
-                double perBatch = 100d / (double)classValues.size();
+                double perBatch = 100d / (double)classes.length;
                 result += (double)progress * perBatch;
                 result += (double)builder.getProgress() / 100d * perBatch;
                 result = result <= 100d ? result : 100d;
@@ -532,7 +540,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                     }
                     numClasses.add(result.getNumClasses());
                     values.add(getColumnValues(result));
-                    classValues = result.getClassValues();
+                    classValues = new ArrayList<String>(result.getClassValues());
+                    Collections.sort(classValues);
                     for( String c : classValues) {
                         rocCurves.add(result.getROCCurve(c));
                     }

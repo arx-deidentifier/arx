@@ -615,15 +615,6 @@ public class StatisticsClassification {
     }
     
     /**
-     * Returns the class values.
-     * 
-     * @return
-     */
-    public List<String> getClassValues() {
-        return new ArrayList<String>(this.rocCurves.keySet());
-    }
-    
-    /**
      * Returns the number of classes
      * @return
      */
