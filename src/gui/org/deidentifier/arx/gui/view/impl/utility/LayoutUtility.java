@@ -161,25 +161,24 @@ public class LayoutUtility implements ILayout {
         
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
-        new ViewStatisticsLogisticRegressionInput(classificationInput, controller);
+        new ViewStatisticsClassificationInput(classificationInput, controller);
 
         Composite classificationInputROCCurves = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInputROCCurves.setLayout(new FillLayout());
-        new ViewStatisticsLogisticRegressionInputROCCurves(classificationInputROCCurves, controller);
+        new ViewStatisticsClassificationROCCurves(classificationInputROCCurves, controller, ModelPart.INPUT);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
-        new ViewStatisticsLogisticRegressionOutput(classificationOutput, controller);
+        new ViewStatisticsClassificationOutput(classificationOutput, controller);
 
         Composite classificationOutputROCCurves = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutputROCCurves.setLayout(new FillLayout());
-        new ViewStatisticsLogisticRegressionOutputROCCurves(classificationOutputROCCurves, controller);
+        new ViewStatisticsClassificationROCCurves(classificationOutputROCCurves, controller, ModelPart.OUTPUT);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
         compositeBottom.setLayout(new FillLayout());
-        final SashForm bottomSash = new SashForm(compositeBottom,
-                                                 SWT.HORIZONTAL | SWT.SMOOTH);
+        final SashForm bottomSash = new SashForm(compositeBottom, SWT.HORIZONTAL | SWT.SMOOTH);
 
         bottomLeft = new Composite(bottomSash, SWT.NONE);
         bottomLeft.setLayout(new FillLayout());

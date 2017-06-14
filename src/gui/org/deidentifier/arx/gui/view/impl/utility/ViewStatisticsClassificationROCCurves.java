@@ -80,13 +80,16 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStatistics<AnalysisContextClassification> {
+public class ViewStatisticsClassificationROCCurves extends ViewStatistics<AnalysisContextClassification> {
 
     /** Minimal width of a category label. */
     private static final int                   MIN_CATEGORY_WIDTH = 10;
 
     /** Internal stuff. */
     private AnalysisManager                    manager;
+
+    /** Model */
+    private Map<String, Map<String, ROCCurve>> rocCurves;
 
     /** View */
     private DynamicTable                       table;
@@ -97,9 +100,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
     /** View */
     private Chart                              chart;
     /** Widget */
-    private Combo                              cmbClassAtt;
-    /** Map clazz to class value to ROC */
-    private Map<String, Map<String, ROCCurve>> class2Values2ROC;
+    private Combo                              combo;
 
     /**
      * Creates a new instance.
@@ -108,12 +109,13 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
      * @param controller
      * @param part
      */
-    public ViewStatisticsLogisticRegressionROCCurves(final Composite parent,
-                                            final Controller controller,
-                                            final ModelPart part) {
-
+    public ViewStatisticsClassificationROCCurves(final Composite parent,
+                                                 final Controller controller,
+                                                 final ModelPart part) {
+        
         super(parent, controller, part, null, false);
         this.manager = new AnalysisManager(parent.getDisplay());
+        this.rocCurves = new HashMap<>();
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_CLASS_VALUE, this);
@@ -124,10 +126,10 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
      * Updates the selected class attribute.
      */
     private void actionClassAttChanged(){
-        if(cmbClassAtt.getSelectionIndex() >=0){
-            String selectedClass = cmbClassAtt.getItem(cmbClassAtt.getSelectionIndex());
+        if(combo.getSelectionIndex() >=0){
+            String selectedClass = combo.getItem(combo.getSelectionIndex());
             updateTableAndChart(selectedClass);
-            getController().update(new ModelEvent(ViewStatisticsLogisticRegressionROCCurves.this,
+            getController().update(new ModelEvent(ViewStatisticsClassificationROCCurves.this,
                                                   ModelPart.SELECTED_ATTRIBUTE,
                                                   selectedClass));
         }
@@ -136,8 +138,6 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
     @Override
     protected Control createControl(Composite parent) {
         
-        this.class2Values2ROC   = new HashMap<>();
-
         // Root
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
@@ -156,8 +156,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         this.table.setLayoutData(SWTUtil.createFillGridData(2));
 
         // Columns
-        String[] columns = getColumnHeaders();
-        String width = String.valueOf(Math.round(100d / ((double) columns.length + 2) * 100d) / 100d) + "%"; //$NON-NLS-1$
+        String width = "50%"; //$NON-NLS-1$
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.22")); //$NON-NLS-1$
@@ -169,15 +168,15 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         }
         SWTUtil.createGenericTooltip(table);
         
+        // Combo for selecting a class attributes
         final Composite composite2 = new Composite(composite, SWT.NONE);
         composite2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         composite2.setLayout(SWTUtil.createGridLayout(2, false));
-
         final Label lblClassAtt = new Label(composite2, SWT.PUSH);
         lblClassAtt.setText(Resources.getMessage("ViewStatisticsClassificationInput.21"));
-        this.cmbClassAtt = new Combo(composite2, SWT.READ_ONLY);
-        this.cmbClassAtt.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.cmbClassAtt.addSelectionListener(new SelectionAdapter() {
+        this.combo = new Combo(composite2, SWT.READ_ONLY);
+        this.combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 actionClassAttChanged();
@@ -246,7 +245,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                                 setChartSeries(item.getText(0), (ROCCurve) item.getData());
                             }
                             getModel().setSelectedClassValue(item.getText(0));
-                            getController().update(new ModelEvent(ViewStatisticsLogisticRegressionROCCurves.this,
+                            getController().update(new ModelEvent(ViewStatisticsClassificationROCCurves.this,
                                                                   ModelPart.SELECTED_CLASS_VALUE,
                                                                   item.getText(0)));
                             return;
@@ -279,8 +278,10 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
             i.dispose();
         }
         table.setRedraw(true);
-        if (cmbClassAtt != null && cmbClassAtt.getItemCount() != 0) cmbClassAtt.select(0);
-        class2Values2ROC.clear();
+        if (combo != null && combo.getItemCount() != 0) combo.select(0);
+        if (rocCurves != null) {
+            rocCurves.clear();
+        }
         resetChart();
         setStatusEmpty();
     }
@@ -322,7 +323,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
             
             @Override
             public void onError() {
-                class2Values2ROC.clear();
+                rocCurves.clear();
                 setStatusEmpty();
             }
 
@@ -335,9 +336,10 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                     return;
                 }
                 
-                // Update combobox
-                cmbClassAtt.setItems(classes);
-                cmbClassAtt.select(0);
+                // Update combo box
+                combo.setItems(classes);
+                combo.select(0);
+                
                 // Update table and chart
                 updateTableAndChart(classes[0]);
 
@@ -362,7 +364,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                 // Timestamp
                 long time = System.currentTimeMillis();
                 
-                class2Values2ROC.clear();
+                // Clear
+                rocCurves.clear();
                 
                 // Do work
                 for (String clazz : classes) {
@@ -378,12 +381,12 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                     }
                     
                     // Init map
-                    if(!class2Values2ROC.containsKey(clazz)){
-                        class2Values2ROC.put(clazz, new HashMap<>());
+                    if(!rocCurves.containsKey(clazz)){
+                        rocCurves.put(clazz, new HashMap<String, ROCCurve>());
                     }
                     // collect clazz -> class value -> ROC
                     for (String c : result.getClassValues()) {
-                        class2Values2ROC.get(clazz).put(c, result.getROCCurve(c));
+                        rocCurves.get(clazz).put(c, result.getROCCurve(c));
                     }
                 }
 
@@ -419,17 +422,6 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
             }
         }
         return closest;
-    }
-    
-    /**
-     * Returns all column headers
-     * @return
-     */
-    protected String[] getColumnHeaders(){
-        return new String[] {
-                             Resources.getMessage("ViewStatisticsClassificationInput.22"), //$NON-NLS-1$
-                             Resources.getMessage("ViewStatisticsClassificationInput.23"), //$NON-NLS-1$
-                     };
     }
     
     @Override
@@ -617,9 +609,9 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             final String selectedAttribute = (String) event.data;
             // Update class attribute combo selection
-            for (int i = 0; i < cmbClassAtt.getItemCount(); i++) {
-                if (cmbClassAtt.getItem(i).equals(selectedAttribute)) {
-                    cmbClassAtt.select(i);
+            for (int i = 0; i < combo.getItemCount(); i++) {
+                if (combo.getItem(i).equals(selectedAttribute)) {
+                    combo.select(i);
                     updateTableAndChart(selectedAttribute);
                     break;
                 }
@@ -655,7 +647,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
     private void updateTableAndChart(String clazz){
         
         // Check
-        if (class2Values2ROC.isEmpty() || !class2Values2ROC.containsKey(clazz)) {
+        if (rocCurves.isEmpty() || !rocCurves.containsKey(clazz)) {
             return;
         }
         
@@ -664,21 +656,21 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
             i.dispose();
         }
         
-        Map<String, ROCCurve> value2ROC = class2Values2ROC.get(clazz);
-        List<String> values = new ArrayList<>(value2ROC.keySet());
-        Collections.sort(values);
-        
         // Create entries
+        Map<String, ROCCurve> curves = rocCurves.get(clazz);
+        List<String> values = new ArrayList<>(curves.keySet());
+        Collections.sort(values);
         for(String value : values){
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(0, value);
-            ROCCurve c = value2ROC.get(value);
+            ROCCurve c = curves.get(value);
             item.setText(1, String.valueOf(c.getAUC()));
             item.setData(c);
         }
 
+        // Table
         table.setFocus();
         table.select(0);
-        setChartSeries(values.get(0), value2ROC.get(values.get(0)));
+        setChartSeries(values.get(0), curves.get(values.get(0)));
     }
 }

@@ -72,7 +72,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<AnalysisContextClassification> {
+public abstract class ViewStatisticsClassification extends ViewStatistics<AnalysisContextClassification> {
 
     /** Minimal width of a category label. */
     private static final int MIN_CATEGORY_WIDTH = 10;
@@ -96,9 +96,9 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
      * @param controller
      * @param part
      */
-    public ViewStatisticsLogisticRegression(final Composite parent,
-                                            final Controller controller,
-                                            final ModelPart part) {
+    public ViewStatisticsClassification(final Composite parent,
+                                        final Controller controller,
+                                        final ModelPart part) {
 
         super(parent, controller, part, null, false);
         this.manager = new AnalysisManager(parent.getDisplay());
@@ -407,7 +407,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                                 setChartSeries((PrecisionRecallMatrix) item.getData());
                             }
                             getModel().setSelectedAttribute(item.getText(0));
-                            getController().update(new ModelEvent(ViewStatisticsLogisticRegression.this,
+                            getController().update(new ModelEvent(ViewStatisticsClassification.this,
                                                                   ModelPart.SELECTED_ATTRIBUTE,
                                                                   item.getText(0)));
                             return;
