@@ -42,16 +42,20 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -90,6 +94,8 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
     private SashForm         sash;
     /** View */
     private Chart            chart;
+    /** Widget */
+    private Combo            cmbClassAtt;
 
     /**
      * Creates a new instance.
@@ -107,6 +113,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_CLASS_VALUE, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
     }
     
     @Override
@@ -126,7 +133,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                 triggerUpdate();
             }
         }
-        if (event.part == ModelPart.SELECTED_CLASS_VALUE) {
+        else if (event.part == ModelPart.SELECTED_CLASS_VALUE) {
             int index = 0;
             for (TableItem item : table.getItems()) {
                 if (item.getText(0).equals(super.getModel().getSelectedClassValue())) {
@@ -138,6 +145,16 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                 }
                 index++;
             }
+        }
+        else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+           final String selectedAttribute = (String) event.data;
+           int index = 0;
+           for (String value : this.cmbClassAtt.getItems()) {
+               if (value.equals(selectedAttribute)) {
+                   cmbClassAtt.select(index);
+               }
+               index++;
+           }
         }
     }
 
@@ -299,6 +316,18 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         }
     }
     
+    /**
+     * Updates the selected class attribute.
+     */
+    private void actionClassAttChanged(){
+        if(cmbClassAtt.getSelectionIndex() >=0){
+            String selectedClass = cmbClassAtt.getItem(cmbClassAtt.getSelectionIndex());
+            getController().update(new ModelEvent(ViewStatisticsLogisticRegressionROCCurves.this,
+                                                  ModelPart.SELECTED_ATTRIBUTE,
+                                                  selectedClass));
+        }
+    }
+    
     @Override
     protected Control createControl(Composite parent) {
 
@@ -308,12 +337,16 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         
         // Shash
         this.sash = new SashForm(this.root, SWT.VERTICAL);
+        
+        final Composite composite = new Composite(this.sash, SWT.NONE);
+        composite.setLayout(SWTUtil.createGridLayout(2));
 
         // Table
-        this.table = SWTUtil.createTableDynamic(this.sash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+        this.table = SWTUtil.createTableDynamic(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         this.table.setMenu(new ClipboardHandlerTable(table).getMenu());
+        this.table.setLayoutData(SWTUtil.createFillGridData(2));
 
         // Columns
         String[] columns = getColumnHeaders();
@@ -335,6 +368,18 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
         }
         SWTUtil.createGenericTooltip(table);
 
+        final Label lblClassAtt = new Label(composite, SWT.NONE);
+        lblClassAtt.setText(Resources.getMessage("ViewStatisticsClassificationInput.21"));
+        lblClassAtt.setLayoutData(SWTUtil.createNoFillGridData());
+        this.cmbClassAtt = new Combo(composite, SWT.READ_ONLY);
+        this.cmbClassAtt.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.cmbClassAtt.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                actionClassAttChanged();
+            }
+        });
+        
         // Chart and sash
         resetChart();
         this.sash.setWeights(new int[] {2, 2});
@@ -444,6 +489,7 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
             i.dispose();
         }
         table.setRedraw(true);
+        if (cmbClassAtt != null && cmbClassAtt.getItemCount() != 0) cmbClassAtt.select(0);
         resetChart();
         setStatusEmpty();
     }
@@ -499,6 +545,10 @@ public abstract class ViewStatisticsLogisticRegressionROCCurves extends ViewStat
                     setStatusEmpty();
                     return;
                 }
+                
+                // Update combobox
+                cmbClassAtt.setItems(classes);
+                cmbClassAtt.select(0);
 
                 // Update chart
                 for (final TableItem i : table.getItems()) {
