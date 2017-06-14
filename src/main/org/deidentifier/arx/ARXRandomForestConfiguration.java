@@ -19,37 +19,27 @@ package org.deidentifier.arx;
 import java.io.Serializable;
 
 /**
- * Configuration for naive bayes classification
+ * Configuration for Random Forest classifiers
  * @author Fabian Prasser
  */
-public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration implements Serializable {
-
-    /** 
-     * Type of bayes classifier
-     */
-    public static enum Type {
-        MULTINOMIAL,
-        BERNOULLI
-    }
+public class ARXRandomForestConfiguration extends ARXClassificationConfiguration implements Serializable {
 
     /** SVUID */
-    private static final long serialVersionUID = 5899021797968063868L;
+    private static final long serialVersionUID = 7928077920858462047L;
 
     /**
      * Returns a new instance
      * @return
      */
-    public static ARXNaiveBayesConfiguration create() {
-        return new ARXNaiveBayesConfiguration();
+    public static ARXRandomForestConfiguration create() {
+        return new ARXRandomForestConfiguration();
     }
 
-    /** Type */
-    private Type    type          = Type.BERNOULLI;
-    /** Prior count */
-    private double  sigma         = 1.0d;
+    /** Number of trees */
+    private int     numberOfTrees = 10;
+
     /** Configuration */
     private int     vectorLength  = 1000;
-
     /** Max records */
     private int     maxRecords    = 100000;
     /** Seed */
@@ -62,7 +52,7 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     /**
      * Constructor
      */
-    private ARXNaiveBayesConfiguration(){
+    private ARXRandomForestConfiguration(){
         // Empty by design
     }
 
@@ -85,21 +75,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     }
 
     /**
-     * Gets the prior count of add-k smoothing of evidence.
-     * @return the sigma
-     */
-    public double getSigma() {
-        return sigma;
-    }
-    
-    /**
-     * Type
-     * @return the type
-     */
-    public Type getType() {
-        return type;
-    }
-    /**
      * @return the vectorLength
      */
     public int getVectorLength() {
@@ -119,7 +94,7 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      * @param deterministic
      * @return
      */
-    public ARXNaiveBayesConfiguration setDeterministic(boolean deterministic) {
+    public ARXRandomForestConfiguration setDeterministic(boolean deterministic) {
         this.deterministic = deterministic;
         return this;
     }
@@ -127,7 +102,7 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     /**
      * @param maxRecords the maxRecords to set
      */
-    public ARXNaiveBayesConfiguration setMaxRecords(int maxRecords) {
+    public ARXRandomForestConfiguration setMaxRecords(int maxRecords) {
         if (maxRecords <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
@@ -138,7 +113,7 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     /**
      * @param numberOfFolds the numberOfFolds to set
      */
-    public ARXNaiveBayesConfiguration setNumFolds(int numberOfFolds) {
+    public ARXRandomForestConfiguration setNumFolds(int numberOfFolds) {
         if (numberOfFolds <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
@@ -150,43 +125,34 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
      * @param seed the seed to set
      */
-    public ARXNaiveBayesConfiguration setSeed(int seed) {
+    public ARXRandomForestConfiguration setSeed(int seed) {
         this.seed = seed;
-        return this;
-    }
-
-    /**
-     * Sets the prior count of add-k smoothing of evidence.
-     * @param sigma the sigma to set
-     */
-    public ARXNaiveBayesConfiguration setSigma(double sigma) {
-        if (sigma < 0) {
-            throw new IllegalArgumentException("Invalid add-k smoothing parameter: " + sigma);
-        }
-        this.sigma = sigma;
-        return this;
-    }
-
-    /**
-     * Type
-     * @param type the type to set
-     */
-    public ARXNaiveBayesConfiguration setType(Type type) {
-        if (type == null) {
-            throw new IllegalArgumentException("Invalid type parameter: " + type);
-        }
-        this.type = type;
         return this;
     }
 
     /**
      * @param vectorLength the vectorLength to set
      */
-    public ARXNaiveBayesConfiguration setVectorLength(int vectorLength) {
+    public ARXRandomForestConfiguration setVectorLength(int vectorLength) {
         if (vectorLength <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
         this.vectorLength = vectorLength;
         return this;
     }
+
+    /**
+     * @return the numberOfTrees
+     */
+    public int getNumberOfTrees() {
+        return numberOfTrees;
+    }
+
+    /**
+     * @param numberOfTrees the numberOfTrees to set
+     */
+    public ARXRandomForestConfiguration setNumberOfTrees(int numberOfTrees) {
+        this.numberOfTrees = numberOfTrees;
+        return this;
+    }    
 }

@@ -631,13 +631,35 @@ public class DataHandleOutput extends DataHandle {
         return 0;
     }
     
+    @Override
+    protected int internalGetEncodedValue(final int row,
+                                          final int col,
+                                          final boolean ignoreSuppression) {
+        
+        // Return the according values
+        final int key = col * 2;
+        final int type = inverseMap[key];
+        switch (type) {
+        case AttributeTypeInternal.IDENTIFYING:
+            return -1;
+        default:
+            final int index = inverseMap[key + 1];
+            final int[][] data = inverseData[type];
+            
+            if (!ignoreSuppression && (suppressedAttributeTypes & (1 << type)) != 0 &&
+                ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
+                return -1;
+            }
+            
+            return data[row][index] & Data.REMOVE_OUTLIER_MASK;
+        }
+    }
+
     /**
      * Gets the value internal.
      * 
-     * @param row
-     *            the row
-     * @param col
-     *            the col
+     * @param row the row
+     * @param col the col
      * @return the value internal
      */
     @Override
