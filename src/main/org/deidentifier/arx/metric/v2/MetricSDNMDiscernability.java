@@ -18,15 +18,9 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.data.Data;
-import org.deidentifier.arx.framework.data.DataManager;
-import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -36,18 +30,11 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- * @author Raffael Bild
  */
 public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     
     /** SVUID. */
     private static final long serialVersionUID = -8573084860566655278L;
-    
-    /** Total number of records */
-    double                    numRecords;
-    
-    /** Minimal size of equivalence classes enforced by the differential privacy model */
-    double                    k;
 
     /**
      * Creates a new instance.
@@ -151,44 +138,6 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
-    }
-    
-    @Override
-    public double getScore(final Transformation node, final HashGroupify groupify) {
-        
-        double score = 0;
-        
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            if (m.isNotOutlier) {
-                score += m.count * m.count;
-            } else {
-                score += m.count * numRecords;
-            }
-            score += (m.pcount - m.count) * numRecords;
-            m = m.nextOrdered;
-        }
-        
-        return -1d * score / (numRecords * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d));
-    }
-    
-    @Override
-    protected void initializeInternal(final DataManager manager,
-                                      final DataDefinition definition, 
-                                      final Data input, 
-                                      final GeneralizationHierarchy[] hierarchies, 
-                                      final ARXConfiguration config) {
-        
-        super.initializeInternal(manager, definition, input, hierarchies, config);
-        
-        numRecords = manager.getDataGeneralized().getDataLength();
-
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
-            if (c instanceof EDDifferentialPrivacy) {
-                k = c.getMinimalClassSize();
-                break;
-            }
-        }
     }
 }
 
