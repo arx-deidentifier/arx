@@ -61,7 +61,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * 
  * @author Fabian Prasser
  */
-public class ViewClassificationAttributes implements IView, ViewStatisticsBasic {
+public class ViewStatisticsClassificationAttributes implements IView, ViewStatisticsBasic {
     
     /**
      * Internal state management
@@ -155,7 +155,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
      * @param parent
      * @param controller
      */
-    public ViewClassificationAttributes(final Composite parent,
+    public ViewStatisticsClassificationAttributes(final Composite parent,
                                         final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
@@ -277,7 +277,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
                 modified = true;
             }
             if (modified) {
-                controller.update(new ModelEvent(ViewClassificationAttributes.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
             }
         }
     }
@@ -310,6 +310,9 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         root.setRedraw(false);        
 
         for (TableItem item : features.getItems()) {
+            item.dispose();
+        }
+        for (TableItem item : classes.getItems()) {
             item.dispose();
         }
         

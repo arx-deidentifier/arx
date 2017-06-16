@@ -27,6 +27,12 @@ public interface ClassificationResult {
      * @return
      */
     public double confidence();
+
+    /**
+     * Returns the confidences for all class values
+     * @return
+     */
+    public double[] confidences();
     
     /**
      * Returns whether the result is correct

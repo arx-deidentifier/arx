@@ -50,6 +50,11 @@ public class MultiClassRandomForestClassificationResult implements Classificatio
     }
 
     @Override
+    public double[] confidences() {
+        return this.probabilities;
+    }
+
+    @Override
     public boolean correct(String clazz) {
         return result == map.get(clazz).intValue();
     }

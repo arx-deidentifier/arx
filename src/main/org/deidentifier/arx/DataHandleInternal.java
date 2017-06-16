@@ -245,13 +245,23 @@ public class DataHandleInternal {
     }
     
     /**
+     * Returns the internal id of the given value
+     * @param column
+     * @param value
+     * @return
+     */
+    public int getValueIdentifier(int column, String value) {
+        return this.handle.getValueIdentifier(column, value);
+    }
+    
+    /**
      * Returns the view
      * @return
      */
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
     }
-    
+
     /**
      * Returns whether the handle is anonymous
      * @return

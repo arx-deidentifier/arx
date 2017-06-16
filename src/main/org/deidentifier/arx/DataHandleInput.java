@@ -249,15 +249,26 @@ public class DataHandleInput extends DataHandle {
     }
     
     @Override
+    protected int getValueIdentifier(int column, String value) {
+        String[] values = dictionary.getMapping()[column];
+        for (int index = 0; index < values.length; index++) {
+            if (values[index].equals(value)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    @Override
     protected int internalGetEncodedValue(final int row, final int column, final boolean ignoreSuppression) {
         return data[row][column];
     }
-
+    
     @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
         return dictionary.getMapping()[column][data[row][column]];
     }
-    
+
     @Override
     protected boolean internalReplace(int column,
                                       String original,

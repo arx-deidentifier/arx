@@ -21,7 +21,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.DataHandleInternal;
@@ -40,8 +39,6 @@ public class ClassificationDataSpecification {
     public final int                             classIndex;
     /** Map */
     public final Map<String, Integer>            classMap;
-    /** Map */
-    public final Map<Integer, String>            classMapInverse;
     /** Indexes */
     public final int[]                           featureIndices;
     /** Feature meta data */
@@ -88,24 +85,10 @@ public class ClassificationDataSpecification {
         this.featureMetadata = getFeatureMetadata(inputFeatureHandle, featureIndices, scaling);
         this.classIndex = getClassIndex(outputFeatureHandle, clazz);
         this.classMap = getClassMap(outputFeatureHandle, classIndex);
-        classMapInverse = getInverseClassMap(this.classMap);
 
         if (classMap.size() == 0) {
             throw new IllegalArgumentException("No classes defined");
         }
-    }
-
-    /**
-     * Returns the inverse class map
-     * @param class Map
-     * @return
-     */
-    private Map<Integer, String> getInverseClassMap(Map<String, Integer> classMap) {
-        Map<Integer, String> result = new HashMap<Integer, String>();
-        for (Entry<String, Integer> entry : classMap.entrySet()) {
-            result.put(entry.getValue(), entry.getKey());
-        }
-        return result;
     }
 
     /**

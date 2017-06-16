@@ -109,6 +109,11 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    protected int getValueIdentifier(int column, String value) {
+        return source.getValueIdentifier(column, value);
+    }
+
+    @Override
     public boolean isOptimized() {
         checkRegistry();
         return source.isOptimized();

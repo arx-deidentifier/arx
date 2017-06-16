@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
@@ -150,13 +149,81 @@ public class StatisticsClassification {
     public static class ROCCurve {
 
         /** Precision */
-        private double[] truePositive  = new double[CONFIDENCE_THRESHOLDS.length];
+        private final double[] truePositive;
         /** Recall */
-        private double[] falsePositive = new double[CONFIDENCE_THRESHOLDS.length];
-        /** Recall */
-        private int[]    exists        = new int[CONFIDENCE_THRESHOLDS.length];
+        private final double[] falsePositive;
         /** AUC */
-        private double   AUC           = 0d;
+        private final double   AUC;
+        
+        /**
+         * Creates a new ROC curve
+         * @param value
+         * @param confidences
+         * @param confidenceIndex
+         * @param handle
+         * @param handleIndex
+         */
+        private ROCCurve(String value,
+                         List<double[]> confidences,
+                         int confidenceIndex,
+                         DataHandleInternal handle,
+                         int handleIndex) {
+            
+            // Determine correct values
+            int records = handle.getNumRows(); // TODO: Sampling?
+            int positive = 0;
+            int valueID = handle.getValueIdentifier(handleIndex, value);
+            final boolean[] correct = new boolean[confidences.size()]; // TODO: Sampling?
+            final double[] confidence = new double[confidences.size()]; // TODO: Sampling?
+            for (int i = 0; i < correct.length; i++) {
+                correct[i] = (handle.getEncodedValue(i, handleIndex, true) == valueID);
+                positive += correct[i] ? 1 : 0;
+                confidence[i] = confidences.get(i)[confidenceIndex];
+            }
+            
+            // Sort by confidence
+            GenericSorting.mergeSort(0, correct.length, new IntComparator() {
+                @Override public int compare(int arg0, int arg1) {
+                    return Double.compare(confidence[arg0], confidence[arg1]);
+                }
+            }, new Swapper() {
+                @Override public void swap(int arg0, int arg1) {
+                    double temp = confidence[arg0];
+                    confidence[arg0] = confidence[arg1];
+                    confidence[arg1] = temp;
+                    boolean temp2 = correct[arg0];
+                    correct[arg0] = correct[arg1];
+                    correct[arg1] = temp2;
+                }
+            });
+            
+            // Initialize curve
+            truePositive = new double[confidences.size()];
+            falsePositive = new double[confidences.size()];
+            
+            // Draw curve
+            int x = 0;
+            int y = 0;
+            int offset=0;
+            for (int i = correct.length - 1; i >= 0; i--) {
+                x += correct[i] ? 0 : 1;
+                y += correct[i] ? 1 : 0;
+                falsePositive[offset] = (double)x/(double)(records-positive);
+                truePositive[offset] = (double)y/(double)positive;
+                offset++;
+            }
+
+            // Calculate AUC: trapezoidal rule
+            double AUC = 0d;
+            for (int i=0; i<truePositive.length-1; i++) {
+                double minX = Math.min(falsePositive[i], falsePositive[i + 1]);
+                double maxX = Math.max(falsePositive[i], falsePositive[i + 1]);
+                double minY = Math.min(truePositive[i], truePositive[i + 1]);
+                double maxY = Math.max(truePositive[i], truePositive[i + 1]);
+                AUC += (maxX - minX) * (minY + maxY) / 2d;
+            }
+            this.AUC = AUC;
+        }
 
         /**
          * Returns the AUC
@@ -182,131 +249,6 @@ public class StatisticsClassification {
             return truePositive;
         }
 
-        /**
-         * Inserts an element into the array
-         * @param array
-         * @param index
-         * @param value
-         * @return
-         */
-        private double[] insert(double[] array, int index, double value) {
-            double[] result = new double[array.length + 1];
-            for (int i = 0; i < result.length; i++) {
-                if (i < index) {
-                    result[i] = array[i];
-                } else if (i == index) {
-                    result[i] = value;
-                } else {
-                    result[i] = array[i - 1];
-                }
-            }
-            return result;
-        }
-        
-        /**
-         * Removes duplicates
-         * @param array1
-         * @param array2
-         * @return The number of elements removed
-         */
-        private int trim(double[] array1, double[] array2) {
-            int trim = 0;
-            int len = array1.length - 1;
-            for (int i = 0; i < len; i++) {
-                if (array1[i] == array1[i + 1] && array2[i] == array2[i + 1]) {
-                    System.arraycopy(array1, i+1, array1, i, array1.length - i - 1);
-                    System.arraycopy(array2, i+1, array2, i, array2.length - i - 1);
-                    trim++; i--; len--;
-                }
-            }
-            return trim;
-        }
-
-        /**
-         * Adds a new value
-         * @param confidence
-         * @param correct
-         */
-        void add(double confidence, boolean correct) {
-
-            // Count
-            int index = (int)(confidence * (CONFIDENCE_THRESHOLDS.length - 1d));
-            falsePositive[index] += correct ? 0d : 1d;
-            truePositive[index] += correct ? 1d : 0d;
-        }
-
-        /**
-         * This value actually exists
-         * @param confidence
-         */
-        void exists(double confidence) {
-            int index = (int)(confidence * (CONFIDENCE_THRESHOLDS.length - 1d));
-            exists[index] ++;
-        }
-
-        /**
-         * Packs the results
-         * @param classifications 
-         */
-        void pack(int[] classifications) {
-
-            // Pack
-            packConfidence(exists);
-            packConfidence(truePositive);
-            packConfidence(falsePositive);
-            
-            // Calculate
-            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                if (exists[i] != 0 && classifications[i] != 0) {
-                    truePositive[i] /= (double)exists[i];
-                    falsePositive[i] /= (double) (classifications[i] - exists[i]);
-                }
-            }
-
-            // Sort
-            GenericSorting.mergeSort(0, falsePositive.length, new IntComparator() {
-                @Override
-                public int compare(int arg0, int arg1) {
-                    return Double.compare(falsePositive[arg0], falsePositive[arg1]);
-                }
-            }, new Swapper() {
-                @Override
-                public void swap(int arg0, int arg1) {
-                    // Swap FP
-                    double temp = falsePositive[arg0];
-                    falsePositive[arg0] = falsePositive[arg1];
-                    falsePositive[arg1] = temp;
-                    // Swap TP
-                    temp = truePositive[arg0];
-                    truePositive[arg0] = truePositive[arg1];
-                    truePositive[arg1] = temp;
-                }
-            });
-            
-            // Remove duplicates
-            int shift = trim(truePositive, falsePositive);
-            truePositive = Arrays.copyOf(truePositive, truePositive.length - shift);
-            falsePositive = Arrays.copyOf(falsePositive, falsePositive.length - shift);
-            
-            // Make sane
-            if (truePositive[0] != 0d && falsePositive[0] != 0d) {
-                truePositive = insert(truePositive, 0, 0d);
-                falsePositive = insert(falsePositive, 0, 0d);
-            }
-            if (truePositive[truePositive.length - 1] != 1d && falsePositive[falsePositive.length - 1] != 1d) {
-                truePositive = insert(truePositive, truePositive.length, 1d);
-                falsePositive = insert(falsePositive, falsePositive.length, 1d);
-            }
-            
-            // Calculate AUC: trapezoidal rule
-            for (int i=0; i<truePositive.length-1; i++) {
-                double minX = Math.min(falsePositive[i], falsePositive[i + 1]);
-                double maxX = Math.max(falsePositive[i], falsePositive[i + 1]);
-                double minY = Math.min(truePositive[i], truePositive[i + 1]);
-                double maxY = Math.max(truePositive[i], truePositive[i + 1]);
-                AUC += (maxX - minX) * (minY + maxY) / 2d;
-            }
-        }
     }
     
     /** Confidence thresholds: only change together with thresholds, steps and num*/
@@ -343,16 +285,6 @@ public class StatisticsClassification {
      * @param array
      */
     private static void packConfidence(double[] array) {
-        for (int i = array.length - 1; i > 0; i--) {
-            array[i - 1] += array[i];
-        }
-    }
-    
-    /**
-     *  Packs an array that is based on confidence intervals
-     * @param array
-     */
-    private static void packConfidence(int[] array) {
         for (int i = array.length - 1; i > 0; i--) {
             array[i - 1] += array[i];
         }
@@ -422,10 +354,10 @@ public class StatisticsClassification {
         if (samplingFraction <= 0d) {
             throw new IllegalArgumentException("Sampling fraction must be >0");
         }
+        // TODO: Sampling fraction is not considered!
         if (samplingFraction > 1d) {
             samplingFraction = 1d;
         }
-        
        
         // Initialize random
         if (!config.isDeterministic()) {
@@ -442,22 +374,22 @@ public class StatisticsClassification {
                                                                                             clazz,
                                                                                             interrupt);
         
-        // Initialize ROC curves
-        for (String classValue : specification.classMap.keySet()) {
-            ROC.put(classValue, new ROCCurve());
-            originalROC.put(classValue, new ROCCurve());
-        }
-        
         // Train and evaluate
         int k = inputHandle.getNumRows() > config.getNumFolds() ? config.getNumFolds() : inputHandle.getNumRows();
         List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), k);
 
         // Track
-        int[] classificationsOriginal = new int[CONFIDENCE_THRESHOLDS.length];
-        int[] classificationsOutput = new int[CONFIDENCE_THRESHOLDS.length];
         int classifications = 0;
-        double total = 100d / ((double)inputHandle.getNumRows() * (double)folds.size());
+        double total = 100d / ((double)inputHandle.getNumRows() * (double)folds.size()); // TODO: Sampling!
         double done = 0d;
+        
+        // ROC
+        List<double[]> confidences = new ArrayList<double[]>();
+        List<double[]> originalConfidences = new ArrayList<double[]>();
+        for (int i = 0; i < inputHandle.getNumRows(); i++) {
+            confidences.add(null);
+            originalConfidences.add(null);
+        }
                 
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
@@ -524,12 +456,7 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
-                        this.originalROC.get(actualValue).exists(resultInputLR.confidence());
-                        this.originalROC.get(specification.classMapInverse.get(resultInputLR.index())).add(resultInputLR.confidence(), correct);
-                        
-                        // Count
-                        int confidenceIndex = (int)(resultInputLR.confidence() * (CONFIDENCE_THRESHOLDS.length - 1d));
-                        classificationsOriginal[confidenceIndex] ++;
+                        originalConfidences.set(index, resultInputLR.confidences());
                         
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -537,12 +464,7 @@ public class StatisticsClassification {
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
                             this.matrix.add(resultOutputLR.confidence(), correct);
-                            this.ROC.get(actualValue).exists(resultOutputLR.confidence());
-                            this.ROC.get(specification.classMapInverse.get(resultOutputLR.index())).add(resultOutputLR.confidence(), correct);
-
-                            // Count
-                            confidenceIndex = (int)(resultOutputLR.confidence() * (CONFIDENCE_THRESHOLDS.length - 1d));
-                            classificationsOutput[confidenceIndex]++;
+                            confidences.set(index, resultOutputLR.confidences());
                         }
                     }
                     this.progress.value = (int)((++done) * total);
@@ -561,14 +483,10 @@ public class StatisticsClassification {
         this.originalAccuracy /= (double)classifications;
         this.originalMatrix.pack();
         
-        // Pack confidence array
-        packConfidence(classificationsOutput);
-        packConfidence(classificationsOriginal);
-        
-        // ROCCurves
-        for (String attr : getClassValues()) {
-            ROC.get(attr).pack(classificationsOutput);
-            originalROC.get(attr).pack(classificationsOriginal);
+        // Initialize ROC curves
+        for (String attr : specification.classMap.keySet()) {
+            ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
+            originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
         }
 
         // Maintain data about outputLR                        
