@@ -49,15 +49,14 @@ import cern.colt.Swapper;
 import cern.colt.function.IntComparator;
 
 /**
- * Statistics representing the prediction accuracy of a data mining
- * classification operator
+ * Statistics representing the performance of various classifiers
  * 
  * @author Fabian Prasser
  */
 public class StatisticsClassification {
 
     /**
-     * A matrix mapping confidence thresholds to precision and recall
+     * A matrix mapping confidence thresholds to precision, recall and f-score
      * 
      * @author Fabian Prasser
      *
