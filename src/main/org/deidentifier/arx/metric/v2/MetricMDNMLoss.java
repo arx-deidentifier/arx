@@ -103,7 +103,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                                        gsFactor,                     // gs-factor
                                        false,                        // precomputed
                                        0.0d,                         // precomputation threshold
-                                       this.getAggregateFunction()   // aggregate function
+                                       this.getAggregateFunction(),  // aggregate function
+                                       false                         // score function supported
                                        );
     }
     

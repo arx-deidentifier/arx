@@ -82,7 +82,8 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
                                        super.getGeneralizationSuppressionFactor(),  // gs-factor
                                        true,                                        // precomputed
                                        1.0d,                                        // precomputation threshold
-                                       this.getAggregateFunction()                  // aggregate function
+                                       this.getAggregateFunction(),                 // aggregate function
+                                       false                                        // score function supported
                                        );
     }
 

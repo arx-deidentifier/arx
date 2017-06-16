@@ -82,11 +82,12 @@ public class MetricMDNMLossPotentiallyPrecomputed extends AbstractMetricMultiDim
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                      // monotonic
+        return new MetricConfiguration(false,                       // monotonic
                                        ((MetricMDNMLoss)super.getDefaultMetric()).getGeneralizationSuppressionFactor(), // gs-factor
-                                       super.isPrecomputed(),      // precomputed
-                                       super.getThreshold(),       // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
+                                       super.isPrecomputed(),       // precomputed
+                                       super.getThreshold(),        // precomputation threshold
+                                       this.getAggregateFunction(), // aggregate function
+                                       false                        // score function supported
                                        );
     }
 

@@ -83,7 +83,8 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
                                        0.5d,                       // gs-factor
                                        false,                      // precomputed
                                        0.0d,                       // precomputation threshold
-                                       AggregateFunction.SUM       // aggregate function
+                                       AggregateFunction.SUM,      // aggregate function
+                                       false                       // score function supported
                                        );
     }
 

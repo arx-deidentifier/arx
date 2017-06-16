@@ -64,11 +64,12 @@ public class MetricMDHeight extends AbstractMetricMultiDimensional {
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(true,                       // monotonic
-                                       0.5d,                       // gs-factor
-                                       false,                      // precomputed
-                                       0d,                         // precomputation threshold
-                                       this.getAggregateFunction() // aggregate function
+        return new MetricConfiguration(true,                        // monotonic
+                                       0.5d,                        // gs-factor
+                                       false,                       // precomputed
+                                       0d,                          // precomputation threshold
+                                       this.getAggregateFunction(), // aggregate function
+                                       false                        // score function supported
                                        );
     }
   

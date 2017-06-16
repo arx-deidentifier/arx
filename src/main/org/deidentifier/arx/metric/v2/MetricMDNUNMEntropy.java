@@ -63,7 +63,8 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
                                        super.getGeneralizationSuppressionFactor(),  // gs-factor
                                        false,                                       // precomputed
                                        0.0d,                                        // precomputation threshold
-                                       this.getAggregateFunction()                  // aggregate function
+                                       this.getAggregateFunction(),                 // aggregate function
+                                       false                                        // score function supported
                                        );
     }
 

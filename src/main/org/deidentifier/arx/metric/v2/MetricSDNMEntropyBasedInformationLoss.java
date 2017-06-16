@@ -185,7 +185,8 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
                                        super.getGeneralizationSuppressionFactor(), 
                                        false, 
                                        0.0d, 
-                                       this.getAggregateFunction());
+                                       this.getAggregateFunction(),
+                                       false);
     }
 
     @Override
