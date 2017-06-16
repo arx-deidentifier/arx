@@ -307,7 +307,7 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
         series.setXSeries(xSeries);
         series.setYSeries(ySeries);
         series.setAntialias(SWT.ON);
-        series.setSymbolType(PlotSymbolType.CIRCLE);
+        series.setSymbolType(PlotSymbolType.NONE);
         series.setSymbolColor(GUIHelper.getColor(255, 32, 32));
         series.enableArea(true);
 
