@@ -383,11 +383,16 @@ public class StatisticsClassification {
         double done = 0d;
         
         // ROC
-        List<double[]> confidences = new ArrayList<double[]>();
         List<double[]> originalConfidences = new ArrayList<double[]>();
         for (int i = 0; i < inputHandle.getNumRows(); i++) {
-            confidences.add(null);
             originalConfidences.add(null);
+        }
+        List<double[]> confidences = null;
+        if (inputHandle != outputHandle) {
+            confidences = new ArrayList<double[]>();
+            for (int i = 0; i < inputHandle.getNumRows(); i++) {
+                confidences.add(null);
+            }
         }
                 
         // For each fold as a validation set
@@ -482,10 +487,15 @@ public class StatisticsClassification {
         this.originalAccuracy /= (double)classifications;
         this.originalMatrix.pack();
         
-        // Initialize ROC curves
+        // Initialize ROC curves on original data
         for (String attr : specification.classMap.keySet()) {
-            ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
             originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
+        }
+        // Initialize ROC curves on anonymized data
+        if (confidences != null) {
+            for (String attr : specification.classMap.keySet()) {
+                ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
+            }    
         }
 
         // Maintain data about outputLR                        
@@ -528,7 +538,7 @@ public class StatisticsClassification {
      * @return
      */
     public Set<String> getClassValues() {
-        return this.ROC.keySet();
+        return this.originalROC.keySet();
     }
     
     /**

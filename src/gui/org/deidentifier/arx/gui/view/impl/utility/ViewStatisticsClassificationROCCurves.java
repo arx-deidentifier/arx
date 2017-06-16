@@ -17,6 +17,7 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,7 +38,6 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressPro
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
@@ -90,6 +90,10 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
 
     /** Model */
     private Map<String, Map<String, ROCCurve>> rocCurves;
+    /** Model */
+    private Map<String, Map<String, ROCCurve>> originalRocCurves;
+    /** Model */
+    private boolean                            isOutput;
 
     /** View */
     private DynamicTable                       table;
@@ -116,6 +120,8 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
         super(parent, controller, part, null, false);
         this.manager = new AnalysisManager(parent.getDisplay());
         this.rocCurves = new HashMap<>();
+        this.originalRocCurves = new HashMap<>();
+        this.isOutput = part != ModelPart.INPUT;
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_CLASS_VALUE, this);
@@ -144,8 +150,8 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
             for (TableItem item : table.getItems()) {
                 if (item.getText(0).equals(super.getModel().getSelectedClassValue())) {
                     table.select(index);
-                    if (item.getData() != null && item.getData() instanceof ROCCurve) {
-                        setChartSeries(item.getText(0), (ROCCurve) item.getData());
+                    if (item.getData() != null) {
+                        setChartSeries((ROCCurve[]) item.getData());
                     }
                     return;
                 }
@@ -166,36 +172,22 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
     }
 
     /**
-     * Updates the selected class attribute.
-     */
-    private void actionClassAttChanged(){
-        if(combo.getSelectionIndex() >=0){
-            String selectedClass = combo.getItem(combo.getSelectionIndex());
-            updateTableAndChart(selectedClass);
-            getController().update(new ModelEvent(ViewStatisticsClassificationROCCurves.this,
-                                                  ModelPart.SELECTED_ATTRIBUTE,
-                                                  selectedClass));
-        }
-    }
-    
-    /**
-     * Returns the value contained in the series that is closest to valueClicked while being greater.
+     * Returns the value of the given point
      * 
-     * @param series
-     * @param valueClicked
+     * @param data
+     * @param value
      * @return
      */
-    private double getClosestValue(double[] series, double valueClicked){
-        double closest = Double.MAX_VALUE;
-        for(int i = 0; i < series.length; i++){
-            double value = series[i];
-            if(valueClicked > value && Math.abs(value - valueClicked) < Math.abs(closest - valueClicked)){
-                closest = value;
-            }
+    private int getIndex(double[] data, double value){
+        int index = Arrays.binarySearch(data, value);
+        if (index < 0) {
+            index = -index + 1;
         }
-        return closest;
+        if (index > data.length - 1) {
+            index = data.length - 1;
+        }
+        return index;
     }
-
 
     /**
      * Resets the chart
@@ -281,16 +273,16 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
     }
     
     /**
-     * Updates the chart with a new rocCurve
+     * Updates the chart with a new ROC Curve
      * 
-     * @param matrix
+     * @param data
      */
-    private void setChartSeries(String classValue, ROCCurve rocCurve) {
+    private void setChartSeries(ROCCurve[] data) {
+        
+        ROCCurve original = data[0];
+        ROCCurve output = data[1];
 
         // Init data
-        double[] xSeries = rocCurve.getFalsePositiveRate();
-        double[] ySeries = rocCurve.getTruePositiveRate();
-
         chart.setRedraw(false);
 
         ISeriesSet seriesSet = chart.getSeriesSet();
@@ -300,25 +292,38 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
             chart.getSeriesSet().deleteSeries(s.getId());
         }
 
-        ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, classValue); // $NON-NLS-1$
+        // Original
+        ILineSeries series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, 
+                                                                  Resources.getMessage("ViewStatisticsClassificationInput.25")); // $NON-NLS-1$
         series.getLabel().setVisible(false);
         series.getLabel().setFont(chart.getFont());
         series.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-        series.setXSeries(xSeries);
-        series.setYSeries(ySeries);
+        series.setXSeries(original.getFalsePositiveRate());
+        series.setYSeries(original.getTruePositiveRate());
         series.setAntialias(SWT.ON);
         series.setSymbolType(PlotSymbolType.NONE);
-        series.setSymbolColor(GUIHelper.getColor(255, 32, 32));
-        series.enableArea(true);
+        series.enableArea(false);
+
+        // Output
+        if (output != null) {
+            series = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, 
+                                                          Resources.getMessage("ViewStatisticsClassificationInput.26")); // $NON-NLS-1$
+            series.getLabel().setVisible(false);
+            series.getLabel().setFont(chart.getFont());
+            series.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+            series.setXSeries(output.getFalsePositiveRate());
+            series.setYSeries(output.getTruePositiveRate());
+            series.setAntialias(SWT.ON);
+            series.setSymbolType(PlotSymbolType.NONE);
+            series.enableArea(false);
+        }
 
         chart.getLegend().setVisible(true);
         chart.getLegend().setPosition(SWT.TOP);
 
         IAxisSet axisSet = chart.getAxisSet();
-
         IAxis yAxis = axisSet.getYAxis(0);
         yAxis.setRange(new Range(0d, 1d));
-
         IAxis xAxis = axisSet.getXAxis(0);
         xAxis.setRange(new Range(0d, 1d));
         xAxis.adjustRange();
@@ -357,7 +362,7 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
     private void updateTableAndChart(String clazz){
         
         // Check
-        if (rocCurves.isEmpty() || !rocCurves.containsKey(clazz)) {
+        if (originalRocCurves.isEmpty() || !originalRocCurves.containsKey(clazz)) {
             return;
         }
         
@@ -367,21 +372,36 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
         }
         
         // Create entries
-        Map<String, ROCCurve> curves = rocCurves.get(clazz);
-        List<String> values = new ArrayList<>(curves.keySet());
+        List<String> values = new ArrayList<>(originalRocCurves.get(clazz).keySet());
         Collections.sort(values);
         for(String value : values){
+            
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(0, value);
-            ROCCurve c = curves.get(value);
-            item.setText(1, String.valueOf(c.getAUC()));
-            item.setData(c);
+            ROCCurve[] data = {null, null};
+            item.setData(data);
+            
+            // Original
+            ROCCurve c = originalRocCurves.get(clazz).get(value);
+            item.setText(1, SWTUtil.getPrettyString(c.getAUC()));
+            data[0] = c;
+            
+            // Output
+            if (isOutput) {
+                ROCCurve c2 = rocCurves.get(clazz).get(value);
+                item.setText(2, SWTUtil.getPrettyString(c2.getAUC()));
+                data[1] = c2;
+            }
         }
 
         // Table
         table.setFocus();
-        table.select(0);
-        setChartSeries(values.get(0), curves.get(values.get(0)));
+        
+        // Update
+        if (!values.isEmpty()) {
+            table.select(0);
+            setChartSeries((ROCCurve[])table.getItem(0).getData());
+        }
     }
 
     @Override
@@ -406,12 +426,20 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
 
         // Columns
         String width = "50%"; //$NON-NLS-1$
+        if (getTarget() == ModelPart.OUTPUT) {
+            width = "33%"; //$NON-NLS-1$
+        }
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.22")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$ 
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.23")); //$NON-NLS-1$
+        if (getTarget() == ModelPart.OUTPUT) {
+            c = new DynamicTableColumn(table, SWT.LEFT);
+            c.setWidth(width, "100px"); //$NON-NLS-1$ 
+            c.setText(Resources.getMessage("ViewStatisticsClassificationInput.24")); //$NON-NLS-1$           
+        }
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
@@ -422,13 +450,20 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
         composite2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         composite2.setLayout(SWTUtil.createGridLayout(2, false));
         final Label lblClassAtt = new Label(composite2, SWT.PUSH);
-        lblClassAtt.setText(Resources.getMessage("ViewStatisticsClassificationInput.21"));
+        lblClassAtt.setText(Resources.getMessage("ViewStatisticsClassificationInput.21")); //$NON-NLS-1$        
         this.combo = new Combo(composite2, SWT.READ_ONLY);
         this.combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.combo.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                actionClassAttChanged();
+                if(combo.getSelectionIndex() >=0){
+                    String selectedClass = combo.getItem(combo.getSelectionIndex());
+                    updateTableAndChart(selectedClass);
+                    getModel().setSelectedAttribute(selectedClass);
+                    getController().update(new ModelEvent(ViewStatisticsClassificationROCCurves.this,
+                                                          ModelPart.SELECTED_ATTRIBUTE,
+                                                          selectedClass));
+                }
             }
         });
         
@@ -451,19 +486,24 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
                             if (cursor.x >= 0 && cursor.x < chart.getPlotArea().getSize().x && cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
                                 ISeries[] data = chart.getSeriesSet().getSeries();
                                 if (data != null && data.length > 0) {
-                                    double x = getClosestValue(data[0].getXSeries(), xAxis.getDataCoordinate(cursor.x));
-                                    double y = getClosestValue(data[0].getYSeries(), yAxis.getDataCoordinate(cursor.y));
-
-                                    if (x >= 0 && y >= 0) {
+                                    double[] x;
+                                    double[] y;
+                                    int index;
+                                    if (getTarget() == ModelPart.OUTPUT) {
+                                        x = data[1].getXSeries();
+                                        y = data[1].getYSeries();
+                                    } else {
+                                        x = data[0].getXSeries();
+                                        y = data[0].getYSeries();
+                                    }
+                                    index = getIndex(x, xAxis.getDataCoordinate(cursor.x));
+                                    if (index >= 0) {
                                         builder.setLength(0);
                                         builder.append("("); //$NON-NLS-1$
-                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.20")) //$NON-NLS-1$
-                                               .append(": "); //$NON-NLS-1$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(x));
-                                        builder.append(", ") //$NON-NLS-1$
-                                               .append(Resources.getMessage("ViewStatisticsClassificationInput.19")) //$NON-NLS-1$
-                                               .append(": "); //$NON-NLS-1$
-                                        builder.append(SWTUtil.getPrettyString(y));
+                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.20")).append(": "); //$NON-NLS-1$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(x[index])).append(", "); //$NON-NLS-1$
+                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.19")).append(": "); //$NON-NLS-1$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(y[index]));
                                         builder.append(")"); //$NON-NLS-1$
                                         sash.setToolTipText(builder.toString());
                                         return;
@@ -477,7 +517,7 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
             }
         });
 
-        // Update matrix
+        // Update curve
         table.addListener(SWT.MouseDown, new Listener() {
             public void handleEvent(Event event) {
                 Rectangle clientArea = table.getClientArea();
@@ -489,9 +529,8 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
                     for (int i = 0; i < table.getColumnCount(); i++) {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
-                            if (item.getData() != null &&
-                                item.getData() instanceof ROCCurve) {
-                                setChartSeries(item.getText(0), (ROCCurve) item.getData());
+                            if (item.getData() != null) {
+                                setChartSeries((ROCCurve[]) item.getData());
                             }
                             getModel().setSelectedClassValue(item.getText(0));
                             getController().update(new ModelEvent(ViewStatisticsClassificationROCCurves.this,
@@ -530,6 +569,9 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
         if (combo != null && combo.getItemCount() != 0) combo.select(0);
         if (rocCurves != null) {
             rocCurves.clear();
+        }
+        if (originalRocCurves != null) {
+            originalRocCurves.clear();
         }
         resetChart();
         setStatusEmpty();
@@ -572,6 +614,7 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
             @Override
             public void onError() {
                 rocCurves.clear();
+                originalRocCurves.clear();
                 setStatusEmpty();
             }
 
@@ -579,7 +622,9 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
             public void onFinish() {
 
                 // Check
-                if (stopped || !isEnabled() || getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty()) {
+                if (stopped || !isEnabled() || 
+                    getModel().getSelectedFeatures().isEmpty() ||
+                    getModel().getSelectedClasses().isEmpty()) {
                     setStatusEmpty();
                     return;
                 }
@@ -599,7 +644,9 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
 
             @Override
             public void onInterrupt() {
-                if (!isEnabled() || getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty()) {
+                if (!isEnabled() || 
+                     getModel().getSelectedFeatures().isEmpty() || 
+                     getModel().getSelectedClasses().isEmpty()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();
@@ -614,6 +661,7 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
                 
                 // Clear
                 rocCurves.clear();
+                originalRocCurves.clear();
                 
                 // Do work
                 for (String clazz : classes) {
@@ -628,13 +676,16 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
                         break;
                     }
                     
-                    // Init map
-                    if(!rocCurves.containsKey(clazz)){
+                    // Collect ROC curves
+                    if(!originalRocCurves.containsKey(clazz)){
+                        originalRocCurves.put(clazz, new HashMap<String, ROCCurve>());
                         rocCurves.put(clazz, new HashMap<String, ROCCurve>());
                     }
-                    // collect clazz -> class value -> ROC
                     for (String c : result.getClassValues()) {
-                        rocCurves.get(clazz).put(c, result.getROCCurve(c));
+                        originalRocCurves.get(clazz).put(c, result.getOriginalROCCurve(c));
+                        if (result.getROCCurve(c) != null) {
+                            rocCurves.get(clazz).put(c, result.getROCCurve(c));
+                        }
                     }
                 }
 
