@@ -282,7 +282,7 @@ public class DataManager {
         
         // Change min & max, when using (e,d)-DP
         for (PrivacyCriterion c : criteria) {
-            if (c instanceof EDDifferentialPrivacy && !((EDDifferentialPrivacy)c).isDataDependent()) {
+            if (c instanceof EDDifferentialPrivacy) {
                 DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
                 for (int i = 0; i < header.length; i++) {
                     final int idx = i * 2;
