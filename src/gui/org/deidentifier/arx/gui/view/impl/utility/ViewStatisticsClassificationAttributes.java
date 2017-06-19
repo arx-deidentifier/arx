@@ -139,15 +139,17 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     private final Controller    controller;
 
     /** View */
-    private final Composite    root;
+    private final Composite     root;
     /** View */
-    private final DynamicTable features;
+    private final DynamicTable  features;
     /** View */
     private final Table         classes;
+    /** View */
+    private List<TableEditor>   editors           = new ArrayList<TableEditor>();
     /** Model */
     private Model               model;
     /** State */
-    private State              state;
+    private State               state;
 
     /**
      * Creates a new instance.
@@ -227,14 +229,21 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
 
     @Override
     public void reset() {
+        for (TableEditor editor : editors) {
+            editor.getEditor().dispose();
+            editor.dispose();
+        }
+        editors.clear();
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
-        state = null;
+        features.removeAll();
+        classes.removeAll();
         SWTUtil.disable(root);
+        state = null;
     }
 
     @Override
@@ -266,7 +275,6 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             }
         }
         if (model != null) {
-            
             boolean modified = false;
             if (!selectedFeatures.equals(model.getSelectedFeatures())) {
                 model.setSelectedFeatures(selectedFeatures);
@@ -308,13 +316,19 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
 
         // Clear
         root.setRedraw(false);        
-
+        for (TableEditor editor : editors) {
+            editor.getEditor().dispose();
+            editor.dispose();
+        }
+        editors.clear();
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
+        features.removeAll();
+        classes.removeAll();
         
         for (int i = 0; i < state.attributes.size(); i++) {
 
@@ -333,6 +347,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
             
             TableEditor editor = new TableEditor(features);
+            editors.add(editor);
             final CCombo combo = new CCombo(features, SWT.NONE);
             final Color defaultColor = combo.getForeground();
             combo.add("x");
@@ -371,7 +386,6 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
                 function = LABEL_CATEGORICAL;
             }
             combo.setText(function);
-        
         }
         
         // Finish
