@@ -34,7 +34,7 @@ import de.linearbits.jhpl.PredictiveProperty;
  * 
  * @author Raffael Bild
  */
-public class EDDPAlgorithm extends AbstractAlgorithm{
+public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
 
     /**
      * Creates a new instance
@@ -49,7 +49,7 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker,
                                            Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
-        return new EDDPAlgorithm(solutionSpace, checker, metric, deterministic, steps, epsilonSearch);
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker, metric, deterministic, steps, epsilonSearch);
     }
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -71,7 +71,7 @@ public class EDDPAlgorithm extends AbstractAlgorithm{
     * @param steps
     * @param epsilonSearch
     */
-    private EDDPAlgorithm(SolutionSpace space, NodeChecker checker,
+    private DataDependentEDDPAlgorithm(SolutionSpace space, NodeChecker checker,
                           Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);

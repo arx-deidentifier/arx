@@ -32,11 +32,7 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
- * (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
- * 
- * Ninghui Li, Wahbeh H. Qardaji, Dong Su:
- * On sampling, anonymization, and differential privacy or, k-anonymization meets differential privacy. 
- * Proceedings of ASIACCS 2012. pp. 32-33
+ * Abstract base class for (e,d)-differential privacy models
  * 
  * @author Raffael Bild
  * @author Fabian Prasser

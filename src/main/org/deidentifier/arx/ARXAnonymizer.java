@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
@@ -32,9 +33,11 @@ import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.criteria.AbstractEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
+import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -543,6 +546,14 @@ public class ARXAnonymizer {
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
 
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
+            if (c instanceof DataDependentEDDifferentialPrivacy) {
+                DataDependentEDDifferentialPrivacy dpCriterion = (DataDependentEDDifferentialPrivacy)c;
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, config.getQualityModel(),
+                                                         dpCriterion.isDeterministic(), dpCriterion.getSteps(), dpCriterion.getEpsilonSearch());
+            }
+        }
+        
         if (config.isHeuristicSearchEnabled() ||
             solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
