@@ -505,8 +505,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, classes[i]);
                     item.setText(1, String.valueOf(numClasses.get(i)));
-                    for (int j = 0; j<values.get(i).size(); j++) {
-                        item.setData(String.valueOf(2+j), values.get(i).get(j));    
+                    for (int j = 0; j < values.get(i).size(); j++) {
+                        item.setData(String.valueOf(2 + j), values.get(i).get(j));
                     }
                     item.setData(matrixes.get(i));
                 }

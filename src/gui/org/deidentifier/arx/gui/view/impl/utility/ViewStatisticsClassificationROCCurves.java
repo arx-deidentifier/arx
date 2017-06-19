@@ -383,13 +383,13 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
             
             // Original
             ROCCurve c = originalRocCurves.get(clazz).get(value);
-            item.setText(1, SWTUtil.getPrettyString(c.getAUC()));
+            item.setData("1", c.getAUC());
             data[0] = c;
             
             // Output
             if (isOutput) {
                 ROCCurve c2 = rocCurves.get(clazz).get(value);
-                item.setText(2, SWTUtil.getPrettyString(c2.getAUC()));
+                item.setData("2", c2.getAUC());
                 data[1] = c2;
             }
         }
@@ -433,10 +433,12 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.22")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(table, c);
         c.setWidth(width, "100px"); //$NON-NLS-1$ 
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.23")); //$NON-NLS-1$
         if (getTarget() == ModelPart.OUTPUT) {
             c = new DynamicTableColumn(table, SWT.LEFT);
+            SWTUtil.createColumnWithBarCharts(table, c);
             c.setWidth(width, "100px"); //$NON-NLS-1$ 
             c.setText(Resources.getMessage("ViewStatisticsClassificationInput.24")); //$NON-NLS-1$           
         }
