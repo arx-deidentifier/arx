@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.Composite;
  * 
  * @author Johanna Eicher
  */
-public class ViewClassificationAttributesOutput implements IView, ViewStatisticsBasic {
+public class ViewStatisticsClassificationAttributesOutput implements IView, ViewStatisticsBasic {
 
     /** View */
     private final Composite  root;
@@ -45,7 +45,7 @@ public class ViewClassificationAttributesOutput implements IView, ViewStatistics
      * @param parent
      * @param controller
      */
-    public ViewClassificationAttributesOutput(final Composite parent,
+    public ViewStatisticsClassificationAttributesOutput(final Composite parent,
                                     final Controller controller) {
         this.root = parent;
         

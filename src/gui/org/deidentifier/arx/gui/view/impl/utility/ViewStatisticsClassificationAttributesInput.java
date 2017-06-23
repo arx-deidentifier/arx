@@ -49,7 +49,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * 
  * @author Fabian Prasser
  */
-public class ViewClassificationAttributesInput implements IView, ViewStatisticsBasic {
+public class ViewStatisticsClassificationAttributesInput implements IView, ViewStatisticsBasic {
 
     /** Controller */
     private final Controller   controller;
@@ -73,7 +73,7 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
      * @param parent
      * @param controller
      */
-    public ViewClassificationAttributesInput(final Composite parent,
+    public ViewStatisticsClassificationAttributesInput(final Composite parent,
                                     final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
@@ -106,7 +106,7 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
                 boolean update = fireEvent(arg0, features, model.getSelectedFeatures(), newSelection);
                 if (update) {
                     model.setSelectedFeatures(newSelection);
-                    controller.update(new ModelEvent(ViewClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
                 }
             }
 
@@ -133,7 +133,7 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
                 boolean update = fireEvent(arg0, classes, model.getSelectedClasses(), newSelection);
                 if (update) {
                    model.setSelectedClasses(newSelection);
-                   controller.update(new ModelEvent(ViewClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
                 }
             }
             
