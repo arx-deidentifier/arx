@@ -30,15 +30,15 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.linearbits.swt.table.DynamicTable;
@@ -53,16 +53,19 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
 
     /** Controller */
     private final Controller   controller;
-    
+
     /** View */
     private final Composite    root;
     /** View */
     private final DynamicTable features;
     /** View */
-    private final Table classes;
-    
+    private final DynamicTable classes;
+
     /** Model */
     private Model              model;
+
+    /** Constant */
+    private final String       ALL = Resources.getMessage("ViewClassificationAttributes.3");
 
     /**
      * Creates a new instance.
@@ -95,10 +98,22 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
         // Create table
         features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        features.addSelectionListener(new DelayedChangeListener(1000) {
+        features.addSelectionListener(new SelectionListener() {
+
             @Override
-            public void delayedEvent() {
-                fireEvent();
+            public void widgetSelected(SelectionEvent arg0) {
+                Set<String> newSelection = new HashSet<String>();
+                boolean update = fireEvent(arg0, features, model.getSelectedFeatures(), newSelection);
+                if (update) {
+                    model.setSelectedFeatures(newSelection);
+                    controller.update(new ModelEvent(ViewClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+                // TODO Auto-generated method stub
+
             }
         });
         DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
@@ -108,14 +123,32 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
         
         
         // Create button
-        classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        classes = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        classes.addSelectionListener(new DelayedChangeListener(1000) {
-            public void delayedEvent() {
-                fireEvent();
-            }   
+        classes.addSelectionListener(new SelectionListener() {
+            
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                Set<String> newSelection = new HashSet<String>();
+                boolean update = fireEvent(arg0, classes, model.getSelectedClasses(), newSelection);
+                if (update) {
+                   model.setSelectedClasses(newSelection);
+                   controller.update(new ModelEvent(ViewClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                }
+            }
+            
+            @Override
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+                // TODO Auto-generated method stub
+                
+            }
         });
         
+        DynamicTableColumn column2 = new DynamicTableColumn(classes, SWT.NONE);
+        column2.setWidth("10%", "40px");
+        DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
+        column3.setWidth("90%", "40px");
+
         // Reset view
         reset();
     }
@@ -160,38 +193,41 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
            update();
         }
     }
-
+    
     /**
      * Checks the selected items and fires an event on changes
      */
-    private void fireEvent() {
-        Set<String> selectedFeatures = new HashSet<String>();
-        for (TableItem item : features.getItems()) {
+    private boolean fireEvent(SelectionEvent event, DynamicTable table, Set<String> currentSelection, Set<String> newSelection){
+        TableItem item = (TableItem) event.item;
+
+        Boolean checkAll = null;
+        if (item.getText(1).equals(ALL)) {
             if (item.getChecked()) {
-                selectedFeatures.add(item.getText(1));
+                checkAll = true;
+            } else {
+                checkAll = false;
             }
         }
-        Set<String> selectedClasses = new HashSet<String>();
-        for (TableItem item : classes.getItems()) {
-            if (item.getChecked()) {
-                selectedClasses.add(item.getText());
+
+        // ignore first item
+        for (int i = 1; i < table.getItemCount(); i++) {
+            item = table.getItem(i);
+            // all checkbox checked or one item checked
+            if ((checkAll != null && checkAll) || (item.getChecked() && checkAll == null)) {
+                newSelection.add(item.getText(1));
+                item.setChecked(true);
+            } 
+            // all checkbox unchecked
+            else if (checkAll != null && !checkAll) {
+                item.setChecked(false);
             }
         }
-        if (model != null) {
-            
-            boolean modified = false;
-            if (!selectedFeatures.equals(model.getSelectedFeatures())) {
-                model.setSelectedFeatures(selectedFeatures);
-                modified = true;
-            }
-            if (!selectedClasses.equals(model.getSelectedClasses())) {
-                model.setSelectedClasses(selectedClasses);
-                modified = true;
-            }
-            if (modified) {
-                controller.update(new ModelEvent(ViewClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
-            }
+
+        // Update
+        if (model != null && !newSelection.equals(currentSelection)) {
+            return true;
         }
+        return false;
     }
 
     /**
@@ -217,6 +253,13 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
             item.dispose();
         }
         
+        TableItem itemAllFeatures = new TableItem(features, SWT.NONE);
+        itemAllFeatures.setText(new String[] { "", ALL });
+
+        TableItem itemAllclasses = new TableItem(classes, SWT.NONE);
+        itemAllclasses.setText(new String[] { "", ALL });
+        
+        
         for (int col = 0; col < handle.getNumColumns(); col++) {
             String attribute = handle.getAttributeName(col);
             DataDefinition def = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
@@ -230,7 +273,7 @@ public class ViewClassificationAttributesInput implements IView, ViewStatisticsB
 
             // Classes
             TableItem itemC = new TableItem(classes, SWT.NONE);
-            itemC.setText(attribute);
+            itemC.setText(new String[] { "", attribute });
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
         }
         
