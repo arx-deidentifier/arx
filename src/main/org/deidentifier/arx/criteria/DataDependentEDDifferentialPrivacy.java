@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
+
 /**
  * Data-dependent (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
  * 
@@ -123,5 +125,22 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
     @Override
     public int getK() {
         return k;
+    }
+    
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Differential privacy");
+        result.addProperty("Epsilon", getEpsilon());
+        result.addProperty("Epsilon anon", getEpsilonAnon());
+        result.addProperty("Epsilon search", getEpsilonSearch());
+        result.addProperty("Delta", getDelta());
+        result.addProperty("Uniqueness threshold (k)", getK());
+        result.addProperty("Sampling probability (beta)", getBeta());
+        return result;
+    }
+    
+    @Override
+    public String toString() {
+        return "(" + getEpsilon() + "," + super.getDelta() + ")-DP " + "(Epsilon anon: " + epsilonAnon + " Epsilon search: " + epsilonSearch + ")";
     }
 }
