@@ -16,8 +16,6 @@
  */
 package org.deidentifier.arx.criteria;
 
-import org.deidentifier.arx.DataGeneralizationScheme;
-
 /**
  * Data-dependent (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
  * 
@@ -41,8 +39,6 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
     /** Parameter */
     private final int                steps;
     /** Parameter */
-    private final double             delta;
-    /** Parameter */
     private final int                k;
     /** Parameter */
     private final double             beta;
@@ -61,7 +57,6 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
         this.beta = calculateBeta(epsilonAnon);
         this.k = calculateK(getDelta(), epsilonAnon, this.beta);
         this.steps = steps;
-        this.delta = delta;
     }
     
     /**
@@ -82,7 +77,6 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
         this.beta = calculateBeta(epsilonAnon);
         this.k = calculateK(getDelta(), epsilonAnon, this.beta);
         this.steps = steps;
-        this.delta = delta;
     }
     
 
@@ -110,15 +104,7 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
      * @return
      */
     public double getEpsilonSearch() {
-        return epsilonAnon;
-    }
-    
-    /**
-     * Returns the delta parameter
-     * @return
-     */
-    public double getDelta() {
-        return delta;
+        return epsilonSearch;
     }
     
     @Override
