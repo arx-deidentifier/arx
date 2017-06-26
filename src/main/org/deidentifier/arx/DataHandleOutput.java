@@ -579,6 +579,19 @@ public class DataHandleOutput extends DataHandle {
         return outputMicroaggregated;
     }
     
+    @Override
+    protected int getValueIdentifier(int column, String value) {
+        int key = column * 2;
+        int type = inverseMap[key];
+        String[] values = inverseDictionaries[type].getMapping()[column];
+        for (int index = 0; index < values.length; index++) {
+            if (values[index].equals(value)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+    
     /**
      * A negative integer, zero, or a positive integer as the first argument is
      * less than, equal to, or greater than the second. It uses the specified
@@ -630,14 +643,36 @@ public class DataHandleOutput extends DataHandle {
         }
         return 0;
     }
+
+    @Override
+    protected int internalGetEncodedValue(final int row,
+                                          final int col,
+                                          final boolean ignoreSuppression) {
+        
+        // Return the according values
+        final int key = col * 2;
+        final int type = inverseMap[key];
+        switch (type) {
+        case AttributeTypeInternal.IDENTIFYING:
+            return -1;
+        default:
+            final int index = inverseMap[key + 1];
+            final int[][] data = inverseData[type];
+            
+            if (!ignoreSuppression && (suppressedAttributeTypes & (1 << type)) != 0 &&
+                ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
+                return -1;
+            }
+            
+            return data[row][index] & Data.REMOVE_OUTLIER_MASK;
+        }
+    }
     
     /**
      * Gets the value internal.
      * 
-     * @param row
-     *            the row
-     * @param col
-     *            the col
+     * @param row the row
+     * @param col the col
      * @return the value internal
      */
     @Override
@@ -704,6 +739,7 @@ public class DataHandleOutput extends DataHandle {
         return found;
     }
     
+
     /**
      * Swap internal.
      * 
@@ -725,13 +761,12 @@ public class DataHandleOutput extends DataHandle {
             outputMicroaggregated.getArray()[row2] = temp;
         }
     }
-    
+
 
     @Override
     protected boolean isAnonymous() {
         return this.anonymous;
     }
-
 
     /**
      * Marks this handle as optimized
@@ -740,7 +775,6 @@ public class DataHandleOutput extends DataHandle {
     protected void setOptimized(boolean optimized) {
         this.optimized = true;
     }
-    
 
     /**
      * Used to update data types after local recoding

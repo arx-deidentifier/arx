@@ -109,6 +109,11 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    protected int getValueIdentifier(int column, String value) {
+        return source.getValueIdentifier(column, value);
+    }
+
+    @Override
     public boolean isOptimized() {
         checkRegistry();
         return source.isOptimized();
@@ -204,6 +209,11 @@ public class DataHandleSubset extends DataHandle {
         return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
     }
     
+    @Override
+    protected int internalGetEncodedValue(int row, int col, boolean ignoreSuppression) {
+        return source.internalGetEncodedValue(this.subset.getArray()[row], col, ignoreSuppression);
+    }
+
     @Override
     protected String internalGetValue(int row, int col, boolean ignoreSuppression) {
         return source.internalGetValue(this.subset.getArray()[row], col, ignoreSuppression);

@@ -39,6 +39,8 @@
             <filename name="**/slf4j-api-1.7.13.jar" />
 			<filename name="**/pdfbox-app-2.0.1.jar" />
 			<filename name="**/pdfbox-layout.jar" />
+			<filename name="**/exp4j-0.4.8.jar" />
+			<filename name="**/smile-1.3.1-java7.jar" />
         </or>
     </fileset>
 
