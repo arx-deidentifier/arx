@@ -65,7 +65,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
     private Model              model;
 
     /** Constant */
-    private final String       ALL = Resources.getMessage("ViewClassificationAttributes.3");
+    private final String       ALL = Resources.getMessage("ViewClassificationAttributes.4");
 
     /**
      * Creates a new instance.

@@ -926,6 +926,14 @@ public abstract class DataHandle {
     }
 
     /**
+     * Returns the internal value identifier
+     * @param column
+     * @param value
+     * @return
+     */
+    protected abstract int getValueIdentifier(int column, String value);
+
+    /**
      * A negative integer, zero, or a positive integer as the first argument is
      * less than, equal to, or greater than the second. It uses the specified
      * data types for comparison. If no datatype is specified for a specific
@@ -958,6 +966,15 @@ public abstract class DataHandle {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Internal representation of get encoded value. Returns -1 for suppressed values.
+     *
+     * @param row the row
+     * @param col the col
+     * @return the value
+     */
+    protected abstract int internalGetEncodedValue(int row, int col, boolean ignoreSuppression);
 
     /**
      * Internal representation of get value.

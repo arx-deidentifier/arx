@@ -23,51 +23,45 @@ import java.util.Map;
  * 
  * @author Fabian Prasser
  */
-public class MultiClassZeroRClassificationResult implements ClassificationResult {
+public class MultiClassNaiveBayesClassificationResult implements ClassificationResult {
 
-    /** Field*/
+    /** Field */
     private final Map<String, Integer> map;
-    /** Field*/
-    private final Integer              result;
-
+    /** Field */
+    private final int                  result;
+    /** Field */
+    private final double[]             probabilities;
+    
     /**
      * Creates a new instance
      * @param result
+     * @param probabilities
      * @param map
      */
-    MultiClassZeroRClassificationResult(Integer result, Map<String, Integer> map) {
+    MultiClassNaiveBayesClassificationResult(int result, double[] probabilities, Map<String, Integer> map) {
         this.map = map;
+        this.probabilities = probabilities;
         this.result = result;
     }
 
     @Override
     public double confidence() {
-        return 1d;
+        return probabilities[result];
     }
 
     @Override
     public double[] confidences() {
-        throw new UnsupportedOperationException();
+        return this.probabilities;
     }
 
     @Override
     public boolean correct(String clazz) {
-        if (result == null) {
-            return false;
-        }
-        return result.intValue() == map.get(clazz).intValue();
+        return result == map.get(clazz).intValue();
     }
 
     @Override
     public double error(String clazz) {
-        if (result == null) {
-            return 1d;
-        }
-        if (correct(clazz)) {
-            return 0d;
-        } else {
-            return 1d;
-        }
+        return 1d - probabilities[map.get(clazz)];
     }
 
     @Override

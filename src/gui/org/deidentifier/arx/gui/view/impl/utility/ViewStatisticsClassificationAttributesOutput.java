@@ -52,7 +52,7 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
         Composite composite = new Composite(parent, SWT.NONE);
         composite.setLayout(new FillLayout());
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
-        label.setText(Resources.getMessage("ViewClassificationAttributes.2"));
+        label.setText(Resources.getMessage("ViewClassificationAttributes.3"));
         StackLayout layout = (StackLayout) this.root.getLayout();
         layout.topControl = composite;
     }

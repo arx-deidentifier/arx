@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsClassification;
@@ -71,7 +72,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<AnalysisContextClassification> {
+public abstract class ViewStatisticsClassification extends ViewStatistics<AnalysisContextClassification> {
 
     /** Minimal width of a category label. */
     private static final int MIN_CATEGORY_WIDTH = 10;
@@ -95,9 +96,9 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
      * @param controller
      * @param part
      */
-    public ViewStatisticsLogisticRegression(final Composite parent,
-                                            final Controller controller,
-                                            final ModelPart part) {
+    public ViewStatisticsClassification(final Composite parent,
+                                        final Controller controller,
+                                        final ModelPart part) {
 
         super(parent, controller, part, null, false);
         this.manager = new AnalysisManager(parent.getDisplay());
@@ -406,7 +407,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                                 setChartSeries((PrecisionRecallMatrix) item.getData());
                             }
                             getModel().setSelectedAttribute(item.getText(0));
-                            getController().update(new ModelEvent(ViewStatisticsLogisticRegression.this,
+                            getController().update(new ModelEvent(ViewStatisticsClassification.this,
                                                                   ModelPart.SELECTED_ATTRIBUTE,
                                                                   item.getText(0)));
                             return;
@@ -451,6 +452,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
         final ARXLogisticRegressionConfiguration config = context.model.getClassificationModel().getARXLogisticRegressionConfiguration();
+        final ARXFeatureScaling scaling = context.model.getClassificationModel().getFeatureScaling();
         
         // Break, if nothing do
         if (context.model.getSelectedFeatures().isEmpty() ||
@@ -503,8 +505,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                     TableItem item = new TableItem(table, SWT.NONE);
                     item.setText(0, classes[i]);
                     item.setText(1, String.valueOf(numClasses.get(i)));
-                    for (int j = 0; j<values.get(i).size(); j++) {
-                        item.setData(String.valueOf(2+j), values.get(i).get(j));    
+                    for (int j = 0; j < values.get(i).size(); j++) {
+                        item.setData(String.valueOf(2 + j), values.get(i).get(j));
                     }
                     item.setData(matrixes.get(i));
                 }
@@ -540,7 +542,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                     // Compute
                     StatisticsClassification result = builder.getClassificationPerformance(features,
                                                                                            clazz,
-                                                                                           config);
+                                                                                           config,
+                                                                                           scaling);
                     progress++;
                     if (stopped) {
                         break;

@@ -303,6 +303,17 @@ public class SWTUtil {
     }
 
     /**
+     * Creates grid data with a horizontal span.
+     *
+     * @return
+     */
+    public static GridData createFillVerticallyGridData(int span) {
+        GridData data = createFillVerticallyGridData();
+        data.horizontalSpan = span;
+        return data;
+    }
+    
+    /**
      * Creates a generic tooltip for the table
      * @param table
      */
@@ -339,7 +350,7 @@ public class SWTUtil {
             }
         });
     }
-    
+
     /**
      * Creates grid data.
      *
@@ -371,6 +382,7 @@ public class SWTUtil {
         layout.marginWidth = 0;
         return layout;
     }
+    
 
     /**
      * Creates a grid layout.
@@ -385,7 +397,7 @@ public class SWTUtil {
         layout.numColumns = columns;
         return layout;
     }
-    
+
 
     /**
      * Creates a grid layout with equal-width columns
@@ -397,7 +409,6 @@ public class SWTUtil {
         layout.makeColumnsEqualWidth = true;
         return layout;
     }
-
 
     /**
      * Creates a help button in the given folder.
@@ -603,6 +614,29 @@ public class SWTUtil {
     }
 
     /**
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
+     */
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            SelectionListener bugFixer = new SelectionListener(){
+                
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
+        }
+    }
+
+    /**
      * Converts a boolean into a pretty string
      * @param value
      * @return
@@ -647,7 +681,7 @@ public class SWTUtil {
     public static String getPrettyString(int value) {
         return String.valueOf(value);
     }
-
+    
     /**
      * Returns a pretty string representing the given value
      * @param value
@@ -656,7 +690,7 @@ public class SWTUtil {
     public static String getPrettyString(long value) {
         return String.valueOf(value);
     }
-
+    
     /**
      * Fallback for objects of unknown type
      * @param value
@@ -696,6 +730,23 @@ public class SWTUtil {
     }
     
     /**
+     * En-/disables the composite and its children.
+     *
+     * @param elem
+     * @param val
+     */
+    private static void setEnabled(final Composite elem, final boolean val) {
+        elem.setEnabled(val);
+        for (final Control c : elem.getChildren()) {
+            if (c instanceof Composite) {
+                setEnabled((Composite) c, val);
+            } else {
+                c.setEnabled(val);
+            }
+        }
+    }
+    
+    /**
      * Converts the slider value to a double.
      *
      * @param min
@@ -715,7 +766,7 @@ public class SWTUtil {
         }
         return val;
     }
-    
+
     /**
      * Converts the slider value to an integer.
      *
@@ -727,44 +778,5 @@ public class SWTUtil {
     public static int sliderToInt(final int min, final int max, final int value) {
         return (int)Math.round(sliderToDouble(min, max, value));
     }
-    
-    /**
-     * Fixes bugs on OSX when scrolling in tables
-     * @param table
-     */
-    private static void fixOSXTableBug(final Table table) {
-        if (isMac()) {
-            SelectionListener bugFixer = new SelectionListener(){
-                
-                @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    widgetSelected(arg0);
-                }
 
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    table.redraw();
-                }
-            };
-            table.getVerticalBar().addSelectionListener(bugFixer);
-            table.getHorizontalBar().addSelectionListener(bugFixer);
-        }
-    }
-    
-    /**
-     * En-/disables the composite and its children.
-     *
-     * @param elem
-     * @param val
-     */
-    private static void setEnabled(final Composite elem, final boolean val) {
-        elem.setEnabled(val);
-        for (final Control c : elem.getChildren()) {
-            if (c instanceof Composite) {
-                setEnabled((Composite) c, val);
-            } else {
-                c.setEnabled(val);
-            }
-        }
-    }
 }
