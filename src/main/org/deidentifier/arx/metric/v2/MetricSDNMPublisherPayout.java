@@ -120,8 +120,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
                                        super.getGeneralizationSuppressionFactor(), // gs-factor
                                        false, 
                                        0.0d, 
-                                       this.getAggregateFunction(),
-                                       false);
+                                       this.getAggregateFunction());
     }
     
     /**

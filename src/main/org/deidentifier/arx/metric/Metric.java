@@ -1477,6 +1477,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Returns whether the metric provides a score function
+     * @return
+     */
+    public boolean isScoreFunctionSupported() {
+        return false;
+    }
+    
+    /**
      * Renders the privacy model
      * @return
      */

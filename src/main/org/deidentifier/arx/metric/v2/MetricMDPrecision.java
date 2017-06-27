@@ -73,8 +73,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
                                        this.getGeneralizationSuppressionFactor(), // gs-factor
                                        false,                                     // precomputed
                                        0.0d,                                      // precomputation threshold
-                                       this.getAggregateFunction(),               // aggregate function
-                                       false                                      // score function supported
+                                       this.getAggregateFunction()                // aggregate function
                                        );
     }
 

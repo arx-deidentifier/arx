@@ -72,8 +72,7 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
                                        super.getDefaultMetric().getGeneralizationSuppressionFactor(), // gs-factor
                                        super.isPrecomputed(), // precomputed
                                        super.getThreshold(), // precomputation threshold
-                                       super.getDefaultMetric().getAggregateFunction(), // aggregate function
-                                       false // score function supported
+                                       super.getDefaultMetric().getAggregateFunction() // aggregate function
         );
     }
     

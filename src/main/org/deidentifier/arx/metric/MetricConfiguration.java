@@ -45,9 +45,6 @@ public class MetricConfiguration implements Serializable {
 
     /** Aggregate function. */
     private AggregateFunction                aggregateFunction       = AggregateFunction.GEOMETRIC_MEAN;
-    
-    /** Score function supported */
-    private boolean                          scoreFunctionSupported  = false;
 
     /**
      * Constructs a new instance.
@@ -63,14 +60,12 @@ public class MetricConfiguration implements Serializable {
                                double gsFactor,
                                boolean precomputed,
                                double precomputationThreshold,
-                               AggregateFunction aggregateFunction,
-                               boolean scoreFunctionSupported) {
+                               AggregateFunction aggregateFunction) {
         this.monotonic = monotonic;
         this.gsFactor = gsFactor;
         this.precomputed = precomputed;
         this.precomputationThreshold = precomputationThreshold;
         this.aggregateFunction = aggregateFunction;
-        this.scoreFunctionSupported = scoreFunctionSupported;
     }
 
     /**
@@ -109,13 +104,6 @@ public class MetricConfiguration implements Serializable {
     }
     
     /**
-     * @return the scoreFunctionSupported
-     */
-    public boolean isScoreFunctionSupported() {
-        return scoreFunctionSupported;
-    }
-    
-    /**
      * @param aggregateFunction the aggregateFunction to set
      */
     public void setAggregateFunction(AggregateFunction aggregateFunction) {
@@ -148,12 +136,5 @@ public class MetricConfiguration implements Serializable {
      */
     public void setPrecomputed(boolean precomputed) {
         this.precomputed = precomputed;
-    }
-    
-    /**
-     * @param scoreFunctionSupported the scoreFunctionSupported to set
-     */
-    public void setScoreFunctionSupported(boolean scoreFunctionSupported) {
-        this.scoreFunctionSupported = scoreFunctionSupported;
     }
 }

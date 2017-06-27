@@ -66,11 +66,10 @@ public class MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed extends Abstrac
      */
     public MetricConfiguration getConfiguration() {
         return new MetricConfiguration(false,                       // monotonic
-                                       0.5d,                        // gs-factor
-                                       super.isPrecomputed(),       // precomputed
-                                       super.getThreshold(),        // precomputation threshold
-                                       this.getAggregateFunction(), // aggregate function
-                                       false                        // score function supported
+                                       0.5d,                       // gs-factor
+                                       super.isPrecomputed(),      // precomputed
+                                       super.getThreshold(),       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
                                        );
     }
     

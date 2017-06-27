@@ -67,12 +67,11 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
      * @return
      */
     public MetricConfiguration getConfiguration() {
-        return new MetricConfiguration(false,                       // monotonic
-                                       0.5d,                        // gs-factor
-                                       true,                        // precomputed
-                                       1.0d,                        // precomputation threshold
-                                       this.getAggregateFunction(), // aggregate function
-                                       false                        // score function supported
+        return new MetricConfiguration(false,                      // monotonic
+                                       0.5d,                       // gs-factor
+                                       true,                       // precomputed
+                                       1.0d,                       // precomputation threshold
+                                       this.getAggregateFunction() // aggregate function
                                        );
     }
 
