@@ -581,15 +581,23 @@ public class DataHandleOutput extends DataHandle {
     
     @Override
     protected int getValueIdentifier(int column, String value) {
-        int key = column * 2;
-        int type = inverseMap[key];
-        String[] values = inverseDictionaries[type].getMapping()[column];
-        for (int index = 0; index < values.length; index++) {
-            if (values[index].equals(value)) {
-                return index;
-            }
+        
+        
+        // Return the according values
+        final int key = column * 2;
+        final int type = inverseMap[key];
+        switch (type) {
+            case AttributeTypeInternal.IDENTIFYING:
+                return -1;
+            default:
+                String[] values = inverseDictionaries[type].getMapping()[inverseMap[key + 1]];
+                for (int index = 0; index < values.length; index++) {
+                    if (values[index].equals(value)) {
+                        return index;
+                    }
+                }
+                return -1;
         }
-        return -1;
     }
     
     /**
