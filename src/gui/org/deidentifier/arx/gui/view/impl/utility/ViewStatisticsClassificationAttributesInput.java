@@ -18,11 +18,15 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -30,12 +34,20 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -50,22 +62,97 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  */
 public class ViewStatisticsClassificationAttributesInput implements IView, ViewStatisticsBasic {
+    
+    /**
+     * Internal state management
+     * 
+     * @author Fabian Prasser
+     */
+    private class State {
+
+        /** Data */
+        private final List<String>        attributes = new ArrayList<String>();
+        /** Data */
+        private final List<AttributeType> types      = new ArrayList<AttributeType>();
+        /** Data */
+        private final Set<String>         features   = new HashSet<String>();
+        /** Data */
+        private final Set<String>         classes    = new HashSet<String>();
+
+        /**
+         * Creates a new instance
+         * 
+         * @param model
+         * @param handle
+         * @param definition
+         */
+        private State(Model model, DataHandle handle, DataDefinition definition) {
+
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                attributes.add(attribute);
+                types.add(definition.getAttributeType(attribute));
+            }
+            features.addAll(model.getSelectedFeatures());
+            classes.addAll(model.getSelectedClasses());
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            State other = (State) obj;
+            if (attributes == null) {
+                if (other.attributes != null) return false;
+            } else if (!attributes.equals(other.attributes)) return false;
+            if (classes == null) {
+                if (other.classes != null) return false;
+            } else if (!classes.equals(other.classes)) return false;
+            if (features == null) {
+                if (other.features != null) return false;
+            } else if (!features.equals(other.features)) return false;
+            if (types == null) {
+                if (other.types != null) return false;
+            } else if (!types.equals(other.types)) return false;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
+            result = prime * result + ((classes == null) ? 0 : classes.hashCode());
+            result = prime * result + ((features == null) ? 0 : features.hashCode());
+            result = prime * result + ((types == null) ? 0 : types.hashCode());
+            return result;
+        }
+    }
+
+    
+    /** Label */
+    private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
+    /** Delay */
+    private static final int    DELAY             = 1000;
 
     /** Controller */
-    private final Controller   controller;
+    private final Controller    controller;
 
     /** View */
-    private final Composite    root;
+    private final Composite     root;
     /** View */
-    private final DynamicTable features;
+    private final DynamicTable  features;
     /** View */
-    private final DynamicTable classes;
-
+    private final DynamicTable  classes;
+    /** View */
+    private List<TableEditor>   editors           = new ArrayList<TableEditor>();
     /** Model */
-    private Model              model;
-
-    /** Constant */
-    private final String       ALL = Resources.getMessage("ViewClassificationAttributes.4");
+    private Model               model;
+    /** State */
+    private State               state;
+    /** Label */
+    private final String        ALL               = Resources.getMessage("ViewClassificationAttributes.4");
 
     /**
      * Creates a new instance.
@@ -119,7 +206,9 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
         column0.setWidth("10%", "40px");
         DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
-        column1.setWidth("90%", "40px");
+        column1.setWidth("45%");
+        DynamicTableColumn column2 = new DynamicTableColumn(features, SWT.NONE);
+        column2.setWidth("45%");
         
         
         // Create button
@@ -144,11 +233,11 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             }
         });
         
-        DynamicTableColumn column2 = new DynamicTableColumn(classes, SWT.NONE);
-        column2.setWidth("10%", "40px");
         DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
-        column3.setWidth("90%", "40px");
-
+        column3.setWidth("10%", "40px");
+        DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
+        column4.setWidth("90%");
+        
         // Reset view
         reset();
     }
@@ -173,13 +262,21 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
 
     @Override
     public void reset() {
+        for (TableEditor editor : editors) {
+            editor.getEditor().dispose();
+            editor.dispose();
+        }
+        editors.clear();
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
+        features.removeAll();
+        classes.removeAll();
         SWTUtil.disable(root);
+        state = null;
     }
 
     @Override
@@ -237,48 +334,143 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
      */
     private void update() {
 
-        if (model == null || model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null) {
+        // Check
+        if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
             return;
         }
         
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-
-        root.setRedraw(false);
+        // Create state
+        State state = new State(model, 
+                                model.getInputConfig().getInput().getHandle(), 
+                                model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition());
         
+        // Check again
+        if (this.state == null || !this.state.equals(state)) {
+            this.state = state;
+        } else {
+            return;
+        }
+
+        // Clear
+        root.setRedraw(false);        
+        for (TableEditor editor : editors) {
+            editor.getEditor().dispose();
+            editor.dispose();
+        }
+        editors.clear();
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
+        features.removeAll();
+        classes.removeAll();
         
         TableItem itemAllFeatures = new TableItem(features, SWT.NONE);
-        itemAllFeatures.setText(new String[] { "", ALL });
+        itemAllFeatures.setText(new String[] { "", ALL, "" });
 
         TableItem itemAllclasses = new TableItem(classes, SWT.NONE);
         itemAllclasses.setText(new String[] { "", ALL });
         
-        
-        for (int col = 0; col < handle.getNumColumns(); col++) {
-            String attribute = handle.getAttributeName(col);
-            DataDefinition def = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
-            Image image = controller.getResources().getImage(def.getAttributeType(attribute));
-            
+        for (int i = 0; i < state.attributes.size(); i++) {
+
             // Features
+            final String attribute = state.attributes.get(i);
+            AttributeType type = state.types.get(i);
+            Image image = controller.getResources().getImage(type);
             TableItem itemF = new TableItem(features, SWT.NONE);
-            itemF.setText(new String[] { "", attribute } );
+            itemF.setText(new String[] { "", attribute, ""} );
             itemF.setImage(0, image);
             itemF.setChecked(model.getSelectedFeatures().contains(attribute));
 
             // Classes
             TableItem itemC = new TableItem(classes, SWT.NONE);
             itemC.setText(new String[] { "", attribute });
+            itemC.setImage(0, image);
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
+            
+            TableEditor editor = new TableEditor(features);
+            editors.add(editor);
+            final CCombo combo = new CCombo(features, SWT.NONE);
+            final Color defaultColor = combo.getForeground();
+            combo.add("x");
+            combo.add("x^2");
+            combo.add("sqrt(x)");
+            combo.add("log(x)");
+            combo.add("2^x");
+            combo.add("1/x");
+            combo.add(LABEL_CATEGORICAL);
+            combo.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    updateCombo(attribute, combo, defaultColor);
+                }
+            });
+            combo.addSelectionListener(new DelayedChangeListener(DELAY) {
+                public void delayedEvent() {
+                    updateFunction(attribute, combo);
+                }   
+            });
+            combo.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(KeyEvent arg0) {
+                    updateCombo(attribute, combo, defaultColor);
+                }
+            });
+            combo.addKeyListener(new DelayedChangeListener(DELAY) {
+                public void delayedEvent() {
+                    updateFunction(attribute, combo);
+                }   
+            });
+            editor.grabHorizontal = true;
+            editor.setEditor(combo, itemF, 2);
+            String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(attribute);
+            if (function == null || function.equals("")) {
+                function = LABEL_CATEGORICAL;
+            }
+            combo.setText(function);
         }
         
+        // Finish
+        features.layout();
         root.setRedraw(true);
         SWTUtil.enable(root);
-    }    
+    }
+    
+    /**
+     * Updates the combo
+     * @param attribute
+     * @param combo
+     * @param defaultColor 
+     */
+    private void updateCombo(String attribute, CCombo combo, Color defaultColor) {
+        String function = combo.getText();
+        if (function.equals(LABEL_CATEGORICAL)) {
+            combo.setForeground(defaultColor);
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
+                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+            combo.setForeground(GUIHelper.COLOR_RED);
+        } else {
+            combo.setForeground(defaultColor);
+        }
+    }
+
+    /**
+     * Updates the function
+     * @param attribute
+     * @param combo
+     */
+    private void updateFunction(String attribute, CCombo combo) {
+        String function = combo.getText();
+        if (function.equals(LABEL_CATEGORICAL)) {
+            model.getClassificationModel().setScalingFunction(attribute, null);
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
+                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+            model.getClassificationModel().setScalingFunction(attribute, null);
+        } else {
+            model.getClassificationModel().setScalingFunction(attribute, function);
+        }
+    }
 
 }
