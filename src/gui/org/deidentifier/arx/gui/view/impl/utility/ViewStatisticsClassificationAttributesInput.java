@@ -327,8 +327,9 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         
         // Create state
         DataDefinition definition = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
+        DataHandle handle = model.getOutput() != null ? model.getOutput() : model.getInputConfig().getInput().getHandle();
         State state = new State(model, 
-                                model.getInputConfig().getInput().getHandle(), 
+                                handle, 
                                 definition);
         
         // Check again
