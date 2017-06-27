@@ -394,12 +394,17 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             editors.add(editor);
             final CCombo combo = new CCombo(features, SWT.NONE);
             final Color defaultColor = combo.getForeground();
-            combo.add("x");
-            combo.add("x^2");
-            combo.add("sqrt(x)");
-            combo.add("log(x)");
-            combo.add("2^x");
-            combo.add("1/x");
+            if (model.getInputDefinition()
+                     .getDataType(attribute) instanceof DataTypeWithRatioScale) {
+                combo.add("x");
+                combo.add("x^2");
+                combo.add("sqrt(x)");
+                combo.add("log(x)");
+                combo.add("2^x");
+                combo.add("1/x");
+            } else {
+                combo.setEditable(false);
+            }
             combo.add(LABEL_CATEGORICAL);
             combo.addSelectionListener(new SelectionAdapter() {
                 @Override
@@ -448,8 +453,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         String function = combo.getText();
         if (function.equals(LABEL_CATEGORICAL)) {
             combo.setForeground(defaultColor);
-        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
-                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
             combo.setForeground(GUIHelper.COLOR_RED);
         } else {
             combo.setForeground(defaultColor);
@@ -465,8 +469,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         String function = combo.getText();
         if (function.equals(LABEL_CATEGORICAL)) {
             model.getClassificationModel().setScalingFunction(attribute, null);
-        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
-                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
             model.getClassificationModel().setScalingFunction(attribute, null);
         } else {
             model.getClassificationModel().setScalingFunction(attribute, function);
