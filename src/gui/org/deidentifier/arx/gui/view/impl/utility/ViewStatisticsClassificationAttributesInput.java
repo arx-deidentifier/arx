@@ -46,11 +46,11 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.linearbits.swt.table.DynamicTable;
@@ -61,7 +61,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * 
  * @author Fabian Prasser
  */
-public class ViewStatisticsClassificationAttributes implements IView, ViewStatisticsBasic {
+public class ViewStatisticsClassificationAttributesInput implements IView, ViewStatisticsBasic {
     
     /**
      * Internal state management
@@ -130,6 +130,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         }
     }
 
+    
     /** Label */
     private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
     /** Delay */
@@ -143,13 +144,15 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     /** View */
     private final DynamicTable  features;
     /** View */
-    private final Table         classes;
+    private final DynamicTable  classes;
     /** View */
     private List<TableEditor>   editors           = new ArrayList<TableEditor>();
     /** Model */
     private Model               model;
     /** State */
     private State               state;
+    /** Label */
+    private final String        ALL               = Resources.getMessage("ViewClassificationAttributes.4");
 
     /**
      * Creates a new instance.
@@ -157,8 +160,8 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
      * @param parent
      * @param controller
      */
-    public ViewStatisticsClassificationAttributes(final Composite parent,
-                                        final Controller controller) {
+    public ViewStatisticsClassificationAttributesInput(final Composite parent,
+                                    final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
@@ -182,6 +185,24 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         // Create table
         features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
+        features.addSelectionListener(new SelectionListener() {
+
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                Set<String> newSelection = new HashSet<String>();
+                boolean update = fireEvent(arg0, features, model.getSelectedFeatures(), newSelection);
+                if (update) {
+                    model.setSelectedFeatures(newSelection);
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                }
+            }
+
+            @Override
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
         DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
         column0.setWidth("10%", "40px");
         DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
@@ -189,21 +210,33 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         DynamicTableColumn column2 = new DynamicTableColumn(features, SWT.NONE);
         column2.setWidth("45%");
         
-        features.addSelectionListener(new DelayedChangeListener(DELAY) {
+        
+        // Create button
+        classes = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
+        classes.addSelectionListener(new SelectionListener() {
+            
             @Override
-            public void delayedEvent() {
-                fireEvent();
+            public void widgetSelected(SelectionEvent arg0) {
+                Set<String> newSelection = new HashSet<String>();
+                boolean update = fireEvent(arg0, classes, model.getSelectedClasses(), newSelection);
+                if (update) {
+                   model.setSelectedClasses(newSelection);
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                }
+            }
+            
+            @Override
+            public void widgetDefaultSelected(SelectionEvent arg0) {
+                // TODO Auto-generated method stub
+                
             }
         });
         
-        // Create button
-        classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        classes.addSelectionListener(new DelayedChangeListener(DELAY) {
-            public void delayedEvent() {
-                fireEvent();
-            }   
-        });
+        DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
+        column3.setWidth("10%", "40px");
+        DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
+        column4.setWidth("90%");
         
         // Reset view
         reset();
@@ -257,37 +290,41 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
            update();
         }
     }
-
+    
     /**
      * Checks the selected items and fires an event on changes
      */
-    private void fireEvent() {
-        Set<String> selectedFeatures = new HashSet<String>();
-        for (TableItem item : features.getItems()) {
+    private boolean fireEvent(SelectionEvent event, DynamicTable table, Set<String> currentSelection, Set<String> newSelection){
+        TableItem item = (TableItem) event.item;
+
+        Boolean checkAll = null;
+        if (item.getText(1).equals(ALL)) {
             if (item.getChecked()) {
-                selectedFeatures.add(item.getText(1));
+                checkAll = true;
+            } else {
+                checkAll = false;
             }
         }
-        Set<String> selectedClasses = new HashSet<String>();
-        for (TableItem item : classes.getItems()) {
-            if (item.getChecked()) {
-                selectedClasses.add(item.getText());
+
+        // ignore first item
+        for (int i = 1; i < table.getItemCount(); i++) {
+            item = table.getItem(i);
+            // all checkbox checked or one item checked
+            if ((checkAll != null && checkAll) || (item.getChecked() && checkAll == null)) {
+                newSelection.add(item.getText(1));
+                item.setChecked(true);
+            } 
+            // all checkbox unchecked
+            else if (checkAll != null && !checkAll) {
+                item.setChecked(false);
             }
         }
-        if (model != null) {
-            boolean modified = false;
-            if (!selectedFeatures.equals(model.getSelectedFeatures())) {
-                model.setSelectedFeatures(selectedFeatures);
-                modified = true;
-            }
-            if (!selectedClasses.equals(model.getSelectedClasses())) {
-                model.setSelectedClasses(selectedClasses);
-                modified = true;
-            }
-            if (modified) {
-                controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
-            }
+
+        // Update
+        if (model != null && !newSelection.equals(currentSelection)) {
+            return true;
         }
+        return false;
     }
 
     /**
@@ -330,6 +367,12 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         features.removeAll();
         classes.removeAll();
         
+        TableItem itemAllFeatures = new TableItem(features, SWT.NONE);
+        itemAllFeatures.setText(new String[] { "", ALL, "" });
+
+        TableItem itemAllclasses = new TableItem(classes, SWT.NONE);
+        itemAllclasses.setText(new String[] { "", ALL });
+        
         for (int i = 0; i < state.attributes.size(); i++) {
 
             // Features
@@ -343,19 +386,25 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
 
             // Classes
             TableItem itemC = new TableItem(classes, SWT.NONE);
-            itemC.setText(attribute);
+            itemC.setText(new String[] { "", attribute });
+            itemC.setImage(0, image);
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
             
             TableEditor editor = new TableEditor(features);
             editors.add(editor);
             final CCombo combo = new CCombo(features, SWT.NONE);
             final Color defaultColor = combo.getForeground();
-            combo.add("x");
-            combo.add("x^2");
-            combo.add("sqrt(x)");
-            combo.add("log(x)");
-            combo.add("2^x");
-            combo.add("1/x");
+            if (model.getInputDefinition()
+                     .getDataType(attribute) instanceof DataTypeWithRatioScale) {
+                combo.add("x");
+                combo.add("x^2");
+                combo.add("sqrt(x)");
+                combo.add("log(x)");
+                combo.add("2^x");
+                combo.add("1/x");
+            } else {
+                combo.setEditable(false);
+            }
             combo.add(LABEL_CATEGORICAL);
             combo.addSelectionListener(new SelectionAdapter() {
                 @Override
@@ -404,8 +453,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         String function = combo.getText();
         if (function.equals(LABEL_CATEGORICAL)) {
             combo.setForeground(defaultColor);
-        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
-                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
             combo.setForeground(GUIHelper.COLOR_RED);
         } else {
             combo.setForeground(defaultColor);
@@ -421,11 +469,11 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         String function = combo.getText();
         if (function.equals(LABEL_CATEGORICAL)) {
             model.getClassificationModel().setScalingFunction(attribute, null);
-        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function) || 
-                   !(model.getInputDefinition().getDataType(attribute) instanceof DataTypeWithRatioScale)) {
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
             model.getClassificationModel().setScalingFunction(attribute, null);
         } else {
             model.getClassificationModel().setScalingFunction(attribute, function);
         }
     }
+
 }
