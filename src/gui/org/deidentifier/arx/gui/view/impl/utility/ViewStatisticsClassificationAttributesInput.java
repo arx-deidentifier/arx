@@ -46,7 +46,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -185,7 +184,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         // Create table
         features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        features.addSelectionListener(new SelectionListener() {
+        features.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent arg0) {
@@ -195,12 +194,6 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
                     model.setSelectedFeatures(newSelection);
                     controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
                 }
-            }
-
-            @Override
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-                // TODO Auto-generated method stub
-
             }
         });
         DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
@@ -214,8 +207,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         // Create button
         classes = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        classes.addSelectionListener(new SelectionListener() {
-            
+        classes.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 Set<String> newSelection = new HashSet<String>();
@@ -224,12 +216,6 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
                    model.setSelectedClasses(newSelection);
                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
                 }
-            }
-            
-            @Override
-            public void widgetDefaultSelected(SelectionEvent arg0) {
-                // TODO Auto-generated method stub
-                
             }
         });
         
@@ -340,9 +326,10 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         }
         
         // Create state
+        DataDefinition definition = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
         State state = new State(model, 
                                 model.getInputConfig().getInput().getHandle(), 
-                                model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition());
+                                definition);
         
         // Check again
         if (this.state == null || !this.state.equals(state)) {
@@ -394,8 +381,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             editors.add(editor);
             final CCombo combo = new CCombo(features, SWT.NONE);
             final Color defaultColor = combo.getForeground();
-            if (model.getInputDefinition()
-                     .getDataType(attribute) instanceof DataTypeWithRatioScale) {
+            if (definition.getDataType(attribute) instanceof DataTypeWithRatioScale) {
                 combo.add("x");
                 combo.add("x^2");
                 combo.add("sqrt(x)");
@@ -475,5 +461,4 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             model.getClassificationModel().setScalingFunction(attribute, function);
         }
     }
-
 }
