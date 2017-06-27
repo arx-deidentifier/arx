@@ -26,6 +26,7 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -74,6 +75,8 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         /** Data */
         private final List<AttributeType> types      = new ArrayList<AttributeType>();
         /** Data */
+        private final List<DataType<?>>   dtypes     = new ArrayList<DataType<?>>();
+        /** Data */
         private final Set<String>         features   = new HashSet<String>();
         /** Data */
         private final Set<String>         classes    = new HashSet<String>();
@@ -85,12 +88,13 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
          * @param handle
          * @param definition
          */
-        private State(Model model, DataHandle handle, DataDefinition definition) {
+        private State(DataHandle handle, DataDefinition definition) {
 
             for (int col = 0; col < handle.getNumColumns(); col++) {
                 String attribute = handle.getAttributeName(col);
                 attributes.add(attribute);
                 types.add(definition.getAttributeType(attribute));
+                dtypes.add(definition.getDataType(attribute));
             }
             features.addAll(model.getSelectedFeatures());
             classes.addAll(model.getSelectedClasses());
@@ -114,6 +118,9 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             if (types == null) {
                 if (other.types != null) return false;
             } else if (!types.equals(other.types)) return false;
+            if (dtypes == null) {
+                if (other.dtypes != null) return false;
+            } else if (!dtypes.equals(other.dtypes)) return false;
             return true;
         }
 
@@ -125,6 +132,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             result = prime * result + ((classes == null) ? 0 : classes.hashCode());
             result = prime * result + ((features == null) ? 0 : features.hashCode());
             result = prime * result + ((types == null) ? 0 : types.hashCode());
+            result = prime * result + ((dtypes == null) ? 0 : dtypes.hashCode());
             return result;
         }
     }
@@ -328,8 +336,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         // Create state
         DataDefinition definition = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
         DataHandle handle = model.getOutput() != null ? model.getOutput() : model.getInputConfig().getInput().getHandle();
-        State state = new State(model, 
-                                handle, 
+        State state = new State(handle, 
                                 definition);
         
         // Check again
