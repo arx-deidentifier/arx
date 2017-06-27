@@ -130,7 +130,7 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
     
     @Override
     public LayoutUtility.ViewUtilityType getType() {
-        return LayoutUtility.ViewUtilityType.LOGISTIC_REGRESSION;
+        return LayoutUtility.ViewUtilityType.CLASSIFICATION_ROC;
     }
 
     @Override

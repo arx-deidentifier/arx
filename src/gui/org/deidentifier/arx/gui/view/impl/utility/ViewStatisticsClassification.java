@@ -109,7 +109,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     
     @Override
     public LayoutUtility.ViewUtilityType getType() {
-        return LayoutUtility.ViewUtilityType.LOGISTIC_REGRESSION;
+        return LayoutUtility.ViewUtilityType.CLASSIFICATION_PRECISION_RECALL;
     }
 
     @Override
