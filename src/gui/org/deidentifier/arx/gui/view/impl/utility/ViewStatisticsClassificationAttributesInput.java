@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
@@ -80,21 +81,24 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         private final Set<String>         features   = new HashSet<String>();
         /** Data */
         private final Set<String>         classes    = new HashSet<String>();
+        /** Data */
+        private final List<String>        scaling = new ArrayList<String>();
 
         /**
          * Creates a new instance
          * 
-         * @param model
          * @param handle
          * @param definition
+         * @param featureScaling 
          */
-        private State(DataHandle handle, DataDefinition definition) {
+        private State(DataHandle handle, DataDefinition definition, ARXFeatureScaling featureScaling) {
 
             for (int col = 0; col < handle.getNumColumns(); col++) {
                 String attribute = handle.getAttributeName(col);
                 attributes.add(attribute);
                 types.add(definition.getAttributeType(attribute));
                 dtypes.add(definition.getDataType(attribute));
+                scaling.add(featureScaling.getScalingFunction(attribute));
             }
             features.addAll(model.getSelectedFeatures());
             classes.addAll(model.getSelectedClasses());
@@ -121,6 +125,9 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             if (dtypes == null) {
                 if (other.dtypes != null) return false;
             } else if (!dtypes.equals(other.dtypes)) return false;
+            if (scaling == null) {
+                if (other.scaling != null) return false;
+            } else if (!scaling.equals(other.scaling)) return false;
             return true;
         }
 
@@ -133,6 +140,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             result = prime * result + ((features == null) ? 0 : features.hashCode());
             result = prime * result + ((types == null) ? 0 : types.hashCode());
             result = prime * result + ((dtypes == null) ? 0 : dtypes.hashCode());
+            result = prime * result + ((scaling == null) ? 0 : scaling.hashCode());
             return result;
         }
     }
@@ -174,6 +182,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.OUTPUT, this);
         
         this.controller = controller;
@@ -336,8 +345,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         // Create state
         DataDefinition definition = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
         DataHandle handle = model.getOutput() != null ? model.getOutput() : model.getInputConfig().getInput().getHandle();
-        State state = new State(handle, 
-                                definition);
+        State state = new State(handle, definition, model.getClassificationModel().getFeatureScaling());
         
         // Check again
         if (this.state == null || !this.state.equals(state)) {
