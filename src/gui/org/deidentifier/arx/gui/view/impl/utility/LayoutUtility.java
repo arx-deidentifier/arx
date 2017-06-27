@@ -201,11 +201,17 @@ public class LayoutUtility implements ILayout {
             public void widgetSelected(final SelectionEvent arg0) {
                 dataOutputView.setSelectionIndex(dataInputView.getSelectionIndex());
                 
+                // Hack to show summary for input
+                if (dataInputView.getSelectionIndex() == 0) {
+                    statisticsInputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                    statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                }
                 // Hack to show classification stuff
-                if (dataInputView.getSelectionIndex()==1) {
+                if (dataInputView.getSelectionIndex() == 1 || dataInputView.getSelectionIndex() == 2) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }
+
                 // Hack to update visualizations
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }
@@ -215,11 +221,17 @@ public class LayoutUtility implements ILayout {
             public void widgetSelected(final SelectionEvent arg0) {
                 dataInputView.setSelectionIndex(dataOutputView.getSelectionIndex());
                 
+                // Hack to show summary for output
+                if (dataOutputView.getSelectionIndex() == 0) {
+                    statisticsInputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                    statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                }
                 // Hack to show classification stuff
-                if (dataOutputView.getSelectionIndex()==1) {
+                if (dataOutputView.getSelectionIndex() == 1 || dataOutputView.getSelectionIndex() == 2) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }
+
                 // Hack to update visualizations
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }
