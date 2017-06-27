@@ -61,6 +61,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * This view allows to select a set of attributes for classification analysis
  * 
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class ViewStatisticsClassificationAttributesInput implements IView, ViewStatisticsBasic {
     
@@ -145,9 +146,11 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         }
     }
 
-    
+    /** Label */
+    private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.4"); //$NON-NLS-1$
     /** Label */
     private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
+
     /** Delay */
     private static final int    DELAY             = 1000;
 
@@ -166,8 +169,6 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
     private Model               model;
     /** State */
     private State               state;
-    /** Label */
-    private final String        ALL               = Resources.getMessage("ViewClassificationAttributes.4");
 
     /**
      * Creates a new instance.
@@ -214,11 +215,11 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             }
         });
         DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
-        column0.setWidth("10%", "40px");
+        column0.setWidth("10%", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
-        column1.setWidth("45%");
+        column1.setWidth("45%"); //$NON-NLS-1$
         DynamicTableColumn column2 = new DynamicTableColumn(features, SWT.NONE);
-        column2.setWidth("45%");
+        column2.setWidth("45%"); //$NON-NLS-1$
         
         
         // Create button
@@ -237,9 +238,9 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         });
         
         DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
-        column3.setWidth("10%", "40px");
+        column3.setWidth("10%", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
-        column4.setWidth("90%");
+        column4.setWidth("90%"); //$NON-NLS-1$
         
         // Reset view
         reset();
@@ -289,19 +290,29 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
            update();
         } else if (event.part == ModelPart.INPUT ||
                    event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
-                   event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.OUTPUT) {
+                   event.part == ModelPart.ATTRIBUTE_TYPE || 
+                   event.part == ModelPart.OUTPUT ||
+                   event.part == ModelPart.DATA_TYPE) {
            update();
         }
     }
     
     /**
      * Checks the selected items and fires an event on changes
+     * @param event
+     * @param table
+     * @param currentSelection
+     * @param newSelection
+     * @return
      */
     private boolean fireEvent(SelectionEvent event, DynamicTable table, Set<String> currentSelection, Set<String> newSelection){
+        
+        // Item
         TableItem item = (TableItem) event.item;
 
+        // Detect check all
         Boolean checkAll = null;
-        if (item.getText(1).equals(ALL)) {
+        if (item.getText(1).equals(LABEL_ALL)) {
             if (item.getChecked()) {
                 checkAll = true;
             } else {
@@ -309,15 +320,16 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             }
         }
 
-        // ignore first item
+        // Ignore first item
         for (int i = 1; i < table.getItemCount(); i++) {
             item = table.getItem(i);
-            // all checkbox checked or one item checked
+            
+            // All checkbox checked or one item checked
             if ((checkAll != null && checkAll) || (item.getChecked() && checkAll == null)) {
                 newSelection.add(item.getText(1));
                 item.setChecked(true);
             } 
-            // all checkbox unchecked
+            // All checkbox unchecked
             else if (checkAll != null && !checkAll) {
                 item.setChecked(false);
             }
@@ -371,10 +383,10 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         classes.removeAll();
         
         TableItem itemAllFeatures = new TableItem(features, SWT.NONE);
-        itemAllFeatures.setText(new String[] { "", ALL, "" });
+        itemAllFeatures.setText(new String[] { "", LABEL_ALL, "" }); //$NON-NLS-1$ //$NON-NLS-2$
 
         TableItem itemAllclasses = new TableItem(classes, SWT.NONE);
-        itemAllclasses.setText(new String[] { "", ALL });
+        itemAllclasses.setText(new String[] { "", LABEL_ALL }); //$NON-NLS-1$
         
         for (int i = 0; i < state.attributes.size(); i++) {
 
@@ -383,60 +395,63 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
             AttributeType type = state.types.get(i);
             Image image = controller.getResources().getImage(type);
             TableItem itemF = new TableItem(features, SWT.NONE);
-            itemF.setText(new String[] { "", attribute, ""} );
+            itemF.setText(new String[] { "", attribute, ""} ); //$NON-NLS-1$ //$NON-NLS-2$
             itemF.setImage(0, image);
             itemF.setChecked(model.getSelectedFeatures().contains(attribute));
 
             // Classes
             TableItem itemC = new TableItem(classes, SWT.NONE);
-            itemC.setText(new String[] { "", attribute });
+            itemC.setText(new String[] { "", attribute }); //$NON-NLS-1$
             itemC.setImage(0, image);
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
             
-            TableEditor editor = new TableEditor(features);
-            editors.add(editor);
-            final CCombo combo = new CCombo(features, SWT.NONE);
-            final Color defaultColor = combo.getForeground();
+            // Add combo, if functions supported
             if (definition.getDataType(attribute) instanceof DataTypeWithRatioScale) {
-                combo.add("x");
-                combo.add("x^2");
-                combo.add("sqrt(x)");
-                combo.add("log(x)");
-                combo.add("2^x");
-                combo.add("1/x");
+                TableEditor editor = new TableEditor(features);
+                editors.add(editor);
+                final CCombo combo = new CCombo(features, SWT.NONE);
+                final Color defaultColor = combo.getForeground();
+                
+                combo.add("x"); //$NON-NLS-1$
+                combo.add("x^2"); //$NON-NLS-1$
+                combo.add("sqrt(x)"); //$NON-NLS-1$
+                combo.add("log(x)"); //$NON-NLS-1$
+                combo.add("2^x"); //$NON-NLS-1$
+                combo.add("1/x"); //$NON-NLS-1$
+                
+                combo.add(LABEL_CATEGORICAL);
+                combo.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent arg0) {
+                        updateCombo(attribute, combo, defaultColor);
+                    }
+                });
+                combo.addSelectionListener(new DelayedChangeListener(DELAY) {
+                    public void delayedEvent() {
+                        updateFunction(attribute, combo);
+                    }   
+                });
+                combo.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyReleased(KeyEvent arg0) {
+                        updateCombo(attribute, combo, defaultColor);
+                    }
+                });
+                combo.addKeyListener(new DelayedChangeListener(DELAY) {
+                    public void delayedEvent() {
+                        updateFunction(attribute, combo);
+                    }   
+                });
+                editor.grabHorizontal = true;
+                editor.setEditor(combo, itemF, 2);
+                String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(attribute);
+                if (function == null || function.equals("")) { //$NON-NLS-1$
+                    function = LABEL_CATEGORICAL;
+                }
+                combo.setText(function);
             } else {
-                combo.setEditable(false);
+                itemF.setText(2, LABEL_CATEGORICAL);
             }
-            combo.add(LABEL_CATEGORICAL);
-            combo.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    updateCombo(attribute, combo, defaultColor);
-                }
-            });
-            combo.addSelectionListener(new DelayedChangeListener(DELAY) {
-                public void delayedEvent() {
-                    updateFunction(attribute, combo);
-                }   
-            });
-            combo.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyReleased(KeyEvent arg0) {
-                    updateCombo(attribute, combo, defaultColor);
-                }
-            });
-            combo.addKeyListener(new DelayedChangeListener(DELAY) {
-                public void delayedEvent() {
-                    updateFunction(attribute, combo);
-                }   
-            });
-            editor.grabHorizontal = true;
-            editor.setEditor(combo, itemF, 2);
-            String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(attribute);
-            if (function == null || function.equals("")) {
-                function = LABEL_CATEGORICAL;
-            }
-            combo.setText(function);
         }
         
         // Finish
