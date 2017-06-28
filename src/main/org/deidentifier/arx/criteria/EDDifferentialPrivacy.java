@@ -45,17 +45,14 @@ public class EDDifferentialPrivacy extends AbstractEDDifferentialPrivacy {
 
     /**
      * Creates a new instance
+     * 
      * @param epsilon
      * @param delta
      * @param generalization
      */
     public EDDifferentialPrivacy(double epsilon, double delta, 
                                  DataGeneralizationScheme generalization) {
-        super(delta);
-        this.epsilon = epsilon;
-        this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(getDelta(), epsilon, this.beta);
+        this(epsilon, delta, generalization, false);
     }
     
     /**
@@ -77,10 +74,30 @@ public class EDDifferentialPrivacy extends AbstractEDDifferentialPrivacy {
         this.k = calculateK(getDelta(), epsilon, this.beta);
     }
     
+    /**
+     * Private constructor used for cloning instances.
+     * 
+     * @param epsilon
+     * @param delta
+     * @param beta
+     * @param k
+     * @param generalization
+     * @param deterministic
+     */
+    private EDDifferentialPrivacy(double epsilon, double delta,
+                                  double beta, int k,
+                                  DataGeneralizationScheme generalization,
+                                  boolean deterministic) {
+        super(delta, deterministic);
+        this.epsilon = epsilon;
+        this.generalization = generalization;
+        this.beta = beta;
+        this.k = k;
+    }
 
     @Override
     public EDDifferentialPrivacy clone() {
-        return new EDDifferentialPrivacy(this.getEpsilon(), this.getDelta(),
+        return new EDDifferentialPrivacy(this.getEpsilon(), this.getDelta(), this.getBeta(), this.getK(),
                                          this.getGeneralizationScheme(), this.isDeterministic());
     }
     

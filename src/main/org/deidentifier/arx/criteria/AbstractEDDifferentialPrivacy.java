@@ -53,16 +53,6 @@ public abstract class AbstractEDDifferentialPrivacy extends ImplicitPrivacyCrite
     private transient boolean     deterministic = false;
 
     /**
-     * Creates a new instance
-     * @param delta
-     */
-    public AbstractEDDifferentialPrivacy(double delta) {
-        super(false, false);
-        this.delta = delta;
-        this.deterministic = false;
-    }
-    
-    /**
      * Creates a new instance which may be configured to produce deterministic output.
      * Note: *never* use this in production. It is implemented for testing purposes, only.
      * 

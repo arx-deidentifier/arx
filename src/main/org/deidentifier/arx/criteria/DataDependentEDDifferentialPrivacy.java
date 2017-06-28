@@ -47,18 +47,14 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
 
     /**
      * Creates a new instance
+     * 
      * @param epsilonAnon
      * @param epsilonSearch
      * @param delta
      * @param steps
      */
     public DataDependentEDDifferentialPrivacy(double epsilonAnon, double epsilonSearch, double delta, int steps) {
-        super(delta);
-        this.epsilonAnon = epsilonAnon;
-        this.epsilonSearch = epsilonSearch;
-        this.beta = calculateBeta(epsilonAnon);
-        this.k = calculateK(getDelta(), epsilonAnon, this.beta);
-        this.steps = steps;
+        this(epsilonAnon, epsilonSearch, delta, steps, false);
     }
     
     /**
@@ -81,11 +77,32 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
         this.steps = steps;
     }
     
+    /**
+     * Private constructor used for cloning instances.
+     * 
+     * @param epsilonAnon
+     * @param epsilonSearch
+     * @param delta
+     * @param beta
+     * @param k
+     * @param steps
+     * @param deterministic
+     */
+    private DataDependentEDDifferentialPrivacy(double epsilonAnon, double epsilonSearch,
+                                               double delta, double beta, int k,
+                                               int steps, boolean deterministic) {
+        super(delta, deterministic);
+        this.epsilonAnon = epsilonAnon;
+        this.epsilonSearch = epsilonSearch;
+        this.beta = beta;
+        this.k = k;
+        this.steps = steps;
+    }
 
     @Override
     public DataDependentEDDifferentialPrivacy clone() {
-        return new DataDependentEDDifferentialPrivacy(this.getEpsilonAnon(), this.getEpsilonSearch(),
-                                                      this.getDelta(), this.getSteps(), this.isDeterministic());
+        return new DataDependentEDDifferentialPrivacy(this.getEpsilonAnon(), this.getEpsilonSearch(), this.getDelta(),
+                                                      this.getBeta(), this.getK(), this.getSteps(), this.isDeterministic());
     }
     
     @Override
