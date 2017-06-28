@@ -509,6 +509,9 @@ public class ARXAnonymizer {
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
+            if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class) && !config.getQualityModel().isScoreFunctionSupported()) {
+                throw new RuntimeException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+            }
         }
         
         // Perform sanity checks

@@ -33,7 +33,6 @@ import org.deidentifier.arx.criteria.AbstractEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -453,14 +452,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if ((c instanceof KAnonymity) && this.isPrivacyModelSpecified(KAnonymity.class)) { 
                throw new IllegalArgumentException("You must not add more than one instance of the k-anonymity model"); 
         }
-        if ((c instanceof AbstractEDDifferentialPrivacy)) {
-            if (this.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) {
-                throw new IllegalArgumentException("You must not add more than one instance of the differential privacy model");
-            }
-            if (!this.metric.isScoreFunctionSupported() && (c instanceof DataDependentEDDifferentialPrivacy)) {
-                throw new IllegalArgumentException("Data-dependent differential privacy for the metric "
-                        + this.metric.getName() + " is not yet implemented");
-            }
+        if ((c instanceof AbstractEDDifferentialPrivacy) && this.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) { 
+            throw new IllegalArgumentException("You must not add more than one instance of the differential privacy model"); 
         }
         
         // Check whether different subsets have been defined
@@ -1056,16 +1049,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public void setQualityModel(Metric<?> model) {
         if (model == null) { throw new NullPointerException("Quality model must not be null"); }
-        
-        if (!model.isScoreFunctionSupported()) {
-            for (PrivacyCriterion c : getPrivacyModels()) {
-                if (c instanceof DataDependentEDDifferentialPrivacy) {
-                    throw new IllegalArgumentException("Data-dependent differential privacy for the metric "
-                            + this.metric.getName() + " is not yet implemented");
-                }
-            }
-        }
-        
         this.metric = model;
     }
     
