@@ -50,7 +50,7 @@ public abstract class AbstractEDDifferentialPrivacy extends ImplicitPrivacyCrite
     /** Parameter */
     private transient DataManager manager;
     /** Parameter */
-    private transient boolean     deterministic = false;
+    private transient boolean     deterministic    = false;
 
     /**
      * Creates a new instance which may be configured to produce deterministic output.
