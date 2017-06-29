@@ -25,16 +25,19 @@ import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
+import org.deidentifier.arx.criteria.AbstractEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -502,9 +505,12 @@ public class ARXAnonymizer {
         }
         
         // Check constraints for (e,d)-DP
-        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+        if (config.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) {
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
+            }
+            if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class) && !config.getQualityModel().isScoreFunctionSupported()) {
+                throw new RuntimeException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
             }
         }
         
@@ -542,6 +548,14 @@ public class ARXAnonymizer {
                                           final DataManager manager,
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
+
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
+            if (c instanceof DataDependentEDDifferentialPrivacy) {
+                DataDependentEDDifferentialPrivacy dpCriterion = (DataDependentEDDifferentialPrivacy)c;
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, config.getQualityModel(),
+                                                         dpCriterion.isDeterministic(), dpCriterion.getSteps(), dpCriterion.getEpsilonSearch());
+            }
+        }
         
         if (config.isHeuristicSearchEnabled() ||
             solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {

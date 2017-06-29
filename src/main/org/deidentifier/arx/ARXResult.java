@@ -43,6 +43,9 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class ARXResult {
 
+    /** Anonymizer */
+    private ARXAnonymizer          anonymizer;
+    
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
