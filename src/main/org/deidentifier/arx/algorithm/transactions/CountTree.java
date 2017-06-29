@@ -1,0 +1,244 @@
+package org.deidentifier.arx.algorithm.transactions;
+
+import com.google.common.collect.Sets;
+import com.google.common.primitives.Ints;
+
+import java.util.*;
+
+public class CountTree {
+
+    private Node root = null;
+    private int[][] transactions;
+    private int m; // The m in k^m-anonymity
+    private GenHierarchy hierarchy;
+
+    private int c = 0;
+
+    public CountTree(int m, int[][] transactions, GenHierarchy hierarchy) {
+        root = new Node(-1, null, -1);
+        root.id = c++;
+        root.count = transactions.length;
+        this.transactions = transactions;
+        this.m = m;
+        this.hierarchy = hierarchy;
+        initTree();
+    }
+
+    // Builds the tree from expanded transactions
+    private void initTree() {
+        for (int[] transaction : transactions) {
+            int[] etran = expandTransaction(transaction);
+            List<int[]> permutations = subsets(etran, m);
+            for (int[] permutation : permutations) {
+                root.insert(permutation, 0);
+            }
+        }
+        root.sort();
+    }
+
+    /**
+     * @param t a transaction
+     * @return the expanded transaction. Strict set semantics
+     */
+    private int[] expandTransaction(int[] t) {
+        Vector<Integer> etran = new Vector<>(t.length * 2);
+        for (int i : t) {
+            int[] generalizations = hierarchy.toRoot(i);
+            for (int j = 0; j < generalizations.length - 1; j++) { // omit root element
+                etran.add(generalizations[j]);
+            }
+        }
+        return Ints.toArray(etran);
+    }
+
+
+    // temporary. To be replaced with efficient dedicated method for generating k-subsets
+    public List<int[]> subsets(int[] s, int m) {
+        Set<Integer> t = new HashSet<>(Ints.asList(s));
+        List<int[]> com = new ArrayList<>();
+
+        for (Set<Integer> integers : Sets.powerSet(t)) {
+            int[] p = Ints.toArray(integers);
+            if (p.length <= m && p.length > 0 && !containsGeneralizedItems(p)) {
+                Arrays.sort(p);
+                reverse(p);
+                com.add(p);
+            }
+        }
+        Collections.sort(com, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return Integer.compare(o1.length, o2.length);
+            }
+        });
+        return com;
+    }
+
+    private void reverse(int[] a) {
+        for (int i = 0; i < a.length / 2; i++) {
+            int temp = a[i];
+            a[i] = a[a.length - i - 1];
+            a[a.length - i - 1] = temp;
+        }
+    }
+
+    /**
+     * @param set an array of items
+     * @return true, if set contains at least two items a and b, where a is a generalization of b, else false
+     */
+    private boolean containsGeneralizedItems(int[] set) {
+        for (int a : set) {
+            for (int b : set) {
+                if (a != b && hierarchy.generalizes(a, b))
+                    return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * @param k the k in k^m-anonymity
+     * @return true if the database depicted by this tree is k^m-anonymous
+     */
+    public boolean isKManonymous(int k) {
+        return root.kmanonymous(k);
+    }
+
+    /**
+     * @return the count of each item in the domain
+     */
+    public int[] itemFrequencies() {
+        int[] c = new int[hierarchy.getDomainItems().length];
+        for (Node child : root.children) {
+            if (child.value < hierarchy.getDomainItems().length)
+                c[child.value] = child.count;
+        }
+        return c;
+    }
+
+
+    // solely for debugging purposes. will be deleted
+    public String dot(Dict d) {
+        if (this.root != null) {
+            StringBuilder s = new StringBuilder("digraph ctree {\n");
+            for (Node child : root.children) {
+                s.append(root.id).append(" [label=\"").append("ROOT").append("\"]\n");
+                s.append(child.id).append("[label=\"").append(d.getString(child.value)).append(" ")
+                        .append(child.count).append("\"]\n");
+
+                s.append(root.id).append(" -> ").append(child.id).append("\n");
+                s.append(child.dot(d));
+            }
+            return s + "\n}";
+        }
+        return "";
+    }
+
+    // A node in the count-tree
+    private class Node {
+        private int count;
+        private int value;
+        private Node parent;
+        private List<Node> children;
+        private int id; // id for graphviz nodes
+
+        Node(int value, Node parent, int count) {
+            this.value = value;
+            this.parent = parent;
+            children = new ArrayList<>();
+            this.count = count;
+            if (parent != null)
+                parent.sort();
+        }
+
+        void sort() {
+            Collections.sort(this.children, new Comparator<Node>() {
+                @Override
+                public int compare(Node o1, Node o2) {
+                    return Integer.compare(o1.count, o2.count);
+                }
+            });
+        }
+
+        void insert(int[] set, int current) {
+            int finalCurrent = current;
+            if (current == set.length) {
+                this.count++;
+                return;
+            }
+            Node n = null;
+            for (Node child : children) {
+                if (child.value == set[finalCurrent]) {
+                    n = child;
+                    break;
+                }
+            }
+            if (n != null) {
+                n.insert(set, ++current);
+            } else {
+                Node nn = new Node(set[current], this, 1);
+                nn.id = c++;
+                this.children.add(nn);
+            }
+            if (this.parent != null)
+                this.parent.sort();
+        }
+
+
+        @Override
+        public String toString() {
+            return String.valueOf(this.value);
+        }
+
+        public boolean kmanonymous(int k) {
+            boolean an = this.count >= k;
+            for (Node child : children) {
+                an &= child.kmanonymous(k);
+            }
+            return an;
+        }
+
+        // solely for debugging purposes. will be deleted
+        public String dot(Dict d) {
+            StringBuilder s = new StringBuilder();
+            for (Node child : children) {
+                s.append(child.id).append("[label=\"").append(d.getString(child.value)).append(" ")
+                        .append(child.count).append("\"]\n");
+                s.append(this.id).append("->").append(child.id).append("\n");
+            }
+            for (Node child : children) {
+                s.append(child.dot(d));
+            }
+            return s.toString();
+
+        }
+    }
+
+
+    public static void main(String[] args) {
+        String[][] h = {{"a1", "A", "ALL"}, {"a2", "A", "ALL"}, {"b1", "B", "ALL"}, {"b2", "B", "ALL"}};
+        Dict d = new Dict(h);
+        GenHierarchy hierarchy = new GenHierarchy(h, d);
+
+        String[][] transactions =
+                //   {{"a1", "b1", "b2",}, {"a2", "b1",}, {"a2", "b1", "b2"}, {"a1", "a2", "b2"}};
+                {{"a1"}, {"a2", "b1", "b2"}, {"a2", "b1", "b2"},
+                        {"a2", "b1", "b2"},};
+
+        int[][] intTran = d.convertTransactions(transactions);
+        CountTree ct = new CountTree(2, intTran, hierarchy);
+
+        System.out.println(ct.dot(d));
+
+        Cut c = new Cut(4);
+        c.generalize(0, 4);
+        c.generalize(1, 4);
+        System.out.println(Metrics.NCP(c, intTran, hierarchy, 4, ct));
+
+
+        System.out.println(OptimalAnonymization.anon(intTran, new int[]{0, 1, 2, 3}, 4, 3, hierarchy));
+
+
+    }
+}
+
