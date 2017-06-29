@@ -270,6 +270,33 @@ public class NodeChecker {
             return (NodeChecker.Result) node.getData();
         }
         
+        // Apply the transformation
+        apply(node);
+        
+        // We are done with transforming and adding
+        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss);
+        if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
+            currentGroupify.stateResetSuppression();
+        }
+        
+        // Compute information loss and lower bound
+        InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
+                metric.getInformationLoss(node, currentGroupify) : null;
+        InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
+        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+        
+        // Return result;
+        return new NodeChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
+                                      minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
+                                      loss,
+                                      bound);
+    }
+    
+    /**
+     * Applies the given transformation
+     * @param node
+     */
+    private void apply(final Transformation node) {
         // Store snapshot from last check
         if (stateMachine.getLastNode() != null) {
             history.store(solutionSpace.getTransformation(stateMachine.getLastNode()), currentGroupify, stateMachine.getLastTransition().snapshot);
@@ -295,24 +322,6 @@ public class NodeChecker {
             currentGroupify = transformer.applySnapshot(transition.projection, node.getGeneralization(), currentGroupify, transition.snapshot);
             break;
         }
-        
-        // We are done with transforming and adding
-        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss);
-        if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
-            currentGroupify.stateResetSuppression();
-        }
-        
-        // Compute information loss and lower bound
-        InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                metric.getInformationLoss(node, currentGroupify) : null;
-        InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
-        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
-        
-        // Return result;
-        return new NodeChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
-                                      minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
-                                      loss,
-                                      bound);
     }
     
     /**
@@ -366,11 +375,7 @@ public class NodeChecker {
      * @return
      */
     public double getScore(Transformation transformation, Metric<?> metric) {
-
-        // Apply transition and groupify
-        currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
-        currentGroupify.stateAnalyze(transformation, true);
-        
+        apply(transformation);
         return metric.getScore(transformation, currentGroupify);
     }
 }
