@@ -53,7 +53,6 @@ public class CountTree {
     }
 
 
-    // temporary. To be replaced with efficient dedicated method for generating k-subsets
     public List<int[]> subsets(int[] s, int k) {
         s = IntOpenHashSet.from(s).toArray(); // multiple items that get equally generalized violate the set semantics
         List<int[]> l = new ArrayList<>();
@@ -88,7 +87,7 @@ public class CountTree {
         return ret;
     }
 
-    // Same source as sub() but with longs. Called when the transaction is smaller than 65 bytes
+    // Same source as sub() but with longs. Called when the transaction is smaller than 65 items
     private List<int[]> lsub(int[] s, int k) {
         List<int[]> ret = new ArrayList<>();
         long set = (1 << k) - 1;
