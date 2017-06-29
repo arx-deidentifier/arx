@@ -1501,6 +1501,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
 
     /**
      * Calculates the score.
+     * Note: All score functions are expected to have a sensitivity of one.
      * 
      * @return
      */

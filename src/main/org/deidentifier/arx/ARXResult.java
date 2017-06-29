@@ -45,7 +45,7 @@ public class ARXResult {
 
     /** Anonymizer */
     private ARXAnonymizer          anonymizer;
-
+    
     /** Lock the buffer. */
     private DataHandle             bufferLockedByHandle = null;
 
@@ -78,7 +78,7 @@ public class ARXResult {
 
     /** The registry. */
     private final SolutionSpace    solutionSpace;
-
+    
     /**
      * Internal constructor for deserialization.
      *
@@ -158,7 +158,9 @@ public class ARXResult {
         this.duration = time;
         this.solutionSpace = solutionSpace;
     }
-    
+
+
+
     /**
      * Creates a new instance.
      *
@@ -193,8 +195,6 @@ public class ARXResult {
         this.duration = duration;
         this.solutionSpace = solutionSpace;
     }
-
-
 
     /**
      * Returns the configuration used.
@@ -273,7 +273,7 @@ public class ARXResult {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, true);
     }
-    
+
     /**
      * Returns a handle to data obtained by applying the given transformation.  This method will fork the buffer, 
      * allowing to obtain multiple handles to different representations of the data set. Note that only one instance can
@@ -286,7 +286,7 @@ public class ARXResult {
     public DataHandle getOutput(ARXNode node) {
         return getOutput(node, true);
     }
-    
+
     /**
      * Returns a handle to data obtained by applying the given transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to

@@ -51,8 +51,11 @@ public class ExponentialMechanism<T> {
 
     /** A cryptographically strong random generator */
     private static class SecureRandomGenerator extends AbstractRandomGenerator {
+        
+        /** The random generator */
         private SecureRandom random;
 
+        /** Constructor */
         public SecureRandomGenerator() {
             super();
             random = new SecureRandom();
@@ -71,8 +74,11 @@ public class ExponentialMechanism<T> {
     
     /** A deterministic random generator */
     private static class DeterministicRandomGenerator extends AbstractRandomGenerator {
+        
+        /** The random generator */
         private Random random;
 
+        /** Constructor */
         public DeterministicRandomGenerator() {
             super();
             random = new Random(0xDEADBEEF);
@@ -111,34 +117,43 @@ public class ExponentialMechanism<T> {
      * @param deterministic
      */
     public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon, int precision, boolean deterministic) {
+        
+        // The followuing code calculates the probability distribution which assigns every value
+        // a probability proportional to exp(0,5 * epsilon * score)
 
         mc = new MathContext(precision, RoundingMode.HALF_UP);
 
+        // Determine the smallest of all exponents having the form 0,5 * epsilon * score.
+        // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
+        // (which can get very large due to the application of the exponential function) while it does not change the result;
+        // it is a trick to make the following computations feasible.
         double shift = Double.MAX_VALUE;
         for (double score : valueToScore.values()) {
             shift = Math.min(shift, 0.5d * epsilon * score);
         }
-        shift *= -1d;
 
+        // For every value, calculate exp(0,5 * epsilon * score) (enumerator), and calculate the sum of all these numbers (divisor).
+        // Note that all numbers are effectively being multiplied with exp(-shift).
         BigDecimal divisor = new BigDecimal(0d, mc);
-        Map<T, BigDecimal> transformationToEnumerator = new HashMap<T, BigDecimal>();
+        Map<T, BigDecimal> valueToEnumerator = new HashMap<T, BigDecimal>();
         for (Entry<T, Double> entry : valueToScore.entrySet()) {
-            T transformation = entry.getKey();
+            T value = entry.getKey();
             Double score = entry.getValue();
 
-            Double exponent = 0.5d * epsilon * score + shift;
-            BigDecimal enumerator = exp(exponent);
-            transformationToEnumerator.put(transformation, enumerator);
+            BigDecimal enumerator = exp(0.5d * epsilon * score - shift);
+            valueToEnumerator.put(value, enumerator);
 
             divisor = divisor.add(enumerator, mc);
         }
 
+        // Compute the probability for every value by calculating enumerator / divisor.
+        // Note that during this computation, the factor exp(-shift) is effectively being cancelled.
         List<Pair<T, Double>> pmf = new ArrayList<>();
-        for (Entry<T, BigDecimal> entry : transformationToEnumerator.entrySet()) {
-            T transformation = entry.getKey();
+        for (Entry<T, BigDecimal> entry : valueToEnumerator.entrySet()) {
+            T value = entry.getKey();
             BigDecimal enumerator = entry.getValue();
             BigDecimal probability = enumerator.divide(divisor, mc);
-            pmf.add(new Pair<T, Double>(transformation, probability.doubleValue()));
+            pmf.add(new Pair<T, Double>(value, probability.doubleValue()));
         }
 
         AbstractRandomGenerator random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();

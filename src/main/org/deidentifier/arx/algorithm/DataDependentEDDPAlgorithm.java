@@ -44,7 +44,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @param deterministic 
      * @param steps
      * @param epsilonSearch
-     * @param scoreType 
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker,
@@ -89,19 +88,25 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     @Override
     public void traverse() {
         
-        Transformation transformation = solutionSpace.getTop();
-        double score = getScore(transformation);
+        // Set the top-transformation to be the initial pivot element
+        Transformation pivot = solutionSpace.getTop();
+        double score = getScore(pivot);
         
-        Transformation bestTransformation = transformation;
+        // Initialize variables tracking the best of all pivot elements
+        Transformation bestTransformation = pivot;
         double bestScore = score;
+        
         progress(0d);
 
+        // Initialize the set of candidates, each mapped to its respective score
         Map<Long, Double> transformationIDToScore = new HashMap<Long, Double>();
-        transformationIDToScore.put(transformation.getIdentifier(), score);
+        transformationIDToScore.put(pivot.getIdentifier(), score);
         
+        // For each step
         for (int step = 1; step <= steps; ++step) {
             
-            LongArrayList list = transformation.getPredecessors();
+            // Add predecessors of the current pivot element to the set of candidates
+            LongArrayList list = pivot.getPredecessors();
             for (int i = 0; i < list.size(); i++) {
                 long id = list.getQuick(i);
                 if (transformationIDToScore.containsKey(id)) continue;
@@ -109,17 +114,21 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 transformationIDToScore.put(id, getScore(predecessor));
             }
             
-            transformationIDToScore.remove(transformation.getIdentifier());
+            // Remove the current pivot element from the set of candidates
+            transformationIDToScore.remove(pivot.getIdentifier());
+            
+            // Select the next pivot element from the set of candidates using the exponential mechanism
 
             ExponentialMechanism<Long> expMechanism = new ExponentialMechanism<Long>(transformationIDToScore,
                     epsilonSearch / ((double) steps), ExponentialMechanism.defaultPrecision, deterministic);
-            
+
             long id = expMechanism.sample();
-            transformation = solutionSpace.getTransformation(id);
+            pivot = solutionSpace.getTransformation(id);
             score = transformationIDToScore.get(id);
             
+            // Keep track of the best pivot element
             if (score > bestScore) {
-                bestTransformation = transformation;
+                bestTransformation = pivot;
                 bestScore = score;
             }
             
