@@ -118,7 +118,7 @@ public class ExponentialMechanism<T> {
      */
     public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon, int precision, boolean deterministic) {
         
-        // The followuing code calculates the probability distribution which assigns every value
+        // The following code calculates the probability distribution which assigns every value
         // a probability proportional to exp(0,5 * epsilon * score)
 
         mc = new MathContext(precision, RoundingMode.HALF_UP);
