@@ -1,8 +1,9 @@
 package org.deidentifier.arx.algorithm.transactions;
 
-import com.google.common.collect.Sets;
+import com.carrotsearch.hppc.IntOpenHashSet;
 import com.google.common.primitives.Ints;
 
+import java.math.BigInteger;
 import java.util.*;
 
 public class CountTree {
@@ -53,34 +54,95 @@ public class CountTree {
 
 
     // temporary. To be replaced with efficient dedicated method for generating k-subsets
-    public List<int[]> subsets(int[] s, int m) {
-        Set<Integer> t = new HashSet<>(Ints.asList(s));
-        List<int[]> com = new ArrayList<>();
-
-        for (Set<Integer> integers : Sets.powerSet(t)) {
-            int[] p = Ints.toArray(integers);
-            if (p.length <= m && p.length > 0 && !containsGeneralizedItems(p)) {
-                Arrays.sort(p);
-                reverse(p);
-                com.add(p);
-            }
+    public List<int[]> subsets(int[] s, int k) {
+        s = IntOpenHashSet.from(s).toArray(); // multiple items that get equally generalized violate the set semantics
+        List<int[]> l = new ArrayList<>();
+        for (int i = 1; i <= k; i++) {
+            if (s.length <= 64)
+                l.addAll(lsub(s, i));
+            else
+                l.addAll(sub(s, i));
         }
-        Collections.sort(com, new Comparator<int[]>() {
-            @Override
-            public int compare(int[] o1, int[] o2) {
-                return Integer.compare(o1.length, o2.length);
+        Iterator<int[]> it = l.iterator();
+        while (it.hasNext()) {
+            int[] next = it.next();
+            if (containsGeneralizedItems(next)) {
+                it.remove();
             }
-        });
-        return com;
+            reverse(next);
+        }
+        return l;
     }
 
-    private void reverse(int[] a) {
-        for (int i = 0; i < a.length / 2; i++) {
-            int temp = a[i];
-            a[i] = a[a.length - i - 1];
-            a[a.length - i - 1] = temp;
+    // https://softwareengineering.stackexchange.com/a/67087
+    private List<int[]> sub(int[] s, int k) {
+        List<int[]> ret = new ArrayList<>();
+        BigInteger set = new BigInteger("1").shiftLeft(k).subtract(new BigInteger("1"));
+        BigInteger limit = new BigInteger("1").shiftLeft(s.length);
+        while (set.compareTo(limit) == -1) {
+            ret.add(pick(set, s));
+            BigInteger c = set.and(set.negate());
+            BigInteger r = set.add(c);
+            set = r.xor(set).shiftRight(2).divide(c).or(r);
+        }
+        return ret;
+    }
+
+    // Same source as sub() but with longs. Called when the transaction is smaller than 65 bytes
+    private List<int[]> lsub(int[] s, int k) {
+        List<int[]> ret = new ArrayList<>();
+        long set = (1 << k) - 1;
+        long limit = (1 << s.length);
+        while (set < limit) {
+            ret.add( pick(set, s));
+
+            long c = set & -set;
+            long r = set + c;
+            set = (((r ^ set) >>> 2) / c) | r;
+        }
+        return ret;
+    }
+
+    private int[] pick(long i, int[] s) {
+        int[] a = new int[Long.bitCount(i)];
+        int k = 0;
+        int p = 0;
+        for (int j = 0; j < 64; j++) {
+            if ((i & 1) == 1) {
+                a[k++] = s[p];
+            }
+            p++;
+            i = i >>> 1;
+        }
+
+        return a;
+    }
+
+    private static int[] pick(BigInteger i, int[] s) {
+        int[] a = new int[i.bitCount()];
+        int k = 0;
+        int p = 0;
+        for (byte b : i.toByteArray()) {
+            for (int j = 0; j < 8; j++) {
+                if ((b & 1) == 1) {
+                    a[k++] = s[p];
+                }
+                p++;
+                b = (byte) (b >> 1);
+            }
+
+        }
+        return a;
+    }
+
+    public static void reverse(int[] data) {
+        for (int left = 0, right = data.length - 1; left < right; left++, right--) {
+            int temp = data[left];
+            data[left]  = data[right];
+            data[right] = temp;
         }
     }
+
 
     /**
      * @param set an array of items
@@ -236,9 +298,7 @@ public class CountTree {
         System.out.println(Metrics.NCP(c, intTran, hierarchy, 4, ct));
 
 
-        System.out.println(OptimalAnonymization.anon(intTran, new int[]{0, 1, 2, 3}, 4, 3, hierarchy));
-
-
+        System.out.println(OptimalAnonymization.anon(intTran, new int[]{0, 1, 2, 3}, 2, 2, hierarchy));
     }
 }
 
