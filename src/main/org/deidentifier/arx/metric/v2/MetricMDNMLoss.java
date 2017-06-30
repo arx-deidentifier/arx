@@ -35,6 +35,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * This class implements a variant of the Loss metric.
  *
  * @author Fabian Prasser
+ * @author Raffael Bild
  */
 public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
@@ -137,6 +138,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
@@ -343,5 +349,34 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
         return round(result);
+    }
+    
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numAttrs) {
+        // Prepare
+        int[] transformation = node.getGeneralization();
+
+        // Compute score
+        double score = 0d;
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            for (int dimension=0; dimension<numAttrs; dimension++){
+                if (m.count>0) {
+                    int value = m.key[dimension];
+                    int level = transformation[dimension];
+                    double share = (double)m.count * shares[dimension].getShare(value, level);
+                    score += m.isNotOutlier ? share : m.count;
+                }
+                score += m.pcount - m.count;
+            }
+            m = m.nextOrdered;
+        }
+        
+        // Adjust sensitivity
+        score *= -1d / numAttrs;
+        if (k > 1) score /= k - 1d;
+        
+        // Return score
+        return score;
     }
 }

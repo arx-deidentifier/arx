@@ -1503,9 +1503,13 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * Calculates the score.
      * Note: All score functions are expected to have a sensitivity of one.
      * 
+     * @param node
+     * @param groupify
+     * @param k
+     * @param numAttrs
      * @return
      */
-    public double getScore(final Transformation node, final HashGroupify groupify) {
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numAttrs) {
         throw new RuntimeException("Data-dependent differential privacy for the quality model "
             + getName() + " is not yet implemented");
     }

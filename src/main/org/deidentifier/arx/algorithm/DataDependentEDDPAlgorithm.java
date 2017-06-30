@@ -44,11 +44,16 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @param deterministic 
      * @param steps
      * @param epsilonSearch
+     * @param k
+     * @param numAttrs
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker,
-                                           Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
-        return new DataDependentEDDPAlgorithm(solutionSpace, checker, metric, deterministic, steps, epsilonSearch);
+                                           Metric<?> metric, boolean deterministic, int steps, double epsilonSearch,
+                                           int k, int numAttrs) {
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker, metric,
+                                              deterministic, steps, epsilonSearch,
+                                              k, numAttrs);
     }
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -60,6 +65,10 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     private final Metric<?>          metric;
     /** Parameter */
     private final boolean            deterministic;
+    /** Parameter */
+    private final int                k;
+    /** Parameter */
+    private final int                numAttrs;
     
     /**
     * Constructor
@@ -71,7 +80,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     * @param epsilonSearch
     */
     private DataDependentEDDPAlgorithm(SolutionSpace space, NodeChecker checker,
-                          Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
+                          Metric<?> metric, boolean deterministic, int steps, double epsilonSearch,
+                          int k, int numAttrs) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
@@ -79,6 +89,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         this.epsilonSearch = epsilonSearch;
         this.metric = metric;
         this.deterministic = deterministic;
+        this.k = k;
+        this.numAttrs = numAttrs;
         this.steps = steps;
         if (steps < 0) { 
             throw new IllegalArgumentException("Invalid step number. Must not be negative."); 
@@ -144,7 +156,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @return
      */
     private Double getScore(Transformation transformation) {
-        return checker.getScore(transformation, metric);
+        return checker.getScore(transformation, metric, k, numAttrs);
     }
 
     /**
