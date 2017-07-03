@@ -17,13 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.framework.check.groupify.HashGroupify;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -77,11 +72,6 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
     public boolean isGSFactorSupported() {
         return true;
     }
-    
-    @Override
-    public boolean isScoreFunctionSupported() {
-        return true;
-    }
 
     @Override
     public ElementData render(ARXConfiguration config) {
@@ -101,49 +91,5 @@ public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
-    }
-    
-    @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords, int[] rootValues) {
-        
-        // Prepare
-        double score = 0d;
-
-        // For every attribute
-        for (int j = 0; j < getDimensionsGeneralized(); ++j) {
-
-            Map<Integer, Integer> nonSuppressedValueToCount = new HashMap<Integer, Integer>();
-
-            HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
-            while (entry != null) {
-
-                // Process values of records which have not been suppressed by sampling
-                if (entry.isNotOutlier && entry.key[j] != rootValues[j]) {
-                    // The attribute value has neither been suppressed because of record suppression nor because of generalization
-                    int value = entry.key[j];
-                    int valueCount = nonSuppressedValueToCount.containsKey(value) ?
-                            (nonSuppressedValueToCount.get(value) + entry.count) : entry.count;
-                    nonSuppressedValueToCount.put(value, valueCount);
-                } else {
-                    // The attribute value has been suppressed because of record suppression or because of generalization
-                    score += entry.count * numRecords;
-                }
-                
-                // Add values for records which have been suppressed by sampling
-                score += (entry.pcount - entry.count) * numRecords;
-
-                // Next group
-                entry = entry.nextOrdered;
-            }
-
-            // Add values for all attribute values which were not suppressed
-            for (int count : nonSuppressedValueToCount.values()) {
-                score += count * count;
-            }
-        }
-
-        // Adjust sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / (numRecords * getDimensionsGeneralized());
-        return (k==1) ? score / 5d : score / (k * k / (k - 1d) + 1d);
     }
 }
