@@ -41,6 +41,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
@@ -133,6 +134,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
@@ -260,6 +266,41 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMax(max);
     }
 
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numAttrs) {
+        
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        
+        int suppressedTuples = 0;
+        int unsuppressedTuples = 0;
+        
+        // For each group
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            
+            // Calculate number of affected records
+            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
+            suppressedTuples += m.isNotOutlier ? 0 : m.count;
+            suppressedTuples += m.pcount - m.count;
+
+            // Next group
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        double score = 0d;
+        for (int i = 0; i<numAttrs; i++) {
+            double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
+            score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
+        }
+        score *= -1d / numAttrs;
+        if (k > 1) score /= k - 1d;
+        
+        // Return
+        return score;
+    }
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
