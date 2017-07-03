@@ -30,6 +30,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     
@@ -86,6 +87,11 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
                                        AggregateFunction.SUM       // aggregate function
                                        );
     }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return true;
+    }
 
     @Override
     public ElementData render(ARXConfiguration config) {
@@ -138,6 +144,28 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
+    }
+    
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords) {
+        
+        // Prepare
+        double score = 0;
+        
+        // Sum up penalty for each record
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            if (m.isNotOutlier) {
+                score += m.count * m.count;
+            } else {
+                score += m.count * numRecords;
+            }
+            score += (m.pcount - m.count) * numRecords;
+            m = m.nextOrdered;
+        }
+        
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        return -1d * score / (numRecords * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d));
     }
 }
 

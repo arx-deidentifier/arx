@@ -267,7 +267,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numAttrs) {
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords) {
         
         // Prepare
         int[] transformation = node.getGeneralization();
@@ -290,11 +290,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         
         // Calculate score
         double score = 0d;
-        for (int i = 0; i<numAttrs; i++) {
+        for (int i = 0; i<getDimensionsGeneralized(); i++) {
             double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
             score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
         }
-        score *= -1d / numAttrs;
+        score *= -1d / getDimensionsGeneralized();
         if (k > 1) score /= k - 1d;
         
         // Return

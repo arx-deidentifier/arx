@@ -352,7 +352,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numAttrs) {
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords) {
         // Prepare
         int[] transformation = node.getGeneralization();
 
@@ -360,7 +360,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double score = 0d;
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
-            for (int dimension=0; dimension<numAttrs; dimension++){
+            for (int dimension=0; dimension<getDimensionsGeneralized(); dimension++){
                 if (m.count>0) {
                     int value = m.key[dimension];
                     int level = transformation[dimension];
@@ -372,8 +372,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
             m = m.nextOrdered;
         }
         
-        // Adjust sensitivity
-        score *= -1d / numAttrs;
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        score *= -1d / getDimensionsGeneralized();
         if (k > 1) score /= k - 1d;
         
         // Return score

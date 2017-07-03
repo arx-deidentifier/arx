@@ -171,7 +171,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numAttrs) {
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords) {
         
         // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
         
@@ -192,6 +192,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
             entry = entry.nextOrdered;
         }
         
+        // Return score
         return (double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d);
     }
 }

@@ -373,11 +373,11 @@ public class NodeChecker {
      * @param transformation
      * @param metric
      * @param k
-     * @param numAttrs
+     * @param numRecords
      * @return
      */
-    public double getScore(Transformation transformation, Metric<?> metric, int k, int numAttrs) {
+    public double getScore(Transformation transformation, Metric<?> metric, int k, int numRecords) {
         apply(transformation);
-        return metric.getScore(transformation, currentGroupify, k, numAttrs);
+        return metric.getScore(transformation, currentGroupify, k, numRecords);
     }
 }

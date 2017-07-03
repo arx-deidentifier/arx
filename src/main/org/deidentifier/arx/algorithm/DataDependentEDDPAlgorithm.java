@@ -45,15 +45,15 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @param steps
      * @param epsilonSearch
      * @param k
-     * @param numAttrs
+     * @param numRecords
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker,
                                            Metric<?> metric, boolean deterministic, int steps, double epsilonSearch,
-                                           int k, int numAttrs) {
+                                           int k, int numRecords) {
         return new DataDependentEDDPAlgorithm(solutionSpace, checker, metric,
                                               deterministic, steps, epsilonSearch,
-                                              k, numAttrs);
+                                              k, numRecords);
     }
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -68,7 +68,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     /** Parameter */
     private final int                k;
     /** Parameter */
-    private final int                numAttrs;
+    private final int                numRecords;
     
     /**
     * Constructor
@@ -78,10 +78,11 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     * @param deterministic 
     * @param steps
     * @param epsilonSearch
+    * @param numRecords 
     */
     private DataDependentEDDPAlgorithm(SolutionSpace space, NodeChecker checker,
                           Metric<?> metric, boolean deterministic, int steps, double epsilonSearch,
-                          int k, int numAttrs) {
+                          int k, int numRecords) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
@@ -90,7 +91,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         this.metric = metric;
         this.deterministic = deterministic;
         this.k = k;
-        this.numAttrs = numAttrs;
+        this.numRecords = numRecords;
         this.steps = steps;
         if (steps < 0) { 
             throw new IllegalArgumentException("Invalid step number. Must not be negative."); 
@@ -156,7 +157,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @return
      */
     private Double getScore(Transformation transformation) {
-        return checker.getScore(transformation, metric, k, numAttrs);
+        return checker.getScore(transformation, metric, k, numRecords);
     }
 
     /**

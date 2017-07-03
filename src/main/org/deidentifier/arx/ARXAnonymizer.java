@@ -554,7 +554,7 @@ public class ARXAnonymizer {
                 DataDependentEDDifferentialPrivacy dpCriterion = (DataDependentEDDifferentialPrivacy)c;
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, config.getQualityModel(),
                                                          dpCriterion.isDeterministic(), dpCriterion.getSteps(), dpCriterion.getEpsilonSearch(),
-                                                         c.getMinimalClassSize(), manager.getHierarchies().length);
+                                                         c.getMinimalClassSize(), manager.getDataGeneralized().getDataLength());
             }
         }
         
