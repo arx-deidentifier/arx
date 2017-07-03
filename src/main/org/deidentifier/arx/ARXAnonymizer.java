@@ -551,10 +551,17 @@ public class ARXAnonymizer {
 
         for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c instanceof DataDependentEDDifferentialPrivacy) {
+                // Determine the root values of all generalization hierarchies
+                int[] rootValues = new int[manager.getHierarchies().length];
+                for (int i = 0; i < manager.getHierarchies().length; i++) {
+                    int[] row = manager.getHierarchies()[i].getArray()[0];
+                    rootValues[i] = row[row.length - 1];
+                }
+                // Create data-dependent (e,d)-differential privacy algorithm
                 DataDependentEDDifferentialPrivacy dpCriterion = (DataDependentEDDifferentialPrivacy)c;
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, config.getQualityModel(),
                                                          dpCriterion.isDeterministic(), dpCriterion.getSteps(), dpCriterion.getEpsilonSearch(),
-                                                         c.getMinimalClassSize(), manager.getDataGeneralized().getDataLength());
+                                                         c.getMinimalClassSize(), manager.getDataGeneralized().getDataLength(), rootValues);
             }
         }
         

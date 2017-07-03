@@ -147,7 +147,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords) {
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords, int[] rootValues) {
         
         // Prepare
         double score = 0;

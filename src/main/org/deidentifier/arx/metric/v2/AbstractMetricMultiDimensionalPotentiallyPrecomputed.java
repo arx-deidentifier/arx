@@ -144,6 +144,11 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     public boolean isPrecomputed() {
         return this.precomputed;
     }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return isPrecomputed() ? precomputedMetric.isScoreFunctionSupported() : defaultMetric.isScoreFunctionSupported();
+    }
 
     /**
      * Returns the default variant.
@@ -222,5 +227,12 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         } else {
             defaultMetric.initializeInternal(manager, definition, input, ahierarchies, config);
         }
+    }
+    
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords, int[] rootValues) {
+        return precomputed ?
+               precomputedMetric.getScore(node, groupify, k, numRecords, rootValues) :
+               defaultMetric.getScore(node, groupify, k, numRecords, rootValues);
     }
 }

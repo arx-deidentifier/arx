@@ -76,6 +76,7 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new DataDependentEDDifferentialPrivacy(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 0.6880872033117096, new int[] { 1, 3, 0, 2, 2, 2, 2, 2, 1 }, false) },
                                               /* 20 */ { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecisionMetric()).addPrivacyModel(new DataDependentEDDifferentialPrivacy(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 0.589773390862588, new int[] { 0, 3, 0, 2, 2, 1, 2, 2, 0 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createDiscernabilityMetric()).addPrivacyModel(new DataDependentEDDifferentialPrivacy(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 2.1844143E7, new int[] { 1, 1, 1, 1, 3, 2, 2, 2, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createEntropyMetric()).addPrivacyModel(new DataDependentEDDifferentialPrivacy(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 235748.7244642646, new int[] { 0, 3, 0, 1, 2, 2, 2, 1, 1 }, false) },
         });
     }
     
