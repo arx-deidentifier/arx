@@ -1,24 +1,35 @@
 package org.deidentifier.arx.algorithm.transactions;
 
+import com.carrotsearch.hppc.IntOpenHashSet;
+
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Cut {
     int[] generalization;
-    private int start;
+    private boolean horizontal;
+    private int level;
 
     public Cut(int domainsize) {
         generalization = new int[domainsize];
         for (int i = 0; i < generalization.length; i++) {
             generalization[i] = i;
         }
+        horizontal = true;
     }
 
     public void generalize(int a, int b) {
-        if (start < a)
-            start = a;
         generalization[a] = b;
+        int mustLevel = this.generalization[0];
+        for (int gen : this.generalization) {
+            if (gen != mustLevel) {
+                this.horizontal = false;
+                return;
+            }
+        }
+        this.horizontal = true;
     }
 
     public int getGeneralization(int a) {
@@ -42,8 +53,11 @@ public class Cut {
             for (int j = 0; j < dp[i].length; j++) {
                 dp[i][j] = generalization[dp[i][j]];
             }
+            // remove duplicates TODO replace with own implementation based on boolean arrays/Bitsets?
+            IntOpenHashSet h = new IntOpenHashSet(dp[i].length);
+            h.add(dp[i]);
+            dp[i] = h.toArray();
         }
-
         return dp;
     }
 
@@ -71,37 +85,43 @@ public class Cut {
     public List<Cut> anchestors(GenHierarchy g) {
         List<Cut> cuts = new LinkedList<>();
         int[][] gtable = g.getHierarchy();
-        int level = getStartLevel(g) + 1;
-        for (int i = start; i < this.generalization.length; ) {
-            if (g.toRoot(this.generalization[start]).length == 1)
-                return cuts;
-            int group = i;
-            Cut anAncestor = new Cut(this.generalization.length);
-            int l = this.generalization.length;
-            int roundtrip = l;
-
-            // Always jump one level higher for this item, regardless if there are neigbors that too can be generalized
-            anAncestor.generalize(group % l, gtable[group % l][level]);
-            while (gtable[group % l][level] == gtable[(group + 1) % l][level] && roundtrip != 0) {
-                anAncestor.generalize(group % l, gtable[group % l][level]);
-                anAncestor.generalize((group + 1) % l, gtable[group % l][level]);
-                group++;
-                roundtrip--;
+        // this is not a horizontal cut, so the next higher cut is a horizontal one
+        if (!horizontal) {
+            level++;
+            Cut horizontal = new Cut(this.generalization.length);
+            for (int i = 0; i < this.generalization.length; i++) {
+                horizontal.generalize(i, gtable[i][level]);
             }
+            horizontal.level = level;
+            return Collections.singletonList(horizontal);
+        }
+        int glevel = level + 1;
+        // Do we really have to loop over all items? The ones under this cut should be sufficient?
+        int group = 0;
+        for (int i = 0; i < this.generalization.length; ) {
+            if (g.toRoot(this.generalization[i]).length == 1)
+                return cuts;
 
+            int groupVal = gtable[i][glevel];
+            Cut anAncestor = new Cut(this.generalization.length);
+
+
+            while (group < gtable.length) {
+                if (groupVal == gtable[group][glevel])
+                    group++;
+                else
+                    break;
+            }
+            for (int j = 0; j < group-i; j++) {
+                anAncestor.generalize(i+j, gtable[i+j][glevel]);
+            }
+            anAncestor.horizontal = false;
             cuts.add(anAncestor);
-            i += ++group;
+            i = group;
         }
         return cuts;
     }
 
-    private int getStartLevel(GenHierarchy g) {
-        for (int i = 0; i < g.toRoot(start).length; i++) {
-            if (this.generalization[start] == g.toRoot(start)[i])
-                return i;
-        }
-        return -1;
-    }
 
     @Override
     public String toString() {

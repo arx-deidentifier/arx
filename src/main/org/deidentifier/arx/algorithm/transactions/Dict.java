@@ -17,6 +17,7 @@ public class Dict {
     */
     public Dict(String[][] hierarchy) {
         ArrayList<String> reps = new ArrayList<>(hierarchy[0].length);
+
         int idcounter = 0;
         int generalizationLevel = 0;
         int biggestTran = hierarchy[0].length;

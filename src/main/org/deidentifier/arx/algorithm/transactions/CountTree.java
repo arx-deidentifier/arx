@@ -12,6 +12,7 @@ public class CountTree {
     private int[][] transactions;
     private int m; // The m in k^m-anonymity
     private GenHierarchy hierarchy;
+    private int[] itemFrequencies;
 
     private int c = 0;
 
@@ -68,6 +69,7 @@ public class CountTree {
             if (containsGeneralizedItems(next)) {
                 it.remove();
             }
+            Arrays.sort(next);
             reverse(next);
         }
         return l;
@@ -93,7 +95,7 @@ public class CountTree {
         long set = (1 << k) - 1;
         long limit = (1L << s.length);
         while (set < limit) {
-            ret.add( pick(set, s));
+            ret.add(pick(set, s));
 
             long c = set & -set;
             long r = set + c;
@@ -125,6 +127,8 @@ public class CountTree {
         int p = 0;
         for (byte b : i.toByteArray()) {
             for (int j = 0; j < 8; j++) {
+                if(p==s.length)
+                    return a;
                 if ((b & 1) == 1) {
                     a[k++] = s[p];
                 }
@@ -139,7 +143,7 @@ public class CountTree {
     public static void reverse(int[] data) {
         for (int left = 0, right = data.length - 1; left < right; left++, right--) {
             int temp = data[left];
-            data[left]  = data[right];
+            data[left] = data[right];
             data[right] = temp;
         }
     }
@@ -171,11 +175,14 @@ public class CountTree {
      * @return the count of each item in the domain
      */
     public int[] itemFrequencies() {
+        if (itemFrequencies != null)
+            return itemFrequencies;
         int[] c = new int[hierarchy.getDomainItems().length];
         for (Node child : root.children) {
             if (child.value < hierarchy.getDomainItems().length)
                 c[child.value] = child.count;
         }
+        itemFrequencies = c;
         return c;
     }
 
@@ -273,33 +280,26 @@ public class CountTree {
                 s.append(child.dot(d));
             }
             return s.toString();
-
         }
     }
 
 
     public static void main(String[] args) {
-        String[][] h = {{"a1", "A", "ALL"}, {"a2", "A", "ALL"}, {"b1", "B", "ALL"}, {"b2", "B", "ALL"}};
-        Dict d = new Dict(h);
-        GenHierarchy hierarchy = new GenHierarchy(h, d);
+         String[][] h = {{"a1", "A", "ALL"}, {"a2", "A", "ALL"}, {"b1", "B", "ALL"}, {"b2", "B", "ALL"}, {"c", "c", "ALL"}};
+         Dict d = new Dict(h);
+         GenHierarchy hierarchy = new GenHierarchy(h, d);
 
-        String[][] transactions =
-                //   {{"a1", "b1", "b2",}, {"a2", "b1",}, {"a2", "b1", "b2"}, {"a1", "a2", "b2"}};
-                {{"a1"}, {"a2", "b1", "b2"}, {"a2", "b1", "b2"},
-                        {"a2", "b1", "b2"},};
+         String[][] transactions =
+                 //   {{"a1", "b1", "b2",}, {"a2", "b1",}, {"a2", "b1", "b2"}, {"a1", "a2", "b2"}};
+                 {{"a1"}, {"a2", "b1",}, {"a2", "b1",},
+                         {"a2", "b1", "b2"},};
 
-        int[][] intTran = d.convertTransactions(transactions);
-        CountTree ct = new CountTree(2, intTran, hierarchy);
+         int[][] intTran = d.convertTransactions(transactions);
+         System.out.println(hierarchy.rep(d));
+         CountTree ct = new CountTree(3, intTran, hierarchy);
+         //System.out.println(ct.dot(d));
 
-        System.out.println(ct.dot(d));
-
-        Cut c = new Cut(4);
-        c.generalize(0, 4);
-        c.generalize(1, 4);
-        System.out.println(Metrics.NCP(c, intTran, hierarchy, 4, ct));
-
-
-        System.out.println(OptimalAnonymization.anon(intTran, new int[]{0, 1, 2, 3}, 2, 2, hierarchy));
-    }
+         System.out.println(OptimalAnonymization.anon(intTran, 2, 2, hierarchy));
+     }
 }
 

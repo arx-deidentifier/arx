@@ -4,7 +4,7 @@ public class Metrics {
 
     // Information Loss (IL) if item is generalized by g
     public static double NCP(int item, int g, GenHierarchy h, int domainsize) {
-        double leaveCount = 0;
+        double leafCount;
         boolean getsGeneralized = false;
 
         for (int i = 0; i < h.toRoot(item).length; i++) {
@@ -13,19 +13,12 @@ public class Metrics {
         }
         if (!getsGeneralized)
             return 0;
+        leafCount = h.getLeafsUnderGeneralization(g);
 
-        for (int i = 0; i < domainsize; i++) {
-            for (int j = 0; j < h.toRoot(i).length; j++) {
-                if (h.toRoot(i)[j] == g) {
-                    leaveCount++;
-                    break;
-                }
-            }
-        }
-        if (leaveCount == 1)
+        if (leafCount == 1)
             return 0;
         else
-            return leaveCount / domainsize;
+            return leafCount / domainsize;
     }
 
     /**
@@ -41,13 +34,15 @@ public class Metrics {
         int dbsize = 0;
         int[] occurences = ct.itemFrequencies();
 
+        // Einmal berechnen
         for (int[] aTran : tran) {
             dbsize += aTran.length;
         }
         double sum = 0;
 
         for (int i = 0; i < occurences.length; i++) {
-            sum += occurences[i] * NCP(i, generalization, h, domainsize);
+            if (occurences[i] != 0)
+                sum += occurences[i] * NCP(i, generalization, h, domainsize);
         }
         return sum / dbsize;
     }

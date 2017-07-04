@@ -11,13 +11,13 @@ public class OptimalAnonymization {
      * OA as in "M. Terrovitis, N. Mamoulis, and P. Kalnis, “Privacy-preserving anonymization of set-valued data,”"
      *
      * @param D the database to be anonymized
-     * @param I the domain
      * @param k k in k^m-anonymity
      * @param m m in k^m-anonymity
      * @param h the generalization hierarchy for I
      * @return the cut that provides k^m-anonymity and inflicts minimal information loss
      */
-    public static Cut anon(int[][] D, int[] I, int k, int m, GenHierarchy h) {
+    public static Cut anon(int[][] D, int k, int m, GenHierarchy h) {
+        int[] I = h.getDomainItems();
         Cut copt = null;
         double coptCost = Double.POSITIVE_INFINITY;
         Queue<Cut> Q = new LinkedBlockingQueue<>();
@@ -27,6 +27,7 @@ public class OptimalAnonymization {
 
         while (!Q.isEmpty()) {
             Cut c = Q.poll();
+            System.out.println("In queue: " + Q.size());
             int[][] generalizedTableByC = c.generalize(D);
             CountTree ct = new CountTree(m, generalizedTableByC, h);
             List<Cut> anchestors = c.anchestors(h);
