@@ -565,8 +565,8 @@ public class ARXResult {
         }
 
         // Check bounds
-        if (!Double.isNaN(records) && (records < 0d || records > 1d)) {
-            throw new IllegalArgumentException("Number of records to optimize must be in [0, 1]");
+        if (!Double.isNaN(records) && (records <= 0d || records > 1d)) {
+            throw new IllegalArgumentException("Number of records to optimize must be in ]0, 1]");
         }
         
         // Check bounds
