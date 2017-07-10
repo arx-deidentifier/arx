@@ -75,7 +75,6 @@ public class CSVDataInput {
         }
 
         @Override
-        @SuppressWarnings("resource")
         public int read(char[] cbuf, int off, int len) throws IOException {
             reader = reader != null ? reader : new InputStreamReader(new FileInputStream(file), charset);
             return reader.read(cbuf, off, len);
