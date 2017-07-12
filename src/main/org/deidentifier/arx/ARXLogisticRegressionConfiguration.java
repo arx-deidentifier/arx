@@ -156,7 +156,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param alpha the alpha to set
      */
     public ARXLogisticRegressionConfiguration setAlpha(double alpha) {
-        this.alpha = alpha;
+        if (this.alpha != alpha) {
+            setModified();
+            this.alpha = alpha;
+        }
         return this;
     }
 
@@ -164,7 +167,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param decayExponent the decayExponent to set
      */
     public ARXLogisticRegressionConfiguration setDecayExponent(double decayExponent) {
-        this.decayExponent = decayExponent;
+        if (this.decayExponent != decayExponent) {
+            setModified();
+            this.decayExponent = decayExponent;
+        }
         return this;
     }
 
@@ -174,7 +180,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @return
      */
     public ARXLogisticRegressionConfiguration setDeterministic(boolean deterministic) {
-        this.deterministic = deterministic;
+        if (this.deterministic != deterministic) {
+            setModified();
+            this.deterministic = deterministic;
+        }
         return this;
     }
 
@@ -182,7 +191,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param lambda the lambda to set
      */
     public ARXLogisticRegressionConfiguration setLambda(double lambda) {
-        this.lambda = lambda;
+        if (this.lambda != lambda) {
+            setModified();
+            this.lambda = lambda;
+        }
         return this;
     }
 
@@ -190,7 +202,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param learningRate the learningRate to set
      */
     public ARXLogisticRegressionConfiguration setLearningRate(double learningRate) {
-        this.learningRate = learningRate;
+        if (this.learningRate != learningRate) {
+            setModified();
+            this.learningRate = learningRate;
+        }
         return this;
     }
 
@@ -201,7 +216,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (maxRecords <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.maxRecords = maxRecords;
+        if (this.maxRecords != maxRecords) {
+            setModified();
+            this.maxRecords = maxRecords;
+        }
         return this;
     }
 
@@ -212,7 +230,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (numberOfFolds <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.numberOfFolds = numberOfFolds;
+        if (this.numberOfFolds != numberOfFolds) {
+            setModified();
+            this.numberOfFolds = numberOfFolds;
+        }
         return this;
     }
 
@@ -220,7 +241,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param priorFunction the priorFunction to set
      */
     public ARXLogisticRegressionConfiguration setPriorFunction(PriorFunction priorFunction) {
-        this.prior = priorFunction;
+        if (this.prior != priorFunction) {
+            setModified();
+            this.prior = priorFunction;
+        }
         return this;
     }
 
@@ -229,7 +253,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param seed the seed to set
      */
     public ARXLogisticRegressionConfiguration setSeed(int seed) {
-        this.seed = seed;
+        if (this.seed != seed) {
+            setModified();
+            this.seed = seed;
+        }
         return this;
     }
 
@@ -237,7 +264,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param stepOffset the stepOffset to set
      */
     public ARXLogisticRegressionConfiguration setStepOffset(int stepOffset) {
-        this.stepOffset = stepOffset;
+        if (this.stepOffset != stepOffset) {
+            setModified();
+            this.stepOffset = stepOffset;
+        }
         return this;
     }
 
@@ -248,7 +278,10 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (vectorLength <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.vectorLength = vectorLength;
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
+        }
         return this;
     }
 }

@@ -120,7 +120,10 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      * @return
      */
     public ARXNaiveBayesConfiguration setDeterministic(boolean deterministic) {
-        this.deterministic = deterministic;
+        if (this.deterministic != deterministic) {
+            setModified();
+            this.deterministic = deterministic;
+        }
         return this;
     }
     
@@ -131,7 +134,10 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (maxRecords <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.maxRecords = maxRecords;
+        if (this.maxRecords != maxRecords) {
+            setModified();
+            this.maxRecords = maxRecords;
+        }
         return this;
     }
 
@@ -142,7 +148,10 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (numberOfFolds <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.numberOfFolds = numberOfFolds;
+        if (this.numberOfFolds != numberOfFolds) {
+            setModified();
+            this.numberOfFolds = numberOfFolds;
+        }
         return this;
     }
 
@@ -151,7 +160,10 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      * @param seed the seed to set
      */
     public ARXNaiveBayesConfiguration setSeed(int seed) {
-        this.seed = seed;
+        if (this.seed != seed) {
+            setModified();
+            this.seed = seed;
+        }
         return this;
     }
 
@@ -163,7 +175,10 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (sigma < 0) {
             throw new IllegalArgumentException("Invalid add-k smoothing parameter: " + sigma);
         }
-        this.sigma = sigma;
+        if (this.sigma != sigma) {
+            setModified();
+            this.sigma = sigma;
+        }
         return this;
     }
 
@@ -175,7 +190,10 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (type == null) {
             throw new IllegalArgumentException("Invalid type parameter: " + type);
         }
-        this.type = type;
+        if (this.type != type) {
+            setModified();
+            this.type = type;
+        }
         return this;
     }
 
@@ -186,7 +204,10 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (vectorLength <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.vectorLength = vectorLength;
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
+        }
         return this;
     }
 }

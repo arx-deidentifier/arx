@@ -25,18 +25,42 @@ import java.io.Serializable;
  */
 public abstract class ARXClassificationConfiguration implements Serializable{
 
-    /** SVUID*/
+    /** SVUID */
     private static final long serialVersionUID = -8751059558718015927L;
+    /** Modified */
+    private boolean           modified         = false;
 
     /** Maximal number of records to consider*/
     public abstract int getMaxRecords();
 
-    /** Deterministic*/
-    public abstract boolean isDeterministic();
+    /** Number of folds*/
+    public abstract int getNumFolds();
 
     /** Seed for drawing records*/
     public abstract long getSeed();
 
-    /** Number of folds*/
-    public abstract int getNumFolds();
+    /** Deterministic*/
+    public abstract boolean isDeterministic();
+    
+    /**
+     * Is this configuration modified
+     * @return
+     */
+    public boolean isModified() {
+        return modified;
+    }
+    
+    /**
+     * Sets modified
+     */
+    protected void setModified() {
+        this.modified = true;
+    }
+    
+    /**
+     * Set unmodified
+     */
+    public void setUnmodified() {
+        this.modified = false;
+    }
 }
