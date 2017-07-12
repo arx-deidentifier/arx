@@ -56,6 +56,9 @@ public class ModelClassification implements Serializable {
      * @return
      */
     public ARXClassificationConfiguration getCurrentConfiguration(){
+        if (this.configCurrent == null) {
+            this.configCurrent = getLogisticRegressionConfiguration();
+        }
         return configCurrent;
     }
 
@@ -75,9 +78,8 @@ public class ModelClassification implements Serializable {
      * @return
      */
     public ARXLogisticRegressionConfiguration getLogisticRegressionConfiguration() {
-        if (this.config == null || this.configCurrent == null) {
+        if (this.config == null) {
             this.config = ARXLogisticRegressionConfiguration.create();
-            this.configCurrent = this.config;
         }
         return this.config;
     }
@@ -87,9 +89,8 @@ public class ModelClassification implements Serializable {
      * @return
      */
     public ARXNaiveBayesConfiguration getNaiveBayesConfiguration() {
-        if (this.configNaiveBayes == null || this.configCurrent == null) {
+        if (this.configNaiveBayes == null) {
             this.configNaiveBayes = ARXNaiveBayesConfiguration.create();
-            this.configCurrent = this.configNaiveBayes;
         }
         return this.configNaiveBayes;
     }
@@ -99,9 +100,8 @@ public class ModelClassification implements Serializable {
      * @return
      */
     public ARXRandomForestConfiguration getRandomForestConfiguration() {
-        if (this.configRandomForest == null || this.configCurrent == null) {
+        if (this.configRandomForest == null) {
             this.configRandomForest = ARXRandomForestConfiguration.create();
-            this.configCurrent = this.configRandomForest;
         }
         return this.configRandomForest;
     }
@@ -111,9 +111,8 @@ public class ModelClassification implements Serializable {
      * @return
      */
     public ARXSVMConfiguration getSVMConfiguration() {
-        if (this.configSVM == null || this.configCurrent == null) {
+        if (this.configSVM == null) {
             this.configSVM = ARXSVMConfiguration.create();
-            this.configCurrent = this.configSVM;
         }
         return this.configSVM;
     }
@@ -124,7 +123,7 @@ public class ModelClassification implements Serializable {
      * @return
      */
     public boolean isModified() {
-        return this.modified || config.isModified() || configNaiveBayes.isModified() || configRandomForest.isModified() || configSVM.isModified();
+        return this.modified || getLogisticRegressionConfiguration().isModified() || getNaiveBayesConfiguration().isModified() || getRandomForestConfiguration().isModified() || getSVMConfiguration().isModified();
     }
     
     /**
@@ -158,9 +157,6 @@ public class ModelClassification implements Serializable {
      */
     public void setUnmodified() {
         this.modified = false;
-        if (configCurrent != null) {
-            configCurrent.setUnmodified();
-        }
         if (config != null) {
             config.setUnmodified();
         }
