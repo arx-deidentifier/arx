@@ -95,7 +95,10 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
      * @return
      */
     public ARXRandomForestConfiguration setDeterministic(boolean deterministic) {
-        this.deterministic = deterministic;
+        if (this.deterministic != deterministic) {
+            setModified();
+            this.deterministic = deterministic;
+        }
         return this;
     }
     
@@ -106,7 +109,10 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         if (maxRecords <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.maxRecords = maxRecords;
+        if (this.maxRecords != maxRecords) {
+            setModified();
+            this.maxRecords = maxRecords;
+        }
         return this;
     }
 
@@ -117,7 +123,10 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         if (numberOfFolds <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.numberOfFolds = numberOfFolds;
+        if (this.numberOfFolds != numberOfFolds) {
+            setModified();
+            this.numberOfFolds = numberOfFolds;
+        }
         return this;
     }
 
@@ -126,7 +135,10 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
      * @param seed the seed to set
      */
     public ARXRandomForestConfiguration setSeed(int seed) {
-        this.seed = seed;
+        if (this.seed != seed) {
+            setModified();
+            this.seed = seed;
+        }
         return this;
     }
 
@@ -137,7 +149,10 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         if (vectorLength <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.vectorLength = vectorLength;
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
+        }
         return this;
     }
 
@@ -152,7 +167,10 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
      * @param numberOfTrees the numberOfTrees to set
      */
     public ARXRandomForestConfiguration setNumberOfTrees(int numberOfTrees) {
-        this.numberOfTrees = numberOfTrees;
+        if (this.numberOfTrees != numberOfTrees) {
+            setModified();
+            this.numberOfTrees = numberOfTrees;
+        }
         return this;
     }    
 }

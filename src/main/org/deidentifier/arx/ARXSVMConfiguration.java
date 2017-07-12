@@ -159,7 +159,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      * @return
      */
     public ARXSVMConfiguration setDeterministic(boolean deterministic) {
-        this.deterministic = deterministic;
+        if (this.deterministic != deterministic) {
+            setModified();
+            this.deterministic = deterministic;
+        }
         return this;
     }
     
@@ -170,7 +173,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (maxRecords <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.maxRecords = maxRecords;
+        if (this.maxRecords != maxRecords) {
+            setModified();
+            this.maxRecords = maxRecords;
+        }
         return this;
     }
 
@@ -181,7 +187,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (numberOfFolds <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.numberOfFolds = numberOfFolds;
+        if (this.numberOfFolds != numberOfFolds) {
+            setModified();
+            this.numberOfFolds = numberOfFolds;
+        }
         return this;
     }
 
@@ -190,7 +199,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      * @param seed the seed to set
      */
     public ARXSVMConfiguration setSeed(int seed) {
-        this.seed = seed;
+        if (this.seed != seed) {
+            setModified();
+            this.seed = seed;
+        }
         return this;
     }
 
@@ -201,7 +213,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (vectorLength <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
-        this.vectorLength = vectorLength;
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
+        }
         return this;
     }
 
@@ -216,7 +231,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      * @param c the c to set
      */
     public ARXSVMConfiguration setC(double c) {
-        this.c = c;
+        if (this.c != c) {
+            setModified();
+            this.c = c;
+        }
         return this;
     }
 
@@ -231,7 +249,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      * @param kernelSigma the kernelSigma to set
      */
     public ARXSVMConfiguration setKernelSigma(double kernelSigma) {
-        this.kernelSigma = kernelSigma;
+        if (this.kernelSigma != kernelSigma) {
+            setModified();
+            this.kernelSigma = kernelSigma;
+        }
         return this;
     }
 
@@ -246,7 +267,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      * @param kernelDegree the kernelDegree to set
      */
     public ARXSVMConfiguration setKernelDegree(int kernelDegree) {
-        this.kernelDegree = kernelDegree;
+        if (this.kernelDegree != kernelDegree) {
+            setModified();
+            this.kernelDegree = kernelDegree;
+        }
         return this;
     }
 
@@ -260,8 +284,11 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
     /**
      * @param kernel the kernel to set
      */
-    public ARXSVMConfiguration setKernelType(Kernel kernel) {
-        this.kernelType = kernel;
+    public ARXSVMConfiguration setKernelType(Kernel kernelType) {
+        if (this.kernelType != kernelType) {
+            setModified();
+            this.kernelType = kernelType;
+        }
         return this;
     }
 
@@ -276,7 +303,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      * @param multiclassType the multiclassType to set
      */
     public ARXSVMConfiguration setMulticlassType(MulticlassType multiclassType) {
-        this.multiclassType = multiclassType;
+        if (this.multiclassType != multiclassType) {
+            setModified();
+            this.multiclassType = multiclassType;
+        }
         return this;
     }
 }

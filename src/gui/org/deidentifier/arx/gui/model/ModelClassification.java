@@ -19,9 +19,12 @@ package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
+import org.deidentifier.arx.ARXNaiveBayesConfiguration;
+import org.deidentifier.arx.ARXRandomForestConfiguration;
+import org.deidentifier.arx.ARXSVMConfiguration;
 
 /**
  * This class represents a model
@@ -31,39 +34,34 @@ import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
 public class ModelClassification implements Serializable {
 
     /** SVUID */
-    private static final long                  serialVersionUID = 5361564507029617616L;
+    private static final long                  serialVersionUID   = 5361564507029617616L;
 
     /** Modified */
-    private boolean                            modified         = false;
-    /** Configuration */
-    private ARXLogisticRegressionConfiguration config           = null;
+    private boolean                            modified           = false;
+    /** Current configuration */
+    private ARXClassificationConfiguration     configCurrent      = null;
+    /** Configuration logistic regression */
+    private ARXLogisticRegressionConfiguration config             = null;
+    /** Configuration naive bayes */
+    private ARXNaiveBayesConfiguration         configNaiveBayes   = null;
+    /** Configuration random forest */
+    private ARXRandomForestConfiguration       configRandomForest = null;
+    /** Configuration SVM */
+    private ARXSVMConfiguration                configSVM          = null;
     /** Feature scaling */
     private ARXFeatureScaling                  featureScaling;
 
     /**
+     * Returns the current classification configuration
      * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getAlpha()
      */
-    public double getAlpha() {
-        return getConfig().getAlpha();
+    public ARXClassificationConfiguration getCurrentConfiguration(){
+        if (this.configCurrent == null) {
+            this.configCurrent = getLogisticRegressionConfiguration();
+        }
+        return configCurrent;
     }
 
-    /**
-     * Returns a config for ARX
-     * @return
-     */
-    public ARXLogisticRegressionConfiguration getARXLogisticRegressionConfiguration() {
-        return getConfig();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getDecayExponent()
-     */
-    public double getDecayExponent() {
-        return getConfig().getDecayExponent();
-    }
-    
     /**
      * Returns the feature scaling
      * @return
@@ -74,167 +72,76 @@ public class ModelClassification implements Serializable {
         }
         return this.featureScaling;
     }
-
+    
     /**
+     * Returns a logistic regression configuration for ARX
      * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getLambda()
      */
-    public double getLambda() {
-        return getConfig().getLambda();
+    public ARXLogisticRegressionConfiguration getLogisticRegressionConfiguration() {
+        if (this.config == null) {
+            this.config = ARXLogisticRegressionConfiguration.create();
+        }
+        return this.config;
+    }
+    
+    /**
+     * Returns a naive bayes configuration for ARX
+     * @return
+     */
+    public ARXNaiveBayesConfiguration getNaiveBayesConfiguration() {
+        if (this.configNaiveBayes == null) {
+            this.configNaiveBayes = ARXNaiveBayesConfiguration.create();
+        }
+        return this.configNaiveBayes;
     }
 
     /**
+     * Returns a random forest configuration for ARX
      * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getLearningRate()
      */
-    public double getLearningRate() {
-        return getConfig().getLearningRate();
+    public ARXRandomForestConfiguration getRandomForestConfiguration() {
+        if (this.configRandomForest == null) {
+            this.configRandomForest = ARXRandomForestConfiguration.create();
+        }
+        return this.configRandomForest;
+    }
+    
+    /**
+     * Returns a SVM configuration for ARX
+     * @return
+     */
+    public ARXSVMConfiguration getSVMConfiguration() {
+        if (this.configSVM == null) {
+            this.configSVM = ARXSVMConfiguration.create();
+        }
+        return this.configSVM;
     }
 
     /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getMaxRecords()
-     */
-    public int getMaxRecords() {
-        return getConfig().getMaxRecords();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getNumFolds()
-     */
-    public Integer getNumberOfFolds() {
-        return getConfig().getNumFolds();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getPriorFunction()
-     */
-    public PriorFunction getPriorFunction() {
-        return getConfig().getPriorFunction();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getSeed()
-     */
-    public Long getSeed() {
-        return getConfig().getSeed();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getStepOffset()
-     */
-    public int getStepOffset() {
-        return getConfig().getStepOffset();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#getVectorLength()
-     */
-    public int getVectorLength() {
-        return getConfig().getVectorLength();
-    }
-
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#isDeterministic()
-     */
-    public boolean isDeterministic() {
-        return getConfig().isDeterministic();
-    }
-
-    /**
-     * Is this model modified
+     * Is this model or one of the configurations modified
+     * 
      * @return
      */
     public boolean isModified() {
-        return modified;
+        return this.modified || getLogisticRegressionConfiguration().isModified() || getNaiveBayesConfiguration().isModified() || getRandomForestConfiguration().isModified() || getSVMConfiguration().isModified();
     }
-
+    
     /**
-     * @param alpha
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setAlpha(double)
+     * Sets the current classification configuration.
+     * 
+     * @param configCurrent
      */
-    public void setAlpha(double alpha) {
-        setModified();
-        getConfig().setAlpha(alpha);
+    public void setCurrentConfiguration(ARXClassificationConfiguration configCurrent){
+        this.configCurrent = configCurrent;
     }
-
+    
     /**
-     * @param decayExponent
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setDecayExponent(double)
+     * Sets modified
      */
-    public void setDecayExponent(double decayExponent) {
-        setModified();
-        getConfig().setDecayExponent(decayExponent);
+    private void setModified() {
+        this.modified = true;
     }
-
-    /**
-     * @param stepOffset
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setDeterministic(boolean)
-     */
-    public void setDeterministic(boolean deterministic) {
-        setModified();
-        getConfig().setDeterministic(deterministic);
-    }
-
-    /**
-     * @param lambda
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setLambda(double)
-     */
-    public void setLambda(double lambda) {
-        setModified();
-        getConfig().setLambda(lambda);
-    }
-
-    /**
-     * @param learningRate
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setLearningRate(double)
-     */
-    public void setLearningRate(double learningRate) {
-        setModified();
-        getConfig().setLearningRate(learningRate);
-    }
-
-    /**
-     * @param maxRecords
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setMaxRecords(int)
-     */
-    public void setMaxRecords(int maxRecords) {
-        setModified();
-        getConfig().setMaxRecords(maxRecords);
-    }
-
-    /**
-     * @param numberOfFolds
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setNumFolds(java.lang.Integer)
-     */
-    public void setNumberOfFolds(Integer numberOfFolds) {
-        setModified();
-        getConfig().setNumFolds(numberOfFolds);
-    }
-
-    /**
-     * @param priorFunction
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setPriorFunction(org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction)
-     */
-    public void setPriorFunction(PriorFunction priorFunction) {
-        setModified();
-        getConfig().setPriorFunction(priorFunction);
-    }
-
+    
     /**
      * Sets a feature scaling function
      * @param attribute
@@ -246,56 +153,13 @@ public class ModelClassification implements Serializable {
     }
     
     /**
-     * @param seed
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setSeed(java.lang.Integer)
-     */
-    public void setSeed(Integer seed) {
-        setModified();
-        getConfig().setSeed(seed);
-    }
-    
-    /**
-     * @param stepOffset
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setStepOffset(int)
-     */
-    public void setStepOffset(int stepOffset) {
-        setModified();
-        getConfig().setStepOffset(stepOffset);
-    }
-
-    /**
-     * Set unmodified
+     * Set this model and all configurations unmodified
      */
     public void setUnmodified() {
         this.modified = false;
-    }
-
-    /**
-     * @param vectorLength
-     * @return
-     * @see org.deidentifier.arx.ARXLogisticRegressionConfiguration#setVectorLength(int)
-     */
-    public ARXLogisticRegressionConfiguration setVectorLength(int vectorLength) {
-        setModified();
-        return getConfig().setVectorLength(vectorLength);
-    }
-    
-    /**
-     * For backwards compatibility
-     */
-    private ARXLogisticRegressionConfiguration getConfig() {
-        if (this.config == null) {
-            this.config = ARXLogisticRegressionConfiguration.create();
-        }
-        return this.config;
-    }
-    
-    /**
-     * Sets modified
-     */
-    private void setModified() {
-        this.modified = true;
+        getLogisticRegressionConfiguration().setUnmodified();
+        getNaiveBayesConfiguration().setUnmodified();
+        getRandomForestConfiguration().setUnmodified();
+        getSVMConfiguration().setUnmodified();
     }
 }
