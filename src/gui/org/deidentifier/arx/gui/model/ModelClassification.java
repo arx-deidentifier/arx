@@ -157,17 +157,9 @@ public class ModelClassification implements Serializable {
      */
     public void setUnmodified() {
         this.modified = false;
-        if (config != null) {
-            config.setUnmodified();
-        }
-        if (configNaiveBayes != null) {
-            configNaiveBayes.setUnmodified();
-        }
-        if (configRandomForest != null) {
-            configRandomForest.setUnmodified();
-        }
-        if (configSVM != null) {
-            configSVM.setUnmodified();
-        }
+        getLogisticRegressionConfiguration().setUnmodified();
+        getNaiveBayesConfiguration().setUnmodified();
+        getRandomForestConfiguration().setUnmodified();
+        getSVMConfiguration().setUnmodified();
     }
 }
