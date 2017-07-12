@@ -158,7 +158,7 @@ public class ModelClassification implements Serializable {
     /**
      * Sets modified
      */
-    protected void setModified() {
+    private void setModified() {
         this.modified = true;
     }
     
