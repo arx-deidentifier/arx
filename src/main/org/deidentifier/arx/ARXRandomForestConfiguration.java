@@ -61,13 +61,6 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         return maxRecords;
     }
     /**
-     * @return the numberOfTrees
-     */
-    public int getNumberOfTrees() {
-        return numberOfTrees;
-    }
-
-    /**
      * @return the numberOfFolds
      */
     public int getNumFolds() {
@@ -87,7 +80,7 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     public int getVectorLength() {
         return vectorLength;
     }
-    
+
     /**
      * Returns whether the process should be deterministic
      * @return
@@ -108,7 +101,7 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         }
         return this;
     }
-
+    
     /**
      * @param maxRecords the maxRecords to set
      */
@@ -119,17 +112,6 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         if (this.maxRecords != maxRecords) {
             setModified();
             this.maxRecords = maxRecords;
-        }
-        return this;
-    }
-
-    /**
-     * @param numberOfTrees the numberOfTrees to set
-     */
-    public ARXRandomForestConfiguration setNumberOfTrees(int numberOfTrees) {
-        if (this.numberOfTrees != numberOfTrees) {
-            setModified();
-            this.numberOfTrees = numberOfTrees;
         }
         return this;
     }
@@ -170,6 +152,24 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         if (this.vectorLength != vectorLength) {
             setModified();
             this.vectorLength = vectorLength;
+        }
+        return this;
+    }
+
+    /**
+     * @return the numberOfTrees
+     */
+    public int getNumberOfTrees() {
+        return numberOfTrees;
+    }
+
+    /**
+     * @param numberOfTrees the numberOfTrees to set
+     */
+    public ARXRandomForestConfiguration setNumberOfTrees(int numberOfTrees) {
+        if (this.numberOfTrees != numberOfTrees) {
+            setModified();
+            this.numberOfTrees = numberOfTrees;
         }
         return this;
     }    

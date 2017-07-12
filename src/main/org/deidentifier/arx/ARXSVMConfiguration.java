@@ -120,45 +120,10 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         // Empty by design
     }
 
-    /**
-     * @return the c
-     */
-    public double getC() {
-        return c;
-    }
-    /**
-     * @return the kernelDegree
-     */
-    public int getKernelDegree() {
-        return kernelDegree;
-    }
-
-    /**
-     * @return the kernelSigma
-     */
-    public double getKernelSigma() {
-        return kernelSigma;
-    }
-
-    /**
-     * @return the kernel
-     */
-    public Kernel getKernelType() {
-        return kernelType;
-    }
-
     @Override
     public int getMaxRecords() {
         return maxRecords;
     }
-    
-    /**
-     * @return the multiclassType
-     */
-    public MulticlassType getMulticlassType() {
-        return multiclassType;
-    }
-    
     /**
      * @return the numberOfFolds
      */
@@ -187,18 +152,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
     public boolean isDeterministic() {
         return deterministic;
     }
-
-    /**
-     * @param c the c to set
-     */
-    public ARXSVMConfiguration setC(double c) {
-        if (this.c != c) {
-            setModified();
-            this.c = c;
-        }
-        return this;
-    }
-
+    
     /**
      * Sets whether the process should be deterministic
      * @param deterministic
@@ -211,40 +165,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         }
         return this;
     }
-
-    /**
-     * @param kernelDegree the kernelDegree to set
-     */
-    public ARXSVMConfiguration setKernelDegree(int kernelDegree) {
-        if (this.kernelDegree != kernelDegree) {
-            setModified();
-            this.kernelDegree = kernelDegree;
-        }
-        return this;
-    }
-
-    /**
-     * @param kernelSigma the kernelSigma to set
-     */
-    public ARXSVMConfiguration setKernelSigma(double kernelSigma) {
-        if (this.kernelSigma != kernelSigma) {
-            setModified();
-            this.kernelSigma = kernelSigma;
-        }
-        return this;
-    }
-
-    /**
-     * @param kernel the kernel to set
-     */
-    public ARXSVMConfiguration setKernelType(Kernel kernelType) {
-        if (this.kernelType != kernelType) {
-            setModified();
-            this.kernelType = kernelType;
-        }
-        return this;
-    }
-
+    
     /**
      * @param maxRecords the maxRecords to set
      */
@@ -255,17 +176,6 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (this.maxRecords != maxRecords) {
             setModified();
             this.maxRecords = maxRecords;
-        }
-        return this;
-    }
-
-    /**
-     * @param multiclassType the multiclassType to set
-     */
-    public ARXSVMConfiguration setMulticlassType(MulticlassType multiclassType) {
-        if (this.multiclassType != multiclassType) {
-            setModified();
-            this.multiclassType = multiclassType;
         }
         return this;
     }
@@ -306,6 +216,96 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (this.vectorLength != vectorLength) {
             setModified();
             this.vectorLength = vectorLength;
+        }
+        return this;
+    }
+
+    /**
+     * @return the c
+     */
+    public double getC() {
+        return c;
+    }
+
+    /**
+     * @param c the c to set
+     */
+    public ARXSVMConfiguration setC(double c) {
+        if (this.c != c) {
+            setModified();
+            this.c = c;
+        }
+        return this;
+    }
+
+    /**
+     * @return the kernelSigma
+     */
+    public double getKernelSigma() {
+        return kernelSigma;
+    }
+
+    /**
+     * @param kernelSigma the kernelSigma to set
+     */
+    public ARXSVMConfiguration setKernelSigma(double kernelSigma) {
+        if (this.kernelSigma != kernelSigma) {
+            setModified();
+            this.kernelSigma = kernelSigma;
+        }
+        return this;
+    }
+
+    /**
+     * @return the kernelDegree
+     */
+    public int getKernelDegree() {
+        return kernelDegree;
+    }
+
+    /**
+     * @param kernelDegree the kernelDegree to set
+     */
+    public ARXSVMConfiguration setKernelDegree(int kernelDegree) {
+        if (this.kernelDegree != kernelDegree) {
+            setModified();
+            this.kernelDegree = kernelDegree;
+        }
+        return this;
+    }
+
+    /**
+     * @return the kernel
+     */
+    public Kernel getKernelType() {
+        return kernelType;
+    }
+
+    /**
+     * @param kernel the kernel to set
+     */
+    public ARXSVMConfiguration setKernelType(Kernel kernelType) {
+        if (this.kernelType != kernelType) {
+            setModified();
+            this.kernelType = kernelType;
+        }
+        return this;
+    }
+
+    /**
+     * @return the multiclassType
+     */
+    public MulticlassType getMulticlassType() {
+        return multiclassType;
+    }
+
+    /**
+     * @param multiclassType the multiclassType to set
+     */
+    public ARXSVMConfiguration setMulticlassType(MulticlassType multiclassType) {
+        if (this.multiclassType != multiclassType) {
+            setModified();
+            this.multiclassType = multiclassType;
         }
         return this;
     }
