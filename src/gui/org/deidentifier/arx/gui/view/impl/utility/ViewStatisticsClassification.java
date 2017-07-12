@@ -451,7 +451,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
-        final ARXLogisticRegressionConfiguration config = context.model.getClassificationModel().getARXLogisticRegressionConfiguration();
+        final ARXLogisticRegressionConfiguration config = context.model.getClassificationModel().getLogisticRegressionConfiguration();
         final ARXFeatureScaling scaling = context.model.getClassificationModel().getFeatureScaling();
         
         // Break, if nothing do

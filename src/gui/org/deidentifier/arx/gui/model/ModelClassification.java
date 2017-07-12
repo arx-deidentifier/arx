@@ -55,84 +55,8 @@ public class ModelClassification implements Serializable {
      * Returns the current classification configuration
      * @return
      */
-    public ARXClassificationConfiguration getARXClassificationConfigurationCurrent(){
+    public ARXClassificationConfiguration getCurrentConfiguration(){
         return configCurrent;
-    }
-    
-    /**
-     * Returns a logistic regression config for ARX
-     * @return
-     */
-    public ARXLogisticRegressionConfiguration getARXLogisticRegressionConfiguration() {
-        return getConfig();
-    }
-    
-    /**
-     * Returns a naive bayes config for ARX
-     * @return
-     */
-    public ARXNaiveBayesConfiguration getARXNaiveBayesConfiguration() {
-        return getConfigNaiveBayes();
-    }
-
-    /**
-     * Returns a random forest config for ARX
-     * @return
-     */
-    public ARXRandomForestConfiguration getARXRandomForestConfiguration() {
-        return getConfigRandomForest();
-    }
-    
-    /**
-     * Returns a SVM config for ARX
-     * @return
-     */
-    public ARXSVMConfiguration getARXSVMConfiguration() {
-        return getConfigSVM();
-    }
-    
-    /**
-     * For backwards compatibility
-     */
-    private ARXLogisticRegressionConfiguration getConfig() {
-        if (this.config == null || this.configCurrent == null) {
-            this.config = ARXLogisticRegressionConfiguration.create();
-            this.configCurrent = this.config;
-        }
-        return this.config;
-    }
-
-    /**
-     * For backwards compatibility
-     */
-    private ARXNaiveBayesConfiguration getConfigNaiveBayes() {
-        if (this.configNaiveBayes == null || this.configCurrent == null) {
-            this.configNaiveBayes = ARXNaiveBayesConfiguration.create();
-            this.configCurrent = this.configNaiveBayes;
-        }
-        return this.configNaiveBayes;
-    }
-    
-    /**
-     * For backwards compatibility
-     */
-    private ARXRandomForestConfiguration getConfigRandomForest() {
-        if (this.configRandomForest == null || this.configCurrent == null) {
-            this.configRandomForest = ARXRandomForestConfiguration.create();
-            this.configCurrent = this.configRandomForest;
-        }
-        return this.configRandomForest;
-    }
-    
-    /**
-     * For backwards compatibility
-     */
-    private ARXSVMConfiguration getConfigSVM() {
-        if (this.configSVM == null || this.configCurrent == null) {
-            this.configSVM = ARXSVMConfiguration.create();
-            this.configCurrent = this.configSVM;
-        }
-        return this.configSVM;
     }
 
     /**
@@ -147,12 +71,69 @@ public class ModelClassification implements Serializable {
     }
     
     /**
-     * Is one of the configurations modified
+     * Returns a logistic regression configuration for ARX
+     * @return
+     */
+    public ARXLogisticRegressionConfiguration getLogisticRegressionConfiguration() {
+        if (this.config == null || this.configCurrent == null) {
+            this.config = ARXLogisticRegressionConfiguration.create();
+            this.configCurrent = this.config;
+        }
+        return this.config;
+    }
+    
+    /**
+     * Returns a naive bayes configuration for ARX
+     * @return
+     */
+    public ARXNaiveBayesConfiguration getNaiveBayesConfiguration() {
+        if (this.configNaiveBayes == null || this.configCurrent == null) {
+            this.configNaiveBayes = ARXNaiveBayesConfiguration.create();
+            this.configCurrent = this.configNaiveBayes;
+        }
+        return this.configNaiveBayes;
+    }
+
+    /**
+     * Returns a random forest configuration for ARX
+     * @return
+     */
+    public ARXRandomForestConfiguration getRandomForestConfiguration() {
+        if (this.configRandomForest == null || this.configCurrent == null) {
+            this.configRandomForest = ARXRandomForestConfiguration.create();
+            this.configCurrent = this.configRandomForest;
+        }
+        return this.configRandomForest;
+    }
+    
+    /**
+     * Returns a SVM configuration for ARX
+     * @return
+     */
+    public ARXSVMConfiguration getSVMConfiguration() {
+        if (this.configSVM == null || this.configCurrent == null) {
+            this.configSVM = ARXSVMConfiguration.create();
+            this.configCurrent = this.configSVM;
+        }
+        return this.configSVM;
+    }
+
+    /**
+     * Is this model or one of the configurations modified
      * 
      * @return
      */
     public boolean isModified() {
         return this.modified || config.isModified() || configNaiveBayes.isModified() || configRandomForest.isModified() || configSVM.isModified();
+    }
+    
+    /**
+     * Sets the current classification configuration.
+     * 
+     * @param configCurrent
+     */
+    public void setCurrentConfiguration(ARXClassificationConfiguration configCurrent){
+        this.configCurrent = configCurrent;
     }
     
     /**
@@ -173,12 +154,24 @@ public class ModelClassification implements Serializable {
     }
     
     /**
-     * Set current config unmodified
+     * Set this model and all configurations unmodified
      */
     public void setUnmodified() {
         this.modified = false;
         if (configCurrent != null) {
             configCurrent.setUnmodified();
+        }
+        if (config != null) {
+            config.setUnmodified();
+        }
+        if (configNaiveBayes != null) {
+            configNaiveBayes.setUnmodified();
+        }
+        if (configRandomForest != null) {
+            configRandomForest.setUnmodified();
+        }
+        if (configSVM != null) {
+            configSVM.setUnmodified();
         }
     }
 }

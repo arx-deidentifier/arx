@@ -295,24 +295,24 @@ public class DialogProperties implements IDialog {
         window.addGroup(Resources.getMessage("DialogProperties.14")); //$NON-NLS-1$
 
         window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.15"), 1000, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getARXLogisticRegressionConfiguration().getMaxRecords(); }
-            protected void setValue(Object t) { model.getClassificationModel().getARXLogisticRegressionConfiguration().setMaxRecords((Integer)t); }});
+            protected Integer getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().getMaxRecords(); }
+            protected void setValue(Object t) { model.getClassificationModel().getLogisticRegressionConfiguration().setMaxRecords((Integer)t); }});
 
         window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getClassificationModel().getARXLogisticRegressionConfiguration().isDeterministic(); }
-            protected void setValue(Object t) { model.getClassificationModel().getARXLogisticRegressionConfiguration().setDeterministic((Boolean)t); }});
+            protected Boolean getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().isDeterministic(); }
+            protected void setValue(Object t) { model.getClassificationModel().getLogisticRegressionConfiguration().setDeterministic((Boolean)t); }});
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, 10) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getARXLogisticRegressionConfiguration().getNumFolds(); }
-            protected void setValue(Object t) { model.getClassificationModel().getARXLogisticRegressionConfiguration().setNumFolds((Integer)t); }});
+            protected Integer getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().getNumFolds(); }
+            protected void setValue(Object t) { model.getClassificationModel().getLogisticRegressionConfiguration().setNumFolds((Integer)t); }});
 
         window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getARXLogisticRegressionConfiguration().getVectorLength(); }
-            protected void setValue(Object t) { model.getClassificationModel().getARXLogisticRegressionConfiguration().setVectorLength((Integer)t); }});
+            protected Integer getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().getVectorLength(); }
+            protected void setValue(Object t) { model.getClassificationModel().getLogisticRegressionConfiguration().setVectorLength((Integer)t); }});
 
         window.addPreference(new PreferenceSelection(Resources.getMessage("DialogProperties.20"), getPriorFunctions()) { //$NON-NLS-1$
-            protected String getValue() { return model.getClassificationModel().getARXLogisticRegressionConfiguration().getPriorFunction().name(); }
-            protected void setValue(Object arg0) { model.getClassificationModel().getARXLogisticRegressionConfiguration().setPriorFunction(PriorFunction.valueOf((String)arg0)); }
+            protected String getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().getPriorFunction().name(); }
+            protected void setValue(Object arg0) { model.getClassificationModel().getLogisticRegressionConfiguration().setPriorFunction(PriorFunction.valueOf((String)arg0)); }
         });
     }
     
