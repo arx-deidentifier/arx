@@ -18,8 +18,6 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 
-import org.deidentifier.arx.gui.resources.Resources;
-
 /**
  * Configuration for logistic regression
  * @author Fabian Prasser
@@ -83,16 +81,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         return alpha;
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.deidentifier.arx.ARXClassificationConfiguration#getClassifierName()
-     */
-    @Override
-    public String getClassifierName() {
-        return Resources.getMessage("ViewClassificationAttributes.7"); //$NON-NLS-1$
-    }
-
-    /**
+     /**
      * @return the decayExponent
      */
     public double getDecayExponent() {
@@ -137,7 +126,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @return the seed
      */
-    public long getSeed() {
+    public int getSeed() {
         return seed;
     }
 

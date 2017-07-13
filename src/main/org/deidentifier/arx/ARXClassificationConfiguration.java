@@ -33,14 +33,11 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     /** Maximal number of records to consider*/
     public abstract int getMaxRecords();
     
-    /** Name of the classifier */
-    public abstract String getClassifierName();
-
     /** Number of folds*/
     public abstract int getNumFolds();
 
     /** Seed for drawing records*/
-    public abstract long getSeed();
+    public abstract int getSeed();
 
     /** Deterministic*/
     public abstract boolean isDeterministic();

@@ -34,6 +34,7 @@ import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -79,7 +80,7 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
         // Composite for classifier combo
         final Composite composite = new Composite(this.root, SWT.NONE);
         composite.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        composite.setLayout(SWTUtil.createGridLayout(2, false));
+        composite.setLayout(SWTUtil.createGridLayout(3, false));
         final Label label = new Label(composite, SWT.PUSH);
         label.setText(Resources.getMessage("ViewClassificationAttributes.4")); //$NON-NLS-1$
         // Combo for selecting classifier
@@ -95,8 +96,18 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
                     updateTable(configCurrent);
                     controller.update(new ModelEvent(ViewStatisticsClassificationAttributesOutput.this,
                                                      ModelPart.STATISTICAL_CLASSIFIER,
-                                                     configCurrent));
+                                                     null));
                 }
+            }
+        });
+        // Button to prompt edit dialog
+        Button button = new Button(composite, SWT.PUSH);
+        button.setText(Resources.getMessage("ViewClassificationAttributes.30")); //$NON-NLS-1$
+        button.setToolTipText(Resources.getMessage("ViewClassificationAttributes.31")); //$NON-NLS-1$
+        button.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+               controller.actionShowClassificationConfigurationDialog();
             }
         });
 
@@ -105,12 +116,6 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
         this.table.setLayoutData(SWTUtil.createFillGridData(2));
         this.table.setLinesVisible(true);
         this.table.setHeaderVisible(true);
-        this.table.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                // TODO prompt edit dialog
-            }
-        });
         DynamicTableColumn c = new DynamicTableColumn(this.table, SWT.LEFT);
         c.setWidth("50%", "100px");
         c.setText(Resources.getMessage("ViewClassificationAttributes.5")); //$NON-NLS-1$
@@ -132,47 +137,47 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
     private void createItemsForLogisticRegression(ARXLogisticRegressionConfiguration config) {
         TableItem item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.11")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getAlpha()));
+        item.setText(1, SWTUtil.getPrettyString(config.getAlpha()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.12")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getDecayExponent()));
+        item.setText(1, SWTUtil.getPrettyString(config.getDecayExponent()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.13")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.isDeterministic()));
+        item.setText(1, SWTUtil.getPrettyString(config.isDeterministic()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.14")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getLambda()));
+        item.setText(1, SWTUtil.getPrettyString(config.getLambda()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.15")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getLearningRate()));
+        item.setText(1, SWTUtil.getPrettyString(config.getLearningRate()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.16")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getMaxRecords()));
+        item.setText(1, SWTUtil.getPrettyString(config.getMaxRecords()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.17")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getNumFolds()));
+        item.setText(1, SWTUtil.getPrettyString(config.getNumFolds()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.18")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getPriorFunction()));
+        item.setText(1, SWTUtil.getPrettyString(config.getPriorFunction()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.19")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getSeed()));
+        item.setText(1, SWTUtil.getPrettyString(config.getSeed()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.20")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getStepOffset()));
+        item.setText(1, SWTUtil.getPrettyString(config.getStepOffset()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.21")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getVectorLength()));
+        item.setText(1, SWTUtil.getPrettyString(config.getVectorLength()));
     }
     
 
@@ -184,31 +189,31 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
     private void createItemsForNaiveBayes(ARXNaiveBayesConfiguration config) {
         TableItem item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.13")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.isDeterministic()));
+        item.setText(1, SWTUtil.getPrettyString(config.isDeterministic()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.16")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getMaxRecords()));
+        item.setText(1, SWTUtil.getPrettyString(config.getMaxRecords()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.17")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getNumFolds()));
+        item.setText(1, SWTUtil.getPrettyString(config.getNumFolds()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.19")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getSeed()));
+        item.setText(1, SWTUtil.getPrettyString(config.getSeed()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.22")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getSigma()));
+        item.setText(1, SWTUtil.getPrettyString(config.getSigma()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.23")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getType()));
+        item.setText(1, SWTUtil.getPrettyString(config.getType()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.21")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getVectorLength()));
+        item.setText(1, SWTUtil.getPrettyString(config.getVectorLength()));
     }
 
     /**
@@ -219,27 +224,27 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
     private void createItemsForRandomForest(ARXRandomForestConfiguration config) {
         TableItem item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.13")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.isDeterministic()));
+        item.setText(1, SWTUtil.getPrettyString(config.isDeterministic()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.16")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getMaxRecords()));
+        item.setText(1, SWTUtil.getPrettyString(config.getMaxRecords()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.17")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getNumFolds()));
+        item.setText(1, SWTUtil.getPrettyString(config.getNumFolds()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.24")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getNumberOfTrees()));
+        item.setText(1, SWTUtil.getPrettyString(config.getNumberOfTrees()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.19")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getSeed()));
+        item.setText(1, SWTUtil.getPrettyString(config.getSeed()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.21")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getVectorLength()));
+        item.setText(1, SWTUtil.getPrettyString(config.getVectorLength()));
     }
 
     /**
@@ -250,43 +255,43 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
     private void createItemsForSVM(ARXSVMConfiguration config) {
         TableItem item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.25")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getC()));
+        item.setText(1, SWTUtil.getPrettyString(config.getC()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.13")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.isDeterministic()));
+        item.setText(1, SWTUtil.getPrettyString(config.isDeterministic()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.26")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getKernelDegree()));
+        item.setText(1, SWTUtil.getPrettyString(config.getKernelDegree()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.27")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getKernelSigma()));
+        item.setText(1, SWTUtil.getPrettyString(config.getKernelSigma()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.28")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getKernelType()));
+        item.setText(1, SWTUtil.getPrettyString(config.getKernelType()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.16")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getMaxRecords()));
+        item.setText(1, SWTUtil.getPrettyString(config.getMaxRecords()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.29")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getMulticlassType()));
+        item.setText(1, SWTUtil.getPrettyString(config.getMulticlassType()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.17")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getNumFolds()));
+        item.setText(1, SWTUtil.getPrettyString(config.getNumFolds()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.19")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getSeed()));
+        item.setText(1, SWTUtil.getPrettyString(config.getSeed()));
 
         item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.21")); //$NON-NLS-1$
-        item.setText(1, String.valueOf(config.getVectorLength()));
+        item.setText(1, SWTUtil.getPrettyString(config.getVectorLength()));
     }
 
     @Override
@@ -322,6 +327,24 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
         return null;
     }
     
+    /**
+     * Return label for classifier based on configuration
+     * 
+     * @param config
+     * @return
+     */
+    private String getLabel(ARXClassificationConfiguration config) {
+        // Logistic regression
+        if (config instanceof ARXLogisticRegressionConfiguration) { return Resources.getMessage("ViewClassificationAttributes.7"); }
+        // Naive Bayes
+        if (config instanceof ARXNaiveBayesConfiguration) { return Resources.getMessage("ViewClassificationAttributes.8"); }
+        // Random forest
+        if (config instanceof ARXRandomForestConfiguration) { return Resources.getMessage("ViewClassificationAttributes.9"); }
+        // SVM
+        if (config instanceof ARXSVMConfiguration) { return Resources.getMessage("ViewClassificationAttributes.10"); }
+        return null;
+    }
+
     @Override
     public Composite getParent() {
         return this.root;
@@ -335,7 +358,7 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
     public ViewUtilityType getType() {
         return ViewUtilityType.CLASSIFICATION;
     }
-
+    
     @Override
     public void reset() {
         for(TableItem item : this.table.getItems()){
@@ -351,10 +374,10 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
             this.model = (Model) event.data;
             // Create items
             final String[] classifiers = new String[4];
-            classifiers[0] = this.model.getClassificationModel().getLogisticRegressionConfiguration().getClassifierName();
-            classifiers[1] = this.model.getClassificationModel().getNaiveBayesConfiguration().getClassifierName();
-            classifiers[2] = this.model.getClassificationModel().getRandomForestConfiguration().getClassifierName();
-            classifiers[3] = this.model.getClassificationModel().getSVMConfiguration().getClassifierName();
+            classifiers[0] = getLabel(this.model.getClassificationModel().getLogisticRegressionConfiguration());
+            classifiers[1] = getLabel(this.model.getClassificationModel().getNaiveBayesConfiguration());
+            classifiers[2] = getLabel(this.model.getClassificationModel().getRandomForestConfiguration());
+            classifiers[3] = getLabel(this.model.getClassificationModel().getSVMConfiguration());
             this.combo.setItems(classifiers);
             // Select LR by default
             this.combo.select(0);

@@ -68,6 +68,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
 import org.deidentifier.arx.gui.view.impl.menu.DialogTopBottomCoding;
 import org.deidentifier.arx.gui.view.impl.risk.LayoutRisks;
+import org.deidentifier.arx.gui.view.impl.utility.DialogClassificationConfiguration;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.eclipse.jface.dialogs.IInputValidator;
@@ -299,6 +300,18 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
+
+    /**
+     * Shows a preference dialog for editing parameter values of classification
+     * configurations.
+     * 
+     * @param model
+     */
+    public void showClassificationConfigurationDialog(Model model) {
+        final DialogClassificationConfiguration dialog = new DialogClassificationConfiguration(shell, model, controller);
+        dialog.open();
+    }
+    
     /**
      * Shows an input dialog for selecting a charset.
      *
@@ -1177,5 +1190,5 @@ public class MainWindow implements IView {
                 return true;
             }  
         };
-    }
+    }  
 }

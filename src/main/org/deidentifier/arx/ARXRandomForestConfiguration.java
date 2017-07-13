@@ -18,8 +18,6 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 
-import org.deidentifier.arx.gui.resources.Resources;
-
 /**
  * Configuration for Random Forest classifiers
  * @author Fabian Prasser
@@ -45,7 +43,7 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     /** Max records */
     private int     maxRecords    = 100000;
     /** Seed */
-    private long    seed          = Integer.MAX_VALUE;
+    private int    seed          = Integer.MAX_VALUE;
     /** Folds */
     private int     numberOfFolds = 10;
     /** Deterministic */
@@ -58,15 +56,6 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         // Empty by design
     }
     
-    /*
-     * (non-Javadoc)
-     * @see org.deidentifier.arx.ARXClassificationConfiguration#getClassifierName()
-     */
-    @Override
-    public String getClassifierName() {
-        return Resources.getMessage("ViewClassificationAttributes.9"); //$NON-NLS-1$
-    }
-
     @Override
     public int getMaxRecords() {
         return maxRecords;
@@ -81,7 +70,7 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     /**
      * @return the seed
      */
-    public long getSeed() {
+    public int getSeed() {
         return seed;
     }
 

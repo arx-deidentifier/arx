@@ -1557,7 +1557,15 @@ public class Controller implements IView {
     public Charset actionShowCharsetInputDialog(final Shell shell) {
         return main.showCharsetInputDialog(shell);
     }
-
+    
+    /**
+     * Shows a preference dialog for editing parameter values of classification
+     * configurations.
+     */
+    public void actionShowClassificationConfigurationDialog() {
+        main.showClassificationConfigurationDialog(model);
+    }
+    
     /**
      * Shows an error dialog.
      *
