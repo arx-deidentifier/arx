@@ -18,6 +18,8 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.gui.resources.Resources;
+
 /**
  * Configuration for naive bayes classification
  * @author Fabian Prasser
@@ -64,6 +66,15 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      */
     private ARXNaiveBayesConfiguration(){
         // Empty by design
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.deidentifier.arx.ARXClassificationConfiguration#getClassifierName()
+     */
+    @Override
+    public String getClassifierName() {
+        return Resources.getMessage("ViewClassificationAttributes.8"); //$NON-NLS-1$
     }
 
     @Override

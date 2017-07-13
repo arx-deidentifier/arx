@@ -18,6 +18,8 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.gui.resources.Resources;
+
 /**
  * Configuration for SVM classifiers
  * @author Fabian Prasser
@@ -118,6 +120,15 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      */
     private ARXSVMConfiguration(){
         // Empty by design
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.deidentifier.arx.ARXClassificationConfiguration#getClassifierName()
+     */
+    @Override
+    public String getClassifierName() {
+        return Resources.getMessage("ViewClassificationAttributes.10"); //$NON-NLS-1$
     }
 
     @Override

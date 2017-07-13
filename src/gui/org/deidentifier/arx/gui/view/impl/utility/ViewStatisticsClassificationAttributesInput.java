@@ -147,7 +147,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
     }
 
     /** Label */
-    private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.4"); //$NON-NLS-1$
+    private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.3"); //$NON-NLS-1$
     /** Label */
     private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
 
