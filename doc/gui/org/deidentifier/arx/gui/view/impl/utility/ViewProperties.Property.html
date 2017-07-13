@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>ViewProperties.Property (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
@@ -158,13 +158,17 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#ViewProperties.Property(java.lang.String,%20java.lang.String[])">ViewProperties.Property</a></strong>(java.lang.String&nbsp;property,
-                       java.lang.String[]&nbsp;values)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#ViewProperties.Property(java.lang.String, java.lang.String[])">ViewProperties.Property</a></strong>(java.lang.String&nbsp;property,
+                       java.lang.String[]&nbsp;values)</code>
+<div class="block">Creates a new property</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#ViewProperties.Property(org.deidentifier.arx.gui.view.impl.utility.ViewProperties.Property,%20java.lang.String,%20java.lang.String[])">ViewProperties.Property</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&nbsp;father,
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#ViewProperties.Property(org.deidentifier.arx.gui.view.impl.utility.ViewProperties.Property, java.lang.String, java.lang.String[])">ViewProperties.Property</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&nbsp;father,
                        java.lang.String&nbsp;property,
-                       java.lang.String[]&nbsp;values)</code>&nbsp;</td>
+                       java.lang.String[]&nbsp;values)</code>
+<div class="block">Creates a new property</div>
+</td>
 </tr>
 </table>
 </li>
@@ -183,7 +187,17 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#add(org.deidentifier.arx.gui.view.impl.utility.ViewProperties.Property)">add</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&nbsp;p)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#add(org.deidentifier.arx.gui.view.impl.utility.ViewProperties.Property)">add</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&nbsp;p)</code>
+<div class="block">Adds a child</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#equals(java.lang.Object)">equals</a></strong>(java.lang.Object&nbsp;obj)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html#hashCode()">hashCode</a></strong>()</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -191,7 +205,7 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, finalize, getClass, notify, notifyAll, toString, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -264,6 +278,7 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;ViewProperties.Property(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&nbsp;father,
                        java.lang.String&nbsp;property,
                        java.lang.String[]&nbsp;values)</pre>
+<div class="block">Creates a new property</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>father</code> - </dd><dd><code>property</code> - </dd><dd><code>values</code> - </dd></dl>
 </li>
 </ul>
@@ -275,6 +290,7 @@ extends java.lang.Object</pre>
 <h4>ViewProperties.Property</h4>
 <pre>public&nbsp;ViewProperties.Property(java.lang.String&nbsp;property,
                        java.lang.String[]&nbsp;values)</pre>
+<div class="block">Creates a new property</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>property</code> - </dd><dd><code>values</code> - </dd></dl>
 </li>
 </ul>
@@ -289,11 +305,38 @@ extends java.lang.Object</pre>
 <a name="add(org.deidentifier.arx.gui.view.impl.utility.ViewProperties.Property)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>add</h4>
 <pre>public&nbsp;void&nbsp;add(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewProperties.Property.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewProperties.Property</a>&nbsp;p)</pre>
+<div class="block">Adds a child</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>p</code> - </dd></dl>
+</li>
+</ul>
+<a name="hashCode()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>hashCode</h4>
+<pre>public&nbsp;int&nbsp;hashCode()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
+</li>
+</ul>
+<a name="equals(java.lang.Object)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>equals</h4>
+<pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;obj)</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
 </li>
 </ul>
 </li>
