@@ -18,6 +18,9 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXNaiveBayesConfiguration;
@@ -52,16 +55,18 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public class ViewStatisticsClassificationAttributesOutput implements IView, ViewStatisticsBasic {
 
     /** View */
-    private final Composite  root;
+    private final Composite                             root;
     /** Controller */
-    private final Controller controller;
+    private final Controller                            controller;
     /** Model */
-    private Model            model;
+    private Model                                       model;
     /** Widget */
-    private Combo            combo;
+    private Combo                                       combo;
     /** View */
-    private DynamicTable     table;
-
+    private DynamicTable                                table;
+    /** Map containing <name,config> pairs */
+    private Map<String, ARXClassificationConfiguration> configs;
+    
     /**
      * Creates a new instance.
      * 
@@ -91,7 +96,7 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
             public void widgetSelected(final SelectionEvent arg0) {
                 if (combo.getSelectionIndex() >= 0) {
                     String type = combo.getItem(combo.getSelectionIndex());
-                    ARXClassificationConfiguration configCurrent = getClassificationConfig(type);
+                    ARXClassificationConfiguration configCurrent = configs.get(type);
                     model.getClassificationModel().setCurrentConfiguration(configCurrent);
                     updateTable(configCurrent);
                     controller.update(new ModelEvent(ViewStatisticsClassificationAttributesOutput.this,
@@ -298,53 +303,7 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
     public void dispose() {
         this.controller.removeListener(this);
     }
-
-    /**
-     * Return the classification configuration for this type.
-     * @param type
-     * @return
-     */
-    private ARXClassificationConfiguration getClassificationConfig(String type) {
-        if (type == null || type.isEmpty()) {
-            throw new IllegalArgumentException("Unknown statistical classifier " + type);
-        }
-        // Logistic regression
-        if (type.equals(Resources.getMessage("ViewClassificationAttributes.7"))) {  //$NON-NLS-1$
-            return this.model.getClassificationModel().getLogisticRegressionConfiguration();
-        }
-        // Naive bayes
-        if (type.equals(Resources.getMessage("ViewClassificationAttributes.8"))) {  //$NON-NLS-1$
-            return this.model.getClassificationModel().getNaiveBayesConfiguration();
-        }
-        // Random forest
-        if (type.equals(Resources.getMessage("ViewClassificationAttributes.9"))) {  //$NON-NLS-1$
-            return this.model.getClassificationModel().getRandomForestConfiguration();
-        }
-        // SVM
-        if (type.equals(Resources.getMessage("ViewClassificationAttributes.10"))) {  //$NON-NLS-1$
-            return this.model.getClassificationModel().getSVMConfiguration();
-        }
-        return null;
-    }
     
-    /**
-     * Return label for classifier based on configuration
-     * 
-     * @param config
-     * @return
-     */
-    private String getLabel(ARXClassificationConfiguration config) {
-        // Logistic regression
-        if (config instanceof ARXLogisticRegressionConfiguration) { return Resources.getMessage("ViewClassificationAttributes.7"); }
-        // Naive Bayes
-        if (config instanceof ARXNaiveBayesConfiguration) { return Resources.getMessage("ViewClassificationAttributes.8"); }
-        // Random forest
-        if (config instanceof ARXRandomForestConfiguration) { return Resources.getMessage("ViewClassificationAttributes.9"); }
-        // SVM
-        if (config instanceof ARXSVMConfiguration) { return Resources.getMessage("ViewClassificationAttributes.10"); }
-        return null;
-    }
-
     @Override
     public Composite getParent() {
         return this.root;
@@ -372,15 +331,25 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
     public void update(ModelEvent event) {
         if (event.part == ModelPart.MODEL) {
             this.model = (Model) event.data;
+            
             // Create items
             final String[] classifiers = new String[4];
-            classifiers[0] = getLabel(this.model.getClassificationModel().getLogisticRegressionConfiguration());
-            classifiers[1] = getLabel(this.model.getClassificationModel().getNaiveBayesConfiguration());
-            classifiers[2] = getLabel(this.model.getClassificationModel().getRandomForestConfiguration());
-            classifiers[3] = getLabel(this.model.getClassificationModel().getSVMConfiguration());
+            classifiers[0] = Resources.getMessage("ViewClassificationAttributes.7");
+            classifiers[1] = Resources.getMessage("ViewClassificationAttributes.8");
+            classifiers[2] = Resources.getMessage("ViewClassificationAttributes.9");
+            classifiers[3] = Resources.getMessage("ViewClassificationAttributes.10");
             this.combo.setItems(classifiers);
             // Select LR by default
             this.combo.select(0);
+            
+            // Init map
+            this.configs = new HashMap<String, ARXClassificationConfiguration>();
+            this.configs.put(classifiers[0], this.model.getClassificationModel().getLogisticRegressionConfiguration());
+            this.configs.put(classifiers[1], this.model.getClassificationModel().getNaiveBayesConfiguration());
+            this.configs.put(classifiers[2], this.model.getClassificationModel().getRandomForestConfiguration());
+            this.configs.put(classifiers[3], this.model.getClassificationModel().getSVMConfiguration());
+            
+            // Update table 
             updateTable(this.model.getClassificationModel().getLogisticRegressionConfiguration());
         }
     }
