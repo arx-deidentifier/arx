@@ -43,7 +43,7 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     /** Max records */
     private int     maxRecords    = 100000;
     /** Seed */
-    private int    seed          = Integer.MAX_VALUE;
+    private int     seed          = Integer.MAX_VALUE;
     /** Folds */
     private int     numberOfFolds = 10;
     /** Deterministic */

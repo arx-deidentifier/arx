@@ -84,12 +84,12 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         this.addCategory(Resources.getMessage("DialogClassificationConfiguration.2")); //$NON-NLS-1$
                   
         // Alpha
-        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.11")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.11"), 0d, 100d, 1d) { //$NON-NLS-1$
             protected Double getValue() { return config.getAlpha(); }
             protected void setValue(Object t) { config.setAlpha((Double) t); }});
         
         // Decay exponent
-        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12"), 0d, 1d, 0.2d) { //$NON-NLS-1$
             protected Double getValue() { return config.getDecayExponent(); }
             protected void setValue(Object t) { config.setDecayExponent((Double) t); }});
         
@@ -99,22 +99,22 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
         // Lambda
-        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14"), 0d, 100d, 0.000001d) { //$NON-NLS-1$
             protected Double getValue() { return config.getLambda(); }
             protected void setValue(Object t) { config.setLambda((Double) t); }});
         
         // Learning rate
-        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.15")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.15"), 0d, 10d, 1d) { //$NON-NLS-1$
             protected Double getValue() { return config.getLearningRate(); }
             protected void setValue(Object t) { config.setLearningRate((Double) t); }});
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
 
         // Number of folds
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17"), 2, 100, 10) { //$NON-NLS-1$
             protected Integer getValue() { return config.getNumFolds(); }
             protected void setValue(Object t) { config.setNumFolds((Integer) t); }});
         
@@ -124,18 +124,13 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object arg0) { config.setPriorFunction(PriorFunction.valueOf((String) arg0)); }
         });
         
-        // Seed
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.19")) { //$NON-NLS-1$
-            protected Integer getValue() { return config.getSeed(); }
-            protected void setValue(Object t) { config.setSeed((Integer) t); }});
-        
         // Step offset
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.20")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.20"), 0, Integer.MAX_VALUE, 10000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getStepOffset(); }
             protected void setValue(Object t) { config.setStepOffset((Integer) t); }});
 
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
     }
@@ -153,21 +148,18 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
         
         // Number of folds
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17"), 2, 100, 10) { //$NON-NLS-1$
             protected Integer getValue() { return config.getNumFolds(); }
             protected void setValue(Object t) { config.setNumFolds((Integer) t); }});
         
-        // Seed
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.19")) { //$NON-NLS-1$
-            protected Integer getValue() { return config.getSeed(); }
-            protected void setValue(Object t) { config.setSeed((Integer) t); }});
-        
         // Sigma
+        // default 1.0d
+        // TODO add bounds
         this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.22")) { //$NON-NLS-1$
             protected Double getValue() { return config.getSigma(); }
             protected void setValue(Object t) { config.setSigma((Double) t); }});
@@ -179,7 +171,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         });
         
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
         
@@ -198,12 +190,12 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
         
         // Number of folds
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17"), 2, 100, 10) { //$NON-NLS-1$
             protected Integer getValue() { return config.getNumFolds(); }
             protected void setValue(Object t) { config.setNumFolds((Integer) t); }});
         
@@ -212,13 +204,10 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected Integer getValue() { return config.getNumberOfTrees(); }
             protected void setValue(Object t) { config.setNumberOfTrees((Integer) t); }});
         
-        // Seed
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.19")) { //$NON-NLS-1$
-            protected Integer getValue() { return config.getSeed(); }
-            protected void setValue(Object t) { config.setSeed((Integer) t); }});
-        
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21")) { //$NON-NLS-1$
+        // default 10
+        // TODO add bounds
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
         
@@ -232,6 +221,8 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         this.addCategory(Resources.getMessage("DialogClassificationConfiguration.5")); //$NON-NLS-1$
         
         // C
+        // default 1.0d
+        // TODO add bounds
         this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.25")) { //$NON-NLS-1$
             protected Double getValue() { return config.getC(); }
             protected void setValue(Object t) { config.setC((Double) t); }});
@@ -242,11 +233,15 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
         // Kernel degree
+        // default 2
+        // TODO add bounds
         this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.26")) { //$NON-NLS-1$
             protected Integer getValue() { return config.getKernelDegree(); }
             protected void setValue(Object t) { config.setKernelDegree((Integer) t); }});
         
         // Kernel sigma
+        // default 1.0d
+        // TODO add bounds
         this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.27")) { //$NON-NLS-1$
             protected Double getValue() { return config.getKernelSigma(); }
             protected void setValue(Object t) { config.setKernelSigma((Double) t); }});
@@ -258,7 +253,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         });
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
 
@@ -269,17 +264,12 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         });
         
         // Number of folds
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.17"), 2, 100, 10) { //$NON-NLS-1$
             protected Integer getValue() { return config.getNumFolds(); }
             protected void setValue(Object t) { config.setNumFolds((Integer) t); }});
         
-        // Seed
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.19")) { //$NON-NLS-1$
-            protected Integer getValue() { return config.getSeed(); }
-            protected void setValue(Object t) { config.setSeed((Integer) t); }});
-        
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
     }
