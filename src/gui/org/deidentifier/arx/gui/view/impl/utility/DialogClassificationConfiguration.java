@@ -162,7 +162,7 @@ public class DialogClassificationConfiguration implements IDialog {
      * Trigger event to update other views.
      */
     private void triggerUpdate(){
-        this.controller.update(new ModelEvent(this, ModelPart.STATISTICAL_CLASSIFIER, null));
+        this.controller.update(new ModelEvent(this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
     }
 
 }

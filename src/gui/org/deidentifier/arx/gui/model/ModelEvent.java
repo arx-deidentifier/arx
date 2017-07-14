@@ -103,8 +103,8 @@ public class ModelEvent {
         /**  EXPAND */
         EXPAND,
 
-        /**  SELECTED_FEATURES_OR_CLASSES */
-        SELECTED_FEATURES_OR_CLASSES,
+        /** CLASSIFICATION_CONFIGURATION */
+        CLASSIFICATION_CONFIGURATION,
         
         /** RISK THRESHOLDS*/
         RISK_THRESHOLD_MAIN,
@@ -123,9 +123,6 @@ public class ModelEvent {
         
         /** SELECTED_CLASS_VALUE */
         SELECTED_CLASS_VALUE,
-        
-        /** STATISTICAL_CLASSIFIER */
-        STATISTICAL_CLASSIFIER
     }
 
     /** The part of the model that has changed. */

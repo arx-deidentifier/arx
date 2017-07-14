@@ -122,11 +122,10 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
         this.rocCurves = new HashMap<>();
         this.originalRocCurves = new HashMap<>();
         this.isOutput = part != ModelPart.INPUT;
-        controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
+        controller.addListener(ModelPart.CLASSIFICATION_CONFIGURATION, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_CLASS_VALUE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-        controller.addListener(ModelPart.STATISTICAL_CLASSIFIER, this);
     }
     
     @Override
@@ -137,8 +136,7 @@ public class ViewStatisticsClassificationROCCurves extends ViewStatistics<Analys
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
-            event.part == ModelPart.STATISTICAL_CLASSIFIER ||
+        if (event.part == ModelPart.CLASSIFICATION_CONFIGURATION ||
             event.part == ModelPart.DATA_TYPE) {
             if (getModel() != null && (getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty())) {
                 doReset();

@@ -100,7 +100,7 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
                     model.getClassificationModel().setCurrentConfiguration(configCurrent);
                     updateTable(configCurrent);
                     controller.update(new ModelEvent(ViewStatisticsClassificationAttributesOutput.this,
-                                                     ModelPart.STATISTICAL_CLASSIFIER,
+                                                     ModelPart.CLASSIFICATION_CONFIGURATION,
                                                      null));
                 }
             }
