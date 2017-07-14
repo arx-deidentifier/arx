@@ -306,10 +306,13 @@ public class MainWindow implements IView {
      * configurations.
      * 
      * @param model
+     * @param true if no changes have been made, false otherwise
      */
-    public void showClassificationConfigurationDialog(Model model) {
-        final DialogClassificationConfiguration dialog = new DialogClassificationConfiguration(shell, model, controller);
-        dialog.open();
+    public boolean showClassificationConfigurationDialog(Model model) {
+        final DialogClassificationConfiguration dialog = new DialogClassificationConfiguration(shell, model);
+        dialog.create();
+        if (dialog.open() == Window.OK) { return true; }
+        return false;
     }
     
     /**

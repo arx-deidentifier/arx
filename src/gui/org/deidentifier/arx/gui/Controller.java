@@ -1563,7 +1563,10 @@ public class Controller implements IView {
      * configurations.
      */
     public void actionShowClassificationConfigurationDialog() {
-        main.showClassificationConfigurationDialog(model);
+        boolean changes = main.showClassificationConfigurationDialog(model);
+        if (changes) {
+            this.update(new ModelEvent(this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+        }
     }
     
     /**
