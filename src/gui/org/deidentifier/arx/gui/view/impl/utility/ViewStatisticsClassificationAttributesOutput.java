@@ -339,8 +339,6 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
             classifiers[2] = Resources.getMessage("ViewClassificationAttributes.9");
             classifiers[3] = Resources.getMessage("ViewClassificationAttributes.10");
             this.combo.setItems(classifiers);
-            // Select LR by default
-            this.combo.select(0);
             
             // Init map
             this.configs = new HashMap<String, ARXClassificationConfiguration>();
@@ -349,6 +347,9 @@ public class ViewStatisticsClassificationAttributesOutput implements IView, View
             this.configs.put(classifiers[2], this.model.getClassificationModel().getRandomForestConfiguration());
             this.configs.put(classifiers[3], this.model.getClassificationModel().getSVMConfiguration());
             
+            // Select LR by default
+            this.combo.select(0);
+
             // Update table 
             updateTable(this.model.getClassificationModel().getLogisticRegressionConfiguration());
         }
