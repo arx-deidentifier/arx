@@ -117,7 +117,7 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
         
         // Prepare classifier
         this.nb = new NaiveBayes(config.getType() == Type.BERNOULLI ? Model.BERNOULLI : Model.MULTINOMIAL, 
-                                 this.specification.classMap.size(), config.getVectorLength());
+                                 this.specification.classMap.size(), config.getVectorLength(), config.getSigma());
                 
         // Prepare encoders
         this.interceptEncoder = new ConstantValueEncoder("intercept");
