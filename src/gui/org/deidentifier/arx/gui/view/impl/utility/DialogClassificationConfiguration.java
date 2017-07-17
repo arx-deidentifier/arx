@@ -29,7 +29,6 @@ import org.deidentifier.arx.ARXRandomForestConfiguration;
 import org.deidentifier.arx.ARXSVMConfiguration;
 import org.deidentifier.arx.ARXSVMConfiguration.Kernel;
 import org.deidentifier.arx.ARXSVMConfiguration.MulticlassType;
-import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.widgets.Shell;
 
@@ -46,9 +45,6 @@ import de.linearbits.preferences.PreferencesDialog;
  */
 public class DialogClassificationConfiguration extends PreferencesDialog {
 
-    /** Model */
-    private final Model             model;
-
     /**
      * Creates an instance.
      * 
@@ -56,12 +52,10 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
      * @param model
      */
     public DialogClassificationConfiguration(Shell parent,
-                                             Model model) {
+                                             ARXClassificationConfiguration config) {
         super(parent,
               Resources.getMessage("DialogClassificationConfiguration.0"), //$NON-NLS-1$
               Resources.getMessage("DialogClassificationConfiguration.1")); //$NON-NLS-1$
-        this.model = model;
-        ARXClassificationConfiguration config = this.model.getClassificationModel().getCurrentConfiguration();
         
         if (config instanceof ARXLogisticRegressionConfiguration) {
             createContentForLogisticRegression((ARXLogisticRegressionConfiguration) config);
