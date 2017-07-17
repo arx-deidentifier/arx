@@ -106,8 +106,6 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
     private int     vectorLength  = 1000;
     /** Max records */
     private int     maxRecords    = 100000;
-    /** Seed */
-    private int     seed          = Integer.MAX_VALUE;
     /** Folds */
     private int     numberOfFolds = 10;
     /** Deterministic */
@@ -129,13 +127,6 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
      */
     public int getNumFolds() {
         return numberOfFolds;
-    }
-
-    /**
-     * @return the seed
-     */
-    public int getSeed() {
-        return seed;
     }
 
     /**
@@ -190,18 +181,6 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (this.numberOfFolds != numberOfFolds) {
             setModified();
             this.numberOfFolds = numberOfFolds;
-        }
-        return this;
-    }
-
-    /**
-     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
-     * @param seed the seed to set
-     */
-    public ARXSVMConfiguration setSeed(int seed) {
-        if (this.seed != seed) {
-            setModified();
-            this.seed = seed;
         }
         return this;
     }

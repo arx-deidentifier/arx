@@ -58,8 +58,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     private int           vectorLength  = 1000;
     /** Max records */
     private int           maxRecords    = 100000;
-    /** Seed */
-    private int           seed          = Integer.MAX_VALUE;
     /** Folds */
     private int           numberOfFolds = 10;
     /** Deterministic */
@@ -121,13 +119,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      */
     public PriorFunction getPriorFunction() {
         return prior;
-    }
-    
-    /**
-     * @return the seed
-     */
-    public int getSeed() {
-        return seed;
     }
 
     /**
@@ -244,18 +235,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (this.prior != priorFunction) {
             setModified();
             this.prior = priorFunction;
-        }
-        return this;
-    }
-
-    /**
-     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
-     * @param seed the seed to set
-     */
-    public ARXLogisticRegressionConfiguration setSeed(int seed) {
-        if (this.seed != seed) {
-            setModified();
-            this.seed = seed;
         }
         return this;
     }

@@ -122,7 +122,7 @@ public class ModelEvent {
         COST_BENEFIT_MODEL,
         
         /** SELECTED_CLASS_VALUE */
-        SELECTED_CLASS_VALUE,
+        SELECTED_CLASS_VALUE
     }
 
     /** The part of the model that has changed. */

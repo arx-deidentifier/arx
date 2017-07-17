@@ -29,15 +29,21 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     private static final long serialVersionUID = -8751059558718015927L;
     /** Modified */
     private boolean           modified         = false;
+    /** Seed */
+    private int     seed          = Integer.MAX_VALUE;
 
     /** Maximal number of records to consider*/
     public abstract int getMaxRecords();
-    
+
     /** Number of folds*/
     public abstract int getNumFolds();
 
-    /** Seed for drawing records*/
-    public abstract int getSeed();
+    /**
+     * @return the seed for drawing records
+     */
+    public int getSeed() {
+        return seed;
+    }
 
     /** Deterministic*/
     public abstract boolean isDeterministic();
@@ -55,6 +61,18 @@ public abstract class ARXClassificationConfiguration implements Serializable{
      */
     protected void setModified() {
         this.modified = true;
+    }
+    
+    /**
+     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
+     * @param seed the seed to set
+     */
+    public ARXClassificationConfiguration setSeed(int seed) {
+        if (this.seed != seed) {
+            setModified();
+            this.seed = seed;
+        }
+        return this;
     }
     
     /**

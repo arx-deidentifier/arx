@@ -52,8 +52,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
 
     /** Max records */
     private int     maxRecords    = 100000;
-    /** Seed */
-    private int     seed          = Integer.MAX_VALUE;
     /** Folds */
     private int     numberOfFolds = 10;
     /** Deterministic */
@@ -75,13 +73,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      */
     public int getNumFolds() {
         return numberOfFolds;
-    }
-
-    /**
-     * @return the seed
-     */
-    public int getSeed() {
-        return seed;
     }
 
     /**
@@ -151,18 +142,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (this.numberOfFolds != numberOfFolds) {
             setModified();
             this.numberOfFolds = numberOfFolds;
-        }
-        return this;
-    }
-
-    /**
-     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
-     * @param seed the seed to set
-     */
-    public ARXNaiveBayesConfiguration setSeed(int seed) {
-        if (this.seed != seed) {
-            setModified();
-            this.seed = seed;
         }
         return this;
     }
