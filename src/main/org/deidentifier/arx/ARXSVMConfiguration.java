@@ -102,14 +102,8 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
 //        SPARSE_THIN_PLATE_SPLINE,
     }
     
-    /** Configuration */
-    private int     vectorLength  = 1000;
-    /** Max records */
-    private int     maxRecords    = 100000;
     /** Folds */
     private int     numberOfFolds = 10;
-    /** Deterministic */
-    private boolean deterministic = true;
 
     /**
      * Constructor
@@ -118,57 +112,11 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         // Empty by design
     }
     
-    @Override
-    public int getMaxRecords() {
-        return maxRecords;
-    }
     /**
      * @return the numberOfFolds
      */
     public int getNumFolds() {
         return numberOfFolds;
-    }
-
-    /**
-     * @return the vectorLength
-     */
-    public int getVectorLength() {
-        return vectorLength;
-    }
-
-    /**
-     * Returns whether the process should be deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
-    }
-    
-    /**
-     * Sets whether the process should be deterministic
-     * @param deterministic
-     * @return
-     */
-    public ARXSVMConfiguration setDeterministic(boolean deterministic) {
-        if (this.deterministic != deterministic) {
-            setModified();
-            this.deterministic = deterministic;
-        }
-        return this;
-    }
-    
-    /**
-     * @param maxRecords the maxRecords to set
-     */
-    public ARXSVMConfiguration setMaxRecords(int maxRecords) {
-        if (maxRecords <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.maxRecords != maxRecords) {
-            setModified();
-            this.maxRecords = maxRecords;
-        }
-        return this;
     }
 
     /**
@@ -181,20 +129,6 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (this.numberOfFolds != numberOfFolds) {
             setModified();
             this.numberOfFolds = numberOfFolds;
-        }
-        return this;
-    }
-
-    /**
-     * @param vectorLength the vectorLength to set
-     */
-    public ARXSVMConfiguration setVectorLength(int vectorLength) {
-        if (vectorLength <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.vectorLength != vectorLength) {
-            setModified();
-            this.vectorLength = vectorLength;
         }
         return this;
     }

@@ -54,14 +54,8 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     private double        learningRate  = 1d;
     /** Configuration */
     private int           stepOffset    = 10000;
-    /** Configuration */
-    private int           vectorLength  = 1000;
-    /** Max records */
-    private int           maxRecords    = 100000;
     /** Folds */
     private int           numberOfFolds = 10;
-    /** Deterministic */
-    private boolean       deterministic = true;
     /** Configuration */
     private PriorFunction prior         = PriorFunction.L1;
 
@@ -101,13 +95,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     }
 
     /**
-     * @return the maxRecords
-     */
-    public int getMaxRecords() {
-        return maxRecords;
-    }
-
-    /**
      * @return the numberOfFolds
      */
     public int getNumFolds() {
@@ -126,21 +113,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      */
     public int getStepOffset() {
         return stepOffset;
-    }
-
-    /**
-     * @return the vectorLength
-     */
-    public int getVectorLength() {
-        return vectorLength;
-    }
-
-    /**
-     * Returns whether the process should be deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
     }
 
     /**
@@ -166,19 +138,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     }
 
     /**
-     * Sets whether the process should be deterministic
-     * @param deterministic
-     * @return
-     */
-    public ARXLogisticRegressionConfiguration setDeterministic(boolean deterministic) {
-        if (this.deterministic != deterministic) {
-            setModified();
-            this.deterministic = deterministic;
-        }
-        return this;
-    }
-
-    /**
      * @param lambda the lambda to set
      */
     public ARXLogisticRegressionConfiguration setLambda(double lambda) {
@@ -196,20 +155,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (this.learningRate != learningRate) {
             setModified();
             this.learningRate = learningRate;
-        }
-        return this;
-    }
-
-    /**
-     * @param maxRecords the maxRecords to set
-     */
-    public ARXLogisticRegressionConfiguration setMaxRecords(int maxRecords) {
-        if (maxRecords <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.maxRecords != maxRecords) {
-            setModified();
-            this.maxRecords = maxRecords;
         }
         return this;
     }
@@ -246,20 +191,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (this.stepOffset != stepOffset) {
             setModified();
             this.stepOffset = stepOffset;
-        }
-        return this;
-    }
-
-    /**
-     * @param vectorLength the vectorLength to set
-     */
-    public ARXLogisticRegressionConfiguration setVectorLength(int vectorLength) {
-        if (vectorLength <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.vectorLength != vectorLength) {
-            setModified();
-            this.vectorLength = vectorLength;
         }
         return this;
     }

@@ -47,15 +47,9 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     private Type    type          = Type.BERNOULLI;
     /** Prior count */
     private double  sigma         = 1.0d;
-    /** Configuration */
-    private int     vectorLength  = 1000;
 
-    /** Max records */
-    private int     maxRecords    = 100000;
     /** Folds */
     private int     numberOfFolds = 10;
-    /** Deterministic */
-    private boolean deterministic = true;
 
     /**
      * Constructor
@@ -64,10 +58,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         // Empty by design
     }
     
-    @Override
-    public int getMaxRecords() {
-        return maxRecords;
-    }
     /**
      * @return the numberOfFolds
      */
@@ -89,47 +79,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      */
     public Type getType() {
         return type;
-    }
-    /**
-     * @return the vectorLength
-     */
-    public int getVectorLength() {
-        return vectorLength;
-    }
-
-    /**
-     * Returns whether the process should be deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
-    }
-    
-    /**
-     * Sets whether the process should be deterministic
-     * @param deterministic
-     * @return
-     */
-    public ARXNaiveBayesConfiguration setDeterministic(boolean deterministic) {
-        if (this.deterministic != deterministic) {
-            setModified();
-            this.deterministic = deterministic;
-        }
-        return this;
-    }
-    
-    /**
-     * @param maxRecords the maxRecords to set
-     */
-    public ARXNaiveBayesConfiguration setMaxRecords(int maxRecords) {
-        if (maxRecords <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.maxRecords != maxRecords) {
-            setModified();
-            this.maxRecords = maxRecords;
-        }
-        return this;
     }
 
     /**
@@ -172,20 +121,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (this.type != type) {
             setModified();
             this.type = type;
-        }
-        return this;
-    }
-
-    /**
-     * @param vectorLength the vectorLength to set
-     */
-    public ARXNaiveBayesConfiguration setVectorLength(int vectorLength) {
-        if (vectorLength <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.vectorLength != vectorLength) {
-            setModified();
-            this.vectorLength = vectorLength;
         }
         return this;
     }
