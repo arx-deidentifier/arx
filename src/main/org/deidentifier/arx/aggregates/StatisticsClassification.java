@@ -348,7 +348,7 @@ public class StatisticsClassification {
         this.interrupt = interrupt;
         this.progress = progress;
         
-        // Sample size
+        // Sampling size
         int numRows = inputHandle.getNumRows();
         if(config.getMaxRecords() > 0) {
             numRows = Math.min(config.getMaxRecords(), numRows);
