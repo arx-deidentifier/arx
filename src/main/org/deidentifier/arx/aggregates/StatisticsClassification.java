@@ -348,14 +348,10 @@ public class StatisticsClassification {
         this.interrupt = interrupt;
         this.progress = progress;
         
-        // Check and clean up
-        double samplingFraction = (double)config.getMaxRecords() / (double)inputHandle.getNumRows();
-        if (samplingFraction <= 0d) {
-            throw new IllegalArgumentException("Sampling fraction must be >0");
-        }
-        // TODO: Sampling fraction is not considered!
-        if (samplingFraction > 1d) {
-            samplingFraction = 1d;
+        // Sample size
+        int numRows = inputHandle.getNumRows();
+        if(config.getMaxRecords() > 0) {
+            numRows = Math.min(config.getMaxRecords(), numRows);
         }
        
         // Initialize random
@@ -374,23 +370,23 @@ public class StatisticsClassification {
                                                                                             interrupt);
         
         // Train and evaluate
-        int k = inputHandle.getNumRows() > config.getNumFolds() ? config.getNumFolds() : inputHandle.getNumRows();
-        List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), k);
+        int k = numRows > config.getNumFolds() ? config.getNumFolds() : numRows;
+        List<List<Integer>> folds = getFolds(numRows, k);
 
         // Track
         int classifications = 0;
-        double total = 100d / ((double)inputHandle.getNumRows() * (double)folds.size()); // TODO: Sampling!
+        double total = 100d / ((double)numRows * (double)folds.size());
         double done = 0d;
         
         // ROC
         List<double[]> originalConfidences = new ArrayList<double[]>();
-        for (int i = 0; i < inputHandle.getNumRows(); i++) {
+        for (int i = 0; i < numRows; i++) {
             originalConfidences.add(null);
         }
         List<double[]> confidences = null;
         if (inputHandle != outputHandle) {
             confidences = new ArrayList<double[]>();
-            for (int i = 0; i < inputHandle.getNumRows(); i++) {
+            for (int i = 0; i < numRows; i++) {
                 confidences.add(null);
             }
         }
