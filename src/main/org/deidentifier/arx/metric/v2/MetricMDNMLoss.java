@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -56,6 +57,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     
     /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      sFactor;
+    
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double            k;
     
     /**
      * Default constructor which treats all transformation methods equally.
@@ -313,6 +317,12 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Save domain shares
         this.shares = manager.getDomainShares();
         
+        // Store minimal size of equivalence classes
+        if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class)) {
+            DataDependentEDDifferentialPrivacy dpCriterion = config.getPrivacyModel(DataDependentEDDifferentialPrivacy.class);
+            k = (double)dpCriterion.getK();
+        }
+        
         // Min and max
         double[] min = new double[getDimensions()];
         Arrays.fill(min, 0d);
@@ -352,7 +362,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords, int[] rootValues) {
+    public double getScore(final Transformation node, final HashGroupify groupify) {
         // Prepare
         int[] transformation = node.getGeneralization();
 

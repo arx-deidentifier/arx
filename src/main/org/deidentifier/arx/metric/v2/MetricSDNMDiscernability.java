@@ -18,9 +18,14 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -36,6 +41,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     
     /** SVUID. */
     private static final long serialVersionUID = -8573084860566655278L;
+    
+    /** Total number of rows. */
+    private double            numRows;
+    
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double            k;
 
     /**
      * Creates a new instance.
@@ -145,27 +156,49 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
         return new ILSingleDimensional(lowerBound);
     }
-    
+
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords, int[] rootValues) {
+    public double getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
-        double score = 0;
+        double penaltySuppressed = 0;
+        double penaltyNotSuppressed = 0;
         
-        // Sum up penalty for each record
+        // Sum up penalties
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
             if (m.isNotOutlier) {
-                score += m.count * m.count;
+                penaltyNotSuppressed += m.count * m.count;
             } else {
-                score += m.count * numRecords;
+                penaltySuppressed += m.count;
             }
-            score += (m.pcount - m.count) * numRecords;
+            penaltySuppressed += m.pcount - m.count;
             m = m.nextOrdered;
         }
+        penaltySuppressed *= numRows;
         
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        return -1d * score / (numRecords * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d));
+        return -1d * (penaltySuppressed + penaltyNotSuppressed) /
+               (numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d));
+    }
+    
+    @Override
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        
+        super.initializeInternal(manager, definition, input, hierarchies, config);
+        
+        // Store the total number of rows
+        numRows = input.getDataLength();
+
+        // Store minimal size of equivalence classes
+        if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class)) {
+            DataDependentEDDifferentialPrivacy dpCriterion = config.getPrivacyModel(DataDependentEDDifferentialPrivacy.class);
+            k = (double)dpCriterion.getK();
+        }
     }
 }
 

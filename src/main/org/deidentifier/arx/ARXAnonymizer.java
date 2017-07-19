@@ -37,7 +37,6 @@ import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -549,20 +548,11 @@ public class ARXAnonymizer {
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
 
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
-            if (c instanceof DataDependentEDDifferentialPrivacy) {
-                // Determine the root values of all generalization hierarchies
-                int[] rootValues = new int[manager.getHierarchies().length];
-                for (int i = 0; i < manager.getHierarchies().length; i++) {
-                    int[] row = manager.getHierarchies()[i].getArray()[0];
-                    rootValues[i] = row[row.length - 1];
-                }
-                // Create data-dependent (e,d)-differential privacy algorithm
-                DataDependentEDDifferentialPrivacy dpCriterion = (DataDependentEDDifferentialPrivacy)c;
-                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, config.getQualityModel(),
-                                                         dpCriterion.isDeterministic(), dpCriterion.getSteps(), dpCriterion.getEpsilonSearch(),
-                                                         c.getMinimalClassSize(), manager.getDataGeneralized().getDataLength(), rootValues);
-            }
+        if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class)){
+            // Iteration over DataDependentEDDifferentialPrivacy models is not required, since only one may be specified
+            DataDependentEDDifferentialPrivacy dpCriterion = config.getPrivacyModel(DataDependentEDDifferentialPrivacy.class);
+            return DataDependentEDDPAlgorithm.create(solutionSpace, checker, dpCriterion.isDeterministic(),
+                                                     dpCriterion.getSteps(), dpCriterion.getEpsilonSearch());
         }
         
         if (config.isHeuristicSearchEnabled() ||

@@ -25,6 +25,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -76,6 +77,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
     /** Num rows */
     private double        rows;
+
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double        k;
+
+    /** The root values of all generalization hierarchies */
+    private int[]         rootValues;
+
 
     /**
      * Precomputed.
@@ -333,12 +341,26 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             max[i] = (input.getDataLength() * log2(input.getDataLength())) * Math.max(gFactor, sFactor);
         }
         
+        // Store minimal size of equivalence classes
+        if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class)) {
+            
+            DataDependentEDDifferentialPrivacy dpCriterion = config.getPrivacyModel(DataDependentEDDifferentialPrivacy.class);
+            k = (double)dpCriterion.getK();
+            
+            /** TODO handle cases in which no single root values are present */
+            rootValues = new int[manager.getHierarchies().length];
+            for (int i = 0; i < manager.getHierarchies().length; i++) {
+                int[] row = manager.getHierarchies()[i].getArray()[0];
+                rootValues[i] = row[row.length - 1];
+            }
+        }
+        
         super.setMax(max);
         super.setMin(min);
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords, int[] rootValues) {
+    public double getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
         double score = 0d;
@@ -360,11 +382,11 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                     nonSuppressedValueToCount.put(value, valueCount);
                 } else {
                     // The attribute value has been suppressed because of record suppression or because of generalization
-                    score += entry.count * numRecords;
+                    score += entry.count * rows;
                 }
                 
                 // Add values for records which have been suppressed by sampling
-                score += (entry.pcount - entry.count) * numRecords;
+                score += (entry.pcount - entry.count) * rows;
 
                 // Next group
                 entry = entry.nextOrdered;
@@ -377,7 +399,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / (numRecords * getDimensionsGeneralized());
+        score *= -1d / (rows * getDimensionsGeneralized());
         return (k==1) ? score / 5d : score / (k * k / (k - 1d) + 1d);
     }
 }

@@ -31,6 +31,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricSDAECS extends AbstractMetricSingleDimensional {
 
@@ -171,7 +172,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify, int k, int numRecords, int[] rootValues) {
+    public double getScore(final Transformation node, final HashGroupify groupify) {
         
         // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
         

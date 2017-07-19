@@ -24,7 +24,6 @@ import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
-import org.deidentifier.arx.metric.Metric;
 
 import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
@@ -40,21 +39,15 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * Creates a new instance
      * @param solutionSpace
      * @param checker
-     * @param metric 
      * @param deterministic 
      * @param steps
      * @param epsilonSearch
-     * @param k
-     * @param numRecords
-     * @param rootValues 
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker,
-                                           Metric<?> metric, boolean deterministic, int steps, double epsilonSearch,
-                                           int k, int numRecords, int[] rootValues) {
-        return new DataDependentEDDPAlgorithm(solutionSpace, checker, metric,
-                                              deterministic, steps, epsilonSearch,
-                                              k, numRecords, rootValues);
+                                           boolean deterministic, int steps, double epsilonSearch) {
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker,
+                                              deterministic, steps, epsilonSearch);
     }
     /** Property */
     private final PredictiveProperty propertyChecked;
@@ -62,41 +55,25 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     private final int                steps;
     /** Parameter */
     private final double             epsilonSearch;
-    /** The metric */
-    private final Metric<?>          metric;
     /** Parameter */
     private final boolean            deterministic;
-    /** Parameter */
-    private final int                k;
-    /** Parameter */
-    private final int                numRecords;
-    /** Parameter */
-    private final int[]              rootValues;
     
     /**
     * Constructor
     * @param space
     * @param checker
-    * @param metric
     * @param deterministic 
     * @param steps
     * @param epsilonSearch
-    * @param numRecords 
-    * @param rootValues 
     */
     private DataDependentEDDPAlgorithm(SolutionSpace space, NodeChecker checker,
-                          Metric<?> metric, boolean deterministic, int steps, double epsilonSearch,
-                          int k, int numRecords, int[] rootValues) {
+                                       boolean deterministic, int steps, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.epsilonSearch = epsilonSearch;
-        this.metric = metric;
         this.deterministic = deterministic;
-        this.k = k;
-        this.numRecords = numRecords;
-        this.rootValues = rootValues;
         this.steps = steps;
         if (steps < 0) { 
             throw new IllegalArgumentException("Invalid step number. Must not be negative."); 
@@ -162,7 +139,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @return
      */
     private Double getScore(Transformation transformation) {
-        return checker.getScore(transformation, metric, k, numRecords, rootValues);
+        return checker.getScore(transformation);
     }
 
     /**
