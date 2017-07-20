@@ -57,7 +57,7 @@ public class SUDA2 {
         this.data = data;
         this.columns = data.length == 0 ? 0 : data[0].length;
     }
-    
+
     /**
      * Executes the SUDA2 algorithm.
      * 
