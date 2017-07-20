@@ -65,12 +65,23 @@ public class SUDA2 {
      * @return
      */
     public SUDA2Statistics getStatistics(int maxKeyLength) {
+        return getStatistics(maxKeyLength, false);
+    }
+
+    /**
+     * Executes the SUDA2 algorithm.
+     * 
+     * @param maxKeyLength If maxKeyLength <= 0, maxKeyLength will be set to the number of columns
+     * @param sdcMicroScores
+     * @return
+     */
+    public SUDA2Statistics getStatistics(int maxKeyLength, boolean sdcMicroScores) {
         
         // If maxK <= 0, maxK will be set to the number of columns
         maxKeyLength = maxKeyLength > 0 ? maxKeyLength : columns;
         
         // Execute
-        this.result = new SUDA2Statistics(this.data.length, this.columns, maxKeyLength);
+        this.result = new SUDA2Statistics(this.data.length, this.columns, maxKeyLength, sdcMicroScores);
         
         // Check
         if (this.data.length == 0 || this.data[0].length == 0) {
