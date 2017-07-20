@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,9 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
- * An abstract base class for privacy models based on distributions of sizes of
- * equivalence classes.
+ * An abstract base class for sample-based privacy criteria.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -58,11 +56,11 @@ public abstract class SampleBasedCriterion extends PrivacyCriterion {
 
     /**
      * Not supported by this type of criterion
-     * @param entry
      *
+     * @param entry
      * @return
      */
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry) {
         throw new UnsupportedOperationException("Not implemented");
     }
     

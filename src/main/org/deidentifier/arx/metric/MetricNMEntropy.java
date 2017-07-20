@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -51,16 +50,9 @@ public class MetricNMEntropy extends MetricEntropy {
      * Creates a new instance.
      */
     protected MetricNMEntropy() {
-        super(true, false, false);
+        super(false, false);
     }
     
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Non-uniform entropy");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
-    }
-
     @Override
     public String toString() {
         return "Non-Monotonic Non-Uniform Entropy";
@@ -111,12 +103,12 @@ public class MetricNMEntropy extends MetricEntropy {
         // Return sum of both values
         return new InformationLossDefaultWithBound(round(originalInfoLoss - additionalInfoLoss), originalInfoLossDefault.getValue());
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return super.getInformationLossInternal(node, (HashGroupify)null).getInformationLoss();
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
@@ -131,5 +123,4 @@ public class MetricNMEntropy extends MetricEntropy {
                                       final ARXConfiguration config) {
         super.initializeInternal(manager, definition, input, hierarchies, config);
     }
-
 }

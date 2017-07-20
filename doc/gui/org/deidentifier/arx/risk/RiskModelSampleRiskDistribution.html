@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>RiskModelSampleRiskDistribution (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -138,45 +138,40 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getAvailableLowerRiskThresholds()">getAvailableLowerRiskThresholds</a></strong>()</code>
-<div class="block">Returns the lower bounds (exclusive) of the intervals for the according data points.</div>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getAvailableRiskThresholds()">getAvailableRiskThresholds</a></strong>()</code>
+<div class="block">Returns a set of risk thresholds for which data is maintained.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>double[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getAvailableUpperRiskThresholds()">getAvailableUpperRiskThresholds</a></strong>()</code>
-<div class="block">Returns the lower bounds (inclusive) of the intervals for the according data points.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getFractionOfRecordsAtCumulativeRisk(double)">getFractionOfRecordsAtCumulativeRisk</a></strong>(double&nbsp;risk)</code>
 <div class="block">Returns the fraction of records with a risk lower than or equal
  to the given threshold.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getFractionOfRecordsAtRisk(double)">getFractionOfRecordsAtRisk</a></strong>(double&nbsp;risk)</code>
 <div class="block">Returns the fraction of records with a risk which equals the given threshold.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getFractionOfRecordsForCumulativeRiskThresholds()">getFractionOfRecordsForCumulativeRiskThresholds</a></strong>()</code>
 <div class="block">Returns an array of cumulative risks for the risk thresholds</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double[]</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getFractionOfRecordsForRiskThresholds()">getFractionOfRecordsForRiskThresholds</a></strong>()</code>
 <div class="block">Returns an array of risks for the risk thresholds</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/risk/RiskModelSampleRiskDistribution.html#getRiskThreshold()">getRiskThreshold</a></strong>()</code>
-<div class="block">Returns the threshold for which is available on prosecutor risks</div>
+<div class="block">Returns the threshold for which is closest to the threshold which has 
+ been defined on prosecutor risks and for which data is maintained</div>
 </td>
 </tr>
 </table>
@@ -222,25 +217,15 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getAvailableLowerRiskThresholds()">
+<a name="getAvailableRiskThresholds()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getAvailableLowerRiskThresholds</h4>
-<pre>public&nbsp;double[]&nbsp;getAvailableLowerRiskThresholds()</pre>
-<div class="block">Returns the lower bounds (exclusive) of the intervals for the according data points.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getAvailableUpperRiskThresholds()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getAvailableUpperRiskThresholds</h4>
-<pre>public&nbsp;double[]&nbsp;getAvailableUpperRiskThresholds()</pre>
-<div class="block">Returns the lower bounds (inclusive) of the intervals for the according data points.</div>
+<h4>getAvailableRiskThresholds</h4>
+<pre>public&nbsp;double[]&nbsp;getAvailableRiskThresholds()</pre>
+<div class="block">Returns a set of risk thresholds for which data is maintained.
+ Note: all risks below 10^-6 are mapped to 0% risk.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -252,7 +237,8 @@ extends java.lang.Object</pre>
 <h4>getFractionOfRecordsAtCumulativeRisk</h4>
 <pre>public&nbsp;double&nbsp;getFractionOfRecordsAtCumulativeRisk(double&nbsp;risk)</pre>
 <div class="block">Returns the fraction of records with a risk lower than or equal
- to the given threshold.</div>
+ to the given threshold.
+ Note: all risks below 10^-6 are mapped to 0% risk.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>risk</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -264,7 +250,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getFractionOfRecordsAtRisk</h4>
 <pre>public&nbsp;double&nbsp;getFractionOfRecordsAtRisk(double&nbsp;risk)</pre>
-<div class="block">Returns the fraction of records with a risk which equals the given threshold.</div>
+<div class="block">Returns the fraction of records with a risk which equals the given threshold.
+ Note: all risks below 10^-6 are mapped to 0% risk.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>risk</code> - </dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
@@ -298,7 +285,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>getRiskThreshold</h4>
 <pre>public&nbsp;double&nbsp;getRiskThreshold()</pre>
-<div class="block">Returns the threshold for which is available on prosecutor risks</div>
+<div class="block">Returns the threshold for which is closest to the threshold which has 
+ been defined on prosecutor risks and for which data is maintained</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

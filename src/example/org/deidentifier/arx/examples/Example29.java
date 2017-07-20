@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,7 +98,7 @@ public class Example29 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new AverageReidentificationRisk(0.5d));
+        config.addCriterion(new AverageReidentificationRisk(0.5d));
         config.setMaxOutliers(1d);
 
         // Anonymize
@@ -118,9 +118,9 @@ public class Example29 extends Example {
     private static void analyzeAttributes(DataHandle handle) {
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
-        RiskModelAttributes riskmodel = builder.getAttributeRisks();
+        RiskModelAttributes riskmodel = builder.getSampleBasedAttributeRisks();
         for (QuasiIdentifierRisk risk : riskmodel.getAttributeRisks()) {
-            System.out.println("   * Distinction: " + risk.getDistinction() + ", Separation: " + risk.getSeparation() + ", Identifier: " + risk.getIdentifier());
+            System.out.println("   * Score: " + risk.getFractionOfUniqueTuples() + ", Identifier: " + risk.getIdentifier());
         }
     }
         

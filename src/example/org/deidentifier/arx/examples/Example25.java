@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,9 +98,9 @@ public class Example25 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(3));
+        config.addCriterion(new KAnonymity(3));
         config.setMaxOutliers(0d);
-        config.setQualityModel(__MetricV2.createLossMetric());
+        config.setMetric(__MetricV2.createLossMetric());
         config.setSuppressionAlwaysEnabled(false);
         ARXResult result = anonymizer.anonymize(data, config);
 
@@ -109,7 +109,7 @@ public class Example25 extends Example {
             for (ARXNode node : level) {
                 Iterator<String[]> transformed = result.getOutput(node, false).iterator();
                 System.out.println("Transformation : "+Arrays.toString(node.getTransformation()));
-                System.out.println("InformationLoss: "+node.getHighestScore());
+                System.out.println("InformationLoss: "+node.getMaximumInformationLoss());
                 while (transformed.hasNext()) {
                     System.out.print("   ");
                     System.out.println(Arrays.toString(transformed.next()));

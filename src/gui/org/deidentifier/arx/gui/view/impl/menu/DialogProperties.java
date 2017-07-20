@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Locale;
 
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
-import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -193,29 +192,30 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.8")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.50"), 1.0e-12, 1d, ARXSolverConfiguration.getDefaultAccuracy()) { //$NON-NLS-1$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.50"), 1.0e-12, 1d, 1.0e-6) { //$NON-NLS-1$
             protected Double getValue() { return model.getRiskModel().getSolverConfiguration().getAccuracy(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().accuracy((Double)t); }});
 
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.51"), 1, 100000, ARXSolverConfiguration.getDefaultIterationsPerTry()) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.51"), 1, 100000, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getIterationsPerTry(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().iterationsPerTry((Integer)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.52"), 1, 1000000, ARXSolverConfiguration.getDefaultIterationsTotal()) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.52"), 1, 1000000, 10000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getIterationsTotal(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().iterationsTotal((Integer)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.53"), 1, 100000, ARXSolverConfiguration.getDefaultTimePerTry()) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.53"), 1, 100000, 100) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimePerTry(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timePerTry((Integer)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.54"), 1, 1000000, ARXSolverConfiguration.getDefaultTimeTotal()) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.54"), 1, 1000000, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimeTotal(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timeTotal((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), ARXSolverConfiguration.getDefaultDeterministic()) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getRiskModel().getSolverConfiguration().isDeterministic(); }
-            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().setDeterministic((Boolean)t); }});        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), false) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getRiskModel().getSolverConfiguration().getStartValues() != null; }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().preparedStartValues((Boolean)t ? getSolverStartValues() : null); }});
+        
     }
 
     /**
@@ -351,5 +351,20 @@ public class DialogProperties implements IDialog {
             result.add(model.name());
         }
         return result.toArray(new String[result.size()]);
+    }
+
+    /**
+     * Returns start values for the solver, if it is configured to be deterministic
+     * @return
+     */
+    private double[][] getSolverStartValues() {
+        double[][] result = new double[16][];
+        int index = 0;
+        for (double d1 = 0.25d; d1 <= 1d; d1 += 0.25d) {
+            for (double d2 = 0.25d; d2 <= 1d; d2 += 0.25d) {
+                result[index++] = new double[] { d1, d2 };
+            }
+        }
+        return result;
     }
 }

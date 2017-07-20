@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ public class Distribution {
         Arrays.fill(elements, -1);
         size = 0;
     }
-    
+
     /**
      * Gets all buckets of the hash table.
      *
@@ -190,22 +190,6 @@ public class Distribution {
      */
     public int size() {
         return size;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Distribution [");
-        boolean first = true;
-        for (int i=0; i<elements.length; i+=2) {
-            if (elements[i] != -1) {
-                builder.append(first ? "" : ",");
-                builder.append(elements[i]).append("=").append(elements[i+1]);
-                first = false;
-            }
-        }
-        builder.append("]");
-        return builder.toString();
     }
 
     /**

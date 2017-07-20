@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,11 +136,8 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.METRIC, this);
-        controller.addListener(ModelPart.ATTRIBUTE_WEIGHT, this);
-        controller.addListener(ModelPart.GS_FACTOR, this);
         controller.addListener(ModelPart.MAX_OUTLIERS, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
-        controller.addListener(ModelPart.COST_BENEFIT_MODEL, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         if (reset != null) {
@@ -183,7 +180,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
             reset();
         } else {
             SWTUtil.enable(root);
-            this.doUpdate(event.part);
+            this.update();
         }
     }
 
@@ -196,8 +193,8 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
      * @return
      */
     protected double asRelativeValue(final InformationLoss<?> infoLoss, final ARXResult result) {
-        return infoLoss.relativeTo(model.getResult().getLattice().getLowestScore(), 
-                                   model.getResult().getLattice().getHighestScore()) * 100d;
+        return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
+                                   model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
     }
     
     /**
@@ -219,10 +216,9 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
             tc.pack();
         }
     }
-    
+
     /**
      * Implement this to update the view.
-     * @param part 
      */
-    protected abstract void doUpdate(ModelPart part);
+    protected abstract void update();
 }

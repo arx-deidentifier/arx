@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@
 
 package org.deidentifier.arx;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -28,7 +26,6 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
@@ -94,7 +91,7 @@ public class DataDefinition implements Cloneable{
         d.setLocked(this.isLocked());
         return d;
     }
-    
+
     /**
      * Returns the type defined for the attribute.
      *
@@ -130,7 +127,7 @@ public class DataDefinition implements Cloneable{
         Hierarchy hierarchy = hierarchies.get(attribute);
         return hierarchy == null ? null : hierarchy.getHierarchy();
     }
-
+    
     /**
      * Returns the associated builder, if any.
      *
@@ -140,7 +137,7 @@ public class DataDefinition implements Cloneable{
     public HierarchyBuilder<?> getHierarchyBuilder(final String attribute) {
         return builders.get(attribute);
     }
-
+    
     /**
      * Returns the according hierarchy object.
      *
@@ -226,7 +223,7 @@ public class DataDefinition implements Cloneable{
         }
         return result;
     }
-    
+
     /**
      * Returns the quasi-identifiers for which microaggregation is specified.
      * @return
@@ -249,6 +246,7 @@ public class DataDefinition implements Cloneable{
     public Set<String> getQuasiIdentifyingAttributes() {
         return getAttributesByType(AttributeType.ATTR_TYPE_QI);
     }
+    
 
     /**
      * Returns the sensitive attributes.
@@ -259,6 +257,7 @@ public class DataDefinition implements Cloneable{
         return getAttributesByType(AttributeType.ATTR_TYPE_SE);
     }
     
+
     /**
      * Returns whether a hierarchy is available.
      *
@@ -268,7 +267,6 @@ public class DataDefinition implements Cloneable{
     public boolean isHierarchyAvailable(String attribute) {
         return getHierarchy(attribute) != null;
     }
-    
 
     /**
      * Returns whether a hierarchy builder is available.
@@ -279,7 +277,6 @@ public class DataDefinition implements Cloneable{
     public boolean isHierarchyBuilderAvailable(String attribute) {
         return getHierarchyBuilder(attribute) != null;
     }
-    
 
     /**
      * Returns whether this definition can be altered.
@@ -337,46 +334,13 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
-     * Renders this object 
-     * @return
-     */
-    public List<ElementData> render() {
-
-        // Render attribute types
-        List<ElementData> result = new ArrayList<>();
-        result.add(render("Insensitive attributes", getInsensitiveAttributes()));
-        result.add(render("Sensitive attributes", getSensitiveAttributes()));
-        result.add(render("Identifying attributes", getIdentifyingAttributes()));
-        result.add(render("Quasi-identifying attributes", getQuasiIdentifyingAttributes()));
-
-        // Render hierarchies
-        Set<String> attributes = new HashSet<>();
-        attributes.addAll(getInsensitiveAttributes());
-        attributes.addAll(getSensitiveAttributes());
-        attributes.addAll(getIdentifyingAttributes());
-        attributes.addAll(getQuasiIdentifyingAttributes());
-        for (String attribute : attributes) {
-            if ((!this.functions.containsKey(attribute) || this.functions.get(attribute) == null ) && 
-                (this.hierarchies.containsKey(attribute) || this.builders.containsKey(attribute))) {
-                result.add(render(attribute, this.hierarchies.get(attribute), this.builders.get(attribute)));
-            }
-        }
-        for (String attribute : attributes) {
-            if (this.functions.containsKey(attribute) && this.functions.get(attribute) != null) {
-                result.add(render(attribute, this.functions.get(attribute)));
-            }
-        }
-        return result;
-    }
-
-    /**
      * Resets the according setting
      * @param attr
      */
     public void resetAttributeType(String attr) {
         this.attributeTypes.remove(attr);
     }
-
+    
     /**
      * Resets the according setting
      * @param attr
@@ -400,7 +364,7 @@ public class DataDefinition implements Cloneable{
     public void resetMaximumGeneralization(String attr) {
         this.minGeneralization.remove(attr);
     }
-    
+
     /**
      * Resets the according setting
      * @param attr
@@ -473,7 +437,7 @@ public class DataDefinition implements Cloneable{
     public void setHierarchy(String attribute, Hierarchy hierarchy) {
         this.hierarchies.put(attribute, hierarchy);
     }
-
+    
     /**
      * Associates the given hierarchy builder
      * @param attribute
@@ -482,7 +446,7 @@ public class DataDefinition implements Cloneable{
     public void setHierarchy(String attribute, HierarchyBuilder<?> builder) {
         this.builders.put(attribute, builder);
     }
-
+    
     /**
      * Define the maximal generalization of a given attribute.
      *
@@ -504,7 +468,7 @@ public class DataDefinition implements Cloneable{
     public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function) {
         this.functions.put(attribute, function);
     }
-    
+
     /**
      * Define the minimal generalization of a given attribute.
      *
@@ -550,7 +514,7 @@ public class DataDefinition implements Cloneable{
             throw new IllegalArgumentException("Attribute ("+attribute+") is not a quasi-identifier");
         }
     }
-    
+
     /**
      * Returns attributes by type
      * @param type
@@ -564,61 +528,6 @@ public class DataDefinition implements Cloneable{
             }
         }
         return result;
-    }
-
-    /**
-     * Renders a hierarchy
-     * @param attribute
-     * @param hierarchy
-     * @param builder
-     */
-    private ElementData render(String attribute, Hierarchy hierarchy, HierarchyBuilder<?> builder) {
-        ElementData result = new ElementData("Generalization hierarchy");
-        result.addProperty("Attribute", attribute);
-        if (hierarchy != null && hierarchy.getHierarchy() != null && 
-            hierarchy.getHierarchy().length != 0 && hierarchy.getHierarchy()[0] != null) {
-            result.addProperty("Height", hierarchy.getHierarchy()[0].length);
-            if (this.getQuasiIdentifyingAttributes().contains(attribute)) {
-                result.addProperty("Minimum level", this.getMinimumGeneralization(attribute));
-                result.addProperty("Maximum level", this.getMaximumGeneralization(attribute));
-            }
-        } else if (builder != null){
-            result.addProperty("Builder type", builder.getType().toString());
-        }
-        return result;
-    }
-
-    /**
-     * Renders a microaggregation function
-     * @param attribute
-     * @param function
-     * @return
-     */
-    private ElementData render(String attribute, MicroAggregationFunction function) {
-        ElementData result = new ElementData("Microaggregation function");
-        result.addProperty("Attribute", attribute);
-        if (function != null) {
-            result.addProperty("Type", function.getLabel());
-        }
-        return result;
-    }
-
-    /**
-     * Renders a set of attributes
-     * @param title
-     * @param attributes
-     * @return
-     */
-    private ElementData render(String title, Set<String> attributes) {
-         ElementData result = new ElementData(title);
-         if (attributes.isEmpty()) {
-             result.addItem("None");
-         } else {
-             for (String attribute : attributes) {
-                 result.addProperty(attribute, this.getDataType(attribute).toString());
-             }
-         }
-         return result;
     }
 
     /**

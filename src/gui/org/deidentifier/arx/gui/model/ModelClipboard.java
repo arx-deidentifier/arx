@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,13 +69,13 @@ public class ModelClipboard {
             return;
         }
 
-        // Collect top-10 in terms of best score
+        // Collect top-10 in terms of lowest information loss
         List<ARXNode> utility = new ArrayList<ARXNode>();
         utility.add(result.getGlobalOptimum());
         collectTopSolutions(utility, result.getLattice(), new Comparator<ARXNode>(){
             @Override
             public int compare(ARXNode o1, ARXNode o2) {
-                return o1.getHighestScore().compareTo(o2.getHighestScore());
+                return o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
             }
         }, 10);
         
@@ -95,7 +95,7 @@ public class ModelClipboard {
                 }
                 int cmp = Double.valueOf(val1).compareTo(val2);
                 if (cmp == 0) {
-                    return o1.getHighestScore().compareTo(o2.getHighestScore());
+                    return o1.getMaximumInformationLoss().compareTo(o2.getMaximumInformationLoss());
                 } else {
                     return cmp;
                 }
@@ -226,14 +226,14 @@ public class ModelClipboard {
     }
 
     /**
-     * Sorts all nodes according to their minimal score.
+     * Sorts all nodes according to their minimal information loss.
      */
     public void sort() {
         Collections.sort(clipboard, new Comparator<ARXNode>(){
             @Override
             public int compare(ARXNode arg0, ARXNode arg1) {
-                InformationLoss<?> loss0 = arg0.getLowestScore();
-                InformationLoss<?> loss1 = arg1.getLowestScore();
+                InformationLoss<?> loss0 = arg0.getMinimumInformationLoss();
+                InformationLoss<?> loss1 = arg1.getMinimumInformationLoss();
                 if (loss0==null && loss1==null) return 0;
                 else if (loss0==null && loss1!=null) return -1;
                 else if (loss0!=null && loss1==null) return +1;

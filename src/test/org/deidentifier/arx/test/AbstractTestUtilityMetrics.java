@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,19 +58,19 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXUtilityMetricsTestCase {
-
-        /** Config */
-        public ARXConfiguration    config;
-
-        /** Dataset */
-        public String              dataset;
-
-        /** Attribute */
-        public String              sensitiveAttribute;
-
-        /** Score */
+        
+        /** TODO */
+        public ARXConfiguration config;
+        
+        /** TODO */
+        public String dataset;
+        
+        /** TODO */
+        public String sensitiveAttribute;
+        
+        /** TODO */
         public Map<String, String> informationLoss;
-
+        
         /**
          * Creates a new instance.
          *
@@ -105,9 +105,9 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
             builder.append(" - Dataset: ").append(dataset).append("\n");
             builder.append(" - Sensitive: ").append(sensitiveAttribute).append("\n");
             builder.append(" - Suppression: ").append(config.getMaxOutliers()).append("\n");
-            builder.append(" - Metric: ").append(config.getQualityModel().toString()).append("\n");
+            builder.append(" - Metric: ").append(config.getMetric().toString()).append("\n");
             builder.append(" - Criteria:\n");
-            for (PrivacyCriterion c : config.getPrivacyModels()) {
+            for (PrivacyCriterion c : config.getCriteria()) {
                 builder.append("   * ").append(c.toString()).append("\n");
             }
             builder.append("}");
@@ -116,7 +116,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
         
         @Override
         public String toString() {
-            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
+            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
@@ -159,7 +159,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
+                    if (testCase.config.containsCriterion(LDiversity.class) || testCase.config.containsCriterion(TCloseness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
@@ -209,11 +209,11 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
                 String loss = testcase.informationLoss.get(label);
                 
                 if (loss != null) {
-                    if (node.getHighestScore().compareTo(node.getLowestScore()) != 0) {
+                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
                         result.getOutput(node, false);
                     }
                     
-                    String actualLoss = node.getHighestScore().toString();
+                    String actualLoss = node.getMaximumInformationLoss().toString();
                     String expectedLoss = testcase.informationLoss.get(label);
                     
                     assertEquals(label, expectedLoss, actualLoss);

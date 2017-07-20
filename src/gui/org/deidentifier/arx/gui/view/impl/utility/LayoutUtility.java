@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,17 +23,18 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
-import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.common.ViewData;
 import org.deidentifier.arx.gui.view.impl.common.ViewDataInput;
 import org.deidentifier.arx.gui.view.impl.common.ViewDataOutput;
 import org.eclipse.nebula.widgets.nattable.coordinate.PixelCoordinate;
+import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -44,11 +45,6 @@ import org.eclipse.swt.widgets.Listener;
  */
 public class LayoutUtility implements ILayout {
 
-    /**
-     * Type of view which is displayed
-     * 
-     * @author Fabian Prasser
-     */
     public static enum ViewUtilityType {
         CLASSIFICATION,
         LOGISTIC_REGRESSION,
@@ -61,6 +57,102 @@ public class LayoutUtility implements ILayout {
         SUMMARY,
         PROPERTIES,
         LOCAL_RECODING
+    }
+
+    /**
+     * A runnable for synchronizing both tables.
+     *
+     * @author Fabian Prasser
+     */
+    private class Synchronizer implements Runnable {
+
+        /**  TODO */
+        final ViewData in;
+        
+        /**  TODO */
+        final ViewData out;
+        
+        /**  TODO */
+        Boolean        stop     = false;
+        
+        /**  TODO */
+        Runnable       runnable = null;
+
+        /**
+         * Creates a new instance.
+         *
+         * @param in
+         * @param out
+         */
+        public Synchronizer(final ViewData in, final ViewData out) {
+            this.in = in;
+            this.out = out;
+            runnable = new Runnable() {
+                @Override
+                public void run() {
+                    ViewportLayer outLayer = out.getViewportLayer();
+                    ViewportLayer inLayer = in.getViewportLayer();
+                    PixelCoordinate coordinate = inLayer.getOrigin();
+                    final int y = coordinate.getY();
+                    final int x = coordinate.getX();
+                    outLayer.setOriginY(y);
+                    outLayer.setOriginX(x);
+                }
+            };
+            new Thread(this).start();
+        }
+
+        /**
+         * Returns the input view.
+         *
+         * @return
+         */
+        public ViewData getIn() {
+            return in;
+        }
+
+        @Override
+        public void run() {
+            final long time = System.currentTimeMillis();
+            while (!stop && ((System.currentTimeMillis() - time) < 1000)) {
+                if ((in != null) && (out != null)) {
+                    try {
+                        if (Display.getCurrent() != null) {
+                            runnable.run();
+                        } else {
+                            Display.getDefault().syncExec(runnable);
+                        }
+                    } catch (final Exception e) {
+                        // Die silently
+                    } 
+                }
+                try {
+                    Thread.sleep(10);
+                } catch (final InterruptedException e) {
+                    // Die silently
+                }
+            }
+            synchronizer = null;
+            synchronized (monitor) {
+                monitor.notify();
+            }
+        }
+
+        /**
+         * 
+         */
+        public void stop() {
+            stop = true;
+            synchronized (monitor) {
+                try {
+                    while (synchronizer != null){
+                        monitor.wait();
+                    }
+                } catch (final InterruptedException e) {
+                    // Die silently
+                }
+            }
+        }
     }
 
     /** Constant */
@@ -102,6 +194,12 @@ public class LayoutUtility implements ILayout {
     /** View */
     private final LayoutUtilityStatistics statisticsOutputLayout;
 
+    /** View */
+    private Synchronizer                  synchronizer  = null;
+
+    /** View */
+    private String[]                      monitor       = new String[0];
+
     /**
      * Creates a new instance.
      *
@@ -139,23 +237,29 @@ public class LayoutUtility implements ILayout {
 
         // Sync tables
         dataInputView.addScrollBarListener(new Listener() {
-            @Override public void handleEvent(final Event arg0) {
-                synchronize(dataInputView, dataOutputView);
+            @Override
+            public void handleEvent(final Event arg0) {
+                PixelCoordinate coordinate = dataInputView.getViewportLayer().getOrigin();
+                final int row = coordinate.getY();
+                final int col = coordinate.getX();
+                if (dataOutputView != null) {
+                    dataOutputView.getViewportLayer().setOriginY(row);
+                    dataOutputView.getViewportLayer().setOriginX(col);
+                    synchronize(dataInputView, dataOutputView);
+                }
             }
         });
-        dataInputView.addScrollBarListener(new DelayedChangeListener(100) {
-            @Override public void delayedEvent() {
-                synchronize(dataInputView, dataOutputView);
-            }
-        });        
         dataOutputView.addScrollBarListener(new Listener() {
-            @Override public void handleEvent(final Event arg0) {
-                synchronize(dataOutputView, dataInputView);
-            }
-        });
-        dataOutputView.addScrollBarListener(new DelayedChangeListener(100) {
-            @Override public void delayedEvent() {
-                synchronize(dataOutputView, dataInputView);
+            @Override
+            public void handleEvent(final Event arg0) {
+                PixelCoordinate coordinate = dataOutputView.getViewportLayer().getOrigin();
+                final int row = coordinate.getY();
+                final int col = coordinate.getX();
+                if (dataInputView != null) {
+                    dataInputView.getViewportLayer().setOriginY(row);
+                    dataInputView.getViewportLayer().setOriginX(col);
+                    synchronize(dataOutputView, dataInputView);
+                }
             }
         });
         
@@ -274,19 +378,22 @@ public class LayoutUtility implements ILayout {
     }
 
     /**
-     * Synchronizes the position of both tables
+     * Synchronizes the tables for another second.
+     *
      * @param in
      * @param out
-     * @return
      */
-    private void synchronize(ViewData in, ViewData out) {
-        if (in == null || out == null) {
-            return;
+    protected void synchronize(final ViewData in, final ViewData out) {
+
+        synchronized (this) {
+            if ((synchronizer != null) && (synchronizer.getIn() != in)) {
+                synchronizer.stop();
+                synchronizer = null;
+            }
+
+            if (synchronizer == null) {
+                synchronizer = new Synchronizer(in, out);
+            }
         }
-        PixelCoordinate coordinate = in.getViewportLayer().getOrigin();
-        final int x = coordinate.getY();
-        final int y = coordinate.getX();
-        out.getViewportLayer().setOriginY(x);
-        out.getViewportLayer().setOriginX(y);
     }
 }

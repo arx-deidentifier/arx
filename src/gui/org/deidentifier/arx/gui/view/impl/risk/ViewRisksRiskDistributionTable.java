@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         
-        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -166,10 +166,7 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                 if (stopped || !isEnabled()) {
                     return;
                 }
-                
-                // Disable drawing
-                table.setRedraw(false);
-                
+
                 // Update chart
                 for (final TableItem i : table.getItems()) {
                     i.dispose();
@@ -183,12 +180,7 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                     item.setData("2", cumulative[i]);
                 }
 
-                // Enable drawing and redraw
-                table.setRedraw(true);
-                table.redraw();
                 root.layout();
-                
-                // Set status
                 setStatusDone();
             }
 
@@ -215,9 +207,9 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                 cumulative = model.getFractionOfRecordsForCumulativeRiskThresholds();
                 labels = new String[frequencies.length];
                 for (int i = 0; i < frequencies.length; i++) {
-                    labels[i] = "]" + String.valueOf(SWTUtil.getPrettyString(model.getAvailableLowerRiskThresholds()[i] * 100d)) +  //$NON-NLS-1$
-                                ", " + String.valueOf(SWTUtil.getPrettyString(model.getAvailableUpperRiskThresholds()[i] * 100d)) + "]"; //$NON-NLS-1$ $NON-NLS-2$
+                    labels[i] = String.valueOf(SWTUtil.getPrettyString(model.getAvailableRiskThresholds()[i] * 100d));
                 }
+                labels[0] = "<=" + SWTUtil.getPrettyString(1e-6); //$NON-NLS-1$
 
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {

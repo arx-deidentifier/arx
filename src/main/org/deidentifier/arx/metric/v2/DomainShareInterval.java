@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
@@ -66,6 +65,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
      * @param hierarchy
      * @param dictionary
      */
+
     @SuppressWarnings("unchecked")
     public DomainShareInterval(HierarchyBuilderIntervalBased<T> builder,
                                int[][] hierarchy, String[] dictionary) {
@@ -136,7 +136,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                             share = toDouble(dataType.subtract(interval.getMax(), interval.getMin())) / domainSize;
                         }
                     } else { 
-                        // Special case, '*' at the end
+                     // Special case, '*' at the end
                         share = 1d;
                     }
                 }
@@ -165,30 +165,6 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                 
             }
         }
-    }
-    
-    /**
-     * Creates a new instance
-     */
-    @SuppressWarnings("unchecked")
-    private DomainShareInterval(double domainSize,
-                                DataType<T> dataType,
-                                Range<T> lower, Range<T> upper,
-                                double[] shares,
-                                LongDoubleOpenHashMap duplicates) {
-        super(dataType, lower, upper);
-        this.domainSize = domainSize;
-        this.dataType = (DataTypeWithRatioScale<T>)dataType;
-        this.shares = shares;
-        this.duplicates = duplicates;
-    }
-
-    @Override
-    public DomainShareInterval<T> clone() {
-        return new DomainShareInterval<T>(this.domainSize, this.getDataType(), 
-                                          this.getLowerRange(), this.getUpperRange(),
-                                          this.shares.clone(), this.duplicates.clone());
-        
     }
 
     /**
@@ -252,7 +228,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
             throw new IllegalStateException("Unknown data type");
         }
     }
-    
+
     /**
      * Serialization.
      *

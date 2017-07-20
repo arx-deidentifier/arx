@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,6 @@ import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
-import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 import cern.colt.GenericSorting;
@@ -58,13 +57,10 @@ import cern.colt.function.IntComparator;
 public class StatisticsBuilder {
 
     /** The handle. */
-    private DataHandleInternal      handle;
+    private DataHandleInternal    handle;
 
     /** The stop flag. */
     private volatile WrappedBoolean interrupt = new WrappedBoolean(false);
-
-    /** Model */
-    private final WrappedInteger    progress  = new WrappedInteger();
 
     /**
      * Creates a new instance.
@@ -98,10 +94,9 @@ public class StatisticsBuilder {
     
         // Reset stop flag
         interrupt.value = false;
-        progress.value = 0;
         
         // Return
-        return new StatisticsClassification(handle.getAssociatedInput(), handle, features, clazz, config, interrupt, progress);
+        return new StatisticsClassification(handle.getAssociatedInput(), handle, features, clazz, config, interrupt);
     }
     
     /**
@@ -475,7 +470,7 @@ public class StatisticsBuilder {
             }
             
             // Handle optimized handles
-            int lower = handle.isOptimized() ? 0 : level;
+            int lower = handle.isOptimized() ? 1 : level;
             int upper = handle.isOptimized() ? hierarchy[0].length: level + 1;
             
             // Build higher level order from base order
@@ -583,12 +578,6 @@ public class StatisticsBuilder {
         averageEquivalenceClassSize /= (double)numberOfEquivalenceClasses;
         averageEquivalenceClassSizeIncludingOutliers /= (double)numberOfEquivalenceClassesIncludingOutliers;
         
-        // Fix corner cases
-        if (numberOfEquivalenceClasses == 0) {
-            averageEquivalenceClassSize = 0;
-            maximalEquivalenceClassSize = 0;
-            minimalEquivalenceClassSize = 0;
-        }
 
         // And return
         return new StatisticsEquivalenceClasses(averageEquivalenceClassSize,
@@ -782,14 +771,12 @@ public class StatisticsBuilder {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.NOMINAL,
                                                                stats.getNumberOfMeasures(),
-                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode())));
             } else if (scale == DataScale.ORDINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.ORDINAL,
                                                                stats.getNumberOfMeasures(),
-                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -811,7 +798,6 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.INTERVAL,
                                                                stats.getNumberOfMeasures(),
-                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -851,7 +837,6 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.RATIO,
                                                                stats.getNumberOfMeasures(),
-                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -1053,10 +1038,7 @@ public class StatisticsBuilder {
                 Integer order1 = order.get(array[arg0]);
                 Integer order2 = order.get(array[arg1]);
                 if (order1 == null || order2 == null) {
-                    String message = "The hierarchy seems to not cover all data values";
-                    message += order1 == null ? " (unknown = "+array[arg0]+")" : "";
-                    message += order2 == null ? " (unknown = "+array[arg1]+")" : "";
-                    throw new RuntimeException(message);
+                    throw new RuntimeException("The hierarchy seems to not cover all data values");
                 } else {
                     return order1.compareTo(order2);
                 }
@@ -1180,14 +1162,5 @@ public class StatisticsBuilder {
      */
     void interrupt() {
         this.interrupt.value = true;
-    }
-
-    /**
-     * Returns progress data, if available
-     *
-     * @return
-     */
-    int getProgress() {
-        return this.progress.value;
     }
 }

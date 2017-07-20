@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,7 @@ import java.util.Set;
 import com.carrotsearch.hppc.IntArrayList;
 
 /**
- * This class represents a the dataset that is to be de-identified 
- * as a subset of the given population table.
+ * This class represents a data subset as required for d-presence.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -43,14 +42,14 @@ public class DataSubset implements Serializable {
      */
     private static class Entry implements Serializable {
         
-        /** SVUID */
+        /**  TODO */
         private static final long serialVersionUID = 31695068160887476L;
-
-        /** Record */
-        private String[]          data;
-
-        /** Hashcode */
-        private int               hashcode;
+        
+        /**  TODO */
+        private String[] data;
+        
+        /**  TODO */
+        private int hashcode;
      
         /**
          * 
@@ -174,7 +173,17 @@ public class DataSubset implements Serializable {
      * @return
      */
     public static DataSubset create(Data data, RowSet subset) {
-        return create(data.getHandle().getNumRows(), subset);
+        int rows = data.getHandle().getNumRows();
+        RowSet bitset = RowSet.create(data);
+        int[] array = new int[subset.size()];
+        int idx = 0;
+        for (int i=0; i<rows; i++){
+            if (subset.contains(i)) {
+                bitset.add(i);
+                array[idx++]=i;
+            }
+        }
+        return new DataSubset(bitset, array);
     }
 
     /**
@@ -186,26 +195,6 @@ public class DataSubset implements Serializable {
      */
     public static DataSubset create(Data data, Set<Integer> subset){
         return create(data.getHandle().getNumRows(), subset);
-    }
-
-    /**
-     * Creates a new subset from the given row set, from which a copy is created.
-     *
-     * @param data
-     * @param subset
-     * @return
-     */
-    public static DataSubset create(int rows, RowSet subset) {
-        RowSet bitset = RowSet.create(rows);
-        int[] array = new int[subset.size()];
-        int idx = 0;
-        for (int i=0; i<rows; i++){
-            if (subset.contains(i)) {
-                bitset.add(i);
-                array[idx++]=i;
-            }
-        }
-        return new DataSubset(bitset, array);
     }
     
     /**
@@ -249,13 +238,6 @@ public class DataSubset implements Serializable {
     }
 
     /**
-     * Clone
-     */
-    public DataSubset clone() {
-        return new DataSubset(this.set.clone(), Arrays.copyOf(this.array, this.array.length));
-    }
-
-    /**
      * Getter
      *
      * @return
@@ -263,7 +245,7 @@ public class DataSubset implements Serializable {
     public int[] getArray() {
         return array;
     }
-    
+
     /**
      * Getter
      * 
@@ -272,13 +254,12 @@ public class DataSubset implements Serializable {
     public RowSet getSet() {
         return set;
     }
-
+    
     /**
-     * Returns the size of the data subset
-     * @return
+     * Clone
      */
-    public int getSize() {
-        return array.length;
+    public DataSubset clone() {
+        return new DataSubset(this.set.clone(), Arrays.copyOf(this.array, this.array.length));
     }
 
     /**

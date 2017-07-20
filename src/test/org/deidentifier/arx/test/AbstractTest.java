@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,33 +25,35 @@ import org.deidentifier.arx.metric.Metric;
 import org.junit.Before;
 
 /**
- * Abstract test class
  * 
- * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
 public abstract class AbstractTest {
     
     /**
-     * Enum for metrics
+     * 
      */
     public static enum TestMetric {
         
-        /** Metric*/
+        /** TODO */
         DMSTAR,
-        /** Metric*/
+                                   
+                                   /** TODO */
         DM,
-        /** Metric*/
+                                   
+                                   /** TODO */
         HEIGHT,
-        /** Metric*/
+                                   
+                                   /** TODO */
         PREC,
-        /** Metric*/
+                                   
+                                   /** TODO */
         ENTROPY,
-        /** Metric*/
+                                   
+                                   /** TODO */
         NMENTROPY
     }
     
-    /** Data provider */
+    /** TODO */
     protected DataProvider provider = null;
     
     @Before
@@ -60,7 +62,8 @@ public abstract class AbstractTest {
     }
     
     /**
-     * Creates a metric
+     * 
+     *
      * @param metricType
      * @return
      */
@@ -90,7 +93,8 @@ public abstract class AbstractTest {
     }
     
     /**
-     * Convert to array
+     * 
+     *
      * @param iterator
      * @return
      */
@@ -103,7 +107,8 @@ public abstract class AbstractTest {
     }
     
     /**
-     * Print array
+     * 
+     *
      * @param array
      */
     protected void printArray(final String[][] array) {
@@ -131,7 +136,8 @@ public abstract class AbstractTest {
     }
     
     /**
-     * Convert to array
+     * 
+     *
      * @param result
      * @return
      */

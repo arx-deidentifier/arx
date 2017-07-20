@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,30 +57,6 @@ public class RiskModelSampleRisks extends RiskModelSample {
     }
 
     /**
-     * Return journalist risk threshold, 1 if there is none
-     * @return
-     */
-    public double getEstimatedJournalistRisk() {
-        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdJournalist() : 1d);
-    }
-
-    /**
-     * Return marketer risk threshold, 1 if there is none
-     * @return
-     */
-    public double getEstimatedMarketerRisk() {
-        return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null && anonymous ? config.getRiskThresholdMarketer() : 1d);
-    }
-
-    /**
-     * Return prosecutor risk threshold, 1 if there is none
-     * @return
-     */
-    public double getEstimatedProsecutorRisk() {
-        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
-    }
-
-    /**
      * Returns the fraction of tuples affected by the highest re-identification
      * risk
      * 
@@ -121,6 +97,30 @@ public class RiskModelSampleRisks extends RiskModelSample {
         int[] classes = getHistogram().getHistogram();
         int index = classes.length - 2;
         return 1d / (double) classes[index];
+    }
+
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getEstimatedJournalistRisk() {
+        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdJournalist() : 1d);
+    }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getEstimatedMarketerRisk() {
+        return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null && anonymous ? config.getRiskThresholdMarketer() : 1d);
+    }
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getEstimatedProsecutorRisk() {
+        return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
     }
     
     /**

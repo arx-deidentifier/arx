@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,15 +116,10 @@ public class ComponentTitledFolder implements IComponent {
      * @param controller
      * @param bar
      * @param id
-     * @param bottom
+     * @param helpids
      */
-    public ComponentTitledFolder(Composite parent, 
-                                 Controller controller, 
-                                 ComponentTitledFolderButtonBar bar, 
-                                 String id, 
-                                 boolean bottom,
-                                 boolean supportsHidingElements){
-        this(parent, controller, bar, id, null, bottom, supportsHidingElements);
+    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButtonBar bar, String id, Map<Composite, String> helpids){
+        this(parent, controller, bar, id, helpids, false, false);
     }
 
     /**
@@ -134,10 +129,15 @@ public class ComponentTitledFolder implements IComponent {
      * @param controller
      * @param bar
      * @param id
-     * @param helpids
+     * @param bottom
      */
-    public ComponentTitledFolder(Composite parent, Controller controller, ComponentTitledFolderButtonBar bar, String id, Map<Composite, String> helpids){
-        this(parent, controller, bar, id, helpids, false, false);
+    public ComponentTitledFolder(Composite parent, 
+                                 Controller controller, 
+                                 ComponentTitledFolderButtonBar bar, 
+                                 String id, 
+                                 boolean bottom,
+                                 boolean supportsHidingElements){
+        this(parent, controller, bar, id, null, bottom, supportsHidingElements);
     }
 
     

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>ImportWizardPageJDBC (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
@@ -179,11 +179,28 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageJDBC.html#connect()">connect</a></strong>()</code>
+<div class="block">Connects to the database
+
+ This tries to establish an JDBC connection.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageJDBC.html#createControl(org.eclipse.swt.widgets.Composite)">createControl</a></strong>(org.eclipse.swt.widgets.Composite&nbsp;parent)</code>
 <div class="block">Creates the design of this page
  
  This adds all the controls to the page along with their listeners.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageJDBC.html#readTables()">readTables</a></strong>()</code>
+<div class="block">Reads in the tables
+
+ If successful, the page is marked as complete and a list of tables is
+ assigned to <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html" title="class in org.deidentifier.arx.gui.view.impl.wizard"><code>ImportWizardModel</code></a>.</div>
 </td>
 </tr>
 </table>
@@ -251,7 +268,7 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
 <a name="createControl(org.eclipse.swt.widgets.Composite)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>createControl</h4>
 <pre>public&nbsp;void&nbsp;createControl(org.eclipse.swt.widgets.Composite&nbsp;parent)</pre>
@@ -259,6 +276,37 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
  
  This adds all the controls to the page along with their listeners.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>parent</code> - </dd></dl>
+</li>
+</ul>
+<a name="connect()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>connect</h4>
+<pre>protected&nbsp;boolean&nbsp;connect()</pre>
+<div class="block">Connects to the database
+
+ This tries to establish an JDBC connection. In case of an error
+ appropriate error messages are set. Otherwise the connection is passed
+ on to <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html" title="class in org.deidentifier.arx.gui.view.impl.wizard"><code>ImportWizardModel</code></a>. The return value indicates whether a
+ connection has been established.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd>True if successfully connected, false otherwise</dd><dt><span class="strong">See Also:</span></dt><dd><code>ImportWizardModel#setJdbcConnection(Connection)}</code></dd></dl>
+</li>
+</ul>
+<a name="readTables()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>readTables</h4>
+<pre>protected&nbsp;boolean&nbsp;readTables()</pre>
+<div class="block">Reads in the tables
+
+ If successful, the page is marked as complete and a list of tables is
+ assigned to <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html" title="class in org.deidentifier.arx.gui.view.impl.wizard"><code>ImportWizardModel</code></a>. Otherwise an appropriate error messages
+ is set.</div>
+<dl><dt><span class="strong">See Also:</span></dt><dd><code>ImportWizardModel#setJdbcTables(List)}</code></dd></dl>
 </li>
 </ul>
 </li>

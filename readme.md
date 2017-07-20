@@ -1,4 +1,4 @@
-ARX - Open Source Data Anonymization Software
+ARX - Powerful Data Anonymization
 ====
 
 ARX is a comprehensive open source software for de-identifying sensitive personal data. 
@@ -8,18 +8,18 @@ tight integration of the many different aspects relevant to data anonymization. 
  * Risk-based anonymization using different statistical models
  * Syntactic privacy models, such as k-anonymity, ℓ-diversity, t-closeness and δ-presence
  * Semantic privacy models, such as (ɛ, δ)-differential privacy
- * Methods for optimizing the profitability of data publishing based on monetary cost-benefit analyses
  * Data transformation with generalization, suppression, microaggregation and top/bottom coding as well as global and local recoding
  * Methods for analyzing data utility
  * Methods for analyzing re-identification risks
 
 The software is able to handle very large datasets on commodity hardware and features an intuitive cross-platform 
-graphical user interface. You can find further information on the project [website](http://arx.deidentifier.org/). 
+graphical user interface. You can find further information on our [website](http://arx.deidentifier.org/). 
 
 License
 ------
 
-ARX (C) 2012-2017 Fabian Prasser, Florian Kohlmayer and Contributors.
+The ARX framework is copyright (C) 2012-2016 Florian Kohlmayer and Fabian Prasser. 
+It is licensed under the Apache License, Version 2.0:
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -36,4 +36,4 @@ governing permissions and limitations under the License.
 External Libraries
 ------
 
-ARX uses external libraries. Their licenses are listed in the respective folders.
+The framework uses external libraries. The according licenses are listed in the respective folders.

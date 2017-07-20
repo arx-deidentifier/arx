@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,8 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
-import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This is a special criterion that does not enforce any privacy guarantees
@@ -44,12 +42,7 @@ public class Inclusion extends DPresence {
     public Inclusion(DataSubset subset) {
         super(subset);
     }
-
-    @Override
-    public PrivacyCriterion clone(DataSubset subset) {
-        return new Inclusion(subset);
-    }
-    
+        
     @Override
     public int getRequirements(){
         // Requires two counters
@@ -58,15 +51,15 @@ public class Inclusion extends DPresence {
     }
 
     @Override
-    public void initialize(DataManager manager, ARXConfiguration config) {
+    public void initialize(DataManager manager) {
         // Nothing to do
     }
-
+    
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry) {
         return true;
     }
-    
+
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
@@ -75,12 +68,5 @@ public class Inclusion extends DPresence {
     @Override
     public String toString() {
         return "Inclusion";
-    }
-
-    @Override
-    public ElementData render() {
-        ElementData result = new ElementData("Record selection");
-        result.addProperty("Number of records", super.getDataSubset().getSize());
-        return result;
     }
 }

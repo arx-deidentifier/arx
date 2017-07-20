@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,18 +37,6 @@ import de.linearbits.jhpl.PredictiveProperty;
  */
 public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
 
-    /**
-     * Creates a new instance
-     * @param solutionSpace
-     * @param checker
-     * @param timeLimit
-     * @return
-     */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace,
-                                           NodeChecker checker,
-                                           int timeLimit) {
-        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
-    }
     /** Property */
     private final PredictiveProperty propertyChecked;
     /** Property */
@@ -57,10 +45,9 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     private final int                stepping;
     /** Time limit */
     private final int                timeLimit;
-
     /** The start time */
     private long                     timeStart;
-    
+
     /**
     * Constructor
     * @param space
@@ -78,6 +65,18 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         this.timeLimit = timeLimit;
         if (timeLimit <= 0) { 
             throw new IllegalArgumentException("Invalid time limit. Must be greater than zero."); 
+        }
+    }
+    
+    /**
+    * Makes sure that the given Transformation has been checked
+    * @param transformation
+    */
+    private void assureChecked(final Transformation transformation) {
+        if (!transformation.hasProperty(propertyChecked)) {
+            transformation.setChecked(checker.check(transformation, true));
+            trackOptimum(transformation);
+            progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
         }
     }
 
@@ -113,15 +112,11 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
     
     /**
-    * Makes sure that the given Transformation has been checked
-    * @param transformation
-    */
-    private void assureChecked(final Transformation transformation) {
-        if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true));
-            trackOptimum(transformation);
-            progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
-        }
+     * Returns the current execution time
+     * @return
+     */
+    private int getTime() {
+        return (int)(System.currentTimeMillis() - timeStart);
     }
 
     /**
@@ -168,31 +163,33 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
     
     /**
-     * Returns the current execution time
-     * @return
-     */
-    private int getTime() {
-        return (int)(System.currentTimeMillis() - timeStart);
-    }
-
-    /**
     * Returns whether we can prune this Transformation
     * @param transformation
     * @return
     */
     private boolean prune(Transformation transformation) {
+        // A Transformation (and it's direct and indirect successors, respectively) can be pruned if
+        // the information loss is monotonic and the nodes's IL is greater or equal than the IL of the
+        // global maximum (regardless of the anonymity criterion's monotonicity)
+        boolean metricMonotonic = checker.getMetric().isMonotonic() || checker.getConfiguration().getAbsoluteMaxOutliers() == 0;
         // Depending on monotony of metric we choose to compare either IL or monotonic subset with the global optimum
         boolean prune = false;
         if (getGlobalOptimum() != null) {
-            
-            // A Transformation (and it's direct and indirect successors, respectively) can be pruned if
-            // the information loss is monotonic and the nodes's IL is greater or equal than the IL of the
-            // global maximum (regardless of the anonymity criterion's monotonicity)
-            // TODO: We could use this for predictive tagging as well!
-            if (checker.getMetric().isMonotonic(checker.getConfiguration().getMaxOutliers())) {
-                prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
-            }
+            if (metricMonotonic) prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
         }
         return (prune || transformation.hasProperty(propertyExpanded));
+    }
+
+    /**
+     * Creates a new instance
+     * @param solutionSpace
+     * @param checker
+     * @param timeLimit
+     * @return
+     */
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace,
+                                           NodeChecker checker,
+                                           int timeLimit) {
+        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
     }
 }

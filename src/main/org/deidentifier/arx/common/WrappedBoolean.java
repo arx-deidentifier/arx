@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,9 +23,6 @@ package org.deidentifier.arx.common;
  */
 public final class WrappedBoolean {
 
-    /** The value*/
-    public boolean value = false;
-
     /**
      * Creates a new instance with initial value "false"
      */
@@ -40,4 +37,7 @@ public final class WrappedBoolean {
     public WrappedBoolean(boolean initialValue) {
         this.value = initialValue;
     }
+
+    /** The value*/
+    public boolean value = false;
 }

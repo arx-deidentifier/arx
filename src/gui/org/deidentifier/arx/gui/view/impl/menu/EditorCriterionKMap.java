@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,17 +148,6 @@ public class EditorCriterionKMap extends EditorCriterion<ModelKMapCriterion> {
         return group;
     }
     
-    @Override
-    protected List<ModelCriterion> getTypicalParameters() {
-        
-        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-        result.add(new ModelKMapCriterion(3));
-        result.add(new ModelKMapCriterion(5));
-        result.add(new ModelKMapCriterion(10));
-        result.add(new ModelKMapCriterion(100));
-        return result;
-    }
-    
     /**
      * Parse
      */
@@ -184,5 +173,16 @@ public class EditorCriterionKMap extends EditorCriterion<ModelKMapCriterion> {
         }
         updateLabel(labelSignificanceLevel, model.getSignificanceLevel());
         knobSignificanceLevel.setValue(model.getSignificanceLevel());
+    }
+    
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+        
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        result.add(new ModelKMapCriterion(3));
+        result.add(new ModelKMapCriterion(5));
+        result.add(new ModelKMapCriterion(10));
+        result.add(new ModelKMapCriterion(100));
+        return result;
     }
 }

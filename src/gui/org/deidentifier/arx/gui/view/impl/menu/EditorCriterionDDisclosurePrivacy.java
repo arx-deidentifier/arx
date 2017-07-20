@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,7 +74,7 @@ public class EditorCriterionDDisclosurePrivacy extends EditorCriterion<ModelDDis
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.100")); //$NON-NLS-1$
 
         labelD = createLabel(group);
-        knobD = createKnobDouble(group, 0.000001d, 1000000d);
+        knobD = createKnobDouble(group, 0.000001d, 10d);
         updateLabel(labelD, knobD.getValue());
         knobD.addSelectionListener(new SelectionAdapter() {
             @Override

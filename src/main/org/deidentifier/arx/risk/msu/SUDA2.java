@@ -21,28 +21,18 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.deidentifier.arx.common.WrappedBoolean;
-import org.deidentifier.arx.exceptions.ComputationInterruptedException;
-
 import com.carrotsearch.hppc.IntOpenHashSet;
 
-/**
- * This class implements the SUDA2 algorithm
- * 
- * @author Fabian Prasser
- */
 public class SUDA2 {
-    
+
+    /** Debug data */
+    private int           calls = 0;
     /** The data */
-    private final int[][]         data;
+    private final int[][] data;
     /** Number of columns */
-    private final int             columns;
+    private final int     columns;
     /** The result */
-    private SUDA2Result           result;
-    /** Progress listener */
-    private SUDA2ProgressListener progressListener;
-    /** Stop flag */
-    private WrappedBoolean        stop;
+    private SUDA2Result   result;
 
     /**
      * Constructor
@@ -55,53 +45,27 @@ public class SUDA2 {
         
         // Init
         this.data = data;
-        this.columns = data.length == 0 ? 0 : data[0].length;
+        this.columns = data[0].length;
     }
 
     /**
-     * Executes the SUDA2 algorithm.
+     * Executes the SUDA2 algorithm
      * 
-     * @param maxKeyLength If maxKeyLength <= 0, maxKeyLength will be set to the number of columns
+     * @param maxK If maxK <= 0, maxK will be set to the number of columns
      * @return
      */
-    public SUDA2Statistics getStatistics(int maxKeyLength) {
+    public SUDA2Result suda2(int maxK) {
         
         // If maxK <= 0, maxK will be set to the number of columns
-        maxKeyLength = maxKeyLength > 0 ? maxKeyLength : columns;
+        maxK = maxK > 0 ? maxK : columns;
         
         // Execute
-        this.result = new SUDA2Statistics(this.data.length, this.columns, maxKeyLength);
-        
-        // Check
-        if (this.data.length == 0 || this.data[0].length == 0) {
-            return (SUDA2Statistics)this.result;
-        }
-        
-        this.suda2(maxKeyLength, this.getItems().getItemList(), data.length);
+        this.calls = 0;
+        this.result = new SUDA2Result(this.columns, maxK);
+        this.suda2(maxK, this.getItems().getItemList(), data.length);
         
         // Return
-        return (SUDA2Statistics)this.result;
-    }
-    
-    /**
-     * Executes the SUDA2 algorithm.
-     * 
-     * @param maxKeyLength If maxKeyLength <= 0, maxKeyLength will be set to the number of columns
-     * @return
-     */
-    public void findKeys(int maxKeyLength, SUDA2Listener listener) {
-
-        // If maxK <= 0, maxK will be set to the number of columns
-        maxKeyLength = maxKeyLength > 0 ? maxKeyLength : columns;
-
-        // Check
-        if (this.data.length == 0 || this.data[0].length == 0) {
-            return;
-        }
-        
-        // Execute
-        this.result = listener;
-        this.suda2(maxKeyLength, this.getItems().getItemList(), data.length);
+        return this.result;
     }
 
     /**
@@ -111,6 +75,9 @@ public class SUDA2 {
     private void check(int[][] data) {
         if (data == null) {
             throw new NullPointerException("Data must not be null");
+        }
+        if (data.length == 0 || data[0] == null || data[0].length == 0) {
+            throw new IllegalArgumentException("Data must not be empty");
         }
     }
         
@@ -191,6 +158,15 @@ public class SUDA2 {
         // Return
         return new Pair<List<SUDA2ItemSet>, SUDA2ItemList>(msus, new SUDA2ItemList(result));
     }
+//
+//    /**
+//     * Returns all 1-MSUs for the given item
+//     * @param item
+//     * @return
+//     */
+//    private Set<SUDA2ItemSet> getOneMSUs(SUDA2Item item) {
+//        return getItems(item).getOneMSUs();
+//    }
 
     /**
      * Returns all 1-MSUS for the given reference item from the given list, starting at fromIndex (included)
@@ -306,6 +282,8 @@ public class SUDA2 {
                                     SUDA2ItemList currentList,
                                     int numRecords) {
 
+        this.calls++;
+
         // Find MSUs and clear list
         Pair<List<SUDA2ItemSet>, SUDA2ItemList> msusAndList = getMSUs(currentList, numRecords);
         List<SUDA2ItemSet> msus = msusAndList.first;
@@ -318,11 +296,18 @@ public class SUDA2 {
             for (SUDA2ItemSet msu : msus) {
                 result.registerMSU(msu);
             }
-        } 
-        
-        if (stop != null && stop.value) {
-            throw new ComputationInterruptedException();
         }
+//
+//        // Find perfectly correlating MSUs
+//        for (int i = 0; i < currentList.size(); i++) {
+//            SUDA2Item item1 = currentList.getList().get(i);
+//            for (int j = i+1; j < currentList.size(); j++) {
+//                SUDA2Item item2 = currentList.getList().get(j);
+//                if (item1.getRows().equals(item2.getRows())) {
+//                    System.out.println("Perfect correlation between " + item1.getSupport() + "/" + item2.getSupport());
+//                }
+//            }
+//        }
 
         // Check for maxK
         if (maxK <= 1) {
@@ -331,22 +316,23 @@ public class SUDA2 {
 
         // For each item i
         int index = 0;
-        int total = currentList.getList().size();
         for (SUDA2Item referenceItem : currentList.getList()) {
             
             // Track
             index++;
             
             // Progress information
-            if (numRecords == data.length && progressListener != null) {
-             
-                progressListener.update((double)index / (double)total);
+            if (numRecords == data.length) {
+                System.out.println(index + "/" + currentList.size() + " -> " + calls);
+//                if (index == 50) {
+//                    return null;
+//                }
             }
 
             // Recursive call
             int upperLimit = maxK - 1; // Pruning strategy 3
-            upperLimit = Math.min(upperLimit, currentList.size() - index); // Pruning strategy 2
-            upperLimit = Math.min(upperLimit, referenceItem.getSupport() - 1); // Pruning strategy 1
+            upperLimit = Math.min(upperLimit, currentList.size() - index); // Pruning strategy 2 // TODO: (+1)?
+            upperLimit = Math.min(upperLimit, referenceItem.getSupport() - 1); // Pruning strategy 1 // TODO: No effect.
             
             // We only perform recursion for maxK > 1
             List<SUDA2ItemSet> msus_i;
@@ -373,26 +359,33 @@ public class SUDA2 {
                     candidate.add(referenceItem);
                     msus.add(candidate);
                 }
+                
+                // TODO: Just a sanity check
+//                if (msus.contains(merged)) {
+//                    throw new IllegalStateException("Duplicate result");
+//                }
+                
+//                if (maxK == 1) {
+//                    for (SUDA2ItemSet existing : msus) {
+//                        if (existing.intersectsWith(merged)) {
+//                            throw new IllegalStateException("Non-minimal result");
+//                        }
+//                    }
+//                    Set<Integer> rows = new HashSet<Integer>();
+//                    Iterator<SUDA2Item> iter = merged.getItems().iterator();
+//                    rows.addAll(this.set.getItem(iter.next().getId()).getRows());
+//                    while (iter.hasNext()) {
+//                        rows.retainAll(this.set.getItem(iter.next().getId()).getRows());
+//                    }
+//                    if (rows.size() != 1) {
+//                        throw new IllegalStateException("Non-unique result");
+//                    }
+//                }
+
             }
         }
         
         // Return
         return msus;
-    }
-
-    /**
-     * Sets a progress listener
-     * @param progressListener
-     */
-    public void setProgressListener(SUDA2ProgressListener progressListener) {
-        this.progressListener = progressListener;
-    }
-
-    /**
-     * Sets a stop flag
-     * @param stop
-     */
-    public void setStopFlag(WrappedBoolean stop) {
-        this.stop = stop;
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -133,7 +132,7 @@ public class MainToolBar extends AbstractMenu {
                     } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
                         anonymityUnknown++;
                     }
-                    if (node.getHighestScore().compareTo(node.getLowestScore()) == 0) {
+                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) == 0) {
                         infolossAvailable++;
                     }
                 }
@@ -226,16 +225,11 @@ public class MainToolBar extends AbstractMenu {
             if (this.optimum != null) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
                   .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
-                  .append(SWTUtil.getPrettyString(!this.heuristic))
+                  .append(heuristic ? Resources.getMessage("MainToolBar.60") : Resources.getMessage("MainToolBar.61")) //$NON-NLS-1$ //$NON-NLS-2$
                   .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
-                  .append(Arrays.toString(this.optimum.getTransformation()));
+                  .append(Arrays.toString(optimum.getTransformation()));
                 sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$
-                  .append(this.optimum.getHighestScore().toString());
-                for (QualityMetadata<?> metadata : this.optimum.getHighestScore().getMetadata()) {
-                    sb.append("\n - ") //$NON-NLS-1$
-                      .append(metadata.getParameter()).append(": ") //$NON-NLS-1$
-                      .append(SWTUtil.getPrettyString(metadata.getValue()));
-                }
+                  .append(optimum.getMaximumInformationLoss().toString());
             }
 
             // Return
@@ -411,6 +405,19 @@ public class MainToolBar extends AbstractMenu {
     }
 
     /**
+     * Trims the given string to 20 characters
+     * @param attribute
+     * @return
+     */
+    private String trim(String attribute) {
+        if (attribute.length() > 20) {
+            return attribute.substring(0, 20) + "...";
+        } else {
+            return attribute;
+        }
+    }
+
+    /**
      * Creates all items
      * @param toolbar
      * @param items
@@ -576,19 +583,6 @@ public class MainToolBar extends AbstractMenu {
         this.labelSelected.setToolTipText(tooltip);
         this.labelApplied.setToolTipText(tooltip);
         this.labelTransformations.setToolTipText(tooltip);
-    }
-
-    /**
-     * Trims the given string to 20 characters
-     * @param attribute
-     * @return
-     */
-    private String trim(String attribute) {
-        if (attribute.length() > 20) {
-            return attribute.substring(0, 20) + "...";
-        } else {
-            return attribute;
-        }
     }
     
     @Override

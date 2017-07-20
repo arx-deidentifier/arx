@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -114,7 +114,7 @@ class UtilityEstimator {
         // Prepare
         initializeTopDown(lattice.getTop());
         setMaximum(lattice.getTop());
-        this.globalMaximum = lattice.getTop().getHighestScore();
+        this.globalMaximum = lattice.getTop().getMaximumInformationLoss();
         
         // Pull
         ARXNode[][] levels = lattice.getLevels();
@@ -123,7 +123,7 @@ class UtilityEstimator {
             for (final ARXNode node : level) {
                 pullTopDown(node);
                 setMaximum(node);
-                this.globalMaximum = max(this.globalMaximum, node.getHighestScore());
+                this.globalMaximum = max(this.globalMaximum, node.getMaximumInformationLoss());
             }
         }
     }
@@ -136,7 +136,7 @@ class UtilityEstimator {
         // Prepare
         initializeBottomUp(lattice.getBottom());
         setMinimum(lattice.getBottom());
-        this.globalMinimum = lattice.getBottom().getLowestScore();
+        this.globalMinimum = lattice.getBottom().getMinimumInformationLoss();
         
         // Pull
         ARXNode[][] levels = lattice.getLevels();
@@ -145,7 +145,7 @@ class UtilityEstimator {
             for (final ARXNode node : level) {
                 pullBottomUp(node);
                 setMinimum(node);
-                this.globalMinimum = min(this.globalMinimum, node.getLowestScore());
+                this.globalMinimum = min(this.globalMinimum, node.getMinimumInformationLoss());
             }
         }
     }
@@ -169,8 +169,8 @@ class UtilityEstimator {
 
         int id = node.getId();
         Anonymity nodeAnonymity = node.getAnonymity();
-        InformationLoss<?> nodeMin = node.getLowestScore();
-        InformationLoss<?> metricMin = metric.createInstanceOfLowestScore();
+        InformationLoss<?> nodeMin = node.getMinimumInformationLoss();
+        InformationLoss<?> metricMin = metric.createMinInformationLoss();
 
         lowerBound[id] = getValueOrDefault(node.getLowerBound(), metricMin);
         
@@ -195,8 +195,8 @@ class UtilityEstimator {
         
         int id = node.getId();
         Anonymity nodeAnonymity = node.getAnonymity();
-        InformationLoss<?> nodeMax = node.getHighestScore();
-        InformationLoss<?> metricMax = metric.createInstanceOfHighestScore();
+        InformationLoss<?> nodeMax = node.getMaximumInformationLoss();
+        InformationLoss<?> metricMax = metric.createMaxInformationLoss();
 
         if (nodeAnonymity == Anonymity.ANONYMOUS && monotonicAnonymous) {
             maximumAnonymous[id] = getValueOrDefault(nodeMax, metricMax);
@@ -259,11 +259,11 @@ class UtilityEstimator {
         }
         
         // Check if values can be replaced
-        if (node.getLowestScore() != null) {
+        if (node.getMinimumInformationLoss() != null) {
             if (node.getAnonymity() == Anonymity.ANONYMOUS && monotonicAnonymous) {
-                minimumAnonymous[id] = max(minimumAnonymous[id], node.getLowestScore());
+                minimumAnonymous[id] = max(minimumAnonymous[id], node.getMinimumInformationLoss());
             } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS && monotonicNonAnonymous) {
-                minimumNonAnonymous[id] = max(minimumNonAnonymous[id], node.getLowestScore());
+                minimumNonAnonymous[id] = max(minimumNonAnonymous[id], node.getMinimumInformationLoss());
             }
         }
     }
@@ -308,11 +308,11 @@ class UtilityEstimator {
         }
         
         // Check if values can be replaced
-        if (node.getHighestScore() != null) {
+        if (node.getMaximumInformationLoss() != null) {
             if (node.getAnonymity() == Anonymity.ANONYMOUS && monotonicAnonymous) {
-                maximumAnonymous[id] = min(maximumAnonymous[id], node.getHighestScore());
+                maximumAnonymous[id] = min(maximumAnonymous[id], node.getMaximumInformationLoss());
             } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS && monotonicNonAnonymous) {
-                maximumNonAnonymous[id] = min(maximumNonAnonymous[id], node.getHighestScore());
+                maximumNonAnonymous[id] = min(maximumNonAnonymous[id], node.getMaximumInformationLoss());
             }
         }
     }
@@ -325,24 +325,24 @@ class UtilityEstimator {
     private void setMaximum(ARXNode node) {
     
         // If we already know everything, abort
-        if (node.getLowestScore() != null && 
-            node.getHighestScore() != null && 
-            node.getLowestScore().compareTo(node.getHighestScore())==0){
+        if (node.getMinimumInformationLoss() != null && 
+            node.getMaximumInformationLoss() != null && 
+            node.getMinimumInformationLoss().compareTo(node.getMaximumInformationLoss())==0){
             return;
         }
         
         // Check if values can be replaced
         InformationLoss<?> minimalMaximum = null;
         if (node.getAnonymity() == Anonymity.ANONYMOUS && monotonicAnonymous) {
-            minimalMaximum = min(node.getHighestScore(), maximumAnonymous[node.getId()]);
+            minimalMaximum = min(node.getMaximumInformationLoss(), maximumAnonymous[node.getId()]);
         } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS && monotonicNonAnonymous) {
-            minimalMaximum = min(node.getHighestScore(), maximumNonAnonymous[node.getId()]);
+            minimalMaximum = min(node.getMaximumInformationLoss(), maximumNonAnonymous[node.getId()]);
         } else {
-            minimalMaximum = min(node.getHighestScore(), metric.createInstanceOfHighestScore());
+            minimalMaximum = min(node.getMaximumInformationLoss(), metric.createMaxInformationLoss());
         }
         
         // Set
-        node.access().setHighestScore(minimalMaximum);
+        node.access().setMaximumInformationLoss(minimalMaximum);
     }
 
     /**
@@ -353,20 +353,20 @@ class UtilityEstimator {
     private void setMinimum(ARXNode node) {
     
         // If we already know everything, abort
-        if (node.getLowestScore() != null && 
-            node.getHighestScore() != null && 
-            node.getLowestScore().compareTo(node.getHighestScore())==0){
+        if (node.getMinimumInformationLoss() != null && 
+            node.getMaximumInformationLoss() != null && 
+            node.getMinimumInformationLoss().compareTo(node.getMaximumInformationLoss())==0){
             return;
         }
         
         // We can always use the lower bound
-        InformationLoss<?> maximalMinimum = max(node.getLowestScore(), lowerBound[node.getId()]);
+        InformationLoss<?> maximalMinimum = max(node.getMinimumInformationLoss(), lowerBound[node.getId()]);
         
         // Check if values can be replaced
         if (node.getAnonymity() == Anonymity.ANONYMOUS) {
             
             // We can always use the optimum as a minimum for anonymous nodes
-            maximalMinimum = max(maximalMinimum, lattice.getOptimum().getLowestScore());
+            maximalMinimum = max(maximalMinimum, lattice.getOptimum().getMinimumInformationLoss());
             
             if (monotonicAnonymous) {
                 maximalMinimum = max(maximalMinimum, minimumAnonymous[node.getId()]);
@@ -376,7 +376,7 @@ class UtilityEstimator {
         }
         
         // Set
-        node.access().setLowestScore(maximalMinimum);
+        node.access().setMinimumInformationLoss(maximalMinimum);
     }
 
     /**

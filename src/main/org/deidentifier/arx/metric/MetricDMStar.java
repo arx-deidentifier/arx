@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.deidentifier.arx.metric;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -46,7 +45,7 @@ public class MetricDMStar extends MetricDefault {
      * Creates a new instance.
      */
     protected MetricDMStar() {
-        super(true, true, false);
+        super(true, false);
     }
 
     @Override
@@ -68,15 +67,13 @@ public class MetricDMStar extends MetricDefault {
     }
 
     @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Discernibility");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
+    public String toString() {
+        return "Monotonic Discernability";
     }
 
     @Override
-    public String toString() {
-        return "Monotonic Discernability";
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
@@ -96,11 +93,6 @@ public class MetricDMStar extends MetricDefault {
             m = m.nextOrdered;
         }
         return new InformationLossDefaultWithBound(value, value);
-    }
-
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
     
     @Override

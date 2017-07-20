@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,31 +30,31 @@ import org.deidentifier.arx.Data.DefaultData;
  */
 public class DataProvider {
     
-    /** Data */
+    /** TODO */
     protected DefaultData data;
     
-    /** Hierarchy */
+    /** TODO */
     protected DefaultHierarchy age;
     
-    /** Hierarchy */
+    /** TODO */
     private final DefaultHierarchy ageWrong;
     
-    /** Hierarchy */
+    /** TODO */
     private final DefaultHierarchy gender;
     
-    /** Hierarchy */
+    /** TODO */
     private final DefaultHierarchy zipcode;
     
-    /** Hierarchy */
+    /** TODO */
     private final DefaultHierarchy ageOne;
     
-    /** Hierarchy */
+    /** TODO */
     private final DefaultHierarchy genderOne;
     
-    /** Hierarchy */
+    /** TODO */
     private final DefaultHierarchy zipcodeOne;
     
-    /** Hierarchy */
+    /** TODO */
     private final DefaultHierarchy ageMissing;
     
     /**

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2014-2015 Karol Babioch, Fabian Prasser
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -248,13 +248,11 @@ public class ImportWizardPageJDBC extends WizardPage {
             /* Read tables from file */
             @Override
             public void widgetSelected(SelectionEvent e) {
+                setPageComplete(false);
                 setErrorMessage(null);
+                
                 connect();
-                boolean ok = readTables();
-                setPageComplete(ok);
-                if (ok) {
-                    setMessage(Resources.getMessage("ImportWizardPageJDBC.21"), INFORMATION); //$NON-NLS-1$
-                }
+                readTables();
             }
         });
         
@@ -402,7 +400,7 @@ public class ImportWizardPageJDBC extends WizardPage {
      *
      * @see {@link ImportWizardModel#setJdbcConnection(Connection)}
      */
-    private boolean connect() {
+    protected boolean connect() {
         
         try {
             
@@ -457,12 +455,12 @@ public class ImportWizardPageJDBC extends WizardPage {
      * Reads in the tables
      *
      * If successful, the page is marked as complete and a list of tables is
-     * assigned to {@link ImportWizardModel}. Otherwise an appropriate error message
+     * assigned to {@link ImportWizardModel}. Otherwise an appropriate error messages
      * is set.
      *
      * @see {@link ImportWizardModel#setJdbcTables(List)}
      */
-    private boolean readTables() {
+    protected boolean readTables() {
         ResultSet rs = null;
         try {
             Connection connection = wizardImport.getData().getJdbcConnection();
@@ -471,12 +469,7 @@ public class ImportWizardPageJDBC extends WizardPage {
             List<String> tables = new ArrayList<String>();
             
             while (rs.next()) {
-                String name = rs.getString("TABLE_NAME"); //$NON-NLS-1$
-                String schema = rs.getString("TABLE_SCHEM"); //$NON-NLS-1$
-                if (schema != null) {
-                    name = schema + "." + name; //$NON-NLS-1$
-                }
-                tables.add(name); 
+                tables.add(rs.getString("TABLE_NAME")); //$NON-NLS-1$
             }
             
             wizardImport.getData().setJdbcTables(tables);

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,18 +72,18 @@ class ComponentStatusLabelGIFHandler implements Runnable {
     } 
     
     /**
-     * Stop
-     */
-    public void stop(){
-        this.stop = true;
-    }
-    
-    /**
      * Dispose the current image, if any
      */
     private void disposeCurrentImage() {
         if (statusLabel.getImage() != null && !statusLabel.getImage().isDisposed()) {
             statusLabel.getImage().dispose();
         }
+    }
+    
+    /**
+     * Stop
+     */
+    public void stop(){
+        this.stop = true;
     }
 }

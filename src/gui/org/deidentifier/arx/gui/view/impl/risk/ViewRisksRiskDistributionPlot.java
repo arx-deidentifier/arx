@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,7 +64,7 @@ import org.swtchart.Range;
 public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk> {
 
     /** Minimal width of a category label. */
-    private static final int MIN_CATEGORY_WIDTH = 18;
+    private static final int MIN_CATEGORY_WIDTH = 10;
 
     /** View */
     private Chart            chart;
@@ -102,26 +102,26 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
     }
 
     /**
-     * Insert item to back
+     * Insert to front
      * @param array
      * @param value
      * @return
      */
     private double[] insertToBack(double[] array, double value) {
         double[] result = Arrays.copyOf(array, array.length + 1);
-        result[result.length - 1] = value;
+        result[result.length-1] = value;
         return result;
     }
 
     /**
-     *Insert item to back
+     * Insert to front
      * @param array
      * @param value
      * @return
      */
     private String[] insertToBack(String[] array, String value) {
         String[] result = Arrays.copyOf(array, array.length + 1);
-        result[result.length - 1] = value;
+        result[result.length-1] = value;
         return result;
     }
 
@@ -133,7 +133,7 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
         if (chart != null) {
             chart.dispose();
         }
-        chart = new Chart(root, SWT.DOUBLE_BUFFERED);
+        chart = new Chart(root, SWT.NONE);
         chart.setOrientation(SWT.HORIZONTAL);
         
         // Show/Hide axis
@@ -168,12 +168,12 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
         
         // OSX workaround
         if (System.getProperty("os.name").toLowerCase().contains("mac")){ //$NON-NLS-1$ //$NON-NLS-2$
-            int r = chart.getBackground().getRed() - 13;
-            int g = chart.getBackground().getGreen() - 13;
-            int b = chart.getBackground().getBlue() - 13;
-            r = r > 0 ? r : 0;
-            r = g > 0 ? g : 0;
-            r = b > 0 ? b : 0;
+            int r = chart.getBackground().getRed()-13;
+            int g = chart.getBackground().getGreen()-13;
+            int b = chart.getBackground().getBlue()-13;
+            r = r>0 ? r : 0;
+            r = g>0 ? g : 0;
+            r = b>0 ? b : 0;
             final Color background = new Color(chart.getDisplay(), r, g, b);
             chart.setBackground(background);
             chart.addDisposeListener(new DisposeListener(){
@@ -219,12 +219,9 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                 if (xAxis != null) {
                     String[] series = xAxis.getCategorySeries();
                     if (series != null) {
-                        root.setRedraw(false);
                         boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
-                        xAxis.enableCategory(true);
-                        xAxis.getTick().setVisible(true);
-                        xAxis.getTick().setTickLabelAngle(enoughSpace ? 45 : 90);
-                        root.setRedraw(true);
+                        xAxis.enableCategory(enoughSpace);
+                        xAxis.getTick().setVisible(enoughSpace);
                     }
                 }
             }
@@ -257,7 +254,15 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                                         builder.setLength(0);
                                         builder.append("("); //$NON-NLS-1$
                                         builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.1")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
-                                        builder.append(x != series.length - 1 ? series[x] : series[series.length - 2]);
+                                        if ( x < series.length-1) {
+                                            builder.append("[");
+                                            builder.append(series[x]);
+                                            builder.append(", ");
+                                            builder.append(series[x + 1]);
+                                            builder.append("[");
+                                        } else {
+                                            builder.append(series[x]);
+                                        }
                                         builder.append("%, ").append(Resources.getMessage("ViewRisksRiskDistributionPlot.4")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                                         builder.append(SWTUtil.getPrettyString(data[1].getYSeries()[x]));
                                         builder.append("%, ").append(Resources.getMessage("ViewRisksRiskDistributionPlot.7")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -312,6 +317,7 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
             private double[] cumulative;
             private double[] threshold;
             private String[] labels;
+            private double   max     = 0d;
 
             @Override
             public int getProgress() {
@@ -374,12 +380,10 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                 IAxisSet axisSet = chart.getAxisSet();
 
                 IAxis yAxis = axisSet.getYAxis(0);
-                yAxis.setRange(new Range(0d, 100d));
+                yAxis.setRange(new Range(0d, max));
 
                 IAxis xAxis = axisSet.getXAxis(0);
                 xAxis.setCategorySeries(labels);
-                xAxis.getTick().setTickLabelAngle(45);
-                xAxis.getTick().setTickMarkStepHint(300);
                 xAxis.adjustRange();
                 updateCategories();
 
@@ -414,22 +418,25 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                 threshold = new double[frequencies.length];
                 double enforced = model.getRiskThreshold();
                 labels = new String[frequencies.length];
+                max = 0d;
                 for (int i = 0; i < frequencies.length; i++) {
                     frequencies[i] *= 100d;
                     cumulative[i] *= 100d;
-                    if (enforced != 1d && enforced <= model.getAvailableUpperRiskThresholds()[i]) {
+                    if (enforced != 1d && enforced <= model.getAvailableRiskThresholds()[i]) {
                         threshold[i] = 100d;
                     }
-                    labels[i] = "]" + String.valueOf(SWTUtil.getPrettyString(model.getAvailableLowerRiskThresholds()[i] * 100d)) + //$NON-NLS-1$
-                                ", " + String.valueOf(SWTUtil.getPrettyString(model.getAvailableUpperRiskThresholds()[i] * 100d)) + "]"; //$NON-NLS-1$ $NON-NLS-2$
+                    max = Math.max(max, frequencies[i]);
+                    max = Math.max(max, cumulative[i]);
+                    labels[i] = String.valueOf(SWTUtil.getPrettyString(model.getAvailableRiskThresholds()[i] * 100d));
                 }
+                labels[0] = "<=" + SWTUtil.getPrettyString(1e-6); //$NON-NLS-1$
                 
                 // TODO: Ugly hack
                 frequencies = insertToBack(frequencies, frequencies[frequencies.length-1]);
                 cumulative = insertToBack(cumulative, cumulative[cumulative.length-1]);
                 threshold = insertToBack(threshold, threshold[threshold.length-1]);
-                labels = insertToBack(labels, " "); //$NON-NLS-1$
-
+                labels = insertToBack(labels, "");
+                
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
                     Thread.sleep(10);

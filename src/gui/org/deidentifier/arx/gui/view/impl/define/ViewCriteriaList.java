@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
@@ -84,10 +83,6 @@ public class ViewCriteriaList implements IView {
     /** View */
     private final Image              symbolR;
     /** View */
-    private final Image              symbolG;
-    /** View */
-    private final Image              symbolB;
-    /** View */
     private final LayoutCriteria     layout;
 
     /**
@@ -112,8 +107,6 @@ public class ViewCriteriaList implements IView {
         this.symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
         this.symbolDP = controller.getResources().getManagedImage("symbol_dp.png"); //$NON-NLS-1$
         this.symbolR = controller.getResources().getManagedImage("symbol_r.png"); //$NON-NLS-1$
-        this.symbolG = controller.getResources().getManagedImage("symbol_gt.png"); //$NON-NLS-1$
-        this.symbolB = controller.getResources().getManagedImage("symbol_b.png"); //$NON-NLS-1$
         
         this.root = parent;
         this.table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
@@ -279,20 +272,7 @@ public class ViewCriteriaList implements IView {
             item.setImage(0, symbolD);
             item.setData(model.getDPresenceModel());
         }
-        
-        if (model.getStackelbergModel().isEnabled()) {
-        	TableItem item = new TableItem(table, SWT.NONE);
-        	item.setText(new String[] { "", model.getStackelbergModel().toString(), ""});
-        	item.setImage(0, symbolG);
-        	item.setData(model.getStackelbergModel());
-        }
 
-        if (model.getMinimumKeySizeModel().isEnabled()) {
-            TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", model.getMinimumKeySizeModel().toString(), ""});
-            item.setImage(0, symbolK);
-            item.setData(model.getMinimumKeySizeModel());
-        }
 
         List<ModelExplicitCriterion> explicit = new ArrayList<ModelExplicitCriterion>();
         for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
@@ -306,11 +286,6 @@ public class ViewCriteriaList implements IView {
             }
         }
         for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
-            if (other.isEnabled()) {
-                explicit.add(other);
-            }
-        }
-        for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
             if (other.isEnabled()) {
                 explicit.add(other);
             }
@@ -330,8 +305,6 @@ public class ViewCriteriaList implements IView {
                 item.setImage(0, symbolT);
             } else if (c instanceof ModelDDisclosurePrivacyCriterion) {
                 item.setImage(0, symbolD);
-            } else if (c instanceof ModelBLikenessCriterion) {
-                item.setImage(0, symbolB);
             }
             item.setData(c);
         }

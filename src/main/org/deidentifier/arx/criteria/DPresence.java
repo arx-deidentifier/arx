@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,8 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
-import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The d-presence criterion
@@ -34,7 +32,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DPresence extends ImplicitPrivacyCriterion {
+public class DPresence extends ImplicitPrivacyCriterion{
     
     /**  SVUID */
     private static final long serialVersionUID = 8534004943055128797L;
@@ -78,14 +76,9 @@ public class DPresence extends ImplicitPrivacyCriterion {
         
     @Override
     public DPresence clone() {
-        return new DPresence(this.getDMin(), this.getDMax(), this.getDataSubset().clone());
+        return new DPresence(this.getDMin(), this.getDMax(), this.getSubset().clone());
     }
     
-    @Override
-    public DataSubset getDataSubset() {
-        return this.subset;
-    }
-
     /**
      * Returns dMax.
      *
@@ -110,34 +103,26 @@ public class DPresence extends ImplicitPrivacyCriterion {
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-    
+
     @Override
-    public void initialize(DataManager manager, ARXConfiguration config) {
+    public DataSubset getSubset() {
+        return this.subset;
+    }
+
+    @Override
+    public void initialize(DataManager manager) {
         // Nothing to do
     }
     
-	@Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    @Override
+    public boolean isAnonymous(HashGroupifyEntry entry) {
         double delta = entry.count == 0 ? 0d : (double) entry.count / (double) entry.pcount;
         return (delta >= dMin) && (delta <= dMax);
     }
-
-    @Override
+    
+	@Override
     public boolean isLocalRecodingSupported() {
         return false;
-    }
-
-    @Override
-    public boolean isSubsetAvailable() {
-        return this.subset != null;
-    }
-
-    @Override
-    public ElementData render() {
-        ElementData result = new ElementData("Delta presence");
-        result.addProperty("Lower threshold (delta)", dMin);
-        result.addProperty("Upper threshold (delta)", dMax);
-        return result;
     }
 
     @Override

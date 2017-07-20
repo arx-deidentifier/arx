@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
-import org.deidentifier.arx.criteria.MatrixBasedCriterion;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
@@ -86,9 +85,6 @@ public class HashGroupify {
     
     /** Criteria. */
     private final SampleBasedCriterion[] sampleBasedCriteria;
-
-    /** Criteria. */
-    private final MatrixBasedCriterion[] matrixBasedCriteria;
     
     /** Allowed tuple outliers. */
     private final int                    suppressionLimit;
@@ -113,7 +109,7 @@ public class HashGroupify {
         // Set params
         this.currentNumOutliers = 0;
         this.suppressionLimit = config.getAbsoluteMaxOutliers();
-        this.utilityMeasure = config.getQualityModel();
+        this.utilityMeasure = config.getMetric();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
         // Extract research subset
@@ -124,9 +120,8 @@ public class HashGroupify {
         }
         
         // Extract criteria
-        this.classBasedCriteria = config.getClassBasedPrivacyModelsAsArray();
-        this.sampleBasedCriteria = config.getSampleBasedPrivacyModelsAsArray();
-        this.matrixBasedCriteria = config.getMatrixBasedPrivacyModelsAsArray();
+        this.classBasedCriteria = config.getClassBasedCriteriaAsArray();
+        this.sampleBasedCriteria = config.getSampleBasedCriteriaAsArray();
         this.minimalClassSize = config.getMinimalGroupSize();
         
         // Sanity check: by convention, d-presence must be the first criterion
@@ -489,7 +484,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry);
+            int anonymous = isPrivacyModelFulfilled(entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -514,7 +509,6 @@ public class HashGroupify {
         }
         
         this.analyzeSampleBasedCriteria(transformation, false);
-        this.analyzeMatrixBasedCriteria(transformation, false);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
     }
     
@@ -549,36 +543,7 @@ public class HashGroupify {
             }
         }
     }
-
-    /**
-     * Analyze matrix-based criteria
-     * @param transformation
-     * @param earlyAbort May we perform an early abort, if we reach the threshold
-     * @return
-     */
-    private void analyzeMatrixBasedCriteria(Transformation transformation, boolean earlyAbort) {
-
-        // Nothing to do
-        if (this.matrixBasedCriteria.length == 0) {
-            return;
-        }
-        
-        // Build a distribution
-        HashGroupifyMatrix matrix = new HashGroupifyMatrix(this.hashTableFirstEntry);
-        
-        // For each criterion
-        for (MatrixBasedCriterion criterion : this.matrixBasedCriteria) {
-            
-            // Enforce
-            criterion.enforce(matrix, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
-            
-            // Early abort
-            this.currentNumOutliers = matrix.getNumSuppressedRecords();
-            if (earlyAbort && currentNumOutliers > suppressionLimit) {
-                return;
-            }
-        }
-    }
+    
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
@@ -589,7 +554,7 @@ public class HashGroupify {
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
         
         // Abort early, if only k-anonymity was specified
-        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0 && matrixBasedCriteria.length == 0) {
+        if (classBasedCriteria.length == 0 && sampleBasedCriteria.length == 0) {
             privacyModelFulfilled = minimalClassSizeFulfilled;
             return;
         }
@@ -608,7 +573,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry);
+            int anonymous = isPrivacyModelFulfilled(entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -643,12 +608,6 @@ public class HashGroupify {
         }
         
         this.analyzeSampleBasedCriteria(transformation, true);
-        this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
-        if (!this.privacyModelFulfilled) {
-            // Early abort
-            return;
-        }
-        this.analyzeMatrixBasedCriteria(transformation, true);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
     
@@ -717,12 +676,12 @@ public class HashGroupify {
         
     /**
      * Checks whether the given entry is anonymous.
-     * @param transformation
+     *
      * @param entry
      * @return
      * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry) {
+    private int isPrivacyModelFulfilled(HashGroupifyEntry entry) {
         
         // Check minimal group size
         if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {
@@ -733,7 +692,7 @@ public class HashGroupify {
         // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
         // This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
         for (int i = 0; i < classBasedCriteria.length; i++) {
-            if (!classBasedCriteria[i].isAnonymous(transformation, entry)) {
+            if (!classBasedCriteria[i].isAnonymous(entry)) {
                 return i + 1;
             }
         }

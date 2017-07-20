@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,6 +90,15 @@ public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCr
         return group;
     }
 
+    /**
+     * Parse
+     */
+    protected void parse(ModelKAnonymityCriterion model, boolean _default) {
+        updateLabel(labelK, model.getK());
+        knobK.setValue(model.getK());
+    }
+
+
     @Override
     protected List<ModelCriterion> getTypicalParameters() {
 
@@ -99,13 +108,5 @@ public class EditorCriterionKAnonymity extends EditorCriterion<ModelKAnonymityCr
         result.add(new ModelKAnonymityCriterion(10));
         result.add(new ModelKAnonymityCriterion(100));
         return result;
-    }
-    
-    /**
-     * Parse
-     */
-    protected void parse(ModelKAnonymityCriterion model, boolean _default) {
-        updateLabel(labelK, model.getK());
-        knobK.setValue(model.getK());
     }
 }

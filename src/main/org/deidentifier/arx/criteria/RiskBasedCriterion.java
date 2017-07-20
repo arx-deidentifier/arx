@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
     /** SVUID */
     private static final long serialVersionUID = -2711630526630937284L;
     /** The threshold */
-    private final double      threshold;
+    private final double    threshold;
 
     /**
      * Creates a new instance of this criterion.

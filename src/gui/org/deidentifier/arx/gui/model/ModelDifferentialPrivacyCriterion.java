@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     @Override
     public String getLabel() {
-        return "(" + '\u03B5' + ", " + '\u03B4' + ")" + Resources.getMessage("ModelCriterion.3"); //$NON-NLS-1$
+        return Resources.getMessage("ModelCriterion.3"); //$NON-NLS-1$
     }
 
     @Override
@@ -115,9 +115,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         if (!_default) {
             this.generalization = other.generalization.clone();
         }
-        if (!_default) {
-            this.setEnabled(other.isEnabled());
-        }
+        this.setEnabled(other.isEnabled());
     }
 
     /**

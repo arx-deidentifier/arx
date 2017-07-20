@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.deidentifier.arx.aggregates.classification.ClassificationResult;
 import org.deidentifier.arx.aggregates.classification.MultiClassLogisticRegression;
 import org.deidentifier.arx.aggregates.classification.MultiClassZeroR;
 import org.deidentifier.arx.common.WrappedBoolean;
-import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 /**
@@ -121,8 +120,6 @@ public class StatisticsClassification {
     private double                averageError;
     /** Interrupt flag */
     private final WrappedBoolean  interrupt;
-    /** Interrupt flag */
-    private final WrappedInteger  progress;
     /** Precision/recall matrix */
     private PrecisionRecallMatrix matrix         = new PrecisionRecallMatrix();
     /** Num classes */
@@ -150,7 +147,6 @@ public class StatisticsClassification {
      * @param clazz - The class attributes
      * @param config - The configuration
      * @param interrupt - The interrupt flag
-     * @param progress 
      * @throws ParseException 
      */
     StatisticsClassification(DataHandleInternal inputHandle,
@@ -158,12 +154,10 @@ public class StatisticsClassification {
                              String[] features,
                              String clazz,
                              ARXLogisticRegressionConfiguration config,
-                             WrappedBoolean interrupt,
-                             WrappedInteger progress) throws ParseException {
+                             WrappedBoolean interrupt) throws ParseException {
 
         // Init
         this.interrupt = interrupt;
-        this.progress = progress;
         
         // Check and clean up
         double samplingFraction = (double)config.getMaxRecords() / (double)inputHandle.getNumRows();
@@ -195,8 +189,6 @@ public class StatisticsClassification {
 
         // Track
         int classifications = 0;
-        double total = 100d / ((double)inputHandle.getNumRows() * (double)folds.size());
-        double done = 0d;
         
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
@@ -224,7 +216,6 @@ public class StatisticsClassification {
                                 outputLR.train(outputHandle, outputHandle, index);
                             }
                             trained = true;
-                            this.progress.value = (int)((++done) * total);
                         }
                     }
                 }
@@ -272,8 +263,6 @@ public class StatisticsClassification {
                             this.matrix.add(resultOutputLR.confidence(), correct);
                         }
                     }
-                    
-                    this.progress.value = (int)((++done) * total);
                 }
             } catch (Exception e) {
                 throw new RuntimeException(e);

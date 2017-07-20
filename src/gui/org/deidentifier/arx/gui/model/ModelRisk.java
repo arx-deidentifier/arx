@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,8 @@ public class ModelRisk implements Serializable {
     private Map<ViewRiskType, Boolean> viewEnabledForInput       = new HashMap<ViewRiskType, Boolean>();
     /** Model */
     private Map<ViewRiskType, Boolean> viewEnabledForOutput      = new HashMap<ViewRiskType, Boolean>();
+    /** Model */
+    private boolean                    useOutputModelIfAvailable = true;
     /** Model */
     private RiskModelForAttributes     riskModelForAttributes    = RiskModelForAttributes.POPULATION_UNIQUENESS_DANKAR;
     /** Model */
@@ -177,6 +179,13 @@ public class ModelRisk implements Serializable {
      */
     public boolean isModified() {
         return modified || config.isModified();
+    }
+    
+    /**
+     * Use the output or the input model?
+     */
+    public boolean isUseOutputPopulationModelIfAvailable() {
+        return useOutputModelIfAvailable;
     }
 
     /***
@@ -287,6 +296,13 @@ public class ModelRisk implements Serializable {
     public void setUnmodified() {
         this.modified = false;
         this.config.setUnmodified();
+    }
+
+    /**
+     * Use the output or the input model?
+     */
+    public void setUseOutputPopulationModelIfAvailable(boolean value) {
+        this.useOutputModelIfAvailable = value;
     }
 
     /**

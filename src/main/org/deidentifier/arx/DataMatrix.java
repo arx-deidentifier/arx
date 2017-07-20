@@ -39,22 +39,6 @@ public class DataMatrix {
     private final int     columns;
 
     /**
-     * Creates a new matrix from the given list
-     * @param matrix
-     */
-    public DataMatrix(int[][] matrix) {
-        if (matrix == null || matrix.length == 0) {
-            this.rows = 0;
-            this.columns = 0;
-            this.matrix = new int[0][0];
-        } else {
-            this.rows = matrix.length;
-            this.columns = matrix[0].length;
-            this.matrix = matrix;
-        }
-    }
-
-    /**
      * Creates a data matrix for output data
      * @param inverseMap
      * @param inverseData
@@ -64,13 +48,14 @@ public class DataMatrix {
      * @param columns
      * @param rows Can be null
      */
+     
     DataMatrix(int[] inverseMap,
-               int[][][] inverseData,
-               Dictionary[] inverseDictionaries,
-               Data outputGeneralized,
-               int suppressedAttributeTypes,
-               int[] columns,
-               int[] rows) {
+                      int[][][] inverseData,
+                      Dictionary[] inverseDictionaries,
+                      Data outputGeneralized,
+                      int suppressedAttributeTypes, 
+                      int[] columns,
+                      int[] rows) {
 
         // Prepare
         this.columns = columns.length;

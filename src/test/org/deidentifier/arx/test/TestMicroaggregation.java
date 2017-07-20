@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.junit.Test;
 
 /**
- * Test for microaggregation.
+ * Test for risk metrics.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -106,9 +106,9 @@ public class TestMicroaggregation extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(5));
+        config.addCriterion(new KAnonymity(5));
         config.setMaxOutliers(1d);
-        config.setQualityModel(Metric.createLossMetric(AggregateFunction.RANK));
+        config.setMetric(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = anonymizer.anonymize(data, config);
         DataHandle exptectedOutput = Data.create("./data/adult_age_microaggregated.csv", StandardCharsets.UTF_8, ';').getHandle();
@@ -138,7 +138,7 @@ public class TestMicroaggregation extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(2));
+        config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXResult result = anonymizer.anonymize(provider.data, config);
@@ -174,7 +174,7 @@ public class TestMicroaggregation extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(2));
+        config.addCriterion(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXResult result = anonymizer.anonymize(provider.data, config);

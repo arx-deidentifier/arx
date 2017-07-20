@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an simple example for using multiple sensitive attributes and
- * different privacy models.
+ * enforcing different privacy criteria.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -63,11 +63,11 @@ public class Example13 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(3));
-        config.addPrivacyModel(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
-        config.addPrivacyModel(new RecursiveCLDiversity("disease2", 3d, 2));
+        config.addCriterion(new KAnonymity(3));
+        config.addCriterion(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
+        config.addCriterion(new RecursiveCLDiversity("disease2", 3d, 2));
         config.setMaxOutliers(0d);
-        config.setQualityModel(Metric.createEntropyMetric());
+        config.setMetric(Metric.createEntropyMetric());
 
         // Now anonymize
         ARXResult result = anonymizer.anonymize(data, config);

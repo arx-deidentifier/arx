@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -131,19 +131,19 @@ public class RiskModelSampleSummary {
         }
 
         /**
-         * Proportion of records with risk above threshold
-         * @return
-         */
-        public double getRecordsAtRisk() {
-            return rA;
-        }
-
-        /**
          * Proportion of records that can be re-identified on average
          * @return
          */
         public double getSuccessRate() {
             return rC;
+        }
+
+        /**
+         * Proportion of records with risk above threshold
+         * @return
+         */
+        public double getRecordsAtRisk() {
+            return rA;
         }
     }
 

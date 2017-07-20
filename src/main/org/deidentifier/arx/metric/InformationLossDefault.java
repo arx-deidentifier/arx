@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.metric;
 
-
 /**
  * This class implements an information loss which can be represented as
  * a single decimal number.
@@ -27,7 +26,7 @@ package org.deidentifier.arx.metric;
  */
 class InformationLossDefault extends InformationLoss<Double> {
 
-    /** SVUID */
+    /** serialVersionUID. */
     private static final long           serialVersionUID = -4341081298410703417L;
 
     /** Current value. */

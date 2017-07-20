@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,16 +86,6 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         return super.close();
     }
 
-    /**
-     * Returns the index of a url.
-     *
-     * @param location
-     * @return
-     */
-    private int getIndexOf(String location) {
-        return config.getIndexForUrl(location);
-    }
-    
     @Override
     protected void configureShell(Shell newShell) {
         super.configureShell(newShell);
@@ -118,7 +108,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
             }
         });
     }
-
+    
     @Override
     protected Control createContents(Composite parent) {
     	Control contents = super.createContents(parent);
@@ -192,6 +182,16 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         list.showSelection();
         try{browser.setUrl(getUrlOf(index));} catch (Exception e){}
         return parent;
+    }
+
+    /**
+     * Returns the index of a url.
+     *
+     * @param location
+     * @return
+     */
+    private int getIndexOf(String location) {
+        return config.getIndexForUrl(location);
     }
     
     @Override

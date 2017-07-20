@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Uses of Class org.deidentifier.arx.DataType (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -97,13 +97,6 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><a href="#org.deidentifier.arx.framework.data">org.deidentifier.arx.framework.data</a></td>
-<td class="colLast">
-<div class="block">This package implements data management, i.e., encoding and representing input data, output data and generalization
- hierarchies</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><a href="#org.deidentifier.arx.io">org.deidentifier.arx.io</a></td>
 <td class="colLast">
 <div class="block">This package provides basic input/output functionality</div>
@@ -291,6 +284,14 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
 <td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the base data type without generalization.</div>
@@ -298,16 +299,16 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../org/deidentifier/arx/DataDefinition.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;columnName)</code>
-<div class="block">Returns the data type for the given column.</div>
+<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
+<div class="block">Method</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -318,37 +319,29 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Method</div>
+<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../org/deidentifier/arx/DataDefinition.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;columnName)</code>
+<div class="block">Returns the data type for the given column.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected abstract <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
-<div class="block">Generates an array of data types.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
-<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
 <td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
 <div class="block">Creates the data type array.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
-<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected abstract <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
+<div class="block">Generates an array of data types.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="type parameter in DataType.DataTypeDescription">T</a>&gt;</code></td>
@@ -778,63 +771,6 @@
 <td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionMode.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMode.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
           <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
           int[][]&nbsp;hierarchy)</code>&nbsp;</td>
-</tr>
-</tbody>
-</table>
-</li>
-<li class="blockList"><a name="org.deidentifier.arx.framework.data">
-<!--   -->
-</a>
-<h3>Uses of <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a> in <a href="../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a></h3>
-<table border="0" cellpadding="3" cellspacing="0" summary="Use table, listing constructors, and an explanation">
-<caption><span>Constructor parameters in <a href="../../../../org/deidentifier/arx/framework/data/package-summary.html">org.deidentifier.arx.framework.data</a> with type arguments of type <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a></span><span class="tabEnd">&nbsp;</span></caption>
-<tr>
-<th class="colOne" scope="col">Constructor and Description</th>
-</tr>
-<tbody>
-<tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20java.lang.String[],%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20int[],%20java.util.Map,%20java.util.Map,%20int[],%20org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[],%20java.lang.String[],%20int[],%20int[],%20int,%20int,%20int[],%20java.util.Map)">DataManager</a></strong>(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-           <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
-           <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
-           <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
-           java.lang.String[]&nbsp;header,
-           <a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchiesGeneralized,
-           int[]&nbsp;hierarchiesHeights,
-           java.util.Map&lt;java.lang.String,<a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;&nbsp;hierarchiesSensitive,
-           java.util.Map&lt;java.lang.String,java.lang.Integer&gt;&nbsp;indexesSensitive,
-           int[]&nbsp;maxLevels,
-           <a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;microaggregationFunctions,
-           java.lang.String[]&nbsp;microaggregationHeader,
-           int[]&nbsp;microaggregationMap,
-           int[]&nbsp;microaggregationDomainSizes,
-           int&nbsp;microaggregationNumAttributes,
-           int&nbsp;microaggregationStartIndex,
-           int[]&nbsp;minLevels,
-           java.util.Map&lt;java.lang.String,<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&gt;&nbsp;dataTypesSensitive)</code>
-<div class="block">For creating a projected instance</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/framework/data/DataManagerSubset.html#DataManagerSubset(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20java.lang.String[],%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20int[],%20java.util.Map,%20java.util.Map,%20int[],%20org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[],%20java.lang.String[],%20int[],%20int[],%20int,%20int,%20int[],%20java.util.Map)">DataManagerSubset</a></strong>(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;source,
-                 <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
-                 <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
-                 <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
-                 java.lang.String[]&nbsp;header,
-                 <a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>[]&nbsp;hierarchiesGeneralized,
-                 int[]&nbsp;hierarchiesHeights,
-                 java.util.Map&lt;java.lang.String,<a href="../../../../org/deidentifier/arx/framework/data/GeneralizationHierarchy.html" title="class in org.deidentifier.arx.framework.data">GeneralizationHierarchy</a>&gt;&nbsp;hierarchiesSensitive,
-                 java.util.Map&lt;java.lang.String,java.lang.Integer&gt;&nbsp;indexesSensitive,
-                 int[]&nbsp;maxLevels,
-                 <a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;microaggregationFunctions,
-                 java.lang.String[]&nbsp;microaggregationHeader,
-                 int[]&nbsp;microaggregationMap,
-                 int[]&nbsp;microaggregationDomainSizes,
-                 int&nbsp;microaggregationNumAttributes,
-                 int&nbsp;microaggregationStartIndex,
-                 int[]&nbsp;minLevels,
-                 java.util.Map&lt;java.lang.String,<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&gt;&nbsp;dataTypesSensitive)</code>
-<div class="block">Constructor</div>
-</td>
 </tr>
 </tbody>
 </table>

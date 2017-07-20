@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -78,25 +77,23 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     /**
      * Precomputed.
      *
-     * @param monotonicWithGeneralization
-     * @param monotonicWithSuppression
+     * @param monotonic
      * @param independent
      * @param gsFactor
      * @param function
      */
-    public MetricMDNUEntropyPrecomputed(boolean monotonicWithGeneralization,
-                                        boolean monotonicWithSuppression, 
+    public MetricMDNUEntropyPrecomputed(boolean monotonic, 
                                         boolean independent, 
                                         double gsFactor, 
                                         AggregateFunction function) {
-        super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor, function);
+        super(monotonic, independent, gsFactor, function);
     }
     
     /**
      * Creates a new instance.
      */
     protected MetricMDNUEntropyPrecomputed() {
-        super(true, true, true, 0.5d, AggregateFunction.SUM);
+        super(true, true, 0.5d, AggregateFunction.SUM);
     }
     
     /**
@@ -106,7 +103,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      * @param function
      */
     protected MetricMDNUEntropyPrecomputed(double gsFactor, AggregateFunction function){
-        super(true, true, true, gsFactor, function);
+        super(true, true, gsFactor, function);
     }
 
     /**
@@ -121,26 +118,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                                        1.0d, // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
         );
-    }
-    
-    @Override
-    public boolean isGSFactorSupported() {
-        return true;
-    }
-
-    @Override
-    public boolean isPrecomputed() {
-        return true;
-    }
-
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Non-uniform entropy");
-        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        result.addProperty("Generalization factor", this.getGeneralizationFactor());
-        result.addProperty("Suppression factor", this.getSuppressionFactor());
-        return result;
     }
     
     @Override
@@ -169,7 +146,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-
+    
     /**
      * 
      *
@@ -214,13 +191,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }
-    
+
     /**
      * Returns the upper bound of the entropy value per column
      * @return
@@ -284,7 +261,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMax(max);
         super.setMin(min);
     }
-
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -329,4 +306,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         super.setMax(max);
         super.setMin(min);
     }
+    
+    /**
+     * Does this metric handle microaggregation
+     * @return
+     */
+    protected boolean isAbleToHandleMicroaggregation() {
+        return false;
+    }
+
 }

@@ -30,7 +30,6 @@ import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.io.CSVHierarchyInput;
-import org.deidentifier.arx.risk.RiskModelMSU;
 
 /**
  * This class implements an example on how to evaluate risks with SUDA2
@@ -90,8 +89,7 @@ public class Example60 extends Example {
     
         Data data = createData("adult");
         long time = System.currentTimeMillis();
-        RiskModelMSU risks = data.getHandle().getRiskEstimator(ARXPopulationModel.create(Region.USA)).getMSUStatistics();
+        data.getHandle().getRiskEstimator(ARXPopulationModel.create(Region.USA)).getMSUStatistics();
         System.out.println("Time: " + (System.currentTimeMillis() - time));
-        System.out.println(risks.getNumKeys());
     }
 }

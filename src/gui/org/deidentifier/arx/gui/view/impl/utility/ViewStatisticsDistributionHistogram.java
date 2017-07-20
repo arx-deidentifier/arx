@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,6 +94,79 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     }
 
     /**
+     * Makes the chart show category labels or not.
+     */
+    private void updateCategories(){
+        if (chart != null){
+            IAxisSet axisSet = chart.getAxisSet();
+            if (axisSet != null) {
+                IAxis xAxis = axisSet.getXAxis(0);
+                if (xAxis != null) {
+                    String[] series = xAxis.getCategorySeries();
+                    if (series != null) {
+                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
+                        xAxis.enableCategory(enoughSpace);
+                        xAxis.getTick().setVisible(enoughSpace);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected Control createControl(Composite parent) {
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(new FillLayout());
+
+        // Tool tip
+        root.addListener(SWT.MouseMove, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (chart != null) {
+                    IAxisSet axisSet = chart.getAxisSet();
+                    if (axisSet != null) {
+                        IAxis xAxis = axisSet.getXAxis(0);
+                        if (xAxis != null) {
+                            Point cursor = chart.getPlotArea().toControl(Display.getCurrent().getCursorLocation());
+                            if (cursor.x >= 0 && cursor.x < chart.getPlotArea().getSize().x && 
+                                cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
+                                String[] series = xAxis.getCategorySeries();
+                                ISeries[] data = chart.getSeriesSet().getSeries();
+                                if (data != null && data.length>0 && series != null) {
+                                    int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
+                                    if (x >= 0 && x < series.length) {
+                                        root.setToolTipText("("+series[x]+", "+SWTUtil.getPrettyString(data[0].getYSeries()[x])+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    root.setToolTipText(null);
+                }
+            }
+        });
+
+        return this.root;
+    }
+
+    @Override
+    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
+        return new AnalysisContextDistribution(context);
+    }
+
+    @Override
+    protected void doReset() {
+        root.setRedraw(false);
+        if (this.manager != null) {
+            this.manager.stop();
+        }
+        resetChart();
+        root.setRedraw(true);
+        setStatusEmpty();
+    }
+
+    /**
      * Resets the chart
      */
     private void resetChart() {
@@ -173,79 +246,6 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         yAxisTitle.setText(Resources.getMessage("ViewRisksClassDistributionPlot.0")); //$NON-NLS-1$
         chart.setEnabled(false);
         updateCategories();
-    }
-
-    /**
-     * Makes the chart show category labels or not.
-     */
-    private void updateCategories(){
-        if (chart != null){
-            IAxisSet axisSet = chart.getAxisSet();
-            if (axisSet != null) {
-                IAxis xAxis = axisSet.getXAxis(0);
-                if (xAxis != null) {
-                    String[] series = xAxis.getCategorySeries();
-                    if (series != null) {
-                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
-                        xAxis.enableCategory(enoughSpace);
-                        xAxis.getTick().setVisible(enoughSpace);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    protected Control createControl(Composite parent) {
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
-
-        // Tool tip
-        root.addListener(SWT.MouseMove, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (chart != null) {
-                    IAxisSet axisSet = chart.getAxisSet();
-                    if (axisSet != null) {
-                        IAxis xAxis = axisSet.getXAxis(0);
-                        if (xAxis != null) {
-                            Point cursor = chart.getPlotArea().toControl(Display.getCurrent().getCursorLocation());
-                            if (cursor.x >= 0 && cursor.x < chart.getPlotArea().getSize().x && 
-                                cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
-                                String[] series = xAxis.getCategorySeries();
-                                ISeries[] data = chart.getSeriesSet().getSeries();
-                                if (data != null && data.length>0 && series != null) {
-                                    int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
-                                    if (x >= 0 && x < series.length) {
-                                        root.setToolTipText("("+series[x]+", "+SWTUtil.getPrettyString(data[0].getYSeries()[x])+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    root.setToolTipText(null);
-                }
-            }
-        });
-
-        return this.root;
-    }
-
-    @Override
-    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
-        return new AnalysisContextDistribution(context);
-    }
-
-    @Override
-    protected void doReset() {
-        root.setRedraw(false);
-        if (this.manager != null) {
-            this.manager.stop();
-        }
-        resetChart();
-        root.setRedraw(true);
-        setStatusEmpty();
     }
 
     @Override

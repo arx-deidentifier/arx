@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -157,16 +157,6 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
     }
 
     /**
-     * Convert to percentage
-     * @param data
-     */
-    private void makePercentage(double[] data) {
-        for (int i = 0; i < data.length; i++) {
-            data[i] = data[i] * 100d;
-        }
-    }
-
-    /**
      * Resets the chart
      */
     private void resetChart() {
@@ -249,7 +239,6 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
         updateCategories();
     }
 
-
     /**
      * Makes the chart show category labels or not.
      */
@@ -269,6 +258,7 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
             }
         }
     }
+
 
     @Override
     protected Control createControl(Composite parent) {
@@ -310,11 +300,11 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
 
         return this.root;
     }
+
     @Override
     protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
         return new AnalysisContextRisk(context);
     }
-
     @Override
     protected void doReset() {
         if (this.manager != null) {
@@ -465,6 +455,16 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
         };
         
         this.manager.start(analysis);
+    }
+
+    /**
+     * Convert to percentage
+     * @param data
+     */
+    private void makePercentage(double[] data) {
+        for (int i = 0; i < data.length; i++) {
+            data[i] = data[i] * 100d;
+        }
     }
 
     @Override

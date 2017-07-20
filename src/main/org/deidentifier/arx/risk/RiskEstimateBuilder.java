@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,12 +25,13 @@ import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
+import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
  * A builder for risk estimates
- *
+ * 
  * @author Fabian Prasser
- * @author Maximilian Zitzmann
+ * 
  */
 public class RiskEstimateBuilder {
 
@@ -40,7 +41,7 @@ public class RiskEstimateBuilder {
     private final DataHandleInternal     handle;
     /** Fields */
     private final Set<String>            identifiers;
-    /** Equivalence classes */
+    /** Classes */
     private RiskModelHistogram           classes;
     /** Asynchronous computation */
     private final WrappedBoolean         stop;
@@ -49,11 +50,11 @@ public class RiskEstimateBuilder {
     /** Model */
     private final WrappedInteger         progress = new WrappedInteger();
     /** Model */
-    private final ARXConfiguration       arxconfig;
-
+    private final ARXConfiguration       arxconfig; 
+    
     /**
      * Creates a new instance
-     *
+     * 
      * @param population
      * @param handle
      * @param classes
@@ -67,7 +68,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     *
+     * 
      * @param population
      * @param handle
      * @param classes
@@ -83,7 +84,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     *
+     * 
      * @param population
      * @param handle
      * @param identifiers
@@ -93,15 +94,15 @@ public class RiskEstimateBuilder {
                                Set<String> identifiers,
                                ARXConfiguration arxconfig) {
         this(population,
-                handle,
-                identifiers,
-                (RiskModelHistogram) null,
-                ARXSolverConfiguration.create(), arxconfig);
+             handle,
+             identifiers,
+             (RiskModelHistogram) null,
+             ARXSolverConfiguration.create(), arxconfig);
     }
 
     /**
      * Creates a new instance
-     *
+     * 
      * @param population
      * @param handle
      * @param identifiers
@@ -117,10 +118,35 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     *
+     * 
      * @param population
      * @param handle
      * @param identifiers
+     * @param solverconfig
+     */
+    private RiskEstimateBuilder(ARXPopulationModel population,
+                                DataHandleInternal handle,
+                                RiskModelHistogram classes,
+                                WrappedBoolean stop,
+                                ARXSolverConfiguration solverconfig,
+                                ARXConfiguration arxconfig) {
+        this.population = population;
+        this.handle = handle;
+        this.identifiers = null;
+        this.classes = classes;
+        this.solverconfig = solverconfig;
+        this.arxconfig = arxconfig;
+        synchronized (this) {
+            this.stop = stop;
+        }
+    }
+
+    /**
+     * Creates a new instance
+     * 
+     * @param population
+     * @param handle
+     * @param qi
      * @param classes
      * @param solverconfig
      */
@@ -143,18 +169,18 @@ public class RiskEstimateBuilder {
 
     /**
      * Creates a new instance
-     *
+     * 
      * @param population
      * @param handle
      * @param identifiers
      * @param solverconfig
      */
-    RiskEstimateBuilder(ARXPopulationModel population,
-                        DataHandleInternal handle,
-                        Set<String> identifiers,
-                        WrappedBoolean stop,
-                        ARXSolverConfiguration solverconfig,
-                        ARXConfiguration arxconfig) {
+    private RiskEstimateBuilder(ARXPopulationModel population,
+                                DataHandleInternal handle,
+                                Set<String> identifiers,
+                                WrappedBoolean stop,
+                                ARXSolverConfiguration solverconfig,
+                                ARXConfiguration arxconfig) {
         this.population = population;
         this.handle = handle;
         this.identifiers = identifiers;
@@ -167,19 +193,8 @@ public class RiskEstimateBuilder {
     }
     
     /**
-     * Returns a class providing access to an analysis of potential quasi-identifiers using
-     * the concepts of alpha distinction and alpha separation.
-     *
-     * @return the RiskModelAttributes data from risk analysis
-     */
-    public RiskModelAttributes getAttributeRisks() {
-        progress.value = 0;
-        return new RiskModelAttributes(this.population, this.handle, this.identifiers, this.stop, progress, this.solverconfig, this.arxconfig);
-    }
-
-    /**
      * Returns a model of the equivalence classes in this data set
-     *
+     * 
      * @return
      */
     public RiskModelHistogram getEquivalenceClassModel() {
@@ -189,7 +204,7 @@ public class RiskEstimateBuilder {
     /**
      * Returns the a set of potential HIPAA identifiers. Values are matched with a
      * confidence threshold of 50%
-     *
+     * 
      * @return
      */
     public HIPAAIdentifierMatch[] getHIPAAIdentifiers() {
@@ -199,7 +214,6 @@ public class RiskEstimateBuilder {
     /**
      * Returns the a set of potential HIPAA identifiers. Values are matched with the
      * given confidence threshold.
-     *
      * @param threshold Confidence threshold
      * @return
      */
@@ -209,51 +223,72 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns an interruptible instance of this object.
-     *
+     * 
      * @return
      */
     public RiskEstimateBuilderInterruptible getInterruptibleInstance() {
         progress.value = 0;
         return new RiskEstimateBuilderInterruptible(this);
     }
-    
     /**
      * Returns a model of the MSUs in this data set
      * @return
      */
     public RiskModelMSU getMSUStatistics() {
         progress.value = 0;
-        return new RiskModelMSU(this.handle, this.identifiers, progress, stop, 0);
+        return new RiskModelMSU(this.handle, this.identifiers, progress, stop);
     }
 
     /**
-     * Returns a model of the MSUs in this data set
-     * @param maxK The maximal size of an MSU considered
+     * Returns a class providing access to population-based risk estimates about
+     * the attributes. Uses the decision rule by Dankar et al.
+     * 
      * @return
      */
-    public RiskModelMSU getMSUStatistics(int maxK) {
-        progress.value = 0;
-        return new RiskModelMSU(this.handle, this.identifiers, progress, stop, maxK);
+    public RiskModelAttributes getPopulationBasedAttributeRisks() {
+        return getAttributeRisks(PopulationUniquenessModel.DANKAR);
+    }
+
+    /**
+     * Returns a class providing access to population-based risk estimates about
+     * the attributes.
+     * 
+     * @param model
+     *            Uses the given statistical model
+     * @return
+     */
+    public RiskModelAttributes getPopulationBasedAttributeRisks(PopulationUniquenessModel model) {
+        return getAttributeRisks(model);
     }
 
     /**
      * Returns a class providing population-based uniqueness estimates
-     *
+     * 
      * @return
      */
     public RiskModelPopulationUniqueness getPopulationBasedUniquenessRisk() {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
-                getHistogram(0.25),
-                stop,
-                progress,
-                solverconfig,
-                false);
+                                                 getHistogram(0.25),
+                                                 stop,
+                                                 progress,
+                                                 solverconfig,
+                                                 false);
+    }
+
+    /**
+     * Returns a class providing access to sample-based risk estimates about the
+     * attributes
+     * 
+     * @return
+     */
+    public RiskModelAttributes getSampleBasedAttributeRisks() {
+        return getAttributeRisks(null);
     }
 
     /**
      * Returns a class providing sample-based re-identification risk estimates
-     *
+     * 
      * @return
      */
     public RiskModelSampleRisks getSampleBasedReidentificationRisk() {
@@ -263,7 +298,7 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a class representing the distribution of prosecutor risks in the sample
-     *
+     * 
      * @return
      */
     public RiskModelSampleRiskDistribution getSampleBasedRiskDistribution() {
@@ -273,7 +308,6 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a risk summary
-     *
      * @param threshold Acceptable highest probability of re-identification for a single record
      * @return
      */
@@ -281,10 +315,10 @@ public class RiskEstimateBuilder {
         progress.value = 0;
         return new RiskModelSampleSummary(handle, identifiers, threshold, stop, progress);
     }
-
+    
     /**
      * Returns a class providing sample-based uniqueness estimates
-     *
+     * 
      * @return
      */
     public RiskModelSampleUniqueness getSampleBasedUniquenessRisk() {
@@ -293,8 +327,64 @@ public class RiskEstimateBuilder {
     }
 
     /**
+     * Returns a class providing access to population- or sample-based risk
+     * estimates about the attributes
+     * 
+     * @param model
+     *            null for sample-based model
+     * @return
+     */
+    private RiskModelAttributes getAttributeRisks(final PopulationUniquenessModel model) {
+        progress.value = 0;
+        return new RiskModelAttributes(this.identifiers, this.stop, progress) {
+            @Override
+            protected RiskProvider getRiskProvider(final Set<String> attributes,
+                                                   final WrappedBoolean stop) {
+
+                // Compute classes
+                RiskEstimateBuilder builder = new RiskEstimateBuilder(population,
+                                                                      handle,
+                                                                      attributes,
+                                                                      stop,
+                                                                      solverconfig,
+                                                                      arxconfig);
+                RiskModelHistogram classes = builder.getEquivalenceClassModel();
+                builder = new RiskEstimateBuilder(population, handle, classes, stop, solverconfig, arxconfig);
+
+                // Use classes to compute risks
+                final RiskModelSampleRisks reidentificationRisks = builder.getSampleBasedReidentificationRisk();
+                final double highestRisk = reidentificationRisks.getHighestRisk();
+                final double averageRisk = reidentificationRisks.getAverageRisk();
+                final double fractionOfUniqueTuples;
+                if (model == null) {
+                    fractionOfUniqueTuples = builder.getSampleBasedUniquenessRisk()
+                                                    .getFractionOfUniqueTuples();
+                } else {
+                    fractionOfUniqueTuples = builder.getPopulationBasedUniquenessRisk()
+                                                    .getFractionOfUniqueTuples(model);
+                }
+
+                // Return a provider
+                return new RiskProvider() {
+                    public double getAverageRisk() {
+                        return averageRisk;
+                    }
+
+                    public double getFractionOfUniqueTuples() {
+                        return fractionOfUniqueTuples;
+                    }
+
+                    public double getHighestRisk() {
+                        return highestRisk;
+                    }
+                };
+            }
+        };
+    }
+
+    /**
      * Returns a model of the equivalence classes in this data set
-     *
+     * 
      * @return
      */
     private RiskModelHistogram getHistogram(double factor) {
@@ -309,22 +399,22 @@ public class RiskEstimateBuilder {
 
     /**
      * Returns a class providing population-based uniqueness estimates
-     *
+     * 
      * @return
      */
-    RiskModelPopulationUniqueness getPopulationBasedUniquenessRiskInterruptible() {
+    protected RiskModelPopulationUniqueness getPopulationBasedUniquenessRiskInterruptible() {
         progress.value = 0;
         return new RiskModelPopulationUniqueness(population,
-                getHistogram(0.25),
-                stop,
-                progress,
-                solverconfig,
-                true);
+                                                 getHistogram(0.25),
+                                                 stop,
+                                                 progress,
+                                                 solverconfig,
+                                                 true);
     }
 
     /**
      * Returns progress data, if available
-     *
+     * 
      * @return
      */
     int getProgress() {

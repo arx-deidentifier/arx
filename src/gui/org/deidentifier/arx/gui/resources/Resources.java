@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,6 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
-import org.deidentifier.arx.AttributeType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -49,22 +48,22 @@ import org.eclipse.swt.widgets.Shell;
  * @author Fabian Prasser
  */
 public class Resources {
-
+    
     /** Messages */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-
+                                                                                                                                   
     /** The splash. */
     private static Image                splash          = null;
-
+    
     /** The iconset. */
     private static Image[]              iconset         = null;
-
+    
     /** The image cache */
     private final Map<String, Image>    imageCache;
-
+    
     /** The charset used to read the license text */
-    private final static Charset        CHARSET         = StandardCharsets.UTF_8;
-
+    private final static Charset CHARSET = StandardCharsets.UTF_8;
+    
     /**
      * Returns the logo.
      *
@@ -240,72 +239,6 @@ public class Resources {
     }
     
     /**
-     * Returns the logger.
-     *
-     * @return
-     */
-    public Logger getLogger() {
-        return logger;
-    }
-    
-    /**
-     * Returns an image. Do not dispose the image.
-     *
-     * @param name
-     * @return
-     */
-    public Image getManagedImage(final String name) {
-        if (shell.isDisposed()) return null;
-        
-        if (imageCache.containsKey(name)) {
-            return imageCache.get(name);
-        } else {
-            Image image = getImage(name);
-            imageCache.put(name, image);
-            return image;
-        }
-    }
-    
-    /**
-     * Returns the shell.
-     *
-     * @return
-     */
-    public Shell getShell() {
-        return shell;
-    }
-    
-    /**
-     * Returns a stream.
-     *
-     * @param name
-     * @return
-     */
-    public InputStream getStream(final String name) {
-        return this.getClass().getResourceAsStream(name);
-    }
-    
-    /**
-     * Returns an image.
-     * 
-     * @param type
-     * @return
-     */
-    public Image getImage(AttributeType type) {
-        if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-            return getManagedImage("bullet_red.png");
-        } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-            return getManagedImage("bullet_green.png");
-        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            return getManagedImage("bullet_purple.png");
-        } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-            return getManagedImage("bullet_yellow.png");
-        } else {
-            throw new IllegalArgumentException("Unknown attribute type '" + type + "'");
-        }
-    }
-    
-    /**
      * Returns an image.
      *
      * @param name
@@ -334,5 +267,51 @@ public class Resources {
                 }
             }
         }
+    }
+    
+    /**
+     * Returns an image. Do not dispose the image.
+     *
+     * @param name
+     * @return
+     */
+    public Image getManagedImage(final String name) {
+        if (shell.isDisposed()) return null;
+        
+        if (imageCache.containsKey(name)) {
+            return imageCache.get(name);
+        } else {
+            Image image = getImage(name);
+            imageCache.put(name, image);
+            return image;
+        }
+    }
+    
+    /**
+     * Returns the logger.
+     *
+     * @return
+     */
+    public Logger getLogger() {
+        return logger;
+    }
+    
+    /**
+     * Returns the shell.
+     *
+     * @return
+     */
+    public Shell getShell() {
+        return shell;
+    }
+    
+    /**
+     * Returns a stream.
+     *
+     * @param name
+     * @return
+     */
+    public InputStream getStream(final String name) {
+        return this.getClass().getResourceAsStream(name);
     }
 }

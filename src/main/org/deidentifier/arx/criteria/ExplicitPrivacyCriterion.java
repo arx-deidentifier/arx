@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
  */
 package org.deidentifier.arx.criteria;
 
-import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.framework.data.DataManager;
 
 /**
@@ -60,7 +59,7 @@ public abstract class ExplicitPrivacyCriterion extends PrivacyCriterion {
     }
 
     @Override
-    public void initialize(DataManager manager, ARXConfiguration config) {
+    public void initialize(DataManager manager) {
         String[] header = manager.getDataAnalyzed().getHeader();
         for (int i=0; i< header.length; i++){
             if (header[i].equals(attribute)) {

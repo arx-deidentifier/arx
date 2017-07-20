@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -319,7 +319,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public Double toDouble(Date date) {
-            return (date == null) ? null : new Long(date.getTime()).doubleValue();
+            if (date == null) {
+                return null;
+            } else {
+                return new Long(date.getTime()).doubleValue();
+            }
         }
 
         @Override
@@ -875,7 +879,11 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public Double toDouble(Long val) {
-            return (val == null) ? null : val.doubleValue();
+            if (val == null) {
+                return null;
+            } else {
+                return val.doubleValue();
+            }
         }
 
         @Override

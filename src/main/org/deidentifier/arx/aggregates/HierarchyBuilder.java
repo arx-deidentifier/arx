@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,37 +43,17 @@ public abstract class HierarchyBuilder<T> implements Serializable {
      */
     public static enum Type {
         
-        /**  Interval-based hierarchy */
-        INTERVAL_BASED("Interval"),
+        /**  TODO */
+        INTERVAL_BASED,
         
-        /**  Order-based hierarchy */
-        ORDER_BASED("Order"),
+        /**  TODO */
+        ORDER_BASED,
         
-        /**  Redaction-based hierarchy */
-        REDACTION_BASED("Redaction");
-
-        /** Name*/
-        private final String name;
-        
-        /**
-         * Creates a new instance
-         * @param name
-         */
-        Type(String name) {
-            this.name = name;
-        }
-        
-        @Override
-        public String toString() {
-            if (name == null) {
-                return super.toString();
-            } else {
-                return name;
-            }
-        }
+        /**  TODO */
+        REDACTION_BASED
     }
     
-    /**  SVUID */
+    /**  TODO */
     private static final long serialVersionUID = -4182364711973630816L;
     
     /**

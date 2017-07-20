@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,23 +29,23 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
 public class MetricConfiguration implements Serializable {
 
     /** SVUID. */
-    private static final long                serialVersionUID        = 871854276489749340L;
+    private static final long serialVersionUID = 871854276489749340L;
 
     /** Monotonic variant. */
-    private boolean                          monotonic               = false;
-
+    private boolean           monotonic               = false;
+    
     /** Coding model. */
-    private double                           gsFactor                = 0.5d;
-
+    private double            gsFactor                = 0.5d;
+    
     /** Precomputed. */
-    private boolean                          precomputed             = false;
-
+    private boolean           precomputed             = false;
+    
     /** Precomputation threshold. */
-    private double                           precomputationThreshold = 0.1d;
-
+    private double            precomputationThreshold = 0.1d;
+    
     /** Aggregate function. */
-    private AggregateFunction                aggregateFunction       = AggregateFunction.GEOMETRIC_MEAN;
-
+    private AggregateFunction aggregateFunction       = AggregateFunction.GEOMETRIC_MEAN;
+    
     /**
      * Constructs a new instance.
      *
@@ -54,13 +54,12 @@ public class MetricConfiguration implements Serializable {
      * @param precomputed
      * @param precomputationThreshold
      * @param aggregateFunction
-     * @param attackerModel 
      */
     public MetricConfiguration(boolean monotonic,
-                               double gsFactor,
-                               boolean precomputed,
-                               double precomputationThreshold,
-                               AggregateFunction aggregateFunction) {
+                                double gsFactor,
+                                boolean precomputed,
+                                double precomputationThreshold,
+                                AggregateFunction aggregateFunction) {
         this.monotonic = monotonic;
         this.gsFactor = gsFactor;
         this.precomputed = precomputed;
@@ -123,14 +122,14 @@ public class MetricConfiguration implements Serializable {
     public void setMonotonic(boolean monotonic) {
         this.monotonic = monotonic;
     }
-
+    
     /**
      * @param precomputationThreshold the precomputationThreshold to set
      */
     public void setPrecomputationThreshold(double precomputationThreshold) {
         this.precomputationThreshold = precomputationThreshold;
     }
-
+    
     /**
      * @param precomputed the precomputed to set
      */

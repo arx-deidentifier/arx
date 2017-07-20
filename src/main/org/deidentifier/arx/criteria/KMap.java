@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,8 @@ import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
-import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * This class implements the k-map privacy model as proposed by Latanya Sweeney.<br>
@@ -102,14 +100,14 @@ public class KMap extends ImplicitPrivacyCriterion {
     }
     
     /**
-     * Creates a new instance of the criterion using thr Poisson estimator proposed by Pannekoek.
+     * Creates a new instance of the criterion. Using the Poisson estimator.
      */
     public KMap(int k, double significanceLevel, ARXPopulationModel populationModel) {
         this(k, significanceLevel, populationModel, CellSizeEstimator.POISSON, null);
     }
     
     /**
-     * Creates a new instance of the criterion using the Poisson estimator proposed by Pannekoek or by El Emam.
+     * Creates a new instance of the criterion.
      */
     public KMap(int k, double significanceLevel, ARXPopulationModel populationModel, CellSizeEstimator estimator) {
         this(k, significanceLevel, populationModel, estimator, null);
@@ -139,22 +137,7 @@ public class KMap extends ImplicitPrivacyCriterion {
     
     @Override
     public KMap clone() {
-        return new KMap(getK(), getSignificanceLevel(), ((getPopulationModel() == null) ? null : getPopulationModel().clone()), getEstimator(), ((getDataSubset() == null) ? null : getDataSubset().clone()));
-    }
-    
-    @Override
-    public PrivacyCriterion clone(DataSubset subset) {
-        if (!isLocalRecodingSupported()) {
-            throw new UnsupportedOperationException("Local recoding is not supported by this model");
-        }
-        // We replace estimated k-map with an according instance of k-anonymity.
-        // This avoids the re-calculation of k' 
-        return new KAnonymity(this.getDerivedK());
-    }
-    
-    @Override
-    public DataSubset getDataSubset() {
-        return this.subset;
+        return new KMap(getK(), getSignificanceLevel(), ((getPopulationModel() == null) ? null : getPopulationModel().clone()), getEstimator(), ((getSubset() == null) ? null : getSubset().clone()));
     }
     
     /**
@@ -181,15 +164,6 @@ public class KMap extends ImplicitPrivacyCriterion {
      */
     public int getK() {
         return this.k;
-    }
-    
-    @Override
-    public int getMinimalClassSize() {
-        if (!isAccurate()) {
-            return this.derivedK;
-        } else {
-            return 0;
-        }
     }
     
     @Override
@@ -245,6 +219,11 @@ public class KMap extends ImplicitPrivacyCriterion {
         return this.significanceLevel;
     }
     
+    @Override
+    public DataSubset getSubset() {
+        return this.subset;
+    }
+    
     /**
      * Returns the calculated type I error.
      * @return
@@ -255,8 +234,8 @@ public class KMap extends ImplicitPrivacyCriterion {
     
     @Override
     @SuppressWarnings("deprecation")
-    public void initialize(DataManager manager, ARXConfiguration config) {
-        super.initialize(manager, config);
+    public void initialize(DataManager manager) {
+        super.initialize(manager);
         
         // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
         if (this.populationModel != null) {
@@ -289,7 +268,7 @@ public class KMap extends ImplicitPrivacyCriterion {
         }
         this.derivedK = Math.min(this.k, this.derivedK);
     }
-
+    
     /**
      * Return true if the population has been modeled explicitly.
      * This implies that no approximation is performed.
@@ -298,45 +277,19 @@ public class KMap extends ImplicitPrivacyCriterion {
     public boolean isAccurate() {
         return this.subset != null;
     }
-
+    
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(HashGroupifyEntry entry) {
         if (this.estimator == null) {
             return entry.pcount >= this.k;
         } else {
             return entry.count >= this.derivedK;
         }
     }
-
+    
     @Override
     public boolean isLocalRecodingSupported() {
         return !isAccurate();
-    }
-
-    @Override
-    public boolean isMinimalClassSizeAvailable() {
-        return this.estimator != null && this.derivedK != -1;
-    }
-
-    @Override
-    public boolean isSubsetAvailable() {
-        return this.subset != null;
-    }
-
-    @Override
-    public ElementData render() {
-        ElementData result = new ElementData("k-Map");
-        result.addProperty("Threshold (k)", k);
-        if (this.estimator != null) {
-            result.addProperty("Estimator", this.estimator.toString());
-            if (this.derivedK != -1) {
-                result.addProperty("Derived threshold", this.derivedK);
-            }
-            if (this.populationModel != null) {
-                result.addProperty("Population", this.populationModel.getPopulationSize());
-            }
-        }
-        return result;
     }
 
     @Override

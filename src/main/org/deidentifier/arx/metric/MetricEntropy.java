@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -75,39 +74,31 @@ public class MetricEntropy extends MetricDefault {
      * 
      */
     protected MetricEntropy() {
-        super(true, true, true);
+        super(true, true);
     }
 
     /**
-     * Creates a new instance.
      * 
-     * @param monotonicWithGeneralization
-     * @param monotonicWithSuppression
+     *
+     * @param monotonic
      * @param independent
      */
-    protected MetricEntropy(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent) {
-        super(monotonicWithGeneralization, monotonicWithSuppression, independent);
+    protected MetricEntropy(final boolean monotonic, final boolean independent) {
+        super(monotonic, independent);
     }
     
-    @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Non-uniform entropy");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
-    }
-
     @Override
     public String toString() {
         return "Monotonic Non-Uniform Entropy";
     }
-    
+
     /**
      * @return the cache
      */
     protected double[][] getCache() {
         return cache;
     }
-
+    
     /**
      * @return the cardinalities
      */
@@ -120,6 +111,11 @@ public class MetricEntropy extends MetricDefault {
      */
     protected int[][][] getHierarchies() {
         return hierarchies;
+    }
+
+    @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
@@ -160,21 +156,16 @@ public class MetricEntropy extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
-    }
-
-    @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
-    
+
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
         return getLowerBoundInternal(node);
     }
-
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -232,5 +223,4 @@ public class MetricEntropy extends MetricDefault {
             Arrays.fill(cache[i], NA);
         }
     }
-
 }

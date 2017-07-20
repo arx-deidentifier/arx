@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, otherData[i], i, 1, -1);
+            groupify.addFromBuffer(outtuple, otherValues[i], i, 1, -1);
         }
 
         @Override
@@ -77,8 +77,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
             
             // TODO: Improve!
-            int[][] values = new int[otherData[0].length][];
-            int[][] frequencies = new int[otherData[0].length][];
+            int[][] values = new int[otherValues[0].length][];
+            int[][] frequencies = new int[otherValues[0].length][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
@@ -122,7 +122,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, otherData[i], i, 1, 1);
+            groupify.addFromBuffer(outtuple, otherValues[i], i, 1, 1);
         }
 
         @Override
@@ -134,8 +134,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[otherData[0].length][];
-            int[][] frequencies = new int[otherData[0].length][];
+            int[][] values = new int[otherValues[0].length][];
+            int[][] frequencies = new int[otherValues[0].length][];
             int index = 0;
             int offset = i + 3;
             int length = config.getSnapshotLength() - 1 - 3;
@@ -157,7 +157,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         
         @Override
         public final void callAll(final int[] outtuple, final int i) {
-            groupify.addFromBuffer(outtuple, otherData[i], i, 1, -1);
+            groupify.addFromBuffer(outtuple, otherValues[i], i, 1, -1);
         }
 
         @Override
@@ -169,8 +169,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int[] outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[otherData[0].length][];
-            int[][] frequencies = new int[otherData[0].length][];
+            int[][] values = new int[otherValues[0].length][];
+            int[][] frequencies = new int[otherValues[0].length][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
@@ -298,8 +298,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     protected int                             outindex9;
     /** The outtuple. */
     protected int[]                           outtuple;
-    /** The sensitive values. */
-    protected final int[][]                   otherData;
+    /** The sesitive values. */
+    protected final int[][]                   otherValues;
     /** The snapshot. */
     protected int[]                           snapshot;
     
@@ -367,30 +367,30 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param otherData
+     * @param other
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
     public AbstractTransformer(final int[][] data,
                                final GeneralizationHierarchy[] hierarchies,
-                               final int[][] otherData,
+                               final int[][] other,
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
                                final ARXConfigurationInternal config) {
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
-        this.otherData = otherData;
+        this.otherValues = other;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
-        this.ssStepWidth = config.getSnapshotLength();
+        ssStepWidth = config.getSnapshotLength();
 
         // Init arrays
-        this.dimensions = data[0].length;
+        dimensions = data[0].length;
         int arraySizes = 15;
-        if (this.dimensions > arraySizes) {
-            arraySizes = this.dimensions;
+        if (dimensions > arraySizes) {
+            arraySizes = dimensions;
         }
         generalizationIndexArray = new int[arraySizes];
         columnIndexArray = new int[arraySizes];

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -50,7 +49,7 @@ public class MetricHeight extends MetricDefault {
      * Creates a new instance.
      */
     protected MetricHeight() {
-        super(true, true, true);
+        super(true, true);
     }
 
     @Override
@@ -72,26 +71,19 @@ public class MetricHeight extends MetricDefault {
     }
 
     @Override
-    public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Height");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        return result;
+    public String toString() {
+        return "Height";
     }
 
     @Override
-    public String toString() {
-        return "Height";
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
     protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
         int level = node.getLevel();
         return new InformationLossDefaultWithBound(level, level);
-    }
-
-    @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
@@ -135,5 +127,4 @@ public class MetricHeight extends MetricDefault {
             maxHeight += definition.getMaximumGeneralization(genQi);
         }
     }
-
 }

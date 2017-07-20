@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2014-2015 Karol Babioch, Fabian Prasser
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -625,6 +625,11 @@ public class ImportWizardPageCSV extends WizardPage {
     }
 
     
+    private Charset getCharset() {
+        // TODO: get charset from user
+        return Charset.defaultCharset();
+    }
+
     /**
      * Tries to detect the line break.
      *
@@ -726,11 +731,6 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Mark page as completed */
         setPageComplete(true);
-    }
-
-    private Charset getCharset() {
-        // TODO: get charset from user
-        return Charset.defaultCharset();
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,6 +28,19 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.Pr
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.metric.v2.MetricMDHeight;
+import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
+import org.deidentifier.arx.metric.v2.MetricMDNUEntropy;
+import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPotentiallyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropy;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPotentiallyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNUNMEntropyPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDPrecision;
+import org.deidentifier.arx.metric.v2.MetricMDStatic;
+import org.deidentifier.arx.metric.v2.MetricSDAECS;
+import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
+import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
 import org.deidentifier.arx.risk.RiskModelHistogram;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
@@ -100,7 +113,20 @@ public class HashGroupifyDistribution {
         
         // Blacklist metrics for which information loss of individual entries
         // is equal to the size of the class
-        if (metric == null || !metric.isClassBasedInformationLossAvailable()) {
+        if ((metric == null) ||
+            (metric instanceof MetricMDHeight) ||
+            (metric instanceof MetricMDNMPrecision) ||
+            (metric instanceof MetricMDNUEntropy) ||
+            (metric instanceof MetricMDNUEntropyPotentiallyPrecomputed) ||
+            (metric instanceof MetricMDNUEntropyPrecomputed) ||
+            (metric instanceof MetricMDNUNMEntropy) ||
+            (metric instanceof MetricMDNUNMEntropyPotentiallyPrecomputed) ||
+            (metric instanceof MetricMDNUNMEntropyPrecomputed) ||
+            (metric instanceof MetricMDPrecision) ||
+            (metric instanceof MetricMDStatic) ||
+            (metric instanceof MetricSDAECS) ||
+            (metric instanceof MetricSDDiscernability) ||
+            (metric instanceof MetricSDNMDiscernability)) {
             
             // Create comparator
             comparator = new Comparator<HashGroupifyEntry>(){
@@ -156,19 +182,19 @@ public class HashGroupifyDistribution {
     }
 
     /**
+     * Returns a set of classes as an input for the risk model
+     */
+    public RiskModelHistogram getHistogram() {
+        return new RiskModelHistogram(this.distribution);
+    }
+
+    /**
      * Returns the fraction of tuples that are in classes of the given size
      * @param size
      * @return
      */
     public double getFractionOfRecordsInClassesOfSize(int size) {
         return (double)distribution.get(size) * (double)size / numRecords;
-    }
-
-    /**
-     * Returns a set of classes as an input for the risk model
-     */
-    public RiskModelHistogram getHistogram() {
-        return new RiskModelHistogram(this.distribution);
     }
 
     /**
@@ -314,7 +340,7 @@ public class HashGroupifyDistribution {
     private void unSuppressEntry(HashGroupifyEntry entry) {
         
         if (this.numSuppressed == 0 || entry.isNotOutlier) {
-            throw new IllegalStateException("Internal error. There are no suppressed entries.");
+            throw new IllegalStateException("Internal error. There are not suppressed entries.");
         }
         entry.isNotOutlier = true;
         this.numSuppressed -= entry.count;

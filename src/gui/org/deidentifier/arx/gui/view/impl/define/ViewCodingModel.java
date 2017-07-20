@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentGSSlider;
-import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -54,7 +53,9 @@ public class ViewCodingModel implements IView {
 
         // Register
         this.controller = controller;
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.MODEL, this);
+        this.controller.addListener(ModelPart.INPUT, this);
         
         this.slider = new ComponentGSSlider(parent);
         this.slider.addSelectionListener(new SelectionAdapter(){
@@ -63,11 +64,6 @@ public class ViewCodingModel implements IView {
                     model.getInputConfig().setSuppressionWeight(slider.getSelection());
                     model.getMetricConfiguration().setGsFactor(slider.getSelection());
                 }
-            }
-        });
-        this.slider.addSelectionListener(new DelayedChangeListener(100) {
-            @Override public void delayedEvent() {
-                controller.update(new ModelEvent(ViewCodingModel.this, ModelPart.GS_FACTOR, model.getInputConfig().getSuppressionWeight()));
             }
         });
     }

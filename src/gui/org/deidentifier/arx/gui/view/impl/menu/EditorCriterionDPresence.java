@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,6 +123,17 @@ public class EditorCriterionDPresence extends EditorCriterion<ModelDPresenceCrit
         return group;
     }
 
+    /**
+     * Parses the input
+     */
+    protected void parse(ModelDPresenceCriterion model, boolean _default) {
+        updateLabel(labelDMin, model.getDmin());
+        knobDMin.setValue(model.getDmin());
+        updateLabel(labelDMax, model.getDmax());
+        knobDMax.setValue(model.getDmax());
+    }
+
+
     @Override
     protected List<ModelCriterion> getTypicalParameters() {
 
@@ -139,16 +150,5 @@ public class EditorCriterionDPresence extends EditorCriterion<ModelDPresenceCrit
         result.add(new ModelDPresenceCriterion(0.04d, 0.05d));
         result.add(new ModelDPresenceCriterion(0.01d, 0.05d));        
         return result;
-    }
-
-
-    /**
-     * Parses the input
-     */
-    protected void parse(ModelDPresenceCriterion model, boolean _default) {
-        updateLabel(labelDMin, model.getDmin());
-        knobDMin.setValue(model.getDmin());
-        updateLabel(labelDMax, model.getDmax());
-        knobDMax.setValue(model.getDmax());
     }
 }

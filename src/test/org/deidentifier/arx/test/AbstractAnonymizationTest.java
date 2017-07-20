@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,9 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,10 +44,6 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.criteria.BasicBLikeness;
-import org.deidentifier.arx.criteria.DDisclosurePrivacy;
-import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
@@ -76,32 +69,30 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXAnonymizationTestCase {
-
+        
         /** Random test variable */
-        private static int                      counter;
+        private static int      counter;
         /** Random test variable */
-        public final int                        id          = counter++;
+        public final int        id          = counter++;
         /** Random test variable */
-        public ARXConfiguration                 config;
+        public ARXConfiguration config;
         /** Random test variable */
-        public String                           dataset;
+        public String           dataset;
         /** Random test variable */
-        public String                           sensitiveAttribute;
+        public String           sensitiveAttribute;
         /** Random test variable */
-        public String                           optimalInformationLoss;
+        public String           optimalInformationLoss;
         /** Random test variable */
-        public int[]                            optimalTransformation;
+        public int[]            optimalTransformation;
         /** Random test variable */
-        public boolean                          practical;
+        public boolean          practical;
         /** Random test variable */
-        public int[]                            statistics;
+        public int[]            statistics;
         /** Random test variable */
-        public int                              hashcode    = -1;
+        public int              hashcode    = -1;
         /** Random test variable */
-        public boolean                          optimizable = false;
-        /** Hierarchy builders */
-        public Map<String, HierarchyBuilder<?>> builders;
-                                 
+        public boolean          optimizable = false;
+                                            
         /**
          * Creates a new instance.
          *
@@ -247,28 +238,9 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             this.hashcode = hashcode;
         }
         
-        /**
-         * Creates a new test case with hierarchy builders
-         * @param config
-         * @param dataset
-         * @param hierarchyBuilders
-         * @param informationLoss
-         * @param transformation
-         * @param practicalMonotonicity
-         */
-        public ARXAnonymizationTestCase(ARXConfiguration config,
-                                        String dataset,
-                                        Map<String, HierarchyBuilder<?>> hierarchyBuilders,
-                                        double informationLoss,
-                                        int[] transformation,
-                                        boolean practicalMonotonicity) {
-            this(config, dataset, informationLoss, transformation, practicalMonotonicity);
-            this.builders = hierarchyBuilders;
-        }
-
         @Override
         public String toString() {
-            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
+            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
@@ -333,31 +305,11 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || 
-                        testCase.config.isPrivacyModelSpecified(TCloseness.class) || 
-                        testCase.config.isPrivacyModelSpecified(DDisclosurePrivacy.class) ||
-                        testCase.config.isPrivacyModelSpecified(BasicBLikeness.class) ||
-                        testCase.config.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
+                    if (testCase.config.containsCriterion(LDiversity.class) || testCase.config.containsCriterion(TCloseness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
                 
-            }
-        }
-        
-        if (testCase.builders != null) {
-
-            // Remove all QIs
-            Set<String> qis = data.getDefinition().getQuasiIdentifyingAttributes();
-            for (String qi : qis) {
-                data.getDefinition().resetHierarchy(qi);
-                data.getDefinition().setAttributeType(qi, AttributeType.INSENSITIVE_ATTRIBUTE);
-            }
-            
-            // Set only builders as QIs
-            for (Entry<String, HierarchyBuilder<?>> entry : testCase.builders.entrySet()){
-                data.getDefinition().setAttributeType(entry.getKey(), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-                data.getDefinition().setHierarchy(entry.getKey(), entry.getValue());
             }
         }
         
@@ -412,11 +364,9 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         
         // Test or warmup
         ARXResult result = anonymizer.anonymize(data, testCase.config);
-        DataHandle output = null;
         if (testCase.hashcode != -1) {
             try {
-                output = result.getOutput();
-                result.optimizeIterative(output, 0.05d, 100, 0.05d);
+                result.optimize(result.getOutput());
             } catch (RollbackRequiredException e) {
                 throw new RuntimeException(e);
             }
@@ -440,8 +390,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 result = anonymizer.anonymize(data, testCase.config);
                 if (testCase.hashcode != -1) {
                     try {
-                        output = result.getOutput();
-                        result.optimizeIterative(output, 0.05d, 100, 0.05d);
+                        result.optimize(result.getOutput());
                     } catch (RollbackRequiredException e) {
                         throw new RuntimeException(e);
                     }
@@ -471,9 +420,10 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             
             // Compute hashcode of result
             int hashcode = 23;
-            for (int row = 0; row < output.getNumRows(); row++) {
-                for (int column = 0; column < output.getNumColumns(); column++) {
-                    hashcode = (37 * hashcode) + output.getValue(row, column).hashCode();
+            DataHandle handle = result.getOutput();
+            for (int row = 0; row < handle.getNumRows(); row++) {
+                for (int column = 0; column < handle.getNumColumns(); column++) {
+                    hashcode = (37 * hashcode) + handle.getValue(row, column).hashCode();
                 }
             }
             
@@ -481,17 +431,17 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             assertEquals("Hash code not equal", hashcode, testCase.hashcode);
             return;
         }
-
+        
         // Check if no solution
         if (testCase.optimalTransformation == null) {
             assertTrue(result.getGlobalOptimum() == null);
         } else {
             
-            String lossActual = result.getGlobalOptimum().getHighestScore().toString();
+            String lossActual = result.getGlobalOptimum().getMaximumInformationLoss().toString();
             String lossExpected = testCase.optimalInformationLoss;
             
             assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
-                         lossActual + "(" + result.getGlobalOptimum().getLowestScore().toString() + ")",
+                         lossActual + "(" + result.getGlobalOptimum().getMinimumInformationLoss().toString() + ")",
                          lossExpected,
                          lossActual);
                          
@@ -525,7 +475,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                     if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
                         statistics[5]++;
                     }
-                    if (arxNode.getHighestScore() == arxNode.getLowestScore()) {
+                    if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
                         statistics[6]++;
                     }
                 }

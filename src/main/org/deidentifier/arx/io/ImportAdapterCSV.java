@@ -172,21 +172,16 @@ public class ImportAdapterCSV extends ImportAdapter {
         }
 
         /* Create regular row */
-        String[] result;
-        try {
-            result = new String[indexes.length];
-            for (int i = 0; i < indexes.length; i++) {
-                result[i] = row[indexes[i]];
-                if (!dataTypes[i].isValid(result[i])) {
-                    if (config.columns.get(i).isCleansing()) {
-                        result[i] = DataType.NULL_VALUE;
-                    } else {
-                        throw new IllegalArgumentException("Data value does not match data type");
-                    }
+        String[] result = new String[indexes.length];
+        for (int i = 0; i < indexes.length; i++) {
+            result[i] = row[indexes[i]];
+            if (!dataTypes[i].isValid(result[i])) {
+                if (config.columns.get(i).isCleansing()) {
+                    result[i] = DataType.NULL_VALUE;
+                } else {
+                    throw new IllegalArgumentException("Data value does not match data type");
                 }
             }
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Inconsistent length of header and records");
         }
 
         /* Fetches the next row, which will be used in next iteration */

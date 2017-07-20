@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,9 +51,6 @@ public abstract class MetricDescription implements Serializable {
     
     /** Aggregate functions supported. */
     private final boolean aggregateFunctionSupported;
-
-    /** Are different attacker models supported. */
-    private final boolean attackerModelSupported;
     
     /**
      * Creates a new description.
@@ -64,22 +61,19 @@ public abstract class MetricDescription implements Serializable {
      * @param configurableCodingModelSupported
      * @param precomputationSupported
      * @param aggregateFunctionSupported
-     * @param attackerModelSupported
      */
     MetricDescription(String name,
                               boolean monotonicVariantSupported,
                               boolean attributeWeightsSupported,
                               boolean configurableCodingModelSupported,
                               boolean precomputationSupported,
-                              boolean aggregateFunctionSupported,
-                              boolean attackerModelSupported) {
+                              boolean aggregateFunctionSupported) {
         this.name = name;
         this.monotonicVariantSupported = monotonicVariantSupported;
         this.attributeWeightsSupported = attributeWeightsSupported;
         this.configurableCodingModelSupported = configurableCodingModelSupported;
         this.precomputationSupported = precomputationSupported;
         this.aggregateFunctionSupported = aggregateFunctionSupported;
-        this.attackerModelSupported = attackerModelSupported;
     }
 
     /**
@@ -124,13 +118,6 @@ public abstract class MetricDescription implements Serializable {
     }
 
     /**
-     * @return the attackerModelSupported
-     */
-    public boolean isAttackerModelSupported() {
-        return attackerModelSupported;
-    }
-    
-    /**
      * @return the attributeWeightsSupported
      */
     public boolean isAttributeWeightsSupported() {
@@ -151,7 +138,7 @@ public abstract class MetricDescription implements Serializable {
      * @return
      */
     public abstract boolean isInstance(Metric<?> metric);
-
+    
     /**
      * @return the monotonicVariantSupported
      */

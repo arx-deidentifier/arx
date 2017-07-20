@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,15 +18,12 @@
 package org.deidentifier.arx.metric;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
 import org.deidentifier.arx.metric.v2.AbstractMetricSingleDimensional;
 import org.deidentifier.arx.metric.v2.MetricMDHeight;
 import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
 import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
-import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.deidentifier.arx.metric.v2.__MetricV2;
 
 /**
@@ -38,9 +35,9 @@ import org.deidentifier.arx.metric.v2.__MetricV2;
  */
 public abstract class InformationLoss<T> implements Comparable<InformationLoss<?>>, Serializable {
 
-    /** SVUID */
-    private static final long        serialVersionUID = -5347658129539223333L;
-
+    /**  TODO */
+    private static final long serialVersionUID = -5347658129539223333L;
+    
     /**
      * Converter method, converting information loss from version 1 to information loss from version 2,
      * if necessary.
@@ -72,30 +69,12 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
         // Default
         return loss;
     }
-
-    /** Metadata */
-    private List<QualityMetadata<?>> metadata         = new ArrayList<QualityMetadata<?>>();
     
     /**
-     * Creates a new instance
+     * 
      */
     protected InformationLoss(){
         // Protected
-    }
-    
-    /**
-     * Adds new metadata
-     * 
-     * @param metadata
-     * @return
-     */
-    protected void addMetadata(QualityMetadata<?> metadata) {
-        
-        // Backwards compatibility
-        if (this.metadata == null) {
-            this.metadata = new ArrayList<QualityMetadata<?>>();
-        }
-        this.metadata.add(metadata);
     }
     
     /**
@@ -105,7 +84,7 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      */
     @Override
     public abstract InformationLoss<T> clone();
-
+    
     /**
      * Compares the loss to the other.
      *
@@ -118,28 +97,12 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
     public abstract boolean equals(Object obj);
 
     /**
-     * Adds new metadata
      * 
-     * @param metadata
-     * @return
-     */
-    public List<QualityMetadata<?>> getMetadata() {
-        
-        // Backwards compatibility
-        if (this.metadata == null) {
-            return new ArrayList<QualityMetadata<?>>();
-        } else {
-            return new ArrayList<QualityMetadata<?>>(this.metadata);
-        }
-    }
-
-    /**
-     * Returns the value
      *
      * @return
      */
     public abstract T getValue();
-    
+
     @Override
     public abstract int hashCode();
 
@@ -149,7 +112,7 @@ public abstract class InformationLoss<T> implements Comparable<InformationLoss<?
      * @param other
      */
     public abstract void max(InformationLoss<?> other);
-
+    
     /**
      * Retains the minimum of this and other.
      *

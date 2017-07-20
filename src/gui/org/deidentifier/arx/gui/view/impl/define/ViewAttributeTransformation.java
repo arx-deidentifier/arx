@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -372,12 +372,10 @@ public class ViewAttributeTransformation implements IView {
                     
                     if (model.getLDiversityModel().get(attribute).isEnabled() ||
                         model.getTClosenessModel().get(attribute).isEnabled() ||
-                        model.getBLikenessModel().get(attribute).isEnabled() ||
                         model.getDDisclosurePrivacyModel().get(attribute).isEnabled()) {
                         criteriaDisabled = true;
                     }
                     
-                    model.getBLikenessModel().get(attribute).setEnabled(false);
                     model.getTClosenessModel().get(attribute).setEnabled(false);
                     model.getLDiversityModel().get(attribute).setEnabled(false);
                     model.getDDisclosurePrivacyModel().get(attribute).setEnabled(false);
@@ -387,14 +385,12 @@ public class ViewAttributeTransformation implements IView {
                 if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
                     
                     if (model.getKAnonymityModel().isEnabled() ||
-                        model.getDPresenceModel().isEnabled() ||
-                        model.getStackelbergModel().isEnabled()) {
+                        model.getDPresenceModel().isEnabled()) {
                         criteriaDisabled = true;
                     }
                     
                     model.getKAnonymityModel().setEnabled(false);
                     model.getDPresenceModel().setEnabled(false);
-                    model.getStackelbergModel().setEnabled(false);
                     for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
                         if (c.isEnabled()) {
                             criteriaDisabled = true;

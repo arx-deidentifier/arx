@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,44 +108,6 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         this.arxmodel = arxmodel;
     }
 
-    /**
-     * Returns a generalization degree
-     * @return
-     */
-    private GeneralizationDegree getGeneralizationDegree(int index) {
-        return GeneralizationDegree.values()[index];
-    }
-    
-    /**
-     * Returns a set of all generalization degrees
-     * @return
-     */
-    private String[] getGeneralizationDegrees() {
-        List<String> result = new ArrayList<String>();
-        for (GeneralizationDegree degree : GeneralizationDegree.values()) {
-            String label = degree.toString().replace("_", "-").toLowerCase();
-            label = label.substring(0,1).toUpperCase() + label.substring(1);
-            result.add(label);
-        }
-        result.add("Custom...");
-        return result.toArray(new String[result.size()]);
-    }
-
-    /**
-     * Returns the according index
-     * @param generalization
-     * @return
-     */
-    private int getIndexOfGeneralizationDegree(GeneralizationDegree generalization) {
-        int index = 0;
-        for (GeneralizationDegree degree : GeneralizationDegree.values()) {
-            if (degree == generalization) {
-                return index;
-            }
-            index ++;
-        }
-        return -1;
-    }
     @Override
     protected Composite build(Composite parent) {
 
@@ -228,18 +190,44 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         return group;
     }
     
-    @Override
-    protected List<ModelCriterion> getTypicalParameters() {
-
-        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
-        for (double delta : DELTAS) {
-            for (double epsilon : EPSILONS) {
-                result.add(new ModelDifferentialPrivacyCriterion(epsilon, delta));
-            }
+    /**
+     * Returns a set of all generalization degrees
+     * @return
+     */
+    private String[] getGeneralizationDegrees() {
+        List<String> result = new ArrayList<String>();
+        for (GeneralizationDegree degree : GeneralizationDegree.values()) {
+            String label = degree.toString().replace("_", "-").toLowerCase();
+            label = label.substring(0,1).toUpperCase() + label.substring(1);
+            result.add(label);
         }
-        return result;
+        result.add("Custom...");
+        return result.toArray(new String[result.size()]);
     }
 
+    /**
+     * Returns the according index
+     * @param generalization
+     * @return
+     */
+    private int getIndexOfGeneralizationDegree(GeneralizationDegree generalization) {
+        int index = 0;
+        for (GeneralizationDegree degree : GeneralizationDegree.values()) {
+            if (degree == generalization) {
+                return index;
+            }
+            index ++;
+        }
+        return -1;
+    }
+    /**
+     * Returns a generalization degree
+     * @return
+     */
+    private GeneralizationDegree getGeneralizationDegree(int index) {
+        return GeneralizationDegree.values()[index];
+    }
+    
     @Override
     protected void parse(ModelDifferentialPrivacyCriterion model, boolean _default) {
         
@@ -255,5 +243,17 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                 comboGeneralization.select(comboGeneralization.getItemCount() - 1);
             }
         }
+    }
+
+    @Override
+    protected List<ModelCriterion> getTypicalParameters() {
+
+        List<ModelCriterion> result = new ArrayList<ModelCriterion>();
+        for (double delta : DELTAS) {
+            for (double epsilon : EPSILONS) {
+                result.add(new ModelDifferentialPrivacyCriterion(epsilon, delta));
+            }
+        }
+        return result;
     }
 }
