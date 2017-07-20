@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>Serialized Form (ARX API Documentation)</title>
 <link rel="stylesheet" type="text/css" href="stylesheet.css" title="Style">
@@ -140,13 +140,17 @@
 <li class="blockList">
 <h4>suppressionAlwaysEnabled</h4>
 <pre>java.lang.Boolean suppressionAlwaysEnabled</pre>
-<div class="block">Determines whether suppression is applied to the output of anonymous as
- well as non-anonymous transformations.</div>
+<div class="block">Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations.</div>
 </li>
 <li class="blockList">
 <h4>utilityBasedMicroaggregation</h4>
 <pre>boolean utilityBasedMicroaggregation</pre>
 <div class="block">Should microaggregation be based on data utility measurements</div>
+</li>
+<li class="blockList">
+<h4>utilityBasedMicroaggregationUseMeanSquaredError</h4>
+<pre>boolean utilityBasedMicroaggregationUseMeanSquaredError</pre>
+<div class="block">Should the mean-squared error be used to measure the impact of microaggregation</div>
 </li>
 <li class="blockList">
 <h4>heuristicSearchForSampleBasedCriteria</h4>
@@ -161,12 +165,56 @@
 <li class="blockList">
 <h4>heuristicSearchThreshold</h4>
 <pre>java.lang.Integer heuristicSearchThreshold</pre>
-<div class="block">We will use the heuristic algorithm, if the size of the search space exceeds this threshold</div>
+<div class="block">We will use the heuristic algorithm, if the size of the search space
+ exceeds this threshold</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>heuristicSearchTimeLimit</h4>
 <pre>java.lang.Integer heuristicSearchTimeLimit</pre>
 <div class="block">The heuristic algorithm will terminate after the given time limit</div>
+</li>
+<li class="blockListLast">
+<h4>costBenefitConfiguration</h4>
+<pre><a href="org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a> costBenefitConfiguration</pre>
+<div class="block">Cost/benefit configuration</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.ARXCostBenefitConfiguration">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">org.deidentifier.arx.ARXCostBenefitConfiguration</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-560679186676701860L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>publisherBenefit</h4>
+<pre>double publisherBenefit</pre>
+<div class="block">Basic parameters</div>
+</li>
+<li class="blockList">
+<h4>publisherLoss</h4>
+<pre>double publisherLoss</pre>
+<div class="block">Basic parameters</div>
+</li>
+<li class="blockList">
+<h4>adversaryGain</h4>
+<pre>double adversaryGain</pre>
+<div class="block">Basic parameters</div>
+</li>
+<li class="blockListLast">
+<h4>adversaryCost</h4>
+<pre>double adversaryCost</pre>
+<div class="block">Basic parameters</div>
 </li>
 </ul>
 </li>
@@ -818,17 +866,17 @@
 <li class="blockList">
 <h4>array</h4>
 <pre>long[] array</pre>
-<div class="block">TODO</div>
+<div class="block">Array</div>
 </li>
 <li class="blockList">
 <h4>length</h4>
 <pre>int length</pre>
-<div class="block">TODO</div>
+<div class="block">Length of array</div>
 </li>
 <li class="blockListLast">
 <h4>size</h4>
 <pre>int size</pre>
-<div class="block">TODO</div>
+<div class="block">Number of bits set</div>
 </li>
 </ul>
 </li>
@@ -1331,7 +1379,7 @@
 <li class="blockListLast">
 <h4>comparator</h4>
 <pre>java.util.Comparator&lt;T&gt; comparator</pre>
-<div class="block">TODO</div>
+<div class="block">Comparator</div>
 </li>
 </ul>
 </li>
@@ -1354,7 +1402,7 @@
 <li class="blockListLast">
 <h4>values</h4>
 <pre>java.lang.String[] values</pre>
-<div class="block">TODO</div>
+<div class="block">Values</div>
 </li>
 </ul>
 </li>
@@ -1438,6 +1486,34 @@
 <dt>serialVersionUID:</dt>
 <dd>-2953252206954936045L</dd>
 </dl>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.BasicBLikeness">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/BasicBLikeness.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.BasicBLikeness</a> extends <a href="org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>2528498679732389575L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>b</h4>
+<pre>double b</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockListLast">
+<h4>distribution</h4>
+<pre>double[] distribution</pre>
+<div class="block">The original distribution.</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.DDisclosurePrivacy">
 <!--   -->
@@ -1557,6 +1633,34 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.EnhancedBLikeness">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/EnhancedBLikeness.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.EnhancedBLikeness</a> extends <a href="org/deidentifier/arx/criteria/ExplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ExplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5319052409590347904L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>b</h4>
+<pre>double b</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockListLast">
+<h4>distribution</h4>
+<pre>double[] distribution</pre>
+<div class="block">The original distribution.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.EntropyLDiversity">
 <!--   -->
 </a>
@@ -1565,6 +1669,42 @@
 <dt>serialVersionUID:</dt>
 <dd>-354688551915634000L</dd>
 </dl>
+<ul class="blockList">
+<li class="blockList"><a name="serialized_methods">
+<!--   -->
+</a>
+<h3>Serialization Methods</h3>
+<ul class="blockList">
+<li class="blockListLast"><a name="readObject(java.io.ObjectInputStream)">
+<!--   -->
+</a>
+<h4>readObject</h4>
+<pre>private&nbsp;void&nbsp;readObject(java.io.ObjectInputStream&nbsp;ois)
+                 throws java.lang.ClassNotFoundException,
+                        java.io.IOException</pre>
+<div class="block">Custom de-serialization
+ 
+ If we de-serialize an older object where the entropy estimator
+ could not be chosen, set the estimator to the default: Shannon.</div>
+<dl><dt><span class="strong">Throws:</span></dt>
+<dd><code>java.lang.ClassNotFoundException</code></dd>
+<dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>estimator</h4>
+<pre><a href="org/deidentifier/arx/criteria/EntropyLDiversity.EntropyEstimator.html" title="enum in org.deidentifier.arx.criteria">EntropyLDiversity.EntropyEstimator</a> estimator</pre>
+<div class="block">Entropy estimator to be used</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.EqualDistanceTCloseness">
 <!--   -->
@@ -1777,6 +1917,34 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.OrderedDistanceTCloseness">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/OrderedDistanceTCloseness.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.OrderedDistanceTCloseness</a> extends <a href="org/deidentifier/arx/criteria/TCloseness.html" title="class in org.deidentifier.arx.criteria">TCloseness</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2395544663063577862L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>distribution</h4>
+<pre>double[] distribution</pre>
+<div class="block">The original distribution.</div>
+</li>
+<li class="blockListLast">
+<h4>order</h4>
+<pre>int[] order</pre>
+<div class="block">The order of the elements.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.criteria.PopulationUniqueness">
 <!--   -->
 </a>
@@ -1833,6 +2001,133 @@
 <h4>monotonicWithGeneralization</h4>
 <pre>java.lang.Boolean monotonicWithGeneralization</pre>
 <div class="block">Is the criterion monotonic with generalization.</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.ProfitabilityJournalist">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/ProfitabilityJournalist.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.ProfitabilityJournalist</a> extends <a href="org/deidentifier/arx/criteria/ProfitabilityProsecutor.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutor</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5089787798100584405L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>subset</h4>
+<pre><a href="org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a> subset</pre>
+<div class="block">Data subset</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/ProfitabilityJournalistNoAttack.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack</a> extends <a href="org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">ProfitabilityProsecutorNoAttack</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>1073520003237793563L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>subset</h4>
+<pre><a href="org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a> subset</pre>
+<div class="block">The data subset</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.ProfitabilityProsecutor">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/ProfitabilityProsecutor.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.ProfitabilityProsecutor</a> extends <a href="org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ImplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-1698534839214708559L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>config</h4>
+<pre><a href="org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a> config</pre>
+<div class="block">Configuration</div>
+</li>
+<li class="blockList">
+<h4>shares</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[] shares</pre>
+<div class="block">Domain shares for each dimension.</div>
+</li>
+<li class="blockList">
+<h4>microaggregationFunctions</h4>
+<pre>org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[] microaggregationFunctions</pre>
+<div class="block">The microaggregation functions.</div>
+</li>
+<li class="blockList">
+<h4>microaggregationStartIndex</h4>
+<pre>int microaggregationStartIndex</pre>
+<div class="block">The start index of the attributes with microaggregation in the data array (dataAnalyzed)</div>
+</li>
+<li class="blockList">
+<h4>microaggregationDomainSizes</h4>
+<pre>int[] microaggregationDomainSizes</pre>
+<div class="block">Domain size for each microaggregated attribute</div>
+</li>
+<li class="blockList">
+<h4>maxIL</h4>
+<pre>double maxIL</pre>
+<div class="block">MaxIL</div>
+</li>
+<li class="blockListLast">
+<h4>riskModel</h4>
+<pre><a href="org/deidentifier/arx/risk/RiskModelCostBenefit.html" title="class in org.deidentifier.arx.risk">RiskModelCostBenefit</a> riskModel</pre>
+<div class="block">Risk model</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/criteria/ProfitabilityProsecutorNoAttack.html" title="class in org.deidentifier.arx.criteria">org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack</a> extends <a href="org/deidentifier/arx/criteria/ImplicitPrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">ImplicitPrivacyCriterion</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-1283022087083117810L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>k</h4>
+<pre>int k</pre>
+<div class="block">The underlying k-anonymity privacy model</div>
+</li>
+<li class="blockListLast">
+<h4>config</h4>
+<pre><a href="org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a> config</pre>
+<div class="block">The underlying cost/benefit configuration</div>
 </li>
 </ul>
 </li>
@@ -2004,6 +2299,20 @@
 <dt>serialVersionUID:</dt>
 <dd>-5347658129539223333L</dd>
 </dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>metadata</h4>
+<pre>java.util.List&lt;E&gt; metadata</pre>
+<div class="block">Metadata</div>
+</li>
+</ul>
+</li>
+</ul>
 </li>
 <li class="blockList"><a name="org.deidentifier.arx.metric.Metric">
 <!--   -->
@@ -2025,9 +2334,14 @@
 <div class="block">Is the metric independent?.</div>
 </li>
 <li class="blockList">
+<h4>monotonicWithGeneralization</h4>
+<pre>java.lang.Boolean monotonicWithGeneralization</pre>
+<div class="block">Is the metric monotonic with generalization?.</div>
+</li>
+<li class="blockList">
 <h4>monotonic</h4>
 <pre>boolean monotonic</pre>
-<div class="block">Is the metric monotonic?.</div>
+<div class="block">Is the metric monotonic with suppression?.</div>
 </li>
 <li class="blockList">
 <h4>gFactor</h4>
@@ -2162,10 +2476,15 @@
 <pre>boolean precomputationSupported</pre>
 <div class="block">Pre-computation supported.</div>
 </li>
-<li class="blockListLast">
+<li class="blockList">
 <h4>aggregateFunctionSupported</h4>
 <pre>boolean aggregateFunctionSupported</pre>
 <div class="block">Aggregate functions supported.</div>
+</li>
+<li class="blockListLast">
+<h4>attackerModelSupported</h4>
+<pre>boolean attackerModelSupported</pre>
+<div class="block">Are different attacker models supported.</div>
 </li>
 </ul>
 </li>
@@ -2504,6 +2823,11 @@
 <pre>int microaggregationStartIndex</pre>
 <div class="block">The start index of the attributes with microaggregation in the data array</div>
 </li>
+<li class="blockList">
+<h4>microaggregationUseMeanSquaredError</h4>
+<pre>boolean microaggregationUseMeanSquaredError</pre>
+<div class="block">Should the mean squared error be used</div>
+</li>
 <li class="blockListLast">
 <h4>microaggregationHeader</h4>
 <pre>java.lang.String[] microaggregationHeader</pre>
@@ -2565,10 +2889,40 @@
 </a>
 <h3>Serialized Fields</h3>
 <ul class="blockList">
-<li class="blockListLast">
+<li class="blockList">
 <h4>tuples</h4>
 <pre>java.lang.Double tuples</pre>
 <div class="block">Row count.</div>
+</li>
+<li class="blockList">
+<h4>dimensions</h4>
+<pre>int dimensions</pre>
+<div class="block">Number of dimensions.</div>
+</li>
+<li class="blockList">
+<h4>dimensionsGeneralized</h4>
+<pre>int dimensionsGeneralized</pre>
+<div class="block">Number of dimensions with generalization</div>
+</li>
+<li class="blockList">
+<h4>dimensionsAggregated</h4>
+<pre>int dimensionsAggregated</pre>
+<div class="block">Number of dimensions with aggregation</div>
+</li>
+<li class="blockList">
+<h4>microaggregationFunctions</h4>
+<pre>org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[] microaggregationFunctions</pre>
+<div class="block">The microaggregation functions.</div>
+</li>
+<li class="blockList">
+<h4>microaggregationStartIndex</h4>
+<pre>int microaggregationStartIndex</pre>
+<div class="block">The start index of the attributes with microaggregation in the data array (dataAnalyzed)</div>
+</li>
+<li class="blockListLast">
+<h4>microaggregationDomainSizes</h4>
+<pre>int[] microaggregationDomainSizes</pre>
+<div class="block">Domain size for each microaggregated attribute</div>
 </li>
 </ul>
 </li>
@@ -3213,6 +3567,34 @@
 <dd>-8573084860566655278L</dd>
 </dl>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricSDNMEntropyBasedInformationLoss.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss</a> extends <a href="org/deidentifier/arx/metric/v2/AbstractMetricSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricSingleDimensional</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-2443537745262162075L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>shares</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[] shares</pre>
+<div class="block">Domain shares for each dimension.</div>
+</li>
+<li class="blockListLast">
+<h4>maxIL</h4>
+<pre>double maxIL</pre>
+<div class="block">MaxIL</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMKLDivergence">
 <!--   -->
 </a>
@@ -3261,6 +3643,82 @@
 </li>
 </ul>
 </li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/MetricSDNMPublisherPayout.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout</a> extends <a href="org/deidentifier/arx/metric/v2/AbstractMetricSingleDimensional.html" title="class in org.deidentifier.arx.metric.v2">AbstractMetricSingleDimensional</a> implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>5729454129866471107L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>config</h4>
+<pre><a href="org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a> config</pre>
+<div class="block">Configuration for the Stackelberg game</div>
+</li>
+<li class="blockList">
+<h4>shares</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/DomainShare.html" title="interface in org.deidentifier.arx.metric.v2">DomainShare</a>[] shares</pre>
+<div class="block">Domain shares for each dimension.</div>
+</li>
+<li class="blockList">
+<h4>maxIL</h4>
+<pre>double maxIL</pre>
+<div class="block">Maximal information loss</div>
+</li>
+<li class="blockList">
+<h4>modelRisk</h4>
+<pre><a href="org/deidentifier/arx/risk/RiskModelCostBenefit.html" title="class in org.deidentifier.arx.risk">RiskModelCostBenefit</a> modelRisk</pre>
+<div class="block">Risk model</div>
+</li>
+<li class="blockList">
+<h4>journalistAttackerModel</h4>
+<pre>boolean journalistAttackerModel</pre>
+<div class="block">Journalist attacker model</div>
+</li>
+<li class="blockListLast">
+<h4>maximalPayout</h4>
+<pre><a href="org/deidentifier/arx/metric/v2/QualityMetadata.html" title="class in org.deidentifier.arx.metric.v2">QualityMetadata</a>&lt;<a href="org/deidentifier/arx/metric/v2/QualityMetadata.html" title="type parameter in QualityMetadata">T</a>&gt; maximalPayout</pre>
+<div class="block">Maximal payout</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList"><a name="org.deidentifier.arx.metric.v2.QualityMetadata">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/metric/v2/QualityMetadata.html" title="class in org.deidentifier.arx.metric.v2">org.deidentifier.arx.metric.v2.QualityMetadata</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>8750896039746232218L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockList">
+<h4>parameter</h4>
+<pre>java.lang.String parameter</pre>
+<div class="block">Parameter</div>
+</li>
+<li class="blockListLast">
+<h4>value</h4>
+<pre>java.lang.Object value</pre>
+<div class="block">Value</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="blockList"><a name="org.deidentifier.arx.metric.v2.TupleMatcher">
 <!--   -->
 </a>
@@ -3289,6 +3747,34 @@
 <h4>tuple</h4>
 <pre>int[] tuple</pre>
 <div class="block">Data</div>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="blockList">
+<h2 title="Package">Package&nbsp;org.deidentifier.arx.risk</h2>
+<ul class="blockList">
+<li class="blockList"><a name="org.deidentifier.arx.risk.RiskModelCostBenefit">
+<!--   -->
+</a>
+<h3>Class <a href="org/deidentifier/arx/risk/RiskModelCostBenefit.html" title="class in org.deidentifier.arx.risk">org.deidentifier.arx.risk.RiskModelCostBenefit</a> extends java.lang.Object implements Serializable</h3>
+<dl class="nameValue">
+<dt>serialVersionUID:</dt>
+<dd>-6124431335607475931L</dd>
+</dl>
+<ul class="blockList">
+<li class="blockList"><a name="serializedForm">
+<!--   -->
+</a>
+<h3>Serialized Fields</h3>
+<ul class="blockList">
+<li class="blockListLast">
+<h4>config</h4>
+<pre><a href="org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a> config</pre>
+<div class="block">The underlying configuration</div>
 </li>
 </ul>
 </li>

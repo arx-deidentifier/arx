@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ public class Example37 extends Example {
                                                                     DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
 
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(criterion);
+        config.addPrivacyModel(criterion);
         config.setMaxOutliers(1d);
         ARXResult result = anonymizer.anonymize(data, config);
 

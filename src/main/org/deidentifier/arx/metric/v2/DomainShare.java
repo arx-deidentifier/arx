@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,12 @@ import java.io.Serializable;
 public interface DomainShare extends Serializable{
 
     /**
+     * Clones the share
+     * @return
+     */
+    public abstract DomainShare clone();
+
+    /**
      * Returns the size of the domain.
      *
      * @return
@@ -41,5 +47,4 @@ public interface DomainShare extends Serializable{
      * @return
      */
     public abstract double getShare(int value, int level);
-
 }

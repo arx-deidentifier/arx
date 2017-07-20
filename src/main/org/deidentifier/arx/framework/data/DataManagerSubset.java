@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,11 +64,13 @@ public class DataManagerSubset extends DataManager {
                                 DistributionAggregateFunction[] microaggregationFunctions,
                                 String[] microaggregationHeader,
                                 int[] microaggregationMap,
+                                int[] microaggregationDomainSizes,
                                 int microaggregationNumAttributes,
                                 int microaggregationStartIndex,
                                 int[] minLevels,
                                 Map<String, DataType<?>> dataTypesSensitive) {
-        super(dataAnalyzed,
+        super(source.getDataDefinition(),
+              dataAnalyzed,
               dataGeneralized,
               dataStatic,
               header,
@@ -80,18 +82,13 @@ public class DataManagerSubset extends DataManager {
               microaggregationFunctions,
               microaggregationHeader,
               microaggregationMap,
+              microaggregationDomainSizes,
               microaggregationNumAttributes,
               microaggregationStartIndex,
               minLevels,
               dataTypesSensitive);
         
         this.source = source;
-    }
-
-    @Override
-    public int[] getOrder(String attribute) {
-        // Delegate to source
-        return source.getOrder(attribute);
     }
 
     @Override
@@ -104,6 +101,12 @@ public class DataManagerSubset extends DataManager {
     public double[] getDistribution(String attribute) {
         // Delegate to source
         return source.getDistribution(attribute);
+    }
+
+    @Override
+    public int[] getOrder(String attribute) {
+        // Delegate to source
+        return source.getOrder(attribute);
     }
 
     @Override

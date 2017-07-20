@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,19 +56,19 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
      */
     public static class ARXUtilityMetricsTestCase {
         
-        /** TODO */
+        /** Config */
         public ARXConfiguration config;
                                 
-        /** TODO */
+        /** Dataset */
         public String           dataset;
                                 
-        /** TODO */
+        /** Sensitive attribute */
         public String           sensitiveAttribute;
                                 
-        /** TODO */
+        /** First model */
         public Metric<?>        m1;
                                 
-        /** TODO */
+        /** Second model */
         public Metric<?>        m2;
                                 
         /**
@@ -106,7 +106,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
             builder.append(" - Metric1: ").append(m1.toString()).append("\n");
             builder.append(" - Metric2: ").append(m2.toString()).append("\n");
             builder.append(" - Criteria:\n");
-            for (PrivacyCriterion c : config.getCriteria()) {
+            for (PrivacyCriterion c : config.getPrivacyModels()) {
                 builder.append("   * ").append(c.toString()).append("\n");
             }
             builder.append("}");
@@ -115,7 +115,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
         
         @Override
         public String toString() {
-            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
@@ -158,7 +158,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.containsCriterion(LDiversity.class) || testCase.config.containsCriterion(TCloseness.class)) {
+                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
@@ -200,43 +200,20 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
         ARXConfiguration testcaseconfig = testcase.config;
         
         // Metric 1
-        testcaseconfig.setMetric(testcase.m1);
+        testcaseconfig.setQualityModel(testcase.m1);
         Data data1 = getDataObject(testcase);
         ARXAnonymizer anonymizer1 = new ARXAnonymizer();
         ARXResult result1 = anonymizer1.anonymize(data1, testcaseconfig);
         
         // Metric 2
-        testcaseconfig.setMetric(testcase.m2);
+        testcaseconfig.setQualityModel(testcase.m2);
         Data data2 = getDataObject(testcase);
         ARXAnonymizer anonymizer2 = new ARXAnonymizer();
         ARXResult result2 = anonymizer2.anonymize(data2, testcaseconfig);
         
-        String loss1 = result1.getGlobalOptimum().getMaximumInformationLoss().toString();
-        String loss2 = result2.getGlobalOptimum().getMaximumInformationLoss().toString();
+        String loss1 = result1.getGlobalOptimum().getHighestScore().toString();
+        String loss2 = result2.getGlobalOptimum().getHighestScore().toString();
         
         assertEquals("Metric value differs", loss1, loss2);
-        
-        // Map<String, ARXNode> result1nodesmap = new HashMap<String, ARXNode>();
-        //
-        // for (ARXNode[] level : result1.getLattice().getLevels()) {
-        // for (ARXNode node : level) {
-        // result1nodesmap.put(Arrays.toString(node.getTransformation()), node);
-        // }
-        // }
-        //
-        // // Test equality information loss for all transformations
-        // for (ARXNode[] level : result2.getLattice().getLevels()) {
-        // for (ARXNode node : level) {
-        //
-        // String label = Arrays.toString(node.getTransformation());
-        // result1.getOutput(result1nodesmap.get(label), false);
-        // result2.getOutput(node, false);
-        //
-        // String loss1 = result1nodesmap.get(label).getMaximumInformationLoss().toString();
-        // String loss2 = node.getMaximumInformationLoss().toString();
-        //
-        // assertEquals(label, loss1, loss2);
-        // }
-        // }
     }
 }

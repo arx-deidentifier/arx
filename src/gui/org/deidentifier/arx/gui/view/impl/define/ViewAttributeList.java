@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -54,6 +53,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * This view lists all attributes and their metadata
  * 
  * @author Fabian Prasser
+ * @author Martin Waltl
  */
 public class ViewAttributeList implements IView {
 
@@ -66,17 +66,8 @@ public class ViewAttributeList implements IView {
     /** Model */
     private String[]         dataTypes;
 
-    /** List */
+    /** View */
     private DynamicTable     table;
-
-    /** Resource */
-    private final Image      IMAGE_IDENTIFYING;
-    /** Resource */
-    private final Image      IMAGE_INSENSITIVE;
-    /** Resource */
-    private final Image      IMAGE_QUASI_IDENTIFYING;
-    /** Resource */
-    private final Image      IMAGE_SENSITIVE;
 
     /**
      * Creates a new instance.
@@ -88,14 +79,6 @@ public class ViewAttributeList implements IView {
     public ViewAttributeList(final Composite parent,
                              final Controller controller) {
 
-
-        // Load images
-        IMAGE_INSENSITIVE = controller.getResources().getManagedImage("bullet_green.png"); //$NON-NLS-1$
-        IMAGE_SENSITIVE = controller.getResources().getManagedImage("bullet_purple.png"); //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png"); //$NON-NLS-1$
-        IMAGE_IDENTIFYING = controller.getResources().getManagedImage("bullet_red.png"); //$NON-NLS-1$
-        
-        
         // Controller
         this.controller = controller;
         this.controller.addListener(ModelPart.INPUT, this);
@@ -141,60 +124,83 @@ public class ViewAttributeList implements IView {
     }
 
     /**
-     * Update
+     * Data type changed
      */
-    private void updateDataTypes() {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
-            table.setRedraw(false);
-            DataHandle data = model.getInputConfig().getInput().getHandle();
-            for (int i = 0; i < data.getNumColumns(); i++) {
-                String attribute = data.getAttributeName(i);
-                table.getItem(i).setText(2, getDataType(attribute));
-                table.getItem(i).setText(3, getDataTypeFormat(attribute));
-            }
-            table.setRedraw(true);
-            SWTUtil.enable(table);
-        }
-    }
+    private void actionDataTypeChanged(String label) {
 
-    /**
-     * Update
-     */
-    private void updateAttributeTypes() {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
-            table.setRedraw(false);
-            DataHandle data = model.getInputConfig().getInput().getHandle();
-            for (int i = 0; i < data.getNumColumns(); i++) {
-                String attribute = data.getAttributeName(i);
-                AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-                if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_IDENTIFYING);  
-                } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_SENSITIVE);
-                } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_QUASI_IDENTIFYING);
-                } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-                    table.getItem(i).setImage(0, IMAGE_INSENSITIVE);
-                }
-            }
-            table.setRedraw(true);
-            SWTUtil.enable(table);
-        }
-    }
+        if (label != null && model != null && model.getInputConfig().getInput() != null) {
 
-    /**
-     * Update
-     * @param attribute
-     */
-    private void updateSelectedAttribute(String attribute) {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
-            DataHandle data = model.getInputConfig().getInput().getHandle();
-            for (int i = 0; i < data.getNumColumns(); i++) {
-                if (data.getAttributeName(i).equals(attribute)) {
-                    table.select(i);
-                    break;
+            // Prepare
+            String attribute = model.getSelectedAttribute();
+            DataTypeDescription<?> description = getDataTypeDescription(label);
+            DataType<?> type = model.getInputDefinition().getDataType(attribute);
+            boolean changed = false;
+
+            try {
+                // Open format dialog
+                if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
+                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                    String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
+                                                                            text1,
+                                                                            text2,
+                                                                            type,
+                                                                            model.getLocale(),
+                                                                            getValuesAsArray(attribute));
+
+                    // Only update the data type of the attribute if an order has been determined
+                    if (array != null) {
+
+                        // Only update the data type of the attribute if the selected type is valid
+                        DataType<?> tempType = DataType.createOrderedString(array);
+                        if (isValidDataType(tempType, getValuesAsList(attribute))) {
+                            type = tempType;
+                            changed = true;
+                        }
+
+                    }
+                } else if (description.hasFormat()) {
+                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
+                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
+                    final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
+                                                                                 text1,
+                                                                                 text2,
+                                                                                 model.getLocale(),
+                                                                                 description,
+                                                                                 getValuesAsList(attribute));
+                    
+                    // Only update the data type of the attribute if a format has been selected
+                    if (format != null) {
+                        // The format input already performs a validity check,
+                        // hence the returned format is valid
+                        type = description.newInstance(format, model.getLocale());
+                        changed = true;
+                    }
+                } else {
+                    
+                    // Only update the data type of the attribute if the selected type is valid
+                    DataType<?> typeTemp = description.newInstance();
+                    if (isValidDataType(typeTemp, getValuesAsList(attribute))) {
+                        type = typeTemp;
+                        changed = true;
+                    }
                 }
-            }   
+                
+            // Handle unexpected errors
+            } catch (Exception e) {
+                
+                controller.actionShowInfoDialog(controller.getResources().getShell(),
+                                                Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+                type = DataType.STRING;
+                changed = true;
+            }
+
+            // Set and update
+            if (changed) {
+                this.model.getInputDefinition().setDataType(attribute, type);
+                this.updateDataTypes();
+                this.controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
+            }
         }
     }
 
@@ -263,41 +269,48 @@ public class ViewAttributeList implements IView {
     }
 
     /**
-     * Updates the view.
-     * 
-     * @param node
+     * Returns the data type of the attribute
+     * @param attribute
+     * @return
      */
-    private void updateEntries() {
+    private String getDataType(String attribute) {
+        return dataTypes[getIndexOfDataType(model.getInputDefinition().getDataType(attribute))];
+    }
 
-        // Check
-        if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) { 
-            return; 
-        }
-
-        table.setRedraw(false);
-        table.removeAll();
-        DataHandle data = model.getInputConfig().getInput().getHandle();
-        for (int i = 0; i < data.getNumColumns(); i++) {
-            String attribute = data.getAttributeName(i);
-            TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", attribute, getDataType(attribute), getDataTypeFormat(attribute) }); //$NON-NLS-1$
-            AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-            if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-                item.setImage(0, IMAGE_IDENTIFYING);  
-            } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-                item.setImage(0, IMAGE_SENSITIVE);
-            } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-                item.setImage(0, IMAGE_QUASI_IDENTIFYING);
-            } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-                item.setImage(0, IMAGE_INSENSITIVE);
-            }
-            if (model.getSelectedAttribute() != null && model.getSelectedAttribute().equals(attribute)) {
-                table.select(i);
+    /**
+     * Returns a description for the given label.
+     *
+     * @param label
+     * @return
+     */
+    private DataTypeDescription<?> getDataTypeDescription(String label) {
+        for (DataTypeDescription<?> desc : DataType.list()) {
+            if (label.equals(desc.getLabel())) {
+                return desc;
             }
         }
-        
-        table.setRedraw(true);
-        SWTUtil.enable(table);
+        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.5") + label); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the format of the attribute
+     * @param attribute
+     * @return
+     */
+    private String getDataTypeFormat(String attribute) {
+
+        DataType<?> dtype = model.getInputDefinition().getDataType(attribute);
+        if (!(dtype instanceof ARXOrderedString) && dtype.getDescription().hasFormat()) {
+            DataTypeWithFormat dtwf = (DataTypeWithFormat) dtype;
+            String format = dtwf.getFormat();
+            if (format == null) {
+                return Resources.getMessage("ViewAttributeDefinition.7"); //$NON-NLS-1$
+            } else {
+                return format;
+            }
+        } else {
+            return Resources.getMessage("ViewAttributeDefinition.8"); //$NON-NLS-1$
+        }
     }
 
     /**
@@ -331,106 +344,13 @@ public class ViewAttributeList implements IView {
     }
     
     /**
-     * Returns the format of the attribute
-     * @param attribute
-     * @return
-     */
-    private String getDataTypeFormat(String attribute) {
-
-        DataType<?> dtype = model.getInputDefinition().getDataType(attribute);
-        if (!(dtype instanceof ARXOrderedString) && dtype.getDescription().hasFormat()) {
-            DataTypeWithFormat dtwf = (DataTypeWithFormat) dtype;
-            String format = dtwf.getFormat();
-            if (format == null) {
-                return Resources.getMessage("ViewAttributeDefinition.7"); //$NON-NLS-1$
-            } else {
-                return format;
-            }
-        } else {
-            return Resources.getMessage("ViewAttributeDefinition.8"); //$NON-NLS-1$
-        }
-    }
-
-    /**
-     * Returns the data type of the attribute
-     * @param attribute
-     * @return
-     */
-    private String getDataType(String attribute) {
-        return dataTypes[getIndexOfDataType(model.getInputDefinition().getDataType(attribute))];
-    }
-
-    /**
-     * Returns a description for the given label.
+     * Create an array of the values in the column for this attribute.
      *
-     * @param label
      * @return
      */
-    private DataTypeDescription<?> getDataTypeDescription(String label) {
-        for (DataTypeDescription<?> desc : DataType.list()) {
-            if (label.equals(desc.getLabel())) {
-                return desc;
-            }
-        }
-        throw new RuntimeException(Resources.getMessage("ViewAttributeDefinition.5") + label); //$NON-NLS-1$
-    }
-  
-    /**
-     * Data type changed
-     */
-    private void actionDataTypeChanged(String label) {
-        if (label != null) {
-            if ((model != null) && (model.getInputConfig().getInput() != null)) {
-                
-                // Obtain type
-                String attribute = model.getSelectedAttribute();
-                DataTypeDescription<?> description = getDataTypeDescription(label);
-                DataType<?> type;
-                
-                // Open format dialog
-                if (description.getLabel().equals("Ordinal")) { //$NON-NLS-1$
-                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
-                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    String[] array = controller.actionShowOrderValuesDialog(controller.getResources().getShell(),
-                                                                            text1, text2, DataType.STRING,
-                                                                            model.getLocale(), getValuesAsArray(attribute));
-                    if (array == null) {
-                        type = DataType.STRING;
-                    } else {
-                        try {
-                            type = DataType.createOrderedString(array);
-                            if (!isValidDataType(type, getValuesAsList(attribute))) {
-                                type = DataType.STRING;
-                            }
-                        } catch (Exception e) {
-                            controller.actionShowInfoDialog(controller.getResources().getShell(),
-                                                            Resources.getMessage("ViewAttributeDefinition.1"), Resources.getMessage("ViewAttributeDefinition.2") + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
-                            type = DataType.STRING;
-                        }
-                    }
-                } else if (description.hasFormat()) {
-                    final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
-                    final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                    final String format = controller.actionShowFormatInputDialog(controller.getResources().getShell(),
-                                                                                 text1, text2, model.getLocale(), description, getValuesAsList(attribute));
-                    if (format == null) {
-                        type = DataType.STRING;
-                    } else {
-                        type = description.newInstance(format, model.getLocale());
-                    }
-                } else {
-                    type = description.newInstance();
-                    if (!isValidDataType(type, getValuesAsList(attribute))) {
-                        type = DataType.STRING;
-                    }
-                }
-                
-                // Set and update
-                this.model.getInputDefinition().setDataType(attribute, type);
-                this.updateDataTypes();
-                this.controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
-            }
-        }
+    private String[] getValuesAsArray(String attribute) {
+        final DataHandle h = model.getInputConfig().getInput().getHandle();
+        return h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute));
     }
 
     /**
@@ -441,7 +361,7 @@ public class ViewAttributeList implements IView {
     private Collection<String> getValuesAsList(String attribute) {
         return Arrays.asList(getValuesAsArray(attribute));
     }
-    
+
     /**
      * Checks whether the data type is valid.
      *
@@ -457,16 +377,84 @@ public class ViewAttributeList implements IView {
         }
         return true;
     }
+  
+    /**
+     * Update
+     */
+    private void updateAttributeTypes() {
+        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+            table.setRedraw(false);
+            DataHandle data = model.getInputConfig().getInput().getHandle();
+            for (int i = 0; i < data.getNumColumns(); i++) {
+                String attribute = data.getAttributeName(i);
+                AttributeType type = model.getInputDefinition().getAttributeType(attribute);
+                table.getItem(i).setImage(0, controller.getResources().getImage(type));
+            }
+            table.setRedraw(true);
+            SWTUtil.enable(table);
+        }
+    }
 
     /**
-     * Create an array of the values in the column for this attribute.
-     *
-     * @return
+     * Update
      */
-    private String[] getValuesAsArray(String attribute) {
-        final DataHandle h = model.getInputConfig().getInput().getHandle();
-        return h.getStatistics().getDistinctValues(h.getColumnIndexOf(attribute));
+    private void updateDataTypes() {
+        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+            table.setRedraw(false);
+            DataHandle data = model.getInputConfig().getInput().getHandle();
+            for (int i = 0; i < data.getNumColumns(); i++) {
+                String attribute = data.getAttributeName(i);
+                table.getItem(i).setText(2, getDataType(attribute));
+                table.getItem(i).setText(3, getDataTypeFormat(attribute));
+            }
+            table.setRedraw(true);
+            SWTUtil.enable(table);
+        }
     }
     
+    /**
+     * Updates the view.
+     * 
+     * @param node
+     */
+    private void updateEntries() {
 
+        // Check
+        if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) { 
+            return; 
+        }
+
+        table.setRedraw(false);
+        table.removeAll();
+        DataHandle data = model.getInputConfig().getInput().getHandle();
+        for (int i = 0; i < data.getNumColumns(); i++) {
+            String attribute = data.getAttributeName(i);
+            TableItem item = new TableItem(table, SWT.NONE);
+            item.setText(new String[] { "", attribute, getDataType(attribute), getDataTypeFormat(attribute) }); //$NON-NLS-1$
+            AttributeType type = model.getInputDefinition().getAttributeType(attribute);
+            item.setImage(0, controller.getResources().getImage(type));  
+            if (model.getSelectedAttribute() != null && model.getSelectedAttribute().equals(attribute)) {
+                table.select(i);
+            }
+        }
+        
+        table.setRedraw(true);
+        SWTUtil.enable(table);
+    }
+
+    /**
+     * Update
+     * @param attribute
+     */
+    private void updateSelectedAttribute(String attribute) {
+        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+            DataHandle data = model.getInputConfig().getInput().getHandle();
+            for (int i = 0; i < data.getNumColumns(); i++) {
+                if (data.getAttributeName(i).equals(attribute)) {
+                    table.select(i);
+                    break;
+                }
+            }   
+        }
+    }
 }

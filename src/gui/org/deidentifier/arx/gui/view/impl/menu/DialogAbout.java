@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,15 +49,15 @@ import org.eclipse.swt.widgets.Text;
  */
 public class DialogAbout extends TitleAreaDialog implements IDialog {
 
-    /**  TODO */
+    /**  License */
     private static final String LICENSE      = Resources.getLicenseText();
     
-    /**  TODO */
+    /**  About */
     private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
                                           Resources.getMessage("AboutDialog.18") + "\n\n" + //$NON-NLS-1$ //$NON-NLS-2$
                                           Resources.getMessage("AboutDialog.21") + Resources.getVersion(); //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Contributors */
     private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" + //$NON-NLS-1$
                                                "Ledian Xhani (hierarchy editor)\n" + //$NON-NLS-1$
                                                "Ljubomir Dshevlekov (hierarchy editor)\n" +  //$NON-NLS-1$
@@ -66,13 +66,17 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Johanna Eicher (heuristic search)\n" + //$NON-NLS-1$
                                                "Helmut Spengler (heuristic search)\n" + //$NON-NLS-1$
                                                "David Gassmann (HIPAA identifiers)\n" + //$NON-NLS-1$
-                                               "Sebastian Stammler (performance improvements)" ; //$NON-NLS-1$
+                                               "Sebastian Stammler (performance improvements, l-diversity)\n" + //$NON-NLS-1$
+                                               "Maximilian Zitzmann (distinction and separation)\n" + //$NON-NLS-1$
+                                               "James Gaupp (game-theoretic privacy)\n" + //$NON-NLS-1$
+                                               "Annika Saken (certificates)\n" + //$NON-NLS-1$
+                                               "Martin Waltl (summary statistics)"; //$NON-NLS-1$
     
-    /**  TODO */
+    /**  Icon */
     private Image image;
 
     /**
-     * Constructor.
+     * Creates a new instance
      *
      * @param parentShell
      * @param controller

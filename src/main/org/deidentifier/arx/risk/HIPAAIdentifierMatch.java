@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,6 +110,20 @@ public class HIPAAIdentifierMatch {
     }
     
     /**
+     * The confidence of the discovery, or null if the
+     * match type is ATTRIBUTE_NAME
+     * 
+     * @return The value which caused the warning
+     */
+    public Double getConfidence() {
+        try {
+            return Double.valueOf(value);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
+    /**
      * The identifier which was found
      * @return The found identifier
      */
@@ -132,7 +146,7 @@ public class HIPAAIdentifierMatch {
     public MatchType getMatchType() {
         return matchType;
     }
-    
+
     /**
      * The value which caused the identification
      * @return The value which caused the warning
@@ -142,20 +156,6 @@ public class HIPAAIdentifierMatch {
             return null;
         } else {
             return value;
-        }
-    }
-
-    /**
-     * The confidence of the discovery, or null if the
-     * match type is ATTRIBUTE_NAME
-     * 
-     * @return The value which caused the warning
-     */
-    public Double getConfidence() {
-        try {
-            return Double.valueOf(value);
-        } catch (Exception e) {
-            return null;
         }
     }
     

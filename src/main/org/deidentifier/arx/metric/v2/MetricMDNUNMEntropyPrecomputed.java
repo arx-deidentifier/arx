@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -47,7 +48,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
      * Creates a new instance.
      */
     protected MetricMDNUNMEntropyPrecomputed() {
-        super(false, false, 0.5d, AggregateFunction.SUM);
+        super(true, false, false, 0.5d, AggregateFunction.SUM);
     }
     
     /**
@@ -57,7 +58,7 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
      * @param function
      */
     protected MetricMDNUNMEntropyPrecomputed(double gsFactor, AggregateFunction function){
-        super(false, false, gsFactor, function);
+        super(true, false, false, gsFactor, function);
     }
     
     /**
@@ -72,6 +73,26 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
                                        1.0d, // precomputation threshold
                                        this.getAggregateFunction() // aggregate function
         );
+    }
+
+    @Override
+    public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isPrecomputed() {
+        return true;
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Non-uniform entropy");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
     }
 
     @Override

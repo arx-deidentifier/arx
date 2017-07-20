@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -155,6 +155,15 @@ public class StatisticsEquivalenceClasses {
     }
 
     /**
+     * Returns the number of outliers in the currently selected data
+     * representation.
+     *
+     * @return
+     */
+    public int getNumberOfOutlyingTuples() {
+        return numberOfOutlyingTuples;
+    }
+    /**
      * Returns the number of tuples in the currently selected data
      * representation.
      *
@@ -163,6 +172,7 @@ public class StatisticsEquivalenceClasses {
     public int getNumberOfTuples() {
         return numberOfTuples - numberOfOutlyingTuples;
     }
+    
     /**
      * Returns the number of tuples in the currently selected data
      * representation.
@@ -172,16 +182,6 @@ public class StatisticsEquivalenceClasses {
     public int getNumberOfTuplesIncludingOutliers() {
         return numberOfTuples;
     }
-    
-    /**
-     * Returns the number of outliers in the currently selected data
-     * representation.
-     *
-     * @return
-     */
-    public int getNumberOfOutlyingTuples() {
-        return numberOfOutlyingTuples;
-    }
 
     @Override
     public String toString() {
@@ -190,7 +190,7 @@ public class StatisticsEquivalenceClasses {
                "- Maximal equivalence class size = " + getMaximalEquivalenceClassSize() + "\n" +
                "- Maximal equivalence class size (including outliers) = " + getMaximalEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Minimal equivalence class size = " + getMinimalEquivalenceClassSize() + "\n" +
-               "- Minimal equivalence class size (including outliers) =" + getMinimalEquivalenceClassSizeIncludingOutliers() + "\n" +
+               "- Minimal equivalence class size (including outliers) = " + getMinimalEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Number of equivalence classes = " + getNumberOfEquivalenceClasses() + "\n" +
                "- Number of equivalence classes (including outliers) = " + getNumberOfEquivalenceClassesIncludingOutliers() + "\n" +
                "- Number of tuples = " + getNumberOfTuples() + "\n" +

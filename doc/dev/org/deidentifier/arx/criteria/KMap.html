@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>KMap (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -167,7 +167,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <td class="colOne"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#KMap(int,%20double,%20org.deidentifier.arx.ARXPopulationModel)">KMap</a></strong>(int&nbsp;k,
     double&nbsp;significanceLevel,
     <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel)</code>
-<div class="block">Creates a new instance of the criterion.</div>
+<div class="block">Creates a new instance of the criterion using thr Poisson estimator proposed by Pannekoek.</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -175,7 +175,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
     double&nbsp;significanceLevel,
     <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel,
     <a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;estimator)</code>
-<div class="block">Creates a new instance of the criterion.</div>
+<div class="block">Creates a new instance of the criterion using the Poisson estimator proposed by Pannekoek or by El Emam.</div>
 </td>
 </tr>
 </table>
@@ -200,6 +200,18 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#clone(org.deidentifier.arx.DataSubset)">clone</a></strong>(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</code>
+<div class="block">Clone for local recoding</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getDataSubset()">getDataSubset</a></strong>()</code>
+<div class="block">If a privacy model uses a data subset, it must overwrite this method</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getDerivedK()">getDerivedK</a></strong>()</code>
 <div class="block">Returns the derived parameter k.</div>
@@ -218,45 +230,45 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getMinimalClassSize()">getMinimalClassSize</a></strong>()</code>
+<div class="block">If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getPopulationModel()">getPopulationModel</a></strong>()</code>
 <div class="block">Returns the associated population model, <code>null</code> if there is none.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getRequirements()">getRequirements</a></strong>()</code>
 <div class="block">Returns the criterion's requirements.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getRiskThresholdJournalist()">getRiskThresholdJournalist</a></strong>()</code>
 <div class="block">Return journalist risk threshold, 1 if there is none</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getRiskThresholdMarketer()">getRiskThresholdMarketer</a></strong>()</code>
 <div class="block">Return marketer risk threshold, 1 if there is none</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getRiskThresholdProsecutor()">getRiskThresholdProsecutor</a></strong>()</code>
 <div class="block">Return journalist risk threshold, 1 if there is none</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>double</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getSignificanceLevel()">getSignificanceLevel</a></strong>()</code>
 <div class="block">Returns the specified significance level.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#getSubset()">getSubset</a></strong>()</code>
-<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -267,7 +279,8 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></strong>(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#initialize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.ARXConfiguration)">initialize</a></strong>(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+          <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Override this to initialize the criterion.</div>
 </td>
 </tr>
@@ -279,7 +292,8 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></strong>(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+           <a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</code>
 <div class="block">Implement this, to enforce the criterion.</div>
 </td>
 </tr>
@@ -290,6 +304,24 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#isMinimalClassSizeAvailable()">isMinimalClassSizeAvailable</a></strong>()</code>
+<div class="block">If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>boolean</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#isSubsetAvailable()">isSubsetAvailable</a></strong>()</code>
+<div class="block">If a privacy model uses a data subset, it must overwrite this method</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/certificate/elements/ElementData.html" title="class in org.deidentifier.arx.certificate.elements">ElementData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#render()">render</a></strong>()</code>
+<div class="block">Renders the privacy model</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/criteria/KMap.html#toString()">toString</a></strong>()</code>
 <div class="block">Returns a string representation.</div>
@@ -301,7 +333,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.criteria.<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></h3>
-<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a></code></li>
+<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithGeneralization()">isMonotonicWithGeneralization</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMonotonicWithSuppression()">isMonotonicWithSuppression</a>, <a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSampleBased()">isSampleBased</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -345,7 +377,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <pre>public&nbsp;KMap(int&nbsp;k,
     double&nbsp;significanceLevel,
     <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel)</pre>
-<div class="block">Creates a new instance of the criterion. Using the Poisson estimator.</div>
+<div class="block">Creates a new instance of the criterion using thr Poisson estimator proposed by Pannekoek.</div>
 </li>
 </ul>
 <a name="KMap(int, double, org.deidentifier.arx.ARXPopulationModel, org.deidentifier.arx.criteria.KMap.CellSizeEstimator)">
@@ -358,7 +390,7 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
     double&nbsp;significanceLevel,
     <a href="../../../../org/deidentifier/arx/ARXPopulationModel.html" title="class in org.deidentifier.arx">ARXPopulationModel</a>&nbsp;populationModel,
     <a href="../../../../org/deidentifier/arx/criteria/KMap.CellSizeEstimator.html" title="enum in org.deidentifier.arx.criteria">KMap.CellSizeEstimator</a>&nbsp;estimator)</pre>
-<div class="block">Creates a new instance of the criterion.</div>
+<div class="block">Creates a new instance of the criterion using the Poisson estimator proposed by Pannekoek or by El Emam.</div>
 </li>
 </ul>
 </li>
@@ -382,6 +414,36 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone()">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 </dl>
+</li>
+</ul>
+<a name="clone(org.deidentifier.arx.DataSubset)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>clone</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a>&nbsp;clone(<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;subset)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone(org.deidentifier.arx.DataSubset)">PrivacyCriterion</a></code></strong></div>
+<div class="block">Clone for local recoding</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#clone(org.deidentifier.arx.DataSubset)">clone</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+</dl>
+</li>
+</ul>
+<a name="getDataSubset()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDataSubset</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getDataSubset()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getDataSubset()">PrivacyCriterion</a></code></strong></div>
+<div class="block">If a privacy model uses a data subset, it must overwrite this method</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getDataSubset()">getDataSubset</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getDerivedK()">
@@ -415,6 +477,21 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <pre>public&nbsp;int&nbsp;getK()</pre>
 <div class="block">Returns k.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getMinimalClassSize()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getMinimalClassSize</h4>
+<pre>public&nbsp;int&nbsp;getMinimalClassSize()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getMinimalClassSize()">PrivacyCriterion</a></code></strong></div>
+<div class="block">If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getMinimalClassSize()">getMinimalClassSize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getPopulationModel()">
@@ -500,21 +577,6 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getSubset()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getSubset</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a>&nbsp;getSubset()</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">PrivacyCriterion</a></code></strong></div>
-<div class="block">Returns a research subset, <code>null</code> if no subset is available</div>
-<dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#getSubset()">getSubset</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="getType1Error()">
 <!--   -->
 </a>
@@ -526,19 +588,20 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="initialize(org.deidentifier.arx.framework.data.DataManager)">
+<a name="initialize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.ARXConfiguration)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>initialize</h4>
-<pre>public&nbsp;void&nbsp;initialize(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">PrivacyCriterion</a></code></strong></div>
+<pre>public&nbsp;void&nbsp;initialize(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;manager,
+              <a href="../../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.ARXConfiguration)">PrivacyCriterion</a></code></strong></div>
 <div class="block">Override this to initialize the criterion.</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager)">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
-</dl>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#initialize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.ARXConfiguration)">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dd><code>config</code> - TODO</dd></dl>
 </li>
 </ul>
 <a name="isAccurate()">
@@ -553,18 +616,20 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
+<a name="isAnonymous(org.deidentifier.arx.framework.lattice.Transformation, org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>isAnonymous</h4>
-<pre>public&nbsp;boolean&nbsp;isAnonymous(<a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">PrivacyCriterion</a></code></strong></div>
+<pre>public&nbsp;boolean&nbsp;isAnonymous(<a href="../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;node,
+                  <a href="../../../../org/deidentifier/arx/framework/check/groupify/HashGroupifyEntry.html" title="class in org.deidentifier.arx.framework.check.groupify">HashGroupifyEntry</a>&nbsp;entry)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">PrivacyCriterion</a></code></strong></div>
 <div class="block">Implement this, to enforce the criterion.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isAnonymous(org.deidentifier.arx.framework.lattice.Transformation,%20org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry)">isAnonymous</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Parameters:</span></dt><dd><code>node</code> - TODO</dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -580,6 +645,51 @@ extends <a href="../../../../org/deidentifier/arx/criteria/ImplicitPrivacyCriter
 <dl>
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isLocalRecodingSupported()">isLocalRecodingSupported</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isMinimalClassSizeAvailable()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isMinimalClassSizeAvailable</h4>
+<pre>public&nbsp;boolean&nbsp;isMinimalClassSizeAvailable()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMinimalClassSizeAvailable()">PrivacyCriterion</a></code></strong></div>
+<div class="block">If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isMinimalClassSizeAvailable()">isMinimalClassSizeAvailable</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="isSubsetAvailable()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>isSubsetAvailable</h4>
+<pre>public&nbsp;boolean&nbsp;isSubsetAvailable()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSubsetAvailable()">PrivacyCriterion</a></code></strong></div>
+<div class="block">If a privacy model uses a data subset, it must overwrite this method</div>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#isSubsetAvailable()">isSubsetAvailable</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="render()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>render</h4>
+<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/certificate/elements/ElementData.html" title="class in org.deidentifier.arx.certificate.elements">ElementData</a>&nbsp;render()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#render()">PrivacyCriterion</a></code></strong></div>
+<div class="block">Renders the privacy model</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html#render()">render</a></code>&nbsp;in class&nbsp;<code><a href="../../../../org/deidentifier/arx/criteria/PrivacyCriterion.html" title="class in org.deidentifier.arx.criteria">PrivacyCriterion</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

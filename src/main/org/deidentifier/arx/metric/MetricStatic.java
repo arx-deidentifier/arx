@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -39,7 +40,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class MetricStatic extends MetricWeighted<InformationLossDefault> {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long               serialVersionUID = 3778891174824606177L;
 
     /** The user defined information loss per level, indexed by column name. */
@@ -54,7 +55,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
      * @param infoloss
      */
     protected MetricStatic(final Map<String, List<Double>> infoloss) {
-        super(true, true);
+        super(true, true, true);
         _infoloss = infoloss;
     }
     
@@ -69,13 +70,15 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
-    public String toString() {
-        return "Static";
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Static");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
     }
     
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new InformationLossDefaultWithBound(entry.count, entry.count);
+    public String toString() {
+        return "Static";
     }
 
     @Override
@@ -90,16 +93,21 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
     }
 
     @Override
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+        return new InformationLossDefaultWithBound(entry.count, entry.count);
+    }
+
+    @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
-
+    
     @Override
     protected InformationLossDefault getLowerBoundInternal(Transformation node,
                                                            HashGroupify groupify) {
          return this.getLowerBoundInternal(node);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -135,4 +143,5 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
             }
         }
     }
+
 }

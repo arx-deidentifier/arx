@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>S-Index (ARX API Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../stylesheet.css" title="Style">
@@ -125,6 +125,14 @@
 <dd>
 <div class="block">Writes the hierarchy to a CSV file.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/ARXCertificate.html#save(java.io.File)">save(File)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/ARXCertificate.html" title="class in org.deidentifier.arx.certificate">ARXCertificate</a></dt>
+<dd>
+<div class="block">Renders the document into the given output stream</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/ARXCertificate.html#save(java.io.OutputStream)">save(OutputStream)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/ARXCertificate.html" title="class in org.deidentifier.arx.certificate">ARXCertificate</a></dt>
+<dd>
+<div class="block">Renders the document into the given output stream</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandle.html#save(java.io.File)">save(File)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
 <div class="block">Writes the data to a CSV file.</div>
@@ -164,6 +172,14 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/AttributeType.html#SENSITIVE_ATTRIBUTE">SENSITIVE_ATTRIBUTE</a></span> - Static variable in class org.deidentifier.arx.<a href="../org/deidentifier/arx/AttributeType.html" title="class in org.deidentifier.arx">AttributeType</a></dt>
 <dd>
 <div class="block">Represents a sensitive attribute.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html#setAdversaryCost(double)">setAdversaryCost(double)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a></dt>
+<dd>
+<div class="block">Sets the amount of money needed by an attacker for trying to re-identify a single record</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html#setAdversaryGain(double)">setAdversaryGain(double)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a></dt>
+<dd>
+<div class="block">Sets the amount of money earned by an attacker for successfully re-identifying a single record</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html#setAggregateFunction(org.deidentifier.arx.aggregates.AggregateFunction)">setAggregateFunction(AggregateFunction&lt;T&gt;)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderGroupingBased</a></dt>
 <dd>
@@ -215,7 +231,9 @@
 <div class="block">Sets the weight for the given attribute.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setBottom(org.deidentifier.arx.ARXLattice.ARXNode)">setBottom(ARXLattice.ARXNode)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setChecked(boolean)">setChecked(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
 <dd>
 <div class="block">Set checked.</div>
@@ -230,6 +248,10 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/ImportConfigurationExcel.html#setContainsHeader(boolean)">setContainsHeader(boolean)</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/ImportConfigurationExcel.html" title="class in org.deidentifier.arx.io">ImportConfigurationExcel</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#setCostBenefitConfiguration(org.deidentifier.arx.ARXCostBenefitConfiguration)">setCostBenefitConfiguration(ARXCostBenefitConfiguration)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Sets the cost/benefit configuration</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataDefinition.html#setDataType(java.lang.String,%20org.deidentifier.arx.DataType)">setDataType(String, DataType&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
 <div class="block">Define the datatype of a given attribute.</div>
@@ -247,6 +269,10 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html#setDeterministic(boolean)">setDeterministic(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></dt>
 <dd>
 <div class="block">Sets whether the process should be deterministic</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXSolverConfiguration.html#setDeterministic(boolean)">setDeterministic(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></dt>
+<dd>
+<div class="block">Sets the solving process to be deterministic</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html#setDomainAndAlphabetSize(int,%20int,%20int)">setDomainAndAlphabetSize(int, int, int)</a></span> - Method in class org.deidentifier.arx.aggregates.<a href="../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased</a></dt>
 <dd>
@@ -295,10 +321,16 @@
 <dd>
 <div class="block">Associates the given hierarchy builder</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setHighestScore(org.deidentifier.arx.metric.InformationLoss)">setHighestScore(InformationLoss&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
+<dd>
+<div class="block">Sets the maximal information loss.</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXAnonymizer.html#setHistorySize(int)">setHistorySize(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
 <dd>
 <div class="block">Sets the maximum number of snapshots allowed to store in the history.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#sethMargin(float)">sethMargin(float)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/IImportColumnIndexed.html#setIndex(int)">setIndex(int)</a></span> - Method in interface org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/IImportColumnIndexed.html" title="interface in org.deidentifier.arx.io">IImportColumnIndexed</a></dt>
 <dd>
 <div class="block">Sets the index this columns refers to.</div>
@@ -312,7 +344,9 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html#setLearningRate(double)">setLearningRate(double)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setLevels(org.deidentifier.arx.ARXLattice.ARXNode[][])">setLevels(ARXLattice.ARXNode[][])</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/CSVSyntax.html#setLinebreak(char[])">setLinebreak(char[])</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a></dt>
 <dd>
 <div class="block">Sets the line break.</div>
@@ -325,17 +359,19 @@
 <dd>
 <div class="block">Sets a listener.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setListIndent(int)">setListIndent(int)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setLowerBound(org.deidentifier.arx.metric.InformationLoss)">setLowerBound(InformationLoss&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
 <dd>
 <div class="block">Sets the lower bound.</div>
 </dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setLowestScore(org.deidentifier.arx.metric.InformationLoss)">setLowestScore(InformationLoss&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
+<dd>
+<div class="block">Sets the minimal information loss.</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataDefinition.html#setMaximumGeneralization(java.lang.String,%20int)">setMaximumGeneralization(String, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
 <div class="block">Define the maximal generalization of a given attribute.</div>
-</dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setMaximumInformationLoss(org.deidentifier.arx.metric.InformationLoss)">setMaximumInformationLoss(InformationLoss&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
-<dd>
-<div class="block">Sets the maximal information loss.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeDataset(double)">setMaximumSnapshotSizeDataset(double)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a></dt>
 <dd>
@@ -358,10 +394,8 @@
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#setMetric(org.deidentifier.arx.metric.Metric)">setMetric(Metric&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
-<div class="block">Sets the utility metric for measuring information loss .</div>
+<div class="block"><span class="strong">Deprecated.</span></div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setMetric(org.deidentifier.arx.metric.Metric)">setMetric(Metric&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataDefinition.html#setMicroAggregationFunction(java.lang.String,%20org.deidentifier.arx.AttributeType.MicroAggregationFunction)">setMicroAggregationFunction(String, AttributeType.MicroAggregationFunction)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></dt>
 <dd>
 <div class="block">Associates the given microaggregation function</div>
@@ -370,14 +404,12 @@
 <dd>
 <div class="block">Define the minimal generalization of a given attribute.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setMinimumInformationLoss(org.deidentifier.arx.metric.InformationLoss)">setMinimumInformationLoss(InformationLoss&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
-<dd>
-<div class="block">Sets the minimal information loss.</div>
-</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/metric/MetricConfiguration.html#setMonotonic(boolean)">setMonotonic(boolean)</a></span> - Method in class org.deidentifier.arx.metric.<a href="../org/deidentifier/arx/metric/MetricConfiguration.html" title="class in org.deidentifier.arx.metric">MetricConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setMonotonicity(org.deidentifier.arx.ARXConfiguration)">setMonotonicity(ARXConfiguration)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/ImportColumnIndexed.html#setName(java.lang.String)">setName(String)</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/ImportColumnIndexed.html" title="class in org.deidentifier.arx.io">ImportColumnIndexed</a></dt>
 <dd>
 <div class="block">Sets the name.</div>
@@ -391,7 +423,9 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html#setNumFolds(int)">setNumFolds(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setOptimum(org.deidentifier.arx.ARXLattice.ARXNode)">setOptimum(ARXLattice.ARXNode)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#setPracticalMonotonicity(boolean)">setPracticalMonotonicity(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
 <div class="block">Set, if practical monotonicity assumed.</div>
@@ -406,6 +440,22 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html#setPriorFunction(org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction)">setPriorFunction(ARXLogisticRegressionConfiguration.PriorFunction)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html#setPublisherBenefit(double)">setPublisherBenefit(double)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a></dt>
+<dd>
+<div class="block">Sets the amount of money earned by the data publisher for publishing a single record</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html#setPublisherLoss(double)">setPublisherLoss(double)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a></dt>
+<dd>
+<div class="block">Sets the amount of money lost by the data publisher, e.g.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#setQualityModel(org.deidentifier.arx.metric.Metric)">setQualityModel(Metric&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">Sets the quality model to be used for optimizing output data.</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setQualityModel(org.deidentifier.arx.metric.Metric)">setQualityModel(Metric&lt;?&gt;)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/CSVSyntax.html#setQuote(char)">setQuote(char)</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a></dt>
 <dd>
 <div class="block">Sets the quote.</div>
@@ -417,12 +467,18 @@
 <dt><span class="strong"><a href="../org/deidentifier/arx/io/ImportConfigurationExcel.html#setSheetIndex(int)">setSheetIndex(int)</a></span> - Method in class org.deidentifier.arx.io.<a href="../org/deidentifier/arx/io/ImportConfigurationExcel.html" title="class in org.deidentifier.arx.io">ImportConfigurationExcel</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setSize(int)">setSize(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setSolutionSpace(org.deidentifier.arx.framework.lattice.SolutionSpace)">setSolutionSpace(SolutionSpace)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
 <dd>
 <div class="block">Updates the solution space</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html#setStepOffset(int)">setStepOffset(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setSubtitleFont(rst.pdfbox.layout.text.BaseFont)">setSubtitleFont(BaseFont)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setSubtitleSize(int)">setSubtitleSize(int)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setSuccessors(org.deidentifier.arx.ARXLattice.ARXNode[])">setSuccessors(ARXLattice.ARXNode[])</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
 <dd>
@@ -436,14 +492,30 @@
 <dd>
 <div class="block">Sets the suppression limit.</div>
 </dd>
-<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setTop(org.deidentifier.arx.ARXLattice.ARXNode)">setTop(ARXLattice.ARXNode)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setTextFont(rst.pdfbox.layout.text.BaseFont)">setTextFont(BaseFont)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setTextSize(int)">setTextSize(int)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setTitleAlignment(rst.pdfbox.layout.text.Alignment)">setTitleAlignment(Alignment)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setTitleFont(rst.pdfbox.layout.text.BaseFont)">setTitleFont(BaseFont)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setTitleHint(rst.pdfbox.layout.elements.render.LayoutHint)">setTitleHint(LayoutHint)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setTitleSize(int)">setTitleSize(int)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setTop(org.deidentifier.arx.ARXLattice.ARXNode)">setTop(ARXLattice.ARXNode)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html#setTransformation(int[])">setTransformation(int[])</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.ARXNode.Access.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode.Access</a></dt>
 <dd>
 <div class="block">Sets the transformation.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLattice.Access.html#setUncertainty(boolean)">setUncertainty(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLattice.Access.html" title="class in org.deidentifier.arx">ARXLattice.Access</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Accessor method</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXSolverConfiguration.html#setUnmodified()">setUnmodified()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXSolverConfiguration.html" title="class in org.deidentifier.arx">ARXSolverConfiguration</a></dt>
 <dd>
 <div class="block">Modified</div>
@@ -454,16 +526,25 @@
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#setUtilityBasedMicroaggregation(boolean)">setUtilityBasedMicroaggregation(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
 <dd>
-<div class="block">Sets whether microaggregation should be based on utility measures</div>
+<div class="block">Sets whether the impact of microaggregation on data utility should be considered</div>
+</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/ARXConfiguration.html#setUtilityBasedMicroaggregationUseMeanSquaredError(boolean)">setUtilityBasedMicroaggregationUseMeanSquaredError(boolean)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></dt>
+<dd>
+<div class="block">If set to true, mean squared error will be used to measure the impact of microaggregation
+ on data quality.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html#setVectorLength(int)">setVectorLength(int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></dt>
+<dd>&nbsp;</dd>
+<dt><span class="strong"><a href="../org/deidentifier/arx/certificate/CertificateStyle.html#setvMargin(float)">setvMargin(float)</a></span> - Method in class org.deidentifier.arx.certificate.<a href="../org/deidentifier/arx/certificate/CertificateStyle.html" title="class in org.deidentifier.arx.certificate">CertificateStyle</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/common/Groupify.html#size()">size()</a></span> - Method in class org.deidentifier.arx.common.<a href="../org/deidentifier/arx/common/Groupify.html" title="class in org.deidentifier.arx.common">Groupify</a></dt>
 <dd>
 <div class="block">Returns the current number of entries</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/RowSet.html#size()">size()</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Returns the number of bits set</div>
+</dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/DataHandle.html#sort(boolean,%20int...)">sort(boolean, int...)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></dt>
 <dd>
 <div class="block">Sorts the dataset according to the given columns.</div>
@@ -544,7 +625,9 @@
 <div class="block">Swaps both rows.</div>
 </dd>
 <dt><span class="strong"><a href="../org/deidentifier/arx/RowSet.html#swap(int,%20int)">swap(int, int)</a></span> - Method in class org.deidentifier.arx.<a href="../org/deidentifier/arx/RowSet.html" title="class in org.deidentifier.arx">RowSet</a></dt>
-<dd>&nbsp;</dd>
+<dd>
+<div class="block">Swaps two bits</div>
+</dd>
 </dl>
 <a href="index-1.html">A</a>&nbsp;<a href="index-2.html">B</a>&nbsp;<a href="index-3.html">C</a>&nbsp;<a href="index-4.html">D</a>&nbsp;<a href="index-5.html">E</a>&nbsp;<a href="index-6.html">F</a>&nbsp;<a href="index-7.html">G</a>&nbsp;<a href="index-8.html">H</a>&nbsp;<a href="index-9.html">I</a>&nbsp;<a href="index-10.html">K</a>&nbsp;<a href="index-11.html">L</a>&nbsp;<a href="index-12.html">M</a>&nbsp;<a href="index-13.html">N</a>&nbsp;<a href="index-14.html">O</a>&nbsp;<a href="index-15.html">P</a>&nbsp;<a href="index-16.html">Q</a>&nbsp;<a href="index-17.html">R</a>&nbsp;<a href="index-18.html">S</a>&nbsp;<a href="index-19.html">T</a>&nbsp;<a href="index-20.html">U</a>&nbsp;<a href="index-21.html">V</a>&nbsp;<a href="index-22.html">W</a>&nbsp;<a href="index-23.html">_</a>&nbsp;</div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->

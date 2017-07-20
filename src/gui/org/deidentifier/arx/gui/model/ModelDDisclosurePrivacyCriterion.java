@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,10 +39,8 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelDDisclosurePrivacyCriterion(String attribute,
-                                            double d) {
+    public ModelDDisclosurePrivacyCriterion(String attribute) {
         super(attribute);
-        this.d = d;
     }
     
     /**
@@ -50,8 +48,10 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelDDisclosurePrivacyCriterion(String attribute) {
+    public ModelDDisclosurePrivacyCriterion(String attribute,
+                                            double d) {
         super(attribute);
+        this.d = d;
     }
     
     @Override
@@ -67,11 +67,6 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
 	    return new DDisclosurePrivacy(getAttribute(), d);
 	}
 	
-	@Override
-    public String getLabel() {
-        return  '\u03B4' + Resources.getMessage("Model.31"); //$NON-NLS-1$
-    }
-	
 	/**
      * Returns D.
      *
@@ -80,6 +75,11 @@ public class ModelDDisclosurePrivacyCriterion extends ModelExplicitCriterion{
 	public double getD() {
 		return d;
 	}
+	
+	@Override
+    public String getLabel() {
+        return  '\u03B4' + Resources.getMessage("Model.31"); //$NON-NLS-1$
+    }
 
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {

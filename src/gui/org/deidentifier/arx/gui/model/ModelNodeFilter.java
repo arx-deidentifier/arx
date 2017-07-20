@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,10 +48,10 @@ public class ModelNodeFilter implements Serializable {
     /** The initial number of nodes. */
     private int                  maxNumNodesInitial = 0;
     
-    /** Bound for min information loss. */
+    /** Bound for min. score. */
     private double               minInformationLoss = 0d;
     
-    /** Bound for max information loss. */
+    /** Bound for max. score. */
     private double               maxInformationLoss = 1d;
 
     /**
@@ -100,7 +100,7 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Allows transformations with any information loss to pass the filter.
+     * Allows transformations with any score to pass the filter.
      */
     public void allowAllInformationLoss() {
         minInformationLoss = 0d;
@@ -126,7 +126,7 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Allows transformations with certain information loss to pass the filter.
+     * Allows transformations with certain score to pass the filter.
      *
      * @param min
      * @param max
@@ -378,10 +378,8 @@ public class ModelNodeFilter implements Serializable {
      */
     public boolean isAllowed(final ARXLattice lattice, final ARXNode node) {
         
-        double max = node.getMaximumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
-                                                                 lattice.getMaximumInformationLoss());
-        double min = node.getMinimumInformationLoss().relativeTo(lattice.getMinimumInformationLoss(), 
-                                                                 lattice.getMaximumInformationLoss());
+        double max = node.getHighestScore().relativeTo(lattice.getLowestScore(), lattice.getHighestScore());
+        double min = node.getLowestScore().relativeTo(lattice.getLowestScore(), lattice.getHighestScore());
         
         if (max < minInformationLoss) {
             return false;
