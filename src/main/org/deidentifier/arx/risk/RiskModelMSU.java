@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.risk;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -187,7 +188,7 @@ public class RiskModelMSU {
      * Returns the column array
      * @param handle
      * @param identifiers
-     * @return
+     * @return The columns in ascending order
      */
     private int[] getColumns(DataHandleInternal handle, Set<String> identifiers) {
         int[] result = new int[identifiers.size()];
@@ -199,6 +200,7 @@ public class RiskModelMSU {
             }
             result[index++] = column;
         }
+        Arrays.sort(result);
         return result;
     }
 }
