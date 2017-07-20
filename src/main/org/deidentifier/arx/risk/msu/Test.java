@@ -16,6 +16,10 @@
  */
 package org.deidentifier.arx.risk.msu;
 
+import java.util.Random;
+
+import org.apache.mahout.math.Arrays;
+
 
 public class Test {
 
@@ -38,13 +42,57 @@ public class Test {
                 new int[] { 1, 2, 1, 0, 2 }  // 5
         };
         
-        System.out.println("26 is correct");
-
-        SUDA2 suda2 = new SUDA2(data);
-        System.out.println(suda2.suda2(0));
-
-        ExhaustiveSearch exhaustive = new ExhaustiveSearch(data);
-        System.out.println(exhaustive.exhaustive());
+//        for (int i = 0; i < 100000; i++) {
+//            SUDA2Result result1 = new SUDA2(data).suda2(0);
+//            SUDA2Result result2 = new ExhaustiveSearch(data).exhaustive();
+//            if (!result1.equals(result2)) {
+//                System.out.println("Mismatch:");
+//                print(data);
+//                System.out.println("SUDA2");
+//                System.out.println(result1);
+//                System.out.println("Exhaustive");
+//                System.out.println(result2);
+//                System.exit(0);
+//            }
+//            permute(data, 100);
+//        }
+//        
+        SUDA2Statistics result1 = new SUDA2(data).getStatistics(0);
+        System.out.println(result1.toString());
+        result1.getColumnKeyContributions(); // Attribute / variable contribution
+        
     }
-       
+
+    /**
+     * Prints the data
+     * @param data
+     */
+    private static void print(int[][] data) {
+        for (int[] row : data) {
+            System.out.println(" - " + Arrays.toString(row));
+        }
+    }
+
+    /**
+     * Permutes the data
+     * @param data
+     * @param numPermutations
+     */
+    private static void permute(int[][] data, int numPermutations) {
+
+        Random random = new Random();
+        for (int i=0; i < numPermutations; i++) {
+            
+            // Select
+            int x1 = random.nextInt(data.length);
+            int x2 = random.nextInt(data.length);
+            int y1 = random.nextInt(data[0].length);
+            int y2 = random.nextInt(data[0].length);
+            
+            // Swap
+            int temp = data[x1][y1];
+            data[x1][y1] = data[x2][y2];
+            data[x2][y2] = temp;
+        }
+    }
 }

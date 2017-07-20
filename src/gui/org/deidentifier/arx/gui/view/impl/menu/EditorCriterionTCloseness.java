@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,13 +115,6 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     }
     
     @Override
-    protected void parse(ModelTClosenessCriterion model, boolean _default) {
-        knobT.setValue(model.getT());
-        updateLabel(labelT, model.getT());
-        comboVariant.select(model.getVariant());
-    }
-
-    @Override
     protected List<ModelCriterion> getTypicalParameters() {
         List<ModelCriterion> result = new ArrayList<ModelCriterion>();
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_EQUAL, 0.15));
@@ -131,5 +124,12 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_ORDERED, 0.15));
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_ORDERED, 0.2));
         return result;
+    }
+
+    @Override
+    protected void parse(ModelTClosenessCriterion model, boolean _default) {
+        knobT.setValue(model.getT());
+        updateLabel(labelT, model.getT());
+        comboVariant.select(model.getVariant());
     }
 }

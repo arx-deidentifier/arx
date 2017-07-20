@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.junit.Test;
 import cern.colt.Arrays;
 
 /**
- * Tests for importing more complex csv files
+ * Tests for importing complex csv files
  * 
  * @author Fabian Prasser
  */

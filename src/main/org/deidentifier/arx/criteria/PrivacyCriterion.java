@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,13 @@ package org.deidentifier.arx.criteria;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * An abstract base class for privacy criteria.
@@ -58,6 +61,34 @@ public abstract class PrivacyCriterion implements Serializable{
      * Clone
      */
     public abstract PrivacyCriterion clone();
+
+    /**
+     * Clone for local recoding
+     */
+    public PrivacyCriterion clone(DataSubset subset) {
+        if (!isLocalRecodingSupported()) {
+            throw new UnsupportedOperationException("Local recoding is not supported by this model");
+        } else if (this.isSubsetAvailable()) {
+            throw new UnsupportedOperationException("This model must override clone(subset)");
+        }
+        return this.clone();
+    }
+    
+    /**
+     * If a privacy model uses a data subset, it must overwrite this method
+     * @return
+     */
+    public DataSubset getDataSubset() {
+    return null;
+    }
+
+    /**
+     * If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations
+     * @return
+     */
+    public int getMinimalClassSize() {
+    return 0;
+    }
     
     /**
      * Returns the associated population model, <code>null</code> if there is none.
@@ -81,7 +112,7 @@ public abstract class PrivacyCriterion implements Serializable{
     public double getRiskThresholdJournalist() {
         return 1d;
     }
-
+    
     /**
      * Return marketer risk threshold, 1 if there is none
      * @return
@@ -99,15 +130,6 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
-     * Override this to initialize the criterion.
-     *
-     * @param manager
-     */
-    public void initialize(DataManager manager){
-        // Empty by design
-    }
-    
-    /**
      * Returns a research subset, <code>null</code> if no subset is available
      * @return
      */
@@ -116,19 +138,38 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
-     * Implement this, to enforce the criterion.
+     * Override this to initialize the criterion.
      *
+     * @param manager
+     * @param config TODO
+     */
+    public void initialize(DataManager manager, ARXConfiguration config){
+        // Empty by design
+    }
+    
+    /**
+     * Implement this, to enforce the criterion.
+     * @param node TODO
      * @param entry
+     *
      * @return
      */
-    public abstract boolean isAnonymous(HashGroupifyEntry entry);
-    
+    public abstract boolean isAnonymous(Transformation node, HashGroupifyEntry entry);
+
     /**
      * Returns whether the criterion supports local recoding.
      * @return
      */
     public abstract boolean isLocalRecodingSupported();
-    
+
+    /**
+     * If a privacy model provides a prosecutor risk threshold, it should override this method to enable optimizations
+     * @return
+     */
+    public boolean isMinimalClassSizeAvailable() {
+        return false;
+    }
+
     /**
      * Returns whether the criterion is monotonic with generalization.
      * @return
@@ -141,6 +182,7 @@ public abstract class PrivacyCriterion implements Serializable{
             return this.monotonicWithGeneralization;
         }
     }
+    
 
     /**
      * Returns whether the criterion is monotonic with tuple suppression.
@@ -159,6 +201,28 @@ public abstract class PrivacyCriterion implements Serializable{
         return false;
     }
 
+    /**
+     * Is this criterion based on the overall dataset
+     * @return
+     */
+    public boolean isMatrixBased() {
+        return false;
+    }
+
+    /**
+     * If a privacy model uses a data subset, it must overwrite this method
+     * @return
+     */
+    public boolean isSubsetAvailable() {
+        return false;
+    }
+
+    /**
+     * Renders the privacy model
+     * @return
+     */
+    public abstract ElementData render();
+    
     /**
      * Returns a string representation.
      *

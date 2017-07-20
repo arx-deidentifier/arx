@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -98,9 +98,6 @@ public class DataHandleInput extends DataHandle {
 
         // Create datatype array
         this.dataTypes = getDataTypeArray();
-        
-        // Create statistics
-        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     @Override
@@ -126,6 +123,11 @@ public class DataHandleInput extends DataHandle {
     public int getNumRows() {
         checkRegistry();
         return data.length;
+    }
+
+    @Override
+    public StatisticsBuilder getStatistics() {
+        return new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     @Override
@@ -174,7 +176,7 @@ public class DataHandleInput extends DataHandle {
             }
         };
     }
-
+    
     /**
      * Swaps two rows.
      *
@@ -187,7 +189,7 @@ public class DataHandleInput extends DataHandle {
         data[row1] = data[row2];
         data[row2] = temp;
     }
-    
+
     /**
      * Releases all resources.
      */
@@ -197,12 +199,12 @@ public class DataHandleInput extends DataHandle {
         dataDI = null;
         dataIS = null;
     }
-
+    
     @Override
     protected DataType<?> getBaseDataType(final String attribute) {
         return this.getDataType(attribute);
     }
-    
+
     @Override
     protected ARXConfiguration getConfiguration() {
         return null;

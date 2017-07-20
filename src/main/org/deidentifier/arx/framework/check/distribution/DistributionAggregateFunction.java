@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
 
         @Override
-        public <T> double getMeanError(Distribution distribution) {
+        public <T> double getError(Distribution distribution) {
             stats.clear();
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
@@ -185,27 +185,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
             return result;
         }
 
-        /**
-         * Reads data into the provided array
-         * @param buckets
-         * @param state
-         * @return True, if data was read
-         */
-        private boolean read(int[] buckets, int[] state) {
-            while (state[1] < buckets.length && buckets[state[1]] == -1) {
-                state[1] += 2;
-            }
-            if (state[1] >= buckets.length) {
-                return false;
-            } else {
-                state[0] = buckets[state[1]];
-                state[1] += 2;
-                return true;
-            }
-        }
-
         @Override
-        public <T> double getMeanError(Distribution distribution) {
+        public <T> double getError(Distribution distribution) {
 
             // Prepare iteration
             int[] buckets = distribution.getBuckets();
@@ -231,6 +212,25 @@ public abstract class DistributionAggregateFunction implements Serializable {
             
             // Return error
             return (double) lvl / (double) (hierarchy[0].length - 1);
+        }
+
+        /**
+         * Reads data into the provided array
+         * @param buckets
+         * @param state
+         * @return True, if data was read
+         */
+        private boolean read(int[] buckets, int[] state) {
+            while (state[1] < buckets.length && buckets[state[1]] == -1) {
+                state[1] += 2;
+            }
+            if (state[1] >= buckets.length) {
+                return false;
+            } else {
+                state[0] = buckets[state[1]];
+                state[1] += 2;
+                return true;
+            }
         }
     }
 
@@ -303,7 +303,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
 
         @Override
-        public <T> double getMeanError(Distribution distribution) {
+        public <T> double getError(Distribution distribution) {
             stats.clear();
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
@@ -379,6 +379,11 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 result.initialize(dictionary, type, hierarchy);
             }
             return result;
+        }
+
+        @Override
+        public <T> double getError(Distribution distribution) {
+            return getInformationLoss(distribution);
         }
     }
 
@@ -503,7 +508,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
 
         @Override
-        public <T> double getMeanError(Distribution distribution) {
+        public <T> double getError(Distribution distribution) {
             
             if (!(type instanceof DataTypeWithRatioScale)) {
                 return 0d;
@@ -624,7 +629,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
 
         @Override
-        public <T> double getMeanError(Distribution distribution) {
+        public <T> double getError(Distribution distribution) {
             
             if (!(type instanceof DataTypeWithRatioScale)) {
                 return 0d;
@@ -684,7 +689,6 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
     }
 
-    
     /** SVUID. */
     private static final long       serialVersionUID = 331877806010996154L;
 
@@ -727,12 +731,29 @@ public abstract class DistributionAggregateFunction implements Serializable {
     public abstract DistributionAggregateFunction clone();
     
     /**
-     * Returns the normalized mean squared error in [0,1], if supported, 0d otherwise
+     * Returns the normalized error induced by aggregation. In most cases this will be the mean squared error 
+     * normalized into [0,1]. In case of generalization, it will return the normalized generalization level
+     * (also called generalization intensity). In case of intervals, it will return the normalized number
+     * of aggregated values. 
+     * 
      * @param distribution
      * @return
      */
-    public <T> double getMeanError(Distribution distribution) {
-        return 0d;
+    public abstract <T> double getError(Distribution distribution);
+    
+    /**
+     * This will return the normalized number of aggregated values in range [1/#distinct-values, 1].
+     * 
+     * @param distribution
+     * @return
+     */
+    public <T> double getInformationLoss(Distribution distribution) {
+        double result = 0d;
+        int[] buckets = distribution.getBuckets();
+        for (int i = 0; i < buckets.length; i += 2) {
+            result += buckets[i] != -1 ? 1 : 0;
+        }
+        return result / (double)dictionary.length;
     }
     
     /**
@@ -798,7 +819,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         _max = _max != null ? _max : 0d;
         return new double[]{_min, _max};
     }
-    
+
     /**
      * Calculates the mean square error after normalizing everything into [0,1]
      * 

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -311,7 +311,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         this.sash = new SashForm(this.root, SWT.VERTICAL);
 
         // Table
-        this.table = SWTUtil.createTableDynamic(this.sash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+        this.table = SWTUtil.createTableDynamic(this.sash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         this.table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -460,7 +460,13 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
 
             @Override
             public int getProgress() {
-                return (int)((double)progress / (double)classes.length * 100d);
+                
+                double result = 0d;
+                double perBatch = 100d / (double)classes.length;
+                result += (double)progress * perBatch;
+                result += (double)builder.getProgress() / 100d * perBatch;
+                result = result <= 100d ? result : 100d;
+                return (int)result;
             }
             
             @Override
@@ -550,19 +556,6 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         this.manager.start(analysis);
     }
 
-    @Override
-    protected ComponentStatusLabelProgressProvider getProgressProvider() {
-        return new ComponentStatusLabelProgressProvider(){
-            public int getProgress() {
-                if (manager == null) {
-                    return 0;
-                } else {
-                    return manager.getProgress();
-                }
-            }
-        };
-    }
-
     /**
      * Returns all column headers
      * @return
@@ -575,6 +568,19 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
      * @return
      */
     protected abstract List<Double> getColumnValues(StatisticsClassification result);
+
+    @Override
+    protected ComponentStatusLabelProgressProvider getProgressProvider() {
+        return new ComponentStatusLabelProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
+    }
 
     /**
      * Is an analysis running

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,9 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.criteria.DPresence;
-import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.metric.Metric;
 
@@ -88,7 +87,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
         setModified();
-        return config.addCriterion(c);
+        return config.addPrivacyModel(c);
     }
     
     @Override
@@ -100,13 +99,23 @@ public class ModelConfiguration implements Serializable, Cloneable {
         c.max = new HashMap<String, Integer>(max);
         c.config = config.clone();
         c.hierarchies = new HashMap<String, Hierarchy>(hierarchies);
-        if (this.containsCriterion(DPresence.class)) {
-            c.researchSubset = this.getCriterion(DPresence.class).getSubset().getSet();
-        } else if (this.containsCriterion(KMap.class) && this.getCriterion(KMap.class).isAccurate()) {
-            c.researchSubset = this.getCriterion(KMap.class).getSubset().getSet();
-        } else {
+        
+        // Clone subset
+        boolean found = false;
+        for (PrivacyCriterion pc : this.getCriteria()) {
+            if (pc.isSubsetAvailable()) {
+                DataSubset subset = pc.getDataSubset();
+                if (subset != null) {
+                    c.researchSubset = subset.getSet();
+                    found = true;
+                    break;
+                }
+            }
+        }
+        if (!found) {
             c.researchSubset = this.researchSubset.clone();
         }
+        
         c.suppressionWeight = this.suppressionWeight;
         c.microAggregationFunctions = new HashMap<String, MicroAggregationFunctionDescription>(microAggregationFunctions);
         c.microAggregationIgnoreMissingData = new HashMap<String, Boolean>(microAggregationIgnoreMissingData);
@@ -121,7 +130,21 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
-        return config.containsCriterion(clazz);
+        return config.isPrivacyModelSpecified(clazz);
+    }
+    
+    /**
+     * @return the adversaryCost
+     */
+    public double getAdversaryCost() {
+        return this.config.getCostBenefitConfiguration().getAdversaryCost();
+    }
+    
+    /**
+     * @return the adversaryGain
+     */
+    public double getAdversaryGain() {
+        return this.config.getCostBenefitConfiguration().getAdversaryGain();
     }
     
     /**
@@ -167,7 +190,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public Set<PrivacyCriterion> getCriteria() {
-        return config.getCriteria();
+        return config.getPrivacyModels();
     }
     
     /**
@@ -178,7 +201,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public <T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz) {
-        return config.getCriteria(clazz);
+        return config.getPrivacyModels(clazz);
     }
     
     /**
@@ -189,7 +212,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
-        return config.getCriterion(clazz);
+        return config.getPrivacyModel(clazz);
     }
     
     /**
@@ -200,6 +223,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.getHeuristicSearchThreshold();
     }
     
+
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getHeuristicSearchTimeLimit()
@@ -216,7 +240,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Map<String, Hierarchy> getHierarchies() {
         return this.hierarchies;
     }
-    
 
     /**
      * Returns the assigned hierarchy, if any. Else null.
@@ -227,7 +250,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Hierarchy getHierarchy(String attribute) {
         return this.hierarchies.get(attribute);
     }
-    
+
     /**
      * Returns the according builder.
      *
@@ -265,7 +288,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public Metric<?> getMetric() {
-        return config.getMetric();
+        return config.getQualityModel();
     }
 
     /**
@@ -280,7 +303,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return this.microAggregationFunctions.get(attribute);
     }
-
+    
     /**
      * Returns the associated handling of missing data
      * @param attribute
@@ -297,7 +320,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
             return ignore;
         }
     }
-
+    
     /**
      * Minimum generalization.
      *
@@ -309,6 +332,20 @@ public class ModelConfiguration implements Serializable, Cloneable {
             return null;
         }
         return this.min.get(attribute);
+    }
+    
+    /**
+     * @return the publisherBenefit
+     */
+    public double getPublisherBenefit() {
+        return this.config.getCostBenefitConfiguration().getPublisherBenefit();
+    }
+    
+    /**
+     * @return the publisherLoss
+     */
+    public double getPublisherLoss() {
+        return this.config.getCostBenefitConfiguration().getPublisherLoss();
     }
     
     /**
@@ -411,6 +448,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public boolean isUtilityBasedMicroaggregation() {
         return config.isUtilityBasedMicroaggregation();
     }
+
+    /**
+     * Returns whether microaggregation will be considered using the mean squared error
+     * @return
+     */
+    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
+        return config.isUtilityBasedMicroaggregationUseMeanSquaredError();
+    }
     
     /**
      * Removes all criteria.
@@ -418,7 +463,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -453,6 +498,26 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * @param adversaryCost the adversaryCost to set
+     */
+    public void setAdversaryCost(double adversaryCost) {
+        if (this.getAdversaryCost() != adversaryCost) {
+            this.setModified();
+        }
+        this.config.getCostBenefitConfiguration().setAdversaryCost(adversaryCost);
+    }
+    
+    /**
+     * @param adversaryGain the adversaryGain to set
+     */
+    public void setAdversaryGain(double adversaryGain) {
+        if (this.getAdversaryGain() != adversaryGain) {
+            this.setModified();
+        }
+        this.config.getCostBenefitConfiguration().setAdversaryGain(adversaryGain);
+    }
+    
+    /**
      * Delegates to an instance of ARXConfiguration.
      *
      * @param supp
@@ -461,7 +526,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setMaxOutliers(supp);
     }
-
+    
     /**
      * @param type
      * @param enabled
@@ -570,7 +635,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public void setMetric(Metric<?> metric) {
         setModified();
-        config.setMetric(metric);
+        config.setQualityModel(metric);
     }
     
     /**
@@ -626,6 +691,27 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * @param publisherBenefit the publisherBenefit to set
+     */
+    public void setPublisherBenefit(double publisherBenefit) {
+        if (this.getPublisherBenefit() != publisherBenefit) {
+            this.setModified();
+        }
+        this.config.getCostBenefitConfiguration().setPublisherBenefit(publisherBenefit);
+    }
+
+
+    /**
+     * @param publisherLoss the publisherLoss to set
+     */
+    public void setPublisherLoss(double publisherLoss) {
+        if (this.getPublisherLoss() != publisherLoss) {
+            this.setModified();
+        }
+        this.config.getCostBenefitConfiguration().setPublisherLoss(publisherLoss);
+    }
+
+    /**
      * Sets the current research subset.
      *
      * @param subset
@@ -643,7 +729,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setSuppressionAlwaysEnabled(enabled);
     }
-    
+
     /**
      * Sets the suppression/generalization weight, that will be respected by
      * the NDS metric.
@@ -654,7 +740,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.suppressionWeight = suppressionWeight;
     }
-    
+
     /**
      * Sets the transformation mode
      * @param attribute
@@ -667,23 +753,31 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.transformationModes.put(attribute, mode);
         setModified();
     }
-    
+
     /**
      * Sets the config unmodified.
      */
     public void setUnmodified() {
-        modified = false;
+        this.modified = false;
     }
-    
+
     /**
-     * Returns whether microaggregation will be considered by utility measures
+     * Sets whether microaggregation will be considered by utility measures
      * @return
      */
     public void setUseUtilityBasedMicroaggregation(boolean value) {
         setModified();
         config.setUtilityBasedMicroaggregation(value);
     }
-    
+
+    /**
+     * Sets whether microaggregation will be considered using the mean squared error
+     * @return
+     */
+    public void setUseUtilityBasedMicroaggregationMeanSquaredError(boolean value) {
+        setModified();
+        config.setUtilityBasedMicroaggregationUseMeanSquaredError(value);
+    }
     /**
      * Mark as modified.
      */

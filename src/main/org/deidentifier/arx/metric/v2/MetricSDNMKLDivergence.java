@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.Map;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -108,7 +109,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
      * Default constructor.
      */
     public MetricSDNMKLDivergence(){
-        super(false, false);
+        super(true, false, false);
     }
     
     @Override
@@ -145,10 +146,17 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("KL divergence");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "KL-Divergence";
     }
-
+    
     /**
      * Returns the area
      * @param output
@@ -164,7 +172,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         }
         return result;
     }
-    
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
@@ -202,23 +210,23 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensionalWithBound(result);
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count, entry.count);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node,
                                                         HashGroupify g) {
         return null;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -273,7 +281,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
                TupleWrapper wrapper = new TupleWrapper(input.getArray()[row]);
                double frequency = groupify.get(wrapper).doubleValue() / this.tuples;
                this.inputDistribution[row] = frequency ;
-               max += frequency * log2(frequency * maximalArea);
+               this.max += frequency * log2(frequency * maximalArea);
            }
        }
     }

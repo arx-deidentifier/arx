@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 
@@ -77,15 +79,12 @@ public class MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed extends Abstrac
     }
 
     @Override
-    public String toString() {
-        return "Normalized non-uniform entropy";
+    public ElementData render(ARXConfiguration config) {
+        return super.getDefaultMetric().render(config);
     }
 
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
+    @Override
+    public String toString() {
+        return "Normalized non-uniform entropy";
     }
 }

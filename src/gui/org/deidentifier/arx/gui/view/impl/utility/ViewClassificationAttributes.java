@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -34,10 +35,14 @@ import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import de.linearbits.swt.table.DynamicTable;
+import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * This view allows to select a set of attributes for classification analysis
@@ -47,17 +52,17 @@ import org.eclipse.swt.widgets.TableItem;
 public class ViewClassificationAttributes implements IView, ViewStatisticsBasic {
 
     /** Controller */
-    private final Controller controller;
-
+    private final Controller   controller;
+    
     /** View */
-    private final Composite  root;
+    private final Composite    root;
     /** View */
-    private final Table      features;
+    private final DynamicTable features;
     /** View */
-    private final Table      classes;
-
+    private final Table classes;
+    
     /** Model */
-    private Model            model;
+    private Model              model;
 
     /**
      * Creates a new instance.
@@ -67,10 +72,12 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
      */
     public ViewClassificationAttributes(final Composite parent,
                                     final Controller controller) {
-
+        
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.OUTPUT, this);
         
         this.controller = controller;
 
@@ -86,7 +93,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         // Create table
-        features = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
         features.addSelectionListener(new DelayedChangeListener(1000) {
             @Override
@@ -94,6 +101,11 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
                 fireEvent();
             }
         });
+        DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
+        column0.setWidth("10%", "40px");
+        DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
+        column1.setWidth("90%", "40px");
+        
         
         // Create button
         classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
@@ -142,7 +154,9 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         if (event.part == ModelPart.MODEL) {
            this.model = (Model) event.data;
            update();
-        } else if (event.part == ModelPart.INPUT || event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES) {
+        } else if (event.part == ModelPart.INPUT ||
+                   event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
+                   event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.OUTPUT) {
            update();
         }
     }
@@ -154,7 +168,7 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
         Set<String> selectedFeatures = new HashSet<String>();
         for (TableItem item : features.getItems()) {
             if (item.getChecked()) {
-                selectedFeatures.add(item.getText());
+                selectedFeatures.add(item.getText(1));
             }
         }
         Set<String> selectedClasses = new HashSet<String>();
@@ -196,33 +210,32 @@ public class ViewClassificationAttributes implements IView, ViewStatisticsBasic 
 
         root.setRedraw(false);
         
-        Set<String> selectedFeatures = model.getSelectedFeatures();
-        
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
-        
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            TableItem item = new TableItem(features, SWT.NONE);
-            String value = handle.getAttributeName(i);
-            item.setText(value);
-            item.setChecked(selectedFeatures.contains(value));
-        }
-        
-        Set<String> selectedClasses = model.getSelectedClasses();
-        
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
         
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            TableItem item = new TableItem(classes, SWT.NONE);
-            String value = handle.getAttributeName(i);
-            item.setText(value);
-            item.setChecked(selectedClasses.contains(value));
+        for (int col = 0; col < handle.getNumColumns(); col++) {
+            String attribute = handle.getAttributeName(col);
+            DataDefinition def = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
+            Image image = controller.getResources().getImage(def.getAttributeType(attribute));
+            
+            // Features
+            TableItem itemF = new TableItem(features, SWT.NONE);
+            itemF.setText(new String[] { "", attribute } );
+            itemF.setImage(0, image);
+            itemF.setChecked(model.getSelectedFeatures().contains(attribute));
+
+            // Classes
+            TableItem itemC = new TableItem(classes, SWT.NONE);
+            itemC.setText(attribute);
+            itemC.setChecked(model.getSelectedClasses().contains(attribute));
         }
         
         root.setRedraw(true);
         SWTUtil.enable(root);
-    }
+    }    
+
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.deidentifier.arx.metric.Metric;
 import org.junit.Test;
 
 /**
+ * Tests the classification of the solution space.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -44,7 +45,7 @@ import org.junit.Test;
 public class TestSolutionSpaceClassification extends AbstractTest {
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -63,10 +64,10 @@ public class TestSolutionSpaceClassification extends AbstractTest {
         DataSubset subset = DataSubset.create(data, selector);
         
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(5));
-        config.addCriterion(new Inclusion(subset));
+        config.addPrivacyModel(new KAnonymity(5));
+        config.addPrivacyModel(new Inclusion(subset));
         config.setMaxOutliers(0.02d);
-        config.setMetric(Metric.createEntropyMetric(false));
+        config.setQualityModel(Metric.createEntropyMetric(false));
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(data, config);
@@ -77,8 +78,8 @@ public class TestSolutionSpaceClassification extends AbstractTest {
         
         for (ARXNode[] level : lattice.getLevels()) {
             for (ARXNode node : level) {
-                if (Double.compare((Double.valueOf(node.getMinimumInformationLoss().toString())), Double.NaN) == 0 ||
-                    Double.compare((Double.valueOf(node.getMaximumInformationLoss().toString())), Double.NaN) == 0) {
+                if (Double.compare((Double.valueOf(node.getLowestScore().toString())), Double.NaN) == 0 ||
+                    Double.compare((Double.valueOf(node.getHighestScore().toString())), Double.NaN) == 0) {
                     fail();
                 }
             }

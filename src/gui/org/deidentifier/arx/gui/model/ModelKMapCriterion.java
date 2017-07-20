@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -81,22 +81,14 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
     }
     
     /**
-     * Returns the significance level.
-     * @return
-     */
-    public double getSignificanceLevel() {
-        return significanceLevel;
-    }
-	
-	/**
      * Returns the estimator.
      * @return
      */
     public CellSizeEstimator getEstimator() {
         return estimator;
     }
-
-    /**
+	
+	/**
      * Returns k.
      *
      * @return
@@ -110,6 +102,14 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         return Resources.getMessage("Model.32"); //$NON-NLS-1$
     }
 
+    /**
+     * Returns the significance level.
+     * @return
+     */
+    public double getSignificanceLevel() {
+        return significanceLevel;
+    }
+
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelKMapCriterion)) {
@@ -117,17 +117,11 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         }
         ModelKMapCriterion other = (ModelKMapCriterion)criterion;
         this.k = other.k;
-        this.setEnabled(other.isEnabled());
         this.setEstimator(other.estimator);
         this.significanceLevel = other.significanceLevel;
-    }
-
-    /**
-     * Sets the significance level.
-     * @param significanceLevel
-     */
-    public void setSignificanceLevel(double significanceLevel) {
-        this.significanceLevel = significanceLevel;
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
 
     /**
@@ -146,6 +140,14 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
 	public void setK(int k) {
 		this.k = k;
 	}
+
+    /**
+     * Sets the significance level.
+     * @param significanceLevel
+     */
+    public void setSignificanceLevel(double significanceLevel) {
+        this.significanceLevel = significanceLevel;
+    }
 
     @Override
     public String toString() {

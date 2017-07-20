@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,9 +40,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.criteria.DPresence;
 import org.deidentifier.arx.criteria.Inclusion;
-import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -53,13 +51,13 @@ import org.deidentifier.arx.metric.MetricDescription;
  * This class implements a large portion of the model used by the GUI.
  *
  * @author Fabian Prasser
+ * @author James Gaupp
  */
 public class Model implements Serializable {
     
     /**
      * The currently selected perspective
      * @author Fabian Prasser
-     *
      */
     public static enum Perspective {
         CONFIGURATION,
@@ -213,8 +211,8 @@ public class Model implements Serializable {
     private ModelRisk                             riskModel                       = null;
 
     /* *****************************************
-     * PRIVACY CRITERIA****************************************
-     */
+     * PRIVACY CRITERIA
+     * *****************************************/
 
     /** Model for a specific privacy criterion. */
     private ModelDPresenceCriterion                       dPresenceModel                  = new ModelDPresenceCriterion();
@@ -240,9 +238,19 @@ public class Model implements Serializable {
     /** Model for a specific privacy criterion. */
     private Map<String, ModelDDisclosurePrivacyCriterion> dDisclosurePrivacyModel         = new HashMap<String, ModelDDisclosurePrivacyCriterion>();
 
+    /** Model for a specific privacy criterion. */
+    private ModelProfitabilityCriterion                   stackelbergPrivacyModel         = new ModelProfitabilityCriterion();
+
+    /** Model for a specific privacy criterion. */
+    private Map<String, ModelBLikenessCriterion>          bLikenessModel                  = new HashMap<String, ModelBLikenessCriterion>();
+
+    /** Model for a specific privacy criterion. */
+    private ModelMinimumKeySizeCriterion                  minimumKeySizeModel             = new ModelMinimumKeySizeCriterion();
+
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
+    
     /** Configuration. */
     private MetricConfiguration                   metricConfig                    = null;
     
@@ -286,42 +294,42 @@ public class Model implements Serializable {
      * @param locale
      */
     public Model(final String name, final String description, Locale locale) {
-		this.name = name;
-		this.description = description;
-		this.locale = locale;
-		setModified();
-	}
+        this.name = name;
+        this.description = description;
+        this.locale = locale;
+        setModified();
+    }
 
     /**
-	 * Adds an entry to the audit trail
-	 * @param entry
-	 */
-	public void addAuditTrailEntry(ModelAuditTrailEntry entry) {
-	    this.getAuditTrail().add(entry);
-	    this.setModified();
-	}
-	
-	/**
+     * Adds an entry to the audit trail
+     * @param entry
+     */
+    public void addAuditTrailEntry(ModelAuditTrailEntry entry) {
+        this.getAuditTrail().add(entry);
+        this.setModified();
+    }
+    
+    /**
      * Creates an anonymizer for the current config.
      *
      * @return
      */
-	public ARXAnonymizer createAnonymizer() {
-	    
-		// Initialize anonymizer
-		this.anonymizer = new ARXAnonymizer();
-		this.anonymizer.setHistorySize(getHistorySize());
-		this.anonymizer.setMaximumSnapshotSizeDataset(getSnapshotSizeDataset());
-		this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
-		
-		// Add all criteria
-		this.createConfig();
+    public ARXAnonymizer createAnonymizer() {
+        
+        // Initialize anonymizer
+        this.anonymizer = new ARXAnonymizer();
+        this.anonymizer.setHistorySize(getHistorySize());
+        this.anonymizer.setMaximumSnapshotSizeDataset(getSnapshotSizeDataset());
+        this.anonymizer.setMaximumSnapshotSizeSnapshot(getSnapshotSizeSnapshot());
+        
+        // Add all criteria
+        this.createConfig();
 
         // Return the anonymizer
-		return anonymizer;
-	}
-	
-	/**
+        return anonymizer;
+    }
+    
+    /**
      * Replaces the output config with a clone of the input config.
      */
     public void createClonedConfig() {
@@ -329,22 +337,22 @@ public class Model implements Serializable {
         // Clone the config
         outputConfig = inputConfig.clone();
         this.setModified();
-	}
+    }
 
     /**
      * Creates an ARXConfiguration.
      */
-	public void createConfig() {
+    public void createConfig() {
 
-		ModelConfiguration config = getInputConfig();
-		DataDefinition definition = getInputDefinition();
+        ModelConfiguration config = getInputConfig();
+        DataDefinition definition = getInputDefinition();
 
-		// Initialize the config
-		config.removeAllCriteria();
-		if (definition == null) return;
-		
-		// Initialize the metric
-		config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
+        // Initialize the config
+        config.removeAllCriteria();
+        if (definition == null) return;
+        
+        // Initialize the metric
+        config.setMetric(this.getMetricDescription().createInstance(this.getMetricConfiguration()));
 
         // Initialize definition
         for (String attr : definition.getQuasiIdentifyingAttributes()) {
@@ -398,10 +406,10 @@ public class Model implements Serializable {
             config.addCriterion(this.differentialPrivacyModel.getCriterion(this));
         }
 
-		if (this.kAnonymityModel != null &&
-		    this.kAnonymityModel.isEnabled()) {
-		    config.addCriterion(this.kAnonymityModel.getCriterion(this));
-		}
+        if (this.kAnonymityModel != null &&
+            this.kAnonymityModel.isEnabled()) {
+            config.addCriterion(this.kAnonymityModel.getCriterion(this));
+        }
 
         if (this.kMapModel != null &&
             this.kMapModel.isEnabled()) {
@@ -412,13 +420,22 @@ public class Model implements Serializable {
             this.dPresenceModel.isEnabled()) {
             config.addCriterion(this.dPresenceModel.getCriterion(this));
         }
-		
-		for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
-	        if (entry.getValue() != null &&
-	            entry.getValue().isEnabled()) {
-	            config.addCriterion(entry.getValue().getCriterion(this));
-	        }
-		}
+        
+        if (this.stackelbergPrivacyModel != null &&
+            this.stackelbergPrivacyModel.isEnabled()) {
+            config.addCriterion(this.stackelbergPrivacyModel.getCriterion(this));
+        }
+        if (this.minimumKeySizeModel != null &&
+                this.minimumKeySizeModel.isEnabled()) {
+                config.addCriterion(this.minimumKeySizeModel.getCriterion(this));
+            }
+            
+        for (Entry<String, ModelLDiversityCriterion> entry : this.lDiversityModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
         
         for (Entry<String, ModelTClosenessCriterion> entry : this.tClosenessModel.entrySet()){
             if (entry.getValue() != null &&
@@ -442,88 +459,118 @@ public class Model implements Serializable {
             }
         }
         
+        for (Entry<String, ModelBLikenessCriterion> entry : this.bLikenessModel.entrySet()){
+            if (entry.getValue() != null &&
+                entry.getValue().isEnabled()) {
+                config.addCriterion(entry.getValue().getCriterion(this));
+            }
+        }
+        
         for (ModelRiskBasedCriterion entry : this.riskBasedModel){
-            if (entry != null &&
-                entry.isEnabled()) {
-                
+            if (entry != null && entry.isEnabled()) {
                 PrivacyCriterion criterion = entry.getCriterion(this);
                 config.addCriterion(criterion);
             }
         }
 
-        // Allow adding and removing tuples
-        if (!config.containsCriterion(DPresence.class) || 
-            !config.containsCriterion(KMap.class) || 
-            (config.containsCriterion(KMap.class) && !config.getCriterion(KMap.class).isAccurate())){
-            if (config.getInput() != null && config.getResearchSubset() != null && 
-                config.getResearchSubset().size() != config.getInput().getHandle().getNumRows()) {
-                    DataSubset subset = DataSubset.create(config.getInput(), config.getResearchSubset());
-                    config.addCriterion(new Inclusion(subset));
+        // If a subset has been defined
+        if (config.getInput() != null && config.getResearchSubset() != null && 
+            config.getResearchSubset().size() != config.getInput().getHandle().getNumRows()) {
+            
+            // Configure it, if not done already
+            boolean subsetDefined = false;
+            for (PrivacyCriterion c : config.getCriteria()) {
+
+                // (e,d)-DP will return false at this point, 
+                // but consistency will be checked by ARXConfiguration.initialize(...) 
+                subsetDefined |= c.isSubsetAvailable();
             }
+            // Add, if missing
+            if (!subsetDefined) {
+                DataSubset subset = DataSubset.create(config.getInput(), config.getResearchSubset());
+                config.addCriterion(new Inclusion(subset));
+            }            
         }
-	}
+    }
 
     /**
      * Creates an ARXConfiguration for the subset.
      *
      * @return
      */
-	public ARXConfiguration createSubsetConfig() {
+    public ARXConfiguration createSubsetConfig() {
 
-		// Create a temporary config
-		ARXConfiguration config = ARXConfiguration.create();
+        // Create a temporary config
+        ARXConfiguration config = ARXConfiguration.create();
 
         // Add an enclosure criterion
         DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
                                               getInputConfig().getResearchSubset());
-		config.addCriterion(new Inclusion(subset));
+        config.addPrivacyModel(new Inclusion(subset));
 
         // Return the config
-		return config;
-	}
+        return config;
+    }
 
-	/**
+    /**
      * Returns the current anonymizer.
      *
      * @return
      */
-	public ARXAnonymizer getAnonymizer() {
-		return anonymizer;
-	}
+    public ARXAnonymizer getAnonymizer() {
+        return anonymizer;
+    }
 
-	/**
+    /**
      * Returns the last two selected attributes.
      *
      * @return
      */
-	public String[] getAttributePair() {
-		if (pair == null) pair = new String[] { null, null };
-		return pair;
-	}
+    public String[] getAttributePair() {
+        if (pair == null) pair = new String[] { null, null };
+        return pair;
+    }
     
     /**
-	 * Returns the audit trail
-	 * @return
-	 */
-	public List<ModelAuditTrailEntry> getAuditTrail() {
-	    if (this.auditTrail == null) {
-	        this.auditTrail = new ArrayList<ModelAuditTrailEntry>();
-	    }
-	    return auditTrail;
-	}
+     * Returns the audit trail
+     * @return
+     */
+    public List<ModelAuditTrailEntry> getAuditTrail() {
+        if (this.auditTrail == null) {
+            this.auditTrail = new ArrayList<ModelAuditTrailEntry>();
+        }
+        return auditTrail;
+    }
 
-	/**
-	 * Returns the classification model
-	 * @return
-	 */
-	public ModelClassification getClassificationModel() {
-	    if (this.classificationModel == null) {
-	        this.classificationModel = new ModelClassification();
-	    }
-	    return this.classificationModel;
-	}
-	
-	/**
+    /**
+     * Returns the b-Likeness privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
+        if (this.bLikenessModel == null) {
+            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
+            }
+        }
+        return bLikenessModel;
+    }
+    
+    /**
+     * Returns the classification model
+     * @return
+     */
+    public ModelClassification getClassificationModel() {
+        if (this.classificationModel == null) {
+            this.classificationModel = new ModelClassification();
+        }
+        return this.classificationModel;
+    }
+
+    /**
      * Returns the clipboard.
      *
      * @return
@@ -535,7 +582,7 @@ public class Model implements Serializable {
         return clipboard;
     }
 
-	/**
+    /**
      * Gets the csv config model.
      * @return
      */
@@ -547,7 +594,7 @@ public class Model implements Serializable {
         return csvSyntax;
     }
 
-	/**
+    /**
      * Returns the d-disclosure privacy model.
      *
      * @return
@@ -564,16 +611,16 @@ public class Model implements Serializable {
         return dDisclosurePrivacyModel;
     }
 
-	/**
+    /**
      * Returns the project description.
      *
      * @return
      */
-	public String getDescription() {
-		return description;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	/**
+    /**
      * Returns the (e,d)-DP model.
      *
      * @return
@@ -585,15 +632,89 @@ public class Model implements Serializable {
         return differentialPrivacyModel;
     }
 
-	/**
+    /**
      * Returns the d-presence model.
      *
      * @return
      */
-	public ModelDPresenceCriterion getDPresenceModel() {
-		return dPresenceModel;
-	}
+    public ModelDPresenceCriterion getDPresenceModel() {
+        return dPresenceModel;
+    }
 
+    /**
+     * Returns a list of indices of all equivalence classes.
+     *
+     * @return
+     */
+    public int[] getGroups() {
+        // TODO: Refactor to colors[groups[row]]
+        return this.groups;
+    }
+    
+    /**
+     * Returns the according parameter.
+     *
+     * @return
+     */
+    public int getHistorySize() {
+        return historySize;
+    }
+
+    /**
+     * Returns an upper bound on the number of nodes that will initially
+     * be displayed in the lattice viewer.
+     *
+     * @return
+     */
+    public int getInitialNodesInViewer() {
+        return initialNodesInViewer;
+    }
+
+    /**
+     * Returns the size in bytes of the input file.
+     *
+     * @return
+     */
+    public long getInputBytes() {
+        return inputBytes;
+    }
+
+    /**
+     * Returns the input configuration.
+     *
+     * @return
+     */
+    public ModelConfiguration getInputConfig() {
+        return inputConfig;
+    }
+
+    /**
+     * Returns the input definition.
+     *
+     * @return
+     */
+    public DataDefinition getInputDefinition(){
+        if (inputConfig==null) return null;
+        else if (inputConfig.getInput()==null) return null;
+        else return inputConfig.getInput().getDefinition();
+    }
+
+    /**
+     * Returns the input population model
+     * @return
+     */
+    public ARXPopulationModel getInputPopulationModel() {
+        return getRiskModel().getPopulationModel();
+    }
+
+    /**
+     * Returns the k-anonymity model.
+     *
+     * @return
+     */
+    public ModelKAnonymityCriterion getKAnonymityModel() {
+        return kAnonymityModel;
+    }
     /**
      * Returns the k-map model.
      *
@@ -606,107 +727,32 @@ public class Model implements Serializable {
         return kMapModel;
     }
     
-	/**
-     * Returns a list of indices of all equivalence classes.
-     *
-     * @return
-     */
-	public int[] getGroups() {
-		// TODO: Refactor to colors[groups[row]]
-		return this.groups;
-	}
-
-	/**
-     * Returns the according parameter.
-     *
-     * @return
-     */
-	public int getHistorySize() {
-		return historySize;
-	}
-
-	/**
-     * Returns an upper bound on the number of nodes that will initially
-     * be displayed in the lattice viewer.
-     *
-     * @return
-     */
-	public int getInitialNodesInViewer() {
-		return initialNodesInViewer;
-	}
-
-	/**
-     * Returns the size in bytes of the input file.
-     *
-     * @return
-     */
-	public long getInputBytes() {
-		return inputBytes;
-	}
-
-	/**
-     * Returns the input configuration.
-     *
-     * @return
-     */
-	public ModelConfiguration getInputConfig() {
-		return inputConfig;
-	}
-
-	/**
-     * Returns the input definition.
-     *
-     * @return
-     */
-	public DataDefinition getInputDefinition(){
-	    if (inputConfig==null) return null;
-	    else if (inputConfig.getInput()==null) return null;
-	    else return inputConfig.getInput().getDefinition();
-	}
-
     /**
-	 * Returns the input population model
-	 * @return
-	 */
-	public ARXPopulationModel getInputPopulationModel() {
-	    return getRiskModel().getPopulationModel();
-	}
-    
-	/**
-     * Returns the k-anonymity model.
-     *
-     * @return
-     */
-	public ModelKAnonymityCriterion getKAnonymityModel() {
-		return kAnonymityModel;
-	}
-	
-	/**
      * Returns the l-diversity model.
      *
      * @return
      */
-	public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
-	       if (this.lDiversityModel == null) {
-	            this.lDiversityModel = new HashMap<String, ModelLDiversityCriterion>();
-	        }
-		return lDiversityModel;
-	}
-
-	/**
+    public Map<String, ModelLDiversityCriterion> getLDiversityModel() {
+           if (this.lDiversityModel == null) {
+                this.lDiversityModel = new HashMap<String, ModelLDiversityCriterion>();
+            }
+        return lDiversityModel;
+    }
+    
+    /**
      * Returns the project locale.
      *
      * @return
      */
-	public Locale getLocale() {
-	    if (this.locale == null) {
-	        return Locale.getDefault();
-	    } else {
-	        return locale;
-	    }
-	}
+    public Locale getLocale() {
+        if (this.locale == null) {
+            return Locale.getDefault();
+        } else {
+            return locale;
+        }
+    }
 
-	/**
+    /**
      * Returns the model for local recoding
      * @return
      */
@@ -717,131 +763,143 @@ public class Model implements Serializable {
         return localRecodingModel;
     }
 
-	/**
+    /**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
      *
      * @return
      */
-	public int getMaximalSizeForComplexOperations(){
-	    return this.maximalSizeForComplexOperations;
-	}
+    public int getMaximalSizeForComplexOperations(){
+        return this.maximalSizeForComplexOperations;
+    }
 
-	/**
+    /**
      * Returns the maximal size of a sub-lattice that will be displayed
      * by the viewer.
      *
      * @return
      */
-	public int getMaxNodesInViewer() {
-		return maxNodesInViewer;
-	}
+    public int getMaxNodesInViewer() {
+        return maxNodesInViewer;
+    }
 
-	/**
+    /**
      * Returns the configuration of the metric.
      *
      * @return
      */
-	public MetricConfiguration getMetricConfiguration() {
-	    
-	    if (this.metricConfig == null) {
-	        if (this.inputConfig == null || this.inputConfig.getMetric() == null) {
-	            this.metricConfig = ARXConfiguration.create().getMetric().getConfiguration();
-	        } else {
-	            this.metricConfig = this.inputConfig.getMetric().getConfiguration();
-	        }
-	    }
-	    return this.metricConfig;
-	}
+    public MetricConfiguration getMetricConfiguration() {
+        
+        if (this.metricConfig == null) {
+            if (this.inputConfig == null || this.inputConfig.getMetric() == null) {
+                this.metricConfig = ARXConfiguration.create().getQualityModel().getConfiguration();
+            } else {
+                this.metricConfig = this.inputConfig.getMetric().getConfiguration();
+            }
+        }
+        return this.metricConfig;
+    }
 
-	/**
+    /**
      * Returns a description of the metric.
      *
      * @return
      */
-	public MetricDescription getMetricDescription() {
-	    if (this.metricDescription == null) {
+    public MetricDescription getMetricDescription() {
+        if (this.metricDescription == null) {
             if (this.inputConfig == null || this.inputConfig.getMetric() == null) {
-                this.metricDescription = ARXConfiguration.create().getMetric().getDescription();
+                this.metricDescription = ARXConfiguration.create().getQualityModel().getDescription();
             } else {
                 this.metricDescription = this.inputConfig.getMetric().getDescription();
             }
         }
-	    return this.metricDescription;
-	}
+        return this.metricDescription;
+    }
 
-	/**
+    /**
+     * Returns the minimum key size model.
+     *
+     * @return
+     */
+    public ModelMinimumKeySizeCriterion getMinimumKeySizeModel() {
+        if (this.minimumKeySizeModel == null) {
+            this.minimumKeySizeModel = new ModelMinimumKeySizeCriterion();
+        }
+        return minimumKeySizeModel;
+    }
+
+    /**
      * Returns the name of this project.
      *
      * @return
      */
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	/**
+    /**
      * Returns the current filter.
      *
      * @return
      */
-	public ModelNodeFilter getNodeFilter() {
-		return nodeFilter;
-	}
+    public ModelNodeFilter getNodeFilter() {
+        return nodeFilter;
+    }
 
-	/**
+    /**
      * Returns a string representation of the current optimum.
      *
      * @return
      */
-	public String getOptimalNodeAsString() {
-		return optimalNodeAsString;
-	}
+    public String getOptimalNodeAsString() {
+        return optimalNodeAsString;
+    }
 
-	/**
-	 * @return the output
-	 */
-	public DataHandle getOutput() {
-		return output;
-	}
+    /**
+     * @return the output
+     */
+    public DataHandle getOutput() {
+        return output;
+    }
 
-	/**
+    /**
      * Returns the output config.
      *
      * @return
      */
-	public ModelConfiguration getOutputConfig() {
-		return outputConfig;
-	}
+    public ModelConfiguration getOutputConfig() {
+        return outputConfig;
+    }
 
-	/**
+    /**
      * Returns the output definition.
      *
      * @return
      */
-	public DataDefinition getOutputDefinition(){
-		if (this.output == null) return null;
-		else return this.output.getDefinition();
-	}
+    public DataDefinition getOutputDefinition(){
+        if (this.output == null) return null;
+        else return this.output.getDefinition();
+    }
 
     /**
      * Returns the currently applied transformation.
      *
      * @return
      */
-	public ARXNode getOutputNode() {
-		return outputNode;
-	}
+    public ARXNode getOutputNode() {
+        return outputNode;
+    }
 
-	/**
+    /**
      * Returns a string representation of the currently applied transformation.
      *
      * @return
      */
-	public String getOutputNodeAsString() {
-		return outputNodeAsString;
-	}
+    public String getOutputNodeAsString() {
+        return outputNodeAsString;
+    }
 
-	/**
+    /**
      * Returns the output population model, if any. Null otherwise.
      * @return
      */
@@ -856,17 +914,17 @@ public class Model implements Serializable {
         }
         return null;
     }
-	
-	/**
+    
+    /**
      * Returns the path of the project.
      *
      * @return
      */
-	public String getPath() {
-		return path;
-	}
-	
-	/**
+    public String getPath() {
+        return path;
+    }
+    
+    /**
      * @return the perspective
      */
     public Perspective getPerspective() {
@@ -876,23 +934,23 @@ public class Model implements Serializable {
         return perspective;
     }
 
-	/**
+    /**
      * Returns the current query.
      *
      * @return
      */
-	public String getQuery() {
+    public String getQuery() {
         return query;
     }
 
-	/**
+    /**
      * Returns the current result.
      *
      * @return the result
      */
-	public ARXResult getResult() {
-		return result;
-	}
+    public ARXResult getResult() {
+        return result;
+    }
 
     /**
      * Returns the risk-based model.
@@ -908,8 +966,8 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-	
-	/**
+    
+    /**
      * Returns the risk model
      * @return the risk model
      */
@@ -920,17 +978,16 @@ public class Model implements Serializable {
         return riskModel;
     }
 
-
     /**
      * Returns the currently selected attribute.
      *
      * @return
      */
-	public String getSelectedAttribute() {
-		return selectedAttribute;
-	}
+    public String getSelectedAttribute() {
+        return selectedAttribute;
+    }
 
-	
+    
     /**
      * Returns the selected features
      * @return
@@ -957,11 +1014,11 @@ public class Model implements Serializable {
         return this.selectedClasses;
     }
 
-	/**
-	 * Returns the selected features
-	 * @return
-	 */
-	public Set<String> getSelectedFeatures() {
+    /**
+     * Returns the selected features
+     * @return
+     */
+    public Set<String> getSelectedFeatures() {
 
         if (this.selectedFeatures == null) {
 
@@ -981,16 +1038,16 @@ public class Model implements Serializable {
             }
         }
         return this.selectedFeatures;
-	}
+    }
 
     /**
      * Returns the selected transformation.
      *
      * @return
      */
-	public ARXNode getSelectedNode() {
-		return selectedNode;
-	}
+    public ARXNode getSelectedNode() {
+        return selectedNode;
+    }
 
     /**
      * Returns a set of quasi identifiers selected for risk analysis
@@ -1039,34 +1096,45 @@ public class Model implements Serializable {
      *
      * @return
      */
-	public char getSeparator() {
-		return separator;
-	}
+    public char getSeparator() {
+        return separator;
+    }
 
     /**
      * Returns the according parameter.
      *
      * @return
      */
-	public double getSnapshotSizeDataset() {
-		return snapshotSizeDataset;
-	}
+    public double getSnapshotSizeDataset() {
+        return snapshotSizeDataset;
+    }
 
-	/**
+    /**
      * Returns the according parameter.
      *
      * @return
      */
-	public double getSnapshotSizeSnapshot() {
-		return snapshotSizeSnapshot;
-	}
+    public double getSnapshotSizeSnapshot() {
+        return snapshotSizeSnapshot;
+    }
 
-	/**
+    /**
+     * Returns the configuration object for the stackelberg privacy model
+     * @return
+     */
+    public ModelProfitabilityCriterion getStackelbergModel() {
+        if (this.stackelbergPrivacyModel == null) {
+            this.stackelbergPrivacyModel = new ModelProfitabilityCriterion();
+        }
+        return stackelbergPrivacyModel;
+    }
+
+    /**
      * Returns the origin of the subset.
      *
      * @return
      */
-	public String getSubsetOrigin(){
+    public String getSubsetOrigin(){
         return this.subsetOrigin;
     }
 
@@ -1075,23 +1143,23 @@ public class Model implements Serializable {
      *
      * @return
      */
-	public Map<String, ModelTClosenessCriterion> getTClosenessModel() {
-	    if (this.tClosenessModel == null) {
+    public Map<String, ModelTClosenessCriterion> getTClosenessModel() {
+        if (this.tClosenessModel == null) {
             this.tClosenessModel = new HashMap<String, ModelTClosenessCriterion>();
         }
-		return tClosenessModel;
-	}
+        return tClosenessModel;
+    }
 
     /**
      * Returns the execution time of the last anonymization process.
      *
      * @return
      */
-	public long getTime() {
-		return time;
-	}
+    public long getTime() {
+        return time;
+    }
 
-	/**
+    /**
      * Returns whether functional hierarchies should be used
      * @return
      */
@@ -1104,7 +1172,7 @@ public class Model implements Serializable {
         return useFunctionalHierarchies;
     }
 
-	/**
+    /**
      * Returns whether list-wise deletion is used for summary statistics
      * @return
      */
@@ -1122,18 +1190,18 @@ public class Model implements Serializable {
      *
      * @return
      */
-	public ModelViewConfig getViewConfig() {
+    public ModelViewConfig getViewConfig() {
         return this.viewConfig;
     }
 
-	/**
+    /**
      * Returns whether debugging is enabled.
      *
      * @return
      */
-	public boolean isDebugEnabled() {
-	    return debugEnabled;
-	}
+    public boolean isDebugEnabled() {
+        return debugEnabled;
+    }
 
     /**
      * Returns whether this project is modified.
@@ -1147,43 +1215,43 @@ public class Model implements Serializable {
         if ((outputConfig != null) && outputConfig.isModified()) { return true; }
         if ((clipboard != null) && clipboard.isModified()) { return true; }
         return modified;
-	}
+    }
 
-	/**
+    /**
      * Returns whether a quasi-identifier is selected.
      *
      * @return
      */
-	public boolean isQuasiIdentifierSelected() {
-		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-	}
-	
-	/**
+    public boolean isQuasiIdentifierSelected() {
+        return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+    }
+    
+    /**
      * Returns whether a sensitive attribute is selected.
      *
      * @return
      */
-	public boolean isSensitiveAttributeSelected() {
-		return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
-	}
+    public boolean isSensitiveAttributeSelected() {
+        return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
+    }
 
-	/**
+    /**
      * Returns whether visualization is enabled.
      *
      * @return
      */
-	public boolean isVisualizationEnabled(){
-	    if (this.showVisualization == null) {
-	        return true;
-	    } else {
-	        return this.showVisualization;
-	    }
-	}
-	
-	/**
+    public boolean isVisualizationEnabled(){
+        if (this.showVisualization == null) {
+            return true;
+        } else {
+            return this.showVisualization;
+        }
+    }
+    
+    /**
      * Resets the model.
      */
-	public void reset() {
+    public void reset() {
         this.resetCriteria();
         this.resetAttributePair();
         this.inputConfig = new ModelConfiguration();
@@ -1197,124 +1265,128 @@ public class Model implements Serializable {
         this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         this.groups = null;
         this.classificationModel = new ModelClassification();
-	}
+    }
     
     /**
      * Returns the last two selected attributes.
      */
     public void resetAttributePair() {
-		if (pair == null)
-			pair = new String[] { null, null };
-		pair[0] = null;
-		pair[1] = null;
-	}
+        if (pair == null)
+            pair = new String[] { null, null };
+        pair[0] = null;
+        pair[1] = null;
+    }
     
     /**
      * Resets the configuration of the privacy criteria.
      */
-	public void resetCriteria() {
-		
-		if (inputConfig==null || inputConfig.getInput()==null) return;
-		
-		differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
-		kAnonymityModel = new ModelKAnonymityCriterion();
-		dPresenceModel = new ModelDPresenceCriterion();
-		kMapModel = new ModelKMapCriterion();
-		lDiversityModel.clear();
-		tClosenessModel.clear();
-		riskBasedModel.clear();
-		dDisclosurePrivacyModel.clear();
-		DataHandle handle = inputConfig.getInput().getHandle();
-		for (int col = 0; col < handle.getNumColumns(); col++) {
-			String attribute = handle.getAttributeName(col);
-			lDiversityModel.put(attribute, new ModelLDiversityCriterion(attribute));
-			tClosenessModel.put(attribute, new ModelTClosenessCriterion(attribute));
-			dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
-		}
-		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
-		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
-		riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
-	}
+    public void resetCriteria() {
+        
+        if (inputConfig==null || inputConfig.getInput()==null) return;
+        
+        differentialPrivacyModel = new ModelDifferentialPrivacyCriterion();
+        kAnonymityModel = new ModelKAnonymityCriterion();
+        stackelbergPrivacyModel = new ModelProfitabilityCriterion();
+        dPresenceModel = new ModelDPresenceCriterion();
+        kMapModel = new ModelKMapCriterion();
+        lDiversityModel.clear();
+        tClosenessModel.clear();
+        riskBasedModel.clear();
+        bLikenessModel.clear();
+        dDisclosurePrivacyModel.clear();
+        minimumKeySizeModel = new ModelMinimumKeySizeCriterion();
+        DataHandle handle = inputConfig.getInput().getHandle();
+        for (int col = 0; col < handle.getNumColumns(); col++) {
+            String attribute = handle.getAttributeName(col);
+            lDiversityModel.put(attribute, new ModelLDiversityCriterion(attribute));
+            tClosenessModel.put(attribute, new ModelTClosenessCriterion(attribute));
+            dDisclosurePrivacyModel.put(attribute, new ModelDDisclosurePrivacyCriterion(attribute));
+            bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
+        }
+        riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_AVERAGE_RISK));
+        riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
+        riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
+    }
 
-	/**
+    /**
      * Sets the anonymizer.
      *
      * @param anonymizer
      */
-	public void setAnonymizer(final ARXAnonymizer anonymizer) {
-		setModified();
-		this.anonymizer = anonymizer;
-	}
+    public void setAnonymizer(final ARXAnonymizer anonymizer) {
+        setModified();
+        this.anonymizer = anonymizer;
+    }
 
-	/**
+    /**
      * Enables debugging.
      *
      * @param value
      */
-	public void setDebugEnabled(boolean value){
-	    this.debugEnabled = value;
-	    this.setModified();
-	}
+    public void setDebugEnabled(boolean value){
+        this.debugEnabled = value;
+        this.setModified();
+    }
 
-	/**
+    /**
      * Sets the project description.
      *
      * @param description
      */
-	public void setDescription(final String description) {
-		this.description = description;
-		setModified();
-	}
+    public void setDescription(final String description) {
+        this.description = description;
+        setModified();
+    }
 
     /**
      * Sets the indices of equivalence classes.
      *
      * @param groups
      */
-	public void setGroups(int[] groups) {
-		this.groups = groups;
-	}
+    public void setGroups(int[] groups) {
+        this.groups = groups;
+    }
 
-	/**
+    /**
      * Sets the according parameter.
      *
      * @param historySize
      */
-	public void setHistorySize(final int historySize) {
-		this.historySize = historySize;
-		setModified();
-	}
+    public void setHistorySize(final int historySize) {
+        this.historySize = historySize;
+        setModified();
+    }
 
-	/**
+    /**
      * Sets the according parameter.
      *
      * @param val
      */
-	public void setInitialNodesInViewer(final int val) {
-		initialNodesInViewer = val;
-		setModified();
-	}
+    public void setInitialNodesInViewer(final int val) {
+        initialNodesInViewer = val;
+        setModified();
+    }
 
-	/**
+    /**
      * Sets the size of the input in bytes.
      *
      * @param inputBytes
      */
-	public void setInputBytes(final long inputBytes) {
-		setModified();
-		this.inputBytes = inputBytes;
-	}
+    public void setInputBytes(final long inputBytes) {
+        setModified();
+        this.inputBytes = inputBytes;
+    }
 
-	/**
+    /**
      * Sets the input config.
      *
      * @param config
      */
-	public void setInputConfig(final ModelConfiguration config) {
-		this.inputConfig = config;
-	}
+    public void setInputConfig(final ModelConfiguration config) {
+        this.inputConfig = config;
+    }
 
-	/**
+    /**
      * Sets the project locale.
      *
      * @param locale Null for default locale
@@ -1323,28 +1395,28 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
-	
-	/**
+    
+    /**
      * Sets the according parameter.
      *
      * @param numberOfRows
      */
-	public void setMaximalSizeForComplexOperations(int numberOfRows) {
+    public void setMaximalSizeForComplexOperations(int numberOfRows) {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-	
-	/**
+    
+    /**
      * Sets the according parameter.
      *
      * @param maxNodesInViewer
      */
-	public void setMaxNodesInViewer(final int maxNodesInViewer) {
-		this.maxNodesInViewer = maxNodesInViewer;
-		setModified();
-	}
-	
-	/**
+    public void setMaxNodesInViewer(final int maxNodesInViewer) {
+        this.maxNodesInViewer = maxNodesInViewer;
+        setModified();
+    }
+    
+    /**
      * Sets the description of the metric.
      *
      * @param description
@@ -1353,69 +1425,69 @@ public class Model implements Serializable {
         this.metricDescription = description;
     }
 
-	/**
+    /**
      * Marks this project as modified.
      */
     public void setModified() {
-		modified = true;
-	}
+        modified = true;
+    }
 
-	/**
+    /**
      * Sets the project name.
      *
      * @param name
      */
-	public void setName(final String name) {
-		this.name = name;
-		setModified();
-	}
+    public void setName(final String name) {
+        this.name = name;
+        setModified();
+    }
 
-	/**
+    /**
      * Sets a filter.
      *
      * @param filter
      */
-	public void setNodeFilter(final ModelNodeFilter filter) {
-		nodeFilter = filter;
-		setModified();
-	}
+    public void setNodeFilter(final ModelNodeFilter filter) {
+        nodeFilter = filter;
+        setModified();
+    }
 
-	/**
+    /**
      * Sets the current output.
      *
      * @param output
      * @param node
      */
-	public void setOutput(final DataHandle output, final ARXNode node) {
-		this.output = output;
-		this.outputNode = node;
-		if (node != null) {
-			outputNodeAsString = Arrays.toString(node.getTransformation());
-		} else {
-		    outputNodeAsString = null;
-		}
-		setModified();
-	}
+    public void setOutput(final DataHandle output, final ARXNode node) {
+        this.output = output;
+        this.outputNode = node;
+        if (node != null) {
+            outputNodeAsString = Arrays.toString(node.getTransformation());
+        } else {
+            outputNodeAsString = null;
+        }
+        setModified();
+    }
 
-	/**
+    /**
      * Sets the output config.
      *
      * @param config
      */
-	public void setOutputConfig(final ModelConfiguration config) {
-		outputConfig = config;
-	}
+    public void setOutputConfig(final ModelConfiguration config) {
+        outputConfig = config;
+    }
 
     /**
      * Sets the project path.
      *
      * @param path
      */
-	public void setPath(final String path) {
-		this.path = path;
-	}
+    public void setPath(final String path) {
+        this.path = path;
+    }
     
-	/**
+    /**
      * @param perspective the perspective to set
      */
     public void setPerspective(Perspective perspective) {
@@ -1427,7 +1499,7 @@ public class Model implements Serializable {
      *
      * @param query
      */
-	public void setQuery(String query){
+    public void setQuery(String query){
         this.query = query;
         setModified();
     }
@@ -1437,47 +1509,47 @@ public class Model implements Serializable {
      *
      * @param result
      */
-	public void setResult(final ARXResult result) {
-		this.result = result;
-		if ((result != null) && (result.getGlobalOptimum() != null)) {
-			optimalNodeAsString = Arrays.toString(result.getGlobalOptimum()
-					.getTransformation());
-		}
-		setModified();
-	}
+    public void setResult(final ARXResult result) {
+        this.result = result;
+        if ((result != null) && (result.getGlobalOptimum() != null)) {
+            optimalNodeAsString = Arrays.toString(result.getGlobalOptimum()
+                    .getTransformation());
+        }
+        setModified();
+    }
 
     /**
      * Marks this project as saved.
      */
-	public void setSaved() {
-		modified = false;
-	}
+    public void setSaved() {
+        modified = false;
+    }
 
     /**
      * Sets the selected attribute.
      *
      * @param attribute
      */
-	public void setSelectedAttribute(final String attribute) {
-		selectedAttribute = attribute;
+    public void setSelectedAttribute(final String attribute) {
+        selectedAttribute = attribute;
 
-		// Track last two selected attributes
-		if (pair == null)
-			pair = new String[] { null, null };
-		if (pair[0] == null) {
-			pair[0] = attribute;
-			pair[1] = null;
-		} else if (pair[1] == null) {
-			pair[1] = attribute;
-		} else {
-			pair[0] = pair[1];
-			pair[1] = attribute;
-		}
+        // Track last two selected attributes
+        if (pair == null)
+            pair = new String[] { null, null };
+        if (pair[0] == null) {
+            pair[0] = attribute;
+            pair[1] = null;
+        } else if (pair[1] == null) {
+            pair[1] = attribute;
+        } else {
+            pair[0] = pair[1];
+            pair[1] = attribute;
+        }
 
-		setModified();
-	}
+        setModified();
+    }
 
-	/**
+    /**
      * Sets a set of selected attributes
      * @param set
      */
@@ -1500,10 +1572,10 @@ public class Model implements Serializable {
      *
      * @param node
      */
-	public void setSelectedNode(final ARXNode node) {
-		selectedNode = node;
-		setModified();
-	}
+    public void setSelectedNode(final ARXNode node) {
+        selectedNode = node;
+        setModified();
+    }
 
     /**
      * Sets a set of quasi identifiers selected for risk analysis
@@ -1519,10 +1591,10 @@ public class Model implements Serializable {
      *
      * @param snapshotSize
      */
-	public void setSnapshotSizeDataset(final double snapshotSize) {
-		snapshotSizeDataset = snapshotSize;
-		setModified();
-	}
+    public void setSnapshotSizeDataset(final double snapshotSize) {
+        snapshotSizeDataset = snapshotSize;
+        setModified();
+    }
 
     /**
      * Sets the according parameter.
@@ -1530,9 +1602,9 @@ public class Model implements Serializable {
      * @param snapshotSize
      */
     public void setSnapshotSizeSnapshot(final double snapshotSize) {
-		setModified();
-		snapshotSizeSnapshot = snapshotSize;
-	}
+        setModified();
+        snapshotSizeSnapshot = snapshotSize;
+    }
 
     /**
      * Sets how the subset was defined.
@@ -1558,24 +1630,24 @@ public class Model implements Serializable {
      * @param time
      */
     public void setTime(final long time) {
-		this.time = time;
-	}
+        this.time = time;
+    }
     
     /**
      * Marks this model as unmodified.
      */
     public void setUnmodified() {
-		modified = false;
-		inputConfig.setUnmodified();
-		getRiskModel().setUnmodified();
-		if (outputConfig != null) {
-			outputConfig.setUnmodified();
-		}
-		if (clipboard != null) {
-		    clipboard.setUnmodified();
-		}
-		getClassificationModel().setUnmodified();
-	}
+        modified = false;
+        inputConfig.setUnmodified();
+        getRiskModel().setUnmodified();
+        if (outputConfig != null) {
+            outputConfig.setUnmodified();
+        }
+        if (clipboard != null) {
+            clipboard.setUnmodified();
+        }
+        getClassificationModel().setUnmodified();
+    }
 
     /**
      * Sets whether funtional hierarchies should be used during anonymization to esimtate utility

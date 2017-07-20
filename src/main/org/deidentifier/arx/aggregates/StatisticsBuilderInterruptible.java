@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -464,6 +464,16 @@ public class StatisticsBuilderInterruptible {
                 throw new InterruptedException("Interrupted by exception: " + e.getMessage());
             }
         }
+    }
+
+    /**
+     * If supported by the according builder, this method will report a progress
+     * value in [0,100]. Otherwise, it will always return 0
+     * 
+     * @return
+     */
+    public int getProgress() {
+        return builder.getProgress();
     }
 
     /**
