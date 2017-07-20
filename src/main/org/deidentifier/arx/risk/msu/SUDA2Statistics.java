@@ -94,11 +94,12 @@ public class SUDA2Statistics extends SUDA2Result {
      * @return
      */
     private double scoreSdcMicro(int size) {
-        double score = Math.pow(2d, columns-size) - 1d;
+        final int UPPER = columns-size;
+        double score = Math.pow(2d, UPPER) - 1d;
         for (int j = 2; j <= size; j++) {
             score *= j;
         }
-        for (int k = 2; k <= columns-size; k++) {
+        for (int k = 2; k <= UPPER; k++) {
             score *= k;
         }
         return score / ArithmeticUtils.factorialDouble(columns);
