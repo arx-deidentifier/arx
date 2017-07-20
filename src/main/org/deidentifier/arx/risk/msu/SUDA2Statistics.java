@@ -20,6 +20,8 @@ import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.apache.commons.math3.util.ArithmeticUtils;
+
 /**
  * The result of executing SUDA2
  * 
@@ -50,9 +52,10 @@ public class SUDA2Statistics extends SUDA2Result {
     /**
      * Creates a new instance
      * @param columns
+     * @param sdcMicroScores
      * @param maxK
      */
-    SUDA2Statistics(int rows, int columns, int maxK) {
+    SUDA2Statistics(int rows, int columns, int maxK, boolean sdcMicroScores) {
         
         // Init
         this.columns = columns;
@@ -61,18 +64,44 @@ public class SUDA2Statistics extends SUDA2Result {
         this.columnKeyTotals = new double[columns];
         this.columnKeyCounts = new double[columns];
         this.sizeDistribution = new double[maxK];
-        
-        // Implemented as described in
-        // IHSN - STATISTICAL DISCLOSURE CONTROL FOR MICRODATA: A PRACTICE GUIDE
+
+        // Calculate intermediate scores
         this.SUDA_INTERMEDIATE_SCORES = new double[maxK];
         for (int size = 1; size <= maxK; size++) {
-            final int UPPER = Math.min(maxK, columns - 1); 
-            double score = 1d;
-            for (int i = size; i < UPPER; i++) {
-                score *= (double) (columns - i);
-            }
+            double score = sdcMicroScores ? scoreSdcMicro(size) : scoreElliot(size);
             SUDA_INTERMEDIATE_SCORES[size - 1] = score;
         }
+    }
+    
+    /**
+     * Calculates the score for an MSU as described in
+     * IHSN - STATISTICAL DISCLOSURE CONTROL FOR MICRODATA: A PRACTICE GUIDE
+     * @param size
+     * @return
+     */
+    private double scoreElliot(int size) {
+        final int UPPER = Math.min(maxK, columns - 1);
+        double score = 1d;
+        for (int i = size; i < UPPER; i++) {
+            score *= (double) (columns - i);
+        }
+        return score;
+    }
+    
+    /**
+     * Calculates the score for an MSU as performed by sdcMicro
+     * @param size
+     * @return
+     */
+    private double scoreSdcMicro(int size) {
+        double score = Math.pow(2d, columns-size) - 1d;
+        for (int j = 2; j <= size; j++) {
+            score *= j;
+        }
+        for (int k = 2; k <= columns-size; k++) {
+            score *= k;
+        }
+        return score / ArithmeticUtils.factorialDouble(columns);
     }
     
     @Override

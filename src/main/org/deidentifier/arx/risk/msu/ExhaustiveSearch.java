@@ -146,7 +146,7 @@ public class ExhaustiveSearch {
 
         System.out.println(" - Current size: " + result.size());
 
-        SUDA2Result _result = new SUDA2Statistics(this.data.length, this.columns, this.columns);
+        SUDA2Result _result = new SUDA2Statistics(this.data.length, this.columns, this.columns, false);
         for (Set<SUDA2Item> msu : result) {
             _result.registerMSU(msu);
         }
