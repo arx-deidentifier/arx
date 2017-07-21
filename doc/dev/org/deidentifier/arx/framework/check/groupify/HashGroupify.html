@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>HashGroupify (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
@@ -116,7 +116,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#HashGroupify(int,%20org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal)">HashGroupify</a></strong>(int&nbsp;capacity,
+<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#HashGroupify(int, org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal)">HashGroupify</a></strong>(int&nbsp;capacity,
             <a href="../../../../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a>&nbsp;config)</code>
 <div class="block">Constructs a new hash groupify operator.</div>
 </td>
@@ -138,7 +138,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromBuffer(int[],%20int[],%20int,%20int,%20int)">addFromBuffer</a></strong>(int[]&nbsp;generalized,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromBuffer(int[], int[], int, int, int)">addFromBuffer</a></strong>(int[]&nbsp;generalized,
              int[]&nbsp;other,
              int&nbsp;representative,
              int&nbsp;count,
@@ -148,7 +148,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromGroupify(int[],%20org.deidentifier.arx.framework.check.distribution.Distribution[],%20int,%20int,%20int)">addFromGroupify</a></strong>(int[]&nbsp;generalized,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromGroupify(int[], org.deidentifier.arx.framework.check.distribution.Distribution[], int, int, int)">addFromGroupify</a></strong>(int[]&nbsp;generalized,
                <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>[]&nbsp;distributions,
                int&nbsp;representative,
                int&nbsp;count,
@@ -158,7 +158,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromSnapshot(int[],%20int[][],%20int[][],%20int,%20int,%20int)">addFromSnapshot</a></strong>(int[]&nbsp;generalized,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#addFromSnapshot(int[], int[][], int[][], int, int, int)">addFromSnapshot</a></strong>(int[]&nbsp;generalized,
                int[][]&nbsp;elements,
                int[][]&nbsp;frequencies,
                int&nbsp;representative,
@@ -199,7 +199,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][],%20int,%20int,%20org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[],%20int[],%20java.lang.String[],%20org.deidentifier.arx.framework.data.Dictionary)">performMicroaggregation</a></strong>(int[][]&nbsp;data,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#performMicroaggregation(int[][], int, int, org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], int[], java.lang.String[], org.deidentifier.arx.framework.data.Dictionary)">performMicroaggregation</a></strong>(int[][]&nbsp;data,
                        int&nbsp;start,
                        int&nbsp;num,
                        <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a>[]&nbsp;functions,
@@ -217,7 +217,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateAnalyze(org.deidentifier.arx.framework.lattice.Transformation,%20boolean)">stateAnalyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/groupify/HashGroupify.html#stateAnalyze(org.deidentifier.arx.framework.lattice.Transformation, boolean)">stateAnalyze</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/lattice/Transformation.html" title="class in org.deidentifier.arx.framework.lattice">Transformation</a>&nbsp;transformation,
             boolean&nbsp;force)</code>
 <div class="block">Analyzes the current state</div>
 </td>

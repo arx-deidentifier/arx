@@ -50,8 +50,11 @@ public abstract class HierarchyBuilder<T> implements Serializable {
         ORDER_BASED("Order"),
         
         /**  Redaction-based hierarchy */
-        REDACTION_BASED("Redaction");
+        REDACTION_BASED("Redaction"),
 
+        /**  Date-based hierarchy */
+        DATE_BASED("Date");
+        
         /** Name*/
         private final String name;
         

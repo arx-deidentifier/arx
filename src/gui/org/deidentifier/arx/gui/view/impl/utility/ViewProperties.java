@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.deidentifier.arx.ARXResult;
@@ -60,7 +61,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         public String[]       values;
 
         /**
-         * 
+         * Creates a new property
          *
          * @param father
          * @param property
@@ -75,7 +76,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         }
 
         /**
-         * 
+         * Creates a new property
          *
          * @param property
          * @param values
@@ -87,13 +88,49 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         }
 
         /**
-         * 
+         * Adds a child
          *
          * @param p
          */
         public void add(final Property p) {
             children.add(p);
             p.parent = this;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + ((children == null) ? 0 : children.hashCode());
+            result = prime * result + ((property == null) ? 0 : property.hashCode());
+            result = prime * result + Arrays.hashCode(values);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            Property other = (Property) obj;
+            if (!getOuterType().equals(other.getOuterType())) return false;
+            if (children == null) {
+                if (other.children != null) return false;
+            } else if (!children.equals(other.children)) return false;
+            if (property == null) {
+                if (other.property != null) return false;
+            } else if (!property.equals(other.property)) return false;
+            if (!Arrays.equals(values, other.values)) return false;
+            return true;
+        }
+
+        /**
+         * Helper
+         * @return
+         */
+        private ViewProperties getOuterType() {
+            return ViewProperties.this;
         }
     }
 

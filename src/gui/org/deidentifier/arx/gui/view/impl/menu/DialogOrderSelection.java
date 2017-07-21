@@ -181,6 +181,20 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
     }
 
     /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
+    }
+    
+    /**
      * Checks whether the data type is valid.
      *
      * @param type
@@ -472,12 +486,12 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
                         if (description.hasFormat()) {
                             final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                             final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                            final String format = controller.actionShowFormatInputDialog(getShell(), text1, text2, locale, description, elements);
-                            if (format == null) {
+                            final String format[] = controller.actionShowFormatInputDialog(getShell(), text1, text2, locale, description, elements);
+                            if (format == null || format[0] == null) {
                                 type = DataType.STRING;
-                                combo.select(getIndexOfDataType(DataType.STRING)+1);
+                                combo.select(getIndexOfDataType(DataType.STRING) + 1);
                             } else {
-                                type = description.newInstance(format, locale);
+                                type = description.newInstance(format[0], format[1] != null ? getLocale(format[1]) : locale);
                             }
                         } else {
                             type = description.newInstance();

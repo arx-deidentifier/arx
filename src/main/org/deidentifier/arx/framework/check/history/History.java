@@ -342,9 +342,9 @@ public class History {
                 data[index + 2] = m.pcount;
                 for (int i=0; i<m.distributions.length; i++) {
                     Distribution distribution = m.distributions[i];
-                    distribution.pack();
-                    data[index + 3 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
-                    data[index + 4 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                    int[][] distributionData = distribution.pack();
+                    data[index + 3 + i * 2] = dictionarySensValue.probe(distributionData[0]);
+                    data[index + 4 + i * 2] = dictionarySensFreq.probe(distributionData[1]);
                 }
                 break;
             // TODO: If we only need a distribution, we should get rid of the primary counter
@@ -352,9 +352,9 @@ public class History {
             case ARXConfiguration.REQUIREMENT_DISTRIBUTION:
                 for (int i=0; i<m.distributions.length; i++) {
                     Distribution distribution = m.distributions[i];
-                    distribution.pack();
-                    data[index + 2 + i * 2] = dictionarySensValue.probe(distribution.getPackedElements());
-                    data[index + 3 + i * 2] = dictionarySensFreq.probe(distribution.getPackedFrequency());
+                    int[][] distributionData = distribution.pack();
+                    data[index + 2 + i * 2] = dictionarySensValue.probe(distributionData[0]);
+                    data[index + 3 + i * 2] = dictionarySensFreq.probe(distributionData[1]);
                 }
                 break;
             default:

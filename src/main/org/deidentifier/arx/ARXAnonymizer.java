@@ -127,7 +127,8 @@ public class ARXAnonymizer {
 
 			// Create output handle
 	        ((DataHandleInput)handle).setLocked(true);
-            return new ARXResult(handle.getRegistry(),
+            return new ARXResult(ARXAnonymizer.this,
+                                 handle.getRegistry(),
                                  this.manager,
                                  this.checker,
                                  handle.getDefinition(),
@@ -618,11 +619,21 @@ public class ARXAnonymizer {
         final long time = System.currentTimeMillis();
         algorithm.traverse();
         
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
+        // Free resources
+        checker.reset();
         
         // Return the result
         return new Result(config.getQualityModel(), checker, solutionSpace, manager, algorithm, time);
+    }
+
+    /**
+     * Parses the settings provided by the given instance
+     * @param anonymizer
+     */
+    protected void parse(ARXAnonymizer anonymizer) {
+        this.historySize = anonymizer.historySize;
+        this.snapshotSizeDataset = anonymizer.snapshotSizeDataset;
+        this.snapshotSizeSnapshot = anonymizer.snapshotSizeSnapshot;
+        this.maxQuasiIdentifiers = anonymizer.maxQuasiIdentifiers;
     }
 }

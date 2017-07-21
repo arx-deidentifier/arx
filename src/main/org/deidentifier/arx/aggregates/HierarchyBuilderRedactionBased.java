@@ -44,14 +44,14 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
      */
     public static enum Order {
         
-        /**  TODO */
+        /**  Order */
         LEFT_TO_RIGHT,
         
-        /**  TODO */
+        /**  Order */
         RIGHT_TO_LEFT
     }
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 3625654600380531803L;
 
     /**
@@ -330,9 +330,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     public int[] prepare(String[] data){
         
         // Check
-        if (this.result == null) {
-            prepareResult(data);
-        }
+        prepareResult(data);
         
         // Compute
         int[] sizes = new int[this.result[0].length];
