@@ -103,7 +103,9 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
     }
     
     /** Folds */
-    private int     numberOfFolds = 10;
+    private int numberOfFolds = 10;
+    /** Configuration */
+    private int vectorLength  = 1000;
 
     /**
      * Constructor
@@ -219,6 +221,27 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
         if (this.multiclassType != multiclassType) {
             setModified();
             this.multiclassType = multiclassType;
+        }
+        return this;
+    }
+    
+    /**
+     * @return the vectorLength
+     */
+    public int getVectorLength() {
+        return vectorLength;
+    }
+    
+    /**
+     * @param vectorLength the vectorLength to set
+     */
+    public ARXSVMConfiguration setVectorLength(int vectorLength) {
+        if (vectorLength <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
         }
         return this;
     }

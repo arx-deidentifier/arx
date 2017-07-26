@@ -36,10 +36,13 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     }
 
     /** Number of trees */
-    private int     numberOfTrees = 10;
+    private int numberOfTrees = 10;
 
     /** Folds */
-    private int     numberOfFolds = 10;
+    private int numberOfFolds = 10;
+
+    /** Configuration */
+    private int vectorLength  = 1000;
 
     /**
      * Constructor
@@ -83,6 +86,27 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         if (this.numberOfTrees != numberOfTrees) {
             setModified();
             this.numberOfTrees = numberOfTrees;
+        }
+        return this;
+    }
+    
+    /**
+     * @return the vectorLength
+     */
+    public int getVectorLength() {
+        return vectorLength;
+    }
+    
+    /**
+     * @param vectorLength the vectorLength to set
+     */
+    public ARXRandomForestConfiguration setVectorLength(int vectorLength) {
+        if (vectorLength <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
         }
         return this;
     }

@@ -45,17 +45,19 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     }
 
     /** Configuration */
-    private double        alpha         = 1d;
-    /** Configuration */
-    private double        decayExponent = 0.2d;
-    /** Configuration */
-    private double        lambda        = 0.000001d;
+    private double        alpha         = 1 - 1.0e-3;
+    /** -1 equals even weighting of all examples, 0 means only use exponential annealing */
+    private double        decayExponent = -0.5;
+    /** Weighting factor for the prior distribution */
+    private double        lambda        = 1.0e-5;
     /** Configuration */
     private double        learningRate  = 1d;
     /** Configuration */
     private int           stepOffset    = 10000;
     /** Folds */
     private int           numberOfFolds = 10;
+    /** Configuration */
+    private int           vectorLength  = 1000;
     /** Configuration */
     private PriorFunction prior         = PriorFunction.L1;
 
@@ -113,6 +115,13 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      */
     public int getStepOffset() {
         return stepOffset;
+    }
+    
+    /**
+     * @return the vectorLength
+     */
+    public int getVectorLength() {
+        return vectorLength;
     }
 
     /**
@@ -191,6 +200,20 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (this.stepOffset != stepOffset) {
             setModified();
             this.stepOffset = stepOffset;
+        }
+        return this;
+    }
+    
+    /**
+     * @param vectorLength the vectorLength to set
+     */
+    public ARXLogisticRegressionConfiguration setVectorLength(int vectorLength) {
+        if (vectorLength <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
         }
         return this;
     }

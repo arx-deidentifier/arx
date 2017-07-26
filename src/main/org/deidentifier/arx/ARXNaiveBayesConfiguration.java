@@ -44,12 +44,13 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     }
 
     /** Type */
-    private Type    type          = Type.BERNOULLI;
+    private Type   type          = Type.BERNOULLI;
     /** Prior count */
-    private double  sigma         = 1.0d;
-
+    private double sigma         = 1.0d;
     /** Folds */
-    private int     numberOfFolds = 10;
+    private int    numberOfFolds = 10;
+    /** Configuration */
+    private int    vectorLength  = 1000;
 
     /**
      * Constructor
@@ -79,6 +80,13 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
      */
     public Type getType() {
         return type;
+    }
+    
+    /**
+     * @return the vectorLength
+     */
+    public int getVectorLength() {
+        return vectorLength;
     }
 
     /**
@@ -121,6 +129,20 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (this.type != type) {
             setModified();
             this.type = type;
+        }
+        return this;
+    }
+    
+    /**
+     * @param vectorLength the vectorLength to set
+     */
+    public ARXNaiveBayesConfiguration setVectorLength(int vectorLength) {
+        if (vectorLength <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
         }
         return this;
     }

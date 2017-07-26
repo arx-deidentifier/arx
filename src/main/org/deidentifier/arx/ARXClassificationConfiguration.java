@@ -35,8 +35,6 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     private boolean           deterministic    = true;
     /** Max records */
     private int               maxRecords       = 100000;
-    /** Configuration */
-    private int               vectorLength     = 1000;
     
     /**
      * @return the maxRecords to consider
@@ -55,13 +53,6 @@ public abstract class ARXClassificationConfiguration implements Serializable{
         return seed;
     }
     
-    /**
-     * @return the vectorLength
-     */
-    public int getVectorLength() {
-        return vectorLength;
-    }
-
     /**
      * Returns whether the process should be deterministic
      * @return
@@ -129,19 +120,5 @@ public abstract class ARXClassificationConfiguration implements Serializable{
      */
     public void setUnmodified() {
         this.modified = false;
-    }
-    
-    /**
-     * @param vectorLength the vectorLength to set
-     */
-    public ARXClassificationConfiguration setVectorLength(int vectorLength) {
-        if (vectorLength <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.vectorLength != vectorLength) {
-            setModified();
-            this.vectorLength = vectorLength;
-        }
-        return this;
     }
 }

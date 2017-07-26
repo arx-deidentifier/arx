@@ -78,22 +78,22 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         this.addCategory(Resources.getMessage("DialogClassificationConfiguration.2")); //$NON-NLS-1$
                   
         // Alpha
-        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.11"), 0d, Double.MAX_VALUE, 1d) { //$NON-NLS-1$
+        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.11"), 0d, 1d, 1 - 1.0e-3) { //$NON-NLS-1$
             protected Double getValue() { return config.getAlpha(); }
             protected void setValue(Object t) { config.setAlpha((Double) t); }});
         
         // Decay exponent
-        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12"), 0d, 1d, 0.2d) { //$NON-NLS-1$
+        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12"), -1d, 0d, -0.5) { //$NON-NLS-1$
             protected Double getValue() { return config.getDecayExponent(); }
             protected void setValue(Object t) { config.setDecayExponent((Double) t); }});
         
         // Deterministic
-        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13"), true) { //$NON-NLS-1$
             protected Boolean getValue() { return config.isDeterministic(); }
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
         // Lambda
-        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14"), 0d, 100d, 0.000001d) { //$NON-NLS-1$
+        this.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14"), 0d, Double.MAX_VALUE, 1.0e-5) { //$NON-NLS-1$
             protected Double getValue() { return config.getLambda(); }
             protected void setValue(Object t) { config.setLambda((Double) t); }});
         
@@ -103,7 +103,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setLearningRate((Double) t); }});
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
 
@@ -113,7 +113,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setNumFolds((Integer) t); }});
         
         // Prior function
-        this.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.18"), getPriorFunctions()) { //$NON-NLS-1$
+        this.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.18"), getPriorFunctions(), PriorFunction.L1.toString()) { //$NON-NLS-1$
             protected String getValue() { return config.getPriorFunction().name(); }
             protected void setValue(Object arg0) { config.setPriorFunction(PriorFunction.valueOf((String) arg0)); }
         });
@@ -124,7 +124,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setStepOffset((Integer) t); }});
 
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 1, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
     }
@@ -137,12 +137,12 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         this.addCategory(Resources.getMessage("DialogClassificationConfiguration.3")); //$NON-NLS-1$
         
         // Deterministic
-        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13"), true) { //$NON-NLS-1$
             protected Boolean getValue() { return config.isDeterministic(); }
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
         
@@ -163,7 +163,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         });
         
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 1, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
         
@@ -177,12 +177,12 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         this.addCategory(Resources.getMessage("DialogClassificationConfiguration.4")); //$NON-NLS-1$
         
         // Deterministic
-        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13"), true) { //$NON-NLS-1$
             protected Boolean getValue() { return config.isDeterministic(); }
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
         
@@ -197,7 +197,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setNumberOfTrees((Integer) t); }});
         
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 1, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
         
@@ -216,7 +216,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setC((Double) t); }});
         
         // Deterministic
-        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13")) { //$NON-NLS-1$
+        this.addPreference(new PreferenceBoolean(Resources.getMessage("ViewClassificationAttributes.13"), true) { //$NON-NLS-1$
             protected Boolean getValue() { return config.isDeterministic(); }
             protected void setValue(Object t) { config.setDeterministic((Boolean) t); }});
         
@@ -237,7 +237,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
         });
         
         // Maximal number of records
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1000, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.16"), 1, Integer.MAX_VALUE, 1000000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getMaxRecords(); }
             protected void setValue(Object t) { config.setMaxRecords((Integer) t); }});
 
@@ -253,7 +253,7 @@ public class DialogClassificationConfiguration extends PreferencesDialog {
             protected void setValue(Object t) { config.setNumFolds((Integer) t); }});
         
         // Vector length
-        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
+        this.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.21"), 1, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
             protected Integer getValue() { return config.getVectorLength(); }
             protected void setValue(Object t) { config.setVectorLength((Integer) t); }});
     }
