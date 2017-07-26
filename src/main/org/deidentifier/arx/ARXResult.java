@@ -504,7 +504,7 @@ public class ARXResult {
      * @return The number of optimized records
      */
     public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
-        return optimizeFast(handle, gsFactor, Double.NaN, listener);
+        return optimizeFast(handle, Double.NaN, gsFactor, listener);
     }
 
     /**
@@ -566,8 +566,8 @@ public class ARXResult {
         }
 
         // Check bounds
-        if (!Double.isNaN(records) && (records < 0d || records > 1d)) {
-            throw new IllegalArgumentException("Number of records to optimize must be in [0, 1]");
+        if (!Double.isNaN(records) && (records <= 0d || records > 1d)) {
+            throw new IllegalArgumentException("Number of records to optimize must be in ]0, 1]");
         }
         
         // Check bounds

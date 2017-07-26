@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>HierarchyWizardModel (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
@@ -116,7 +116,7 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#HierarchyWizardModel(org.deidentifier.arx.DataType,%20java.util.Locale,%20java.lang.String[])">HierarchyWizardModel</a></strong>(<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;&nbsp;dataType,
+<td class="colOne"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#HierarchyWizardModel(org.deidentifier.arx.DataType, java.util.Locale, java.lang.String[])">HierarchyWizardModel</a></strong>(<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;&nbsp;dataType,
                     java.util.Locale&nbsp;locale,
                     java.lang.String[]&nbsp;data)</code>
 <div class="block">Creates a new instance for the given data type.</div>
@@ -150,48 +150,54 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelDate.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelDate</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#getDateModel()">getDateModel</a></strong>()</code>
+<div class="block">Returns the model of the date-based builder.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/AttributeType.Hierarchy.html" title="class in org.deidentifier.arx">AttributeType.Hierarchy</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#getHierarchy()">getHierarchy</a></strong>()</code>
 <div class="block">Returns the current hierarchy.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelIntervals.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelIntervals</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#getIntervalModel()">getIntervalModel</a></strong>()</code>
 <div class="block">Returns the model of the interval-based builder.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelOrder.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelOrder</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#getOrderModel()">getOrderModel</a></strong>()</code>
 <div class="block">Returns the model of the order-based builder.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelRedaction.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelRedaction</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#getRedactionModel()">getRedactionModel</a></strong>()</code>
 <div class="block">Returns the model of the redaction-based builder.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#getType()">getType</a></strong>()</code>
 <div class="block">Returns the type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#parse(org.deidentifier.arx.aggregates.HierarchyBuilder)">parse</a></strong>(<a href="../../../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;&nbsp;builder)</code>
 <div class="block">Updates the model with a new specification.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#setType(org.deidentifier.arx.aggregates.HierarchyBuilder.Type)">setType</a></strong>(<a href="../../../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a>&nbsp;type)</code>
 <div class="block">Sets the type.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected &lt;U&gt;&nbsp;boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html#sort(org.deidentifier.arx.DataType)">sort</a></strong>(<a href="../../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;U&gt;&nbsp;type)</code>
 <div class="block">Sort.</div>
@@ -307,6 +313,17 @@ extends java.lang.Object</pre>
 <h4>getRedactionModel</h4>
 <pre>public&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelRedaction.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelRedaction</a>&lt;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModel.html" title="type parameter in HierarchyWizardModel">T</a>&gt;&nbsp;getRedactionModel()</pre>
 <div class="block">Returns the model of the redaction-based builder.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getDateModel()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDateModel</h4>
+<pre>public&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/HierarchyWizardModelDate.html" title="class in org.deidentifier.arx.gui.view.impl.wizard">HierarchyWizardModelDate</a>&nbsp;getDateModel()</pre>
+<div class="block">Returns the model of the date-based builder.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
