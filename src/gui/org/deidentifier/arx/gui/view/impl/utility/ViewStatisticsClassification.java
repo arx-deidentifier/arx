@@ -102,7 +102,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
 
         super(parent, controller, part, null, false);
         this.manager = new AnalysisManager(parent.getDisplay());
-        controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
+        controller.addListener(ModelPart.CLASSIFICATION_CONFIGURATION, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
     }
@@ -115,7 +115,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
+        if (event.part == ModelPart.CLASSIFICATION_CONFIGURATION ||
             event.part == ModelPart.DATA_TYPE) {
             if (getModel() != null && (getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty())) {
                 doReset();

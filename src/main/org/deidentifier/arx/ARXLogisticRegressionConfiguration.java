@@ -45,25 +45,19 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     }
 
     /** Configuration */
-    private double        alpha         = 1d;
-    /** Configuration */
-    private double        decayExponent = 0.2d;
-    /** Configuration */
-    private double        lambda        = 0.000001d;
+    private double        alpha         = 1 - 1.0e-3;
+    /** -1 equals even weighting of all examples, 0 means only use exponential annealing */
+    private double        decayExponent = -0.5;
+    /** Weighting factor for the prior distribution */
+    private double        lambda        = 1.0e-5;
     /** Configuration */
     private double        learningRate  = 1d;
     /** Configuration */
     private int           stepOffset    = 10000;
-    /** Configuration */
-    private int           vectorLength  = 1000;
-    /** Max records */
-    private int           maxRecords    = 100000;
-    /** Seed */
-    private int           seed          = Integer.MAX_VALUE;
     /** Folds */
     private int           numberOfFolds = 10;
-    /** Deterministic */
-    private boolean       deterministic = true;
+    /** Configuration */
+    private int           vectorLength  = 1000;
     /** Configuration */
     private PriorFunction prior         = PriorFunction.L1;
 
@@ -80,8 +74,8 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     public double getAlpha() {
         return alpha;
     }
-
-    /**
+    
+     /**
      * @return the decayExponent
      */
     public double getDecayExponent() {
@@ -103,13 +97,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     }
 
     /**
-     * @return the maxRecords
-     */
-    public int getMaxRecords() {
-        return maxRecords;
-    }
-
-    /**
      * @return the numberOfFolds
      */
     public int getNumFolds() {
@@ -122,13 +109,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     public PriorFunction getPriorFunction() {
         return prior;
     }
-    
-    /**
-     * @return the seed
-     */
-    public long getSeed() {
-        return seed;
-    }
 
     /**
      * @return the stepOffset
@@ -136,20 +116,12 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     public int getStepOffset() {
         return stepOffset;
     }
-
+    
     /**
      * @return the vectorLength
      */
     public int getVectorLength() {
         return vectorLength;
-    }
-
-    /**
-     * Returns whether the process should be deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
     }
 
     /**
@@ -175,19 +147,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     }
 
     /**
-     * Sets whether the process should be deterministic
-     * @param deterministic
-     * @return
-     */
-    public ARXLogisticRegressionConfiguration setDeterministic(boolean deterministic) {
-        if (this.deterministic != deterministic) {
-            setModified();
-            this.deterministic = deterministic;
-        }
-        return this;
-    }
-
-    /**
      * @param lambda the lambda to set
      */
     public ARXLogisticRegressionConfiguration setLambda(double lambda) {
@@ -205,20 +164,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         if (this.learningRate != learningRate) {
             setModified();
             this.learningRate = learningRate;
-        }
-        return this;
-    }
-
-    /**
-     * @param maxRecords the maxRecords to set
-     */
-    public ARXLogisticRegressionConfiguration setMaxRecords(int maxRecords) {
-        if (maxRecords <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.maxRecords != maxRecords) {
-            setModified();
-            this.maxRecords = maxRecords;
         }
         return this;
     }
@@ -249,18 +194,6 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     }
 
     /**
-     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
-     * @param seed the seed to set
-     */
-    public ARXLogisticRegressionConfiguration setSeed(int seed) {
-        if (this.seed != seed) {
-            setModified();
-            this.seed = seed;
-        }
-        return this;
-    }
-
-    /**
      * @param stepOffset the stepOffset to set
      */
     public ARXLogisticRegressionConfiguration setStepOffset(int stepOffset) {
@@ -270,7 +203,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
         }
         return this;
     }
-
+    
     /**
      * @param vectorLength the vectorLength to set
      */

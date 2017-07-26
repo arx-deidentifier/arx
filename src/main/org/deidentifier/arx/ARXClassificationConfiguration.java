@@ -29,18 +29,37 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     private static final long serialVersionUID = -8751059558718015927L;
     /** Modified */
     private boolean           modified         = false;
-
-    /** Maximal number of records to consider*/
-    public abstract int getMaxRecords();
-
+    /** Seed */
+    private int               seed             = Integer.MAX_VALUE;
+    /** Deterministic */
+    private boolean           deterministic    = true;
+    /** Max records */
+    private int               maxRecords       = 100000;
+    
+    /**
+     * @return the maxRecords to consider
+     */
+    public int getMaxRecords() {
+        return maxRecords;
+    }
+    
     /** Number of folds*/
     public abstract int getNumFolds();
-
-    /** Seed for drawing records*/
-    public abstract long getSeed();
-
-    /** Deterministic*/
-    public abstract boolean isDeterministic();
+    
+    /**
+     * @return the seed for drawing records
+     */
+    public int getSeed() {
+        return seed;
+    }
+    
+    /**
+     * Returns whether the process should be deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
+    }
     
     /**
      * Is this configuration modified
@@ -51,10 +70,49 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     }
     
     /**
+     * Sets whether the process should be deterministic
+     * @param deterministic
+     * @return
+     */
+    public ARXClassificationConfiguration setDeterministic(boolean deterministic) {
+        if (this.deterministic != deterministic) {
+            setModified();
+            this.deterministic = deterministic;
+        }
+        return this;
+    }
+
+    /**
+     * @param maxRecords the maxRecords to set
+     */
+    public ARXClassificationConfiguration setMaxRecords(int maxRecords) {
+        if (maxRecords <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.maxRecords != maxRecords) {
+            setModified();
+            this.maxRecords = maxRecords;
+        }
+        return this;
+    }
+
+    /**
      * Sets modified
      */
     protected void setModified() {
         this.modified = true;
+    }
+    
+    /**
+     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
+     * @param seed the seed to set
+     */
+    public ARXClassificationConfiguration setSeed(int seed) {
+        if (this.seed != seed) {
+            setModified();
+            this.seed = seed;
+        }
+        return this;
     }
     
     /**

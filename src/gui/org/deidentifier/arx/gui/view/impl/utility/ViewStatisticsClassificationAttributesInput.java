@@ -147,7 +147,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
     }
 
     /** Label */
-    private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.4"); //$NON-NLS-1$
+    private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.3"); //$NON-NLS-1$
     /** Label */
     private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
 
@@ -181,7 +181,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
         
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
+        controller.addListener(ModelPart.CLASSIFICATION_CONFIGURATION, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.OUTPUT, this);
@@ -210,7 +210,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
                 boolean update = fireEvent(arg0, features, model.getSelectedFeatures(), newSelection);
                 if (update) {
                     model.setSelectedFeatures(newSelection);
-                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
                 }
             }
         });
@@ -232,7 +232,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
                 boolean update = fireEvent(arg0, classes, model.getSelectedClasses(), newSelection);
                 if (update) {
                    model.setSelectedClasses(newSelection);
-                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
                 }
             }
         });
@@ -289,7 +289,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
            this.model = (Model) event.data;
            update();
         } else if (event.part == ModelPart.INPUT ||
-                   event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
+                   event.part == ModelPart.CLASSIFICATION_CONFIGURATION ||
                    event.part == ModelPart.ATTRIBUTE_TYPE || 
                    event.part == ModelPart.OUTPUT ||
                    event.part == ModelPart.DATA_TYPE) {

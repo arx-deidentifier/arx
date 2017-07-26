@@ -36,18 +36,13 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     }
 
     /** Number of trees */
-    private int     numberOfTrees = 10;
+    private int numberOfTrees = 10;
+
+    /** Folds */
+    private int numberOfFolds = 10;
 
     /** Configuration */
-    private int     vectorLength  = 1000;
-    /** Max records */
-    private int     maxRecords    = 100000;
-    /** Seed */
-    private long    seed          = Integer.MAX_VALUE;
-    /** Folds */
-    private int     numberOfFolds = 10;
-    /** Deterministic */
-    private boolean deterministic = true;
+    private int vectorLength  = 1000;
 
     /**
      * Constructor
@@ -55,65 +50,12 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     private ARXRandomForestConfiguration(){
         // Empty by design
     }
-
-    @Override
-    public int getMaxRecords() {
-        return maxRecords;
-    }
+    
     /**
      * @return the numberOfFolds
      */
     public int getNumFolds() {
         return numberOfFolds;
-    }
-
-    /**
-     * @return the seed
-     */
-    public long getSeed() {
-        return seed;
-    }
-
-    /**
-     * @return the vectorLength
-     */
-    public int getVectorLength() {
-        return vectorLength;
-    }
-
-    /**
-     * Returns whether the process should be deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
-    }
-    
-    /**
-     * Sets whether the process should be deterministic
-     * @param deterministic
-     * @return
-     */
-    public ARXRandomForestConfiguration setDeterministic(boolean deterministic) {
-        if (this.deterministic != deterministic) {
-            setModified();
-            this.deterministic = deterministic;
-        }
-        return this;
-    }
-    
-    /**
-     * @param maxRecords the maxRecords to set
-     */
-    public ARXRandomForestConfiguration setMaxRecords(int maxRecords) {
-        if (maxRecords <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.maxRecords != maxRecords) {
-            setModified();
-            this.maxRecords = maxRecords;
-        }
-        return this;
     }
 
     /**
@@ -126,32 +68,6 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
         if (this.numberOfFolds != numberOfFolds) {
             setModified();
             this.numberOfFolds = numberOfFolds;
-        }
-        return this;
-    }
-
-    /**
-     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
-     * @param seed the seed to set
-     */
-    public ARXRandomForestConfiguration setSeed(int seed) {
-        if (this.seed != seed) {
-            setModified();
-            this.seed = seed;
-        }
-        return this;
-    }
-
-    /**
-     * @param vectorLength the vectorLength to set
-     */
-    public ARXRandomForestConfiguration setVectorLength(int vectorLength) {
-        if (vectorLength <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.vectorLength != vectorLength) {
-            setModified();
-            this.vectorLength = vectorLength;
         }
         return this;
     }
@@ -172,5 +88,26 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
             this.numberOfTrees = numberOfTrees;
         }
         return this;
-    }    
+    }
+    
+    /**
+     * @return the vectorLength
+     */
+    public int getVectorLength() {
+        return vectorLength;
+    }
+    
+    /**
+     * @param vectorLength the vectorLength to set
+     */
+    public ARXRandomForestConfiguration setVectorLength(int vectorLength) {
+        if (vectorLength <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
+        }
+        return this;
+    }
 }

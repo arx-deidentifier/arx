@@ -103,8 +103,8 @@ public class ModelEvent {
         /**  EXPAND */
         EXPAND,
 
-        /**  SELECTED_FEATURES_OR_CLASSES */
-        SELECTED_FEATURES_OR_CLASSES,
+        /** CLASSIFICATION_CONFIGURATION */
+        CLASSIFICATION_CONFIGURATION,
         
         /** RISK THRESHOLDS*/
         RISK_THRESHOLD_MAIN,
