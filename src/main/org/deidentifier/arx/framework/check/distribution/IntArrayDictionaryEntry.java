@@ -18,7 +18,7 @@
 package org.deidentifier.arx.framework.check.distribution;
 
 /**
- * Implements an entry stored in off-heap memory.
+ * Implements an entry.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

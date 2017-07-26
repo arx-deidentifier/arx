@@ -44,7 +44,7 @@ public class DataMatrix {
     private int                  baseOffset   = 0;
 
     /**
-     * Instantiates a new memory block. The block will *not* be initialized.
+     * Instantiates a new memory block.
      *
      * @param rows the num rows
      * @param columns the num columns
