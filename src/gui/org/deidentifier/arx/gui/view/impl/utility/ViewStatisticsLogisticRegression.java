@@ -88,6 +88,13 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
     /** View */
     private Chart            chart;
 
+    /** Label */
+    private final String     precision;
+    /** Label */
+    private final String     recall;
+    /** Label */
+    private final String     fscore;
+
     /**
      * Creates a new instance.
      *
@@ -104,6 +111,9 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        precision = Resources.getMessage("ViewStatisticsClassificationInput.15"); //$NON-NLS-1$
+        recall = Resources.getMessage("ViewStatisticsClassificationInput.16"); //$NON-NLS-1$
+        fscore = Resources.getMessage("ViewStatisticsClassificationInput.18"); //$NON-NLS-1$
     }
     
     @Override
@@ -243,7 +253,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
 
         ISeriesSet seriesSet = chart.getSeriesSet();
 
-        ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.15")); //$NON-NLS-1$
+        // Precision
+        ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, precision);
         series1.getLabel().setVisible(false);
         series1.getLabel().setFont(chart.getFont());
         series1.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
@@ -252,7 +263,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         series1.setSymbolType(PlotSymbolType.NONE);
         series1.enableArea(true);
         
-        ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
+        // Recall
+        ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, recall);
         series2.getLabel().setVisible(false);
         series2.getLabel().setFont(chart.getFont());
         series2.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
@@ -260,7 +272,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         series2.setSymbolType(PlotSymbolType.NONE);
         series2.enableArea(true);
         
-        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.18")); //$NON-NLS-1$
+        // F-Score
+        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, fscore);
         series3.getLabel().setVisible(false);
         series3.getLabel().setFont(chart.getFont());
         series3.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
@@ -268,7 +281,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         series3.setSymbolType(PlotSymbolType.NONE);
         series3.enableArea(true);
         
-        seriesSet.bringToFront(Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
+        seriesSet.bringToFront(recall);
         
         chart.getLegend().setVisible(true);
         chart.getLegend().setPosition(SWT.TOP);
@@ -365,17 +378,22 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                                 cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
                                 String[] series = xAxis.getCategorySeries();
                                 ISeries[] data = chart.getSeriesSet().getSeries();
-                                if (data != null && data.length>0 && series != null) {
+                                if (data != null && data.length == 3 && series != null) {
                                     int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
                                     if (x >= 0 && x < series.length && !series[x].equals("")) {
                                         builder.setLength(0);
                                         builder.append("("); //$NON-NLS-1$
                                         builder.append(Resources.getMessage("ViewStatisticsClassificationInput.14")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
                                         builder.append(series[x]);
-                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.15")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(data[0].getYSeries()[x]));
-                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.16")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(data[1].getYSeries()[x]));
+                                        // Precision
+                                        builder.append("%, ").append(precision).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(SWTUtil.getPrettyString(chart.getSeriesSet().getSeries(precision).getYSeries()[x]));
+                                        // Recall
+                                        builder.append("%, ").append(recall).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(SWTUtil.getPrettyString(chart.getSeriesSet().getSeries(recall).getYSeries()[x]));
+                                        // F-Score
+                                        builder.append("%, ").append(fscore).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(SWTUtil.getPrettyString(chart.getSeriesSet().getSeries(fscore).getYSeries()[x]));
                                         builder.append("%)"); //$NON-NLS-1$
                                         sash.setToolTipText(builder.toString());
                                         return;
