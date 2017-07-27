@@ -161,19 +161,20 @@ public class StatisticsClassification {
          * @param confidenceIndex
          * @param handle
          * @param handleIndex
+         * @param numSamples
          */
         private ROCCurve(String value,
                          List<double[]> confidences,
                          int confidenceIndex,
                          DataHandleInternal handle,
-                         int handleIndex) {
+                         int handleIndex,
+                         int numSamples) {
             
-            // Determine correct values
-            int records = handle.getNumRows(); // TODO: Sampling?
+            int records = numSamples;
             int positive = 0;
             int valueID = handle.getValueIdentifier(handleIndex, value);
-            final boolean[] correct = new boolean[confidences.size()]; // TODO: Sampling?
-            final double[] confidence = new double[confidences.size()]; // TODO: Sampling?
+            final boolean[] correct = new boolean[confidences.size()];
+            final double[] confidence = new double[confidences.size()];
             for (int i = 0; i < correct.length; i++) {
                 correct[i] = (handle.getEncodedValue(i, handleIndex, true) == valueID);
                 positive += correct[i] ? 1 : 0;
@@ -348,11 +349,10 @@ public class StatisticsClassification {
         this.interrupt = interrupt;
         this.progress = progress;
         
+        // Number of rows
+        int numRecords = inputHandle.getNumRows();
         // Sampling size
-        int numRows = inputHandle.getNumRows();
-        if(config.getMaxRecords() > 0) {
-            numRows = Math.min(config.getMaxRecords(), numRows);
-        }
+        int numSamples = getNumSamples(numRecords, config);
        
         // Initialize random
         if (!config.isDeterministic()) {
@@ -370,23 +370,23 @@ public class StatisticsClassification {
                                                                                             interrupt);
         
         // Train and evaluate
-        int k = numRows > config.getNumFolds() ? config.getNumFolds() : numRows;
-        List<List<Integer>> folds = getFolds(numRows, k);
+        int k = numSamples > config.getNumFolds() ? config.getNumFolds() : numSamples;
+        List<List<Integer>> folds = getFolds(numRecords, numSamples, k);
 
         // Track
         int classifications = 0;
-        double total = 100d / ((double)numRows * (double)folds.size());
+        double total = 100d / ((double)numSamples * (double)folds.size());
         double done = 0d;
         
         // ROC
         List<double[]> originalConfidences = new ArrayList<double[]>();
-        for (int i = 0; i < numRows; i++) {
+        for (int i = 0; i < numSamples; i++) {
             originalConfidences.add(null);
         }
         List<double[]> confidences = null;
         if (inputHandle != outputHandle) {
             confidences = new ArrayList<double[]>();
-            for (int i = 0; i < numRows; i++) {
+            for (int i = 0; i < numSamples; i++) {
                 confidences.add(null);
             }
         }
@@ -485,12 +485,12 @@ public class StatisticsClassification {
         
         // Initialize ROC curves on original data
         for (String attr : specification.classMap.keySet()) {
-            originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
+            originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex, numSamples));
         }
         // Initialize ROC curves on anonymized data
         if (confidences != null) {
             for (String attr : specification.classMap.keySet()) {
-                ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
+                ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex, numSamples));
             }    
         }
 
@@ -656,20 +656,25 @@ public class StatisticsClassification {
 
     /**
      * Creates the folds
-     * @param length
+     * @param numRecords
+     * @param numSamples
      * @param k
-     * @param random
      * @return
      */
-    private List<List<Integer>> getFolds(int length, int k) {
+    private List<List<Integer>> getFolds(int numRecords, int numSamples, int k) {
         
-        // Prepare indexes
+        // Prepare indexes of all records
         List<Integer> rows = new ArrayList<>();
-        for (int row = 0; row < length; row++) {
+        for (int row = 0; row < numRecords; row++) {
             rows.add(row);
         }
+        
+        // Shuffle
         Collections.shuffle(rows, random);
         
+        // Select subset of size numSamples
+        rows = rows.subList(0, numSamples);
+
         // Create folds
         List<List<Integer>> folds = new ArrayList<>();
         int size = rows.size() / k;
@@ -696,5 +701,22 @@ public class StatisticsClassification {
         rows.clear();
         rows = null;
         return folds;
+    }
+    
+    /**
+     * Returns the number of samples as the minimum of actual number of rows in
+     * the dataset and maximal number of rows as specified in config.
+     * 
+     * @param numRows
+     * @param config
+     * @return
+     */
+    private int getNumSamples(int numRows,
+                              ARXClassificationConfiguration config) {
+        int numSamples = numRows;
+        if (config.getMaxRecords() > 0) {
+            numSamples = Math.min(config.getMaxRecords(), numSamples);
+        }
+        return numSamples;
     }
 }
