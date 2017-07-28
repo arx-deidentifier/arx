@@ -380,15 +380,9 @@ public class StatisticsClassification {
         
         // ROC
         List<double[]> originalConfidences = new ArrayList<double[]>();
-        for (int i = 0; i < numSamples; i++) {
-            originalConfidences.add(null);
-        }
         List<double[]> confidences = null;
         if (inputHandle != outputHandle) {
             confidences = new ArrayList<double[]>();
-            for (int i = 0; i < numSamples; i++) {
-                confidences.add(null);
-            }
         }
                 
         // For each fold as a validation set
@@ -456,7 +450,7 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
-                        originalConfidences.set(index, resultInputLR.confidences());
+                        originalConfidences.add(resultInputLR.confidences());
                         
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -464,7 +458,7 @@ public class StatisticsClassification {
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
                             this.matrix.add(resultOutputLR.confidence(), correct);
-                            confidences.set(index, resultOutputLR.confidences());
+                            confidences.add(resultOutputLR.confidences());
                         }
                     }
                     this.progress.value = (int)((++done) * total);
