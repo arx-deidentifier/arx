@@ -173,10 +173,11 @@ public class StatisticsClassification {
             int valueID = handle.getValueIdentifier(handleIndex, value);
             final boolean[] correct = new boolean[records];
             final double[] confidence = new double[records];
-            for (int i = 0; i < correct.length; i++) {
-                correct[i] = (handle.getEncodedValue(i, handleIndex, true) == valueID);
-                positive += correct[i] ? 1 : 0;
-                confidence[i] = confidences.get(i)[confidenceIndex];
+            int j = 0;
+            for (int index : confidences.keySet()) {
+                correct[j] = (handle.getEncodedValue(index, handleIndex, true) == valueID);
+                positive += correct[j] ? 1 : 0;
+                confidence[j] = confidences.get(index)[confidenceIndex];
             }
             
             // Sort by confidence
@@ -445,7 +446,7 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
-                        originalConfidences.put(index,  resultInputLR.confidences());
+                        originalConfidences.put(index, resultInputLR.confidences());
                         
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -477,7 +478,7 @@ public class StatisticsClassification {
             originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
         }
         // Initialize ROC curves on anonymized data
-        if (confidences != null) {
+        if (!confidences.isEmpty()) {
             for (String attr : specification.classMap.keySet()) {
                 ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
             }    
