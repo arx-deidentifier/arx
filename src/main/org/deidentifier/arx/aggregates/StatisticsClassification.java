@@ -161,20 +161,18 @@ public class StatisticsClassification {
          * @param confidenceIndex
          * @param handle
          * @param handleIndex
-         * @param numSamples
          */
         private ROCCurve(String value,
-                         List<double[]> confidences,
+                         Map<Integer, double[]> confidences,
                          int confidenceIndex,
                          DataHandleInternal handle,
-                         int handleIndex,
-                         int numSamples) {
+                         int handleIndex) {
             
-            int records = numSamples;
+            int records = confidences.size();
             int positive = 0;
             int valueID = handle.getValueIdentifier(handleIndex, value);
-            final boolean[] correct = new boolean[confidences.size()];
-            final double[] confidence = new double[confidences.size()];
+            final boolean[] correct = new boolean[records];
+            final double[] confidence = new double[records];
             for (int i = 0; i < correct.length; i++) {
                 correct[i] = (handle.getEncodedValue(i, handleIndex, true) == valueID);
                 positive += correct[i] ? 1 : 0;
@@ -198,8 +196,8 @@ public class StatisticsClassification {
             });
             
             // Initialize curve
-            truePositive = new double[confidences.size()];
-            falsePositive = new double[confidences.size()];
+            truePositive = new double[records];
+            falsePositive = new double[records];
             
             // Draw curve
             int x = 0;
@@ -379,11 +377,8 @@ public class StatisticsClassification {
         double done = 0d;
         
         // ROC
-        List<double[]> originalConfidences = new ArrayList<double[]>();
-        List<double[]> confidences = null;
-        if (inputHandle != outputHandle) {
-            confidences = new ArrayList<double[]>();
-        }
+        Map<Integer, double[]> originalConfidences = new HashMap<Integer, double[]>();
+        Map<Integer, double[]> confidences = new HashMap<Integer, double[]>();
                 
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
@@ -450,7 +445,7 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
-                        originalConfidences.add(resultInputLR.confidences());
+                        originalConfidences.put(index,  resultInputLR.confidences());
                         
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -458,7 +453,7 @@ public class StatisticsClassification {
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
                             this.matrix.add(resultOutputLR.confidence(), correct);
-                            confidences.add(resultOutputLR.confidences());
+                            confidences.put(index, resultOutputLR.confidences());
                         }
                     }
                     this.progress.value = (int)((++done) * total);
@@ -479,12 +474,12 @@ public class StatisticsClassification {
         
         // Initialize ROC curves on original data
         for (String attr : specification.classMap.keySet()) {
-            originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex, numSamples));
+            originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
         }
         // Initialize ROC curves on anonymized data
         if (confidences != null) {
             for (String attr : specification.classMap.keySet()) {
-                ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex, numSamples));
+                ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
             }    
         }
 
