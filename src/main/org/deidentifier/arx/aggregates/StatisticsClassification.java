@@ -168,16 +168,16 @@ public class StatisticsClassification {
                          DataHandleInternal handle,
                          int handleIndex) {
             
-            int records = confidences.size();
-            int positive = 0;
+            int positives = 0;
             int valueID = handle.getValueIdentifier(handleIndex, value);
-            final boolean[] correct = new boolean[records];
-            final double[] confidence = new double[records];
+            final boolean[] correct = new boolean[confidences.size()];
+            final double[] confidence = new double[confidences.size()];
             int j = 0;
             for (int index : confidences.keySet()) {
                 correct[j] = (handle.getEncodedValue(index, handleIndex, true) == valueID);
-                positive += correct[j] ? 1 : 0;
+                positives += correct[j] ? 1 : 0;
                 confidence[j] = confidences.get(index)[confidenceIndex];
+                j++;
             }
             
             // Sort by confidence
@@ -197,18 +197,19 @@ public class StatisticsClassification {
             });
             
             // Initialize curve
-            truePositive = new double[records];
-            falsePositive = new double[records];
+            truePositive = new double[confidences.size()];
+            falsePositive = new double[confidences.size()];
             
             // Draw curve
+            int negatives = confidences.size() - positives;
             int x = 0;
             int y = 0;
             int offset=0;
             for (int i = correct.length - 1; i >= 0; i--) {
                 x += correct[i] ? 0 : 1;
                 y += correct[i] ? 1 : 0;
-                falsePositive[offset] = (double)x/(double)(records-positive);
-                truePositive[offset] = (double)y/(double)positive;
+                falsePositive[offset] = (double)x/(double)(negatives);
+                truePositive[offset] = (double)y/(double)positives;
                 offset++;
             }
 
