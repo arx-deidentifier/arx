@@ -4,17 +4,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-//Class that manages the conversion from string labels to integer representations
+/**
+ * This class represents a bidirectional dictionary that maps strings <-> int. Used to convert databases to internal
+ * int representation
+ */
 public class Dict {
 
     private Map<String, Integer> m = new HashMap<>();
     private String[] reps;
 
-    /*
-    builds the dictionary based on a string hierarchy. Works in a breadth first fashion, so the labels that are less
-    generalized have smaller ids. Not really cache-friendly but neccessary right now for a more compact count-tree
-    */
+
+    /**
+     * Builds the dictionary based on a string hierarchy. Works in a breadth first fashion, so the labels that are less
+     * generalized have smaller ids
+     *
+     * @param hierarchy the hierarchy that the dict should be built on
+     */
     public Dict(String[][] hierarchy) {
         ArrayList<String> reps = new ArrayList<>(hierarchy[0].length);
 
@@ -35,10 +40,21 @@ public class Dict {
         this.reps = reps.toArray(new String[0]);
     }
 
+    /**
+     *
+     * @param s the string representation of an item
+     * @return the integer representation of an item. null if not in this dict
+     */
     public int getRepresentation(String s) {
         return m.get(s);
     }
 
+
+    /**
+     *
+     * @param i  the integer representation of an item
+     * @return the string representation of an item
+     */
     public String getString(int i) {
         return reps[i];
     }
