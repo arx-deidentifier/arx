@@ -66,7 +66,7 @@ public class TestClassification {
      * @return
      * @throws IOException
      */
-    private Data getData(String dataset) throws IOException {
+    private Data getData(final String dataset) throws IOException {
 
         // Load data
         Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
