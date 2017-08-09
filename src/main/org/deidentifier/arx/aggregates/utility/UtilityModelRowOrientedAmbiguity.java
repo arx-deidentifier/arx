@@ -23,7 +23,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
 /**
  * Implementation of the Ambiguity measure, as described in:<br>
  * <br>
- * "Goldberger, Tassa: Efficient Anonymizations with Enhanced Utility
+ * Goldberger, Tassa: Efficient Anonymizations with Enhanced Utility
  * 
  * @author Fabian Prasser
  */
