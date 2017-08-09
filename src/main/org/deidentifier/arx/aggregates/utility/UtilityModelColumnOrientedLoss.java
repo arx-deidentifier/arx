@@ -28,7 +28,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-class UtilityModelColumnOrientedLoss extends UtilityModelColumnOriented {
+class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureColumnOriented> {
     
     /** Header */
     private final int[]                indices;
@@ -39,9 +39,12 @@ class UtilityModelColumnOrientedLoss extends UtilityModelColumnOriented {
      * Creates a new instance
      * @param interrupt
      * @param input
+     * @param config
      */
-    UtilityModelColumnOrientedLoss(WrappedBoolean interrupt, DataHandleInternal input) {
-        super(interrupt, input);
+    UtilityModelColumnOrientedLoss(WrappedBoolean interrupt, 
+                                   DataHandleInternal input,
+                                   UtilityConfiguration config) {
+        super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.shares = getHelper().getDomainShares(input, indices);
     }
@@ -65,13 +68,12 @@ class UtilityModelColumnOrientedLoss extends UtilityModelColumnOriented {
                 
                 try {
                     double share = 1d;
-                    if (!output.isOutlier(row)) {
+                    if (!isSuppressed(output, indices, row)) {
                         share = shares[i].getShare(output.getValue(row, column), 0);
                     }
                     result[i] += share;
                 } catch (Exception e) {
-                    
-                    // Mark with NaN in case of error
+                    // Silently catch exceptions
                     result[i] = Double.NaN;
                     break;
                 }

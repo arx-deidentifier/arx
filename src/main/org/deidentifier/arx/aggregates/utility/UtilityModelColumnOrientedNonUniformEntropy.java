@@ -18,7 +18,6 @@
 package org.deidentifier.arx.aggregates.utility;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,228 +30,177 @@ import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
  * Implementation of the Non-Uniform Entropy measure that can handle local recoding. See:<br>
- * A. De Waal and L. Willenborg: "Information loss through global recoding and local suppression," 
- * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
+ * A. De Waal and L. Willenborg: "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17-20, 1999.
  * 
  * @author Fabian Prasser
  */
-class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModelColumnOriented {
+class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<UtilityMeasureColumnOriented> {
 
-    /** Log */
-    private static final double                      LOG2 = Math.log(2);
-    /** Level map: column -> value -> level */
-    private final Map<Integer, Map<String, Integer>> levelMap;
-    /** Generalization map: column -> level -> value -> value */
-    private final Map<Integer, Map<Integer, Map<String, String>>>  generalizationMap;
-    /** Input */
-    private final String[][]                         input;
     /** Header */
-    private final String[]                           header;
-
+    private final int[]                   indices;
+    /** Hierarchies */
+    private final String[][][]            hierarchies;
 
     /**
      * Creates a new instance
      * @param interrupt
      * @param input
+     * @param config
      */
-    UtilityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt, DataHandleInternal input) {
-        super(interrupt, input);
-    
-        // Fix hierarchy (if suppressed character is not contained in generalization hierarchy)
-        final String SUPPRESSED = "*";
-        
-        for(String attr : hierarchies.keySet()) {
-        	
-        	String[][] hierarchy = hierarchies.get(attr);
-        	
-        	Set<String> values = new HashSet<String>();
-    		for (int i = 0; i < hierarchy.length; i++) {
-    			String[] levels = hierarchy[i];
-    			values.add(levels[levels.length - 1]);
-    		}
-        	
-    		if (values.size() > 1 || !values.iterator().next().equals(SUPPRESSED)) {
-    			for(int i = 0; i < hierarchy.length; i++) {
-    				hierarchy[i] = Arrays.copyOf(hierarchy[i], hierarchy[i].length + 1);
-    				hierarchy[i][hierarchy[i].length - 1] = SUPPRESSED;
-            	}
-    		}
-        	
-    		hierarchies.put(attr, hierarchy);
-    	}
-        
-        // Do rest
-        this.input = input;
-        this.header = header;
-        this.levelMap = new HashMap<>();
-        this.generalizationMap = new HashMap<>(); 
-        for (int i=0; i<header.length; i++) {
-            levelMap.put(i, getLevelMap(hierarchies.get(header[i])));
-            Map<Integer, Map<String, String>> generalizations = new HashMap<>();
-            for (int level = 0; level < hierarchies.get(header[i])[0].length; level++) {
-                generalizations.put(level, getGeneralizationMap(hierarchies.get(header[i]), level));
-            }
-            generalizationMap.put(i, generalizations);
-        }
+    UtilityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
+                                                DataHandleInternal input,
+                                                UtilityConfiguration config) {
+
+        super(interrupt, input, config);
+        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
+        this.hierarchies = getHelper().getHierarchies(input, indices);
     }
 
     /**
-     * Builds a generalization map: value -> generalized
-     * 
-     * @param hierarchy
-     * @param level 
-     * @return
-     */
-    private Map<String, String> getGeneralizationMap(String[][] hierarchy, int level) {
-
-        Map<String, String> map = new HashMap<String, String>();
-        for (int row = 0; row < hierarchy.length; row++) {
-            map.put(hierarchy[row][0], hierarchy[row][level]);
-        }
-        return map;
-    }
-
-    /**
-     * Frequencies in input for all rows with transformation level >= level
-     * @param input
+     * Returns the frequencies of values in input data for all rows with transformation level >= level
      * @param transformations
-     * @param col
+     * @param column
      * @param level
      * @return
      */
-    private Map<String, Double> getInputFrequencies(String[][] input, int[][] transformations, int col, int level) {
+    private Map<String, Double> getInputFrequencies( int[] transformations, int column, int level) {
+        DataHandleInternal input = getInput();
         Map<String, Double> result = new HashMap<String, Double>();
-        for (int row = 0; row < input.length; row++) {
-            if (transformations[row][col] >= level) {
-                String value = input[row][col];
+        for (int row = 0; row < input.getNumRows(); row++) {
+            if (transformations[row] >= level) {
+                String value = input.getValue(row, column);
                 Double count = result.get(value);
                 result.put(value, count != null ? count + 1d : 1d);
             }
+
+            // Check
+            checkInterrupt();
         }
         return result;
     }
 
     /**
-     * Builds a level map: value -> level
-     * @param hierarchy
-     * @return
-     */
-    private Map<String, Integer> getLevelMap(String[][] hierarchy) {
-        
-        Map<String, Integer> map = new HashMap<String, Integer>();
-        for (int col = 0; col < hierarchy[0].length; col++) {
-            for (int row = 0; row < hierarchy.length; row++) {
-                String value = hierarchy[row][col];
-                if (!map.containsKey(value)) {
-                    map.put(value, col);
-                }
-            }
-        }
-        return map;
-    }
-
-    /**
-     * Frequencies of values on the target level in output for all rows with transformation level >= level
-     * @param input
+     * Returns the frequencies of values in input data on the target level in output for all rows with transformation level >= level
      * @param transformations
-     * @param col
+     * @param generalizationFunctions
+     * @param column
      * @param level
      * @param target
      * @return
      */
-    private Map<String, Double> getOutputFrequencies(String[][] input, int[][] transformations, int col, int level, int target) {
+    private Map<String, Double> getOutputFrequencies(int[] transformations,
+                                                     Map<String, String>[] generalizationFunctions,
+                                                     int column, 
+                                                     int level, 
+                                                     int target) {
         Map<String, Double> result = new HashMap<String, Double>();
-        for (int row = 0; row < input.length; row++) {
-            if (transformations[row][col] >= level) {
-                String value = generalizationMap.get(col).get(target).get(input[row][col]);
+        DataHandleInternal input = getInput();
+        for (int row = 0; row < input.getNumRows(); row++) {
+            if (transformations[row] >= level) {
+                String value = generalizationFunctions[target].get(input.getValue(row, column));
                 Double count = result.get(value);
                 result.put(value, count != null ? count + 1d : 1d);
             }
+
+            // Check
+            checkInterrupt();
         }
         return result;
-    }
-
-    /**
-     * Log base-2
-     * @param d
-     * @return
-     */
-    private double log2(double d) {
-        return Math.log(d) / LOG2;
     }
 
     @Override
-    double[] evaluate(final DataHandleInternal output) {
+    UtilityMeasureColumnOriented evaluate(final DataHandleInternal output) {
         
-        // Collect transformations
-        final int[][] transformations = new int[output.length][];
-        for (int row = 0; row < output.length; row++) {
-            int[] transformation = new int[output[row].length];
-            for (int column = 0; column < transformation.length; column++) {
-                transformation[column] = levelMap.get(column).get(output[row][column]);
-            }
-            transformations[row] = transformation;
-        }
+
+        // Prepare
+        double[] result = new double[indices.length];
+        double[] min = new double[indices.length];
+        double[] max = new double[indices.length];
         
         // For each column
-        double[] result = new double[input[0].length];
-        for (int col = 0; col < header.length; col++) {
-            
-            // Collect all generalization levels
-            Set<Integer> _levels = new HashSet<Integer>();
-            for (int row = 0; row < input.length; row++) {
-                _levels.add(transformations[row][col]);
-            }
-            List<Integer> levels = new ArrayList<Integer>();
-            levels.addAll(_levels);
-            Collections.sort(levels);
-            
-            // For each generalization level
-            for (int numlevel = 0; numlevel < levels.size(); numlevel++) {
-                
-                // Obtain level
-                int level = levels.get(numlevel);
-                
-                // Frequencies in input or numlevel - 1 for all rows with transformation level >= level
-                Map<String, Double> inputFrequencies;
-                if (numlevel == 0) {
-                    inputFrequencies = getInputFrequencies(input, transformations, col, level);
-                } else {
-                    inputFrequencies = getOutputFrequencies(input,
-                                                            transformations,
-                                                            col,
-                                                            level,
-                                                            levels.get(numlevel - 1));
-                }
+        for (int i = 0; i < result.length; i++) {
 
-                // Frequencies of values on the given level in output for all rows with transformation level >= level
-                Map<String, Double> outputFrequencies = getOutputFrequencies(input, transformations, col, level, level);
+            // Map
+            int column = indices[i];
+
+            try {
                 
-                // Sum up loss of values transformation level >= level
-                for (int row = 0; row < output.length; row++) {
-                    if (transformations[row][col] >= level) {
+                // Prepare
+                Map<String, String>[] generalizationFunctions = getHelper().getGeneralizationFunctions(hierarchies, i);
+                Map<String, Integer> inverseGeneralizationFunction = getHelper().getInverseGeneralizationFunction(hierarchies, i);
+                
+                // Determine generalization levels
+                final int[] transformations = new int[output.getNumRows()];
+                for (int row = 0; row < output.getNumRows(); row++) {
+                    transformations[row] = inverseGeneralizationFunction.get(output.getValue(row, column));
+                }
+                
+                // Group and sort all generalization levels
+                Set<Integer> _levels = new HashSet<Integer>();
+                for (int level : transformations) {
+                    _levels.add(level);
+                }
+                List<Integer> levels = new ArrayList<Integer>();
+                levels.addAll(_levels);
+                Collections.sort(levels);
+                
+                // For each generalization level
+                for (int levelIndex = 0; levelIndex < levels.size(); levelIndex++) {
+                    
+                    // Obtain level
+                    int currentLevel = levels.get(levelIndex);
+                    int previousLevel = levelIndex > 0 ? levels.get(levelIndex - 1) : currentLevel;
+                    
+                    // Frequencies in input or levelindex - 1 for all rows with transformation level >= level
+                    Map<String, Double> inputFrequencies = levelIndex == 0 ? inputFrequencies = getInputFrequencies(transformations, column, currentLevel)
+                                                                           : getOutputFrequencies(transformations, generalizationFunctions, column, currentLevel, previousLevel);
+
+                    // Frequencies of values on the given level in output for all rows with transformation level >= level
+                    Map<String, Double> outputFrequencies = getOutputFrequencies(transformations, generalizationFunctions, column, currentLevel, currentLevel);
+                    
+                    // Sum up loss of values transformation level >= level
+                    DataHandleInternal input = getInput();
+                    for (int row = 0; row < input.getNumRows(); row++) {
+
+                        // Input and output value for this cell
+                        String value = input.getValue(row, column);
+                        String inputValue = levelIndex == 0 ? value : generalizationFunctions[previousLevel].get(value);
+                        String outputValue = generalizationFunctions[levels.get(currentLevel)].get(value);
                         
-                        // In and out
-                        String inputValue;
-                        if (numlevel == 0) {
-                            inputValue = input[row][col];
-                        } else {
-                            inputValue = generalizationMap.get(col).get(levels.get(numlevel - 1)).get(input[row][col]);
+                        // Calculate result
+                        if (transformations[row] >= currentLevel) {
+                            result[i] += log2(inputFrequencies.get(inputValue) / outputFrequencies.get(outputValue));
                         }
-                        String outputValue = generalizationMap.get(col).get(level).get(input[row][col]);
                         
-                        // Sum up
-                        result[col] += log2(inputFrequencies.get(inputValue) /
-                                            outputFrequencies.get(outputValue));
+                        // Calculate maximum
+                        max[i] += log2(inputFrequencies.get(inputValue) / (double)input.getNumRows());
+
+                        // Check
+                        checkInterrupt();
                     }
                 }
+                    
+                // Invert sign
+                result[i] *= -1;
+                
+                // Explicitly define minimum
+                min[i] = 0;
+                
+            } catch (Exception e) {
+                // Silently catch exceptions
+                result[i] = Double.NaN;
+                min[i] = Double.NaN;
+                max[i] = Double.NaN;
+                break;
             }
+
+            // Check
+            checkInterrupt();
+            
         }
-        
-        // Invert sign
-        for (int i=0; i<result.length; i++) {
-            result[i] *= -1;
-        }
-        return result;
+
+        // Return
+        return new UtilityMeasureColumnOriented(output, indices, min, result, max);
     }
 }

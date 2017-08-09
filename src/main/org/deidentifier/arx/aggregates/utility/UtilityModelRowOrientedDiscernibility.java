@@ -17,46 +17,65 @@
 
 package org.deidentifier.arx.aggregates.utility;
 
-import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.Groupify.Group;
+import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
-import org.deidentifier.arx.framework.check.groupify.HashGroupify;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 
 
 /**
  * Implementation of the Discernibility measure, as proposed in:<br>
  * <br>
- * R. Bayardo, R. Agrawal, Data privacy through optimal k-anonymization, in: Proc Int Conf Data Engineering, 2005, pp. 217–228
+ * R. Bayardo, R. Agrawal, Data privacy through optimal k-anonymization.
+ * Proc Int Conf Data Engineering, 2005, pp. 217-228
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedDiscernibility extends UtilityModelRowOriented {
+class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureRowOriented> {
 
+    /** Header */
+    private final int[] indices;
+    
+    /** Minimum */
+    private final double min;
 
+    /** Maximum */
+    private final double max;
+    
+    /** Rows*/
+    private final double rows;
+    
     /**
      * Creates a new instance
      * @param interrupt
      * @param input
+     * @param config
      */
-    UtilityModelRowOrientedDiscernibility(WrappedBoolean interrupt, DataHandleInternal input) {
-        super(interrupt, input);
-    
+    UtilityModelRowOrientedDiscernibility(WrappedBoolean interrupt,
+                                          DataHandleInternal input,
+                                          UtilityConfiguration config) {
+        super(interrupt, input, config);
+        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
+        this.min = getDiscernibility(getHelper().getGroupify(input, indices));
+        this.rows = input.getNumRows();
+        this.max = rows * rows;
     }
-
-    @Override
-    double evaluate(DataHandleInternal output) {
-        
-        HashGroupify<StringArray> table = new HashGroupify<StringArray>(10);
-        for (String[] row : input) {
-            table.add(new StringArray(row));
-        }
-     
-        HashGroupifyEntry<StringArray> e = table.first();
-        double sum = getPenalty(e, input.length);
+    
+    /**
+     * Get discernibility
+     * @param groupify
+     * @return
+     */
+    private double getDiscernibility(Groupify<TupleWrapper> groupify) {
+        Group<TupleWrapper> e = groupify.first();
+        double sum = getPenalty(e);
         while (e.hasNext()) {
             e = e.next();
-            sum += getPenalty(e, input.length);
+            sum += getPenalty(e);
+
+            // Check
+            checkInterrupt();
         }
         return sum;
     }
@@ -64,30 +83,29 @@ class UtilityModelRowOrientedDiscernibility extends UtilityModelRowOriented {
     /**
      * Returns the penalty for the given table
      * @param entry
-     * @param rows
      * @return
      */
-    private double getPenalty(HashGroupifyEntry<StringArray> entry, double rows) {
+    private double getPenalty(Group<TupleWrapper> entry) {
 
+        double count = entry.getCount();
         if (isSuppressed(entry)) {
-            return entry.getCount() * rows;
-        } else {
-            return entry.getCount() * entry.getCount();
+            return count * rows;
+        } else {            
+            return count * count;
         }
     }
 
-    /**
-     * We assume that an entry is suppressed, if all values are equal
-     * @param entry
-     * @return
-     */
-    private boolean isSuppressed(HashGroupifyEntry<StringArray> entry) {
-        String[] array = entry.getElement().values;
-        for (int i=1; i<array.length; i++) {
-            if (!array[i-1].equals(array[i])) {
-                return false;
-            }
+    @Override
+    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+
+        try {
+            // Prepare
+            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
+            double result = getDiscernibility(groupify);
+            return new UtilityMeasureRowOriented(min, result, max);
+        } catch (Exception e) {
+            // Silently catch exceptions
+            return new UtilityMeasureRowOriented(min, Double.NaN, max);
         }
-        return true;
     }
 }

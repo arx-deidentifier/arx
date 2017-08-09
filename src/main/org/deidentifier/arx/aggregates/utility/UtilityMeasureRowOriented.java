@@ -46,18 +46,18 @@ public class UtilityMeasureRowOriented {
     }
 
     /**
-     * Returns whether this value is available
-     * @return
-     */
-    public boolean isAvailable() {
-        return !Double.isNaN(result);
-    }
-    
-    /**
      * Returns the normalized [0,1] value
      * @return
      */
     public double getValue() {
         return (this.result - this.minimum) / (this.maximum - this.minimum);
+    }
+    
+    /**
+     * Returns whether this value is available
+     * @return
+     */
+    public boolean isAvailable() {
+        return !Double.isNaN(result);
     }
 }

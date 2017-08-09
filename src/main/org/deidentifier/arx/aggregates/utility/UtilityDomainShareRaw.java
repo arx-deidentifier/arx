@@ -31,20 +31,24 @@ class UtilityDomainShareRaw implements UtilityDomainShare {
     private final Map<String, Double> shares;
 
     /** Domain size */
-    private final double               domainSize;
+    private final double              domainSize;
 
-    /** Maxlevels */
-    private final int                  maxlevels;
+    /** Maximum levels */
+    private final int                 maxlevels;
+
+    /** Suppressed */
+    private final String              suppressedValue;
 
     /**
      * Creates a new instance
      * @param hierarchies
-     * @param header
+     * @param suppressedValue
      */
-    UtilityDomainShareRaw(String[][] hierarchy) {
+    UtilityDomainShareRaw(String[][] hierarchy, String suppressedValue) {
         this.shares = getLoss(hierarchy);
         this.domainSize = hierarchy.length;
         this.maxlevels = hierarchy[0].length - 1;
+        this.suppressedValue = suppressedValue;
     }
     
     @Override
@@ -58,7 +62,7 @@ class UtilityDomainShareRaw implements UtilityDomainShare {
             Double loss = this.shares.get(value + level);
             if (loss != null) { return loss; }
         }
-        return 1d;
+        return value.equals(suppressedValue) ? 1d : 1d / this.getDomainSize();
     }
 
     /**

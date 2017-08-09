@@ -18,7 +18,9 @@ package org.deidentifier.arx.aggregates.utility;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
@@ -34,34 +36,100 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * @author Fabian Prasser
  */
 class UtilityHelper {
-    
-    /** Flag*/
-    private final WrappedBoolean interrupt;
-    
+
+    /** Flag */
+    private final WrappedBoolean       interrupt;
+    /** Value */
+    private final String               suppressedValue;
+
     /**
      * Creates a new instance
      * @param interrupt
+     * @param config
      */
-    UtilityHelper(WrappedBoolean interrupt) {
+    UtilityHelper(WrappedBoolean interrupt, UtilityConfiguration config) {
         this.interrupt = interrupt;
+        this.suppressedValue = config.getSuppressedValue();
     }
 
     /**
-     * Returns indices of quasi-identifiers
-     * 
-     * @param handle
-     * @return
+     * Checks whether an interruption happened.
      */
-    int[] getIndicesOfQuasiIdentifiers(DataHandleInternal handle) {
-        int[] result = new int[handle.getDefinition().getQuasiIdentifyingAttributes().size()];
-        int index = 0;
-        for (String qi : handle.getDefinition().getQuasiIdentifyingAttributes()) {
-            result[index++] = handle.getColumnIndexOf(qi);
+    private void checkInterrupt() {
+        if (interrupt.value) {
+            throw new ComputationInterruptedException("Interrupted");
         }
-        Arrays.sort(result);
-        return result;
     }
 
+    /**
+     * Returns domain shares for the handle
+     * @param handle
+     * @param indices
+     * @return
+     */
+    UtilityDomainShare[] getDomainShares(DataHandleInternal handle, int[] indices) {
+
+        // Prepare
+        UtilityDomainShare[] shares = new UtilityDomainShare[indices.length];
+        String[][][] hierarchies = getHierarchies(handle, indices);
+        
+        // Compute domain shares
+        for (int i=0; i<shares.length; i++) {
+            
+            try {
+                
+                // Extract info
+                String[][] hierarchy = hierarchies[i];
+                String attribute = handle.getAttributeName(indices[i]);
+                HierarchyBuilder<?> builder = handle.getDefinition().getHierarchyBuilder(attribute);
+                
+                // Create shares for redaction-based hierarchies
+                if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
+                    ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
+                    shares[i] = new UtilityDomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                    
+                // Create fallback-shares for materialized hierarchies
+                // TODO: Interval-based hierarchies are currently not compatible
+                } else {
+                    shares[i] = new UtilityDomainShareRaw(hierarchy, suppressedValue);
+                }
+                
+            } catch (Exception e) {
+                // Ignore silently
+                shares[i] = null;
+            }
+        }
+
+        // Return
+        return shares;
+    }
+    
+    /**
+     * Builds a generalization function mapping input values to the given level of the hierarchy
+     * 
+     * @param hierarchies
+     * @param index
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    Map<String, String>[] getGeneralizationFunctions(String[][][] hierarchies, int index) {
+        
+        // Prepare
+        Map<String, String>[] result = new HashMap[hierarchies.length];
+
+        // For each dimension
+        for (int level = 0; level < hierarchies[index][0].length; level++) {
+            Map<String, String> map = new HashMap<String, String>();
+            for (int row = 0; row < hierarchies[index].length; row++) {
+                map.put(hierarchies[index][row][0], hierarchies[index][row][level]);
+            }
+            result[level] = map;
+        }
+        
+        // Return
+        return result;
+    }
+    
     /**
      * Returns a groupified version of the dataset
      * 
@@ -84,40 +152,116 @@ class UtilityHelper {
         
         return groupify;
     }
-    
+
     /**
-     * Returns domain shares for the handle
+     * Returns hierarchies, creates trivial hierarchies if no hierarchy is found.
+     * Adds an additional level, if there is no root node
+     * 
      * @param handle
      * @param indices
      * @return
      */
-    UtilityDomainShare[] getDomainShares(DataHandleInternal handle, int[] indices) {
-
-        // Compute domain shares
-        UtilityDomainShare[] shares = new UtilityDomainShare[indices.length];
-        for (int i=0; i<shares.length; i++) {
+    String[][][] getHierarchies(DataHandleInternal handle, int[] indices) {
+        
+        String[][][] hierarchies = new String[indices.length][][];
+        
+        // Collect hierarchies
+        for (int i=0; i<indices.length; i++) {
             
-            // Extract info
+            // Extract and store
             String attribute = handle.getAttributeName(indices[i]);
             String[][] hierarchy = handle.getDefinition().getHierarchy(attribute);
-            HierarchyBuilder<?> builder = handle.getDefinition().getHierarchyBuilder(attribute);
             
-            // Create shares for redaction-based hierarchies
-            if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
-                ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
-                shares[i] = new UtilityDomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+            // If not empty
+            if (hierarchy != null && hierarchy.length != 0 && hierarchy[0] != null && hierarchy[0].length != 0) {
                 
-            // Create fallback-shares for materialized hierarchies
-            // TODO: Interval-based hierarchies are currently not compatible
+                // Clone
+                hierarchies[i] = hierarchy.clone();
+                
             } else {
-                shares[i] = new UtilityDomainShareRaw(hierarchy);
+                
+                // Create trivial hierarchy
+                String[] values = handle.getDistinctValues(indices[i]);
+                hierarchies[i] = new String[values.length][2];
+                for (int j = 0; j < hierarchies[i].length; j++) {
+                    hierarchies[i][j][0] = values[j];
+                    hierarchies[i][j][1] = suppressedValue;
+                }
             }
         }
 
+        // Fix hierarchy (if suppressed character is not contained in generalization hierarchy)
+        for (int j=0; j<indices.length; j++) {
+            
+            // Access
+            String[][] hierarchy = hierarchies[j];
+            
+            // Check if there is a problem
+            Set<String> values = new HashSet<String>();
+            for (int i = 0; i < hierarchy.length; i++) {
+                String[] levels = hierarchy[i];
+                values.add(levels[levels.length - 1]);
+            }
+            
+            // There is a problem
+            if (values.size() > 1 || !values.iterator().next().equals(this.suppressedValue)) {
+                for(int i = 0; i < hierarchy.length; i++) {
+                    hierarchy[i] = Arrays.copyOf(hierarchy[i], hierarchy[i].length + 1);
+                    hierarchy[i][hierarchy[i].length - 1] = this.suppressedValue;
+                }
+            }
+            
+            // Replace
+            hierarchies[j] = hierarchy;
+            
+            // Check
+            checkInterrupt();
+        }
+        
         // Return
-        return shares;
+        return hierarchies;
+    }
+
+    /**
+     * Returns indices of quasi-identifiers
+     * 
+     * @param handle
+     * @return
+     */
+    int[] getIndicesOfQuasiIdentifiers(DataHandleInternal handle) {
+        int[] result = new int[handle.getDefinition().getQuasiIdentifyingAttributes().size()];
+        int index = 0;
+        for (String qi : handle.getDefinition().getQuasiIdentifyingAttributes()) {
+            result[index++] = handle.getColumnIndexOf(qi);
+        }
+        Arrays.sort(result);
+        return result;
     }
     
+    /**
+     * Returns the inverse generalization function
+     * @param hierarchies
+     * @param index
+     * @return
+     */
+    Map<String, Integer> getInverseGeneralizationFunction(String[][][] hierarchies, int index) {
+
+        // Prepare
+        Map<String, Integer> result = new HashMap<>();
+
+        for (int col = 0; col < hierarchies[index][0].length; col++) {
+            for (int row = 0; row < hierarchies[index].length; row++) {
+                String value = hierarchies[index][row][col];
+                if (!result.containsKey(value)) {
+                    result.put(value, col);
+                }
+            }
+        }
+        
+        // Return
+        return result;
+    }
+
     /**
      * Returns precisions
      * @param handle
@@ -129,37 +273,37 @@ class UtilityHelper {
         // Prepare
         @SuppressWarnings("unchecked")
         Map<String, Double>[] precisions = new Map[indices.length];
+        String[][][] hierarchies = getHierarchies(handle, indices);
+        
         for (int i=0; i<precisions.length; i++) {
             
-            // Extract info
-            String attribute = handle.getAttributeName(indices[i]);
-            String[][] hierarchy = handle.getDefinition().getHierarchy(attribute);
-            
-            // Calculate precision
-            Map<String, Double> precision = new HashMap<String, Double>();
-            for (int col = 0; col < hierarchy[0].length; col++) {
-                for (int row = 0; row < hierarchy.length; row++) {
-                    String value = hierarchy[row][col];
-                    if (!precision.containsKey(value)) {
-                        precision.put(value, (double)col / ((double)hierarchy[0].length - 1d));
+            try {
+                
+                // Extract info
+                String[][] hierarchy = hierarchies[i];
+                
+                // Calculate precision
+                Map<String, Double> precision = new HashMap<String, Double>();
+                for (int col = 0; col < hierarchy[0].length; col++) {
+                    for (int row = 0; row < hierarchy.length; row++) {
+                        String value = hierarchy[row][col];
+                        if (!precision.containsKey(value)) {
+                            precision.put(value, (double)col / ((double)hierarchy[0].length - 1d));
+                        }
                     }
                 }
+                
+                // Store
+                precisions[i] = precision;
+                
+            } catch (Exception e) {
+                
+                // Drop silently
+                precisions[i] = null;
             }
-            
-            // Store
-            precisions[i] = precision;
         }
 
         // Return
         return precisions;
-    }
-
-    /**
-     * Checks whether an interruption happened.
-     */
-    private void checkInterrupt() {
-        if (interrupt.value) {
-            throw new ComputationInterruptedException("Interrupted");
-        }
     }
 }

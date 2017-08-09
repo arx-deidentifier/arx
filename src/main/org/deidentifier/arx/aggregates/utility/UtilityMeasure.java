@@ -25,15 +25,15 @@ public abstract class UtilityMeasure {
         this.rowOriented = rowOriented;
     }
 
-    public boolean isRowOriented() {
-        return this.rowOriented;
-    }
+    public abstract boolean isAvailable();
+    
+    public abstract boolean isAvailable(String column);
     
     public boolean isColumnOriented() {
         return !this.rowOriented;
     }
-    
-    public abstract boolean isAvailable();
 
-    public abstract boolean isAvailable(String column);
+    public boolean isRowOriented() {
+        return this.rowOriented;
+    }
 }

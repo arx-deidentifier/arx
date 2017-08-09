@@ -25,11 +25,11 @@ import org.deidentifier.arx.common.WrappedBoolean;
 /**
  * Implementation of the Precision measure, as proposed in:<br>
  * <br>
- * L. Sweeney, Achieving k-anonymity privacy protection using generalization and suppression, J Uncertain Fuzz Knowl Sys 10 (5) (2002) 571–588.
+ * L. Sweeney, Achieving k-anonymity privacy protection using generalization and suppression, J Uncertain Fuzz Knowl Sys 10 (5) (2002) 571ï¿½588.
  * 
  * @author Fabian Prasser
  */
-class UtilityModelColumnOrientedPrecision extends UtilityModelColumnOriented {
+class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMeasureColumnOriented> {
 
     /** Header */
     private final int[]                 indices;
@@ -40,9 +40,12 @@ class UtilityModelColumnOrientedPrecision extends UtilityModelColumnOriented {
      * Creates a new instance
      * @param interrupt
      * @param input
+     * @param config
      */
-    UtilityModelColumnOrientedPrecision(WrappedBoolean interrupt, DataHandleInternal input) {
-        super(interrupt, input);
+    UtilityModelColumnOrientedPrecision(WrappedBoolean interrupt,
+                                        DataHandleInternal input,
+                                        UtilityConfiguration config) {
+        super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.precisions = getHelper().getPrecision(input, indices);
     }
@@ -66,14 +69,13 @@ class UtilityModelColumnOrientedPrecision extends UtilityModelColumnOriented {
                 
                 try {
                     double precision = 1d;
-                    if (!output.isOutlier(row)) {
+                    if (!isSuppressed(output, indices, row)) {
                         Double temp = this.precisions[i].get(output.getValue(row, column));
                         precision = temp != null ? temp : 1d;
                     }
                     result[i] += precision;
                 } catch (Exception e) {
-                    
-                    // Mark with NaN in case of error
+                    // Silently catch exceptions
                     result[i] = Double.NaN;
                     break;
                 }

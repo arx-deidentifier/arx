@@ -17,23 +17,25 @@
 package org.deidentifier.arx.aggregates.utility;
 
 /**
- * Base class for representing domain shares in this package
+ * Basic configuration for utility models
  * 
  * @author Fabian Prasser
  */
-public interface UtilityDomainShare {
+class UtilityConfiguration {
+    
+    private String suppressedValue = "*";
 
     /**
-     * Returns the domain size
-     * @return
+     * @return the suppressedValue
      */
-    public abstract double getDomainSize();
-    
+    public String getSuppressedValue() {
+        return suppressedValue;
+    }
+
     /**
-     * Returns the domain share
-     * @param value
-     * @param level
-     * @return
+     * @param suppressedValue the suppressedValue to set
      */
-    public abstract double getShare(String value, int level);
+    public void setSuppressedValue(String suppressedValue) {
+        this.suppressedValue = suppressedValue;
+    }
 }

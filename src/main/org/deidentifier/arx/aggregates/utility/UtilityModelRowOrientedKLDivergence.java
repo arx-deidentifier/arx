@@ -17,13 +17,10 @@
 
 package org.deidentifier.arx.aggregates.utility;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
-import org.deidentifier.arx.metric.v2.DomainShare;
 
 /**
  * This class implements the KL Divergence metric.<br>
@@ -33,100 +30,137 @@ import org.deidentifier.arx.metric.v2.DomainShare;
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedKLDivergence extends UtilityModelRowOriented {
-    
+class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRowOriented> {
+
     /** Domain shares */
-    private final DomainShare   shares;
+    private final UtilityDomainShare[] shares;
     /** Header */
-    private final String[]      header;
+    private final int[]                indices;
+    /** Rows */
+    private final int                  rows;
     /** Distribution */
-    private double[]            inputDistribution = null;
-    /** Log */
-    private static final double LOG2              = Math.log(2);
-    
+    private double[]                   inputDistribution = null;
+    /** Minimum */
+    private final double               min;
+    /** Maximum */
+    private final double               max;
+
     /**
      * Creates a new instance
      * @param interrupt
      * @param input
+     * @param config
      */
-    UtilityModelRowOrientedKLDivergence(WrappedBoolean interrupt, DataHandleInternal input) {
-        super(interrupt, input);
-        this.shares = new DomainShare(hierarchies, header);
-        this.inputDistribution = getDistribution(input);
-    }
-    
-    @Override
-    double evaluate(DataHandleInternal output) {
-        
-        double[] outputDistribution = getDistribution(output);
-        
-        // Init
-        double result = 0d;
-        
-        // For each tuple
-        for (int row = 0; row < output.length; row++) {
-            
-            // Obtain frequency
-            double inputFrequency = inputDistribution[row];
-            double outputFrequency = outputDistribution[row];
-            outputFrequency /= getArea(output[row], generalization);
-            
-            // Compute KL-Divergence
-            result += inputFrequency * log2(inputFrequency / outputFrequency);
-            
+    UtilityModelRowOrientedKLDivergence(WrappedBoolean interrupt,
+                                        DataHandleInternal input,
+                                        UtilityConfiguration config) {
+        super(interrupt, input, config);
+        this.rows = input.getNumRows();
+        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
+        this.shares = getHelper().getDomainShares(input, indices);
+        this.inputDistribution = getDistribution(getHelper().getGroupify(input, indices), input);
+        this.min = getKLDivergence(input, inputDistribution, inputDistribution);
+        double _max = 1d;
+        for (UtilityDomainShare share : shares) {
+            _max *= share.getDomainSize();
         }
-        
-        return result;
+        this.max = (double)this.rows * log2(_max);
     }
     
     /**
      * Returns the area
-     * @param tuple
+     * @param handle
+     * @param row
      * @return
      */
-    private double getArea(String[] tuple, int[] generalization) {
+    private double getArea(DataHandleInternal handle, int row) {
         double area = 1d;
-        for (int i = 0; i < tuple.length; i++) {
-            double loss = shares.getShare(header[i], tuple[i], generalization[i]);
-            area *= loss * shares.domainSize[i];
+        for (int i = 0; i < indices.length; i++) {
+            int column = indices[i];
+            double loss = 1d;
+            if (!isSuppressed(handle, row, column)) {
+                loss = shares[i].getShare(handle.getValue(row, column), 0);
+            }
+            area *= loss * shares[i].getDomainSize();
         }
         return area;
     }
     
     /**
-     * Returns a distribution
-     * @param output
+     * Returns the distribution per record
+     * @param groupify
+     * @param handle
      * @return
      */
-    private double[] getDistribution(String[][] output) {
-        
-        // Groupify
-        Map<TupleWrapper, Integer> groupify = new HashMap<TupleWrapper, Integer>();
-        for (int row = 0; row < output.length; row++) {
-            TupleWrapper wrapper = new TupleWrapper(output[row]);
-            Integer count = groupify.get(wrapper);
-            count = count == null ? 1 : count + 1;
-            groupify.put(wrapper, count);
-        }
+    private double[] getDistribution(Groupify<TupleWrapper> groupify,
+                                     DataHandleInternal handle) {
         
         // Build input distribution
-        double[] result = new double[output.length];
-        for (int row = 0; row < output.length; row++) {
-            TupleWrapper wrapper = new TupleWrapper(output[row]);
-            double frequency = groupify.get(wrapper).doubleValue() / output.length;
+        double[] result = new double[rows];
+        for (int row = 0; row < rows; row++) {
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
+            double frequency = (double)groupify.get(tuple).getCount() / (double)rows;
             result[row] = frequency;
+
+            // Check
+            checkInterrupt();
         }
         
         // Return
         return result;
     }
-    
+
     /**
-     * Log base-2
-     * @param d
+     * Calculates KL-Divergence
+     * @param handle
+     * @param inputDistribution
+     * @param outputDistribution
      * @return
      */
-    private double log2(double d) {
-        return Math.log(d) / LOG2;
+    private double getKLDivergence(DataHandleInternal handle,
+                                   double[] inputDistribution,
+                                   double[] outputDistribution) {
+
+        // Init
+        double result = 0d;
+        
+        // For each tuple
+        for (int row = 0; row < rows; row++) {
+            
+            // Obtain frequency
+            double inputFrequency = inputDistribution[row];
+            double outputFrequency = outputDistribution[row];
+            outputFrequency /= getArea(handle, row);
+            
+            // Compute KL-Divergence
+            result += inputFrequency * log2(inputFrequency / outputFrequency); 
+
+            // Check
+            checkInterrupt();
+        }
+        
+        return result;
+    }
+    
+    @Override
+    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+        
+        try {
+    
+            // Output distribution
+            double[] outputDistribution = getDistribution(getHelper().getGroupify(output, indices), output);
+    
+            // KL divergence
+            double result = getKLDivergence(output,
+                                            inputDistribution,
+                                            outputDistribution);
+            
+            // Return
+            return new UtilityMeasureRowOriented(min, result, max);
+            
+        } catch (Exception e) {
+            // Silently catch exceptions
+            return new UtilityMeasureRowOriented(min, Double.NaN, max);
+        }
     }
 }

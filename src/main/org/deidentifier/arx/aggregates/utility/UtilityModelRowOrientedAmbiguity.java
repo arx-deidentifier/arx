@@ -19,7 +19,6 @@ package org.deidentifier.arx.aggregates.utility;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
-import org.deidentifier.arx.metric.v2.DomainShare;
 
 /**
  * Implementation of the Ambiguity measure, as described in:<br>
@@ -28,37 +27,52 @@ import org.deidentifier.arx.metric.v2.DomainShare;
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedAmbiguity extends UtilityModelRowOriented {
+class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasureRowOriented> {
     
-    /** Domain shares */
-    private final DomainShare shares;
     /** Header */
-    private final String[]    header;
+    private final int[]                indices;
+    /** Domain shares */
+    private final UtilityDomainShare[] shares;
     
-
     /**
      * Creates a new instance
      * @param interrupt
      * @param input
+     * @param config
      */
-    UtilityModelRowOrientedAmbiguity(WrappedBoolean interrupt, DataHandleInternal input) {
-        super(interrupt, input);
-    
-        this.shares = new DomainShare(hierarchies, header);
+    UtilityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
+                                     DataHandleInternal input,
+                                     UtilityConfiguration config) {
+        super(interrupt, input, config);
+        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
+        this.shares = getHelper().getDomainShares(input, indices);
     }
     
     @Override
-    double evaluate(DataHandleInternal output, int[] transformation) {
+    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
         
+        double min = 0d;
         double result = 0d;
-        for (String[] row : input) {
-            double resultRow = 1d;
-            for (int i = 0; i < row.length; i++) {
-                resultRow *= shares.getShare(header[i], row[i], transformation[i]) * shares.domainSize[i];
+        double max = 0d;
+        try {
+            for (int row = 0; row < output.getNumRows(); row++) {
+                double rowMin = 1d;
+                double rowResult = 1d;
+                double rowMax = 1d;
+                for (int i = 0; i < indices.length; i++) {
+                    int column = indices[i];
+                    rowResult *= shares[i].getShare(output.getValue(row, column), 0) * shares[i].getDomainSize();
+                    rowMin *= 1d;
+                    rowMax *= shares[i].getDomainSize();
+                }
+                min += rowMin;
+                result += rowResult;
+                max += rowMax;
             }
-            result += resultRow;
+            return new UtilityMeasureRowOriented(min, result, max);
+        } catch (Exception e) {
+            // Silently catch exceptions
+            return new UtilityMeasureRowOriented(Double.NaN, Double.NaN, Double.NaN);
         }
-        return result;
     }
-    
 }

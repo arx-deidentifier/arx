@@ -31,7 +31,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedAECS extends UtilityModelRowOriented {
+class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowOriented> {
 
     /** Header */
     private final int[] indices;
@@ -46,23 +46,17 @@ class UtilityModelRowOrientedAECS extends UtilityModelRowOriented {
      * Creates a new instance
      * @param interrupt
      * @param input
+     * @param config
      */
-    UtilityModelRowOrientedAECS(WrappedBoolean interrupt, DataHandleInternal input) {
-        super(interrupt, input);
+    UtilityModelRowOrientedAECS(WrappedBoolean interrupt,
+                                DataHandleInternal input,
+                                UtilityConfiguration config) {
+        super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.min = getAverageGroupSize(getHelper().getGroupify(input, indices));
         this.max = input.getNumRows();
     }
     
-    @Override
-    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
-        
-        // Prepare
-        Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
-        double result = getAverageGroupSize(groupify);
-        return new UtilityMeasureRowOriented(min, result, max);
-    }
-
     /**
      * Returns the average group size for this groupify
      * @param groupify
@@ -77,9 +71,26 @@ class UtilityModelRowOrientedAECS extends UtilityModelRowOriented {
             group = group.next();
             count++;
             sum += group.getCount();
+
+            // Check
+            checkInterrupt();
         }
         
         // Finalize
         return sum / count;
+    }
+
+    @Override
+    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+
+        try {
+            // Prepare
+            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
+            double result = getAverageGroupSize(groupify);
+            return new UtilityMeasureRowOriented(min, result, max);
+        } catch (Exception e) {
+            // Silently catch exceptions
+            return new UtilityMeasureRowOriented(min, Double.NaN, max);
+        }
     }
 }
