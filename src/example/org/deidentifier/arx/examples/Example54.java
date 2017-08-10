@@ -29,7 +29,9 @@ import java.util.regex.Pattern;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.aggregates.StatisticsUtility;
 import org.deidentifier.arx.criteria.KAnonymity;
@@ -93,6 +95,9 @@ public class Example54 extends Example {
     public static void main(String[] args) throws ParseException, IOException, NoSuchAlgorithmException {
         
         Data data = createData("adult");
+        
+        data.getDefinition().setDataType("age", DataType.INTEGER);
+        data.getDefinition().setMicroAggregationFunction("age", MicroAggregationFunction.createArithmeticMean());
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
