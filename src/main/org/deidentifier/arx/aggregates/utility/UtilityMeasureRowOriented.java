@@ -59,7 +59,10 @@ public class UtilityMeasureRowOriented {
      * @return
      */
     public double getValue() {
-        return (this.result - this.minimum) / (this.maximum - this.minimum);
+        double val = (this.result - this.minimum) / (this.maximum - this.minimum);
+        val = val < 0d ? 0d : val; // Truncate
+        val = val > 1d ? 1d : val; // Truncate
+        return val;
     }
     
     /**

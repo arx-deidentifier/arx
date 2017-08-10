@@ -25,6 +25,7 @@ import org.deidentifier.arx.DataType;
  */
 public class UtilityConfiguration {
     
+    /** Value*/
     private String suppressedValue = DataType.ANY_VALUE;
 
     /**

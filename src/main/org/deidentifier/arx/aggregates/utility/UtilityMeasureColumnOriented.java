@@ -89,7 +89,10 @@ public class UtilityMeasureColumnOriented {
         if (result == null) {
             return Double.NaN;
         }
-        return getAggregate(UtilityAggregateFunction.ARITHMETIC_MEAN, normalizeBeforeAggregation);
+        double val = getAggregate(UtilityAggregateFunction.ARITHMETIC_MEAN, normalizeBeforeAggregation);
+        val = val < 0d ? 0d : val; // Truncate
+        val = val > 1d ? 1d : val; // Truncate
+        return val;
     }
     
     /**
@@ -101,7 +104,10 @@ public class UtilityMeasureColumnOriented {
         if (result == null) {
             return Double.NaN;
         }
-        return getAggregate(UtilityAggregateFunction.GEOMETRIC_MEAN, normalizeBeforeAggregation);
+        double val = getAggregate(UtilityAggregateFunction.GEOMETRIC_MEAN, normalizeBeforeAggregation);
+        val = val < 0d ? 0d : val; // Truncate
+        val = val > 1d ? 1d : val; // Truncate
+        return val;
     }
 
     /**
@@ -113,7 +119,10 @@ public class UtilityMeasureColumnOriented {
         if (result == null) {
             return Double.NaN;
         }
-        return getAggregate(UtilityAggregateFunction.MAX, normalizeBeforeAggregation);
+        double val = getAggregate(UtilityAggregateFunction.MAX, normalizeBeforeAggregation);
+        val = val < 0d ? 0d : val; // Truncate
+        val = val > 1d ? 1d : val; // Truncate
+        return val;
     }
 
     /**
@@ -128,7 +137,10 @@ public class UtilityMeasureColumnOriented {
         Double val = result.get(attribute);
         Double min = minimum.get(attribute);
         Double max = maximum.get(attribute);
-        return val != null && min != null && max != null ? ((val - min) / (max - min)) : Double.NaN;
+        val = (val != null && min != null && max != null ? ((val - min) / (max - min)) : Double.NaN);
+        val = val < 0d ? 0d : val; // Truncate
+        val = val > 1d ? 1d : val; // Truncate
+        return val;
     }
     
 
