@@ -106,16 +106,17 @@ public class Example54 extends Example {
         config.setQualityModel(Metric.createLossMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
-
+        System.out.println("Done");
+        
         // Access statistics
         StatisticsUtility utility = result.getOutput().getStatistics().getUtilityStatistics();
-        System.out.println("Ambiguity: " + utility.getAmbiguity().getValue());
-        System.out.println("AECS: " + utility.getAverageClassSize().getValue());
-        System.out.println("Discernibility: " + utility.getDiscernibility().getValue());
-        System.out.println("Granularity: " + utility.getGranularity().getArithmeticMean(false));
-        System.out.println("KL-Divergence: " + utility.getKLDivergence().getValue());
-        System.out.println("Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
-        System.out.println("Precision: " + utility.getPrecision().getArithmeticMean(false));
-        System.out.println("SSE: " + utility.getSSE().getValue());
+        System.out.println(" - Ambiguity: " + utility.getAmbiguity().getValue());
+        System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
+        System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
+        System.out.println(" - Granularity: " + utility.getGranularity().getArithmeticMean(false));
+        System.out.println(" - KL-Divergence: " + utility.getKLDivergence().getValue());
+        System.out.println(" - Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
+        System.out.println(" - Precision: " + utility.getPrecision().getArithmeticMean(false));
+        System.out.println(" - SSE: " + utility.getSSE().getValue());
     }
 }
