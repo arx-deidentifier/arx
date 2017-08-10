@@ -131,6 +131,7 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
                     
                 // Invert sign
                 result[i] *= -1;
+                max[i] *= -1;
                 
                 // Explicitly define minimum
                 min[i] = 0;
