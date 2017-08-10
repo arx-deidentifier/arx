@@ -111,5 +111,6 @@ public class Example54 extends Example {
         System.out.println("KL-Divergence: " + utility.getKLDivergence().getValue());
         System.out.println("Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
         System.out.println("Precision: " + utility.getPrecision().getArithmeticMean(false));
+        System.out.println("SSE: " + utility.getSSE().getValue());
     }
 }

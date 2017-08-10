@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.aggregates.utility;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
 
@@ -31,7 +34,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
 public class UtilityModelRowOrientedSSE extends UtilityModel<UtilityMeasureRowOriented> {
 
     /** Header */
-    private final int[]                indices;
+    private final int[] indices;
     
     /**
      * Creates a new instance
@@ -47,46 +50,148 @@ public class UtilityModelRowOrientedSSE extends UtilityModel<UtilityMeasureRowOr
 
     }
     
-    /**
-     * Output: the output dataset without header
-     */
     @Override
-    public UtilityMeasureRowOriented evaluate(DataHandleInternal handle) {
+    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
        
-        return null;
+        try {
+                
+            // Prepare
+            List<double[]> columns1 = new ArrayList<>();
+            List<double[]> columns2 = new ArrayList<>();
+            List<Double> stdDevs = new ArrayList<>();
+            String[][][] hierarchies = getHelper().getHierarchies(getInput(), indices);
+            
+            // Collect
+            for (int index = 0; index < indices.length; index++) {
+                try {
+                    int column = indices[index];
+                    double[][] columnsAsNumbers = getHelper().getColumnsAsNumbers(getInput(), output, 
+                                                                                  hierarchies[index], column);
+                    if (columnsAsNumbers != null) {
+                        double stdDev = getHelper().getStandardDeviation(columnsAsNumbers[0]);
+                        columns1.add(columnsAsNumbers[0]);
+                        columns2.add(columnsAsNumbers[1]);
+                        stdDevs.add(stdDev);
+                    }
+                    
+                } catch (Exception e) {
+                    // Fail silently
+                }
+            }
+            
+            // Check
+            if (columns1.isEmpty() || columns2.isEmpty() || stdDevs.isEmpty()) {
+                return new UtilityMeasureRowOriented();
+            }
+            
+            // Real distance
+            double realDistance = getEuclideanDistance(columns1.toArray(new double[columns1.size()][]),
+                                                       columns2.toArray(new double[columns2.size()][]),
+                                                       stdDevs.toArray(new Double[stdDevs.size()]));
+            
+            // Maximal distance
+            double maxDistance = getEuclideanDistance(columns1.toArray(new double[columns1.size()][]),
+                                                      stdDevs.toArray(new Double[stdDevs.size()]));
+            
+            // Normalize
+            realDistance /= (double)columns1.size();
+            realDistance /= (double)output.getNumRows();
+            maxDistance /= (double)columns1.size();
+            maxDistance /= (double)output.getNumRows();
+            
+            // Return
+            return new UtilityMeasureRowOriented(0d, realDistance, maxDistance);
+            
+        } catch (Exception e) {
+            return new UtilityMeasureRowOriented();
+        }
     }
     
     /**
-     * Returns the euclidean distance between records
+     * Returns the maximal sum of the euclidean distance between all records
      * 
-     * @param columns1
-     * @param columns2
-     * @param standardDeviations
-     * @param row
+     * @param input
+     * @param inputStdDev
      * @return
      */
-    private double getEuclideanDistance(double[][] columns1, 
-                                        double[][] columns2,
-                                        double[] standardDeviations,
-                                        int row) {
+    private double getEuclideanDistance(double[][] input, 
+                                        Double[] inputStdDev) {
+        
+        // Calculate minimum and maximum
+        double[] minimum = new double[input.length];
+        double[] maximum = new double[input.length];
+        for (int i = 0; i < input.length; i++) {
+            double[] minmax = getHelper().getMinMax(input[i]);
+            minimum[i] = minmax[0];
+            maximum[i] = minmax[1];
+        }
 
         // Prepare
-        row *= 2;
-        double result = 0;
+        double resultOverall = 0d;
         
-        // For each column
-        for(int column=0; column<columns1.length; column++){
+        // For each row
+        for(int row=0; row<input[0].length; row+=2){
             
-            double minimum1 = columns1[column][row];
-            double maximum1 = columns1[column][row + 1];
-            double minimum2 = columns2[column][row];
-            double maximum2 = columns2[column][row + 1];
-            maximum1 = (maximum2 - minimum1) > (minimum1 - minimum2) ? maximum2 : minimum2;
-            double temp = (standardDeviations[column] == 0d) ? 0d : (minimum1 - maximum1) / standardDeviations[column];
-            result += (temp * temp);
+            // Check
+            checkInterrupt();
+            
+            // For each column
+            double resultRow = 0;
+            for(int column=0; column<input.length; column++){
+                
+                double minimum1 = input[column][row];
+                double maximum1 = input[column][row + 1];
+                double minimum2 = minimum[column];
+                double maximum2 = maximum[column];
+                maximum1 = (maximum2 - minimum1) > (minimum1 - minimum2) ? maximum2 : minimum2;
+                double temp = (inputStdDev[column] == 0d) ? 0d : (minimum1 - maximum1) / inputStdDev[column];
+                resultRow += (temp * temp);
+            }
+            
+            // Summarize
+            resultOverall += Math.sqrt(resultRow);
         }
         
         // Return
-        return Math.sqrt(result);
+        return resultOverall;
+    }
+
+    /**
+     * Returns the sum of the euclidean distance between all records
+     * 
+     * @param input
+     * @param output
+     * @param inputStdDev
+     * @return
+     */
+    private double getEuclideanDistance(double[][] input, 
+                                        double[][] output,
+                                        Double[] inputStdDev) {
+
+        // Prepare
+        double resultOverall = 0d;
+        
+        // For each row
+        for(int row=0; row<input[0].length; row+=2){
+                
+            // For each column
+            double resultRow = 0;
+            for(int column=0; column<input.length; column++){
+                
+                double minimum1 = input[column][row];
+                double maximum1 = input[column][row + 1];
+                double minimum2 = output[column][row];
+                double maximum2 = output[column][row + 1];
+                maximum1 = (maximum2 - minimum1) > (minimum1 - minimum2) ? maximum2 : minimum2;
+                double temp = (inputStdDev[column] == 0d) ? 0d : (minimum1 - maximum1) / inputStdDev[column];
+                resultRow += (temp * temp);
+            }
+            
+            // Summarize
+            resultOverall += Math.sqrt(resultRow);
+        }
+        
+        // Return
+        return resultOverall;
     }
 }

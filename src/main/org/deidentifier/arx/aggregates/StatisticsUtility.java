@@ -28,6 +28,7 @@ import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedAECS;
 import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedAmbiguity;
 import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedDiscernibility;
 import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedKLDivergence;
+import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedSSE;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
@@ -54,6 +55,8 @@ public class StatisticsUtility {
     private UtilityMeasureRowOriented    discernibility;
     /** Row-oriented model */
     private UtilityMeasureRowOriented    kldivergence;
+    /** Row-oriented model */
+    private UtilityMeasureRowOriented    sse;
 
     /** State */
     private WrappedBoolean               stop;
@@ -91,7 +94,7 @@ public class StatisticsUtility {
             // Fail silently
             this.loss = new UtilityMeasureColumnOriented();
         }
-        this.progress.value = 15;
+        this.progress.value = 10;
 
         // Build
         try {
@@ -101,7 +104,7 @@ public class StatisticsUtility {
             // Fail silently
             this.entropy = new UtilityMeasureColumnOriented();
         }
-        this.progress.value = 30;
+        this.progress.value = 20;
 
         // Build
         try {
@@ -111,7 +114,7 @@ public class StatisticsUtility {
             // Fail silently
             this.precision = new UtilityMeasureColumnOriented();
         }
-        this.progress.value = 45;
+        this.progress.value = 30;
 
         // Build
         try {
@@ -121,7 +124,7 @@ public class StatisticsUtility {
             // Fail silently
             this.aecs = new UtilityMeasureRowOriented();
         }
-        this.progress.value = 60;
+        this.progress.value = 40;
 
         // Build
         try {
@@ -131,7 +134,7 @@ public class StatisticsUtility {
             // Fail silently
             this.ambiguity = new UtilityMeasureRowOriented();
         }
-        this.progress.value = 75;
+        this.progress.value = 50;
 
         // Build
         try {
@@ -141,7 +144,7 @@ public class StatisticsUtility {
             // Fail silently
             this.discernibility = new UtilityMeasureRowOriented();
         }
-        this.progress.value = 90;
+        this.progress.value = 60;
 
         // Build
         try {
@@ -151,6 +154,19 @@ public class StatisticsUtility {
             // Fail silently
             this.kldivergence = new UtilityMeasureRowOriented();
         }
+        this.progress.value = 70;
+
+        // Build
+        try {
+            this.sse = new UtilityModelRowOrientedSSE(stop, input, configuration).evaluate(output);
+            this.checkInterrupt();
+        } catch (Exception e) {
+            // Fail silently
+            this.sse = new UtilityMeasureRowOriented();
+        }
+        this.progress.value = 80;
+        
+        // TODO: More
         this.progress.value = 100;
     }
 
@@ -235,6 +251,20 @@ public class StatisticsUtility {
         return precision;
     }
 
+    /**
+     * Utility according to the "SSE" model proposed in:<br>
+     * <br>
+     * Soria-Comas, Jordi, et al.:
+     * "t-closeness through microaggregation: Strict privacy with enhanced utility preservation."
+     * IEEE Transactions on Knowledge and Data Engineering 27.11 (2015):
+     * 3098-3110.
+     * 
+     * @return utility measure
+     */
+    public UtilityMeasureRowOriented getSSE() {
+        return sse;
+    }
+    
     /**
      * Checks whether an interruption happened.
      */
