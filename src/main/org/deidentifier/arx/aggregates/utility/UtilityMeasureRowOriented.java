@@ -34,6 +34,15 @@ public class UtilityMeasureRowOriented {
     private final double maximum;
 
     /**
+     * Creates an empty instance
+     */
+    public UtilityMeasureRowOriented() {
+        this.result = Double.NaN;
+        this.minimum = Double.NaN;
+        this.maximum = Double.NaN;
+    }
+
+    /**
      * Creates a new instance
      * @param minimum
      * @param result

@@ -27,12 +27,12 @@ import org.deidentifier.arx.common.WrappedBoolean;
 /**
  * Implementation of the Discernibility measure, as proposed in:<br>
  * <br>
- * R. Bayardo, R. Agrawal, Data privacy through optimal k-anonymization.
+ * R. Bayardo, R. Agrawal: "Data privacy through optimal k-anonymization"
  * Proc Int Conf Data Engineering, 2005, pp. 217-228
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureRowOriented> {
+public class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureRowOriented> {
 
     /** Header */
     private final int[] indices;
@@ -52,9 +52,9 @@ class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureR
      * @param input
      * @param config
      */
-    UtilityModelRowOrientedDiscernibility(WrappedBoolean interrupt,
-                                          DataHandleInternal input,
-                                          UtilityConfiguration config) {
+    public UtilityModelRowOrientedDiscernibility(WrappedBoolean interrupt,
+                                                 DataHandleInternal input,
+                                                 UtilityConfiguration config) {
         super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.min = getDiscernibility(getHelper().getGroupify(input, indices));
@@ -62,6 +62,20 @@ class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureR
         this.max = rows * rows;
     }
     
+    @Override
+    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+
+        try {
+            // Prepare
+            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
+            double result = getDiscernibility(groupify);
+            return new UtilityMeasureRowOriented(min, result, max);
+        } catch (Exception e) {
+            // Silently catch exceptions
+            return new UtilityMeasureRowOriented(min, Double.NaN, max);
+        }
+    }
+
     /**
      * Get discernibility
      * @param groupify
@@ -92,20 +106,6 @@ class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureR
             return count * rows;
         } else {            
             return count * count;
-        }
-    }
-
-    @Override
-    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
-
-        try {
-            // Prepare
-            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
-            double result = getDiscernibility(groupify);
-            return new UtilityMeasureRowOriented(min, result, max);
-        } catch (Exception e) {
-            // Silently catch exceptions
-            return new UtilityMeasureRowOriented(min, Double.NaN, max);
         }
     }
 }

@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
@@ -885,6 +886,26 @@ public class StatisticsBuilder {
         }
         
         return result;
+    }
+    
+    /**
+     * Returns data utility according to various models.
+     * 
+     * @return
+     */
+    public StatisticsUtility getUtilityStatistics() {
+        
+        // Reset stop flag
+        interrupt.value = false;
+        progress.value = 0;
+        
+        // Prepare
+        DataHandleInternal input = this.handle.getAssociatedInput();
+        DataHandleInternal output = this.handle;
+        ARXConfiguration config = this.handle.getConfiguration();
+
+        // Build and return
+        return new StatisticsUtility(input, output, config, interrupt, progress);
     }
 
     /**

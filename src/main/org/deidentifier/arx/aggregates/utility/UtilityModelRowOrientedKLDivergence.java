@@ -30,7 +30,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRowOriented> {
+public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRowOriented> {
 
     /** Domain shares */
     private final UtilityDomainShare[] shares;
@@ -51,9 +51,9 @@ class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRow
      * @param input
      * @param config
      */
-    UtilityModelRowOrientedKLDivergence(WrappedBoolean interrupt,
-                                        DataHandleInternal input,
-                                        UtilityConfiguration config) {
+    public UtilityModelRowOrientedKLDivergence(WrappedBoolean interrupt,
+                                               DataHandleInternal input,
+                                               UtilityConfiguration config) {
         super(interrupt, input, config);
         this.rows = input.getNumRows();
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
@@ -65,6 +65,28 @@ class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRow
             _max *= share.getDomainSize();
         }
         this.max = (double)this.rows * log2(_max);
+    }
+    
+    @Override
+    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+        
+        try {
+    
+            // Output distribution
+            double[] outputDistribution = getDistribution(getHelper().getGroupify(output, indices), output);
+    
+            // KL divergence
+            double result = getKLDivergence(output,
+                                            inputDistribution,
+                                            outputDistribution);
+            
+            // Return
+            return new UtilityMeasureRowOriented(min, result, max);
+            
+        } catch (Exception e) {
+            // Silently catch exceptions
+            return new UtilityMeasureRowOriented(min, Double.NaN, max);
+        }
     }
     
     /**
@@ -85,7 +107,7 @@ class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRow
         }
         return area;
     }
-    
+
     /**
      * Returns the distribution per record
      * @param groupify
@@ -109,7 +131,7 @@ class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRow
         // Return
         return result;
     }
-
+    
     /**
      * Calculates KL-Divergence
      * @param handle
@@ -140,27 +162,5 @@ class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRow
         }
         
         return result;
-    }
-    
-    @Override
-    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
-        
-        try {
-    
-            // Output distribution
-            double[] outputDistribution = getDistribution(getHelper().getGroupify(output, indices), output);
-    
-            // KL divergence
-            double result = getKLDivergence(output,
-                                            inputDistribution,
-                                            outputDistribution);
-            
-            // Return
-            return new UtilityMeasureRowOriented(min, result, max);
-            
-        } catch (Exception e) {
-            // Silently catch exceptions
-            return new UtilityMeasureRowOriented(min, Double.NaN, max);
-        }
     }
 }

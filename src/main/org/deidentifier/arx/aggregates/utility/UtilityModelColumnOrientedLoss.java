@@ -28,7 +28,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureColumnOriented> {
+public class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureColumnOriented> {
     
     /** Header */
     private final int[]                indices;
@@ -41,16 +41,16 @@ class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureColumnOr
      * @param input
      * @param config
      */
-    UtilityModelColumnOrientedLoss(WrappedBoolean interrupt, 
-                                   DataHandleInternal input,
-                                   UtilityConfiguration config) {
+    public UtilityModelColumnOrientedLoss(WrappedBoolean interrupt,
+                                          DataHandleInternal input,
+                                          UtilityConfiguration config) {
         super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.shares = getHelper().getDomainShares(input, indices);
     }
     
     @Override
-    UtilityMeasureColumnOriented evaluate(DataHandleInternal output) {
+    public UtilityMeasureColumnOriented evaluate(DataHandleInternal output) {
         
         // Prepare
         double[] result = new double[indices.length];

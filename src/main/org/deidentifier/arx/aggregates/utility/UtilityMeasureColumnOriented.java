@@ -41,6 +41,15 @@ public class UtilityMeasureColumnOriented {
     private final Map<String, Double> maximum;
 
     /**
+     * Creates an empty instance
+     */
+    public UtilityMeasureColumnOriented() {
+        this.result = null;
+        this.minimum = null;
+        this.maximum = null;
+    }
+
+    /**
      * Creates a new instance
      * @param handle
      * @param indices
@@ -77,6 +86,9 @@ public class UtilityMeasureColumnOriented {
      * @return
      */
     public double getArithmeticMean(boolean normalizeBeforeAggregation) {
+        if (result == null) {
+            return Double.NaN;
+        }
         return getAggregate(UtilityAggregateFunction.ARITHMETIC_MEAN, normalizeBeforeAggregation);
     }
     
@@ -86,6 +98,9 @@ public class UtilityMeasureColumnOriented {
      * @return
      */
     public double getGeometricMean(boolean normalizeBeforeAggregation) {
+        if (result == null) {
+            return Double.NaN;
+        }
         return getAggregate(UtilityAggregateFunction.GEOMETRIC_MEAN, normalizeBeforeAggregation);
     }
 
@@ -95,6 +110,9 @@ public class UtilityMeasureColumnOriented {
      * @return
      */
     public double getMax(boolean normalizeBeforeAggregation) {
+        if (result == null) {
+            return Double.NaN;
+        }
         return getAggregate(UtilityAggregateFunction.MAX, normalizeBeforeAggregation);
     }
 
@@ -104,6 +122,9 @@ public class UtilityMeasureColumnOriented {
      * @return
      */
     public double getValue(String attribute) {
+        if (result == null) {
+            return Double.NaN;
+        }
         Double val = result.get(attribute);
         Double min = minimum.get(attribute);
         Double max = maximum.get(attribute);
@@ -117,7 +138,7 @@ public class UtilityMeasureColumnOriented {
      * @return
      */
     public boolean isAvailable(String attribute) {
-        return result.containsKey(attribute) && !Double.isNaN(result.get(attribute));
+        return result != null && result.containsKey(attribute) && !Double.isNaN(result.get(attribute));
     }
     
     
@@ -146,7 +167,8 @@ public class UtilityMeasureColumnOriented {
                 return (aggregated - min) / (max - min);
             }
         } catch (Exception e) {
-           return Double.NaN;
+            // Fail silently
+            return Double.NaN;
         }
     }
 

@@ -16,14 +16,16 @@
  */
 package org.deidentifier.arx.aggregates.utility;
 
+import org.deidentifier.arx.DataType;
+
 /**
  * Basic configuration for utility models
  * 
  * @author Fabian Prasser
  */
-class UtilityConfiguration {
+public class UtilityConfiguration {
     
-    private String suppressedValue = "*";
+    private String suppressedValue = DataType.ANY_VALUE;
 
     /**
      * @return the suppressedValue

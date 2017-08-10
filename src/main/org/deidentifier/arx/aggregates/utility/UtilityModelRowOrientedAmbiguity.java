@@ -23,11 +23,12 @@ import org.deidentifier.arx.common.WrappedBoolean;
 /**
  * Implementation of the Ambiguity measure, as described in:<br>
  * <br>
- * Goldberger, Tassa: Efficient Anonymizations with Enhanced Utility
+ * Goldberger, Tassa: "Efficient Anonymizations with Enhanced Utility"
+ * Trans Data Priv
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasureRowOriented> {
+public class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasureRowOriented> {
     
     /** Header */
     private final int[]                indices;
@@ -40,16 +41,16 @@ class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasureRowOri
      * @param input
      * @param config
      */
-    UtilityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
-                                     DataHandleInternal input,
-                                     UtilityConfiguration config) {
+    public UtilityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
+                                            DataHandleInternal input,
+                                            UtilityConfiguration config) {
         super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.shares = getHelper().getDomainShares(input, indices);
     }
     
     @Override
-    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
         
         double min = 0d;
         double result = 0d;

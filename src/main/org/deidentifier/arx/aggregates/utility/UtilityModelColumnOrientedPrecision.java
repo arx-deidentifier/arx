@@ -25,11 +25,12 @@ import org.deidentifier.arx.common.WrappedBoolean;
 /**
  * Implementation of the Precision measure, as proposed in:<br>
  * <br>
- * L. Sweeney, Achieving k-anonymity privacy protection using generalization and suppression, J Uncertain Fuzz Knowl Sys 10 (5) (2002) 571�588.
+ * L. Sweeney: "Achieving k-anonymity privacy protection using generalization and suppression"
+ * J Uncertain Fuzz Knowl Sys 10 (5) (2002) 571-588.
  * 
  * @author Fabian Prasser
  */
-class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMeasureColumnOriented> {
+public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMeasureColumnOriented> {
 
     /** Header */
     private final int[]                 indices;
@@ -42,16 +43,16 @@ class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMeasureCol
      * @param input
      * @param config
      */
-    UtilityModelColumnOrientedPrecision(WrappedBoolean interrupt,
-                                        DataHandleInternal input,
-                                        UtilityConfiguration config) {
+    public UtilityModelColumnOrientedPrecision(WrappedBoolean interrupt,
+                                               DataHandleInternal input,
+                                               UtilityConfiguration config) {
         super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.precisions = getHelper().getPrecision(input, indices);
     }
 
     @Override
-    UtilityMeasureColumnOriented evaluate(DataHandleInternal output) {
+    public UtilityMeasureColumnOriented evaluate(DataHandleInternal output) {
 
         // Prepare
         double[] result = new double[indices.length];

@@ -495,6 +495,23 @@ public class StatisticsBuilderInterruptible {
     }
 
     /**
+     * Returns data utility according to various models.
+     * 
+     * @return
+     */
+    public StatisticsUtility getUtilityStatistics() throws InterruptedException {
+        try {
+            return builder.getUtilityStatistics();
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+    
+    /**
      * Interrupts all computations.
      */
     public void interrupt() {

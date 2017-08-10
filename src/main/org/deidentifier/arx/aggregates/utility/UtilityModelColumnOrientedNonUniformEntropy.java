@@ -35,7 +35,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<UtilityMeasureColumnOriented> {
+public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<UtilityMeasureColumnOriented> {
 
     /** Header */
     private final int[]                   indices;
@@ -48,69 +48,17 @@ class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<UtilityMe
      * @param input
      * @param config
      */
-    UtilityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
-                                                DataHandleInternal input,
-                                                UtilityConfiguration config) {
+    public UtilityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
+                                                       DataHandleInternal input,
+                                                       UtilityConfiguration config) {
 
         super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.hierarchies = getHelper().getHierarchies(input, indices);
     }
 
-    /**
-     * Returns the frequencies of values in input data for all rows with transformation level >= level
-     * @param transformations
-     * @param column
-     * @param level
-     * @return
-     */
-    private Map<String, Double> getInputFrequencies( int[] transformations, int column, int level) {
-        DataHandleInternal input = getInput();
-        Map<String, Double> result = new HashMap<String, Double>();
-        for (int row = 0; row < input.getNumRows(); row++) {
-            if (transformations[row] >= level) {
-                String value = input.getValue(row, column);
-                Double count = result.get(value);
-                result.put(value, count != null ? count + 1d : 1d);
-            }
-
-            // Check
-            checkInterrupt();
-        }
-        return result;
-    }
-
-    /**
-     * Returns the frequencies of values in input data on the target level in output for all rows with transformation level >= level
-     * @param transformations
-     * @param generalizationFunctions
-     * @param column
-     * @param level
-     * @param target
-     * @return
-     */
-    private Map<String, Double> getOutputFrequencies(int[] transformations,
-                                                     Map<String, String>[] generalizationFunctions,
-                                                     int column, 
-                                                     int level, 
-                                                     int target) {
-        Map<String, Double> result = new HashMap<String, Double>();
-        DataHandleInternal input = getInput();
-        for (int row = 0; row < input.getNumRows(); row++) {
-            if (transformations[row] >= level) {
-                String value = generalizationFunctions[target].get(input.getValue(row, column));
-                Double count = result.get(value);
-                result.put(value, count != null ? count + 1d : 1d);
-            }
-
-            // Check
-            checkInterrupt();
-        }
-        return result;
-    }
-
     @Override
-    UtilityMeasureColumnOriented evaluate(final DataHandleInternal output) {
+    public UtilityMeasureColumnOriented evaluate(final DataHandleInternal output) {
         
 
         // Prepare
@@ -202,5 +150,57 @@ class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<UtilityMe
 
         // Return
         return new UtilityMeasureColumnOriented(output, indices, min, result, max);
+    }
+
+    /**
+     * Returns the frequencies of values in input data for all rows with transformation level >= level
+     * @param transformations
+     * @param column
+     * @param level
+     * @return
+     */
+    private Map<String, Double> getInputFrequencies( int[] transformations, int column, int level) {
+        DataHandleInternal input = getInput();
+        Map<String, Double> result = new HashMap<String, Double>();
+        for (int row = 0; row < input.getNumRows(); row++) {
+            if (transformations[row] >= level) {
+                String value = input.getValue(row, column);
+                Double count = result.get(value);
+                result.put(value, count != null ? count + 1d : 1d);
+            }
+
+            // Check
+            checkInterrupt();
+        }
+        return result;
+    }
+
+    /**
+     * Returns the frequencies of values in input data on the target level in output for all rows with transformation level >= level
+     * @param transformations
+     * @param generalizationFunctions
+     * @param column
+     * @param level
+     * @param target
+     * @return
+     */
+    private Map<String, Double> getOutputFrequencies(int[] transformations,
+                                                     Map<String, String>[] generalizationFunctions,
+                                                     int column, 
+                                                     int level, 
+                                                     int target) {
+        Map<String, Double> result = new HashMap<String, Double>();
+        DataHandleInternal input = getInput();
+        for (int row = 0; row < input.getNumRows(); row++) {
+            if (transformations[row] >= level) {
+                String value = generalizationFunctions[target].get(input.getValue(row, column));
+                Double count = result.get(value);
+                result.put(value, count != null ? count + 1d : 1d);
+            }
+
+            // Check
+            checkInterrupt();
+        }
+        return result;
     }
 }

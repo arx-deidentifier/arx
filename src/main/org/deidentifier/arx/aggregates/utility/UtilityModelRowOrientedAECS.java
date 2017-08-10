@@ -26,12 +26,12 @@ import org.deidentifier.arx.common.WrappedBoolean;
 /**
  * Implementation of the AECS measure, as proposed in:<br>
  * <br>
- * K. LeFevre, D. DeWitt, R. Ramakrishnan, Mondrian multidimensional k-anonymity.
+ * K. LeFevre, D. DeWitt, R. Ramakrishnan: "Mondrian multidimensional k-anonymity"
  * Proc Int Conf Data Engineering, 2006.
  * 
  * @author Fabian Prasser
  */
-class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowOriented> {
+public class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowOriented> {
 
     /** Header */
     private final int[] indices;
@@ -48,15 +48,29 @@ class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowOriented
      * @param input
      * @param config
      */
-    UtilityModelRowOrientedAECS(WrappedBoolean interrupt,
-                                DataHandleInternal input,
-                                UtilityConfiguration config) {
+    public UtilityModelRowOrientedAECS(WrappedBoolean interrupt,
+                                       DataHandleInternal input,
+                                       UtilityConfiguration config) {
         super(interrupt, input, config);
         this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
         this.min = getAverageGroupSize(getHelper().getGroupify(input, indices));
         this.max = input.getNumRows();
     }
     
+    @Override
+    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+
+        try {
+            // Prepare
+            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
+            double result = getAverageGroupSize(groupify);
+            return new UtilityMeasureRowOriented(min, result, max);
+        } catch (Exception e) {
+            // Silently catch exceptions
+            return new UtilityMeasureRowOriented(min, Double.NaN, max);
+        }
+    }
+
     /**
      * Returns the average group size for this groupify
      * @param groupify
@@ -78,19 +92,5 @@ class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowOriented
         
         // Finalize
         return sum / count;
-    }
-
-    @Override
-    UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
-
-        try {
-            // Prepare
-            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
-            double result = getAverageGroupSize(groupify);
-            return new UtilityMeasureRowOriented(min, result, max);
-        } catch (Exception e) {
-            // Silently catch exceptions
-            return new UtilityMeasureRowOriented(min, Double.NaN, max);
-        }
     }
 }
