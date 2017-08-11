@@ -186,13 +186,17 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
             // Obtain frequency
             double inputFrequency = inputDistribution[row];
             double outputFrequency = outputDistribution[row];
-            outputFrequency /= getArea(handle, row, indices, shares);
+            double area = getArea(handle, row, indices, shares);
             
-            // Compute KL-Divergence
-            result += inputFrequency * log2(inputFrequency / outputFrequency);
-            
-            // TODO: Something seems to be wrong with this implementation
-            // The value should never be <0, but it is
+            // Weird sanity check
+            if (area > outputFrequency / inputFrequency) {
+                double log = log2(inputFrequency / (outputFrequency / area));
+                log = log < 0d ? 0d : log; // Fix subtle rounding issues
+                result += inputFrequency * log;
+            } else {
+                // TODO: This should not happen, but happens quite often
+                // TODO: We ignore it, assuming that these are rounding issues
+            }
 
             // Check
             checkInterrupt();
