@@ -29,17 +29,17 @@ import java.util.regex.Pattern;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.aggregates.StatisticsUtility;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.StatisticsQuality;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to access utility statistics
+ * This class implements an example on how to access quality statistics
  *
  * @author Fabian Prasser
  */
@@ -109,7 +109,7 @@ public class Example54 extends Example {
         System.out.println("Done");
         
         // Access statistics
-        StatisticsUtility utility = result.getOutput().getStatistics().getUtilityStatistics();
+        StatisticsQuality utility = result.getOutput().getStatistics().getQualityStatistics();
         System.out.println(" - Ambiguity: " + utility.getAmbiguity().getValue());
         System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
