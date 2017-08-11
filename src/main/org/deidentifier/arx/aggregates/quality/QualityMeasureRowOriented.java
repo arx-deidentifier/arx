@@ -63,7 +63,7 @@ public class QualityMeasureRowOriented {
         double val = (this.result - this.minimum) / (this.maximum - this.minimum);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
-        return val;
+        return 1d - val;
     }
     
     /**

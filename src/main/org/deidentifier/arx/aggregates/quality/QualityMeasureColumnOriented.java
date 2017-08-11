@@ -93,7 +93,7 @@ public class QualityMeasureColumnOriented {
         double val = getAggregate(QualityAggregateFunction.ARITHMETIC_MEAN, normalizeBeforeAggregation);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
-        return val;
+        return 1d - val;
     }
     
     /**
@@ -108,7 +108,7 @@ public class QualityMeasureColumnOriented {
         double val = getAggregate(QualityAggregateFunction.GEOMETRIC_MEAN, normalizeBeforeAggregation);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
-        return val;
+        return 1d - val;
     }
 
     /**
@@ -123,7 +123,7 @@ public class QualityMeasureColumnOriented {
         double val = getAggregate(QualityAggregateFunction.MAX, normalizeBeforeAggregation);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
-        return val;
+        return 1d - val;
     }
 
     /**
@@ -141,7 +141,7 @@ public class QualityMeasureColumnOriented {
         val = (val != null && min != null && max != null ? ((val - min) / (max - min)) : Double.NaN);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
-        return val;
+        return 1d - val;
     }
     
 
