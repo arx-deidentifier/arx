@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.Groupify;
@@ -30,7 +30,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMeasureRowOriented> {
+public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMeasureRowOriented> {
 
     /**
      * Creates a new instance
@@ -45,15 +45,15 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
      * @param indices
      * @param config
      */
-    public UtilityModelRowOrientedKLDivergence(WrappedBoolean interrupt,
+    public QualityModelRowOrientedKLDivergence(WrappedBoolean interrupt,
                                                DataHandleInternal input,
                                                DataHandleInternal output,
                                                Groupify<TupleWrapper> groupedInput,
                                                Groupify<TupleWrapper> groupedOutput,
                                                String[][][] hierarchies,
-                                               UtilityDomainShare[] shares,
+                                               QualityDomainShare[] shares,
                                                int[] indices,
-                                               UtilityConfiguration config) {
+                                               QualityConfiguration config) {
         
         super(interrupt,
               input,
@@ -67,7 +67,7 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
     }
 
     @Override
-    public UtilityMeasureRowOriented evaluate() {
+    public QualityMeasureRowOriented evaluate() {
 
         try {
 
@@ -76,13 +76,13 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
             DataHandleInternal output = getOutput();
             int rows = input.getNumRows();
             int[] indices = getIndices();
-            UtilityDomainShare[] shares = getDomainShares();
+            QualityDomainShare[] shares = getDomainShares();
             double[] inputDistribution = getDistribution(getGroupedInput(), input, indices, shares, rows);
 
             // Min and max
             double min = getKLDivergence(input, inputDistribution, inputDistribution, indices, shares, rows);
             double _max = 1d;
-            for (UtilityDomainShare share : shares) {
+            for (QualityDomainShare share : shares) {
                 _max *= share.getDomainSize();
             }
             double max = (double) rows * log2(_max);
@@ -99,11 +99,11 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
                                             rows);
             
             // Return
-            return new UtilityMeasureRowOriented(min, result, max);
+            return new QualityMeasureRowOriented(min, result, max);
             
         } catch (Exception e) {
             // Silently catch exceptions
-            return new UtilityMeasureRowOriented();
+            return new QualityMeasureRowOriented();
         }
     }
     
@@ -118,7 +118,7 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
     private double getArea(DataHandleInternal handle, 
                            int row,
                            int[] indices,
-                           UtilityDomainShare[] shares) {
+                           QualityDomainShare[] shares) {
         double area = 1d;
         for (int i = 0; i < indices.length; i++) {
             int column = indices[i];
@@ -143,7 +143,7 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
     private double[] getDistribution(Groupify<TupleWrapper> groupify,
                                      DataHandleInternal handle,
                                      int[] indices,
-                                     UtilityDomainShare[] shares,
+                                     QualityDomainShare[] shares,
                                      int rows) {
         
         // Build input distribution
@@ -174,7 +174,7 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
                                    double[] inputDistribution,
                                    double[] outputDistribution,
                                    int[] indices,
-                                   UtilityDomainShare[] shares,
+                                   QualityDomainShare[] shares,
                                    int rows) {
 
         // Init

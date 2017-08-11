@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,7 +37,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<UtilityMeasureColumnOriented> {
+public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<QualityMeasureColumnOriented> {
 
     /**
      * Creates a new instance
@@ -52,15 +52,15 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
      * @param indices
      * @param config
      */
-    public UtilityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
+    public QualityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
                                                        DataHandleInternal input,
                                                        DataHandleInternal output,
                                                        Groupify<TupleWrapper> groupedInput,
                                                        Groupify<TupleWrapper> groupedOutput,
                                                        String[][][] hierarchies,
-                                                       UtilityDomainShare[] shares,
+                                                       QualityDomainShare[] shares,
                                                        int[] indices,
-                                                       UtilityConfiguration config) {
+                                                       QualityConfiguration config) {
         super(interrupt,
               input,
               output,
@@ -73,7 +73,7 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
     }
     
     @Override
-    public UtilityMeasureColumnOriented evaluate() {
+    public QualityMeasureColumnOriented evaluate() {
         
         // Prepare
         int[] indices = getIndices();
@@ -167,7 +167,7 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
         }
 
         // Return
-        return new UtilityMeasureColumnOriented(output, indices, min, result, max);
+        return new QualityMeasureColumnOriented(output, indices, min, result, max);
     }
 
     /**

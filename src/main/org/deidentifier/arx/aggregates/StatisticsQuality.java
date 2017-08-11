@@ -22,20 +22,20 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
-import org.deidentifier.arx.aggregates.utility.UtilityConfiguration;
-import org.deidentifier.arx.aggregates.utility.UtilityDomainShare;
-import org.deidentifier.arx.aggregates.utility.UtilityDomainShareRaw;
-import org.deidentifier.arx.aggregates.utility.UtilityDomainShareRedaction;
-import org.deidentifier.arx.aggregates.utility.UtilityMeasureColumnOriented;
-import org.deidentifier.arx.aggregates.utility.UtilityMeasureRowOriented;
-import org.deidentifier.arx.aggregates.utility.UtilityModelColumnOrientedLoss;
-import org.deidentifier.arx.aggregates.utility.UtilityModelColumnOrientedNonUniformEntropy;
-import org.deidentifier.arx.aggregates.utility.UtilityModelColumnOrientedPrecision;
-import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedAECS;
-import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedAmbiguity;
-import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedDiscernibility;
-import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedKLDivergence;
-import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedSSE;
+import org.deidentifier.arx.aggregates.quality.QualityConfiguration;
+import org.deidentifier.arx.aggregates.quality.QualityDomainShare;
+import org.deidentifier.arx.aggregates.quality.QualityDomainShareRaw;
+import org.deidentifier.arx.aggregates.quality.QualityDomainShareRedaction;
+import org.deidentifier.arx.aggregates.quality.QualityMeasureColumnOriented;
+import org.deidentifier.arx.aggregates.quality.QualityMeasureRowOriented;
+import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedLoss;
+import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedNonUniformEntropy;
+import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedPrecision;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAECS;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAmbiguity;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedDiscernibility;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedKLDivergence;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSSE;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -43,29 +43,29 @@ import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 /**
- * Encapsulates statistics obtained using various utility models
+ * Encapsulates statistics obtained using various quality models
  *
  * @author Fabian Prasser
  */
-public class StatisticsUtility {
+public class StatisticsQuality {
 
     /** Column-oriented model */
-    private UtilityMeasureColumnOriented loss;
+    private QualityMeasureColumnOriented loss;
     /** Column-oriented model */
-    private UtilityMeasureColumnOriented entropy;
+    private QualityMeasureColumnOriented entropy;
     /** Column-oriented model */
-    private UtilityMeasureColumnOriented precision;
+    private QualityMeasureColumnOriented precision;
 
     /** Row-oriented model */
-    private UtilityMeasureRowOriented    aecs;
+    private QualityMeasureRowOriented    aecs;
     /** Row-oriented model */
-    private UtilityMeasureRowOriented    ambiguity;
+    private QualityMeasureRowOriented    ambiguity;
     /** Row-oriented model */
-    private UtilityMeasureRowOriented    discernibility;
+    private QualityMeasureRowOriented    discernibility;
     /** Row-oriented model */
-    private UtilityMeasureRowOriented    kldivergence;
+    private QualityMeasureRowOriented    kldivergence;
     /** Row-oriented model */
-    private UtilityMeasureRowOriented    sse;
+    private QualityMeasureRowOriented    sse;
 
     /** State */
     private WrappedBoolean               stop;
@@ -80,7 +80,7 @@ public class StatisticsUtility {
      * @param stop
      * @param progress
      */
-    StatisticsUtility(DataHandleInternal input,
+    StatisticsQuality(DataHandleInternal input,
                       DataHandleInternal output,
                       ARXConfiguration config,
                       WrappedBoolean stop,
@@ -91,7 +91,7 @@ public class StatisticsUtility {
         this.progress = progress;
         
         // Build config
-        UtilityConfiguration configuration = new UtilityConfiguration();
+        QualityConfiguration configuration = new QualityConfiguration();
         // TODO: Do something with ARXConfiguration here.
         
         // Precompute frequently required resources
@@ -99,12 +99,12 @@ public class StatisticsUtility {
         Groupify<TupleWrapper> groupedInput = this.getGroupify(input, indices);
         Groupify<TupleWrapper> groupedOutput = this.getGroupify(output, indices);
         String[][][] hierarchies = getHierarchies(input, indices, configuration);
-        UtilityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
+        QualityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
         
 
         // Build
         try {
-            this.loss = new UtilityModelColumnOrientedLoss(stop,
+            this.loss = new QualityModelColumnOrientedLoss(stop,
                                                            input,
                                                            output,
                                                            groupedInput,
@@ -116,13 +116,13 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.loss = new UtilityMeasureColumnOriented();
+            this.loss = new QualityMeasureColumnOriented();
         }
         this.progress.value = 10;
 
         // Build
         try {
-            this.entropy = new UtilityModelColumnOrientedNonUniformEntropy(stop,
+            this.entropy = new QualityModelColumnOrientedNonUniformEntropy(stop,
                                                                            input,
                                                                            output,
                                                                            groupedInput,
@@ -134,13 +134,13 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.entropy = new UtilityMeasureColumnOriented();
+            this.entropy = new QualityMeasureColumnOriented();
         }
         this.progress.value = 20;
 
         // Build
         try {
-            this.precision = new UtilityModelColumnOrientedPrecision(stop,
+            this.precision = new QualityModelColumnOrientedPrecision(stop,
                                                                      input,
                                                                      output,
                                                                      groupedInput,
@@ -152,13 +152,13 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.precision = new UtilityMeasureColumnOriented();
+            this.precision = new QualityMeasureColumnOriented();
         }
         this.progress.value = 30;
 
         // Build
         try {
-            this.aecs = new UtilityModelRowOrientedAECS(stop,
+            this.aecs = new QualityModelRowOrientedAECS(stop,
                                                         input,
                                                         output,
                                                         groupedInput,
@@ -170,13 +170,13 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.aecs = new UtilityMeasureRowOriented();
+            this.aecs = new QualityMeasureRowOriented();
         }
         this.progress.value = 40;
 
         // Build
         try {
-            this.ambiguity = new UtilityModelRowOrientedAmbiguity(stop,
+            this.ambiguity = new QualityModelRowOrientedAmbiguity(stop,
                                                                   input,
                                                                   output,
                                                                   groupedInput,
@@ -188,13 +188,13 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.ambiguity = new UtilityMeasureRowOriented();
+            this.ambiguity = new QualityMeasureRowOriented();
         }
         this.progress.value = 50;
 
         // Build
         try {
-            this.discernibility = new UtilityModelRowOrientedDiscernibility(stop,
+            this.discernibility = new QualityModelRowOrientedDiscernibility(stop,
                                                                             input,
                                                                             output,
                                                                             groupedInput,
@@ -206,13 +206,13 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.discernibility = new UtilityMeasureRowOriented();
+            this.discernibility = new QualityMeasureRowOriented();
         }
         this.progress.value = 60;
 
         // Build
         try {
-            this.kldivergence = new UtilityModelRowOrientedKLDivergence(stop,
+            this.kldivergence = new QualityModelRowOrientedKLDivergence(stop,
                                                                         input,
                                                                         output,
                                                                         groupedInput,
@@ -224,13 +224,13 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.kldivergence = new UtilityMeasureRowOriented();
+            this.kldivergence = new QualityMeasureRowOriented();
         }
         this.progress.value = 70;
 
         // Build
         try {
-            this.sse = new UtilityModelRowOrientedSSE(stop,
+            this.sse = new QualityModelRowOrientedSSE(stop,
                                                       input,
                                                       output,
                                                       groupedInput,
@@ -242,7 +242,7 @@ public class StatisticsUtility {
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
-            this.sse = new UtilityMeasureRowOriented();
+            this.sse = new QualityMeasureRowOriented();
         }
         this.progress.value = 80;
         
@@ -251,97 +251,101 @@ public class StatisticsUtility {
     }
 
     /**
-     * Utility according to the "Ambiguity" model proposed in:<br>
+     * Quality according to the "Ambiguity" model proposed in:<br>
      * <br>
      * Goldberger, Tassa: "Efficient Anonymizations with Enhanced Utility"
      * Trans Data Priv
-     * @return utility measure
+     * 
+     * @return Quality measure
      */
-    public UtilityMeasureRowOriented getAmbiguity() {
+    public QualityMeasureRowOriented getAmbiguity() {
         return ambiguity;
     }
 
     /**
-     * Utility according to the "AECS" model proposed in:<br>
+     * Quality according to the "AECS" model proposed in:<br>
      * <br>
      * K. LeFevre, D. DeWitt, R. Ramakrishnan: "Mondrian multidimensional k-anonymity"
      * Proc Int Conf Data Engineering, 2006.
-     * @return utility measure
+     * 
+     * @return Quality measure
      */
-    public UtilityMeasureRowOriented getAverageClassSize() {
+    public QualityMeasureRowOriented getAverageClassSize() {
         return aecs;
     }
 
     /**
-     * Utility according to the "Discernibility" model proposed in:<br>
+     * Quality according to the "Discernibility" model proposed in:<br>
      * <br>
      * R. Bayardo, R. Agrawal: "Data privacy through optimal k-anonymization"
      * Proc Int Conf Data Engineering, 2005, pp. 217-228
      * 
-     * @return utility measure
+     * @return Quality measure
      */
-    public UtilityMeasureRowOriented getDiscernibility() {
+    public QualityMeasureRowOriented getDiscernibility() {
         return discernibility;
     }
 
     /**
-     * Utility according to the "Loss" model proposed in:<br>
+     * Quality according to the "Loss" model proposed in:<br>
      * <br>
      * Iyengar, V.: "Transforming data to satisfy privacy constraints"
      * Proc Int Conf Knowl Disc Data Mining, p. 279-288 (2002)
      * 
-     * @return utility measure
+     * @return Quality measure
      */
-    public UtilityMeasureColumnOriented getGranularity() {
+    public QualityMeasureColumnOriented getGranularity() {
         return loss;
     }
 
     /**
-     * Utility according to the "KL-Divergence" model proposed in:<br>
+     * Quality according to the "KL-Divergence" model proposed in:<br>
      * <br>
      * Ashwin Machanavajjhala, Daniel Kifer, Johannes Gehrke, Muthuramakrishnan Venkitasubramaniam: <br>
      * L-diversity: Privacy beyond k-anonymity<br>
      * ACM Transactions on Knowledge Discovery from Data (TKDD), Volume 1 Issue 1, March 2007
-     * @return utility measure
+     * 
+     * @return Quality measure
      */
-    public UtilityMeasureRowOriented getKLDivergence() {
+    public QualityMeasureRowOriented getKLDivergence() {
         return kldivergence;
     }
 
     /**
-     * Utility according to the "Non-Uniform Entropy" model proposed in:<br>
+     * Quality according to the "Non-Uniform Entropy" model proposed in:<br>
      * <br>
      * A. De Waal and L. Willenborg: "Information loss through global recoding and local suppression"
      * Netherlands Off Stat, vol. 14, pp. 17-20, 1999.
      * 
-     * @return utility measure
+     * @return Quality measure
      */
-    public UtilityMeasureColumnOriented getNonUniformEntropy() {
+    public QualityMeasureColumnOriented getNonUniformEntropy() {
         return entropy;
     }
 
     /**
-     * Utility according to the "Precision" model proposed in:<br>
+     * Quality according to the "Precision" model proposed in:<br>
      * <br>
      * L. Sweeney: "Achieving k-anonymity privacy protection using generalization and suppression"
      * J Uncertain Fuzz Knowl Sys 10 (5) (2002) 571-588.
-     * @return utility measure
+     * 
+     * @return Quality measure
      */
-    public UtilityMeasureColumnOriented getPrecision() {
+    public QualityMeasureColumnOriented getPrecision() {
         return precision;
     }
 
     /**
-     * Utility according to the "SSE" model proposed in:<br>
+     * Quality according to the "SSE" model proposed in:<br>
      * <br>
      * Soria-Comas, Jordi, et al.:
      * "t-closeness through microaggregation: Strict privacy with enhanced utility preservation."
      * IEEE Transactions on Knowledge and Data Engineering 27.11 (2015):
      * 3098-3110.
      * 
-     * @return utility measure
+     * @return Quality measure
      */
-    public UtilityMeasureRowOriented getSSE() {
+    public QualityMeasureRowOriented getSSE() {
         return sse;
     }
 
@@ -362,13 +366,13 @@ public class StatisticsUtility {
      * @param config
      * @return
      */
-    private UtilityDomainShare[] getDomainShares(DataHandleInternal handle, 
+    private QualityDomainShare[] getDomainShares(DataHandleInternal handle, 
                                                  int[] indices,
                                                  String[][][] hierarchies,
-                                                 UtilityConfiguration config) {
+                                                 QualityConfiguration config) {
 
         // Prepare
-        UtilityDomainShare[] shares = new UtilityDomainShare[indices.length];
+        QualityDomainShare[] shares = new QualityDomainShare[indices.length];
         
         // Compute domain shares
         for (int i=0; i<shares.length; i++) {
@@ -383,12 +387,12 @@ public class StatisticsUtility {
                 // Create shares for redaction-based hierarchies
                 if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
                     ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
-                    shares[i] = new UtilityDomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                    shares[i] = new QualityDomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
                     
                 // Create fallback-shares for materialized hierarchies
                 // TODO: Interval-based hierarchies are currently not compatible
                 } else {
-                    shares[i] = new UtilityDomainShareRaw(hierarchy, config.getSuppressedValue());
+                    shares[i] = new QualityDomainShareRaw(hierarchy, config.getSuppressedValue());
                 }
                 
             } catch (Exception e) {
@@ -435,7 +439,7 @@ public class StatisticsUtility {
      */
     private String[][][] getHierarchies(DataHandleInternal handle, 
                                         int[] indices,
-                                        UtilityConfiguration config) {
+                                        QualityConfiguration config) {
         
         String[][][] hierarchies = new String[indices.length][][];
         

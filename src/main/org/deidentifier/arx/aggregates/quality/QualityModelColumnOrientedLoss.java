@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.Groupify;
@@ -30,7 +30,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureColumnOriented> {
+public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureColumnOriented> {
     
 
     /**
@@ -46,15 +46,15 @@ public class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureC
      * @param indices
      * @param config
      */
-    public UtilityModelColumnOrientedLoss(WrappedBoolean interrupt,
+    public QualityModelColumnOrientedLoss(WrappedBoolean interrupt,
                                           DataHandleInternal input,
                                           DataHandleInternal output,
                                           Groupify<TupleWrapper> groupedInput,
                                           Groupify<TupleWrapper> groupedOutput,
                                           String[][][] hierarchies,
-                                          UtilityDomainShare[] shares,
+                                          QualityDomainShare[] shares,
                                           int[] indices,
-                                          UtilityConfiguration config) {
+                                          QualityConfiguration config) {
         super(interrupt,
               input,
               output,
@@ -67,12 +67,12 @@ public class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureC
     }
     
     @Override
-    public UtilityMeasureColumnOriented evaluate() {
+    public QualityMeasureColumnOriented evaluate() {
         
         // Prepare
         int[] indices = getIndices();
         DataHandleInternal output = getOutput();
-        UtilityDomainShare[] shares = getDomainShares();
+        QualityDomainShare[] shares = getDomainShares();
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
@@ -111,6 +111,6 @@ public class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureC
         }
 
         // Return
-        return new UtilityMeasureColumnOriented(output, indices, min, result, max);
+        return new QualityMeasureColumnOriented(output, indices, min, result, max);
     }
 }

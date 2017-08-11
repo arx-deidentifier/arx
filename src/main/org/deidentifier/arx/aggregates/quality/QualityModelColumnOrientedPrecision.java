@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMeasureColumnOriented> {
+public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMeasureColumnOriented> {
 
     /**
      * Creates a new instance
@@ -48,15 +48,15 @@ public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMea
      * @param indices
      * @param config
      */
-    public UtilityModelColumnOrientedPrecision(WrappedBoolean interrupt,
+    public QualityModelColumnOrientedPrecision(WrappedBoolean interrupt,
                                                DataHandleInternal input,
                                                DataHandleInternal output,
                                                Groupify<TupleWrapper> groupedInput,
                                                Groupify<TupleWrapper> groupedOutput,
                                                String[][][] hierarchies,
-                                               UtilityDomainShare[] shares,
+                                               QualityDomainShare[] shares,
                                                int[] indices,
-                                               UtilityConfiguration config) {
+                                               QualityConfiguration config) {
         super(interrupt,
               input,
               output,
@@ -69,7 +69,7 @@ public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMea
     }
     
     @Override
-    public UtilityMeasureColumnOriented evaluate() {
+    public QualityMeasureColumnOriented evaluate() {
         
         // Prepare
         int[] indices = getIndices();
@@ -115,7 +115,7 @@ public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMea
         }
 
         // Return
-        return new UtilityMeasureColumnOriented(output, indices, min, result, max);
+        return new QualityMeasureColumnOriented(output, indices, min, result, max);
     }
 
     /**

@@ -889,11 +889,11 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns data utility according to various models.
+     * Returns data quality according to various models.
      * 
      * @return
      */
-    public StatisticsUtility getUtilityStatistics() {
+    public StatisticsQuality getQualityStatistics() {
         
         // Reset stop flag
         interrupt.value = false;
@@ -905,7 +905,7 @@ public class StatisticsBuilder {
         ARXConfiguration config = this.handle.getConfiguration();
 
         // Build and return
-        return new StatisticsUtility(input, output, config, interrupt, progress);
+        return new StatisticsQuality(input, output, config, interrupt, progress);
     }
 
     /**

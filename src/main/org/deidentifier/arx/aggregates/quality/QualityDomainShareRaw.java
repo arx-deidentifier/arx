@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ import java.util.Map;
  * 
  * @author Fabian Prasser
  */
-public class UtilityDomainShareRaw implements UtilityDomainShare {
+public class QualityDomainShareRaw implements QualityDomainShare {
 
     /** Domain shares */
     private final Map<String, Double> shares;
@@ -41,7 +41,7 @@ public class UtilityDomainShareRaw implements UtilityDomainShare {
      * @param hierarchies
      * @param suppressedValue
      */
-    public UtilityDomainShareRaw(String[][] hierarchy, String suppressedValue) {
+    public QualityDomainShareRaw(String[][] hierarchy, String suppressedValue) {
         this.shares = getShares(hierarchy);
         this.domainSize = hierarchy.length;
         this.suppressedValue = suppressedValue;

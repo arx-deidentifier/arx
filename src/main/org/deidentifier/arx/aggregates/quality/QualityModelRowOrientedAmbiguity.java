@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.Groupify;
@@ -30,7 +30,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasureRowOriented> {
+public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasureRowOriented> {
 
     /**
      * Creates a new instance
@@ -45,15 +45,15 @@ public class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasur
      * @param indices
      * @param config
      */
-    public UtilityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
+    public QualityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
                                             DataHandleInternal input,
                                             DataHandleInternal output,
                                             Groupify<TupleWrapper> groupedInput,
                                             Groupify<TupleWrapper> groupedOutput,
                                             String[][][] hierarchies,
-                                            UtilityDomainShare[] shares,
+                                            QualityDomainShare[] shares,
                                             int[] indices,
-                                            UtilityConfiguration config) {
+                                            QualityConfiguration config) {
         super(interrupt,
               input,
               output,
@@ -66,12 +66,12 @@ public class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasur
     }
 
     @Override
-    public UtilityMeasureRowOriented evaluate() {
+    public QualityMeasureRowOriented evaluate() {
         
         // Prepare
         int[] indices = getIndices();
         DataHandleInternal output = getOutput();
-        UtilityDomainShare[] shares = getDomainShares();
+        QualityDomainShare[] shares = getDomainShares();
         double min = 0d;
         double result = 0d;
         double max = 0d;
@@ -91,10 +91,10 @@ public class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasur
                 result += rowResult;
                 max += rowMax;
             }
-            return new UtilityMeasureRowOriented(min, result, max);
+            return new QualityMeasureRowOriented(min, result, max);
         } catch (Exception e) {
             // Silently catch exceptions
-            return new UtilityMeasureRowOriented(Double.NaN, Double.NaN, Double.NaN);
+            return new QualityMeasureRowOriented(Double.NaN, Double.NaN, Double.NaN);
         }
     }
 }

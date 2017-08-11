@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelRowOrientedSSE extends UtilityModel<UtilityMeasureRowOriented> {
+public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOriented> {
 
     /**
      * Creates a new instance
@@ -55,15 +55,15 @@ public class UtilityModelRowOrientedSSE extends UtilityModel<UtilityMeasureRowOr
      * @param indices
      * @param config
      */
-    public UtilityModelRowOrientedSSE(WrappedBoolean interrupt,
+    public QualityModelRowOrientedSSE(WrappedBoolean interrupt,
                                       DataHandleInternal input,
                                       DataHandleInternal output,
                                       Groupify<TupleWrapper> groupedInput,
                                       Groupify<TupleWrapper> groupedOutput,
                                       String[][][] hierarchies,
-                                      UtilityDomainShare[] shares,
+                                      QualityDomainShare[] shares,
                                       int[] indices,
-                                      UtilityConfiguration config) {
+                                      QualityConfiguration config) {
         super(interrupt,
               input,
               output,
@@ -76,7 +76,7 @@ public class UtilityModelRowOrientedSSE extends UtilityModel<UtilityMeasureRowOr
     }
 
     @Override
-    public UtilityMeasureRowOriented evaluate() {
+    public QualityMeasureRowOriented evaluate() {
  
         try {
                 
@@ -107,7 +107,7 @@ public class UtilityModelRowOrientedSSE extends UtilityModel<UtilityMeasureRowOr
             
             // Check
             if (columns1.isEmpty() || columns2.isEmpty() || stdDevs.isEmpty()) {
-                return new UtilityMeasureRowOriented();
+                return new QualityMeasureRowOriented();
             }
             
             // Real distance
@@ -126,10 +126,10 @@ public class UtilityModelRowOrientedSSE extends UtilityModel<UtilityMeasureRowOr
             maxDistance /= (double)getOutput().getNumRows();
             
             // Return
-            return new UtilityMeasureRowOriented(0d, realDistance, maxDistance);
+            return new QualityMeasureRowOriented(0d, realDistance, maxDistance);
             
         } catch (Exception e) {
-            return new UtilityMeasureRowOriented();
+            return new QualityMeasureRowOriented();
         }
     }
     

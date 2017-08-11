@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.Groupify;
@@ -25,13 +25,13 @@ import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 /**
- * Base class for utility models
+ * Base class for quality models
  * 
  * @author Fabian Prasser
  * 
  * @param <T>
  */
-abstract class UtilityModel<T> {
+abstract class QualityModel<T> {
 
     /** Log */
     private static final double          LOG2 = Math.log(2);
@@ -58,7 +58,7 @@ abstract class UtilityModel<T> {
     private final String[][][]           hierarchies;
 
     /** Shares */
-    private final UtilityDomainShare[]   shares;
+    private final QualityDomainShare[]   shares;
 
     /** Value */
     private final String                 suppressedValue;
@@ -76,15 +76,15 @@ abstract class UtilityModel<T> {
      * @param indices
      * @param config
      */
-    UtilityModel(WrappedBoolean interrupt,
+    QualityModel(WrappedBoolean interrupt,
                  DataHandleInternal input,
                  DataHandleInternal output,
                  Groupify<TupleWrapper> groupedInput,
                  Groupify<TupleWrapper> groupedOutput,
                  String[][][] hierarchies,
-                 UtilityDomainShare[] shares,
+                 QualityDomainShare[] shares,
                  int[] indices,
-                 UtilityConfiguration config) {
+                 QualityConfiguration config) {
         this.input = input;
         this.output = output;
         this.groupedInput = groupedInput;
@@ -94,20 +94,6 @@ abstract class UtilityModel<T> {
         this.hierarchies = hierarchies;
         this.interrupt = interrupt;
         this.suppressedValue = config.getSuppressedValue();
-    }
-
-    /**
-     * Returns the domain shares
-     */
-    public UtilityDomainShare[] getDomainShares() {
-        return shares;
-    }
-
-    /**
-     * Returns the hierarchies
-     */
-    public String[][][] getHierarchies() {
-        return hierarchies;
     }
 
     /**
@@ -125,6 +111,13 @@ abstract class UtilityModel<T> {
     abstract T evaluate();
 
     /**
+     * Returns the domain shares
+     */
+    QualityDomainShare[] getDomainShares() {
+        return shares;
+    }
+
+    /**
      * Returns grouped input
      */
     Groupify<TupleWrapper> getGroupedInput() {
@@ -136,6 +129,13 @@ abstract class UtilityModel<T> {
      */
     Groupify<TupleWrapper> getGroupedOutput() {
         return groupedOutput;
+    }
+
+    /**
+     * Returns the hierarchies
+     */
+    String[][][] getHierarchies() {
+        return hierarchies;
     }
 
     /**

@@ -15,15 +15,14 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
-
+package org.deidentifier.arx.aggregates.quality;
 
 /**
- * Aggregate function for multi-dimensional utility measures
+ * Aggregate function for multi-dimensional quality measures
  * 
  * @author Fabian Prasser
  */
-public abstract class UtilityAggregateFunction {
+public abstract class QualityAggregateFunction {
     
     /** A label for this function*/
     private final String label;
@@ -31,7 +30,7 @@ public abstract class UtilityAggregateFunction {
     /**
      * Arithmetic mean
      */
-    static final UtilityAggregateFunction ARITHMETIC_MEAN = new UtilityAggregateFunction("Arithmetic mean"){
+    static final QualityAggregateFunction ARITHMETIC_MEAN = new QualityAggregateFunction("Arithmetic mean"){
         @Override protected double aggregate(double[] values) {
             double result = 0d;
             double count = 0d;
@@ -49,7 +48,7 @@ public abstract class UtilityAggregateFunction {
     /**
      * Geometric mean
      */
-    static final UtilityAggregateFunction GEOMETRIC_MEAN = new UtilityAggregateFunction("Geometric mean"){
+    static final QualityAggregateFunction GEOMETRIC_MEAN = new QualityAggregateFunction("Geometric mean"){
         @Override protected double aggregate(double[] values) {
             double result = 1d;
             double count = 0d;
@@ -67,7 +66,7 @@ public abstract class UtilityAggregateFunction {
     /**
      * Max
      */
-    static final UtilityAggregateFunction MAX = new UtilityAggregateFunction("Maximum"){
+    static final QualityAggregateFunction MAX = new QualityAggregateFunction("Maximum"){
         @Override protected double aggregate(double[] values) {
             double result = - Double.MAX_VALUE;
             for (int i = 0; i< values.length; i++) {
@@ -83,7 +82,7 @@ public abstract class UtilityAggregateFunction {
      * Creates a new instance
      * @param label
      */
-    UtilityAggregateFunction(String label) {
+    QualityAggregateFunction(String label) {
         this.label = label;
     }
     

@@ -15,24 +15,52 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
-public abstract class UtilityMeasure {
+/**
+ * Base class for quality measures. Results are reported in range [0, 1].
+ * Higher is better.
+ * 
+ * @author Fabian rasser
+ */
+public abstract class QualityMeasure {
     
+    /** Row-oriented model*/
     private final boolean rowOriented;
     
-    public UtilityMeasure(boolean rowOriented) {
+    /**
+     * Creates a new instance
+     * @param rowOriented
+     */
+    public QualityMeasure(boolean rowOriented) {
         this.rowOriented = rowOriented;
     }
 
+    /**
+     * Returns whether this measure is available
+     * @return
+     */
     public abstract boolean isAvailable();
     
+    /**
+     * Returns whether this measure is available for the given column
+     * @param column
+     * @return
+     */
     public abstract boolean isAvailable(String column);
     
+    /**
+     * Returns whether this is a column-oriented measure
+     * @return
+     */
     public boolean isColumnOriented() {
         return !this.rowOriented;
     }
 
+    /**
+     * Returns whether this is a row-oriented measure
+     * @return
+     */
     public boolean isRowOriented() {
         return this.rowOriented;
     }

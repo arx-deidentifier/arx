@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 
@@ -25,7 +25,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
  * 
  * @author Fabian Prasser
  */
-public class UtilityDomainShareRedaction implements UtilityDomainShare {
+public class QualityDomainShareRedaction implements QualityDomainShare {
 
     /** Meta-data about the nature of the domain of the attribute. */
     private double            maxValueLength;
@@ -53,7 +53,7 @@ public class UtilityDomainShareRedaction implements UtilityDomainShare {
      *
      * @param builder
      */
-    public UtilityDomainShareRedaction(HierarchyBuilderRedactionBased<?> builder) {
+    public QualityDomainShareRedaction(HierarchyBuilderRedactionBased<?> builder) {
 
         // Store base data
         this.domainSize = builder.getDomainSize();

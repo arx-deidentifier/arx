@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.Groupify;
@@ -31,7 +31,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowOriented> {
+public class QualityModelRowOrientedAECS extends QualityModel<QualityMeasureRowOriented> {
 
     /**
      * Creates a new instance
@@ -46,15 +46,15 @@ public class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowO
      * @param indices
      * @param config
      */
-    public UtilityModelRowOrientedAECS(WrappedBoolean interrupt,
+    public QualityModelRowOrientedAECS(WrappedBoolean interrupt,
                                        DataHandleInternal input,
                                        DataHandleInternal output,
                                        Groupify<TupleWrapper> groupedInput,
                                        Groupify<TupleWrapper> groupedOutput,
                                        String[][][] hierarchies,
-                                       UtilityDomainShare[] shares,
+                                       QualityDomainShare[] shares,
                                        int[] indices,
-                                       UtilityConfiguration config) {
+                                       QualityConfiguration config) {
         super(interrupt,
               input,
               output,
@@ -67,17 +67,17 @@ public class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowO
     }
 
     @Override
-    public UtilityMeasureRowOriented evaluate() {
+    public QualityMeasureRowOriented evaluate() {
 
         try {
             // Calculate
             double min = getAverageGroupSize(getGroupedInput());
             double max = getInput().getNumRows();
             double result = getAverageGroupSize(getGroupedOutput());
-            return new UtilityMeasureRowOriented(min, result, max);
+            return new QualityMeasureRowOriented(min, result, max);
         } catch (Exception e) {
             // Silently catch exceptions
-            return new UtilityMeasureRowOriented();
+            return new QualityMeasureRowOriented();
         }
     }
 

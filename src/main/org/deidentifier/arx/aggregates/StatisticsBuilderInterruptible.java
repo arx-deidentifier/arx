@@ -495,13 +495,13 @@ public class StatisticsBuilderInterruptible {
     }
 
     /**
-     * Returns data utility according to various models.
+     * Returns data quality according to various models.
      * 
      * @return
      */
-    public StatisticsUtility getUtilityStatistics() throws InterruptedException {
+    public StatisticsQuality getQualityStatistics() throws InterruptedException {
         try {
-            return builder.getUtilityStatistics();
+            return builder.getQualityStatistics();
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");

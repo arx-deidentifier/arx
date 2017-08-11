@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataType;
 
 /**
- * Basic configuration for utility models
+ * Basic configuration for quality models
  * 
  * @author Fabian Prasser
  */
-public class UtilityConfiguration {
+public class QualityConfiguration {
     
     /** Value*/
     private String suppressedValue = DataType.ANY_VALUE;

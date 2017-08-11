@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,11 +25,12 @@ import java.util.Map;
 import org.deidentifier.arx.DataHandleInternal;
 
 /**
- * Quality measures for individual attributes
+ * Quality measures for individual attributes. Results are reported in range [0, 1].
+ * Higher is better.
  * 
  * @author Fabian Prasser
  */
-public class UtilityMeasureColumnOriented {
+public class QualityMeasureColumnOriented {
 
     /** Values */
     private final Map<String, Double> result;
@@ -43,7 +44,7 @@ public class UtilityMeasureColumnOriented {
     /**
      * Creates an empty instance
      */
-    public UtilityMeasureColumnOriented() {
+    public QualityMeasureColumnOriented() {
         this.result = null;
         this.minimum = null;
         this.maximum = null;
@@ -57,7 +58,7 @@ public class UtilityMeasureColumnOriented {
      * @param result
      * @param maximum
      */
-    public UtilityMeasureColumnOriented(DataHandleInternal handle,
+    public QualityMeasureColumnOriented(DataHandleInternal handle,
                                         int[] indices,
                                         double[] minimum,
                                         double[] result,
@@ -81,7 +82,7 @@ public class UtilityMeasureColumnOriented {
     }
 
     /**
-     * Returns an aggregate, or NaN if not available
+     * Returns an aggregate, or NaN if not available. Higher is better.
      * @param normalizeBeforeAggregation
      * @return
      */
@@ -89,14 +90,14 @@ public class UtilityMeasureColumnOriented {
         if (result == null) {
             return Double.NaN;
         }
-        double val = getAggregate(UtilityAggregateFunction.ARITHMETIC_MEAN, normalizeBeforeAggregation);
+        double val = getAggregate(QualityAggregateFunction.ARITHMETIC_MEAN, normalizeBeforeAggregation);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
         return val;
     }
     
     /**
-     * Returns an aggregate, or NaN if not available
+     * Returns an aggregate, or NaN if not available. Higher is better.
      * @param normalizeBeforeAggregation
      * @return
      */
@@ -104,14 +105,14 @@ public class UtilityMeasureColumnOriented {
         if (result == null) {
             return Double.NaN;
         }
-        double val = getAggregate(UtilityAggregateFunction.GEOMETRIC_MEAN, normalizeBeforeAggregation);
+        double val = getAggregate(QualityAggregateFunction.GEOMETRIC_MEAN, normalizeBeforeAggregation);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
         return val;
     }
 
     /**
-     * Returns an aggregate, or NaN if not available
+     * Returns an aggregate, or NaN if not available. Higher is better.
      * @param normalizeBeforeAggregation
      * @return
      */
@@ -119,14 +120,14 @@ public class UtilityMeasureColumnOriented {
         if (result == null) {
             return Double.NaN;
         }
-        double val = getAggregate(UtilityAggregateFunction.MAX, normalizeBeforeAggregation);
+        double val = getAggregate(QualityAggregateFunction.MAX, normalizeBeforeAggregation);
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
         return val;
     }
 
     /**
-     * Returns the normalized [0, 1] value for the given attribute
+     * Returns the normalized [0, 1] value for the given attribute. Higher is better.
      * @param attribute
      * @return
      */
@@ -160,7 +161,7 @@ public class UtilityMeasureColumnOriented {
      * @param normalizeBeforeAggregation
      * @return
      */
-    private double getAggregate(UtilityAggregateFunction function,
+    private double getAggregate(QualityAggregateFunction function,
                                 boolean normalizeBeforeAggregation) {
         try {
             if (normalizeBeforeAggregation) {

@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 /**
- * A measure for the complete dataset
+ * A measure for the complete dataset. Results are reported in range [0, 1].
+ * Higher is better.
  * 
  * @author Fabian Prasser
  */
-public class UtilityMeasureRowOriented {
+public class QualityMeasureRowOriented {
 
     /** Value*/
     private final double result;
@@ -36,7 +37,7 @@ public class UtilityMeasureRowOriented {
     /**
      * Creates an empty instance
      */
-    public UtilityMeasureRowOriented() {
+    public QualityMeasureRowOriented() {
         this.result = Double.NaN;
         this.minimum = Double.NaN;
         this.maximum = Double.NaN;
@@ -48,14 +49,14 @@ public class UtilityMeasureRowOriented {
      * @param result
      * @param maximum
      */
-    public UtilityMeasureRowOriented(double minimum, double result, double maximum) {
+    public QualityMeasureRowOriented(double minimum, double result, double maximum) {
         this.result = result;
         this.minimum = minimum;
         this.maximum = maximum;
     }
 
     /**
-     * Returns the normalized [0,1] value
+     * Returns the normalized [0,1] value. Higher is better.
      * @return
      */
     public double getValue() {

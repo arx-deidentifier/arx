@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 /**
  * Base class for representing domain shares in this package
  * 
  * @author Fabian Prasser
  */
-public interface UtilityDomainShare {
+public interface QualityDomainShare {
 
     /**
      * Returns the domain size

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.aggregates.utility;
+package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.Groupify;
@@ -32,7 +32,7 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * 
  * @author Fabian Prasser
  */
-public class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureRowOriented> {
+public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityMeasureRowOriented> {
 
     /**
      * Creates a new instance
@@ -47,15 +47,15 @@ public class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityM
      * @param indices
      * @param config
      */
-    public UtilityModelRowOrientedDiscernibility(WrappedBoolean interrupt,
+    public QualityModelRowOrientedDiscernibility(WrappedBoolean interrupt,
                                                  DataHandleInternal input,
                                                  DataHandleInternal output,
                                                  Groupify<TupleWrapper> groupedInput,
                                                  Groupify<TupleWrapper> groupedOutput,
                                                  String[][][] hierarchies,
-                                                 UtilityDomainShare[] shares,
+                                                 QualityDomainShare[] shares,
                                                  int[] indices,
-                                                 UtilityConfiguration config) {
+                                                 QualityConfiguration config) {
         super(interrupt,
               input,
               output,
@@ -68,7 +68,7 @@ public class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityM
     }
 
     @Override
-    public UtilityMeasureRowOriented evaluate() {
+    public QualityMeasureRowOriented evaluate() {
         
         try {
             // Calculate
@@ -76,10 +76,10 @@ public class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityM
             double min = getDiscernibility(getGroupedInput(), rows);
             double max = rows * rows;
             double result = getDiscernibility(getGroupedOutput(), rows);
-            return new UtilityMeasureRowOriented(min, result, max);
+            return new QualityMeasureRowOriented(min, result, max);
         } catch (Exception e) {
             // Silently catch exceptions
-            return new UtilityMeasureRowOriented();
+            return new QualityMeasureRowOriented();
         }
     }
 
