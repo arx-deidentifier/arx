@@ -54,6 +54,7 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
                                                UtilityDomainShare[] shares,
                                                int[] indices,
                                                UtilityConfiguration config) {
+        
         super(interrupt,
               input,
               output,
@@ -188,7 +189,10 @@ public class UtilityModelRowOrientedKLDivergence extends UtilityModel<UtilityMea
             outputFrequency /= getArea(handle, row, indices, shares);
             
             // Compute KL-Divergence
-            result += inputFrequency * log2(inputFrequency / outputFrequency); 
+            result += inputFrequency * log2(inputFrequency / outputFrequency);
+            
+            // TODO: Something seems to be wrong with this implementation
+            // The value should never be <0, but it is
 
             // Check
             checkInterrupt();
