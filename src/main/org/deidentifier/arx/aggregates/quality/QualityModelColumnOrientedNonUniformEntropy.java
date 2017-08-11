@@ -148,6 +148,9 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                 Map<String, Double> inputFrequencies = getInputFrequencies(transformations, column, 0);
                 for (int row = 0; row < input.getNumRows(); row++) {
                     max[i] += log2(inputFrequencies.get(input.getValue(row, column)) / (double)input.getNumRows());
+
+                    // Check
+                    checkInterrupt();
                 }
 
                 // Invert sign
