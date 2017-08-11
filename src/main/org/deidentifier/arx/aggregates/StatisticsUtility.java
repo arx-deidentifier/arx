@@ -16,9 +16,16 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.utility.UtilityConfiguration;
+import org.deidentifier.arx.aggregates.utility.UtilityDomainShare;
+import org.deidentifier.arx.aggregates.utility.UtilityDomainShareRaw;
+import org.deidentifier.arx.aggregates.utility.UtilityDomainShareRedaction;
 import org.deidentifier.arx.aggregates.utility.UtilityMeasureColumnOriented;
 import org.deidentifier.arx.aggregates.utility.UtilityMeasureRowOriented;
 import org.deidentifier.arx.aggregates.utility.UtilityModelColumnOrientedLoss;
@@ -29,6 +36,8 @@ import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedAmbiguity;
 import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedDiscernibility;
 import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedKLDivergence;
 import org.deidentifier.arx.aggregates.utility.UtilityModelRowOrientedSSE;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
@@ -71,11 +80,11 @@ public class StatisticsUtility {
      * @param stop
      * @param progress
      */
-    public StatisticsUtility(DataHandleInternal input,
-                             DataHandleInternal output,
-                             ARXConfiguration config,
-                             WrappedBoolean stop,
-                             WrappedInteger progress) {
+    StatisticsUtility(DataHandleInternal input,
+                      DataHandleInternal output,
+                      ARXConfiguration config,
+                      WrappedBoolean stop,
+                      WrappedInteger progress) {
      
         // State
         this.stop = stop;
@@ -83,12 +92,27 @@ public class StatisticsUtility {
         
         // Build config
         UtilityConfiguration configuration = new UtilityConfiguration();
-        
         // TODO: Do something with ARXConfiguration here.
+        
+        // Precompute frequently required resources
+        int[] indices = getIndicesOfQuasiIdentifiers(input);
+        Groupify<TupleWrapper> groupedInput = this.getGroupify(input, indices);
+        Groupify<TupleWrapper> groupedOutput = this.getGroupify(output, indices);
+        String[][][] hierarchies = getHierarchies(input, indices, configuration);
+        UtilityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
+        
 
         // Build
         try {
-            this.loss = new UtilityModelColumnOrientedLoss(stop, input, configuration).evaluate(output);
+            this.loss = new UtilityModelColumnOrientedLoss(stop,
+                                                           input,
+                                                           output,
+                                                           groupedInput,
+                                                           groupedOutput,
+                                                           hierarchies,
+                                                           shares,
+                                                           indices,
+                                                           configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -98,7 +122,15 @@ public class StatisticsUtility {
 
         // Build
         try {
-            this.entropy = new UtilityModelColumnOrientedNonUniformEntropy(stop, input, configuration).evaluate(output);
+            this.entropy = new UtilityModelColumnOrientedNonUniformEntropy(stop,
+                                                                           input,
+                                                                           output,
+                                                                           groupedInput,
+                                                                           groupedOutput,
+                                                                           hierarchies,
+                                                                           shares,
+                                                                           indices,
+                                                                           configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -108,7 +140,15 @@ public class StatisticsUtility {
 
         // Build
         try {
-            this.precision = new UtilityModelColumnOrientedPrecision(stop, input, configuration).evaluate(output);
+            this.precision = new UtilityModelColumnOrientedPrecision(stop,
+                                                                     input,
+                                                                     output,
+                                                                     groupedInput,
+                                                                     groupedOutput,
+                                                                     hierarchies,
+                                                                     shares,
+                                                                     indices,
+                                                                     configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -118,7 +158,15 @@ public class StatisticsUtility {
 
         // Build
         try {
-            this.aecs = new UtilityModelRowOrientedAECS(stop, input, configuration).evaluate(output);
+            this.aecs = new UtilityModelRowOrientedAECS(stop,
+                                                        input,
+                                                        output,
+                                                        groupedInput,
+                                                        groupedOutput,
+                                                        hierarchies,
+                                                        shares,
+                                                        indices,
+                                                        configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -128,7 +176,15 @@ public class StatisticsUtility {
 
         // Build
         try {
-            this.ambiguity = new UtilityModelRowOrientedAmbiguity(stop, input, configuration).evaluate(output);
+            this.ambiguity = new UtilityModelRowOrientedAmbiguity(stop,
+                                                                  input,
+                                                                  output,
+                                                                  groupedInput,
+                                                                  groupedOutput,
+                                                                  hierarchies,
+                                                                  shares,
+                                                                  indices,
+                                                                  configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -138,7 +194,15 @@ public class StatisticsUtility {
 
         // Build
         try {
-            this.discernibility = new UtilityModelRowOrientedDiscernibility(stop, input, configuration).evaluate(output);
+            this.discernibility = new UtilityModelRowOrientedDiscernibility(stop,
+                                                                            input,
+                                                                            output,
+                                                                            groupedInput,
+                                                                            groupedOutput,
+                                                                            hierarchies,
+                                                                            shares,
+                                                                            indices,
+                                                                            configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -148,7 +212,15 @@ public class StatisticsUtility {
 
         // Build
         try {
-            this.kldivergence = new UtilityModelRowOrientedKLDivergence(stop, input, configuration).evaluate(output);
+            this.kldivergence = new UtilityModelRowOrientedKLDivergence(stop,
+                                                                        input,
+                                                                        output,
+                                                                        groupedInput,
+                                                                        groupedOutput,
+                                                                        hierarchies,
+                                                                        shares,
+                                                                        indices,
+                                                                        configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -158,7 +230,15 @@ public class StatisticsUtility {
 
         // Build
         try {
-            this.sse = new UtilityModelRowOrientedSSE(stop, input, configuration).evaluate(output);
+            this.sse = new UtilityModelRowOrientedSSE(stop,
+                                                      input,
+                                                      output,
+                                                      groupedInput,
+                                                      groupedOutput,
+                                                      hierarchies,
+                                                      shares,
+                                                      indices,
+                                                      configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -264,7 +344,7 @@ public class StatisticsUtility {
     public UtilityMeasureRowOriented getSSE() {
         return sse;
     }
-    
+
     /**
      * Checks whether an interruption happened.
      */
@@ -272,5 +352,163 @@ public class StatisticsUtility {
         if (stop.value) {
             throw new ComputationInterruptedException("Interrupted");
         }
+    }
+
+    /**
+     * Returns domain shares for the handle
+     * @param handle
+     * @param indices
+     * @param hierarchies
+     * @param config
+     * @return
+     */
+    private UtilityDomainShare[] getDomainShares(DataHandleInternal handle, 
+                                                 int[] indices,
+                                                 String[][][] hierarchies,
+                                                 UtilityConfiguration config) {
+
+        // Prepare
+        UtilityDomainShare[] shares = new UtilityDomainShare[indices.length];
+        
+        // Compute domain shares
+        for (int i=0; i<shares.length; i++) {
+            
+            try {
+                
+                // Extract info
+                String[][] hierarchy = hierarchies[i];
+                String attribute = handle.getAttributeName(indices[i]);
+                HierarchyBuilder<?> builder = handle.getDefinition().getHierarchyBuilder(attribute);
+                
+                // Create shares for redaction-based hierarchies
+                if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
+                    ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
+                    shares[i] = new UtilityDomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                    
+                // Create fallback-shares for materialized hierarchies
+                // TODO: Interval-based hierarchies are currently not compatible
+                } else {
+                    shares[i] = new UtilityDomainShareRaw(hierarchy, config.getSuppressedValue());
+                }
+                
+            } catch (Exception e) {
+                // Ignore silently
+                shares[i] = null;
+            }
+        }
+
+        // Return
+        return shares;
+    }
+
+    /**
+     * Returns a groupified version of the dataset
+     * 
+     * @param handle
+     * @param indices
+     * @return
+     */
+    private Groupify<TupleWrapper> getGroupify(DataHandleInternal handle, int[] indices) {
+        
+        // Prepare
+        int capacity = handle.getNumRows() / 10;
+        capacity = capacity > 10 ? capacity : 10;
+        Groupify<TupleWrapper> groupify = new Groupify<TupleWrapper>(capacity);
+        int numRows = handle.getNumRows();
+        for (int row = 0; row < numRows; row++) {
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
+            groupify.add(tuple);
+            checkInterrupt();
+        }
+        
+        return groupify;
+    }
+
+    /**
+     * Returns hierarchies, creates trivial hierarchies if no hierarchy is found.
+     * Adds an additional level, if there is no root node
+     * 
+     * @param handle
+     * @param indices
+     * @param config
+     * @return
+     */
+    private String[][][] getHierarchies(DataHandleInternal handle, 
+                                        int[] indices,
+                                        UtilityConfiguration config) {
+        
+        String[][][] hierarchies = new String[indices.length][][];
+        
+        // Collect hierarchies
+        for (int i=0; i<indices.length; i++) {
+            
+            // Extract and store
+            String attribute = handle.getAttributeName(indices[i]);
+            String[][] hierarchy = handle.getDefinition().getHierarchy(attribute);
+            
+            // If not empty
+            if (hierarchy != null && hierarchy.length != 0 && hierarchy[0] != null && hierarchy[0].length != 0) {
+                
+                // Clone
+                hierarchies[i] = hierarchy.clone();
+                
+            } else {
+                
+                // Create trivial hierarchy
+                String[] values = handle.getDistinctValues(indices[i]);
+                hierarchies[i] = new String[values.length][2];
+                for (int j = 0; j < hierarchies[i].length; j++) {
+                    hierarchies[i][j][0] = values[j];
+                    hierarchies[i][j][1] = config.getSuppressedValue();
+                }
+            }
+        }
+
+        // Fix hierarchy (if suppressed character is not contained in generalization hierarchy)
+        for (int j=0; j<indices.length; j++) {
+            
+            // Access
+            String[][] hierarchy = hierarchies[j];
+            
+            // Check if there is a problem
+            Set<String> values = new HashSet<String>();
+            for (int i = 0; i < hierarchy.length; i++) {
+                String[] levels = hierarchy[i];
+                values.add(levels[levels.length - 1]);
+            }
+            
+            // There is a problem
+            if (values.size() > 1 || !values.iterator().next().equals(config.getSuppressedValue())) {
+                for(int i = 0; i < hierarchy.length; i++) {
+                    hierarchy[i] = Arrays.copyOf(hierarchy[i], hierarchy[i].length + 1);
+                    hierarchy[i][hierarchy[i].length - 1] = config.getSuppressedValue();
+                }
+            }
+            
+            // Replace
+            hierarchies[j] = hierarchy;
+            
+            // Check
+            checkInterrupt();
+        }
+        
+        // Return
+        return hierarchies;
+    }
+
+    /**
+     * Returns indices of quasi-identifiers
+     * 
+     * @param handle
+     * @return
+     */
+    private int[] getIndicesOfQuasiIdentifiers(DataHandleInternal handle) {
+        int[] result = new int[handle.getDefinition().getQuasiIdentifyingAttributes().size()];
+        int index = 0;
+        for (String qi : handle.getDefinition().getQuasiIdentifyingAttributes()) {
+            result[index++] = handle.getColumnIndexOf(qi);
+        }
+        Arrays.sort(result);
+        return result;
     }
 }

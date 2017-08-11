@@ -34,59 +34,67 @@ import org.deidentifier.arx.common.WrappedBoolean;
  */
 public class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityMeasureRowOriented> {
 
-    /** Header */
-    private final int[] indices;
-    
-    /** Minimum */
-    private final double min;
-
-    /** Maximum */
-    private final double max;
-    
-    /** Rows*/
-    private final double rows;
-    
     /**
      * Creates a new instance
+     * 
      * @param interrupt
      * @param input
+     * @param output
+     * @param groupedInput
+     * @param groupedOutput
+     * @param hierarchies
+     * @param shares
+     * @param indices
      * @param config
      */
     public UtilityModelRowOrientedDiscernibility(WrappedBoolean interrupt,
                                                  DataHandleInternal input,
+                                                 DataHandleInternal output,
+                                                 Groupify<TupleWrapper> groupedInput,
+                                                 Groupify<TupleWrapper> groupedOutput,
+                                                 String[][][] hierarchies,
+                                                 UtilityDomainShare[] shares,
+                                                 int[] indices,
                                                  UtilityConfiguration config) {
-        super(interrupt, input, config);
-        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
-        this.min = getDiscernibility(getHelper().getGroupify(input, indices));
-        this.rows = input.getNumRows();
-        this.max = rows * rows;
+        super(interrupt,
+              input,
+              output,
+              groupedInput,
+              groupedOutput,
+              hierarchies,
+              shares,
+              indices,
+              config);
     }
-    
-    @Override
-    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
 
+    @Override
+    public UtilityMeasureRowOriented evaluate() {
+        
         try {
-            // Prepare
-            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
-            double result = getDiscernibility(groupify);
+            // Calculate
+            double rows = getInput().getNumRows();
+            double min = getDiscernibility(getGroupedInput(), rows);
+            double max = rows * rows;
+            double result = getDiscernibility(getGroupedOutput(), rows);
             return new UtilityMeasureRowOriented(min, result, max);
         } catch (Exception e) {
             // Silently catch exceptions
-            return new UtilityMeasureRowOriented(min, Double.NaN, max);
+            return new UtilityMeasureRowOriented();
         }
     }
 
     /**
      * Get discernibility
      * @param groupify
+     * @param rows
      * @return
      */
-    private double getDiscernibility(Groupify<TupleWrapper> groupify) {
+    private double getDiscernibility(Groupify<TupleWrapper> groupify, double rows) {
         Group<TupleWrapper> e = groupify.first();
-        double sum = getPenalty(e);
+        double sum = getPenalty(e, rows);
         while (e.hasNext()) {
             e = e.next();
-            sum += getPenalty(e);
+            sum += getPenalty(e, rows);
 
             // Check
             checkInterrupt();
@@ -97,9 +105,10 @@ public class UtilityModelRowOrientedDiscernibility extends UtilityModel<UtilityM
     /**
      * Returns the penalty for the given table
      * @param entry
+     * @param rows
      * @return
      */
-    private double getPenalty(Group<TupleWrapper> entry) {
+    private double getPenalty(Group<TupleWrapper> entry, double rows) {
 
         double count = entry.getCount();
         if (isSuppressed(entry)) {

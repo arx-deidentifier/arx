@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
@@ -37,31 +39,46 @@ import org.deidentifier.arx.common.WrappedBoolean;
  */
 public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<UtilityMeasureColumnOriented> {
 
-    /** Header */
-    private final int[]                   indices;
-    /** Hierarchies */
-    private final String[][][]            hierarchies;
-
     /**
      * Creates a new instance
+     * 
      * @param interrupt
      * @param input
+     * @param output
+     * @param groupedInput
+     * @param groupedOutput
+     * @param hierarchies
+     * @param shares
+     * @param indices
      * @param config
      */
     public UtilityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
                                                        DataHandleInternal input,
+                                                       DataHandleInternal output,
+                                                       Groupify<TupleWrapper> groupedInput,
+                                                       Groupify<TupleWrapper> groupedOutput,
+                                                       String[][][] hierarchies,
+                                                       UtilityDomainShare[] shares,
+                                                       int[] indices,
                                                        UtilityConfiguration config) {
-
-        super(interrupt, input, config);
-        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
-        this.hierarchies = getHelper().getHierarchies(input, indices);
+        super(interrupt,
+              input,
+              output,
+              groupedInput,
+              groupedOutput,
+              hierarchies,
+              shares,
+              indices,
+              config);
     }
-
+    
     @Override
-    public UtilityMeasureColumnOriented evaluate(final DataHandleInternal output) {
+    public UtilityMeasureColumnOriented evaluate() {
         
-
         // Prepare
+        int[] indices = getIndices();
+        DataHandleInternal output = getOutput();
+        String[][][] hierarchies = getHierarchies();
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
@@ -75,8 +92,8 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
             try {
                 
                 // Prepare
-                Map<String, String>[] generalizationFunctions = getHelper().getGeneralizationFunctions(hierarchies, i);
-                Map<String, Integer> inverseGeneralizationFunction = getHelper().getInverseGeneralizationFunction(hierarchies, i);
+                Map<String, String>[] generalizationFunctions = getGeneralizationFunctions(hierarchies, i);
+                Map<String, Integer> inverseGeneralizationFunction = getInverseGeneralizationFunction(hierarchies, i);
                 
                 // Determine generalization levels
                 final int[] transformations = new int[output.getNumRows()];
@@ -154,6 +171,32 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
     }
 
     /**
+     * Builds a generalization function mapping input values to the given level of the hierarchy
+     * 
+     * @param hierarchies
+     * @param index
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    private Map<String, String>[] getGeneralizationFunctions(String[][][] hierarchies, int index) {
+        
+        // Prepare
+        Map<String, String>[] result = new HashMap[hierarchies.length];
+
+        // For each dimension
+        for (int level = 0; level < hierarchies[index][0].length; level++) {
+            Map<String, String> map = new HashMap<String, String>();
+            for (int row = 0; row < hierarchies[index].length; row++) {
+                map.put(hierarchies[index][row][0], hierarchies[index][row][level]);
+            }
+            result[level] = map;
+        }
+        
+        // Return
+        return result;
+    }
+
+    /**
      * Returns the frequencies of values in input data for all rows with transformation level >= level
      * @param transformations
      * @param column
@@ -173,6 +216,33 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
             // Check
             checkInterrupt();
         }
+        return result;
+    }
+
+    /**
+     * Returns the inverse generalization function
+     * @param hierarchies
+     * @param index
+     * @return
+     */
+    private Map<String, Integer> getInverseGeneralizationFunction(String[][][] hierarchies, int index) {
+
+        // Prepare
+        Map<String, Integer> result = new HashMap<>();
+
+        for (int col = 0; col < hierarchies[index][0].length; col++) {
+            for (int row = 0; row < hierarchies[index].length; row++) {
+                String value = hierarchies[index][row][col];
+                if (!result.containsKey(value)) {
+                    result.put(value, col);
+                }
+            }
+            
+            // Check
+            checkInterrupt();
+        }
+        
+        // Return
         return result;
     }
 

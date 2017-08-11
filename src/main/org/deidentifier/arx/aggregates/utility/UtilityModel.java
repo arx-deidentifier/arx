@@ -18,6 +18,7 @@
 package org.deidentifier.arx.aggregates.utility;
 
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -27,67 +28,144 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * Base class for utility models
  * 
  * @author Fabian Prasser
- *
+ * 
  * @param <T>
  */
 abstract class UtilityModel<T> {
-    
-    /** Log */
-    private static final double        LOG2              = Math.log(2);
-    
-    /** Input */
-    private final DataHandleInternal input;
 
-    /** Helper */
-    private final UtilityHelper      helper;
+    /** Log */
+    private static final double          LOG2 = Math.log(2);
+
+    /** Input */
+    private final DataHandleInternal     input;
+
+    /** Output */
+    private final DataHandleInternal     output;
+
+    /** Grouped */
+    private final Groupify<TupleWrapper> groupedInput;
+
+    /** Grouped */
+    private final Groupify<TupleWrapper> groupedOutput;
+
+    /** Input */
+    private final int[]                  indices;
 
     /** Flag */
-    private final WrappedBoolean     interrupt;
+    private final WrappedBoolean         interrupt;
+
+    /** Hierarchies */
+    private final String[][][]           hierarchies;
+
+    /** Shares */
+    private final UtilityDomainShare[]   shares;
 
     /** Value */
-    private final String             suppressedValue;
+    private final String                 suppressedValue;
 
     /**
      * Creates a new instance
+     * 
      * @param interrupt
      * @param input
+     * @param output
+     * @param groupedInput
+     * @param groupedOutput
+     * @param hierarchies
+     * @param shares
+     * @param indices
      * @param config
      */
-    UtilityModel(WrappedBoolean interrupt, 
+    UtilityModel(WrappedBoolean interrupt,
                  DataHandleInternal input,
+                 DataHandleInternal output,
+                 Groupify<TupleWrapper> groupedInput,
+                 Groupify<TupleWrapper> groupedOutput,
+                 String[][][] hierarchies,
+                 UtilityDomainShare[] shares,
+                 int[] indices,
                  UtilityConfiguration config) {
         this.input = input;
+        this.output = output;
+        this.groupedInput = groupedInput;
+        this.groupedOutput = groupedOutput;
+        this.indices = indices;
+        this.shares = shares;
+        this.hierarchies = hierarchies;
         this.interrupt = interrupt;
-        this.helper = new UtilityHelper(interrupt, config);
         this.suppressedValue = config.getSuppressedValue();
     }
-    
+
+    /**
+     * Returns the domain shares
+     */
+    public UtilityDomainShare[] getDomainShares() {
+        return shares;
+    }
+
+    /**
+     * Returns the hierarchies
+     */
+    public String[][][] getHierarchies() {
+        return hierarchies;
+    }
+
     /**
      * Checks whether an interruption happened.
      */
     void checkInterrupt() {
-        if (interrupt.value) {
-            throw new ComputationInterruptedException("Interrupted");
-        }
+        if (interrupt.value) { throw new ComputationInterruptedException("Interrupted"); }
     }
 
     /**
      * Evaluates the utility measure
-     * @param output
+     * 
      * @return
      */
-    abstract T evaluate(DataHandleInternal output);
-    
-    UtilityHelper getHelper() {
-        return this.helper;
+    abstract T evaluate();
+
+    /**
+     * Returns grouped input
+     */
+    Groupify<TupleWrapper> getGroupedInput() {
+        return groupedInput;
     }
 
+    /**
+     * Returns grouped output
+     */
+    Groupify<TupleWrapper> getGroupedOutput() {
+        return groupedOutput;
+    }
+
+    /**
+     * Returns relevant indices
+     */
+    int[] getIndices() {
+        return indices;
+    }
+
+    /**
+     * Returns input
+     * 
+     * @return
+     */
     DataHandleInternal getInput() {
         return this.input;
     }
 
     /**
+     * Returns output
+     * 
+     * @return
+     */
+    DataHandleInternal getOutput() {
+        return this.output;
+    }
+
+    /**
      * Returns whether a value is suppressed
+     * 
      * @param handle
      * @param row
      * @param column
@@ -105,49 +183,44 @@ abstract class UtilityModel<T> {
 
     /**
      * We assume that an entry is suppressed, if all values are equal
+     * 
      * @param entry
      * @return
      */
     boolean isSuppressed(DataHandleInternal handle, int[] indices, int row) {
-        
+
         // Check flag
-        if (handle.isOutlier(row)) {
-            return true;
-        }
-        
+        if (handle.isOutlier(row)) { return true; }
+
         // Check values
         for (int i = 1; i < indices.length; i++) {
-            if (!handle.getValue(row, indices[i - 1]).equals(handle.getValue(row, indices[i]))) {
-                return false;
-            }
+            if (!handle.getValue(row, indices[i - 1]).equals(handle.getValue(row, indices[i]))) { return false; }
         }
         return true;
     }
-    
+
     /**
      * We assume that an entry is suppressed, if all values are equal
+     * 
      * @param entry
      * @return
      */
     boolean isSuppressed(Group<TupleWrapper> entry) {
-        
+
         // Check flag
-        if (entry.getElement().isOutlier()) {
-            return true;
-        }
-        
+        if (entry.getElement().isOutlier()) { return true; }
+
         // Check values
         String[] array = entry.getElement().getValues();
         for (int i = 1; i < array.length; i++) {
-            if (!array[i - 1].equals(array[i])) {
-                return false;
-            }
+            if (!array[i - 1].equals(array[i])) { return false; }
         }
         return true;
     }
 
     /**
      * Returns whether a value is suppressed
+     * 
      * @param value
      * @return
      */
@@ -157,6 +230,7 @@ abstract class UtilityModel<T> {
 
     /**
      * Log base-2
+     * 
      * @param d
      * @return
      */

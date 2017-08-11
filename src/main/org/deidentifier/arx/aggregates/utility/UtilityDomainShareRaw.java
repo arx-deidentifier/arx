@@ -25,16 +25,13 @@ import java.util.Map;
  * 
  * @author Fabian Prasser
  */
-class UtilityDomainShareRaw implements UtilityDomainShare {
+public class UtilityDomainShareRaw implements UtilityDomainShare {
 
     /** Domain shares */
     private final Map<String, Double> shares;
 
     /** Domain size */
     private final double              domainSize;
-
-    /** Maximum levels */
-    private final int                 maxlevels;
 
     /** Suppressed */
     private final String              suppressedValue;
@@ -44,10 +41,9 @@ class UtilityDomainShareRaw implements UtilityDomainShare {
      * @param hierarchies
      * @param suppressedValue
      */
-    UtilityDomainShareRaw(String[][] hierarchy, String suppressedValue) {
-        this.shares = getLoss(hierarchy);
+    public UtilityDomainShareRaw(String[][] hierarchy, String suppressedValue) {
+        this.shares = getShares(hierarchy);
         this.domainSize = hierarchy.length;
-        this.maxlevels = hierarchy[0].length - 1;
         this.suppressedValue = suppressedValue;
     }
     
@@ -58,11 +54,8 @@ class UtilityDomainShareRaw implements UtilityDomainShare {
     
     @Override
     public double getShare(String value, int level) {
-        for (; level <= maxlevels; level++) {
-            Double loss = this.shares.get(value + level);
-            if (loss != null) { return loss; }
-        }
-        return value.equals(suppressedValue) ? 1d : 1d / this.getDomainSize();
+        Double loss = this.shares.get(value);
+        return loss != null ? loss : (value.equals(suppressedValue) ? 1d : 1d / this.getDomainSize());
     }
 
     /**
@@ -70,53 +63,39 @@ class UtilityDomainShareRaw implements UtilityDomainShare {
      * @param hierarchy
      * @return
      */
-    private Map<String, Double> getLoss(String[][] hierarchy) {
+    private Map<String, Double> getShares(String[][] hierarchy) {
         
-        Map<String, Double> loss = new HashMap<String, Double>();
-        
-        // Prepare map:
-        // Level -> Value on level + 1 -> Count of values on level that are generalized to this value
-        Map<Integer, Map<String, Integer>> map = new HashMap<Integer, Map<String, Integer>>();
-        for (int level = 0; level < hierarchy[0].length - 1; level++) {
-            for (int row = 0; row < hierarchy.length; row++) {
-                
-                // Obtain map per level
-                Map<String, Integer> levelMap = map.get(level);
-                if (levelMap == null) {
-                    levelMap = new HashMap<String, Integer>();
-                    map.put(level, levelMap);
-                }
-                
-                // Count
-                String value = hierarchy[row][level + 1];
-                value += (level + 1);
-                Integer count = levelMap.get(value);
-                count = count == null ? 1 : count + 1;
-                levelMap.put(value, count);
-            }
-        }
+        Map<String, Double> shares = new HashMap<>();
         
         // Level 0
+        double baseFraction = 1d / (double) hierarchy.length;
         for (int row = 0; row < hierarchy.length; row++) {
             String value = hierarchy[row][0];
-            value += 0;
-            if (!loss.containsKey(value)) {
-                loss.put(value, 1d / (double) hierarchy.length);
-            }
+            shares.put(value, baseFraction);
         }
         
-        // Level > 1
-        for (int col = 1; col < hierarchy[0].length; col++) {
+        // For each generalization level
+        for (int level = 1; level < hierarchy[0].length; level++) {
+
+            // Calculate shares on this level
+            Map<String, Double> temp = new HashMap<>();
             for (int row = 0; row < hierarchy.length; row++) {
-                String value = hierarchy[row][col];
-                value += col;
-                if (!loss.containsKey(value)) {
-                    double count = map.get(col - 1).get(value);
-                    loss.put(value, (double) count / (double) hierarchy.length);
-                }
+                String value = hierarchy[row][level];
+                Double count = temp.get(value);
+                count = count == null ? 1 : count + 1;
+                temp.put(value, count);
             }
+            
+            // Normalize
+            for (String key : temp.keySet()) {
+                temp.put(key, temp.get(key) / (double) hierarchy.length);
+            }
+            
+            // Merge
+            shares.putAll(temp);
         }
         
-        return loss;
+        // Return
+        return shares;
     }
 }

@@ -18,6 +18,8 @@
 package org.deidentifier.arx.aggregates.utility;
 
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
@@ -29,32 +31,51 @@ import org.deidentifier.arx.common.WrappedBoolean;
  * @author Fabian Prasser
  */
 public class UtilityModelRowOrientedAmbiguity extends UtilityModel<UtilityMeasureRowOriented> {
-    
-    /** Header */
-    private final int[]                indices;
-    /** Domain shares */
-    private final UtilityDomainShare[] shares;
-    
+
     /**
      * Creates a new instance
+     * 
      * @param interrupt
      * @param input
+     * @param output
+     * @param groupedInput
+     * @param groupedOutput
+     * @param hierarchies
+     * @param shares
+     * @param indices
      * @param config
      */
     public UtilityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
                                             DataHandleInternal input,
+                                            DataHandleInternal output,
+                                            Groupify<TupleWrapper> groupedInput,
+                                            Groupify<TupleWrapper> groupedOutput,
+                                            String[][][] hierarchies,
+                                            UtilityDomainShare[] shares,
+                                            int[] indices,
                                             UtilityConfiguration config) {
-        super(interrupt, input, config);
-        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
-        this.shares = getHelper().getDomainShares(input, indices);
+        super(interrupt,
+              input,
+              output,
+              groupedInput,
+              groupedOutput,
+              hierarchies,
+              shares,
+              indices,
+              config);
     }
-    
+
     @Override
-    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+    public UtilityMeasureRowOriented evaluate() {
         
+        // Prepare
+        int[] indices = getIndices();
+        DataHandleInternal output = getOutput();
+        UtilityDomainShare[] shares = getDomainShares();
         double min = 0d;
         double result = 0d;
         double max = 0d;
+        
         try {
             for (int row = 0; row < output.getNumRows(); row++) {
                 double rowMin = 1d;

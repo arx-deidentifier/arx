@@ -18,6 +18,8 @@
 package org.deidentifier.arx.aggregates.utility;
 
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
@@ -30,29 +32,47 @@ import org.deidentifier.arx.common.WrappedBoolean;
  */
 public class UtilityModelColumnOrientedLoss extends UtilityModel<UtilityMeasureColumnOriented> {
     
-    /** Header */
-    private final int[]                indices;
-    /** Domain shares */
-    private final UtilityDomainShare[] shares;
-    
+
     /**
      * Creates a new instance
+     * 
      * @param interrupt
      * @param input
+     * @param output
+     * @param groupedInput
+     * @param groupedOutput
+     * @param hierarchies
+     * @param shares
+     * @param indices
      * @param config
      */
     public UtilityModelColumnOrientedLoss(WrappedBoolean interrupt,
                                           DataHandleInternal input,
+                                          DataHandleInternal output,
+                                          Groupify<TupleWrapper> groupedInput,
+                                          Groupify<TupleWrapper> groupedOutput,
+                                          String[][][] hierarchies,
+                                          UtilityDomainShare[] shares,
+                                          int[] indices,
                                           UtilityConfiguration config) {
-        super(interrupt, input, config);
-        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
-        this.shares = getHelper().getDomainShares(input, indices);
+        super(interrupt,
+              input,
+              output,
+              groupedInput,
+              groupedOutput,
+              hierarchies,
+              shares,
+              indices,
+              config);
     }
     
     @Override
-    public UtilityMeasureColumnOriented evaluate(DataHandleInternal output) {
+    public UtilityMeasureColumnOriented evaluate() {
         
         // Prepare
+        int[] indices = getIndices();
+        DataHandleInternal output = getOutput();
+        UtilityDomainShare[] shares = getDomainShares();
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];

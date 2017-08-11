@@ -17,9 +17,12 @@
 
 package org.deidentifier.arx.aggregates.utility;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.Groupify;
+import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
@@ -32,29 +35,47 @@ import org.deidentifier.arx.common.WrappedBoolean;
  */
 public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMeasureColumnOriented> {
 
-    /** Header */
-    private final int[]                 indices;
-    /** Precision */
-    private final Map<String, Double>[] precisions;
-
     /**
      * Creates a new instance
+     * 
      * @param interrupt
      * @param input
+     * @param output
+     * @param groupedInput
+     * @param groupedOutput
+     * @param hierarchies
+     * @param shares
+     * @param indices
      * @param config
      */
     public UtilityModelColumnOrientedPrecision(WrappedBoolean interrupt,
                                                DataHandleInternal input,
+                                               DataHandleInternal output,
+                                               Groupify<TupleWrapper> groupedInput,
+                                               Groupify<TupleWrapper> groupedOutput,
+                                               String[][][] hierarchies,
+                                               UtilityDomainShare[] shares,
+                                               int[] indices,
                                                UtilityConfiguration config) {
-        super(interrupt, input, config);
-        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
-        this.precisions = getHelper().getPrecision(input, indices);
+        super(interrupt,
+              input,
+              output,
+              groupedInput,
+              groupedOutput,
+              hierarchies,
+              shares,
+              indices,
+              config);
     }
-
+    
     @Override
-    public UtilityMeasureColumnOriented evaluate(DataHandleInternal output) {
-
+    public UtilityMeasureColumnOriented evaluate() {
+        
         // Prepare
+        int[] indices = getIndices();
+        DataHandleInternal output = getOutput();
+        String[][][] hierarchies = getHierarchies();
+        Map<String, Double>[] precisions = getPrecisions(hierarchies);
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
@@ -71,7 +92,7 @@ public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMea
                 try {
                     double precision = 1d;
                     if (!isSuppressed(output, indices, row)) {
-                        Double temp = this.precisions[i].get(output.getValue(row, column));
+                        Double temp = precisions[i].get(output.getValue(row, column));
                         precision = temp != null ? temp : 1d;
                     }
                     result[i] += precision;
@@ -95,5 +116,51 @@ public class UtilityModelColumnOrientedPrecision extends UtilityModel<UtilityMea
 
         // Return
         return new UtilityMeasureColumnOriented(output, indices, min, result, max);
+    }
+
+    /**
+     * Returns precisions
+     * @param hierarchies
+     * @return
+     */
+    private Map<String, Double>[] getPrecisions(String[][][] hierarchies) {
+
+        // Prepare
+        @SuppressWarnings("unchecked")
+        Map<String, Double>[] precisions = new Map[hierarchies.length];
+        
+        for (int i=0; i<precisions.length; i++) {
+            
+            try {
+                
+                // Extract info
+                String[][] hierarchy = hierarchies[i];
+                
+                // Calculate precision
+                Map<String, Double> precision = new HashMap<String, Double>();
+                for (int col = 0; col < hierarchy[0].length; col++) {
+                    for (int row = 0; row < hierarchy.length; row++) {
+                        String value = hierarchy[row][col];
+                        if (!precision.containsKey(value)) {
+                            precision.put(value, (double)col / ((double)hierarchy[0].length - 1d));
+                        }
+                    }
+                    
+                    // Check
+                    checkInterrupt();
+                }
+                
+                // Store
+                precisions[i] = precision;
+                
+            } catch (Exception e) {
+                
+                // Drop silently
+                precisions[i] = null;
+            }
+        }
+
+        // Return
+        return precisions;
     }
 }

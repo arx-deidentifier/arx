@@ -33,41 +33,51 @@ import org.deidentifier.arx.common.WrappedBoolean;
  */
 public class UtilityModelRowOrientedAECS extends UtilityModel<UtilityMeasureRowOriented> {
 
-    /** Header */
-    private final int[] indices;
-    
-    /** Minimum */
-    private final double min;
-
-    /** Maximum */
-    private final double max;
-    
     /**
      * Creates a new instance
+     * 
      * @param interrupt
      * @param input
+     * @param output
+     * @param groupedInput
+     * @param groupedOutput
+     * @param hierarchies
+     * @param shares
+     * @param indices
      * @param config
      */
     public UtilityModelRowOrientedAECS(WrappedBoolean interrupt,
                                        DataHandleInternal input,
+                                       DataHandleInternal output,
+                                       Groupify<TupleWrapper> groupedInput,
+                                       Groupify<TupleWrapper> groupedOutput,
+                                       String[][][] hierarchies,
+                                       UtilityDomainShare[] shares,
+                                       int[] indices,
                                        UtilityConfiguration config) {
-        super(interrupt, input, config);
-        this.indices = getHelper().getIndicesOfQuasiIdentifiers(input);
-        this.min = getAverageGroupSize(getHelper().getGroupify(input, indices));
-        this.max = input.getNumRows();
+        super(interrupt,
+              input,
+              output,
+              groupedInput,
+              groupedOutput,
+              hierarchies,
+              shares,
+              indices,
+              config);
     }
-    
+
     @Override
-    public UtilityMeasureRowOriented evaluate(DataHandleInternal output) {
+    public UtilityMeasureRowOriented evaluate() {
 
         try {
-            // Prepare
-            Groupify<TupleWrapper> groupify = getHelper().getGroupify(output, indices);
-            double result = getAverageGroupSize(groupify);
+            // Calculate
+            double min = getAverageGroupSize(getGroupedInput());
+            double max = getInput().getNumRows();
+            double result = getAverageGroupSize(getGroupedOutput());
             return new UtilityMeasureRowOriented(min, result, max);
         } catch (Exception e) {
             // Silently catch exceptions
-            return new UtilityMeasureRowOriented(min, Double.NaN, max);
+            return new UtilityMeasureRowOriented();
         }
     }
 

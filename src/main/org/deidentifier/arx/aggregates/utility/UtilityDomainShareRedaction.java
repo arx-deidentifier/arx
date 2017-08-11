@@ -25,7 +25,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
  * 
  * @author Fabian Prasser
  */
-class UtilityDomainShareRedaction implements UtilityDomainShare {
+public class UtilityDomainShareRedaction implements UtilityDomainShare {
 
     /** Meta-data about the nature of the domain of the attribute. */
     private double            maxValueLength;
@@ -53,7 +53,7 @@ class UtilityDomainShareRedaction implements UtilityDomainShare {
      *
      * @param builder
      */
-    UtilityDomainShareRedaction(HierarchyBuilderRedactionBased<?> builder) {
+    public UtilityDomainShareRedaction(HierarchyBuilderRedactionBased<?> builder) {
 
         // Store base data
         this.domainSize = builder.getDomainSize();
