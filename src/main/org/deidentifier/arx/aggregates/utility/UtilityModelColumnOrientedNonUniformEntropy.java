@@ -131,7 +131,7 @@ public class UtilityModelColumnOrientedNonUniformEntropy extends UtilityModel<Ut
                         // Input and output value for this cell
                         String value = input.getValue(row, column);
                         String inputValue = levelIndex == 0 ? value : generalizationFunctions[previousLevel].get(value);
-                        String outputValue = generalizationFunctions[levels.get(currentLevel)].get(value);
+                        String outputValue = generalizationFunctions[currentLevel].get(value);
                         
                         // Calculate result
                         if (transformations[row] >= currentLevel) {
