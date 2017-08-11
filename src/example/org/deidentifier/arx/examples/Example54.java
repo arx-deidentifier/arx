@@ -32,9 +32,11 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.StatisticsQuality;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
@@ -91,8 +93,9 @@ public class Example54 extends Example {
      * @throws ParseException
      * @throws IOException
      * @throws NoSuchAlgorithmException 
+     * @throws RollbackRequiredException 
      */
-    public static void main(String[] args) throws ParseException, IOException, NoSuchAlgorithmException {
+    public static void main(String[] args) throws ParseException, IOException, NoSuchAlgorithmException, RollbackRequiredException {
         
         Data data = createData("adult");
         
@@ -103,13 +106,15 @@ public class Example54 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
         config.setMaxOutliers(1d);
-        config.setQualityModel(Metric.createLossMetric());
+        config.setQualityModel(Metric.createLossMetric(0d));
         
         ARXResult result = anonymizer.anonymize(data, config);
+        DataHandle output = result.getOutput();
+        result.optimizeIterativeFast(output, 0.01d);
         System.out.println("Done");
         
         // Access statistics
-        StatisticsQuality utility = result.getOutput().getStatistics().getQualityStatistics();
+        StatisticsQuality utility = output.getStatistics().getQualityStatistics();
         System.out.println(" - Ambiguity: " + utility.getAmbiguity().getValue());
         System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
