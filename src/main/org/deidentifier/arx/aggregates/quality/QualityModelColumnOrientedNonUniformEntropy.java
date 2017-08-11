@@ -118,7 +118,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                     int previousLevel = levelIndex > 0 ? levels.get(levelIndex - 1) : currentLevel;
                     
                     // Frequencies in input or levelindex - 1 for all rows with transformation level >= level
-                    Map<String, Double> inputFrequencies = levelIndex == 0 ? inputFrequencies = getInputFrequencies(transformations, column, currentLevel)
+                    Map<String, Double> inputFrequencies = levelIndex == 0 ? getInputFrequencies(transformations, column, currentLevel)
                                                                            : getOutputFrequencies(transformations, generalizationFunctions, column, currentLevel, previousLevel);
 
                     // Frequencies of values on the given level in output for all rows with transformation level >= level
@@ -138,14 +138,18 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                             result[i] += log2(inputFrequencies.get(inputValue) / outputFrequencies.get(outputValue));
                         }
                         
-                        // Calculate maximum
-                        max[i] += log2(inputFrequencies.get(inputValue) / (double)input.getNumRows());
-
                         // Check
                         checkInterrupt();
                     }
                 }
-                    
+
+                // Calculate maximum
+                DataHandleInternal input = getInput();
+                Map<String, Double> inputFrequencies = getInputFrequencies(transformations, column, 0);
+                for (int row = 0; row < input.getNumRows(); row++) {
+                    max[i] += log2(inputFrequencies.get(input.getValue(row, column)) / (double)input.getNumRows());
+                }
+
                 // Invert sign
                 result[i] *= -1;
                 max[i] *= -1;
