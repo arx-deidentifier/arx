@@ -116,8 +116,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                                                        stdDevs.toArray(new Double[stdDevs.size()]));
             
             // Maximal distance
-            double maxDistance = getEuclideanDistance(columns1.toArray(new double[columns1.size()][]),
-                                                      stdDevs.toArray(new Double[stdDevs.size()]));
+            double maxDistance = getMaximumEuclideanDistance(columns1.toArray(new double[columns1.size()][]),
+                                                             columns2.toArray(new double[columns2.size()][]),
+                                                             stdDevs.toArray(new Double[stdDevs.size()]));
             
             // Normalize
             realDistance /= (double)columns1.size();
@@ -204,19 +205,20 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * Returns the maximal sum of the euclidean distance between all records
      * 
      * @param input
+     * @param output
      * @param inputStdDev
      * @return
      */
-    private double getEuclideanDistance(double[][] input, 
-                                        Double[] inputStdDev) {
+    private double getMaximumEuclideanDistance(double[][] input, double[][] output, Double[] inputStdDev) {
         
         // Calculate minimum and maximum
         double[] minimum = new double[input.length];
         double[] maximum = new double[input.length];
         for (int i = 0; i < input.length; i++) {
-            double[] minmax = getMinMax(input[i]);
-            minimum[i] = minmax[0];
-            maximum[i] = minmax[1];
+            double[] iminmax = getMinMax(input[i]);
+            double[] ominmax = getMinMax(output[i]);
+            minimum[i] = Math.min(iminmax[0], ominmax[0]);
+            maximum[i] = Math.max(iminmax[1], ominmax[1]);
         }
 
         // Prepare
@@ -300,7 +302,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
         double max = -Double.MAX_VALUE;
         
         // Calculate min and max
-        for (int i = 0; i < inputColumnAsNumbers.length; i += 2) {
+        for (int i = 0; i < inputColumnAsNumbers.length; i++) {
             double value = inputColumnAsNumbers[i];
             min = Math.min(min, value);
             max = Math.max(max, value);
