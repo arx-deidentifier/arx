@@ -716,7 +716,6 @@ public class StatisticsBuilder {
             throw new IllegalArgumentException("Input and output do not match");
         }
 
-
         // Build and return
         return new StatisticsQuality(input.getHandle(), output, config, interrupt, progress);
     }
