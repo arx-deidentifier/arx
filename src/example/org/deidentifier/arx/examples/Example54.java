@@ -112,9 +112,22 @@ public class Example54 extends Example {
         DataHandle output = result.getOutput();
         result.optimizeIterativeFast(output, 0.01d);
         System.out.println("Done");
+
+        // Access statistics
+        StatisticsQuality utility = data.getHandle().getStatistics().getQualityStatistics();
+        System.out.println("Input:");
+        System.out.println(" - Ambiguity: " + utility.getAmbiguity().getValue());
+        System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
+        System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
+        System.out.println(" - Granularity: " + utility.getGranularity().getArithmeticMean(false));
+        System.out.println(" - KL-Divergence: " + utility.getKullbackLeiblerDivergence().getValue());
+        System.out.println(" - Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
+        System.out.println(" - Precision: " + utility.getGeneralizationIntensity().getArithmeticMean(false));
+        System.out.println(" - SSE: " + utility.getSumOfSquaredErrors().getValue());
         
         // Access statistics
-        StatisticsQuality utility = output.getStatistics().getQualityStatistics();
+        utility = output.getStatistics().getQualityStatistics();
+        System.out.println("Output:");
         System.out.println(" - Ambiguity: " + utility.getAmbiguity().getValue());
         System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
