@@ -324,12 +324,12 @@ public class StatisticsQuality {
     }
 
     /**
-     * Returns the data types of the attributes considered
-     * 
-     * @return the datatypes
+     * Returns the data type for the attribute
+     * @param attribute
+     * @return
      */
-    public Map<String, DataType<?>> getDatatypes() {
-        return datatypes;
+    public DataType<?> getDataType(String attribute) {
+        return datatypes.get(attribute);
     }
 
     /**
@@ -425,6 +425,7 @@ public class StatisticsQuality {
         }
     }
 
+
     /**
      * Returns a list of the attributes covered
      * @param output
@@ -438,7 +439,6 @@ public class StatisticsQuality {
         }
         return result;
     }
-
 
     /**
      * Returns all data types
