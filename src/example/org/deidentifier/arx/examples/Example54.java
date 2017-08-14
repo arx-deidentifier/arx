@@ -119,9 +119,9 @@ public class Example54 extends Example {
         System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
         System.out.println(" - Granularity: " + utility.getGranularity().getArithmeticMean(false));
-        System.out.println(" - KL-Divergence: " + utility.getKLDivergence().getValue());
+        System.out.println(" - KL-Divergence: " + utility.getKullbackLeiblerDivergence().getValue());
         System.out.println(" - Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
-        System.out.println(" - Precision: " + utility.getPrecision().getArithmeticMean(false));
-        System.out.println(" - SSE: " + utility.getSSE().getValue());
+        System.out.println(" - Precision: " + utility.getGeneralizationIntensity().getArithmeticMean(false));
+        System.out.println(" - SSE: " + utility.getSumOfSquaredErrors().getValue());
     }
 }
