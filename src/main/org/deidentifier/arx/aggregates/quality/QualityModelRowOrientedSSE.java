@@ -17,16 +17,12 @@
 
 package org.deidentifier.arx.aggregates.quality;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.DataHandleInternal;
-import org.deidentifier.arx.DataType.ARXDate;
-import org.deidentifier.arx.DataType.ARXDecimal;
-import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
@@ -175,34 +171,6 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
         inputAsNumbers = getNumbersFromHierarchy(input, column, hierarchy);
         outputAsNumbers = getNumbersFromHierarchy(output, column, hierarchy);
         return new double[][]{inputAsNumbers, outputAsNumbers};
-    }
-
-    /**
-     * Converts a value into a double
-     * @param datatype
-     * @param value
-     * @return
-     */
-    private double getDouble(DataTypeWithRatioScale<?> datatype, String value) {
-        
-        Double result = null;
-        if (datatype instanceof ARXDecimal) {
-            ARXDecimal type = (ARXDecimal)datatype;
-            result = type.toDouble(type.parse(value));
-            
-        } else if (datatype instanceof ARXInteger) {
-            ARXInteger type = (ARXInteger)datatype;
-            result = type.toDouble(type.parse(value));
-            
-        } else if (datatype instanceof ARXDate) {
-            ARXDate type = (ARXDate)datatype;
-            result = type.toDouble(type.parse(value));
-        } else {
-            throw new IllegalArgumentException("Unknown data type");
-        }
-        
-        // Silently fall back to 0 for NULL values
-        return result != null ? result : 0d;
     }
 
     /**
@@ -399,7 +367,18 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
             double[] minmax = getMinMax(inputNumbers);
             double minimum = minmax[0];
             double maximum = minmax[1];
-            DataTypeWithRatioScale<?> type = (DataTypeWithRatioScale<?>)input.getDataType(attribute);
+            
+            // Create a sample of the data
+            List<String> sample = new ArrayList<>();
+            for (int row = 0; row < input.getNumRows() && sample.size() < 50; row++) {
+                if (!input.isOutlier(row)) {
+                    sample.add(input.getValue(row, column));
+                }
+            }
+            
+            // Create parsers
+            QualityConfigurationValueParser<?> valueParser = QualityConfigurationValueParser.create(input.getDataType(attribute));
+            QualityConfigurationRangeParser rangeParser = QualityConfigurationRangeParser.getParser(valueParser, sample);
             
             // Parse
             for (int row = 0; row < input.getNumRows(); row++) {
@@ -410,7 +389,11 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                     range = new double[]{minimum, maximum};
                 } else {
                     String value = output.getValue(row, column);
-                    range = getRange(value, type, minimum, maximum);    
+                    if (isSuppressed(value)) {
+                        range = new double[]{minimum, maximum};    
+                    } else {
+                        range = rangeParser.getRange(valueParser, value, minimum, maximum);
+                    }
                 }
                 
                 result[row * 2] = range[0];
@@ -446,9 +429,10 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
             
             // Parse numbers
             if (input.getDataType(attribute) instanceof DataTypeWithRatioScale) {
-                DataTypeWithRatioScale<?> type = (DataTypeWithRatioScale<?>)input.getDataType(attribute);
+
+                QualityConfigurationValueParser<?> parser = QualityConfigurationValueParser.create(input.getDataType(attribute));
                 for (int row = 0; row < input.getNumRows(); row++) {
-                    double number = getDouble(type, input.getValue(row, column));
+                    double number = parser.getDouble(input.getValue(row, column));
                     result[row * 2] = number;
                     result[row * 2 + 1] = number;
                     
@@ -556,90 +540,6 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
         }
     }
     
-
-    /**
-     * Parses different forms of transformed values
-     * @param value
-     * @param type 
-     * @return
-     * @throws ParseException 
-     */
-    private double[] getRange(String value, DataTypeWithRatioScale<?> type, double minimum, double maximum) throws ParseException {
-
-        double min, max;
-        
-        // Suppressed
-        if (isSuppressed(value)) {
-            min = minimum;
-            max = maximum;
-            
-        // Masked
-        } else if (value.contains("*")) {
-            min = Double.valueOf(value.replace('*', '0'));
-            max = Double.valueOf(value.replace('*', '9'));
-            
-        // Interval
-        } else if (value.startsWith("[") && value.endsWith("[")) {
-            min = Double.valueOf(value.substring(1, value.indexOf(",")).trim());
-            max = Double.valueOf(value.substring(value.indexOf(",") + 1, value.length() - 1).trim()) - 1d;
-
-        // Interval
-        } else if (value.startsWith("[") && value.endsWith("]")) {
-            min = Double.valueOf(value.substring(1, value.indexOf(";")).trim());
-            max = Double.valueOf(value.substring(value.indexOf(";") + 1, value.length() - 1).trim());
-
-        // Upper bound
-        } else if (value.startsWith(">") && !value.startsWith(">=")) {
-            min = Double.valueOf(value.substring(1, value.length()));
-            min += 1d; // TODO only valid for integer values   
-            max = maximum;
-            
-        // Upper bound
-        } else if (value.startsWith(">=")) {        
-            min = Double.valueOf(value.substring(2, value.length()));
-            max = maximum;
-            
-        // Lower bound
-        } else if (value.startsWith("<") && !value.startsWith("<=")) {          
-            min = minimum; 
-            max = Double.valueOf(value.substring(1, value.length()));
-            max -= -1d; // TODO only valid for integer values   
-            
-        // Lower bound
-        } else if (value.startsWith("<=")) {            
-            min = minimum; 
-            max = Double.valueOf(value.substring(2, value.length()));
-            
-        // Set
-        } else if (value.startsWith("{") && value.endsWith("}")) {
-            
-            min = Double.MAX_VALUE;
-            max = -Double.MAX_VALUE;
-            value = value.replace('{', ' ').replace('}', ' ');
-            for (String part : value.split(",")) {
-                part = part.trim();
-                if (!part.equals("")) {
-                    min = Math.min(min, Double.valueOf(part));
-                    max = Math.max(max, Double.valueOf(part));
-                }
-            }
-            
-        // Ungeneralized
-        } else {
-            min = getDouble(type, value);
-            max = min;
-        }
-        
-        // Truncate values to the actual range of values in the input dataset
-        // to prevent erroneous high distance values
-        max = Math.min(max, maximum);
-        min = Math.max(min, minimum);
-        
-        // Return
-        return new double[]{min, max};
-    }
-    
-
     /**
      * Returns the standard deviation for input data
      * @param inputColumnAsNumbers
