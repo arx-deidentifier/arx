@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -60,8 +60,8 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
      * @param config
      */
     public QualityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
-                                                       DataHandleInternal input,
-                                                       DataHandleInternal output,
+                                                       DataHandle input,
+                                                       DataHandle output,
                                                        Groupify<TupleWrapper> groupedInput,
                                                        Groupify<TupleWrapper> groupedOutput,
                                                        String[][][] hierarchies,
@@ -84,7 +84,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
         
         // Prepare
         int[] indices = getIndices();
-        DataHandleInternal output = getOutput();
+        DataHandle output = getOutput();
         String[][][] hierarchies = getHierarchies();
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
@@ -132,7 +132,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                     Map<String, Double> outputFrequencies = getOutputFrequencies(transformations, generalizationFunctions, column, currentLevel, currentLevel);
                     
                     // Sum up loss of values transformation level >= level
-                    DataHandleInternal input = getInput();
+                    DataHandle input = getInput();
                     for (int row = 0; row < input.getNumRows(); row++) {
 
                         // Input and output value for this cell
@@ -151,7 +151,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                 }
 
                 // Calculate maximum
-                DataHandleInternal input = getInput();
+                DataHandle input = getInput();
                 Map<String, Double> inputFrequencies = getInputFrequencies(transformations, column, 0);
                 for (int row = 0; row < input.getNumRows(); row++) {
                     max[i] += log2(inputFrequencies.get(input.getValue(row, column)) / (double)input.getNumRows());
@@ -218,7 +218,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
      * @return
      */
     private Map<String, Double> getInputFrequencies( int[] transformations, int column, int level) {
-        DataHandleInternal input = getInput();
+        DataHandle input = getInput();
         Map<String, Double> result = new HashMap<String, Double>();
         for (int row = 0; row < input.getNumRows(); row++) {
             if (transformations[row] >= level) {
@@ -275,7 +275,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                                                      int level, 
                                                      int target) {
         Map<String, Double> result = new HashMap<String, Double>();
-        DataHandleInternal input = getInput();
+        DataHandle input = getInput();
         for (int row = 0; row < input.getNumRows(); row++) {
             if (transformations[row] >= level) {
                 String value = generalizationFunctions[target].get(input.getValue(row, column));

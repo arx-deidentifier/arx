@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.aggregates.quality;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -46,8 +46,8 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
      * @param config
      */
     public QualityModelRowOrientedKLDivergence(WrappedBoolean interrupt,
-                                               DataHandleInternal input,
-                                               DataHandleInternal output,
+                                               DataHandle input,
+                                               DataHandle output,
                                                Groupify<TupleWrapper> groupedInput,
                                                Groupify<TupleWrapper> groupedOutput,
                                                String[][][] hierarchies,
@@ -72,8 +72,8 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
         try {
 
             // Prepare
-            DataHandleInternal input = getInput();
-            DataHandleInternal output = getOutput();
+            DataHandle input = getInput();
+            DataHandle output = getOutput();
             int rows = input.getNumRows();
             int[] indices = getIndices();
             QualityDomainShare[] shares = getDomainShares();
@@ -115,7 +115,7 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
      * @param shares
      * @return
      */
-    private double getArea(DataHandleInternal handle, 
+    private double getArea(DataHandle handle, 
                            int row,
                            int[] indices,
                            QualityDomainShare[] shares) {
@@ -141,7 +141,7 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
      * @return
      */
     private double[] getDistribution(Groupify<TupleWrapper> groupify,
-                                     DataHandleInternal handle,
+                                     DataHandle handle,
                                      int[] indices,
                                      QualityDomainShare[] shares,
                                      int rows) {
@@ -149,7 +149,7 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
         // Build input distribution
         double[] result = new double[rows];
         for (int row = 0; row < rows; row++) {
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
             double frequency = (double)groupify.get(tuple).getCount() / (double)rows;
             result[row] = frequency;
 
@@ -170,7 +170,7 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
      * @param shares
      * @return
      */
-    private double getKLDivergence(DataHandleInternal handle,
+    private double getKLDivergence(DataHandle handle,
                                    double[] inputDistribution,
                                    double[] outputDistribution,
                                    int[] indices,

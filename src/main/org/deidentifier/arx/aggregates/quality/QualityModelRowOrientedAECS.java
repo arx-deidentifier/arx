@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.aggregates.quality;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
@@ -47,8 +47,8 @@ public class QualityModelRowOrientedAECS extends QualityModel<QualityMeasureRowO
      * @param config
      */
     public QualityModelRowOrientedAECS(WrappedBoolean interrupt,
-                                       DataHandleInternal input,
-                                       DataHandleInternal output,
+                                       DataHandle input,
+                                       DataHandle output,
                                        Groupify<TupleWrapper> groupedInput,
                                        Groupify<TupleWrapper> groupedOutput,
                                        String[][][] hierarchies,

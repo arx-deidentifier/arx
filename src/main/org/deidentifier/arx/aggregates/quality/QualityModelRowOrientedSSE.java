@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
@@ -52,8 +52,8 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @param config
      */
     public QualityModelRowOrientedSSE(WrappedBoolean interrupt,
-                                      DataHandleInternal input,
-                                      DataHandleInternal output,
+                                      DataHandle input,
+                                      DataHandle output,
                                       Groupify<TupleWrapper> groupedInput,
                                       Groupify<TupleWrapper> groupedOutput,
                                       String[][][] hierarchies,
@@ -138,8 +138,8 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @param column
      * @return
      */
-    private double[][] getColumnsAsNumbers(DataHandleInternal input,
-                                           DataHandleInternal output,
+    private double[][] getColumnsAsNumbers(DataHandle input,
+                                           DataHandle output,
                                            String[][] hierarchy,
                                            int column) {
         
@@ -304,7 +304,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @param hierarchy
      * @return
      */
-    private double[] getNumbersFromHierarchy(DataHandleInternal handle,
+    private double[] getNumbersFromHierarchy(DataHandle handle,
                                              int column,
                                              String[][] hierarchy) {
 
@@ -365,7 +365,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @param column
      * @return
      */
-    private double[] getNumbersFromNumericColumn(DataHandleInternal input, int column) {
+    private double[] getNumbersFromNumericColumn(DataHandle input, int column) {
         
         try {
             
@@ -407,7 +407,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @param column
      * @return
      */
-    private double[] getNumbersFromNumericColumn(double[] inputAsNumbers, DataHandleInternal output, int column) {
+    private double[] getNumbersFromNumericColumn(double[] inputAsNumbers, DataHandle output, int column) {
         
         try {
 
@@ -460,9 +460,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @param hierarchy
      * @return
      */
-    private double[] getNumbersFromNumericColumnAndHierarchy(DataHandleInternal input,
+    private double[] getNumbersFromNumericColumnAndHierarchy(DataHandle input,
                                                              double[] inputAsNumbers,
-                                                             DataHandleInternal output,
+                                                             DataHandle output,
                                                              int column,
                                                              String[][] hierarchy) {
 
@@ -545,7 +545,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @return
      */
     private double[] getRangeFromNumericColumn(double[] inputNumbers,
-                                               DataHandleInternal output,
+                                               DataHandle output,
                                                int column) {
         
         try {

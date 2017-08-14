@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.quality.QualityConfiguration;
 import org.deidentifier.arx.aggregates.quality.QualityDomainShare;
 import org.deidentifier.arx.aggregates.quality.QualityDomainShareRaw;
@@ -80,8 +80,8 @@ public class StatisticsQuality {
      * @param stop
      * @param progress
      */
-    StatisticsQuality(DataHandleInternal input,
-                      DataHandleInternal output,
+    StatisticsQuality(DataHandle input,
+                      DataHandle output,
                       ARXConfiguration config,
                       WrappedBoolean stop,
                       WrappedInteger progress) {
@@ -366,7 +366,7 @@ public class StatisticsQuality {
      * @param config
      * @return
      */
-    private QualityDomainShare[] getDomainShares(DataHandleInternal handle, 
+    private QualityDomainShare[] getDomainShares(DataHandle handle, 
                                                  int[] indices,
                                                  String[][][] hierarchies,
                                                  QualityConfiguration config) {
@@ -412,7 +412,7 @@ public class StatisticsQuality {
      * @param indices
      * @return
      */
-    private Groupify<TupleWrapper> getGroupify(DataHandleInternal handle, int[] indices) {
+    private Groupify<TupleWrapper> getGroupify(DataHandle handle, int[] indices) {
         
         // Prepare
         int capacity = handle.getNumRows() / 10;
@@ -420,7 +420,7 @@ public class StatisticsQuality {
         Groupify<TupleWrapper> groupify = new Groupify<TupleWrapper>(capacity);
         int numRows = handle.getNumRows();
         for (int row = 0; row < numRows; row++) {
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
             groupify.add(tuple);
             checkInterrupt();
         }
@@ -437,7 +437,7 @@ public class StatisticsQuality {
      * @param config
      * @return
      */
-    private String[][][] getHierarchies(DataHandleInternal handle, 
+    private String[][][] getHierarchies(DataHandle handle, 
                                         int[] indices,
                                         QualityConfiguration config) {
         
@@ -506,7 +506,7 @@ public class StatisticsQuality {
      * @param handle
      * @return
      */
-    private int[] getIndicesOfQuasiIdentifiers(DataHandleInternal handle) {
+    private int[] getIndicesOfQuasiIdentifiers(DataHandle handle) {
         int[] result = new int[handle.getDefinition().getQuasiIdentifyingAttributes().size()];
         int index = 0;
         for (String qi : handle.getDefinition().getQuasiIdentifyingAttributes()) {

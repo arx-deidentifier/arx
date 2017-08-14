@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.aggregates.quality;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -46,8 +46,8 @@ public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasur
      * @param config
      */
     public QualityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
-                                            DataHandleInternal input,
-                                            DataHandleInternal output,
+                                            DataHandle input,
+                                            DataHandle output,
                                             Groupify<TupleWrapper> groupedInput,
                                             Groupify<TupleWrapper> groupedOutput,
                                             String[][][] hierarchies,
@@ -70,7 +70,7 @@ public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasur
         
         // Prepare
         int[] indices = getIndices();
-        DataHandleInternal output = getOutput();
+        DataHandle output = getOutput();
         QualityDomainShare[] shares = getDomainShares();
         double min = 0d;
         double result = 0d;

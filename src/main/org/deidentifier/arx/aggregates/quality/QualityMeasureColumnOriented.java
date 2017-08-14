@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 
 /**
  * Quality measures for individual attributes. Results are reported in range [0, 1].
@@ -58,7 +58,7 @@ public class QualityMeasureColumnOriented {
      * @param result
      * @param maximum
      */
-    public QualityMeasureColumnOriented(DataHandleInternal handle,
+    public QualityMeasureColumnOriented(DataHandle handle,
                                         int[] indices,
                                         double[] minimum,
                                         double[] result,

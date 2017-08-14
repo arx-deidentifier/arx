@@ -131,13 +131,6 @@ public abstract class QualityConfigurationRangeParser {
     }
     
     /**
-     * Implement this method to provide a parser
-     * @param value
-     * @return
-     */
-    protected abstract String[] getRange(String value);
-    
-    /**
      * Returns whether the parser matches the value
      * @param parser
      * @param value
@@ -147,6 +140,13 @@ public abstract class QualityConfigurationRangeParser {
         String[] range = getRange(value.replaceAll("\\s","")); // Trim
         return (range[0] != null && parser.accepts(range[0])) || (range[1] != null && parser.accepts(range[1]));
     }
+    
+    /**
+     * Implement this method to provide a parser
+     * @param value
+     * @return
+     */
+    protected abstract String[] getRange(String value);
 
     /**
      * Pack function

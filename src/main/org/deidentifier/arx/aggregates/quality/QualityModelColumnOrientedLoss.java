@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.aggregates.quality;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -47,8 +47,8 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
      * @param config
      */
     public QualityModelColumnOrientedLoss(WrappedBoolean interrupt,
-                                          DataHandleInternal input,
-                                          DataHandleInternal output,
+                                          DataHandle input,
+                                          DataHandle output,
                                           Groupify<TupleWrapper> groupedInput,
                                           Groupify<TupleWrapper> groupedOutput,
                                           String[][][] hierarchies,
@@ -71,7 +71,7 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
         
         // Prepare
         int[] indices = getIndices();
-        DataHandleInternal output = getOutput();
+        DataHandle output = getOutput();
         QualityDomainShare[] shares = getDomainShares();
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];

@@ -32,6 +32,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataScale;
@@ -682,6 +683,45 @@ public class StatisticsBuilder {
     }
 
     /**
+     * Returns data quality according to various models.
+     * 
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics() {
+        
+        // Build and return
+        return getQualityStatistics(this.handle.getHandle());
+    }
+
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output) {
+
+        // Reset stop flag
+        interrupt.value = false;
+        progress.value = 0;
+
+        // Prepare
+        DataHandleInternal input = this.handle.getAssociatedInput();
+        ARXConfiguration config = this.handle.getConfiguration();
+        
+        // Very basic check        
+        if (output.getNumRows() != input.getNumRows() ||
+            output.getNumColumns() != input.getNumColumns()) {
+            throw new IllegalArgumentException("Input and output do not match");
+        }
+
+
+        // Build and return
+        return new StatisticsQuality(input.getHandle(), output, config, interrupt, progress);
+    }
+    
+    /**
      * Returns summary statistics for all attributes.
      * 
      * @param listwiseDeletion A flag enabling list-wise deletion
@@ -886,26 +926,6 @@ public class StatisticsBuilder {
         }
         
         return result;
-    }
-    
-    /**
-     * Returns data quality according to various models.
-     * 
-     * @return
-     */
-    public StatisticsQuality getQualityStatistics() {
-        
-        // Reset stop flag
-        interrupt.value = false;
-        progress.value = 0;
-        
-        // Prepare
-        DataHandleInternal input = this.handle.getAssociatedInput();
-        DataHandleInternal output = this.handle;
-        ARXConfiguration config = this.handle.getConfiguration();
-
-        // Build and return
-        return new StatisticsQuality(input, output, config, interrupt, progress);
     }
 
     /**
@@ -1197,18 +1217,18 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Stops all computations. May lead to exceptions being thrown. Use with care.
-     */
-    void interrupt() {
-        this.interrupt.value = true;
-    }
-
-    /**
      * Returns progress data, if available
      *
      * @return
      */
     int getProgress() {
         return this.progress.value;
+    }
+
+    /**
+     * Stops all computations. May lead to exceptions being thrown. Use with care.
+     */
+    void interrupt() {
+        this.interrupt.value = true;
     }
 }

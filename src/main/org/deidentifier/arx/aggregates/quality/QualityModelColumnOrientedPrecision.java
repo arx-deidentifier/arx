@@ -20,7 +20,7 @@ package org.deidentifier.arx.aggregates.quality;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -49,8 +49,8 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
      * @param config
      */
     public QualityModelColumnOrientedPrecision(WrappedBoolean interrupt,
-                                               DataHandleInternal input,
-                                               DataHandleInternal output,
+                                               DataHandle input,
+                                               DataHandle output,
                                                Groupify<TupleWrapper> groupedInput,
                                                Groupify<TupleWrapper> groupedOutput,
                                                String[][][] hierarchies,
@@ -73,7 +73,7 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
         
         // Prepare
         int[] indices = getIndices();
-        DataHandleInternal output = getOutput();
+        DataHandle output = getOutput();
         String[][][] hierarchies = getHierarchies();
         Map<String, Double>[] precisions = getPrecisions(hierarchies);
         double[] result = new double[indices.length];

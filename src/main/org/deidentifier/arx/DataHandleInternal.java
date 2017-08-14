@@ -186,6 +186,14 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns the underlying handle. This should rarely be used.
+     * @return
+     */
+    public DataHandle getHandle() {
+        return this.handle;
+    }
+
+    /**
      * Delegate
      * @param row
      * @param column
@@ -211,11 +219,11 @@ public class DataHandleInternal {
     public int getNumRows() {   
         return handle.getNumRows();
     }
-
+  
     public StatisticsBuilder getStatisticsBuilder() {
         return this.handle.getStatistics();
     }
-  
+
     /**
      * Returns the superset, if this handle is a subset
      * @return
@@ -227,7 +235,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-
+    
     /**
      * Method
      * @param row
@@ -244,7 +252,7 @@ public class DataHandleInternal {
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-    
+
     /**
      * Returns the view
      * @return

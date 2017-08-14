@@ -17,7 +17,7 @@
 
 package org.deidentifier.arx.aggregates.quality;
 
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
@@ -37,10 +37,10 @@ abstract class QualityModel<T> {
     private static final double          LOG2 = Math.log(2);
 
     /** Input */
-    private final DataHandleInternal     input;
+    private final DataHandle     input;
 
     /** Output */
-    private final DataHandleInternal     output;
+    private final DataHandle     output;
 
     /** Grouped */
     private final Groupify<TupleWrapper> groupedInput;
@@ -77,8 +77,8 @@ abstract class QualityModel<T> {
      * @param config
      */
     QualityModel(WrappedBoolean interrupt,
-                 DataHandleInternal input,
-                 DataHandleInternal output,
+                 DataHandle input,
+                 DataHandle output,
                  Groupify<TupleWrapper> groupedInput,
                  Groupify<TupleWrapper> groupedOutput,
                  String[][][] hierarchies,
@@ -150,7 +150,7 @@ abstract class QualityModel<T> {
      * 
      * @return
      */
-    DataHandleInternal getInput() {
+    DataHandle getInput() {
         return this.input;
     }
 
@@ -159,7 +159,7 @@ abstract class QualityModel<T> {
      * 
      * @return
      */
-    DataHandleInternal getOutput() {
+    DataHandle getOutput() {
         return this.output;
     }
 
@@ -171,7 +171,7 @@ abstract class QualityModel<T> {
      * @param column
      * @return
      */
-    boolean isSuppressed(DataHandleInternal handle, int row, int column) {
+    boolean isSuppressed(DataHandle handle, int row, int column) {
 
         // Check flag
         if (handle.isOutlier(row)) {
@@ -187,7 +187,7 @@ abstract class QualityModel<T> {
      * @param entry
      * @return
      */
-    boolean isSuppressed(DataHandleInternal handle, int[] indices, int row) {
+    boolean isSuppressed(DataHandle handle, int[] indices, int row) {
 
         // Check flag
         if (handle.isOutlier(row)) { return true; }
