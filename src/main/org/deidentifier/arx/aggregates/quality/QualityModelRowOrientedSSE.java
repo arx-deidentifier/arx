@@ -139,9 +139,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @return
      */
     private double[][] getColumnsAsNumbers(DataHandleInternal input,
-                                   DataHandleInternal output,
-                                   String[][] hierarchy,
-                                   int column) {
+                                           DataHandleInternal output,
+                                           String[][] hierarchy,
+                                           int column) {
         
         // Try to parse the input into a number
         double[] inputAsNumbers = getNumbersFromNumericColumn(input, column);
@@ -150,11 +150,21 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
         // If this worked
         if (inputAsNumbers != null) {
             
+            // Try to parse the output into a number
+            outputAsNumbers = getNumbersFromNumericColumn(inputAsNumbers, output, column);
+
+            // If this worked: return
+            if (outputAsNumbers != null) {
+                // NUMBER - NUMBER
+                return new double[][]{inputAsNumbers, outputAsNumbers};
+            }
+            
             // Try to parse output based on numeric input
-            outputAsNumbers = getNumbersFromNumericColumn(input, inputAsNumbers, output, column);
+            outputAsNumbers = getRangeFromNumericColumn(inputAsNumbers, output, column);
             
             // If this worked: return
             if (outputAsNumbers != null) {
+                // NUMBER - RANGE
                 return new double[][]{inputAsNumbers, outputAsNumbers};
             }
             
@@ -163,6 +173,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
 
             // If this worked: return
             if (outputAsNumbers != null) {
+                // NUMBER - HIERARCHY
                 return new double[][]{inputAsNumbers, outputAsNumbers};
             }
         }    
@@ -170,9 +181,50 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
         // In all other cases: fall back to artificial ordinals
         inputAsNumbers = getNumbersFromHierarchy(input, column, hierarchy);
         outputAsNumbers = getNumbersFromHierarchy(output, column, hierarchy);
+        
+        // HIERARCHY - HIERARCHY
         return new double[][]{inputAsNumbers, outputAsNumbers};
     }
 
+    /**
+     * Returns the sum of the euclidean distance between all records
+     * 
+     * @param input
+     * @param output
+     * @param inputStdDev
+     * @return
+     */
+    private double getEuclideanDistance(double[][] input, 
+                                        double[][] output,
+                                        Double[] inputStdDev) {
+
+        // Prepare
+        double resultOverall = 0d;
+        
+        // For each row
+        for(int row=0; row<input[0].length; row+=2){
+                
+            // For each column
+            double resultRow = 0;
+            for(int column=0; column<input.length; column++){
+                
+                double minimum1 = input[column][row];
+                double maximum1 = input[column][row + 1];
+                double minimum2 = output[column][row];
+                double maximum2 = output[column][row + 1];
+                maximum1 = (maximum2 - minimum1) > (minimum1 - minimum2) ? maximum2 : minimum2;
+                double temp = (inputStdDev[column] == 0d) ? 0d : (minimum1 - maximum1) / inputStdDev[column];
+                resultRow += (temp * temp);
+            }
+            
+            // Summarize
+            resultOverall += Math.sqrt(resultRow);
+        }
+        
+        // Return
+        return resultOverall;
+    }
+    
     /**
      * Returns the maximal sum of the euclidean distance between all records
      * 
@@ -210,45 +262,6 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                 double maximum1 = input[column][row + 1];
                 double minimum2 = minimum[column];
                 double maximum2 = maximum[column];
-                maximum1 = (maximum2 - minimum1) > (minimum1 - minimum2) ? maximum2 : minimum2;
-                double temp = (inputStdDev[column] == 0d) ? 0d : (minimum1 - maximum1) / inputStdDev[column];
-                resultRow += (temp * temp);
-            }
-            
-            // Summarize
-            resultOverall += Math.sqrt(resultRow);
-        }
-        
-        // Return
-        return resultOverall;
-    }
-    
-    /**
-     * Returns the sum of the euclidean distance between all records
-     * 
-     * @param input
-     * @param output
-     * @param inputStdDev
-     * @return
-     */
-    private double getEuclideanDistance(double[][] input, 
-                                        double[][] output,
-                                        Double[] inputStdDev) {
-
-        // Prepare
-        double resultOverall = 0d;
-        
-        // For each row
-        for(int row=0; row<input[0].length; row+=2){
-                
-            // For each column
-            double resultRow = 0;
-            for(int column=0; column<input.length; column++){
-                
-                double minimum1 = input[column][row];
-                double maximum1 = input[column][row + 1];
-                double minimum2 = output[column][row];
-                double maximum2 = output[column][row + 1];
                 maximum1 = (maximum2 - minimum1) > (minimum1 - minimum2) ? maximum2 : minimum2;
                 double temp = (inputStdDev[column] == 0d) ? 0d : (minimum1 - maximum1) / inputStdDev[column];
                 resultRow += (temp * temp);
@@ -347,73 +360,6 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
     }
 
     /**
-     * Tries to parse numbers from output when there is a numeric input column
-     * @param input
-     * @param inputNumbers
-     * @param output
-     * @param column
-     * @return
-     */
-    private double[] getNumbersFromNumericColumn(DataHandleInternal input,
-                                                 double[] inputNumbers,
-                                                 DataHandleInternal output,
-                                                 int column) {
-        
-        try {
-            
-            // Prepare
-            String attribute = input.getAttributeName(column);
-            double[] result = new double[input.getNumRows() * 2];
-            double[] minmax = getMinMax(inputNumbers);
-            double minimum = minmax[0];
-            double maximum = minmax[1];
-            
-            // Create a sample of the data
-            List<String> sample = new ArrayList<>();
-            for (int row = 0; row < input.getNumRows() && sample.size() < 50; row++) {
-                if (!input.isOutlier(row)) {
-                    sample.add(input.getValue(row, column));
-                }
-            }
-            
-            // Create parsers
-            QualityConfigurationValueParser<?> valueParser = QualityConfigurationValueParser.create(input.getDataType(attribute));
-            QualityConfigurationRangeParser rangeParser = QualityConfigurationRangeParser.getParser(valueParser, sample);
-            
-            // Parse
-            for (int row = 0; row < input.getNumRows(); row++) {
-                
-                // Parse
-                double[] range;
-                if (output.isOutlier(row)) {
-                    range = new double[]{minimum, maximum};
-                } else {
-                    String value = output.getValue(row, column);
-                    if (isSuppressed(value)) {
-                        range = new double[]{minimum, maximum};    
-                    } else {
-                        range = rangeParser.getRange(valueParser, value, minimum, maximum);
-                    }
-                }
-                
-                result[row * 2] = range[0];
-                result[row * 2 + 1] = range[1];
-                
-                // Check
-                checkInterrupt();
-            }
-            
-            // Return
-            return result;
-            
-        } catch (Exception e) {
-            
-            // Fail silently
-            return null;
-        }
-    }
-    
-    /**
      * Parses numbers from a numeric input column
      * @param input
      * @param column
@@ -435,6 +381,57 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                     double number = parser.getDouble(input.getValue(row, column));
                     result[row * 2] = number;
                     result[row * 2 + 1] = number;
+                    
+                    // Check
+                    checkInterrupt();
+                }
+                
+                // Return
+                return result;
+            } else {
+                
+                // Return
+                return null;
+            }
+        } catch (Exception e) {
+            
+            // Fail silently
+            return null;
+        }
+    }
+
+    /**
+     * Parses numbers from a numeric output column
+     * @param inputAsNumbers
+     * @param output
+     * @param column
+     * @return
+     */
+    private double[] getNumbersFromNumericColumn(double[] inputAsNumbers, DataHandleInternal output, int column) {
+        
+        try {
+
+            // Prepare
+            String attribute = output.getAttributeName(column);
+            double[] result = new double[output.getNumRows() * 2];
+            double[] minmax = getMinMax(inputAsNumbers);
+            double minimum = minmax[0];
+            double maximum = minmax[1];
+            
+            // Parse numbers
+            if (output.getDataType(attribute) instanceof DataTypeWithRatioScale) {
+
+                QualityConfigurationValueParser<?> parser = QualityConfigurationValueParser.create(output.getDataType(attribute));
+                for (int row = 0; row < output.getNumRows(); row++) {
+                    
+                    if (output.isOutlier(row)) {
+                        result[row * 2] = minimum;
+                        result[row * 2 + 1] = maximum;    
+                    } else {   
+                        double number = parser.getDouble(output.getValue(row, column));
+                        result[row * 2] = number;
+                        result[row * 2 + 1] = number;
+                    }
                     
                     // Check
                     checkInterrupt();
@@ -528,6 +525,71 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                 // Map using hierarchy
                 result[row * 2] = min.get(value);
                 result[row * 2 + 1] = max.get(value);
+            }
+            
+            // Return
+            return result;
+            
+        } catch (Exception e) {
+            
+            // Fail silently
+            return null;
+        }
+    }
+
+    /**
+     * Tries to parse numbers from output when there is a numeric input column
+     * @param inputNumbers
+     * @param output
+     * @param column
+     * @return
+     */
+    private double[] getRangeFromNumericColumn(double[] inputNumbers,
+                                               DataHandleInternal output,
+                                               int column) {
+        
+        try {
+            
+            // Prepare
+            String attribute = output.getAttributeName(column);
+            double[] result = new double[output.getNumRows() * 2];
+            double[] minmax = getMinMax(inputNumbers);
+            double minimum = minmax[0];
+            double maximum = minmax[1];
+            
+            // Create a sample of the data
+            List<String> sample = new ArrayList<>();
+            for (int row = 0; row < output.getNumRows() && sample.size() < 50; row++) {
+                if (!output.isOutlier(row)) {
+                    sample.add(output.getValue(row, column));
+                }
+            }
+            
+            // Create parsers
+            QualityConfigurationValueParser<?> valueParser = QualityConfigurationValueParser.create(output.getDataType(attribute));
+            QualityConfigurationRangeParser rangeParser = QualityConfigurationRangeParser.getParser(valueParser, sample);
+            
+            // Parse
+            for (int row = 0; row < output.getNumRows(); row++) {
+                
+                // Parse
+                double[] range;
+                if (output.isOutlier(row)) {
+                    range = new double[]{minimum, maximum};
+                } else {
+                    String value = output.getValue(row, column);
+                    if (isSuppressed(value)) {
+                        range = new double[]{minimum, maximum};    
+                    } else {
+                        range = rangeParser.getRange(valueParser, value, minimum, maximum);
+                    }
+                }
+                
+                result[row * 2] = range[0];
+                result[row * 2 + 1] = range[1];
+                
+                // Check
+                checkInterrupt();
             }
             
             // Return
