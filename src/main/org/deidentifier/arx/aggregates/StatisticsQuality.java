@@ -16,12 +16,17 @@
  */
 package org.deidentifier.arx.aggregates;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.aggregates.quality.QualityConfiguration;
 import org.deidentifier.arx.aggregates.quality.QualityDomainShare;
 import org.deidentifier.arx.aggregates.quality.QualityDomainShareRaw;
@@ -50,27 +55,34 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 public class StatisticsQuality {
 
     /** Column-oriented model */
-    private QualityMeasureColumnOriented loss;
+    private QualityMeasureColumnOriented       loss;
     /** Column-oriented model */
-    private QualityMeasureColumnOriented entropy;
+    private QualityMeasureColumnOriented       entropy;
     /** Column-oriented model */
-    private QualityMeasureColumnOriented precision;
+    private QualityMeasureColumnOriented       precision;
 
     /** Row-oriented model */
-    private QualityMeasureRowOriented    aecs;
+    private QualityMeasureRowOriented          aecs;
     /** Row-oriented model */
-    private QualityMeasureRowOriented    ambiguity;
+    private QualityMeasureRowOriented          ambiguity;
     /** Row-oriented model */
-    private QualityMeasureRowOriented    discernibility;
+    private QualityMeasureRowOriented          discernibility;
     /** Row-oriented model */
-    private QualityMeasureRowOriented    kldivergence;
+    private QualityMeasureRowOriented          kldivergence;
     /** Row-oriented model */
-    private QualityMeasureRowOriented    sse;
+    private QualityMeasureRowOriented          sse;
+
+    /** Quality */
+    private final List<String>                 attributes;
+    /** Quality */
+    private final Map<String, DataType<?>>     datatypes;
+    /** Quality */
+    private final QualityMeasureColumnOriented missings;
 
     /** State */
-    private WrappedBoolean               stop;
+    private WrappedBoolean                     stop;
     /** State */
-    private WrappedInteger               progress;
+    private WrappedInteger                     progress;
 
     /**
      * Creates a new instance
@@ -97,7 +109,13 @@ public class StatisticsQuality {
         // Extract quasi-identifiers
         int[] indices = getIndicesOfQuasiIdentifiers(input);
         
+        // Basic measures
+        this.attributes = getAttributes(output, indices);
+        this.datatypes = getDataTypes(output, indices);
+        this.missings = getMissings(output, indices);
 
+        this.progress.value = 10;
+        
         // Special case: we are checking the input dataset
         if (input == output) {
             
@@ -112,6 +130,7 @@ public class StatisticsQuality {
             this.discernibility = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.kldivergence = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.sse = new QualityMeasureRowOriented(0d, 0d, 1d);
+            this.progress.value = 100;
             
             // Break
             return;
@@ -123,6 +142,8 @@ public class StatisticsQuality {
         String[][][] hierarchies = getHierarchies(input, indices, configuration);
         QualityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
 
+        this.progress.value = 20;
+        
         // Build
         try {
             
@@ -140,7 +161,7 @@ public class StatisticsQuality {
             // Fail silently
             this.loss = new QualityMeasureColumnOriented();
         }
-        this.progress.value = 10;
+        this.progress.value = 30;
 
         // Build
         try {
@@ -158,7 +179,7 @@ public class StatisticsQuality {
             // Fail silently
             this.entropy = new QualityMeasureColumnOriented();
         }
-        this.progress.value = 20;
+        this.progress.value = 40;
 
         // Build
         try {
@@ -176,7 +197,7 @@ public class StatisticsQuality {
             // Fail silently
             this.precision = new QualityMeasureColumnOriented();
         }
-        this.progress.value = 30;
+        this.progress.value = 50;
 
         // Build
         try {
@@ -194,7 +215,7 @@ public class StatisticsQuality {
             // Fail silently
             this.aecs = new QualityMeasureRowOriented();
         }
-        this.progress.value = 40;
+        this.progress.value = 60;
 
         // Build
         try {
@@ -212,7 +233,7 @@ public class StatisticsQuality {
             // Fail silently
             this.ambiguity = new QualityMeasureRowOriented();
         }
-        this.progress.value = 50;
+        this.progress.value = 70;
 
         // Build
         try {
@@ -230,7 +251,7 @@ public class StatisticsQuality {
             // Fail silently
             this.discernibility = new QualityMeasureRowOriented();
         }
-        this.progress.value = 60;
+        this.progress.value = 80;
 
         // Build
         try {
@@ -248,7 +269,7 @@ public class StatisticsQuality {
             // Fail silently
             this.kldivergence = new QualityMeasureRowOriented();
         }
-        this.progress.value = 70;
+        this.progress.value = 90;
 
         // Build
         try {
@@ -266,9 +287,6 @@ public class StatisticsQuality {
             // Fail silently
             this.sse = new QualityMeasureRowOriented();
         }
-        this.progress.value = 80;
-        
-        // TODO: More
         this.progress.value = 100;
     }
 
@@ -285,6 +303,15 @@ public class StatisticsQuality {
     }
 
     /**
+     * Returns a list of all attributes considered
+     * 
+     * @return the attributes
+     */
+    public List<String> getAttributes() {
+        return attributes;
+    }
+
+    /**
      * Quality according to the "AECS" model proposed in:<br>
      * <br>
      * K. LeFevre, D. DeWitt, R. Ramakrishnan: "Mondrian multidimensional k-anonymity"
@@ -294,6 +321,15 @@ public class StatisticsQuality {
      */
     public QualityMeasureRowOriented getAverageClassSize() {
         return aecs;
+    }
+
+    /**
+     * Returns the data types of the attributes considered
+     * 
+     * @return the datatypes
+     */
+    public Map<String, DataType<?>> getDatatypes() {
+        return datatypes;
     }
 
     /**
@@ -346,6 +382,15 @@ public class StatisticsQuality {
     }
 
     /**
+     * Returns the fraction of missing values of the attributes considered
+     * 
+     * @return the datatypes
+     */
+    public QualityMeasureColumnOriented getMissings() {
+        return missings;
+    }
+
+    /**
      * Quality according to the "Non-Uniform Entropy" model proposed in:<br>
      * <br>
      * A. De Waal and L. Willenborg: "Information loss through global recoding and local suppression"
@@ -378,6 +423,35 @@ public class StatisticsQuality {
         if (stop.value) {
             throw new ComputationInterruptedException("Interrupted");
         }
+    }
+
+    /**
+     * Returns a list of the attributes covered
+     * @param output
+     * @param indices
+     * @return
+     */
+    private List<String> getAttributes(DataHandle output, int[] indices) {
+        List<String> result = new ArrayList<>();
+        for (int index : indices) {
+            result.add(output.getAttributeName(index));
+        }
+        return result;
+    }
+
+
+    /**
+     * Returns all data types
+     * @param output
+     * @param indices
+     * @return
+     */
+    private Map<String, DataType<?>> getDataTypes(DataHandle output, int[] indices) {
+        Map<String, DataType<?>> result = new HashMap<>();
+        for (String attribute : getAttributes(output, indices)) {
+            result.put(attribute, output.getDataType(attribute));
+        }
+        return result;
     }
 
     /**
@@ -536,5 +610,41 @@ public class StatisticsQuality {
         }
         Arrays.sort(result);
         return result;
+    }
+
+    /**
+     * Returns the fraction of missing values
+     * @param output
+     * @param indices
+     * @return
+     */
+    private QualityMeasureColumnOriented getMissings(DataHandle output, int[] indices) {
+        
+        // Prepare
+        double[] minimum = new double[indices.length];
+        double[] result = new double[indices.length];
+        double[] maximum = new double[indices.length];
+        Arrays.fill(minimum, 0d);
+        Arrays.fill(maximum, 1d);
+        
+        // Calculate
+        for (int i = 0; i < indices.length; i++) {
+            int column = indices[i];
+            double missings = 0d;
+            for (int row = 0; row < output.getNumRows(); row++) {
+                if (output.isOutlier(row) || output.getValue(row, column).equals(DataType.ANY_VALUE) || 
+                    output.getValue(row, column).equals(DataType.NULL_VALUE)) {
+                    missings += 1d;
+                }
+                
+                // Check
+                checkInterrupt();
+            } 
+            missings /= (double)output.getNumRows();
+            result[i] = 1d - missings;
+        }
+
+        // Return
+        return new QualityMeasureColumnOriented(output, indices, minimum, result, maximum);
     }
 }
