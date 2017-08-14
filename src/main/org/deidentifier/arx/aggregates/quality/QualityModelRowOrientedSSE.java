@@ -185,20 +185,24 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      */
     private double getDouble(DataTypeWithRatioScale<?> datatype, String value) {
         
+        Double result = null;
         if (datatype instanceof ARXDecimal) {
             ARXDecimal type = (ARXDecimal)datatype;
-            return type.toDouble(type.parse(value));
+            result = type.toDouble(type.parse(value));
             
         } else if (datatype instanceof ARXInteger) {
             ARXInteger type = (ARXInteger)datatype;
-            return type.toDouble(type.parse(value));
+            result = type.toDouble(type.parse(value));
             
         } else if (datatype instanceof ARXDate) {
             ARXDate type = (ARXDate)datatype;
-            return type.toDouble(type.parse(value));
+            result = type.toDouble(type.parse(value));
         } else {
             throw new IllegalArgumentException("Unknown data type");
         }
+        
+        // Silently fall back to 0 for NULL values
+        return result != null ? result : 0d;
     }
 
     /**
