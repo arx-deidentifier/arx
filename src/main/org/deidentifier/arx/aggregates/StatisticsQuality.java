@@ -94,16 +94,38 @@ public class StatisticsQuality {
         QualityConfiguration configuration = new QualityConfiguration();
         // TODO: Do something with ARXConfiguration here.
         
-        // Precompute frequently required resources
+        // Extract quasi-identifiers
         int[] indices = getIndicesOfQuasiIdentifiers(input);
+        
+
+        // Special case: we are checking the input dataset
+        if (input == output) {
+            
+            // Column oriented
+            this.loss = new QualityMeasureColumnOriented(input, indices);
+            this.entropy = new QualityMeasureColumnOriented(input, indices);
+            this.precision = new QualityMeasureColumnOriented(input, indices);
+
+            // Row oriented
+            this.aecs = new QualityMeasureRowOriented(0d, 0d, 1d);
+            this.ambiguity = new QualityMeasureRowOriented(0d, 0d, 1d);
+            this.discernibility = new QualityMeasureRowOriented(0d, 0d, 1d);
+            this.kldivergence = new QualityMeasureRowOriented(0d, 0d, 1d);
+            this.sse = new QualityMeasureRowOriented(0d, 0d, 1d);
+            
+            // Break
+            return;
+        }
+        
+        // Pre-computed frequently needed data
         Groupify<TupleWrapper> groupedInput = this.getGroupify(input, indices);
         Groupify<TupleWrapper> groupedOutput = this.getGroupify(output, indices);
         String[][][] hierarchies = getHierarchies(input, indices, configuration);
         QualityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
-        
 
         // Build
         try {
+            
             this.loss = new QualityModelColumnOrientedLoss(stop,
                                                            input,
                                                            output,

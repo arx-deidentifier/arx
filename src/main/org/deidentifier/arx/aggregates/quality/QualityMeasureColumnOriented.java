@@ -51,6 +51,29 @@ public class QualityMeasureColumnOriented {
     }
 
     /**
+     * Creates a new instance for input data
+     * @param handle
+     * @param indices
+     */
+    public QualityMeasureColumnOriented(DataHandle handle,
+                                        int[] indices) {
+
+        // Prepare
+        this.result = new HashMap<>();
+        this.minimum = new HashMap<>();
+        this.maximum = new HashMap<>();
+        
+        // Convert
+        for (int i = 0; i < indices.length; i++) {
+            int column = indices[i];
+            String attribute = handle.getAttributeName(column);
+            this.minimum.put(attribute, 0d);
+            this.result.put(attribute, 0d);
+            this.maximum.put(attribute, 1d);
+        }
+    }
+    
+    /**
      * Creates a new instance
      * @param handle
      * @param indices
