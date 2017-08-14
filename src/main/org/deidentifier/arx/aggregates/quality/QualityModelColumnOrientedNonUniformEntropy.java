@@ -31,7 +31,14 @@ import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
- * Implementation of the Non-Uniform Entropy measure that can handle local recoding. See:<br>
+ * Implementation of the Non-Uniform Entropy measure that can handle local recoding. Enhanced
+ * model supporting local recoding as presented in: <br>
+ * <br>
+ * Fabian Prasser, Raffael Bild, Klaus A. Kuhn.
+ * "A Generic Method for Assessing the Quality of De-Identified Health Data."
+ * Proceedings of MIE 2016, IOS Press, August 2016.<br>
+ * <br>
+ * Original model, see:<br>
  * A. De Waal and L. Willenborg: "Information loss through global recoding and local suppression" 
  * Netherlands Off Stat, vol. 14, pp. 17-20, 1999.
  * 
