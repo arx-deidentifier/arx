@@ -287,6 +287,18 @@ public class StatisticsQuality {
     }
 
     /**
+     * Quality according to the "Precision" model proposed in:<br>
+     * <br>
+     * L. Sweeney: "Achieving k-anonymity privacy protection using generalization and suppression"
+     * J Uncertain Fuzz Knowl Sys 10 (5) (2002) 571-588.
+     * 
+     * @return Quality measure
+     */
+    public QualityMeasureColumnOriented getGeneralizationIntensity() {
+        return precision;
+    }
+
+    /**
      * Quality according to the "Loss" model proposed in:<br>
      * <br>
      * Iyengar, V.: "Transforming data to satisfy privacy constraints"
@@ -307,7 +319,7 @@ public class StatisticsQuality {
      * 
      * @return Quality measure
      */
-    public QualityMeasureRowOriented getKLDivergence() {
+    public QualityMeasureRowOriented getKullbackLeiblerDivergence() {
         return kldivergence;
     }
 
@@ -324,18 +336,6 @@ public class StatisticsQuality {
     }
 
     /**
-     * Quality according to the "Precision" model proposed in:<br>
-     * <br>
-     * L. Sweeney: "Achieving k-anonymity privacy protection using generalization and suppression"
-     * J Uncertain Fuzz Knowl Sys 10 (5) (2002) 571-588.
-     * 
-     * @return Quality measure
-     */
-    public QualityMeasureColumnOriented getPrecision() {
-        return precision;
-    }
-
-    /**
      * Quality according to the "SSE" model proposed in:<br>
      * <br>
      * Soria-Comas, Jordi, et al.:
@@ -345,7 +345,7 @@ public class StatisticsQuality {
      * 
      * @return Quality measure
      */
-    public QualityMeasureRowOriented getSSE() {
+    public QualityMeasureRowOriented getSumOfSquaredErrors() {
         return sse;
     }
 
