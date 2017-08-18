@@ -12,7 +12,7 @@ import java.io.IOException;
  */
 public class HierarchyGenerator {
 
-    static int[][] generate(int domainSize, int degree) {
+    public static int[][] generate(int domainSize, int degree) {
         IntArrayList[] p = new IntArrayList[domainSize];
         int[][] ret = new int[domainSize][];
 
@@ -54,12 +54,12 @@ public class HierarchyGenerator {
     }
 
 
-    static void generateAndSave(int size, int degree, String file) throws IOException {
+   public static void generateAndSave(int size, int degree, String file) throws IOException {
         int[][] m = generate(size, degree);
         saveHierarchy(file, m);
     }
 
-    private static void saveHierarchy(String path, int[][] hierarchy) throws IOException {
+    public static void saveHierarchy(String path, int[][] hierarchy) throws IOException {
         FileWriter fw = new FileWriter(path);
         for (int[] aHierarchy : hierarchy) {
             fw.write(StringUtils.join(Ints.asList(aHierarchy), ',') + "\n");

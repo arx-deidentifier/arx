@@ -213,4 +213,8 @@ public class KMAnonymity {
             return -1;
         return Metrics.NCP(resultingCut, hierarchy, itemFrequencies, itemFrequenciesSum);
     }
+
+    public Cut getResultingCut() {
+        return resultingCut;
+    }
 }

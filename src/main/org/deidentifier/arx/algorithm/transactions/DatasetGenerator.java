@@ -18,7 +18,7 @@ public class DatasetGenerator {
         return db;
     }
 
-    static void save(int[][] db, String file) throws IOException {
+    public static void save(int[][] db, String file) throws IOException {
         FileWriter fw = new FileWriter(file);
 
         for (int i = 0; i < db.length; i++) {

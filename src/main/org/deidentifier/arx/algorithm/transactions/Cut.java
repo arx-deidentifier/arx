@@ -77,7 +77,7 @@ public class Cut {
         }
 
         if (level < generalization[item]) // we don't allow lowering the cuts levels
-            throw new IllegalArgumentException("Lowering of generalization level not supported");
+            return;
 
         // ensure all leafs under the generalization at level are generalized
         int generalizationItem = hierarchy.getHierarchy()[item][level];
