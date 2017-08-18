@@ -22,17 +22,21 @@ public class Dict {
      */
     public Dict(String[][] hierarchy) {
         ArrayList<String> reps = new ArrayList<>(hierarchy[0].length);
+        Map<String, Integer> keys = new HashMap<>(hierarchy[0].length * hierarchy.length);
 
         int idcounter = 0;
         int generalizationLevel = 0;
-        int biggestTran = hierarchy[0].length;
-        for (int i = 0; i < biggestTran; i++) {
+        for (int i = 0; i < hierarchy[0].length; i++) {
             for (String[] item : hierarchy) {
-                if (item.length > biggestTran)
-                    biggestTran = item.length;
-                if (item.length > generalizationLevel && !m.containsKey(item[generalizationLevel])) {
-                    m.put(item[generalizationLevel], idcounter++);
-                    reps.add(idcounter - 1, item[generalizationLevel]);
+                String key = item[generalizationLevel];
+
+                Integer genlevel = keys.put(key, generalizationLevel);
+                if (genlevel != null && genlevel != generalizationLevel) // Hierarchy contains same item on different levels. This is not supported
+                    throw new RuntimeException(String.format("Item %s already contained at level %d. Replace item with distinct value.\n", key, generalizationLevel));
+
+                if (item.length > generalizationLevel && !m.containsKey(key)) {
+                    m.put(key, idcounter++);
+                    reps.add(idcounter - 1, key);
                 }
             }
             generalizationLevel++;
@@ -41,7 +45,6 @@ public class Dict {
     }
 
     /**
-     *
      * @param s the string representation of an item
      * @return the integer representation of an item. null if not in this dict
      */
@@ -51,8 +54,7 @@ public class Dict {
 
 
     /**
-     *
-     * @param i  the integer representation of an item
+     * @param i the integer representation of an item
      * @return the string representation of an item
      */
     public String getString(int i) {

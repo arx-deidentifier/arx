@@ -26,17 +26,36 @@ public class Metrics {
      * @param g  the cut for which the information loss is computed
      * @param h  the generalization hierarchy which g belongs to
      * @param ct the count-tree for tran
-     * @return the information loss inflicted when applying cut g on database tran
+     * @return the information loss inflicted when applying cut g on the database where ct is generated from
      */
     public static double NCP(Cut g, Hierarchy h, CountTree ct) {
         double sum = 0;
         int[] Cp = ct.itemFrequencies();
 
         for (int i = 0; i < h.getDomainItems().length; i++) {
-            if (g.generalization[i] > 0) // item is generalized. If it is not, loss = 0, so multiplication = 0 so we can optimize this by ourselves
+            if (Cp[i] > 0 && g.generalization[i] > 0)
                 sum += Cp[i] * NCP(i, g.getGeneralization(i), h);
         }
 
-        return sum / ct.getCountDomainItems();
+        return sum / ct.getItemCount();
     }
+
+    /**
+     * @param g                  the cut for which the information loss is computed
+     * @param h                  the generalization hierarchy which g belongs to
+     * @param itemFrequencies    the count of each item in the database
+     * @param itemFrequenciesSum the sum of itemFrequencies
+     * @return the information loss inflicted when applying cut g on a database where itemFrequencies is generated from
+     */
+    public static double NCP(Cut g, Hierarchy h, int[] itemFrequencies, int itemFrequenciesSum) {
+        double sum = 0;
+
+        for (int i = 0; i < h.getDomainItems().length; i++) {
+            if (itemFrequencies[i] > 0 && g.generalization[i] > 0)
+                sum += itemFrequencies[i] * NCP(i, g.getGeneralization(i), h);
+        }
+
+        return sum / itemFrequenciesSum;
+    }
+
 }

@@ -7,16 +7,16 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 import java.util.Arrays;
 import java.util.BitSet;
 
-//TODO come up with way to efficiently walk hierarchy
 public class Hierarchy {
 
     private int[][] hierarchy;
     private int[] domainItems;
     private int[] leafsUnderItem;
-    // [level][item, start, end]
-    protected int[][] zoningInfo;
-    private int[][] extendedHierarchy;
 
+    // [level][item, start, end]
+    int[][] groupInfo;
+    private int[][] extendedHierarchy;
+    final int nodeCount;
 
     /**
      * Converts the given generalization hierarchy to an integer representation according to the dictionary
@@ -28,33 +28,39 @@ public class Hierarchy {
         hierarchy = new int[h.length][h[0].length];
         domainItems = new int[h.length];
 
-        BitSet nodeCount = new BitSet(h.length * h[0].length);
+        BitSet nodes = new BitSet(h.length * h[0].length); // there are at max. h.length * h[0].length different nodes in the hierarchy
 
         // map string hierarchy to integer hierarchy
         for (int i = 0; i < h.length; i++) {
             for (int j = 0; j < h[0].length; j++) {
                 hierarchy[i][j] = d.getRepresentation(h[i][j]);
-                nodeCount.set(hierarchy[i][j]);
+                nodes.set(hierarchy[i][j]);
             }
             this.domainItems[i] = d.getRepresentation(h[i][0]);
         }
 
-        // Counting the leafs under each item in the generalization hierarchy
-        leafsUnderItem = new int[nodeCount.cardinality()];
-        extendedHierarchy = new int[nodeCount.cardinality() - domainItems.length][];
+        this.nodeCount = nodes.cardinality();
+
+        extendedHierarchy = new int[this.nodeCount - domainItems.length][];
 
         createZoningInfo();
 
-        for (int[] ints : zoningInfo) {
+        // Counting the leafs under each item in the generalization hierarchy
+        leafsUnderItem = new int[this.nodeCount];
+        for (int[] ints : groupInfo) {
             for (int i = 0; i < ints.length; i += 3) {
-                int diff = ints[i + 2] - ints[i + 1];
+                int diff = ints[i + 2] - ints[i + 1]; // a node generalizes as many leaves as its group is large + 1
                 leafsUnderItem[ints[i]] = diff == 0 ? 0 : diff + 1;
             }
         }
     }
 
+    /**
+     * Groups the nodes on each layer in the hierarchy array, so the start and length of each inner node doesn't need
+     * to be recomputed every time.
+     */
     private void createZoningInfo() {
-        zoningInfo = new int[hierarchy[0].length][];
+        groupInfo = new int[hierarchy[0].length][];
         IntArrayList groupInfo = new IntArrayList(hierarchy.length * 2);
         for (int level = 0; level < hierarchy[0].length; level++) {
             int currentPointer = 0;
@@ -66,7 +72,7 @@ public class Hierarchy {
                 groupInfo.add(groupingItem, groupStart, currentPointer);
                 groupStart = ++currentPointer;
             }
-            zoningInfo[level] = groupInfo.toArray();
+            this.groupInfo[level] = groupInfo.toArray();
             groupInfo.clear();
         }
     }
@@ -108,8 +114,7 @@ public class Hierarchy {
             for (int[] path : this.hierarchy) {
                 for (int j = 0; j < path.length; j++) {
                     if (path[j] == item) {
-                        //TODO dont copy the array, but instead save two integers. The leaf where item is a gener. from and the level at which this item starts so extendedHierarchy is int[nodecount-|I|][2]
-                        setExtendedHierarchyItem(item, Arrays.copyOfRange(path, j, path.length));
+                        setExtendedHierarchyItem(item, Arrays.copyOfRange(path, j, path.length)); // cache the array
                         return extendedHierarchy(item);
                     }
                 }
@@ -118,10 +123,22 @@ public class Hierarchy {
         return null;
     }
 
+    /**
+     * Returns the path to the root for generalizing items (items that are not in the domain)
+     *
+     * @param i the item for which the path to the root should be returned
+     * @return the path to the root beginning at i
+     */
     private int[] extendedHierarchy(int i) {
         return this.extendedHierarchy[i - this.hierarchy[0][1]];
     }
 
+    /**
+     * Sets the path to the root beginning at i
+     *
+     * @param i  the item where the path starts
+     * @param ii the path
+     */
     private void setExtendedHierarchyItem(int i, int[] ii) {
         this.extendedHierarchy[i - this.hierarchy[0][1]] = ii;
     }
@@ -153,10 +170,13 @@ public class Hierarchy {
     /**
      * @return the leafes of this hierarchy
      */
-    protected int[] getDomainItems() {
+    public int[] getDomainItems() {
         return domainItems;
     }
 
+    /**
+     * @return the hierarchy
+     */
     protected int[][] getHierarchy() {
         return hierarchy;
     }
@@ -187,8 +207,10 @@ public class Hierarchy {
                 etran.add(generalizations[j]);
             }
         }
-
-        return etran.toArray();
+        if (t.length == 1 && t[0] == hierarchy[0][hierarchy[0].length - 1])
+            return t;
+        else
+            return etran.toArray();
     }
 }
 

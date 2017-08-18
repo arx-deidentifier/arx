@@ -1,41 +1,45 @@
 package org.deidentifier.arx.algorithm.transactions;
 
 import com.carrotsearch.hppc.IntArrayList;
+import com.google.common.primitives.Ints;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.*;
 
 public class CountTree {
 
     private Node root = null;
-    private int[][] transactions;
     private int m; // The m in k^m-anonymity
     private Hierarchy hierarchy;
-    private int[] itemFrequencies;
-    private int countDomainItems;
+    private int[] itemFrequencies; // the count of occurences of each leaf in the generalization hierarchy
+    private int sumDomainItemCount; // the sum of itemFrequencies
 
-    private int c = 0; // for graphviz
-
+    /**
+     * Initializes a Count Tree and populates it with itemsets of size <= m
+     *
+     * @param m         the m in k^m-anonymity
+     * @param hierarchy the generalization hierarchy this Count Tree is based on
+     */
     public CountTree(int m, int[][] transactions, Hierarchy hierarchy) {
         root = new Node(-1, null, Integer.MAX_VALUE);
-        root.id = c++;
-        this.transactions = transactions;
         this.m = m;
         this.hierarchy = hierarchy;
-        initTree();
+        initTree(transactions);
     }
 
+    /**
+     * Initializes an empty Count Tree
+     *
+     * @param m         the m in k^m-anonymity
+     * @param hierarchy the generalization hierarchy this Count Tree is based on
+     */
     public CountTree(int m, Hierarchy hierarchy) {
         this.m = m;
         this.hierarchy = hierarchy;
         root = new Node(-1, null, Integer.MAX_VALUE);
-        root.id = c++;
     }
 
-    // Builds the tree from expanded transactions
-    private void initTree() {
+    // Builds the tree from transactions
+    private void initTree(int[][] transactions) {
         for (int[] transaction : transactions) {
             int[] etran = hierarchy.expandTransaction(transaction);
             insert(etran);
@@ -43,12 +47,21 @@ public class CountTree {
         root.sortRecursive();
     }
 
-    public void insert(int[] a) {
-        for (int i = 1; i <= m; i++) {
-            SubsetIterator it = new SubsetIterator(a, i);
+    /**
+     * Inserts alls subsets for set of size <= m
+     *
+     * @param set the set to be inserted into the tree
+     */
+    public void insert(int[] set) {
+        // if the set to be inserted is smaller than m, there are only subsets of set up to size set.length (there are no subsets of size n+1 of sets of size n).
+        // So we can skip all SubsetIterators of size set.length + 1 to m.
+        int limit = set.length > m ? m : set.length;
+        for (int i = 1; i <= limit; i++) {
+            SubsetIterator it = new SubsetIterator(set, i);
             while (it.hasNext()) {
                 int[] next = it.next();
-                if (!hierarchy.containsGeneralizedItems(next)) {
+                if (!hierarchy.containsGeneralizedItems(next)) { // only insert sets that don't contain two items where one is set generalization of another
+                    sortDescending(next); // sorting the items reduces fragmentation of the tree
                     root.insert(next, 0);
                 }
             }
@@ -72,7 +85,7 @@ public class CountTree {
     /**
      * @return the count of each item in the domain
      */
-    protected int[] itemFrequencies() {
+    public int[] itemFrequencies() {
         if (itemFrequencies != null) // itemFrequencies aren't cached
             return itemFrequencies;
 
@@ -82,60 +95,30 @@ public class CountTree {
                 c[child.value] = child.count;
         }
         itemFrequencies = c;
+
+        //calculate count of all items combined. Used in NCP
         for (int itemFrequency : itemFrequencies) {
-            countDomainItems += itemFrequency;
+            sumDomainItemCount += itemFrequency;
         }
         return c;
     }
 
-    protected int getCountDomainItems() {
-        return countDomainItems;
+    public int getItemCount() {
+        return sumDomainItemCount;
     }
 
-    // solely for debugging purposes. will be deleted
-    protected String dot(Dict d) {
-        if (this.root != null) {
-            StringBuilder s = new StringBuilder("digraph ctree {\n");
-            for (Node child : root.children) {
-                s.append(root.id).append(" [label=\"").append("ROOT").append("\"]\n");
-                s.append(child.id).append("[label=\"").append(d.getString(child.value)).append(" ")
-                        .append(child.count).append("\"]\n");
-
-                s.append(root.id).append(" -> ").append(child.id).append("\n");
-                s.append(child.dot(d));
-            }
-            return s + "\n}";
-        }
-        return "";
-    }
-
-    protected String dot() throws IOException {
-        if (this.root != null) {
-            StringBuilder s = new StringBuilder("digraph ctree {\n");
-            for (Node child : root.children) {
-                s.append(root.id).append(" [label=\"").append("ROOT").append("\"]\n");
-                s.append(child.id).append("[label=\"ID").append(child.value).append(" ")
-                        .append(child.count).append("\"]\n");
-
-                s.append(root.id).append(" -> ").append(child.id).append("\n");
-                s.append(child.dot());
-            }
-            s.append("}");
-            File f = new File("graph.dot");
-            FileWriter w = new FileWriter(f, false);
-            w.write(s.toString());
-            w.flush();
-            w.close();
-            return s + "\n}";
-        }
-        return "";
-    }
-
-    public boolean providesKAnonymity(int[] path, int k) {
-        Arrays.sort(path);
-        reverse(path);
+    /**
+     * @param path the set to be inserted
+     * @param c    the cut that is used to generalize path
+     * @param k    an integer
+     * @return true if path, generalized by c occurs at least k times in the tree, false if less than k
+     */
+    public boolean providesKAnonymity(int[] path, Cut c, int k) {
+        sortDescending(path);
         Node n = root;
+        int oldCount;
         int uu = 0;
+
         for (int i : path) {
             for (Node node : n.getChildren()) {
                 if (node.getValue() == i) {
@@ -146,7 +129,42 @@ public class CountTree {
             }
         }
 
-        return uu == path.length && n.count >= k-1;
+        if (uu != path.length)
+            throw new RuntimeException("Path does not exist");
+
+        oldCount = n.count;
+        uu = 0;
+        n = root;
+        int[] genPath = c.generalizeTransaction(path);
+        sortDescending(genPath);
+
+
+        if (Arrays.equals(genPath, path)) // no item in path was generalized by c
+            return uu == path.length && oldCount >= k;
+
+
+        for (int i : genPath) { // find end of path where the generalized path is inserted
+            for (Node node : n.getChildren()) {
+                if (node.getValue() == i) {
+                    uu++;
+                    n = node;
+                    break;
+                }
+            }
+        }
+
+        if (uu != genPath.length)
+            throw new RuntimeException("Path does not exist for generalized transaction");
+
+
+        return n.count + oldCount >= k; // if the count of the old endnode of the path plus the endnode
+    }
+
+    /**
+     * sorts all nodes in this tree
+     */
+    public void sort() {
+        root.sortRecursive();
     }
 
     // A node in the count-tree
@@ -155,18 +173,18 @@ public class CountTree {
         private int value;
         private Node parent;
         private List<Node> children;
-        private int id; // id for graphviz nodes
 
         Node(int value, Node parent, int count) {
             this.value = value;
             this.parent = parent;
             children = new ArrayList<>();
             this.count = count;
-            if (parent != null)
-                parent.sort();
         }
 
-        void sort() {
+        /**
+         * A node is sorted when the order of its children is descending according to their count
+         */
+        private void sort() {
             Collections.sort(this.children, new Comparator<Node>() {
                 @Override
                 public int compare(Node o1, Node o2) {
@@ -175,19 +193,21 @@ public class CountTree {
             });
         }
 
-        void insert(int[] set, int current) {
-
-            if (current == set.length) {
+        /**
+         * Inserts all items of set beginning at current into the nodes below this
+         *
+         * @param set     the items to be inserted
+         * @param current the first item in set to be inserted
+         */
+        private void insert(int[] set, int current) {
+            if (current == set.length) { // last item is inserted, update count and backtrack
                 this.count++;
                 return;
             }
 
-            Arrays.sort(set);
-            reverse(set);
-
             Node n = null;
 
-            for (Node child : children) {
+            for (Node child : children) { // search if the current node is already present
                 if (child.value == set[current])
                     n = child;
             }
@@ -196,28 +216,26 @@ public class CountTree {
                 n.insert(set, current + 1);
             } else {
                 Node newNode = new Node(set[current], this, 0);
-                newNode.id = c++;
                 this.children.add(newNode);
                 newNode.insert(set, current + 1);
             }
-
         }
 
-
-        protected void sortRecursive() {
+        /**
+         * Sorts this node and all its children
+         */
+        private void sortRecursive() {
             this.sort();
             for (Node child : children) {
                 child.sortRecursive();
             }
         }
 
-
-        @Override
-        public String toString() {
-            return String.valueOf(this.value);
-        }
-
-        public boolean kmanonymous(int k) {
+        /**
+         * @param k the k in k^m-anonymity
+         * @return true if all nodes below this node have count >= k, else false
+         */
+        private boolean kmanonymous(int k) {
             boolean nodeKanonymous = this.count >= k;
 
             if (!nodeKanonymous)
@@ -227,35 +245,6 @@ public class CountTree {
                 nodeKanonymous &= child.kmanonymous(k);
             }
             return nodeKanonymous;
-        }
-
-
-        // solely for debugging purposes. will be deleted
-        public String dot(Dict d) {
-            StringBuilder s = new StringBuilder();
-            for (Node child : children) {
-                s.append(child.id).append("[label=\"").append(d.getString(child.value)).append(" ")
-                        .append(child.count).append("\"]\n");
-                s.append(this.id).append("->").append(child.id).append("\n");
-            }
-            for (Node child : children) {
-                s.append(child.dot(d));
-            }
-            return s.toString();
-        }
-
-        public String dot() {
-            StringBuilder s = new StringBuilder();
-            for (Node child : children) {
-                s.append(child.id).append("[label=\"ID: ").append(child.value).append(" ")
-                        .append(child.count).append("\"]\n");
-                s.append(this.id).append("->").append(child.id).append("\n");
-            }
-            for (Node child : children) {
-                s.append(child.dot());
-            }
-
-            return s.toString();
         }
 
         public List<Node> getChildren() {
@@ -274,6 +263,12 @@ public class CountTree {
             return parent;
         }
 
+        /**
+         * @return the path from the root of the tree to this node
+         */
+        public int[] getPath() {
+            return getPath(new IntArrayList()).toArray();
+        }
 
         private IntArrayList getPath(IntArrayList a) {
             if (this.parent == null) {
@@ -284,17 +279,14 @@ public class CountTree {
                 return a;
             }
         }
-
-        public int[] getPath() {
-            return getPath(new IntArrayList()).toArray();
-        }
     }
 
-    private static void reverse(int[] arr) {
-        for (int i = 0; i < arr.length / 2; i++) {
-            int temp = arr[i];
-            arr[i] = arr[arr.length - i - 1];
-            arr[arr.length - i - 1] = temp;
-        }
+    /**
+     * Sorts the array in descending order
+     * @param array The array to be sorted
+     */
+    private static void sortDescending(int[] array) {
+        List<Integer> integersList = Ints.asList(array); // This works sinces Ints.asList directly uses the array as backing data structure
+        Collections.sort(integersList, Collections.reverseOrder()); // so when the list is sorted, the backing array is sorted, which means the given array is sorted
     }
 }
