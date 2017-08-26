@@ -2,9 +2,10 @@ package org.deidentifier.arx.algorithm.transactions;
 
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -81,14 +82,9 @@ public class Cut {
 
         // ensure all leafs under the generalization at level are generalized
         int generalizationItem = hierarchy.getHierarchy()[item][level];
-        for (int i = 0; i < hierarchy.groupInfo[level].length; i += 3) {
-            if (hierarchy.groupInfo[level][i] == generalizationItem) {
-                int start = hierarchy.groupInfo[level][i + 1];
-                int end = hierarchy.groupInfo[level][i + 2];
-                Arrays.fill(this.generalization, start, end + 1, level);
-                break;
-            }
-        }
+        int start = hierarchy.rangeInfo[generalizationItem][1];
+        int end = hierarchy.rangeInfo[generalizationItem][2];
+        Arrays.fill(this.generalization, start, end + 1, level);
 
         this.horizontal = isHorizontal();
         this.level = maxLevel();
@@ -139,15 +135,10 @@ public class Cut {
     public boolean isGeneralized(int i) {
         if (i < generalization.length)
             return generalization[i] > 0;
-        else { // Find the first leaf that is generalized by i and return if the leaf is generlized to a higher level than the level of i
-            for (int j = hierarchy.groupInfo.length - 1; j >= 0; j--) {
-                for (int k = 0; k < hierarchy.groupInfo[j].length; k += 3) {
-                    if (hierarchy.groupInfo[j][k] == i)
-                        return generalization[hierarchy.groupInfo[j][k + 1]] > j;
-                }
-            }
+        else { // i is a inner node of the hierarchy. Return true if i is generalized to a node above i
+            int nodeAtLevel = hierarchy.toRoot(i)[0];
+            return hierarchy.rangeInfo[nodeAtLevel][0] > hierarchy.rangeInfo[i][0];
         }
-        return false;
     }
 
 
@@ -194,62 +185,66 @@ public class Cut {
     }
 
     /**
-     * Computes the ancestors in the hierarchy of cuts. See Figure 4 in
+     * Computes the immediate ancestors in the hierarchy of cuts. See Figure 4 in
      * "M. Terrovitis, N. Mamoulis, and P. Kalnis, “Privacy-preserving anonymization of set-valued data,”" for illustration
      *
      * @return all ancestors in the hierarchy of cuts.
      */
     public List<Cut> ancestors() {
-        List<Cut> cuts = new LinkedList<>();
-        int[][] hierarchyArray = hierarchy.getHierarchy();
+        List<Cut> ancestors = new ArrayList<>();
+        IntArrayList nodes = new IntArrayList();
 
-        int level = horizontal ? this.level + 1 : this.level;
-        // the nodes that are in this level of the hierarchy, but not in this cut
-        IntArrayList nodesOfThisLevel = new IntArrayList(hierarchyArray.length / 2);
-
-        IntArrayList nodesOfThisCutList = new IntArrayList();
-        int[] nodesOfThisCut;
-
-        int[] groupInfo = hierarchy.groupInfo[level];
-
-        for (int i = 0; i < groupInfo.length; i += 3) {
-            if (generalization[groupInfo[i + 1]] != level)
-                nodesOfThisLevel.add(i / 3);
-            else
-                nodesOfThisCutList.add(i / 3);
-        }
-        nodesOfThisCut = nodesOfThisCutList.toArray();
-
-        // Generate sets of increasing size of all the nodes that are not in this cut
-        for (int i = 1; i <= (horizontal ? 1 : nodesOfThisLevel.size()); i++) {
-            SubsetIterator ancestorNodes = new SubsetIterator(nodesOfThisLevel.toArray(), i);
-            while (ancestorNodes.hasNext()) {
-                int[] next = ancestorNodes.next();
-                int[] newCut = concat(nodesOfThisCut, next); // merge the current cut with the generated cut
-                // create cut from node set
-                cuts.add(cutFromGroupArray(newCut, level));
+        // add leafs that have not generalized at all to the list
+        for (int i = 0; i < this.generalization.length; ) {
+            if (this.generalization[i] > 0) {
+                i++;
+                continue;
             }
-        }
-        cuts.remove(this);
-        return cuts;
-    }
+            int level = 1;
+            int generalization = hierarchy.toRoot(i)[level];
 
-    private Cut cutFromGroupArray(int[] newCut, int level) {
-        Cut genCut = new Cut(this.hierarchy);
-        for (int group : newCut) {
-            int gStart = hierarchy.groupInfo[level][group * 3 + 1];
-            int gEnd = hierarchy.groupInfo[level][group * 3 + 2];
-            Arrays.fill(genCut.generalization, gStart, gEnd + 1, level);
+            nodes.add(generalization);
+            i = hierarchy.rangeInfo[generalization][2] + 1;
         }
-        genCut.horizontal = genCut.isHorizontal();
-        genCut.level = level;
-        return genCut;
-    }
 
-    private static int[] concat(int[] first, int[] second) {
-        int[] result = Arrays.copyOf(first, first.length + second.length);
-        System.arraycopy(second, 0, result, first.length, second.length);
-        return result;
+        // search for sets of nodes that can be generalized to the same node
+        for (int i = 0; i < this.generalization.length; ) {
+            if (this.generalization[i] == 0) {
+                i++;
+                continue;
+            }
+            int level = this.generalization[i];
+            int generalization = hierarchy.toRoot(i)[level + 1];
+            int nodeAboveEnd = hierarchy.rangeInfo[generalization][2];
+            int nodeAboveStart = hierarchy.rangeInfo[generalization][1];
+
+
+            boolean allEqual = true;
+            for (int j = nodeAboveStart; j <= nodeAboveEnd; j++) {
+                if (this.generalization[j] != level) {
+                    allEqual = false;
+                    break;
+                }
+            }
+            i = hierarchy.rangeInfo[generalization][2] + 1;
+            if (!allEqual)
+                continue;
+            nodes.add(generalization);
+        }
+
+        for (IntCursor node : nodes) {
+            Cut c = new Cut(this.hierarchy);
+            int start = hierarchy.rangeInfo[node.value][1];
+            int end = hierarchy.rangeInfo[node.value][2];
+            int level = hierarchy.rangeInfo[node.value][0];
+            System.arraycopy(this.generalization, 0, c.generalization, 0, this.generalization.length);
+            Arrays.fill(c.generalization, start, end + 1, level);
+            c.level += c.maxLevel();
+            ancestors.add(c);
+        }
+
+
+        return ancestors;
     }
 
     @Override

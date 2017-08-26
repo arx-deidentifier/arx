@@ -39,7 +39,6 @@ public class KMAnonymity {
         Cut cout = new Cut(hierarchy);
 
         for (int i = 1; i <= m; i++) {
-
             CountTree ct = new CountTree(i, hierarchy);
             for (int[] transaction : D) {
                 int[] expTran = hierarchy.expandTransaction(transaction);
@@ -48,26 +47,10 @@ public class KMAnonymity {
             }
             ct.sort();
             Cut c = directAnonymization(ct);
-
             cout.merge(c);
         }
         resultingCut = cout;
         return cout;
-    }
-
-    private void countItems() {
-        IntIntOpenHashMap count = new IntIntOpenHashMap();
-        for (int[] ints : D) {
-            for (int anInt : ints) {
-                count.putOrAdd(anInt, 1, 1);
-            }
-        }
-        itemFrequencies = new int[hierarchy.nodeCount];
-
-        for (IntIntCursor next : count) {
-            itemFrequencies[next.key] = next.value;
-            itemFrequenciesSum += next.value;
-        }
     }
 
     /**
@@ -169,7 +152,7 @@ public class KMAnonymity {
     /**
      * OA as in
      * "Manolis Terrovitis, Nikos Mamoulis, and Panos Kalnis. 2008. Privacy-preserving anonymization of set-valued data.
-     * Proc. VLDB Endow. 1, 1 (August 2008), 115-125."
+     * Proc. VLDB Endow. 1, 1 (August 2008), 115-125." (slightly modified)
      *
      * @return the cut that provides k^m-anonymity and inflicts minimal information loss
      */
@@ -216,5 +199,20 @@ public class KMAnonymity {
 
     public Cut getResultingCut() {
         return resultingCut;
+    }
+
+    private void countItems() {
+        IntIntOpenHashMap count = new IntIntOpenHashMap();
+        for (int[] ints : D) {
+            for (int anInt : ints) {
+                count.putOrAdd(anInt, 1, 1);
+            }
+        }
+        itemFrequencies = new int[hierarchy.nodeCount];
+
+        for (IntIntCursor next : count) {
+            itemFrequencies[next.key] = next.value;
+            itemFrequenciesSum += next.value;
+        }
     }
 }

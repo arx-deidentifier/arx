@@ -13,8 +13,9 @@ public class Hierarchy {
     private int[] domainItems;
     private int[] leafsUnderItem;
 
-    // [level][item, start, end]
-    int[][] groupInfo;
+    // [item][level, start, end]
+    int[][] rangeInfo;
+
     private int[][] extendedHierarchy;
     final int nodeCount;
 
@@ -43,15 +44,19 @@ public class Hierarchy {
 
         extendedHierarchy = new int[this.nodeCount - domainItems.length][];
 
-        createZoningInfo();
-
+        int[][] groupInfo = createGroupInfo();
+        rangeInfo = new int[this.nodeCount][];
         // Counting the leafs under each item in the generalization hierarchy
         leafsUnderItem = new int[this.nodeCount];
+        int l = 0;
         for (int[] ints : groupInfo) {
             for (int i = 0; i < ints.length; i += 3) {
                 int diff = ints[i + 2] - ints[i + 1]; // a node generalizes as many leaves as its group is large + 1
                 leafsUnderItem[ints[i]] = diff == 0 ? 0 : diff + 1;
+
+                rangeInfo[ints[i]] = new int[]{l, ints[i + 1], ints[i + 2]};
             }
+            l++;
         }
     }
 
@@ -59,9 +64,9 @@ public class Hierarchy {
      * Groups the nodes on each layer in the hierarchy array, so the start and length of each inner node doesn't need
      * to be recomputed every time.
      */
-    private void createZoningInfo() {
-        groupInfo = new int[hierarchy[0].length][];
-        IntArrayList groupInfo = new IntArrayList(hierarchy.length * 2);
+    private int[][] createGroupInfo() {
+        int[][] groupInfo = new int[hierarchy[0].length][];
+        IntArrayList groupInfoL = new IntArrayList(hierarchy.length * 2);
         for (int level = 0; level < hierarchy[0].length; level++) {
             int currentPointer = 0;
             int groupStart = 0;
@@ -69,12 +74,13 @@ public class Hierarchy {
                 int groupingItem = hierarchy[currentPointer][level];
                 while (currentPointer < hierarchy.length - 1 && groupingItem == hierarchy[currentPointer + 1][level]) // grouping operation
                     currentPointer++;
-                groupInfo.add(groupingItem, groupStart, currentPointer);
+                groupInfoL.add(groupingItem, groupStart, currentPointer);
                 groupStart = ++currentPointer;
             }
-            this.groupInfo[level] = groupInfo.toArray();
-            groupInfo.clear();
+            groupInfo[level] = groupInfoL.toArray();
+            groupInfoL.clear();
         }
+        return groupInfo;
     }
 
 
