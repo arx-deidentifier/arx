@@ -162,7 +162,6 @@ public class KMAnonymity {
         Queue<Cut> Q = new ArrayDeque<>();
         Q.add(new Cut(hierarchy));
         HashSet<Cut> H = new HashSet<>();
-        CountTree origTree = new CountTree(m, D, hierarchy);
 
         while (!Q.isEmpty()) {
             Cut c = Q.poll();
@@ -181,9 +180,9 @@ public class KMAnonymity {
                     if (Q.contains(ancestor))
                         Q.remove(ancestor);
                 }
-                if (Metrics.NCP(c, hierarchy, origTree) < coptCost) {
+                if (Metrics.NCP(c, hierarchy, itemFrequencies, itemFrequenciesSum) < coptCost) {
                     copt = c;
-                    coptCost = Metrics.NCP(c, hierarchy, origTree);
+                    coptCost = Metrics.NCP(c, hierarchy, itemFrequencies, itemFrequenciesSum);
                 }
             }
         }
