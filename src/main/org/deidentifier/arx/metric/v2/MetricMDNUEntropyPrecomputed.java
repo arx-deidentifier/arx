@@ -81,8 +81,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     /** Minimal size of equivalence classes enforced by the differential privacy model */
     private double        k;
 
-    /** The root values of all generalization hierarchies */
-    private int[]         rootValues;
+    /** The root values of all generalization hierarchies or null if nor single root value exists */
+    private Integer[]     rootValues;
 
 
     /**
@@ -341,17 +341,25 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             max[i] = (input.getDataLength() * log2(input.getDataLength())) * Math.max(gFactor, sFactor);
         }
         
-        // Store minimal size of equivalence classes
         if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class)) {
             
+            // Store minimal size of equivalence classes
             DataDependentEDDifferentialPrivacy dpCriterion = config.getPrivacyModel(DataDependentEDDifferentialPrivacy.class);
             k = (double)dpCriterion.getK();
             
-            /** TODO handle cases in which no single root values are present */
-            rootValues = new int[manager.getHierarchies().length];
-            for (int i = 0; i < manager.getHierarchies().length; i++) {
-                int[] row = manager.getHierarchies()[i].getArray()[0];
-                rootValues[i] = row[row.length - 1];
+            // Store root values of generalization hierarchies or null if no single root value exists
+            rootValues = new Integer[hierarchies.length];
+            for (int i = 0; i < hierarchies.length; i++) {
+                Integer rootValue = null;
+                for (int[] row : hierarchies[i].getArray()) {
+                    if (rootValue == null) {
+                        rootValue = row[row.length-1];
+                    } else if (row[row.length-1] != rootValue) {
+                        rootValue = null;
+                        break;
+                    }
+                }
+                rootValues[i] = rootValue;
             }
         }
         
@@ -374,7 +382,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             while (entry != null) {
 
                 // Process values of records which have not been suppressed by sampling
-                if (entry.isNotOutlier && entry.key[j] != rootValues[j]) {
+                if (entry.isNotOutlier && (rootValues[j] == null || entry.key[j] != rootValues[j])) {
                     // The attribute value has neither been suppressed because of record suppression nor because of generalization
                     int value = entry.key[j];
                     int valueCount = nonSuppressedValueToCount.containsKey(value) ?
