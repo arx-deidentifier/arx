@@ -168,6 +168,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                 min[i] = 0;
                 
             } catch (Exception e) {
+                
                 // Silently catch exceptions
                 result[i] = Double.NaN;
                 min[i] = Double.NaN;
@@ -179,7 +180,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
             checkInterrupt();
             
         }
-
+        
         // Return
         return new QualityMeasureColumnOriented(output, indices, min, result, max);
     }
@@ -195,7 +196,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
     private Map<String, String>[] getGeneralizationFunctions(String[][][] hierarchies, int index) {
         
         // Prepare
-        Map<String, String>[] result = new HashMap[hierarchies.length];
+        Map<String, String>[] result = new HashMap[hierarchies[index][0].length];
 
         // For each dimension
         for (int level = 0; level < hierarchies[index][0].length; level++) {
