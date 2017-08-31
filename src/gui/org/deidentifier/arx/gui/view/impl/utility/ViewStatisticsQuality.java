@@ -318,7 +318,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     
                     item = new TableItem(table2, SWT.NONE);
                     item.setText(0, "N.-U. entropy");
-                    setNumericValueAtIndex(item, 1, quality.getGranularity().getArithmeticMean(false));
+                    setNumericValueAtIndex(item, 1, quality.getNonUniformEntropy().getArithmeticMean(false));
                     
                     item = new TableItem(table2, SWT.NONE);
                     item.setText(0, "Discernibility");
