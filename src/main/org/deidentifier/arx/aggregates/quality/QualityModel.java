@@ -17,6 +17,11 @@
 
 package org.deidentifier.arx.aggregates.quality;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
@@ -63,6 +68,9 @@ abstract class QualityModel<T> {
     /** Value */
     private final String                 suppressedValue;
 
+    /** Roots*/
+    private final Map<Integer, String>   roots = new HashMap<>();
+
     /**
      * Creates a new instance
      * 
@@ -85,6 +93,8 @@ abstract class QualityModel<T> {
                  QualityDomainShare[] shares,
                  int[] indices,
                  QualityConfiguration config) {
+        
+        // Store data
         this.input = input;
         this.output = output;
         this.groupedInput = groupedInput;
@@ -94,6 +104,26 @@ abstract class QualityModel<T> {
         this.hierarchies = hierarchies;
         this.interrupt = interrupt;
         this.suppressedValue = config.getSuppressedValue();
+        
+        // Collect roots
+        for (int index = 0; index < indices.length; index++) {
+            int column = indices[index];
+            String root = getRoot(hierarchies[index]);
+            this.roots.put(column,  root);
+        }
+    }
+
+    /**
+     * Returns the root for the given hierarchy
+     * @param strings
+     * @return
+     */
+    private String getRoot(String[][] hierarchy) {
+        Set<String> roots = new HashSet<>();
+        for (String[] row : hierarchy) {
+            roots.add(row[row.length - 1]);
+        }
+        return (roots.size() == 1) ? roots.iterator().next() : null;
     }
 
     /**
@@ -116,7 +146,7 @@ abstract class QualityModel<T> {
     QualityDomainShare[] getDomainShares() {
         return shares;
     }
-
+    
     /**
      * Returns grouped input
      */
@@ -164,6 +194,14 @@ abstract class QualityModel<T> {
     }
 
     /**
+     * Returns the suppression string
+     * @return
+     */
+    String getSuppressionString() {
+        return suppressedValue;
+    }
+
+    /**
      * Returns whether a value is suppressed
      * 
      * @param handle
@@ -177,7 +215,7 @@ abstract class QualityModel<T> {
         if (handle.isOutlier(row)) {
             return true;
         } else {
-            return handle.getValue(row, column).equals(suppressedValue);
+            return isSuppressed(column, handle.getValue(row, column));
         }
     }
 
@@ -221,11 +259,12 @@ abstract class QualityModel<T> {
     /**
      * Returns whether a value is suppressed
      * 
+     * @param column
      * @param value
      * @return
      */
-    boolean isSuppressed(String value) {
-        return value.equals(suppressedValue);
+    boolean isSuppressed(int column, String value) {
+        return value.equals(suppressedValue) || value.equals(roots.get(column));
     }
 
     /**

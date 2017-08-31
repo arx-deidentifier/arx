@@ -168,7 +168,6 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                 min[i] = 0;
                 
             } catch (Exception e) {
-
                 // Silently catch exceptions
                 result[i] = Double.NaN;
                 min[i] = Double.NaN;
@@ -243,6 +242,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
         // Prepare
         Map<String, Integer> result = new HashMap<>();
 
+        // Collect
         for (int col = 0; col < hierarchies[index][0].length; col++) {
             for (int row = 0; row < hierarchies[index].length; row++) {
                 String value = hierarchies[index][row][col];
@@ -253,6 +253,11 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
             
             // Check
             checkInterrupt();
+        }
+        
+        // Handle suppressed value
+        if (!result.containsKey(getSuppressionString())) {
+            result.put(getSuppressionString(), hierarchies[index][0].length-1);
         }
         
         // Return

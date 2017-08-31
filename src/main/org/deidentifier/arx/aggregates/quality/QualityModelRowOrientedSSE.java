@@ -339,9 +339,18 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                 checkInterrupt();
             }
             
+            // Add min and max for suppressed values
+            if (!min.containsKey(getSuppressionString())) {
+                min.put(getSuppressionString(), 0);
+            }
+            if (!max.containsKey(getSuppressionString())) {
+                max.put(getSuppressionString(), hierarchy.length - 1);
+            }
+            
             // Map values
             for (int row = 0; row < handle.getNumRows(); row++) {
                 String value = handle.getValue(row, column);
+                
                 result[row * 2] = min.get(value);
                 result[row * 2 + 1] = max.get(value);
                 
@@ -353,7 +362,6 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
             return result;
             
         } catch (Exception e) {
-            
             // Fail silently
             return null;
         }
@@ -516,7 +524,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                 String value = output.getValue(row, column);
                 
                 // Check 2
-                if (isSuppressed(value)) {
+                if (isSuppressed(column, value)) {
                     result[row * 2] = overallMin;
                     result[row * 2 + 1] = overallMax;
                     continue;
@@ -578,7 +586,7 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                     range = new double[]{minimum, maximum};
                 } else {
                     String value = output.getValue(row, column);
-                    if (isSuppressed(value)) {
+                    if (isSuppressed(column, value)) {
                         range = new double[]{minimum, maximum};    
                     } else {
                         range = rangeParser.getRange(valueParser, value, minimum, maximum);

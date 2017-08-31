@@ -578,7 +578,7 @@ public class StatisticsQuality {
             }
             
             // There is a problem
-            if (values.size() > 1 || !values.iterator().next().equals(config.getSuppressedValue())) {
+            if (values.size() > 1) {
                 for(int i = 0; i < hierarchy.length; i++) {
                     hierarchy[i] = Arrays.copyOf(hierarchy[i], hierarchy[i].length + 1);
                     hierarchy[i][hierarchy[i].length - 1] = config.getSuppressedValue();
