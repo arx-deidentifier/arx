@@ -163,7 +163,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         // Attribute-related
         ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
-        separator.setText("Attribute-related quality");
+        separator.setText("Attribute-level quality");
         
         // Create table
         this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -193,7 +193,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             // Attribute-related
             separator = new ComponentTitledSeparator(root, SWT.NONE);
             separator.setLayoutData(separatordata);
-            separator.setText("Dataset-related quality");
+            separator.setText("Dataset-level quality");
             
             // Create table
             this.table2 = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
