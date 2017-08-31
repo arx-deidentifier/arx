@@ -31,7 +31,8 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TableColumn;
@@ -152,22 +153,23 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
 
     @Override
     protected Control createControl(Composite parent) {
-
-        // Create root
+        
+        // Root
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(SWTUtil.createGridLayout(1));
+        this.root.setLayout(new FillLayout());
         
-        // Prepare
-        GridData separatordata = SWTUtil.createFillHorizontallyGridData(true, 3);
-        separatordata.verticalIndent = 0;
+        // Sash
+        SashForm sash = new SashForm(this.root, SWT.VERTICAL);
 
-        // Attribute-related
-        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
-        separator.setLayoutData(separatordata);
-        separator.setText(Resources.getMessage("ViewStatisticsQuality.9")); //$NON-NLS-1$
+        // Upper
+        Composite upper = new Composite(sash, SWT.NONE);
+        upper.setLayout(SWTUtil.createGridLayout(1));
+        ComponentTitledSeparator separator1 = new ComponentTitledSeparator(upper, SWT.NONE);
+        separator1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        separator1.setText(Resources.getMessage("ViewStatisticsQuality.9")); //$NON-NLS-1$
         
-        // Create table
-        this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+        // Add to upper
+        this.table = SWTUtil.createTableDynamic(upper, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
         this.table.setHeaderVisible(true);
         this.table.setLinesVisible(true);
         this.table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -188,16 +190,19 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             col.pack();
         }
         SWTUtil.createGenericTooltip(table);
-        
-        if (getTarget() == ModelPart.OUTPUT) {
 
-            // Attribute-related
-            separator = new ComponentTitledSeparator(root, SWT.NONE);
-            separator.setLayoutData(separatordata);
-            separator.setText(Resources.getMessage("ViewStatisticsQuality.10")); //$NON-NLS-1$
+        // Add to lower
+        if (getTarget() == ModelPart.OUTPUT) {
+    
+            // Lower
+            Composite lower = new Composite(sash, SWT.NONE);
+            lower.setLayout(SWTUtil.createGridLayout(1));
+            ComponentTitledSeparator separator2 = new ComponentTitledSeparator(lower, SWT.NONE);
+            separator2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+            separator2.setText(Resources.getMessage("ViewStatisticsQuality.10")); //$NON-NLS-1$
             
             // Create table
-            this.table2 = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+            this.table2 = SWTUtil.createTableDynamic(lower, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
             this.table2.setHeaderVisible(true);
             this.table2.setLinesVisible(true);
             this.table2.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -220,11 +225,15 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             SWTUtil.createGenericTooltip(table);
         }
         
-        // Layout
-        root.layout();
-        
-        // Return
-        return root;
+        // Configure & return
+        if (getTarget() == ModelPart.OUTPUT) {
+            sash.setWeights(new int[] {2, 1});
+        } else {
+            sash.setWeights(new int[] {2});
+        }
+        this.root.layout();
+        this.root.pack();
+        return this.root;
     }
 
     @Override
@@ -342,6 +351,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     table2.layout();
                 }
                 
+                root.layout();
                 setStatusDone();
             }
 
