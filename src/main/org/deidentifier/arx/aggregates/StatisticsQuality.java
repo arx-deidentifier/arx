@@ -629,12 +629,33 @@ public class StatisticsQuality {
         
         // Calculate
         for (int i = 0; i < indices.length; i++) {
+
+            // Extract special label for missings from hierarchy
             int column = indices[i];
+            String attribute = output.getAttributeName(column);
+            String[][] hierarchy = output.getDefinition().getHierarchy(attribute);
+            Set<String> roots = new HashSet<>();
+            for (String[] row : hierarchy) {
+                roots.add(row[row.length - 1]);
+            }
+            String ROOT_VALUE = (roots.size() == 1) ? roots.iterator().next() : null;
+            
+            // Search for missings
             double missings = 0d;
             for (int row = 0; row < output.getNumRows(); row++) {
-                if (output.isOutlier(row) || output.getValue(row, column).equals(DataType.ANY_VALUE) || 
-                    output.getValue(row, column).equals(DataType.NULL_VALUE)) {
-                    missings += 1d;
+                
+                // Suppressed record
+                if (output.isOutlier(row)) {
+                    missings += 1d; 
+                } else {
+                    
+                    // Suppressed value
+                    String value = output.getValue(row, column);
+                    if (value.equals(DataType.ANY_VALUE) ||
+                        value.equals(DataType.NULL_VALUE) ||
+                        value.equals(ROOT_VALUE)) {
+                        missings += 1d;
+                    }
                 }
                 
                 // Check

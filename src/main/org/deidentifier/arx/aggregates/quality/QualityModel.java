@@ -37,10 +37,10 @@ abstract class QualityModel<T> {
     private static final double          LOG2 = Math.log(2);
 
     /** Input */
-    private final DataHandle     input;
+    private final DataHandle             input;
 
     /** Output */
-    private final DataHandle     output;
+    private final DataHandle             output;
 
     /** Grouped */
     private final Groupify<TupleWrapper> groupedInput;
