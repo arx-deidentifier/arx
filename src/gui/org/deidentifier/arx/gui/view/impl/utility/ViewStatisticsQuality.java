@@ -23,6 +23,7 @@ import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsQuality;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
@@ -108,15 +109,15 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         List<String> result = new ArrayList<>();
         
         // Input and output
-        result.add("Attribute");
-        result.add("Data type");
-        result.add("Missings");
+        result.add(Resources.getMessage("ViewStatisticsQuality.0")); //$NON-NLS-1$
+        result.add(Resources.getMessage("ViewStatisticsQuality.1")); //$NON-NLS-1$
+        result.add(Resources.getMessage("ViewStatisticsQuality.2")); //$NON-NLS-1$
         
         // Output only
         if (getTarget() == ModelPart.OUTPUT) {
-            result.add("Gen. intensity");
-            result.add("Granularity");
-            result.add("N.-U. entropy");
+            result.add(Resources.getMessage("ViewStatisticsQuality.3")); //$NON-NLS-1$
+            result.add(Resources.getMessage("ViewStatisticsQuality.4")); //$NON-NLS-1$
+            result.add(Resources.getMessage("ViewStatisticsQuality.5")); //$NON-NLS-1$
         }
         
         // Return
@@ -129,8 +130,8 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
      */
     private List<String> getColumns2() {
         List<String> result = new ArrayList<>();
-        result.add("Model");
-        result.add("Quality");
+        result.add(Resources.getMessage("ViewStatisticsQuality.6")); //$NON-NLS-1$
+        result.add(Resources.getMessage("ViewStatisticsQuality.7")); //$NON-NLS-1$
         return result;
     }
 
@@ -143,7 +144,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
      */
     private void setNumericValueAtIndex(TableItem item, int index, double value) {
         if (Double.isNaN(value)) {
-            item.setText(index, "N/A");
+            item.setText(index, Resources.getMessage("ViewStatisticsQuality.8")); //$NON-NLS-1$
         } else {
             item.setData(String.valueOf(index), value);
         }
@@ -163,7 +164,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         // Attribute-related
         ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
-        separator.setText("Attribute-level quality");
+        separator.setText(Resources.getMessage("ViewStatisticsQuality.9")); //$NON-NLS-1$
         
         // Create table
         this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -193,7 +194,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             // Attribute-related
             separator = new ComponentTitledSeparator(root, SWT.NONE);
             separator.setLayoutData(separatordata);
-            separator.setText("Dataset-level quality");
+            separator.setText(Resources.getMessage("ViewStatisticsQuality.10")); //$NON-NLS-1$
             
             // Create table
             this.table2 = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -309,31 +310,31 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     }
                     
                     TableItem item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, "Gen. intensity");
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.11")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getGeneralizationIntensity().getArithmeticMean(false));
                     
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, "Granularity");
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.12")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getGranularity().getArithmeticMean(false));
                     
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, "N.-U. entropy");
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.13")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getNonUniformEntropy().getArithmeticMean(false));
                     
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, "Discernibility");
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.14")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getDiscernibility().getValue());
                     
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, "Average class size");
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.15")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getAverageClassSize().getValue());
                     
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, "K.-L. divergence");
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.16")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getKullbackLeiblerDivergence().getValue());
                     
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, "Sum of squared errors");
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.17")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getSumOfSquaredErrors().getValue());
                     
                     // Done
