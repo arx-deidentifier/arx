@@ -99,7 +99,6 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
                 } catch (Exception e) {
                     // Silently catch exceptions
                     result[i] = Double.NaN;
-                    break;
                 }
                 
                 // Check

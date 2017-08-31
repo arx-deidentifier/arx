@@ -95,7 +95,6 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
                 } catch (Exception e) {
                     // Silently catch exceptions
                     result[i] = Double.NaN;
-                    break;
                 }
                 
                 // Check

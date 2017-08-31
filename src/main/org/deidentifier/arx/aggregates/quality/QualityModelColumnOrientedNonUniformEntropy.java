@@ -124,7 +124,7 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                     int currentLevel = levels.get(levelIndex);
                     int previousLevel = levelIndex > 0 ? levels.get(levelIndex - 1) : currentLevel;
                     
-                    // Frequencies in input or levelindex - 1 for all rows with transformation level >= level
+                    // Frequencies in input or levelIndex - 1 for all rows with transformation level >= level
                     Map<String, Double> inputFrequencies = levelIndex == 0 ? getInputFrequencies(transformations, column, currentLevel)
                                                                            : getOutputFrequencies(transformations, generalizationFunctions, column, currentLevel, previousLevel);
 
@@ -168,17 +168,15 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                 min[i] = 0;
                 
             } catch (Exception e) {
-                
+
                 // Silently catch exceptions
                 result[i] = Double.NaN;
                 min[i] = Double.NaN;
                 max[i] = Double.NaN;
-                break;
             }
 
             // Check
             checkInterrupt();
-            
         }
         
         // Return
