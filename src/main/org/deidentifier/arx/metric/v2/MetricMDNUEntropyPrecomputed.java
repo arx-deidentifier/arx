@@ -81,7 +81,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     /** Minimal size of equivalence classes enforced by the differential privacy model */
     private double        k;
 
-    /** The root values of all generalization hierarchies or null if nor single root value exists */
+    /** The root values of all generalization hierarchies or null if no single root value exists */
     private Integer[]     rootValues;
 
 

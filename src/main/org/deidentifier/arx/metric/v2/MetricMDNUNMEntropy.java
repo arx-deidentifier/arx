@@ -29,7 +29,6 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
- * @author Raffael Bild
  */
 public class MetricMDNUNMEntropy extends MetricMDNUNMEntropyPrecomputed {
 
