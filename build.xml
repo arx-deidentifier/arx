@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.6.0" />
+    <property name="arx.version" value="3.7.0" />
 
     <!-- add extra parameter to javadoc generation if Java 1.8 is used -->
     <condition property="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" else="-notimestamp">

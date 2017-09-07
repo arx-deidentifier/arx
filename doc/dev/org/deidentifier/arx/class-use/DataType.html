@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="en">
+<html lang="de">
 <head>
 <title>Uses of Class org.deidentifier.arx.DataType (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -241,7 +241,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.util.Date&gt;</code></td>
-<td class="colLast"><span class="strong">DataType.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String,%20java.util.Locale)">createDate</a></strong>(java.lang.String&nbsp;format,
+<td class="colLast"><span class="strong">DataType.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.html#createDate(java.lang.String, java.util.Locale)">createDate</a></strong>(java.lang.String&nbsp;format,
           java.util.Locale&nbsp;locale)</code>
 <div class="block">A date data type with given format.</div>
 </td>
@@ -254,7 +254,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Double&gt;</code></td>
-<td class="colLast"><span class="strong">DataType.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String,%20java.util.Locale)">createDecimal</a></strong>(java.lang.String&nbsp;format,
+<td class="colLast"><span class="strong">DataType.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.html#createDecimal(java.lang.String, java.util.Locale)">createDecimal</a></strong>(java.lang.String&nbsp;format,
              java.util.Locale&nbsp;locale)</code>
 <div class="block">Creates a decimal data type with a format string from the given locale.</div>
 </td>
@@ -267,7 +267,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.lang.Long&gt;</code></td>
-<td class="colLast"><span class="strong">DataType.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String,%20java.util.Locale)">createInteger</a></strong>(java.lang.String&nbsp;format,
+<td class="colLast"><span class="strong">DataType.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.html#createInteger(java.lang.String, java.util.Locale)">createInteger</a></strong>(java.lang.String&nbsp;format,
              java.util.Locale&nbsp;locale)</code>
 <div class="block">An integer data type with given format using the given locale.</div>
 </td>
@@ -291,6 +291,14 @@
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
 <td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the base data type without generalization.</div>
@@ -298,16 +306,16 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getBaseDataType(java.lang.String)">getBaseDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
+<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../org/deidentifier/arx/DataDefinition.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;columnName)</code>
-<div class="block">Returns the data type for the given column.</div>
+<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
+<div class="block">Method</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -318,37 +326,29 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleInternal.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInternal.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>
-<div class="block">Method</div>
+<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../org/deidentifier/arx/DataDefinition.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;columnName)</code>
+<div class="block">Returns the data type for the given column.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataType(java.lang.String)">getDataType</a></strong>(java.lang.String&nbsp;attribute)</code>&nbsp;</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected abstract <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
-<div class="block">Generates an array of data types.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
-<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
 <td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
 <div class="block">Creates the data type array.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
-<td class="colLast"><span class="strong">DataHandleSubset.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleSubset.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><span class="strong">DataHandleInput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleInput.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected abstract <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
+<div class="block">Generates an array of data types.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="type parameter in DataType.DataTypeDescription">T</a>&gt;</code></td>
@@ -364,7 +364,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>abstract <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../org/deidentifier/arx/DataType.DataTypeDescription.html" title="type parameter in DataType.DataTypeDescription">T</a>&gt;</code></td>
-<td class="colLast"><span class="strong">DataType.DataTypeDescription.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.DataTypeDescription.html#newInstance(java.lang.String,%20java.util.Locale)">newInstance</a></strong>(java.lang.String&nbsp;format,
+<td class="colLast"><span class="strong">DataType.DataTypeDescription.</span><code><strong><a href="../../../../org/deidentifier/arx/DataType.DataTypeDescription.html#newInstance(java.lang.String, java.util.Locale)">newInstance</a></strong>(java.lang.String&nbsp;format,
            java.util.Locale&nbsp;locale)</code>
 <div class="block">Creates a new instance with the given format string and the given locale.</div>
 </td>
@@ -386,14 +386,14 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class)">getMatchingDataTypes</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int, java.lang.Class)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int, java.lang.Class, double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz,
                     double&nbsp;threshold)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.</div>
@@ -401,7 +401,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale)">getMatchingDataTypes</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int, java.lang.Class, java.util.Locale)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz,
                     java.util.Locale&nbsp;locale)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type for a given wrapped class.</div>
@@ -409,7 +409,7 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;U&gt;&nbsp;java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int, java.lang.Class, java.util.Locale, double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.lang.Class&lt;U&gt;&nbsp;clazz,
                     java.util.Locale&nbsp;locale,
                     double&nbsp;threshold)</code>
@@ -418,14 +418,14 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int, double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     double&nbsp;threshold)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale)">getMatchingDataTypes</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int, java.util.Locale)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.util.Locale&nbsp;locale)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type
  This method only returns types that match at least 80% of all values in the column .</div>
@@ -433,7 +433,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;org.apache.commons.math3.util.Pair&lt;<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;,java.lang.Double&gt;&gt;</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale,%20double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int, java.util.Locale, double)">getMatchingDataTypes</a></strong>(int&nbsp;column,
                     java.util.Locale&nbsp;locale,
                     double&nbsp;threshold)</code>
 <div class="block">Returns a mapping from data types to the relative number of values that conform to the according type.</div>
@@ -450,14 +450,14 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20org.deidentifier.arx.DataType)">addColumn</a></strong>(int&nbsp;index,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int, org.deidentifier.arx.DataType)">addColumn</a></strong>(int&nbsp;index,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Adds a new column.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(int&nbsp;index,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int, org.deidentifier.arx.DataType, boolean)">addColumn</a></strong>(int&nbsp;index,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
          boolean&nbsp;cleansing)</code>
 <div class="block">Adds a new column.</div>
@@ -465,7 +465,7 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20java.lang.String,%20org.deidentifier.arx.DataType)">addColumn</a></strong>(int&nbsp;index,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int, java.lang.String, org.deidentifier.arx.DataType)">addColumn</a></strong>(int&nbsp;index,
          java.lang.String&nbsp;alias,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Adds a new column.</div>
@@ -473,7 +473,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(int&nbsp;index,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(int, java.lang.String, org.deidentifier.arx.DataType, boolean)">addColumn</a></strong>(int&nbsp;index,
          java.lang.String&nbsp;alias,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
          boolean&nbsp;cleansing)</code>
@@ -482,14 +482,14 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20org.deidentifier.arx.DataType)">addColumn</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String, org.deidentifier.arx.DataType)">addColumn</a></strong>(java.lang.String&nbsp;name,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Adds a new column.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String, org.deidentifier.arx.DataType, boolean)">addColumn</a></strong>(java.lang.String&nbsp;name,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
          boolean&nbsp;cleansing)</code>
 <div class="block">Adds a new column.</div>
@@ -497,7 +497,7 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType)">addColumn</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String, java.lang.String, org.deidentifier.arx.DataType)">addColumn</a></strong>(java.lang.String&nbsp;name,
          java.lang.String&nbsp;alias,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Adds a new column.</div>
@@ -505,7 +505,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">addColumn</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><span class="strong">DataSource.</span><code><strong><a href="../../../../org/deidentifier/arx/DataSource.html#addColumn(java.lang.String, java.lang.String, org.deidentifier.arx.DataType, boolean)">addColumn</a></strong>(java.lang.String&nbsp;name,
          java.lang.String&nbsp;alias,
          <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
          boolean&nbsp;cleansing)</code>
@@ -514,7 +514,7 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../org/deidentifier/arx/Data.html#create(java.io.File,%20java.nio.charset.Charset,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a></strong>(java.io.File&nbsp;file,
+<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../org/deidentifier/arx/Data.html#create(java.io.File, java.nio.charset.Charset, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">create</a></strong>(java.io.File&nbsp;file,
       java.nio.charset.Charset&nbsp;charset,
       <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
       <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
@@ -523,7 +523,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../org/deidentifier/arx/Data.html#create(java.io.InputStream,%20java.nio.charset.Charset,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a></strong>(java.io.InputStream&nbsp;stream,
+<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../org/deidentifier/arx/Data.html#create(java.io.InputStream, java.nio.charset.Charset, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">create</a></strong>(java.io.InputStream&nbsp;stream,
       java.nio.charset.Charset&nbsp;charset,
       <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
       <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
@@ -532,7 +532,7 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a></code></td>
-<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../org/deidentifier/arx/Data.html#create(java.lang.String,%20java.nio.charset.Charset,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">create</a></strong>(java.lang.String&nbsp;path,
+<td class="colLast"><span class="strong">Data.</span><code><strong><a href="../../../../org/deidentifier/arx/Data.html#create(java.lang.String, java.nio.charset.Charset, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">create</a></strong>(java.lang.String&nbsp;path,
       java.nio.charset.Charset&nbsp;charset,
       <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
       <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
@@ -541,7 +541,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String[]</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getNonConformingValues(int,%20org.deidentifier.arx.DataType,%20int)">getNonConformingValues</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getNonConformingValues(int, org.deidentifier.arx.DataType, int)">getNonConformingValues</a></strong>(int&nbsp;column,
                       <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
                       int&nbsp;max)</code>
 <div class="block">Returns a set of values that do not conform to the given data type.</div>
@@ -549,14 +549,14 @@
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getNumConformingValues(int,%20org.deidentifier.arx.DataType)">getNumConformingValues</a></strong>(int&nbsp;column,
+<td class="colLast"><span class="strong">DataHandle.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandle.html#getNumConformingValues(int, org.deidentifier.arx.DataType)">getNumConformingValues</a></strong>(int&nbsp;column,
                       <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type)</code>
 <div class="block">Returns the number of (distinct) values that conform to the given data type.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../org/deidentifier/arx/DataDefinition.html#setDataType(java.lang.String,%20org.deidentifier.arx.DataType)">setDataType</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../org/deidentifier/arx/DataDefinition.html#setDataType(java.lang.String, org.deidentifier.arx.DataType)">setDataType</a></strong>(java.lang.String&nbsp;attribute,
            <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type)</code>
 <div class="block">Define the datatype of a given attribute.</div>
 </td>
@@ -572,7 +572,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#updateData(org.deidentifier.arx.DataHandle,%20java.util.Map,%20int[])">updateData</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;data,
+<td class="colLast"><span class="strong">DataHandleOutput.</span><code><strong><a href="../../../../org/deidentifier/arx/DataHandleOutput.html#updateData(org.deidentifier.arx.DataHandle, java.util.Map, int[])">updateData</a></strong>(<a href="../../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;data,
           java.util.Map&lt;java.lang.String,<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&gt;&nbsp;types,
           int[]&nbsp;outliers)</code>
 <div class="block">Used to update data when loading projects after local recoding.</div>
@@ -623,41 +623,68 @@
 </tr>
 <tbody>
 <tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;java.util.Date&gt;</code></td>
+<td class="colLast"><span class="strong">HierarchyBuilderDate.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html#create(org.deidentifier.arx.DataType, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity...)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.util.Date&gt;&nbsp;type,
+      <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Granularity.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Granularity</a>...&nbsp;granularities)</code>
+<div class="block">Creates an hierarchy reflecting the given granularities</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;java.util.Date&gt;</code></td>
+<td class="colLast"><span class="strong">HierarchyBuilderDate.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html#create(org.deidentifier.arx.DataType, java.util.TimeZone, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Format, java.util.Date, java.util.Date, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity...)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.util.Date&gt;&nbsp;type,
+      java.util.TimeZone&nbsp;timeZone,
+      <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Format.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Format</a>&nbsp;format,
+      java.util.Date&nbsp;bottomCoding,
+      java.util.Date&nbsp;topCoding,
+      <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Granularity.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Granularity</a>...&nbsp;granularities)</code>
+<div class="block">Creates an hierarchy reflecting the given granularities</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;java.util.Date&gt;</code></td>
+<td class="colLast"><span class="strong">HierarchyBuilderDate.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html#create(org.deidentifier.arx.DataType, java.util.TimeZone, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Format, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity...)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.util.Date&gt;&nbsp;type,
+      java.util.TimeZone&nbsp;timeZone,
+      <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Format.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Format</a>&nbsp;format,
+      <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Granularity.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Granularity</a>...&nbsp;granularities)</code>
+<div class="block">Creates an hierarchy reflecting the given granularities</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a>&lt;T&gt;</code></td>
 <td class="colLast"><span class="strong">HierarchyBuilderIntervalBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(org.deidentifier.arx.DataType)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased</a>&lt;T&gt;</code></td>
-<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html#create(org.deidentifier.arx.DataType,%20boolean)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
+<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html#create(org.deidentifier.arx.DataType, boolean)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
       boolean&nbsp;order)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased</a>&lt;T&gt;</code></td>
-<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html#create(org.deidentifier.arx.DataType,%20java.util.Comparator)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
+<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html#create(org.deidentifier.arx.DataType, java.util.Comparator)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
       java.util.Comparator&lt;T&gt;&nbsp;comparator)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a>&lt;T&gt;</code></td>
-<td class="colLast"><span class="strong">HierarchyBuilderIntervalBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(org.deidentifier.arx.DataType,%20org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range,%20org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
+<td class="colLast"><span class="strong">HierarchyBuilderIntervalBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#create(org.deidentifier.arx.DataType, org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range, org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range)">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
       <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Range.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Range</a>&lt;T&gt;&nbsp;lowerRange,
       <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Range.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Range</a>&lt;T&gt;&nbsp;upperRange)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased</a>&lt;T&gt;</code></td>
-<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html#create(org.deidentifier.arx.DataType,%20java.lang.String[])">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
+<td class="colLast"><span class="strong">HierarchyBuilderOrderBased.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html#create(org.deidentifier.arx.DataType, java.lang.String[])">create</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type,
       java.lang.String[]&nbsp;order)</code>
 <div class="block">Creates a new instance.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.AggregateFunctionBuilder.html" title="class in org.deidentifier.arx.aggregates">AggregateFunction.AggregateFunctionBuilder</a>&lt;T&gt;</code></td>
 <td class="colLast"><span class="strong">AggregateFunction.</span><code><strong><a href="../../../../org/deidentifier/arx/aggregates/AggregateFunction.html#forType(org.deidentifier.arx.DataType)">forType</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;T&gt;&nbsp;type)</code>
 <div class="block">Returns a builder for the given data type.</div>
@@ -682,7 +709,7 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html#HierarchyBuilderGroupingBased(org.deidentifier.arx.aggregates.HierarchyBuilder.Type,%20org.deidentifier.arx.DataType)">HierarchyBuilderGroupingBased</a></strong>(<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a>&nbsp;type,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html#HierarchyBuilderGroupingBased(org.deidentifier.arx.aggregates.HierarchyBuilder.Type, org.deidentifier.arx.DataType)">HierarchyBuilderGroupingBased</a></strong>(<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.Type.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilder.Type</a>&nbsp;type,
                              <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html" title="type parameter in HierarchyBuilderGroupingBased">T</a>&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance for the given data type.</div>
 </td>
@@ -693,7 +720,7 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#HierarchyBuilderIntervalBased(org.deidentifier.arx.DataType,%20org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range,%20org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range)">HierarchyBuilderIntervalBased</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&gt;&nbsp;type,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html#HierarchyBuilderIntervalBased(org.deidentifier.arx.DataType, org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range, org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range)">HierarchyBuilderIntervalBased</a></strong>(<a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&gt;&nbsp;type,
                              <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Range.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Range</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&gt;&nbsp;lowerRange,
                              <a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.Range.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased.Range</a>&lt;<a href="../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="type parameter in HierarchyBuilderIntervalBased">T</a>&gt;&nbsp;upperRange)</code>
 <div class="block">Creates a new instance.</div>
@@ -713,7 +740,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/classification/ClassificationFeatureMetadata.html#ClassificationFeatureMetadata(java.lang.String,%20org.deidentifier.arx.DataType)">ClassificationFeatureMetadata</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/classification/ClassificationFeatureMetadata.html#ClassificationFeatureMetadata(java.lang.String, org.deidentifier.arx.DataType)">ClassificationFeatureMetadata</a></strong>(java.lang.String&nbsp;attribute,
                              <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type)</code>
 <div class="block">Creates a new instance</div>
 </td>
@@ -749,7 +776,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DistributionAggregateFunction.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
+<td class="colLast"><span class="strong">DistributionAggregateFunction.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
           <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
           int[][]&nbsp;hierarchy)</code>
 <div class="block">Initializes the function</div>
@@ -757,25 +784,25 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
+<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
           <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
           int[][]&nbsp;hierarchy)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
+<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
           <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
           int[][]&nbsp;hierarchy)</code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionMedian.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMedian.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
+<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionMedian.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMedian.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
           <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
           int[][]&nbsp;hierarchy)</code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionMode.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMode.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
+<td class="colLast"><span class="strong">DistributionAggregateFunction.DistributionAggregateFunctionMode.</span><code><strong><a href="../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionMode.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
           <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
           int[][]&nbsp;hierarchy)</code>&nbsp;</td>
 </tr>
@@ -793,7 +820,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20java.lang.String[],%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20int[],%20java.util.Map,%20java.util.Map,%20int[],%20org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[],%20java.lang.String[],%20int[],%20int[],%20int,%20int,%20int[],%20java.util.Map)">DataManager</a></strong>(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/framework/data/DataManager.html#DataManager(org.deidentifier.arx.DataDefinition, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int[], int, int, int[], java.util.Map)">DataManager</a></strong>(<a href="../../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
            <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
            <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
            <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
@@ -815,7 +842,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/framework/data/DataManagerSubset.html#DataManagerSubset(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20org.deidentifier.arx.framework.data.Data,%20java.lang.String[],%20org.deidentifier.arx.framework.data.GeneralizationHierarchy[],%20int[],%20java.util.Map,%20java.util.Map,%20int[],%20org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[],%20java.lang.String[],%20int[],%20int[],%20int,%20int,%20int[],%20java.util.Map)">DataManagerSubset</a></strong>(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;source,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/framework/data/DataManagerSubset.html#DataManagerSubset(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, org.deidentifier.arx.framework.data.Data, java.lang.String[], org.deidentifier.arx.framework.data.GeneralizationHierarchy[], int[], java.util.Map, java.util.Map, int[], org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction[], java.lang.String[], int[], int[], int, int, int[], java.util.Map)">DataManagerSubset</a></strong>(<a href="../../../../org/deidentifier/arx/framework/data/DataManager.html" title="class in org.deidentifier.arx.framework.data">DataManager</a>&nbsp;source,
                  <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataAnalyzed,
                  <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataGeneralized,
                  <a href="../../../../org/deidentifier/arx/framework/data/Data.html" title="class in org.deidentifier.arx.framework.data">Data</a>&nbsp;dataStatic,
@@ -901,7 +928,7 @@
 </tr>
 <tbody>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File,%20java.nio.charset.Charset,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.File&nbsp;file,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.File, java.nio.charset.Charset, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.File&nbsp;file,
             java.nio.charset.Charset&nbsp;charset,
             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
             <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatype)</code>
@@ -909,7 +936,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream,%20java.nio.charset.Charset,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.InputStream, java.nio.charset.Charset, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.InputStream&nbsp;stream,
             java.nio.charset.Charset&nbsp;charset,
             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
             <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
@@ -917,7 +944,7 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.Reader,%20char,%20char,%20char,%20char[],%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.Reader&nbsp;reader,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.io.Reader, char, char, char, char[], org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.io.Reader&nbsp;reader,
             char&nbsp;delimiter,
             char&nbsp;quote,
             char&nbsp;escape,
@@ -927,7 +954,7 @@
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String,%20java.nio.charset.Charset,%20org.deidentifier.arx.io.CSVSyntax,%20org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/CSVDataInput.html#CSVDataInput(java.lang.String, java.nio.charset.Charset, org.deidentifier.arx.io.CSVSyntax, org.deidentifier.arx.DataType[])">CSVDataInput</a></strong>(java.lang.String&nbsp;filename,
             java.nio.charset.Charset&nbsp;charset,
             <a href="../../../../org/deidentifier/arx/io/CSVSyntax.html" title="class in org.deidentifier.arx.io">CSVSyntax</a>&nbsp;config,
             <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;org.apache.poi.ss.formula.functions.T&gt;[]&nbsp;datatypes)</code>
@@ -935,40 +962,40 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumn.html#ImportColumn(java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumn</a></strong>(java.lang.String&nbsp;aliasName,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumn.html#ImportColumn(java.lang.String, org.deidentifier.arx.DataType)">ImportColumn</a></strong>(java.lang.String&nbsp;aliasName,
             <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;dataType)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumn.html#ImportColumn(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumn</a></strong>(java.lang.String&nbsp;aliasName,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumn.html#ImportColumn(java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumn</a></strong>(java.lang.String&nbsp;aliasName,
             <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;dataType,
             boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int,%20org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int, org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(int&nbsp;index,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnCSV</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int, org.deidentifier.arx.DataType, boolean)">ImportColumnCSV</a></strong>(int&nbsp;index,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(int&nbsp;index,
                java.lang.String&nbsp;aliasName,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnCSV</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(int, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnCSV</a></strong>(int&nbsp;index,
                java.lang.String&nbsp;aliasName,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                boolean&nbsp;cleansing)</code>
@@ -976,27 +1003,27 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String, org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
                java.lang.String&nbsp;alias,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnCSV.html#ImportColumnCSV(java.lang.String, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnCSV</a></strong>(java.lang.String&nbsp;name,
                java.lang.String&nbsp;alias,
                <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                boolean&nbsp;cleansing)</code>
@@ -1004,27 +1031,27 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int,%20org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int, org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(int&nbsp;index,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int, org.deidentifier.arx.DataType, boolean)">ImportColumnExcel</a></strong>(int&nbsp;index,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                  boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(int&nbsp;index,
                  java.lang.String&nbsp;aliasName,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(int, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnExcel</a></strong>(int&nbsp;index,
                  java.lang.String&nbsp;aliasName,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                  boolean&nbsp;cleansing)</code>
@@ -1032,27 +1059,27 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String, org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                  boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
                  java.lang.String&nbsp;alias,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnExcel.html#ImportColumnExcel(java.lang.String, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnExcel</a></strong>(java.lang.String&nbsp;name,
                  java.lang.String&nbsp;alias,
                  <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                  boolean&nbsp;cleansing)</code>
@@ -1060,55 +1087,27 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int,%20org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int, org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(int&nbsp;index,
                    <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnIndexed</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int, org.deidentifier.arx.DataType, boolean)">ImportColumnIndexed</a></strong>(int&nbsp;index,
                    <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                    boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(int&nbsp;index,
                    java.lang.String&nbsp;aliasName,
                    <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnIndexed</a></strong>(int&nbsp;index,
-                   java.lang.String&nbsp;aliasName,
-                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
-                   boolean&nbsp;cleansing)</code>
-<div class="block">Creates a new instance of this object with the given parameters.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
-                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
-<div class="block">Creates a new instance of this object with the given parameters.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
-                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
-                   boolean&nbsp;cleansing)</code>
-<div class="block">Creates a new instance of this object with the given parameters.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
-                   java.lang.String&nbsp;aliasName,
-                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
-<div class="block">Creates a new instance of this object with the given parameters.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(int, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnIndexed</a></strong>(int&nbsp;index,
                    java.lang.String&nbsp;aliasName,
                    <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                    boolean&nbsp;cleansing)</code>
@@ -1116,27 +1115,55 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int,%20org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String, org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
+                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
+                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                   boolean&nbsp;cleansing)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
+                   java.lang.String&nbsp;aliasName,
+                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnIndexed.html#ImportColumnIndexed(java.lang.String, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnIndexed</a></strong>(java.lang.String&nbsp;name,
+                   java.lang.String&nbsp;aliasName,
+                   <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
+                   boolean&nbsp;cleansing)</code>
+<div class="block">Creates a new instance of this object with the given parameters.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int, org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(int&nbsp;index,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnJDBC</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int, org.deidentifier.arx.DataType, boolean)">ImportColumnJDBC</a></strong>(int&nbsp;index,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                 boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(int&nbsp;index,
                 java.lang.String&nbsp;aliasName,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnJDBC</a></strong>(int&nbsp;index,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(int, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnJDBC</a></strong>(int&nbsp;index,
                 java.lang.String&nbsp;aliasName,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                 boolean&nbsp;cleansing)</code>
@@ -1144,27 +1171,27 @@
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String, org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                 boolean&nbsp;cleansing)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String, java.lang.String, org.deidentifier.arx.DataType)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
                 java.lang.String&nbsp;aliasName,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype)</code>
 <div class="block">Creates a new instance of this object with the given parameters.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String,%20java.lang.String,%20org.deidentifier.arx.DataType,%20boolean)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/io/ImportColumnJDBC.html#ImportColumnJDBC(java.lang.String, java.lang.String, org.deidentifier.arx.DataType, boolean)">ImportColumnJDBC</a></strong>(java.lang.String&nbsp;name,
                 java.lang.String&nbsp;aliasName,
                 <a href="../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;datatype,
                 boolean&nbsp;cleansing)</code>
