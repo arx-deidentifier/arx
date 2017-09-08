@@ -102,6 +102,21 @@ public abstract class AbstractEDDifferentialPrivacy extends ImplicitPrivacyCrite
     }
     
     @Override
+    public double getRiskThresholdJournalist() {
+        return 1d / (double)getK();
+    }
+    
+    @Override
+    public double getRiskThresholdMarketer() {
+        return 1d / (double)getK();
+    }
+    
+    @Override
+    public double getRiskThresholdProsecutor() {
+        return 1d / (double)getK();
+    }
+    
+    @Override
     public int getRequirements(){
         // Requires two counters
         return ARXConfiguration.REQUIREMENT_COUNTER |
