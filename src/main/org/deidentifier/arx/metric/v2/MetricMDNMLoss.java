@@ -22,7 +22,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacyOptimal;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -318,8 +318,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this.shares = manager.getDomainShares();
         
         // Store minimal size of equivalence classes
-        if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class)) {
-            DataDependentEDDifferentialPrivacy dpCriterion = config.getPrivacyModel(DataDependentEDDifferentialPrivacy.class);
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacyOptimal.class)) {
+            EDDifferentialPrivacyOptimal dpCriterion = config.getPrivacyModel(EDDifferentialPrivacyOptimal.class);
             k = (double)dpCriterion.getK();
         }
         

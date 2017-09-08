@@ -23,7 +23,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacyOptimal;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -341,10 +341,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             max[i] = (input.getDataLength() * log2(input.getDataLength())) * Math.max(gFactor, sFactor);
         }
         
-        if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class)) {
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacyOptimal.class)) {
             
             // Store minimal size of equivalence classes
-            DataDependentEDDifferentialPrivacy dpCriterion = config.getPrivacyModel(DataDependentEDDifferentialPrivacy.class);
+            EDDifferentialPrivacyOptimal dpCriterion = config.getPrivacyModel(EDDifferentialPrivacyOptimal.class);
             k = (double)dpCriterion.getK();
             
             // Store root values of generalization hierarchies or null if no single root value exists

@@ -29,7 +29,7 @@ import org.deidentifier.arx.DataGeneralizationScheme;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class EDDifferentialPrivacy extends AbstractEDDifferentialPrivacy {
+public class EDDifferentialPrivacy extends EDDifferentialPrivacyAbstract {
     
     /** SVUID */
     private static final long        serialVersionUID = 242579895476272606L;
