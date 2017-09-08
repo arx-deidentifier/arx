@@ -111,7 +111,7 @@ public class CountTree {
      * @param path the set to be inserted
      * @param c    the cut that is used to generalize path
      * @param k    an integer
-     * @return true if path, generalized by c occurs at least k times in the tree, false if less than k
+     * @return true if path, generalized by c occurs at least k+1 times in the tree, false if less than k
      */
     public boolean providesKAnonymity(int[] path, Cut c, int k) {
         sortDescending(path);
@@ -140,7 +140,7 @@ public class CountTree {
 
 
         if (Arrays.equals(genPath, path)) // no item in path was generalized by c
-            return uu == path.length && oldCount >= k;
+            return uu == path.length && oldCount > k;
 
 
         for (int i : genPath) { // find end of path where the generalized path is inserted
@@ -157,7 +157,7 @@ public class CountTree {
             throw new RuntimeException("Path does not exist for generalized transaction");
 
 
-        return n.count + oldCount >= k; // if the count of the old endnode of the path plus the endnode
+        return n.count + oldCount > k; // if the count of the old endnode of the path plus the endnode
     }
 
     /**
@@ -233,10 +233,10 @@ public class CountTree {
 
         /**
          * @param k the k in k^m-anonymity
-         * @return true if all nodes below this node have count >= k, else false
+         * @return true if all nodes below this node have count > k, else false
          */
         private boolean kmanonymous(int k) {
-            boolean nodeKanonymous = this.count >= k;
+            boolean nodeKanonymous = this.count > k;
 
             if (!nodeKanonymous)
                 return false;

@@ -84,7 +84,7 @@ public class KMAnonymity {
         if (cout.isGeneralized(node.getValue()))
             return;
 
-        if (node.getChildren().size() == 0 && node.getCount() < k) { // node is a leaf node and has count less than k
+        if (node.getChildren().size() == 0 && node.getCount() <= k) { // node is a leaf node and has count less than k
             int[] J = node.getPath();
             Cut c = getKAnonymousCut(J, k, ct);
             cout.merge(c);
@@ -165,7 +165,6 @@ public class KMAnonymity {
 
         while (!Q.isEmpty()) {
             Cut c = Q.poll();
-            System.out.println(Q.size());
             int[][] generalizedTableByC = c.generalize(D);
             CountTree ct = new CountTree(m, generalizedTableByC, hierarchy);
             List<Cut> ancestors = c.ancestors();
