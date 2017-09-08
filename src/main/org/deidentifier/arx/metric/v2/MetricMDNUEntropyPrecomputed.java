@@ -18,8 +18,6 @@
 package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
@@ -33,6 +31,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class provides an efficient implementation of the non-uniform entropy
@@ -81,8 +81,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     /** Minimal size of equivalence classes enforced by the differential privacy model */
     private double        k;
 
-    /** The root values of all generalization hierarchies or null if no single root value exists */
-    private Integer[]     rootValues;
+    /** The root values of all generalization hierarchies or -1 if no single root value exists */
+    private int[]         rootValues;
 
 
     /**
@@ -348,14 +348,14 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             k = (double)dpCriterion.getK();
             
             // Store root values of generalization hierarchies or null if no single root value exists
-            rootValues = new Integer[hierarchies.length];
+            rootValues = new int[hierarchies.length];
             for (int i = 0; i < hierarchies.length; i++) {
-                Integer rootValue = null;
+                int rootValue = -1;
                 for (int[] row : hierarchies[i].getArray()) {
-                    if (rootValue == null) {
+                    if (rootValue == -1) {
                         rootValue = row[row.length-1];
                     } else if (row[row.length-1] != rootValue) {
-                        rootValue = null;
+                        rootValue = -1;
                         break;
                     }
                 }
@@ -376,18 +376,15 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         // For every attribute
         for (int j = 0; j < getDimensionsGeneralized(); ++j) {
 
-            Map<Integer, Integer> nonSuppressedValueToCount = new HashMap<Integer, Integer>();
+            IntIntOpenHashMap nonSuppressedValueToCount = new IntIntOpenHashMap();
 
             HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
             while (entry != null) {
 
                 // Process values of records which have not been suppressed by sampling
-                if (entry.isNotOutlier && (rootValues[j] == null || entry.key[j] != rootValues[j])) {
+                if (entry.isNotOutlier && (rootValues[j] == -1 || entry.key[j] != rootValues[j])) {
                     // The attribute value has neither been suppressed because of record suppression nor because of generalization
-                    int value = entry.key[j];
-                    int valueCount = nonSuppressedValueToCount.containsKey(value) ?
-                            (nonSuppressedValueToCount.get(value) + entry.count) : entry.count;
-                    nonSuppressedValueToCount.put(value, valueCount);
+                    nonSuppressedValueToCount.putOrAdd(entry.key[j], entry.count, entry.count);
                 } else {
                     // The attribute value has been suppressed because of record suppression or because of generalization
                     score += entry.count * rows;
@@ -401,8 +398,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             }
 
             // Add values for all attribute values which were not suppressed
-            for (int count : nonSuppressedValueToCount.values()) {
-                score += count * count;
+            final boolean [] states = nonSuppressedValueToCount.allocated;
+            final int [] counts = nonSuppressedValueToCount.values;
+            for (int i = 0; i < states.length; i++) {
+                if (states[i]) {
+                    score += counts[i] * counts[i];
+                }
             }
         }
 
