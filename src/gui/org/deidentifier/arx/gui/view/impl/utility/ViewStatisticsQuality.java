@@ -52,11 +52,14 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
     private Composite       root;
 
     /** View */
+    private SashForm        sash;
+
+    /** View */
     private DynamicTable    table;
 
     /** View */
     private DynamicTable    table2;
-    
+
     /** Internal stuff. */
     private AnalysisManager manager;
 
@@ -97,6 +100,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             setNumericValueAtIndex(item, 3, quality.getGeneralizationIntensity().getValue(attribute));
             setNumericValueAtIndex(item, 4, quality.getGranularity().getValue(attribute));
             setNumericValueAtIndex(item, 5, quality.getNonUniformEntropy().getValue(attribute));
+            setNumericValueAtIndex(item, 6, quality.getAttributeLevelSquaredError().getValue(attribute));
         }
     }
 
@@ -119,6 +123,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             result.add(Resources.getMessage("ViewStatisticsQuality.3")); //$NON-NLS-1$
             result.add(Resources.getMessage("ViewStatisticsQuality.4")); //$NON-NLS-1$
             result.add(Resources.getMessage("ViewStatisticsQuality.5")); //$NON-NLS-1$
+            result.add(Resources.getMessage("ViewStatisticsQuality.18")); //$NON-NLS-1$
         }
         
         // Return
@@ -159,7 +164,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         this.root.setLayout(new FillLayout());
         
         // Sash
-        SashForm sash = new SashForm(this.root, SWT.VERTICAL);
+        this.sash = new SashForm(this.root, SWT.VERTICAL);
 
         // Upper
         Composite upper = new Composite(sash, SWT.NONE);
@@ -344,11 +349,29 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     
                     item = new TableItem(table2, SWT.NONE);
                     item.setText(0, Resources.getMessage("ViewStatisticsQuality.17")); //$NON-NLS-1$
-                    setNumericValueAtIndex(item, 1, quality.getSumOfSquaredErrors().getValue());
+                    setNumericValueAtIndex(item, 1, quality.getRecordLevelSquaredError().getValue());
+
+                    item = new TableItem(table2, SWT.NONE);
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.18")); //$NON-NLS-1$
+                    setNumericValueAtIndex(item, 1, quality.getAttributeLevelSquaredError().getArithmeticMean(false));
                     
                     // Done
                     table2.setRedraw(true);
                     table2.layout();
+                }
+                
+                // Dynamic weights
+                if (getTarget() == ModelPart.OUTPUT) {
+                    
+                    int upperWeight = table.getItemCount();
+                    int lowerWeight = table2.getItemCount();
+                    if (upperWeight > 2 * lowerWeight) {
+                        upperWeight = 2;
+                        lowerWeight = 1;
+                    }                     
+                    sash.setWeights(new int[] {upperWeight, lowerWeight});
+                } else {
+                    sash.setWeights(new int[] {2});
                 }
                 
                 root.layout();

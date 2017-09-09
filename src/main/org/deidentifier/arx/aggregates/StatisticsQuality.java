@@ -34,6 +34,7 @@ import org.deidentifier.arx.aggregates.quality.QualityDomainShareRedaction;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureColumnOriented;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureRowOriented;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedLoss;
+import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedMSE;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedNonUniformEntropy;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedPrecision;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAECS;
@@ -60,6 +61,8 @@ public class StatisticsQuality {
     private QualityMeasureColumnOriented       entropy;
     /** Column-oriented model */
     private QualityMeasureColumnOriented       precision;
+    /** Column-oriented model */
+    private QualityMeasureColumnOriented       mse;
 
     /** Row-oriented model */
     private QualityMeasureRowOriented          aecs;
@@ -114,8 +117,6 @@ public class StatisticsQuality {
         this.datatypes = getDataTypes(output, indices);
         this.missings = getMissings(output, indices);
 
-        this.progress.value = 10;
-        
         // Special case: we are checking the input dataset
         if (input == output) {
             
@@ -123,6 +124,7 @@ public class StatisticsQuality {
             this.loss = new QualityMeasureColumnOriented(input, indices);
             this.entropy = new QualityMeasureColumnOriented(input, indices);
             this.precision = new QualityMeasureColumnOriented(input, indices);
+            this.mse = new QualityMeasureColumnOriented(input, indices);
 
             // Row oriented
             this.aecs = new QualityMeasureRowOriented(0d, 0d, 1d);
@@ -142,7 +144,7 @@ public class StatisticsQuality {
         String[][][] hierarchies = getHierarchies(input, indices, configuration);
         QualityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
 
-        this.progress.value = 20;
+        this.progress.value = 10;
         
         // Build
         try {
@@ -161,7 +163,7 @@ public class StatisticsQuality {
             // Fail silently
             this.loss = new QualityMeasureColumnOriented();
         }
-        this.progress.value = 30;
+        this.progress.value = 20;
 
         // Build
         try {
@@ -179,7 +181,7 @@ public class StatisticsQuality {
             // Fail silently
             this.entropy = new QualityMeasureColumnOriented();
         }
-        this.progress.value = 40;
+        this.progress.value = 30;
 
         // Build
         try {
@@ -196,6 +198,24 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.precision = new QualityMeasureColumnOriented();
+        }
+        this.progress.value = 40;
+
+        // Build
+        try {
+            this.mse = new QualityModelColumnOrientedMSE(stop,
+                                                         input,
+                                                         output,
+                                                         groupedInput,
+                                                         groupedOutput,
+                                                         hierarchies,
+                                                         shares,
+                                                         indices,
+                                                         configuration).evaluate();
+            this.checkInterrupt();
+        } catch (Exception e) {
+            // Fail silently
+            this.mse = new QualityMeasureColumnOriented();
         }
         this.progress.value = 50;
 
@@ -300,6 +320,15 @@ public class StatisticsQuality {
      */
     public QualityMeasureRowOriented getAmbiguity() {
         return ambiguity;
+    }
+
+    /**
+     * Mean squared error for microaggregated attributes
+     * 
+     * @return Quality measure
+     */
+    public QualityMeasureColumnOriented getAttributeLevelSquaredError() {
+        return mse;
     }
 
     /**
@@ -412,7 +441,7 @@ public class StatisticsQuality {
      * 
      * @return Quality measure
      */
-    public QualityMeasureRowOriented getSumOfSquaredErrors() {
+    public QualityMeasureRowOriented getRecordLevelSquaredError() {
         return sse;
     }
 
