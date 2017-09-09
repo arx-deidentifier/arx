@@ -66,15 +66,7 @@ public class Cut {
     public void generalizeToLevel(int item, int level) {
         // If item is a inner node, we have to find a leaf that is generalized by item and then generalize the leaf to the specified level
         if (item >= this.generalization.length) {
-            for (int i = 0; i < this.generalization.length; i++) {
-                int[] r = this.hierarchy.toRoot(i);
-                for (int aR : r) {
-                    if (aR == item) {
-                        item = i;
-                        break;
-                    }
-                }
-            }
+            item = this.hierarchy.rangeInfo[item][1];
         }
 
         if (level < generalization[item]) // we don't allow lowering the cuts levels
@@ -110,21 +102,15 @@ public class Cut {
         if (l < this.generalization.length)
             return this.hierarchy.getHierarchy()[l][generalization[l]];
         else { // search where the inner leaf l is generalized and to which level
-            for (int i = 0; i < this.generalization.length; i++) {
-                int[] r = this.hierarchy.toRoot(i);
-                for (int j = 0; j < r.length; j++) {
-                    if (r[j] == l) {
-                        // the leaves under this level are generalized to nodes above l,
-                        // so the node where the leaves are generalized to is returned
-                        if (j < this.generalization[i])
-                            return this.hierarchy.getHierarchy()[i][this.generalization[i]];
-                        else // If the leaves are generalized to a node below l, then l itself is returned
-                            return this.hierarchy.getHierarchy()[i][j];
-                    }
-                }
-            }
+            int firstleaf = this.hierarchy.rangeInfo[l][1];
+            int levelNode = this.hierarchy.rangeInfo[l][0];
+            int levelFirstLeaf = this.generalization[firstleaf];
+
+            if(levelFirstLeaf <= levelNode )
+                return l;
+            else
+                return this.hierarchy.getHierarchy()[firstleaf][this.generalization[firstleaf]];
         }
-        throw new RuntimeException("Item is not in domain");
     }
 
 

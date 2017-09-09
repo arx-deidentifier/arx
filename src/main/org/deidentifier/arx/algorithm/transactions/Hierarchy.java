@@ -156,21 +156,8 @@ public class Hierarchy {
      * @return true, if generalization is a generalization of item, or the item itself
      */
     protected boolean generalizes(int item, int generalization) {
-        return generalizesAtLevel(item, generalization) >= 0;
-    }
-
-    /**
-     * @param item           an item
-     * @param generalization an item
-     * @return the level where the generalization of item is. returns -1 if generalization does not generalize item
-     */
-    protected int generalizesAtLevel(int item, int generalization) {
-        int[] pathToRoot = toRoot(item);
-        for (int i = 0; i < pathToRoot.length; i++) {
-            if (pathToRoot[i] == generalization)
-                return i;
-        }
-        return -1;
+        return (this.rangeInfo[item][1] >= this.rangeInfo[generalization][1]
+                && this.rangeInfo[item][2] <= this.rangeInfo[generalization][2]);
     }
 
     /**

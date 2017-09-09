@@ -1,6 +1,7 @@
 package org.deidentifier.arx.algorithm.transactions;
 
 import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.google.common.primitives.Ints;
 
 import java.util.*;
@@ -108,29 +109,23 @@ public class CountTree {
     }
 
     /**
-     * @param path the set to be inserted
+     * @param path the </strong>descending sorted<strong> set to be inserted
      * @param c    the cut that is used to generalize path
      * @param k    an integer
      * @return true if path, generalized by c occurs at least k+1 times in the tree, false if less than k
      */
     public boolean providesKAnonymity(int[] path, Cut c, int k) {
-        sortDescending(path);
+       // sortDescending(path);
         Node n = root;
         int oldCount;
         int uu = 0;
 
         for (int i : path) {
-            for (Node node : n.getChildren()) {
-                if (node.getValue() == i) {
-                    uu++;
-                    n = node;
-                    break;
-                }
-            }
+            n = n.getChild(i);
+            uu++;
+            if(n == null)
+                throw new RuntimeException("Path does not exist");
         }
-
-        if (uu != path.length)
-            throw new RuntimeException("Path does not exist");
 
         oldCount = n.count;
         uu = 0;
@@ -143,19 +138,12 @@ public class CountTree {
             return uu == path.length && oldCount > k;
 
 
-        for (int i : genPath) { // find end of path where the generalized path is inserted
-            for (Node node : n.getChildren()) {
-                if (node.getValue() == i) {
-                    uu++;
-                    n = node;
-                    break;
-                }
-            }
+        for (int i : genPath) {
+            n = n.getChild(i);
+            uu++;
+            if(n == null)
+                throw new RuntimeException("Path does not exist for generalized transaction");
         }
-
-        if (uu != genPath.length)
-            throw new RuntimeException("Path does not exist for generalized transaction");
-
 
         return n.count + oldCount > k; // if the count of the old endnode of the path plus the endnode
     }
@@ -167,17 +155,21 @@ public class CountTree {
         root.sortRecursive();
     }
 
+
+
     // A node in the count-tree
     protected class Node {
         private int count;
         private int value;
         private Node parent;
         private List<Node> children;
+        private IntObjectOpenHashMap<Node> insertLookup; // todo this should be nulled after the tree was built to free memory
 
         Node(int value, Node parent, int count) {
             this.value = value;
             this.parent = parent;
             children = new ArrayList<>();
+            insertLookup = new IntObjectOpenHashMap<>();
             this.count = count;
         }
 
@@ -205,20 +197,20 @@ public class CountTree {
                 return;
             }
 
-            Node n = null;
-
-            for (Node child : children) { // search if the current node is already present
-                if (child.value == set[current])
-                    n = child;
-            }
+            Node n = insertLookup.get(set[current]);
 
             if (n != null) {
                 n.insert(set, current + 1);
             } else {
                 Node newNode = new Node(set[current], this, 0);
                 this.children.add(newNode);
+                insertLookup.put(newNode.value, newNode);
                 newNode.insert(set, current + 1);
             }
+        }
+
+        public Node getChild(int value){
+            return insertLookup.get(value);
         }
 
         /**

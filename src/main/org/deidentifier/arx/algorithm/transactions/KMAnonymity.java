@@ -4,10 +4,7 @@ import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.cursors.IntIntCursor;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class KMAnonymity {
     private int k;
@@ -107,23 +104,21 @@ public class KMAnonymity {
     private Cut getKAnonymousCut(int[] itemset, int k, final CountTree ct) {
         int height = hierarchy.getHierarchy()[0].length - 1;
 
-        //  Each item in the itemset can be generalized to levels 0-height.
-        //  TODO itemset can contain an inner node of the hierarchy(level > 0). So intuitively we don't have to add level 0 for this item, because that inner node is not affected by a generalization less than its level. Since itemset.length is generally small, this is low priority
-        int[] level = new int[height * itemset.length];
+        IntArrayList levels = new IntArrayList(height*itemset.length);
 
-        for (int g = 0; g < level.length; g++) {
-            level[g] = g % height;
+        // add all levels each item in the itemset can be generalized to
+        for (int item : itemset) {
+            for (int i = hierarchy.rangeInfo[item][0]; i < height; i++) {
+                levels.add(i);
+            }
         }
 
         // Generate all possible cuts that contain the items of itemset
-        SubsetIterator v = new SubsetIterator(level, itemset.length);
-        HashSet<IntArrayList> cuts = new HashSet<>();
-        while (v.hasNext()) {
-            int[] next = v.next();
+        SubsetIterator v = new SubsetIterator(levels.toArray(), itemset.length);
+        Set<IntArrayList> cuts = new HashSet<>();
 
-            IntArrayList n = new IntArrayList(next.length);
-            n.add(next);
-            cuts.add(n);
+        while (v.hasNext()) {
+            cuts.add(IntArrayList.from(v.next()));
         }
 
 
