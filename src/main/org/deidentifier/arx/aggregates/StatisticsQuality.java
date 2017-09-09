@@ -115,7 +115,9 @@ public class StatisticsQuality {
         // Basic measures
         this.attributes = getAttributes(output, indices);
         this.datatypes = getDataTypes(output, indices);
+        this.progress.value = 2;
         this.missings = getMissings(output, indices);
+        this.progress.value = 4;
 
         // Special case: we are checking the input dataset
         if (input == output) {
@@ -140,16 +142,21 @@ public class StatisticsQuality {
         
         // Pre-computed frequently needed data
         Groupify<TupleWrapper> groupedInput = this.getGroupify(input, indices);
+        this.progress.value = 6;
         Groupify<TupleWrapper> groupedOutput = this.getGroupify(output, indices);
+        this.progress.value = 8;
         String[][][] hierarchies = getHierarchies(input, indices, configuration);
         QualityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
 
         this.progress.value = 10;
         
         // Build
+        int workload = 10;
         try {
             
             this.loss = new QualityModelColumnOrientedLoss(stop,
+                                                           progress,
+                                                           workload,
                                                            input,
                                                            output,
                                                            groupedInput,
@@ -162,12 +169,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.loss = new QualityMeasureColumnOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 20;
-
+        
         // Build
+        workload = 25;
         try {
             this.entropy = new QualityModelColumnOrientedNonUniformEntropy(stop,
+                                                                           progress,
+                                                                           workload,
                                                                            input,
                                                                            output,
                                                                            groupedInput,
@@ -180,12 +190,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.entropy = new QualityMeasureColumnOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 30;
 
         // Build
+        workload = 10;
         try {
             this.precision = new QualityModelColumnOrientedPrecision(stop,
+                                                                     progress,
+                                                                     workload,
                                                                      input,
                                                                      output,
                                                                      groupedInput,
@@ -198,12 +211,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.precision = new QualityMeasureColumnOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 40;
 
         // Build
+        workload = 10;
         try {
             this.mse = new QualityModelColumnOrientedMSE(stop,
+                                                         progress,
+                                                         workload,
                                                          input,
                                                          output,
                                                          groupedInput,
@@ -216,12 +232,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.mse = new QualityMeasureColumnOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 50;
 
         // Build
+        workload = 1;
         try {
             this.aecs = new QualityModelRowOrientedAECS(stop,
+                                                        progress,
+                                                        workload,
                                                         input,
                                                         output,
                                                         groupedInput,
@@ -234,12 +253,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.aecs = new QualityMeasureRowOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 60;
 
         // Build
+        workload = 10;
         try {
             this.ambiguity = new QualityModelRowOrientedAmbiguity(stop,
+                                                                  progress,
+                                                                  workload,
                                                                   input,
                                                                   output,
                                                                   groupedInput,
@@ -252,12 +274,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.ambiguity = new QualityMeasureRowOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 70;
-
+        
         // Build
+        workload = 2;
         try {
             this.discernibility = new QualityModelRowOrientedDiscernibility(stop,
+                                                                            progress,
+                                                                            workload,
                                                                             input,
                                                                             output,
                                                                             groupedInput,
@@ -270,12 +295,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.discernibility = new QualityMeasureRowOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 80;
 
         // Build
+        workload = 10;
         try {
             this.kldivergence = new QualityModelRowOrientedKLDivergence(stop,
+                                                                        progress,
+                                                                        workload,
                                                                         input,
                                                                         output,
                                                                         groupedInput,
@@ -288,12 +316,15 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.kldivergence = new QualityMeasureRowOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 90;
 
         // Build
+        workload = 12;
         try {
             this.sse = new QualityModelRowOrientedSSE(stop,
+                                                      progress,
+                                                      workload,
                                                       input,
                                                       output,
                                                       groupedInput,
@@ -306,8 +337,8 @@ public class StatisticsQuality {
         } catch (Exception e) {
             // Fail silently
             this.sse = new QualityMeasureRowOriented();
+            this.progress.value += workload;
         }
-        this.progress.value = 100;
     }
 
     /**

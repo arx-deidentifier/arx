@@ -22,6 +22,7 @@ import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Implementation of the AECS measure, as proposed in:<br>
@@ -37,6 +38,8 @@ public class QualityModelRowOrientedAECS extends QualityModel<QualityMeasureRowO
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -47,6 +50,8 @@ public class QualityModelRowOrientedAECS extends QualityModel<QualityMeasureRowO
      * @param config
      */
     public QualityModelRowOrientedAECS(WrappedBoolean interrupt,
+                                       WrappedInteger progress,
+                                       int totalWorkload,
                                        DataHandle input,
                                        DataHandle output,
                                        Groupify<TupleWrapper> groupedInput,
@@ -56,6 +61,8 @@ public class QualityModelRowOrientedAECS extends QualityModel<QualityMeasureRowO
                                        int[] indices,
                                        QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -70,12 +77,29 @@ public class QualityModelRowOrientedAECS extends QualityModel<QualityMeasureRowO
     public QualityMeasureRowOriented evaluate() {
 
         try {
+
+            // Progress
+            setSteps(2);
+            
             // Calculate
             double min = getAverageGroupSize(getGroupedInput());
+
+            // Progress
+            setStepPerformed();
+            
             double max = getInput().getNumRows();
             double result = getAverageGroupSize(getGroupedOutput());
+
+            // Progress
+            setStepsDone();
+            
             return new QualityMeasureRowOriented(min, result, max);
+            
         } catch (Exception e) {
+
+            // Progress
+            setStepsDone();
+            
             // Silently catch exceptions
             return new QualityMeasureRowOriented();
         }

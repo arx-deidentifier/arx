@@ -24,6 +24,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Implementation of the Precision measure, as proposed in:<br>
@@ -39,6 +40,8 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -49,6 +52,8 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
      * @param config
      */
     public QualityModelColumnOrientedPrecision(WrappedBoolean interrupt,
+                                               WrappedInteger progress,
+                                               int totalWorkload,
                                                DataHandle input,
                                                DataHandle output,
                                                Groupify<TupleWrapper> groupedInput,
@@ -58,6 +63,8 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
                                                int[] indices,
                                                QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -79,6 +86,9 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
+
+        // Progress
+        setSteps(result.length);
         
         // For each column
         for (int i = 0; i < result.length; i++) {
@@ -104,6 +114,9 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
                 // Check
                 checkInterrupt();
             }
+
+            // Progress
+            setStepPerformed();
         }
 
         // For each column
@@ -113,6 +126,9 @@ public class QualityModelColumnOrientedPrecision extends QualityModel<QualityMea
             max[i] = 1d;
         }
 
+        // Progress
+        setStepsDone();
+        
         // Return
         return new QualityMeasureColumnOriented(output, indices, min, result, max);
     }

@@ -29,6 +29,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Implementation of the Non-Uniform Entropy measure that can handle local recoding. Enhanced
@@ -50,6 +51,8 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -60,6 +63,8 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
      * @param config
      */
     public QualityModelColumnOrientedNonUniformEntropy(WrappedBoolean interrupt,
+                                                       WrappedInteger progress,
+                                                       int totalWorkload,
                                                        DataHandle input,
                                                        DataHandle output,
                                                        Groupify<TupleWrapper> groupedInput,
@@ -69,6 +74,8 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                                                        int[] indices,
                                                        QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -89,6 +96,9 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
+
+        // Progress
+        setSteps(result.length * 3);
         
         // For each column
         for (int i = 0; i < result.length; i++) {
@@ -116,6 +126,9 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                 List<Integer> levels = new ArrayList<Integer>();
                 levels.addAll(_levels);
                 Collections.sort(levels);
+
+                // Progress
+                setStepPerformed();
                 
                 // For each generalization level
                 for (int levelIndex = 0; levelIndex < levels.size(); levelIndex++) {
@@ -150,6 +163,9 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                     }
                 }
 
+                // Progress
+                setStepPerformed();
+
                 // Calculate maximum
                 DataHandle input = getInput();
                 Map<String, Double> inputFrequencies = getInputFrequencies(transformations, column, 0);
@@ -159,6 +175,9 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
                     // Check
                     checkInterrupt();
                 }
+
+                // Progress
+                setStepPerformed();
 
                 // Invert sign
                 result[i] *= -1;
@@ -177,6 +196,9 @@ public class QualityModelColumnOrientedNonUniformEntropy extends QualityModel<Qu
             // Check
             checkInterrupt();
         }
+
+        // Progress
+        setStepsDone();
         
         // Return
         return new QualityMeasureColumnOriented(output, indices, min, result, max);

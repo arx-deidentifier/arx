@@ -21,6 +21,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Implementation of the Ambiguity measure, as described in:<br>
@@ -36,6 +37,8 @@ public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasur
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -46,6 +49,8 @@ public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasur
      * @param config
      */
     public QualityModelRowOrientedAmbiguity(WrappedBoolean interrupt,
+                                            WrappedInteger progress,
+                                            int totalWorkload,
                                             DataHandle input,
                                             DataHandle output,
                                             Groupify<TupleWrapper> groupedInput,
@@ -55,6 +60,8 @@ public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasur
                                             int[] indices,
                                             QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -75,6 +82,9 @@ public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasur
         double min = 0d;
         double result = 0d;
         double max = 0d;
+
+        // Progress
+        setSteps(output.getNumRows());
         
         try {
             for (int row = 0; row < output.getNumRows(); row++) {
@@ -90,9 +100,21 @@ public class QualityModelRowOrientedAmbiguity extends QualityModel<QualityMeasur
                 min += rowMin;
                 result += rowResult;
                 max += rowMax;
+
+                // Progress
+                setStepPerformed();
             }
+
+            // Progress
+            setStepsDone();
+            
             return new QualityMeasureRowOriented(min, result, max);
+            
         } catch (Exception e) {
+
+            // Progress
+            setStepsDone();
+            
             // Silently catch exceptions
             return new QualityMeasureRowOriented(Double.NaN, Double.NaN, Double.NaN);
         }

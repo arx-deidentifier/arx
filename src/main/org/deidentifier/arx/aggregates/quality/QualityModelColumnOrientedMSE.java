@@ -22,6 +22,7 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Implementation of the Mean Squared Error for microaggregated columns.
@@ -35,6 +36,8 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -45,6 +48,8 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
      * @param config
      */
     public QualityModelColumnOrientedMSE(WrappedBoolean interrupt,
+                                         WrappedInteger progress,
+                                         int totalWorkload,
                                          DataHandle input,
                                          DataHandle output,
                                          Groupify<TupleWrapper> groupedInput,
@@ -54,6 +59,8 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
                                          int[] indices,
                                          QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -74,6 +81,9 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
+
+        // Progress
+        setSteps(result.length);
         
         // For each column
         for (int i = 0; i < result.length; i++) {
@@ -129,12 +139,16 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
                 }
             } catch (Exception e) {
                 
-                e.printStackTrace();
-                
                 // Ignore silently
                 result[i] = Double.NaN;
             }
+            
+            // Progress
+            setStepPerformed();
         }
+
+        // Progress
+        setStepsDone();
         
         // Return
         return new QualityMeasureColumnOriented(outputHandle, indices, min, result, max);
