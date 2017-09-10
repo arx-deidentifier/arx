@@ -35,7 +35,7 @@ import org.deidentifier.arx.io.ImportConfigurationJDBC;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DataSource {
+public class DataSource { // NO_UCD
     
     /**
      * Creates a CSV data source.

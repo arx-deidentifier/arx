@@ -96,21 +96,6 @@ public class GeneralizationHierarchy {
     }
 
     /**
-     * Can be used to create a copy of the generalization hierarchy.
-     *
-     * @param name
-     * @param map
-     * @param distinctValues
-     */
-    protected GeneralizationHierarchy(final String name,
-                                      final int[][] map,
-                                      final int[] distinctValues) {
-        this.attribute = name;
-        this.map = map;
-        this.distinctValues = distinctValues;
-    }
-    
-    /**
      * Throws an exception, if the hierarchy is not monotonic.
      * 
      * TODO: This is a potentially expensive check that should be done when loading the hierarchy

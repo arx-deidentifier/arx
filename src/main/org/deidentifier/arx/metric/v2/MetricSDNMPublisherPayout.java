@@ -71,15 +71,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private QualityMetadata<Double>     maximalPayout;
 
     /**
-     * Creates a new instance. Default constructor which treats all transformation methods equally.
-     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
-     *                                the prosecutor model will be assumed, otherwise
-     */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
-       this(journalistAttackerModel, 0.5d);
-    }
-    
-    /**
      * Creates a new instance
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
@@ -90,7 +81,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
      *            generalization. The values in between can be used for
      *            balancing both methods.
      */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
+    protected MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
         super(false, false, false, gsFactor);
         this.journalistAttackerModel = journalistAttackerModel;
     }

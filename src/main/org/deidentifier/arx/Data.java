@@ -38,7 +38,7 @@ import org.deidentifier.arx.io.ImportConfiguration;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class Data {
+public abstract class Data { // NO_UCD
 
     /**
      * The default implementation of a data object. It allows the user to

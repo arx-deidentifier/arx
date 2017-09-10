@@ -30,7 +30,6 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Group;
 import org.deidentifier.arx.aggregates.HierarchyBuilderGroupingBased.Level;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
-import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
@@ -156,30 +155,6 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
                 this.bottomTopCodingBound = dtype.getMaximum();
                 this.minMaxBound = dtype.getMaximum();
             }
-        }
-
-        /**
-         * 
-         *
-         * @param range
-         */
-        public HierarchyWizardGroupingRange(Range<U> range) {
-            this.snapBound = range.getSnapFrom();
-            this.bottomTopCodingBound = range.getBottomTopCodingFrom();
-            this.minMaxBound = range.getMinMaxValue();
-        }
-        
-        /**
-         * 
-         *
-         * @param snapBound
-         * @param bottomTopCodingBound
-         * @param minMaxBound
-         */
-        public HierarchyWizardGroupingRange(U snapBound, U bottomTopCodingBound, U minMaxBound) {
-            this.snapBound = snapBound;
-            this.bottomTopCodingBound = bottomTopCodingBound;
-            this.minMaxBound = minMaxBound;
         }
     }
 
@@ -330,25 +305,7 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
             }
         }
     }
-    
-    /**
-     * Adds groups.
-     *
-     * @param list
-     */
-    public void addGroups(List<HierarchyWizardGroupingGroup<T>> list) {
-        groups.add(list);
-    }
-    
-    /**
-     * Adds an interval.
-     *
-     * @param i
-     */
-    public void addInterval(HierarchyWizardGroupingInterval<T> i) {
-        intervals.add(i);
-    }
-    
+ 
     /**
      * Adds a column.
      *

@@ -419,18 +419,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Adds a privacy model to the configuration. This method is deprecated.
-     * Please use addPrivacyModel(...) instead.
-     *
-     * @param c
-     * @return
-     */
-    @Deprecated
-    public ARXConfiguration addCriterion(PrivacyCriterion c) {
-        return addPrivacyModel(c);
-    }
-        
-    /**
      * Adds a privacy model to the configuration.
      *
      * @param c
@@ -528,18 +516,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /**
      * Returns whether the configuration contains a privacy model which is an instance of the given class.
-     * This method is deprecated. Please use isPrivacyModelSpecified(...) instead.
-     *
-     * @param clazz
-     * @return
-     */
-    @Deprecated
-    public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
-        return this.isPrivacyModelSpecified(clazz);
-    }
-    
-    /**
-     * Returns whether the configuration contains a privacy model which is an instance of the given class.
      *
      * @param clazz
      * @return
@@ -593,42 +569,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.costBenefitConfiguration;
     }
-
-    /**
-     * Returns all criteria. This method is deprecated.
-     * Please use getPrivacyModels() instead. 
-     * @return
-     */
-    @Deprecated
-    public Set<PrivacyCriterion> getCriteria() {
-        return getPrivacyModels();
-    }
-    
-    /**
-     * Returns all privacy models which are instances of the given class.
-     * This method is deprecated. Please use getPrivacyModels(...) instead.
-     *
-     * @param <T>
-     * @param clazz
-     * @return
-     */
-    @Deprecated
-    public <T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz) {
-        return this.getPrivacyModels(clazz);
-    }
-
-    /**
-     * Returns an instance of the class, if any. Throws an exception if more than one such model exists.
-     * This method is deprecated. Please use getPrivacyModel(...) instead.
-     *
-     * @param <T>
-     * @param clazz
-     * @return
-     */
-    @Deprecated
-    public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
-        return this.getPrivacyModel(clazz);
-    }
     
     /**
      * When the size of the solution space exceeds the returned number of transformations,
@@ -662,17 +602,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public final double getMaxOutliers() {
         return relMaxOutliers;
-    }
-    
-    /**
-     * Returns the quality model to be used for optimizing output data.
-     * This method is deprecated. Please use getQualityModel() instead.
-     *
-     * @return
-     */
-    @Deprecated
-    public Metric<?> getMetric() {
-        return getQualityModel();
     }
     
     /**
@@ -1018,18 +947,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public void setMaxOutliers(double max) {
         this.relMaxOutliers = max;
-    }
-
-
-    /**
-     * Sets the quality model to be used for optimizing output data.
-     * This method is deprecated. Please use setQualityModel(...) instead.
-     *
-     * @param model
-     */
-    @Deprecated
-    public void setMetric(Metric<?> model) {
-        this.setQualityModel(model);
     }
     
     /**

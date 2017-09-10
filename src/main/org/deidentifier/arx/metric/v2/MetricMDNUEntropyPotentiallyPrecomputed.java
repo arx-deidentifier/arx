@@ -42,18 +42,6 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
      * #distinctValues / #rows <= threshold for all quasi-identifiers.
      * 
      * @param threshold
-     */
-    protected MetricMDNUEntropyPotentiallyPrecomputed(double threshold) {
-        super(new MetricMDNUEntropy(),
-              new MetricMDNUEntropyPrecomputed(),
-              threshold);
-    }
-
-    /**
-     * Creates a new instance. The precomputed variant will be used if 
-     * #distinctValues / #rows <= threshold for all quasi-identifiers.
-     * 
-     * @param threshold
      * @param gsFactor
      * @param function
      */

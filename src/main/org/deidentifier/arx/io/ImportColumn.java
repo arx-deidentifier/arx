@@ -30,7 +30,7 @@ import org.deidentifier.arx.DataType;
  * @author Florian Kohlmayer
  * 
  */
-abstract public class ImportColumn {
+abstract public class ImportColumn { // NO_UCD
 
     /**
      * Alias name of column.

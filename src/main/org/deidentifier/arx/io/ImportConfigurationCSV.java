@@ -25,7 +25,7 @@ import java.nio.charset.Charset;
  * @author Karol Babioch
  * @author Fabian Prasser
  */
-public class ImportConfigurationCSV extends ImportConfigurationFile implements IImportConfigurationWithHeader {
+public class ImportConfigurationCSV extends ImportConfigurationFile implements IImportConfigurationWithHeader { // NO_UCD
 
     /** Character that separates the columns from each other. */
     private final char   delimiter;
