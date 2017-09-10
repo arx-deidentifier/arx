@@ -334,13 +334,13 @@ public class DataHandleInput extends DataHandle {
     /**
      * Updates the definition with further data to swap.
      *
-     * @param dataMatrix
-     * @param dataMatrix2
-     * @param dataMatrix3
+     * @param matrixGH
+     * @param matrixDI
+     * @param matrixIS
      */
-    protected void update(DataMatrix dataMatrix, DataMatrix dataMatrix2, DataMatrix dataMatrix3) {
-        this.dataGH = dataMatrix;
-        this.dataDI = dataMatrix2;
-        this.dataIS = dataMatrix3;
+    protected void update(DataMatrix matrixGH, DataMatrix matrixDI, DataMatrix matrixIS) {
+        this.dataGH = matrixGH;
+        this.dataDI = matrixDI;
+        this.dataIS = matrixIS;
     }
 }
