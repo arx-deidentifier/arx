@@ -29,7 +29,7 @@ import java.util.logging.Logger;
  * A wrapper containing delegates for loading JDBC-drivers dynamically 
  * @author Fabian Prasser
  */
-class ImportWizardDriverShim implements Driver {
+class ImportWizardDriverShim implements Driver { // NO_UCD
     
     /** The driver*/
     private final Driver driver;

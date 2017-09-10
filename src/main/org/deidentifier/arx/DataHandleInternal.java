@@ -17,9 +17,6 @@
 
 package org.deidentifier.arx;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 
 /**
@@ -117,17 +114,6 @@ public class DataHandleInternal {
     }
 
     /**
-     * Delegate
-     * @param row
-     * @param column
-     * @return
-     * @throws ParseException
-     */
-    public Date getDate(int row, int column) throws ParseException {
-        return handle.getDate(row, column);
-    }
-
-    /**
      * Method
      * @return
      */
@@ -166,17 +152,6 @@ public class DataHandleInternal {
     }
     
     /**
-     * Delegate
-     * @param row
-     * @param column
-     * @return
-     * @throws ParseException
-     */
-    public Double getDouble(int row, int column) throws ParseException {
-        return handle.getDouble(row, column);
-    }
-
-    /**
      * Method
      * @param attribute
      * @return
@@ -191,17 +166,6 @@ public class DataHandleInternal {
      */
     public DataHandle getHandle() {
         return this.handle;
-    }
-
-    /**
-     * Delegate
-     * @param row
-     * @param column
-     * @return
-     * @throws ParseException
-     */
-    public Long getLong(int row, int column) throws ParseException {
-        return handle.getLong(row, column);
     }
 
     /**

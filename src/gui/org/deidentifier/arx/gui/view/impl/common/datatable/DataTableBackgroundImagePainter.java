@@ -45,16 +45,6 @@ public class DataTableBackgroundImagePainter extends CellPainterWrapper {
      *            used for painting the cell contents
      * @param bgImage
      *            to be used for painting the background
-     */
-    public DataTableBackgroundImagePainter(ICellPainter interiorPainter, Image bgImage) {
-        this(interiorPainter, bgImage, null);
-    }
-
-    /**
-     * @param interiorPainter
-     *            used for painting the cell contents
-     * @param bgImage
-     *            to be used for painting the background
      * @param separatorColor
      *            to be used for drawing left and right borders for the cell.
      *            Set to null if the borders are not required.
@@ -64,27 +54,6 @@ public class DataTableBackgroundImagePainter extends CellPainterWrapper {
         this.bgImage = bgImage;
         this.scaledBgImage = bgImage;
         this.separatorColor = separatorColor;
-    }
-
-    /**
-     * @param bgImage
-     *            to be used for painting the background
-     * @since 1.4
-     */
-    public DataTableBackgroundImagePainter(Image bgImage) {
-        this(null, bgImage, null);
-    }
-
-    /**
-     * @param bgImage
-     *            to be used for painting the background
-     * @param separatorColor
-     *            to be used for drawing left and right borders for the cell.
-     *            Set to null if the borders are not required.
-     * @since 1.4
-     */
-    public DataTableBackgroundImagePainter(Image bgImage, Color separatorColor) {
-        this(null, bgImage, separatorColor);
     }
 
     @Override

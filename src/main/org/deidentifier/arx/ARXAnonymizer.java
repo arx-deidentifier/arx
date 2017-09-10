@@ -44,7 +44,6 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
-import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class offers several methods to define parameters and execute the ARX
@@ -53,7 +52,7 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class ARXAnonymizer {
+public class ARXAnonymizer { // NO_UCD
 
     /**
      * Temporary result of the ARX algorithm.
@@ -75,9 +74,6 @@ public class ARXAnonymizer {
         /** The data manager. */
         final DataManager       manager;
 
-        /** The metric. */
-        final Metric<?>         metric;
-
         /** The time. */
         final long              time;
 
@@ -94,13 +90,11 @@ public class ARXAnonymizer {
          * @param algorithm
          * @param time
          */
-        Result(final Metric<?> metric,
-               final NodeChecker checker,
+        Result(final NodeChecker checker,
                final SolutionSpace solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
                final long time) {
-            this.metric = metric;
             this.checker = checker;
             this.solutionSpace = solutionSpace;
             this.manager = manager;
@@ -623,7 +617,7 @@ public class ARXAnonymizer {
         checker.reset();
         
         // Return the result
-        return new Result(config.getQualityModel(), checker, solutionSpace, manager, algorithm, time);
+        return new Result(checker, solutionSpace, manager, algorithm, time);
     }
 
     /**

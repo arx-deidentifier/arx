@@ -64,25 +64,6 @@ public abstract class EditorString implements IEditor<String> {
         this.createControl(composite);
     }
     
-    /**
-     * Creates a new instance
-     *
-     * @param category
-     * @param label
-     * @param ok
-     * @param multi
-     */
-    public EditorString(final String category,
-                        final String label,
-                        final Button ok,
-                        final boolean multi) {
-        
-        this.category = category;
-        this.label = label;
-        this.multi = multi;
-        this.ok = ok;
-    }
-
     @Override
     public void createControl(final Composite parent) {
         

@@ -23,8 +23,8 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -219,9 +219,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     /** The hash groupify. */
     private HashGroupify                     groupify;
     
-    /** The bucket. */
-    protected int                             bucket;
-    
     /** The buffer. */
     protected int[][]                         buffer;
     
@@ -251,8 +248,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     
     /** The element. */
     protected HashGroupifyEntry               element;
-    /** The groupify array. */
-    protected HashGroupifyEntry[]             groupifyArray;
     /** The hierarchies. */
     protected final GeneralizationHierarchy[] hierarchies;
     /** The idindex14. */
@@ -469,8 +464,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
      *            the start index
      * @param stopIndex
      *            the stop index
-     * @param bucket
-     *            the bucket
      * @param element
      *            the element
      * @param buffer
@@ -484,7 +477,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
                      final TransitionType transition,
                      final int startIndex,
                      final int stopIndex,
-                     final int bucket,
                      final HashGroupifyEntry element,
                      final int[][] buffer) {
 
@@ -493,7 +485,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         this.startIndex = startIndex;
         this.stopIndex = stopIndex;
         this.element = element;
-        this.bucket = bucket;
 
         this.generalization = state;
         this.transition = transition;
@@ -510,7 +501,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
 
         // Store groupify
         this.groupify = groupify;
-        // this.groupify.clear();
 
         // Store snapshot
         this.snapshot = snapshot;
@@ -583,43 +573,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         idindex13 = columnMapArray[13];
         idindex14 = columnMapArray[14];
 
-    }
-
-    /**
-     * Update out indices.
-     * 
-     * @param activecolumns
-     *            the activecolumns
-     * @param projection
-     *            the projection
-     */
-    public void updateOutIndices(final int[] activecolumns, final long projection) {
-
-        // Make sure all 15 indices are set
-        final int[] outindices2 = new int[15];
-        int outcount = 0;
-        for (int i = 0; i < activecolumns.length; i++) {
-            if ((projection & (1L << activecolumns[i])) == 0) {
-                outindices2[outcount++] = i;
-            }
-        }
-
-        // Copy
-        outindex0 = outindices2[0];
-        outindex1 = outindices2[1];
-        outindex2 = outindices2[2];
-        outindex3 = outindices2[3];
-        outindex4 = outindices2[4];
-        outindex5 = outindices2[5];
-        outindex6 = outindices2[6];
-        outindex7 = outindices2[7];
-        outindex8 = outindices2[8];
-        outindex9 = outindices2[9];
-        outindex10 = outindices2[10];
-        outindex11 = outindices2[11];
-        outindex12 = outindices2[12];
-        outindex13 = outindices2[13];
-        outindex14 = outindices2[14];
     }
 
     /**

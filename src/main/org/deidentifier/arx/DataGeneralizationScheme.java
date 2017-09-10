@@ -27,7 +27,7 @@ import java.util.Set;
  * This class encapsulates a generalization scheme
  * @author Fabian Prasser
  */
-public class DataGeneralizationScheme implements Serializable, Cloneable {
+public class DataGeneralizationScheme implements Serializable, Cloneable { // NO_UCD
     
     /**
      * A specific generalization degree

@@ -154,37 +154,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
   
     /**
-     * Helper method for creating information loss.
-     *
-     * @param values
-     * @param bound
-     * @return
-     */
-    protected ILMultiDimensionalWithBound createInformationLossWithBound(double[] values,
-                                                                         double[] bound){
-        return new ILMultiDimensionalWithBound(createInformationLoss(values),
-                                               createInformationLoss(bound));
-    }
-
-    /**
-     * Helper method for creating information loss.
-     *
-     * @param values
-     * @return
-     */
-    protected ILMultiDimensionalWithBound createInformationLossWithoutBound(double[] values){
-        return new ILMultiDimensionalWithBound(createInformationLoss(values));
-    }
-
-    /**
-     * Returns the aggregate functions used for microaggregation
-     * @return
-     */
-    protected DistributionAggregateFunction[] getAggregateFunctions() {
-        return this.microaggregationFunctions;
-    }
-    
-    /**
      * Returns the number of dimensions.
      *
      * @return

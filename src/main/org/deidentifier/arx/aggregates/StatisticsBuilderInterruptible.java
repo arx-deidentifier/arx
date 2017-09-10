@@ -33,7 +33,7 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * 
  * @author Fabian Prasser
  */
-public class StatisticsBuilderInterruptible {
+public class StatisticsBuilderInterruptible { // NO_UCD
 
     /** The backing builder. */
     private StatisticsBuilder builder;

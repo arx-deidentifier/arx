@@ -180,15 +180,6 @@ public class IntArrayDictionary {
     }
 
     /**
-     * Returns the element count of the dictionary.
-     *
-     * @return the int
-     */
-    public int size() {
-        return elementCount;
-    }
-
-    /**
      * Creates a new entry.
      *
      * @param key the key

@@ -18,7 +18,6 @@
 package org.deidentifier.arx.gui.worker;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.deidentifier.arx.ARXAnonymizer;
@@ -84,18 +82,6 @@ public class WorkerLoad extends Worker<Model> {
 	
 	/** The model. */
 	private Model      model;
-
-	/**
-     * Creates a new instance.
-     *
-     * @param file
-     * @param controller
-     * @throws ZipException
-     * @throws IOException
-     */
-    public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
-        this.zipfile = new ZipFile(file);
-    }
 
     /**
      * Constructor.

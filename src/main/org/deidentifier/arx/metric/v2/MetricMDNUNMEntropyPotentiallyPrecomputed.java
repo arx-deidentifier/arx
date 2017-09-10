@@ -38,18 +38,6 @@ public class MetricMDNUNMEntropyPotentiallyPrecomputed extends AbstractMetricMul
     private static final long serialVersionUID = -3213516677340712914L;
 
     /**
-     * Creates a new instance. The precomputed variant will be used if 
-     * #distinctValues / #rows <= threshold for all quasi-identifiers.
-     * 
-     * @param threshold
-     */
-    protected MetricMDNUNMEntropyPotentiallyPrecomputed(double threshold) {
-        super(new MetricMDNUNMEntropy(),
-              new MetricMDNUNMEntropyPrecomputed(),
-              threshold);
-    }
-
-    /**
      * Creates a new instance. The pre-computed variant will be used if 
      * #distinctValues / #rows <= threshold for all quasi-identifiers.
      * 

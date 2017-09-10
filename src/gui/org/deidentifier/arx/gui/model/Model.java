@@ -487,25 +487,6 @@ public class Model implements Serializable {
     }
 
     /**
-     * Creates an ARXConfiguration for the subset.
-     *
-     * @return
-     */
-    public ARXConfiguration createSubsetConfig() {
-
-        // Create a temporary config
-        ARXConfiguration config = ARXConfiguration.create();
-
-        // Add an enclosure criterion
-        DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
-                                              getInputConfig().getResearchSubset());
-        config.addPrivacyModel(new Inclusion(subset));
-
-        // Return the config
-        return config;
-    }
-
-    /**
      * Returns the current anonymizer.
      *
      * @return
@@ -1474,13 +1455,6 @@ public class Model implements Serializable {
             optimalNodeAsString = null;
         }
         setModified();
-    }
-
-    /**
-     * Marks this project as saved.
-     */
-    public void setSaved() {
-        modified = false;
     }
 
     /**

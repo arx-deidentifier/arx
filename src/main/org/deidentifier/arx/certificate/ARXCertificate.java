@@ -51,7 +51,7 @@ import rst.pdfbox.layout.elements.Document;
  * @author Annika Saken
  * @author Fabian Prasser
  */
-public class ARXCertificate {
+public class ARXCertificate { // NO_UCD
 
     /**
      * Creates a new instance
@@ -265,20 +265,4 @@ public class ARXCertificate {
 	void add(Element element) {
 	    this.elements.add(element);
 	}
-
-    /**
-	 * Adds a new data element
-	 * @param data
-	 */
-	void add(ElementData data) {
-	    this.elements.add(data);
-	}
-
-    /**
-     * Adds a new list of data elements
-     * @param data
-     */
-    void add(List<ElementData> data) {
-        this.elements.addAll(data);
-    }
 }

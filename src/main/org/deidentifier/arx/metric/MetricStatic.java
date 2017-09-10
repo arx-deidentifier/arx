@@ -38,16 +38,16 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class MetricStatic extends MetricWeighted<InformationLossDefault> {
+public class MetricStatic extends MetricWeighted<InformationLossDefault> { // NO_UCD
 
-    /**  SVUID */
-    private static final long               serialVersionUID = 3778891174824606177L;
+    /** SVUID */
+    private static final long                 serialVersionUID = 3778891174824606177L;
 
     /** The user defined information loss per level, indexed by column name. */
     protected final Map<String, List<Double>> _infoloss;
 
     /** The pre-calculated information loss. */
-    private double[][]                      infoloss;
+    private double[][]                        infoloss;
 
     /**
      * Constructor.
@@ -143,5 +143,4 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> {
             }
         }
     }
-
 }

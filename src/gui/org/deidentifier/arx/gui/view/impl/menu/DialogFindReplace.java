@@ -234,15 +234,6 @@ public class DialogFindReplace extends TitleAreaDialog {
         return composite;
     }
 
-    /**
-     * Returns the ok button.
-     * 
-     * @return the ok button
-     */
-    protected Button getOkButton() {
-        return okButton;
-    }
-
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {

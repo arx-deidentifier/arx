@@ -321,7 +321,6 @@ public class Transformer {
         int startIndex = 0;
         int stopIndex = 0;
 
-        int bucket = 0;
         HashGroupifyEntry element = null;
 
         switch (transition) {
@@ -332,7 +331,6 @@ public class Transformer {
         case ROLLUP:
             startIndex = 0;
             stopIndex = source.getNumberOfEquivalenceClasses();
-            bucket = 0;
             element = source.getFirstEquivalenceClass();
             break;
         case SNAPSHOT:
@@ -354,7 +352,6 @@ public class Transformer {
                  transition,
                  startIndex,
                  stopIndex,
-                 bucket,
                  element,
                  outputGeneralized);
 

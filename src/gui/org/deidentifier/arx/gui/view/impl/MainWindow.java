@@ -390,16 +390,6 @@ public class MainWindow implements IView {
      * Shows an error dialog.
      *
      * @param message
-     * @param text
-     */
-    public void showErrorDialog(final String message, final String text) {
-        showErrorDialog(this.shell, message, text);
-    }
-
-    /**
-     * Shows an error dialog.
-     *
-     * @param message
      * @param throwable
      */
     public void showErrorDialog(final String message, final Throwable throwable) {

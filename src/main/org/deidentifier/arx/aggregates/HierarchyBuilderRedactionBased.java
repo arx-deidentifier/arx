@@ -37,7 +37,7 @@ import com.carrotsearch.hppc.CharOpenHashSet;
  * @author Fabian Prasser
  * @param <T>
  */
-public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> implements Serializable {
+public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> implements Serializable { // NO_UCD
 
     /**
      * Order

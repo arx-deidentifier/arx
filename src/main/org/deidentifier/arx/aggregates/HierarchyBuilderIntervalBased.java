@@ -36,7 +36,7 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
  * @author Fabian Prasser
  * @param <T>
  */
-public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> {
+public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> { // NO_UCD
     
     /**
      * This class represents an node.

@@ -309,85 +309,7 @@ public class ComponentStatusLabel extends Canvas {
         gradientPercents = null;
         redraw();
     }
-
-    /**
-     * 
-     *
-     * @param colors
-     * @param percents
-     */
-    public void setBackground(Color[] colors, int[] percents) {
-        setBackground(colors, percents, false);
-    }
-
-    /**
-     * 
-     *
-     * @param colors
-     * @param percents
-     * @param vertical
-     */
-    public void setBackground(Color[] colors, int[] percents, boolean vertical) {
-        checkWidget();
-        if (colors != null) {
-            if (percents == null || percents.length != colors.length - 1) {
-                SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-            }
-            if (getDisplay().getDepth() < 15) {
-                // Don't use gradients on low color displays
-                colors = new Color[] { colors[colors.length - 1] };
-                percents = new int[] {};
-            }
-            for (int i = 0; i < percents.length; i++) {
-                if (percents[i] < 0 || percents[i] > 100) {
-                    SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-                }
-                if (i > 0 && percents[i] < percents[i - 1]) {
-                    SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-                }
-            }
-        }
-
-        // Are these settings the same as before?
-        final Color background = getBackground();
-        if (backgroundImage == null) {
-            if ((gradientColors != null) && (colors != null) && (gradientColors.length == colors.length)) {
-                boolean same = false;
-                for (int i = 0; i < gradientColors.length; i++) {
-                    same = (gradientColors[i] == colors[i]) ||
-                           ((gradientColors[i] == null) && (colors[i] == background)) ||
-                           ((gradientColors[i] == background) && (colors[i] == null));
-                    if (!same) break;
-                }
-                if (same) {
-                    for (int i = 0; i < gradientPercents.length; i++) {
-                        same = gradientPercents[i] == percents[i];
-                        if (!same) break;
-                    }
-                }
-                if (same && this.gradientVertical == vertical) return;
-            }
-        } else {
-            backgroundImage = null;
-        }
-        // Store the new settings
-        if (colors == null) {
-            gradientColors = null;
-            gradientPercents = null;
-            gradientVertical = false;
-        } else {
-            gradientColors = new Color[colors.length];
-            for (int i = 0; i < colors.length; ++i)
-                gradientColors[i] = (colors[i] != null) ? colors[i] : background;
-            gradientPercents = new int[percents.length];
-            for (int i = 0; i < percents.length; ++i)
-                gradientPercents[i] = percents[i];
-            gradientVertical = vertical;
-        }
-        // Refresh with the new settings
-        redraw();
-    }
-
+    
     /**
      * 
      *
@@ -494,23 +416,6 @@ public class ComponentStatusLabel extends Canvas {
         checkWidget();
         if (this.leftMargin == leftMargin || leftMargin < 0) return;
         this.leftMargin = leftMargin;
-        redraw();
-    }
-
-    /**
-     * 
-     *
-     * @param leftMargin
-     * @param topMargin
-     * @param rightMargin
-     * @param bottomMargin
-     */
-    public void setMargins(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
-        checkWidget();
-        this.leftMargin = Math.max(0, leftMargin);
-        this.topMargin = Math.max(0, topMargin);
-        this.rightMargin = Math.max(0, rightMargin);
-        this.bottomMargin = Math.max(0, bottomMargin);
         redraw();
     }
 

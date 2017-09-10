@@ -58,10 +58,6 @@ public class HIPAAIdentifierMatch {
         HIPAAIdentifier(char category) {
             this.category = category;
         }
-        
-        int getCategory() {
-            return category;
-        }
     }
     
     /**
@@ -74,15 +70,15 @@ public class HIPAAIdentifierMatch {
                            ATTRIBUTE_VALUE
     }
     
-    /** TODO */
+    /** Field */
     private final String          column;
-    /** TODO */
+    /** Field */
     private final HIPAAIdentifier identifier;
-    /** TODO */
+    /** Field */
     private final MatchType       matchType;
-    /** TODO */
+    /** Field */
     private final String          value;
-    /** TODO */
+    /** Field */
     private final String          instance;
     
     /**
