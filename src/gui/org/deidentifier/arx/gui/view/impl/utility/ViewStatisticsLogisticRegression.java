@@ -74,19 +74,28 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<AnalysisContextClassification> {
 
     /** Minimal width of a category label. */
-    private static final int MIN_CATEGORY_WIDTH = 10;
+    private static final int    MIN_CATEGORY_WIDTH = 10;
+
+    /** Label */
+    private static final String TEXT_THRESHOLD     = Resources.getMessage("ViewStatisticsClassificationInput.14"); //$NON-NLS-1$
+    /** Label */
+    private static final String TEXT_PRECISION     = Resources.getMessage("ViewStatisticsClassificationInput.15"); //$NON-NLS-1$
+    /** Label */
+    private static final String TEXT_RECALL        = Resources.getMessage("ViewStatisticsClassificationInput.16"); //$NON-NLS-1$
+    /** Label */
+    private static final String TEXT_F_SCORE       = Resources.getMessage("ViewStatisticsClassificationInput.18"); //$NON-NLS-1$
 
     /** Internal stuff. */
-    private AnalysisManager  manager;
+    private AnalysisManager     manager;
 
     /** View */
-    private DynamicTable     table;
+    private DynamicTable        table;
     /** View */
-    private Composite        root;
+    private Composite           root;
     /** View */
-    private SashForm         sash;
+    private SashForm            sash;
     /** View */
-    private Chart            chart;
+    private Chart               chart;
 
     /**
      * Creates a new instance.
@@ -243,7 +252,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
 
         ISeriesSet seriesSet = chart.getSeriesSet();
 
-        ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.15")); //$NON-NLS-1$
+        // Precision
+        ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, TEXT_PRECISION);
         series1.getLabel().setVisible(false);
         series1.getLabel().setFont(chart.getFont());
         series1.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
@@ -252,7 +262,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         series1.setSymbolType(PlotSymbolType.NONE);
         series1.enableArea(true);
         
-        ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
+        // Recall
+        ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, TEXT_RECALL);
         series2.getLabel().setVisible(false);
         series2.getLabel().setFont(chart.getFont());
         series2.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
@@ -260,7 +271,8 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         series2.setSymbolType(PlotSymbolType.NONE);
         series2.enableArea(true);
         
-        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.18")); //$NON-NLS-1$
+        // F-Score
+        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, TEXT_F_SCORE);
         series3.getLabel().setVisible(false);
         series3.getLabel().setFont(chart.getFont());
         series3.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
@@ -268,7 +280,7 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
         series3.setSymbolType(PlotSymbolType.NONE);
         series3.enableArea(true);
         
-        seriesSet.bringToFront(Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
+        seriesSet.bringToFront(TEXT_RECALL);
         
         chart.getLegend().setVisible(true);
         chart.getLegend().setPosition(SWT.TOP);
@@ -365,17 +377,22 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
                                 cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
                                 String[] series = xAxis.getCategorySeries();
                                 ISeries[] data = chart.getSeriesSet().getSeries();
-                                if (data != null && data.length>0 && series != null) {
+                                if (data != null && data.length == 3 && series != null) {
                                     int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
                                     if (x >= 0 && x < series.length && !series[x].equals("")) {
                                         builder.setLength(0);
                                         builder.append("("); //$NON-NLS-1$
-                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.14")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(TEXT_THRESHOLD).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
                                         builder.append(series[x]);
-                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.15")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(data[0].getYSeries()[x]));
-                                        builder.append("%, ").append(Resources.getMessage("ViewStatisticsClassificationInput.16")).append(": "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(data[1].getYSeries()[x]));
+                                        // Precision
+                                        builder.append("%, ").append(TEXT_PRECISION).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(SWTUtil.getPrettyString(chart.getSeriesSet().getSeries(TEXT_PRECISION).getYSeries()[x]));
+                                        // Recall
+                                        builder.append("%, ").append(TEXT_RECALL).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(SWTUtil.getPrettyString(chart.getSeriesSet().getSeries(TEXT_RECALL).getYSeries()[x]));
+                                        // F-Score
+                                        builder.append("%, ").append(TEXT_F_SCORE).append(": "); //$NON-NLS-1$ //$NON-NLS-2$
+                                        builder.append(SWTUtil.getPrettyString(chart.getSeriesSet().getSeries(TEXT_F_SCORE).getYSeries()[x]));
                                         builder.append("%)"); //$NON-NLS-1$
                                         sash.setToolTipText(builder.toString());
                                         return;

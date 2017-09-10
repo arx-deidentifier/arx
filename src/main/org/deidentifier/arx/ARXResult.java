@@ -195,8 +195,6 @@ public class ARXResult {
         this.solutionSpace = solutionSpace;
     }
 
-
-
     /**
      * Returns the configuration used.
      *

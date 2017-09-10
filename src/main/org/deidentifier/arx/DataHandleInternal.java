@@ -100,6 +100,14 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns the associated configuration, if any. Null otherwise.
+     * @return
+     */
+    public ARXConfiguration getConfiguration() {
+        return handle.getConfiguration();
+    }
+
+    /**
      * Method
      * @param attribute
      * @return
@@ -135,7 +143,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column) {
         return handle.getDistinctValues(column);
     }
-
+    
     /**
      * Method
      * @param column
@@ -146,7 +154,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler stop) {
         return handle.getDistinctValues(column, ignoreSuppression, stop);
     }
-    
+
     /**
      * Method
      * @param column
@@ -156,7 +164,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column, InterruptHandler stop) {
         return handle.getDistinctValues(column, false, stop);
     }
-
+    
     /**
      * Delegate
      * @param row
@@ -167,7 +175,7 @@ public class DataHandleInternal {
     public Double getDouble(int row, int column) throws ParseException {
         return handle.getDouble(row, column);
     }
-    
+
     /**
      * Method
      * @param attribute
@@ -175,6 +183,14 @@ public class DataHandleInternal {
      */
     public int getGeneralization(String attribute) {
         return handle.getGeneralization(attribute);
+    }
+
+    /**
+     * Returns the underlying handle. This should rarely be used.
+     * @return
+     */
+    public DataHandle getHandle() {
+        return this.handle;
     }
 
     /**
@@ -203,7 +219,7 @@ public class DataHandleInternal {
     public int getNumRows() {   
         return handle.getNumRows();
     }
-
+  
     public StatisticsBuilder getStatisticsBuilder() {
         return this.handle.getStatistics();
     }
@@ -219,7 +235,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-  
+    
     /**
      * Method
      * @param row
@@ -229,14 +245,14 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-
+    
     /**
      * Gets the value
      */
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-    
+
     /**
      * Returns the view
      * @return
@@ -244,7 +260,7 @@ public class DataHandleInternal {
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
     }
-    
+
     /**
      * Returns whether the handle is anonymous
      * @return

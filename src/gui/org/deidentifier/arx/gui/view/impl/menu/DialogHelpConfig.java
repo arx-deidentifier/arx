@@ -179,6 +179,10 @@ public class DialogHelpConfig {
                               Resources.getMessage("DialogHelpConfig.68"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/utility/accuracy.html")); //$NON-NLS-1$
 
+        entries.add(new Entry("help.utility.quality", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.70"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/utility/quality.html")); //$NON-NLS-1$
+
         entries.add(new Entry("help.utility.localrecoding", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.69"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/utility/localrecoding.html")); //$NON-NLS-1$
