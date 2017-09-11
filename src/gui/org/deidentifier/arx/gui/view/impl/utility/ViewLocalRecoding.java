@@ -242,7 +242,6 @@ public class ViewLocalRecoding implements IView, ViewStatisticsBasic {
         }
     }
 
-
     /**
      * Returns a list of entries for the combo box
      * @return
