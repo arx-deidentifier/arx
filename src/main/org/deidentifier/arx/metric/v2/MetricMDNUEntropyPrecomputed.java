@@ -345,7 +345,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             
             // Store minimal size of equivalence classes
             EDDifferentialPrivacyOptimal dpCriterion = config.getPrivacyModel(EDDifferentialPrivacyOptimal.class);
-            k = (double)dpCriterion.getK();
+            k = (double)dpCriterion.getMinimalClassSize();
             
             // Store root values of generalization hierarchies or null if no single root value exists
             rootValues = new int[hierarchies.length];

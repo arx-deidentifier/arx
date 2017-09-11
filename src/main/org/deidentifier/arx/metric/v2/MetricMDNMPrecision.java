@@ -336,7 +336,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         // Store minimal size of equivalence classes
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacyOptimal.class)) {
             EDDifferentialPrivacyOptimal dpCriterion = config.getPrivacyModel(EDDifferentialPrivacyOptimal.class);
-            k = (double)dpCriterion.getK();
+            k = (double)dpCriterion.getMinimalClassSize();
         }
     }
 }
