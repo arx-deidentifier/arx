@@ -792,6 +792,8 @@ public class MainWindow implements IView {
             }
         });
 
+        items.add(new MainMenuSeparator());
+
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.39"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("cross.png"), //$NON-NLS-1$
                                    true) {
