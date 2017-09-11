@@ -29,7 +29,7 @@ import org.deidentifier.arx.certificate.elements.ElementData;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPrivacy {
+public class EDDifferentialPrivacyOptimal extends EDDifferentialPrivacyAbstract {
     
     /** SVUID */
     private static final long        serialVersionUID = 242579895476272606L;
@@ -53,7 +53,7 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
      * @param delta
      * @param steps
      */
-    public DataDependentEDDifferentialPrivacy(double epsilonAnon, double epsilonSearch, double delta, int steps) {
+    public EDDifferentialPrivacyOptimal(double epsilonAnon, double epsilonSearch, double delta, int steps) {
         this(epsilonAnon, epsilonSearch, delta, steps, false);
     }
     
@@ -67,7 +67,7 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
      * @param steps
      * @param deterministic
      */
-    public DataDependentEDDifferentialPrivacy(double epsilonAnon, double epsilonSearch,
+    public EDDifferentialPrivacyOptimal(double epsilonAnon, double epsilonSearch,
                                               double delta, int steps, boolean deterministic) {
         super(delta, deterministic);
         this.epsilonAnon = epsilonAnon;
@@ -88,7 +88,7 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
      * @param steps
      * @param deterministic
      */
-    private DataDependentEDDifferentialPrivacy(double epsilonAnon, double epsilonSearch,
+    private EDDifferentialPrivacyOptimal(double epsilonAnon, double epsilonSearch,
                                                double delta, double beta, int k,
                                                int steps, boolean deterministic) {
         super(delta, deterministic);
@@ -100,8 +100,8 @@ public class DataDependentEDDifferentialPrivacy extends AbstractEDDifferentialPr
     }
 
     @Override
-    public DataDependentEDDifferentialPrivacy clone() {
-        return new DataDependentEDDifferentialPrivacy(this.getEpsilonAnon(), this.getEpsilonSearch(), this.getDelta(),
+    public EDDifferentialPrivacyOptimal clone() {
+        return new EDDifferentialPrivacyOptimal(this.getEpsilonAnon(), this.getEpsilonSearch(), this.getDelta(),
                                                       this.getBeta(), this.getK(), this.getSteps(), this.isDeterministic());
     }
     

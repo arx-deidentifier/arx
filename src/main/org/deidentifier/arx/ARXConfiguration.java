@@ -29,7 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.criteria.AbstractEDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacyAbstract;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
@@ -452,7 +452,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if ((c instanceof KAnonymity) && this.isPrivacyModelSpecified(KAnonymity.class)) { 
                throw new IllegalArgumentException("You must not add more than one instance of the k-anonymity model"); 
         }
-        if ((c instanceof AbstractEDDifferentialPrivacy) && this.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) { 
+        if ((c instanceof EDDifferentialPrivacyAbstract) && this.isPrivacyModelSpecified(EDDifferentialPrivacyAbstract.class)) { 
             throw new IllegalArgumentException("You must not add more than one instance of the differential privacy model"); 
         }
         
@@ -1356,7 +1356,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         // Compute max outliers
-        if (this.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) {
+        if (this.isPrivacyModelSpecified(EDDifferentialPrivacyAbstract.class)) {
             absMaxOutliers = (int) dataLength;
         } else {
             absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);

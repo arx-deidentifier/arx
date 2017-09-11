@@ -24,6 +24,7 @@ import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacyOptimal;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.runner.RunWith;
@@ -51,6 +52,7 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
+                                              /* Data-independent differential privacy */
                                               /* 0 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacy(2d, 1E-5d, DataGeneralizationScheme.create(GeneralizationDegree.LOW_MEDIUM), true)), "./data/adult.csv", 0.6820705793543056, new int[] { 0, 2, 0, 1, 1, 1, 1, 1, 0 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacy(1.5d, 1E-6d, DataGeneralizationScheme.create(GeneralizationDegree.HIGH), true)), "./data/adult.csv", 0.8112222411559193, new int[] { 1, 3, 1, 2, 2, 2, 2, 2, 1 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacy(LN2, 1E-7d, DataGeneralizationScheme.create(GeneralizationDegree.LOW_MEDIUM), true)), "./data/adult.csv", 0.7437618217405468, new int[] { 0, 2, 0, 1, 1, 1, 1, 1, 0 }, false) },
@@ -69,6 +71,22 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.0d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacy(1.5d, 1E-8d, DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM), true)), "./data/fars.csv", 0.43090885593016726, new int[] { 3, 1, 2, 2, 1, 1, 2, 1 }, false) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacy(LN3, 1E-5d, DataGeneralizationScheme.create(GeneralizationDegree.HIGH), true)), "./data/fars.csv", 0.6796862034370221, new int[] { 4, 2, 2, 2, 1, 2, 2, 2 }, true) },
                                               { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacy(1.0d, 1E-6d, DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM_HIGH), true)), "./data/fars.csv", 0.40463191801066123, new int[] { 3, 1, 2, 2, 1, 1, 2, 1 }, false) },
+                                              /* Data-dependent differential privacy */
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createAECSMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 747.875, new int[] { 0, 3, 1, 2, 3, 2, 2, 1, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 0.6880872033117096, new int[] { 1, 3, 0, 2, 2, 2, 2, 2, 1 }, false) },
+                                              /* 20 */ { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecisionMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 0.589773390862588, new int[] { 0, 3, 0, 2, 2, 1, 2, 2, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createDiscernabilityMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 2.1844143E7, new int[] { 1, 1, 1, 1, 3, 2, 2, 2, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createEntropyMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/adult.csv", 235748.7244642646, new int[] { 0, 3, 0, 1, 2, 2, 2, 1, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createAECSMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/cup.csv", 189.03, new int[] { 5, 1, 1, 2, 0, 3, 4, 4 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/cup.csv", 0.4208602413896392, new int[] { 4, 3, 0, 1, 0, 3, 2, 2 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecisionMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/cup.csv", 0.6156805467386128, new int[] { 4, 4, 0, 0, 0, 3, 3, 3 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createDiscernabilityMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/cup.csv", 6.1535014E7, new int[] { 5, 4, 1, 1, 0, 4, 4, 3 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createEntropyMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/cup.csv", 1279030.0994022028, new int[] { 4, 3, 0, 1, 0, 3, 3, 3 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createAECSMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/fars.csv", 1930.6451612903227, new int[] { 4, 2, 3, 3, 1, 2, 2, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/fars.csv", 0.3275306089925023, new int[] { 3, 1, 2, 2, 0, 1, 2, 1 }, false) },
+                                              /* 30 */ { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecisionMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/fars.csv", 0.49322960178223346, new int[] { 5, 1, 3, 1, 0, 0, 3, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createDiscernabilityMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/fars.csv", 2.408373474E9, new int[] { 5, 2, 3, 2, 1, 2, 3, 2 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createEntropyMetric()).addPrivacyModel(new EDDifferentialPrivacyOptimal(0.9d, 1d, 1E-5d, 10, true)), "./data/fars.csv", 890773.3686077329, new int[] { 3, 1, 2, 2, 0, 1, 2, 1 }, false) },
         });
     }
     

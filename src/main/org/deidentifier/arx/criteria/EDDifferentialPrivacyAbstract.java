@@ -38,7 +38,7 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public abstract class AbstractEDDifferentialPrivacy extends ImplicitPrivacyCriterion {
+public abstract class EDDifferentialPrivacyAbstract extends ImplicitPrivacyCriterion {
 
     /** SVUID. */
     private static final long     serialVersionUID = 8562076232747003882L;
@@ -59,7 +59,7 @@ public abstract class AbstractEDDifferentialPrivacy extends ImplicitPrivacyCrite
      * @param delta
      * @param deterministic
      */
-    public AbstractEDDifferentialPrivacy(double delta, boolean deterministic) {
+    public EDDifferentialPrivacyAbstract(double delta, boolean deterministic) {
         super(false, false);
         this.delta = delta;
         this.deterministic = deterministic;
@@ -99,6 +99,21 @@ public abstract class AbstractEDDifferentialPrivacy extends ImplicitPrivacyCrite
     @Override
     public int getMinimalClassSize() {
         return getK();
+    }
+    
+    @Override
+    public double getRiskThresholdJournalist() {
+        return 1d / (double)getK();
+    }
+    
+    @Override
+    public double getRiskThresholdMarketer() {
+        return 1d / (double)getK();
+    }
+    
+    @Override
+    public double getRiskThresholdProsecutor() {
+        return 1d / (double)getK();
     }
     
     @Override

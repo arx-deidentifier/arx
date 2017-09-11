@@ -371,10 +371,9 @@ public class NodeChecker {
     /**
      * Calculates a score
      * @param transformation
-     * @param metric
      * @return
      */
-    public double getScore(Transformation transformation, Metric<?> metric) {
+    public double getScore(Transformation transformation) {
         apply(transformation);
         return metric.getScore(transformation, currentGroupify);
     }
