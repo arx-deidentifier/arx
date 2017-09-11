@@ -43,28 +43,20 @@ public class IntArrayDictionaryEntry {
     /**
      * Creates a new entry.
      * 
-     * @param key
-     *            the key
-     * @param hash
-     *            the hash
-     * @param value
-     *            the value
+     * @param key the key
+     * @param hash the hash
+     * @param value the value
      */
     public IntArrayDictionaryEntry(final int[] key,
                                    final int hash,
                                    final int value) {
-        hashcode = hash;
+        this.hashcode = hash;
         this.key = key;
         this.value = value;
-        refCount = 1;
-        next = null;
+        this.refCount = 1;
+        this.next = null;
     }
 
-    /**
-     * 
-     *
-     * @return
-     */
     public int decRefCount() {
         refCount--;
         return refCount;
@@ -107,20 +99,17 @@ public class IntArrayDictionaryEntry {
     }
 
     /**
-     * 
+     * Increments the reference counter
      */
     public void incRefCount() {
         refCount++;
-
     }
 
     /**
-     * Sets the next element in this bucket.
-     * 
+     * Sets next
      * @param next
-     *            the new next element in this bucket
      */
-    public void setNext(final IntArrayDictionaryEntry next) {
+    public void setNext(IntArrayDictionaryEntry next) {
         this.next = next;
     }
 }

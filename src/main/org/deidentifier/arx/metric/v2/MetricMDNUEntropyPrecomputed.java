@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -314,8 +315,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
         
         // Create reference to the hierarchies
-        final int[][] data = input.getArray();
-        this.hierarchies = new int[data[0].length][][];
+        final DataMatrix data = input.getArray();
+        this.hierarchies = new int[data.getNumColumns()][][];
         for (int i = 0; i < hierarchies.length; i++) {
             this.hierarchies[i] = hierarchies[i].getArray();
         }

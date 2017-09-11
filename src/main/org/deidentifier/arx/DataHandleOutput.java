@@ -28,6 +28,7 @@ import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataManager.AttributeTypeInternal;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
@@ -51,7 +52,7 @@ public class DataHandleOutput extends DataHandle {
         
         @Override
         public boolean hasNext() {
-            return row < outputGeneralized.getArray().length;
+            return row < outputGeneralized.getArray().getNumRows();
         }
         
         @Override
@@ -90,12 +91,13 @@ public class DataHandleOutput extends DataHandle {
     private Data         inputStatic;
 
     /** An inverse map to data arrays. */
-    private int[][][]    inverseData;
+    private DataMatrix[] inverseData;
 
     /** An inverse map to dictionaries. */
     private Dictionary[] inverseDictionaries;
 
-    /** An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
+    /**
+     * An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
     private int[]        inverseMap;
 
     /** The start index of the MA attributes in the dataDI */
@@ -189,7 +191,7 @@ public class DataHandleOutput extends DataHandle {
         }
         
         // Build inverse data array
-        this.inverseData = new int[5][][];
+        this.inverseData = new DataMatrix[5];
         this.inverseData[AttributeTypeInternal.INSENSITIVE] = this.inputStatic.getArray();
         this.inverseData[AttributeTypeInternal.SENSITIVE] = this.inputAnalyzed.getArray();
         this.inverseData[AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED] = this.outputGeneralized.getArray();
@@ -449,7 +451,7 @@ public class DataHandleOutput extends DataHandle {
      * Returns the input buffer
      * @return
      */
-    protected int[][] getInputBuffer() {
+    protected DataMatrix getInputBuffer() {
         checkRegistry();
         return registry.getInputHandle().getInputBuffer();
     }
@@ -544,14 +546,14 @@ public class DataHandleOutput extends DataHandle {
             return DataType.ANY_VALUE;
         default:
             final int index = inverseMap[key + 1];
-            final int[][] data = inverseData[type];
+            final DataMatrix data = inverseData[type];
             
             if (!ignoreSuppression && (suppressedAttributeTypes & (1 << type)) != 0 &&
-                ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
+                ((outputGeneralized.getArray().get(row, 0) & Data.OUTLIER_MASK) != 0)) {
                 return DataType.ANY_VALUE;
             }
             
-            final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;
+            final int value = data.get(row, index) & Data.REMOVE_OUTLIER_MASK;
             final String[][] dictionary = inverseDictionaries[type].getMapping();
             return dictionary[index][value];
         }
@@ -564,7 +566,7 @@ public class DataHandleOutput extends DataHandle {
      * @return
      */
     protected boolean internalIsOutlier(final int row) {
-        return ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0);
+        return ((outputGeneralized.getArray().get(row, 0) & Data.OUTLIER_MASK) != 0);
     }
     
     @Override
@@ -604,16 +606,13 @@ public class DataHandleOutput extends DataHandle {
      *            the row2
      */
     protected void internalSwap(final int row1, final int row2) {
+        
         // Swap GH
-        int[] temp = outputGeneralized.getArray()[row1];
-        outputGeneralized.getArray()[row1] = outputGeneralized.getArray()[row2];
-        outputGeneralized.getArray()[row2] = temp;
+        outputGeneralized.getArray().swap(row1, row2);
         
         // Swap OT
-        if (outputMicroaggregated.getArray().length != 0) {
-            temp = outputMicroaggregated.getArray()[row1];
-            outputMicroaggregated.getArray()[row1] = outputMicroaggregated.getArray()[row2];
-            outputMicroaggregated.getArray()[row2] = temp;
+        if (outputMicroaggregated.getArray().getNumRows() != 0) {
+            outputMicroaggregated.getArray().swap(row1, row2);
         }
     }
     

@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -39,9 +40,9 @@ public class Transformer15 extends AbstractTransformer {
      * @param dictionarySensFreq
      * @param config
      */
-    public Transformer15(final int[][] data,
+    public Transformer15(final DataMatrix data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final int[][] otherValues,
+                         final DataMatrix otherValues,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfigurationInternal config) {
@@ -57,26 +58,28 @@ public class Transformer15 extends AbstractTransformer {
     @Override
     protected void processAll() {
         for (int i = startIndex; i < stopIndex; i++) {
-            intuple = data[i];
-            outtuple = buffer[i];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
-            outtuple[outindex14] = idindex14[intuple[index14]][generalizationindex14];
+
+            // Transform
+            buffer.setRow(i);
+            data.setRow(i);
+            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
+            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
+            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
+            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(outindex5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
+            buffer.setValueAtColumn(outindex6, idindex6[data.getValueAtColumn(index6)][generalizationindex6]);
+            buffer.setValueAtColumn(outindex7, idindex7[data.getValueAtColumn(index7)][generalizationindex7]);
+            buffer.setValueAtColumn(outindex8, idindex8[data.getValueAtColumn(index8)][generalizationindex8]);
+            buffer.setValueAtColumn(outindex9, idindex9[data.getValueAtColumn(index9)][generalizationindex9]);
+            buffer.setValueAtColumn(outindex10, idindex10[data.getValueAtColumn(index10)][generalizationindex10]);
+            buffer.setValueAtColumn(outindex11, idindex11[data.getValueAtColumn(index11)][generalizationindex11]);
+            buffer.setValueAtColumn(outindex12, idindex12[data.getValueAtColumn(index12)][generalizationindex12]);
+            buffer.setValueAtColumn(outindex13, idindex13[data.getValueAtColumn(index13)][generalizationindex13]);
+            buffer.setValueAtColumn(outindex14, idindex14[data.getValueAtColumn(index14)][generalizationindex14]);
 
             // Call
-            delegate.callAll(outtuple, i);
+            delegate.callAll(i, i);
         }
     }
 
@@ -91,26 +94,27 @@ public class Transformer15 extends AbstractTransformer {
 
         while (element != null) {
 
-            intuple = data[element.representative];
-            outtuple = buffer[element.representative];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
-            outtuple[outindex14] = idindex14[intuple[index14]][generalizationindex14];
+            // Transform
+            buffer.setRow(element.representative);
+            data.setRow(element.representative);
+            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
+            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
+            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
+            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(outindex5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
+            buffer.setValueAtColumn(outindex6, idindex6[data.getValueAtColumn(index6)][generalizationindex6]);
+            buffer.setValueAtColumn(outindex7, idindex7[data.getValueAtColumn(index7)][generalizationindex7]);
+            buffer.setValueAtColumn(outindex8, idindex8[data.getValueAtColumn(index8)][generalizationindex8]);
+            buffer.setValueAtColumn(outindex9, idindex9[data.getValueAtColumn(index9)][generalizationindex9]);
+            buffer.setValueAtColumn(outindex10, idindex10[data.getValueAtColumn(index10)][generalizationindex10]);
+            buffer.setValueAtColumn(outindex11, idindex11[data.getValueAtColumn(index11)][generalizationindex11]);
+            buffer.setValueAtColumn(outindex12, idindex12[data.getValueAtColumn(index12)][generalizationindex12]);
+            buffer.setValueAtColumn(outindex13, idindex13[data.getValueAtColumn(index13)][generalizationindex13]);
+            buffer.setValueAtColumn(outindex14, idindex14[data.getValueAtColumn(index14)][generalizationindex14]);
 
             // Call
-            delegate.callGroupify(outtuple, element);
+            delegate.callGroupify(element.representative, element);
 
             // Next element
             element = element.nextOrdered;
@@ -129,26 +133,28 @@ public class Transformer15 extends AbstractTransformer {
         stopIndex *= ssStepWidth;
 
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
-            intuple = data[snapshot[i]];
-            outtuple = buffer[snapshot[i]];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
-            outtuple[outindex14] = idindex14[intuple[index14]][generalizationindex14];
+
+            // Transform
+            buffer.setRow(snapshot[i]);
+            data.setRow(snapshot[i]);
+            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
+            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
+            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
+            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(outindex5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
+            buffer.setValueAtColumn(outindex6, idindex6[data.getValueAtColumn(index6)][generalizationindex6]);
+            buffer.setValueAtColumn(outindex7, idindex7[data.getValueAtColumn(index7)][generalizationindex7]);
+            buffer.setValueAtColumn(outindex8, idindex8[data.getValueAtColumn(index8)][generalizationindex8]);
+            buffer.setValueAtColumn(outindex9, idindex9[data.getValueAtColumn(index9)][generalizationindex9]);
+            buffer.setValueAtColumn(outindex10, idindex10[data.getValueAtColumn(index10)][generalizationindex10]);
+            buffer.setValueAtColumn(outindex11, idindex11[data.getValueAtColumn(index11)][generalizationindex11]);
+            buffer.setValueAtColumn(outindex12, idindex12[data.getValueAtColumn(index12)][generalizationindex12]);
+            buffer.setValueAtColumn(outindex13, idindex13[data.getValueAtColumn(index13)][generalizationindex13]);
+            buffer.setValueAtColumn(outindex14, idindex14[data.getValueAtColumn(index14)][generalizationindex14]);
 
             // Call
-            delegate.callSnapshot(outtuple, snapshot, i);
+            delegate.callSnapshot(snapshot[i], snapshot, i);
         }
     }
 }

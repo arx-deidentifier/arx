@@ -40,6 +40,7 @@ import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -110,14 +111,14 @@ public class ARXAnonymizer { // NO_UCD
          * @param handle
          * @return
          */
-		public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
+        public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
 
-		    // Create lattice
-	        final ARXLattice lattice = new ARXLattice(solutionSpace,
-	                                                  (algorithm instanceof FLASHAlgorithmImpl),
-	                                                  optimum,
-	                                                  manager.getDataGeneralized().getHeader(),
-	                                                  config.getInternalConfiguration());
+            // Create lattice
+            final ARXLattice lattice = new ARXLattice(solutionSpace,
+                                                      (algorithm instanceof FLASHAlgorithmImpl),
+                                                      optimum,
+                                                      manager.getDataGeneralized().getHeader(),
+                                                      config.getInternalConfiguration());
 
 			// Create output handle
 	        ((DataHandleInput)handle).setLocked(true);
@@ -130,7 +131,7 @@ public class ARXAnonymizer { // NO_UCD
                                  lattice,
                                  System.currentTimeMillis() - time,
                                  solutionSpace);      
-		}
+        }
     }
 
     /** History size. */
@@ -317,9 +318,9 @@ public class ARXAnonymizer { // NO_UCD
         if (config.isPrivacyModelSpecified(LDiversity.class)){
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)){
                 // TODO: getDataGeneralized().getDataLength() does not consider data subsets
-	            if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
-	            }
+                if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
+                    throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+                }
             }
         }
         if (config.isPrivacyModelSpecified(DDisclosurePrivacy.class)){
@@ -560,7 +561,7 @@ public class ARXAnonymizer { // NO_UCD
 
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final DataMatrix dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
         final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getPrivacyModels(), getAggregateFunctions(definition));
         return manager;
