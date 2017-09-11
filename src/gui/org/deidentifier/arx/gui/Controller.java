@@ -562,8 +562,10 @@ public class Controller implements IView {
     /**
      * Starts the anonymization.
      * @param heuristicSearch 
+     * @param localRecoding
      */
-    public void actionMenuEditAnonymize(boolean heuristicSearch) {
+    public void actionMenuEditAnonymize(boolean heuristicSearch,
+                                        boolean localRecoding) {
 
         if (model == null) {
             main.showInfoDialog(main.getShell(),
@@ -587,17 +589,21 @@ public class Controller implements IView {
 
         // Query for execution time
         int timeLimit = 0;
-        if (heuristicSearch) {
+        if (localRecoding) {
+            
+            // TODO
+            return;
+            
+        } else if (heuristicSearch) {
             String output = this.actionShowInputDialog(main.getShell(), 
                                                        Resources.getMessage("Controller.38"),  //$NON-NLS-1$
                                                        Resources.getMessage("Controller.79") + //$NON-NLS-1$
                                                        Resources.getMessage("Controller.80"), "0.5", //$NON-NLS-1$ //$NON-NLS-2$
                                                        new IInputValidator(){
                                                         public String isValid(String arg0) {
-                                                            // TODO: Ugly hack
                                                             try { 
                                                                 double val = Double.parseDouble(arg0); 
-                                                                return val>0d ? null : Resources.getMessage("Controller.98");  //$NON-NLS-1$
+                                                                return val > 0d ? null : Resources.getMessage("Controller.98"); //$NON-NLS-1$
                                                             } catch (Exception e) {
                                                                 return Resources.getMessage("Controller.99"); //$NON-NLS-1$
                                                             }

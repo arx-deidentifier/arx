@@ -767,7 +767,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.21"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_anonymize.png"), //$NON-NLS-1$
                                    true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(false); }
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(false, false); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
@@ -776,7 +776,17 @@ public class MainWindow implements IView {
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.40"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_anonymize_heuristic.png"), //$NON-NLS-1$
                                    true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(true); }
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(true, false); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+        
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.44"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_anonymize_local.png"), //$NON-NLS-1$
+                                   true) {
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(true, true); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
