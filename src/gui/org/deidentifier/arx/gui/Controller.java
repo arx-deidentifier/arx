@@ -58,11 +58,11 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -73,10 +73,10 @@ import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
-import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.wizard.ARXWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardResult;
@@ -588,16 +588,16 @@ public class Controller implements IView {
         }
 
         // Query for parameters
-        int timeLimit = 0;
+        int maxTimePerIteration = 0;
+        double minRecordsPerIteration = 0d;
         if (localRecoding) {
             
             Pair<Double, Double> output = this.actionShowLocalAnonymizationDialog();
             if (output == null) {
                 return;
             }
-            
-            // TODO
-            return;
+            maxTimePerIteration = Double.valueOf(output.getFirst() * 1000d).intValue();
+            minRecordsPerIteration = output.getSecond();
 
         // Query for execution time
         } else if (heuristicSearch) {
@@ -618,14 +618,14 @@ public class Controller implements IView {
             if (output == null) {
                 return;
             }
-            timeLimit = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
+            maxTimePerIteration = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
         }
 
         // Reset
         actionMenuEditReset();
         
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(model, timeLimit);
+        final WorkerAnonymize worker = new WorkerAnonymize(model, maxTimePerIteration, minRecordsPerIteration);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
 
         // Show errors
@@ -666,7 +666,8 @@ public class Controller implements IView {
         if (worker.getResult() != null) {
 
             // Retrieve optimal result
-            final ARXResult result = worker.getResult();
+            Pair<ARXResult, DataHandle> workerResult = worker.getResult();
+            final ARXResult result = workerResult.getFirst();
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
@@ -684,19 +685,18 @@ public class Controller implements IView {
             model.getClipboard().addInterestingTransformations(model);
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
-                model.setOutput(result.getOutput(false), result.getGlobalOptimum());
+                model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
-                                      result.getOutput(false)));
+                                      workerResult.getSecond()));
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
 
                 // Do not sort if dataset is too large
                 if (model.getMaximalSizeForComplexOperations() == 0 ||
-                    model.getInputConfig().getInput().getHandle().getNumRows() <=
-                    model.getMaximalSizeForComplexOperations()) {
+                    model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
                     this.model.getViewConfig().setSubset(true);
                     this.model.getViewConfig().setMode(Mode.GROUPED);
                     this.updateViewConfig(true);
@@ -1677,7 +1677,8 @@ public class Controller implements IView {
 
     /**
      * Shows a dialog for configuration of local anonymization.
-     * @return
+     * @return Returns the parameters selected by the user. Returns a pair. 
+     *         First: max. time per iteration. Second: min. records per iteration.
      */
     public Pair<Double, Double> actionShowLocalAnonymizationDialog() {
         return main.showLocalAnonymizationDialog();

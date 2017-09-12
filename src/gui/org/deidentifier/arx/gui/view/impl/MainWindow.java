@@ -557,9 +557,8 @@ public class MainWindow implements IView {
 
     /**
      * Shows a dialog for local anonymization
-     * @return A pair containing the bottom value + inclusive and the top value + inclusive.
-     *         Either bottom or top may be <code>null</code> if they have not been defined. The overall pair may be
-     *         <code>null</code> if cancel was pressed.
+     * @return Returns the parameters selected by the user. Returns a pair. 
+     *         First: max. time per iteration. Second: min. records per iteration.
      */
     public Pair<Double, Double> showLocalAnonymizationDialog() {
         DialogLocalAnonymization dialog = new DialogLocalAnonymization(shell);
