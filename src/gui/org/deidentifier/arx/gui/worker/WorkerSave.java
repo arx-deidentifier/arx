@@ -90,7 +90,7 @@ public class WorkerSave extends Worker<Model> {
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
 
-        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 10); //$NON-NLS-1$
+        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 8); //$NON-NLS-1$
 
         try {
             final FileOutputStream f = new FileOutputStream(path);
@@ -103,11 +103,6 @@ public class WorkerSave extends Worker<Model> {
             arg0.worked(1);
             writeInput(model, zip);
             arg0.worked(1);
-            writeInputSubset(model, zip);
-            arg0.worked(1);
-            writeOutput(model, zip);
-            arg0.worked(1);
-            writeOutputSubset(model, zip);
             arg0.worked(1);
             writeConfiguration(model, zip);
             arg0.worked(1);
@@ -124,7 +119,6 @@ public class WorkerSave extends Worker<Model> {
             return;
         }
 
-        arg0.worked(100);
         arg0.done();
     }
 
@@ -545,24 +539,6 @@ public class WorkerSave extends Worker<Model> {
     }
 
     /**
-     * Writes the input subset to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
-        if (model.getInputConfig().getInput() != null) {
-            if (model.getInputConfig().getInput().getHandle() != null) {
-                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-                out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
-            }
-        }
-    }
-    
-
-    /**
      * Writes the lattice to the file.
      *
      * @param model
@@ -665,35 +641,5 @@ public class WorkerSave extends Worker<Model> {
         final Writer w = new OutputStreamWriter(zip);
         w.write(toXML(model));
         w.flush();
-    }
-
-	/**
-     * Writes the output to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
-		if (model.getOutput() != null) {
-			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
-			final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-			out.write(model.getOutput().iterator());
-		}
-	}
-
-    /**
-     * Writes the output to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-    private void writeOutputSubset(final Model model, final ZipOutputStream zip) throws IOException {
-        if (model.getOutput() != null) {
-            zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-            out.write(model.getOutput().getView().iterator());
-        }
     }
 }
