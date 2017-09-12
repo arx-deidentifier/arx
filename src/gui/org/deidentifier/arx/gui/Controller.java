@@ -587,13 +587,19 @@ public class Controller implements IView {
             return;
         }
 
-        // Query for execution time
+        // Query for parameters
         int timeLimit = 0;
         if (localRecoding) {
             
+            Pair<Double, Double> output = this.actionShowLocalAnonymizationDialog();
+            if (output == null) {
+                return;
+            }
+            
             // TODO
             return;
-            
+
+        // Query for execution time
         } else if (heuristicSearch) {
             String output = this.actionShowInputDialog(main.getShell(), 
                                                        Resources.getMessage("Controller.38"),  //$NON-NLS-1$
@@ -1563,7 +1569,7 @@ public class Controller implements IView {
     public Charset actionShowCharsetInputDialog(final Shell shell) {
         return main.showCharsetInputDialog(shell);
     }
-
+    
     /**
      * Shows an error dialog.
      *
@@ -1616,7 +1622,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-    
+
     /**
      * Shows a help dialog.
      *
@@ -1625,7 +1631,7 @@ public class Controller implements IView {
     public void actionShowHelpDialog(String id) {
         main.showHelpDialog(id);
     }
-
+    
     /**
      * Shows an info dialog.
      *
@@ -1636,6 +1642,7 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1651,7 +1658,6 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1667,6 +1673,14 @@ public class Controller implements IView {
                                         final String initial,
                                         final IInputValidator validator) {
         return main.showInputDialog(shell, header, text, initial, validator);
+    }
+
+    /**
+     * Shows a dialog for configuration of local anonymization.
+     * @return
+     */
+    public Pair<Double, Double> actionShowLocalAnonymizationDialog() {
+        return main.showLocalAnonymizationDialog();
     }
 
     /**

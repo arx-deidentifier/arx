@@ -62,6 +62,7 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
 import org.deidentifier.arx.gui.view.impl.menu.DialogFindReplace;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
+import org.deidentifier.arx.gui.view.impl.menu.DialogLocalAnonymization;
 import org.deidentifier.arx.gui.view.impl.menu.DialogMultiSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
@@ -555,6 +556,18 @@ public class MainWindow implements IView {
     }
 
     /**
+     * Shows a dialog for local anonymization
+     * @return A pair containing the bottom value + inclusive and the top value + inclusive.
+     *         Either bottom or top may be <code>null</code> if they have not been defined. The overall pair may be
+     *         <code>null</code> if cancel was pressed.
+     */
+    public Pair<Double, Double> showLocalAnonymizationDialog() {
+        DialogLocalAnonymization dialog = new DialogLocalAnonymization(shell);
+        dialog.create();
+        dialog.open();
+        return dialog.getResult();
+    }
+    /**
      * Shows a dialog that allows selecting multiple elements
      * @param shell
      * @param title
@@ -564,10 +577,10 @@ public class MainWindow implements IView {
      * @return
      */
     public List<String> showMultiSelectionDialog(Shell shell,
-                                                       String title,
-                                                       String text,
-                                                       List<String> elements,
-                                                       List<String> selected) {
+                                                 String title,
+                                                 String text,
+                                                 List<String> elements,
+                                                 List<String> selected) {
 
         // Open dialog
         DialogMultiSelection dlg = new DialogMultiSelection(shell, title, text, elements, selected);
@@ -577,6 +590,7 @@ public class MainWindow implements IView {
             return null;
         }
     }
+
     /**
      * Shows a file open dialog.
      *
@@ -697,6 +711,7 @@ public class MainWindow implements IView {
             return dialog.getCriterion();
         }
     }
+    
 
     /**
      * Shows a top/bottom coding dialog
