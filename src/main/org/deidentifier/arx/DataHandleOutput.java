@@ -96,8 +96,7 @@ public class DataHandleOutput extends DataHandle {
     /** An inverse map to dictionaries. */
     private Dictionary[] inverseDictionaries;
 
-    /**
-     * An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
+    /** An inverse map for column indices. map[i*2]=attribute type, map[i*2+1]=index position. */
     private int[]        inverseMap;
 
     /** The start index of the MA attributes in the dataDI */
