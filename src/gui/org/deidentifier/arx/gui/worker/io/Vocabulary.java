@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ import org.xml.sax.SAXException;
  */
 public abstract class Vocabulary {
     
-    /**  TODO */
+    /**  Versions map */
     private static final Map<String, Vocabulary> versions = new HashMap<String, Vocabulary>();
     
     static {
@@ -50,7 +50,7 @@ public abstract class Vocabulary {
     }
 	
 	/**
-     * 
+     * Version check
      *
      * @param version
      * @throws SAXException
@@ -499,22 +499,6 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isAttribute(String value){return value.equals(getAttribute());}
-
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-    public boolean isAttributeWeight(String value) {return value.equals(getAttributeWeight());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-    public boolean isAttributeWeights(String value) {return value.equals(getAttributeWeights());}
 	
 	/**
      * 
@@ -538,30 +522,6 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isConfig(String value){ return value.equals(getConfig()); }
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isCriteria(String value){return value.equals(getCriteria());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isCriterion(String value){return value.equals(getCriterion());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
 	public boolean isDatatype(String value){return value.equals(getDatatype());}
 	
 	/**
@@ -578,23 +538,8 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isDepth(String value){return value.equals(getDepth());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
 	public boolean isFormat(String value){return value.equals(getFormat());}
 	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isId(String value){return value.equals(getId());}
 	
 	/**
      * 
@@ -626,14 +571,6 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-    public boolean isLocale(String value) {return value.equals(getLocale());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
 	public boolean isMax(String value){return value.equals(getMax());}
 	
 	/**
@@ -651,14 +588,6 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isMetric(String value){return value.equals(getMetric());}
 	
 	/**
 	 * 
@@ -720,23 +649,7 @@ public abstract class Vocabulary {
      * @param value
      * @return
      */
-	public boolean isPracticalMonotonicity(String value){return value.equals(getPracticalMonotonicity());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
 	public boolean isPredecessors(String value){return value.equals(getPredecessors());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isProtectSensitiveAssociations(String value){return value.equals(getProtectSensitiveAssociations());}
 	
 	/**
      * 
@@ -746,22 +659,6 @@ public abstract class Vocabulary {
      */
 	public boolean isRef(String value){return value.equals(getRef());}
 	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isRelativeMaxOutliers(String value){return value.equals(getRelativeMaxOutliers());}
-	
-	/**
-     * 
-     *
-     * @param value
-     * @return
-     */
-	public boolean isRemoveOutliers(String value){return value.equals(getRemoveOutliers());}
-	
     /**
      * 
      *
@@ -770,22 +667,6 @@ public abstract class Vocabulary {
      */
 	public boolean isSuccessors(String value){return value.equals(getSuccessors());}
     
-    /**
-     * 
-     *
-     * @param value
-     * @return
-     */
-    public boolean isSuppressedAttributeTypes(String value) {return value.equals(getSuppressedAttributeTypes());}
-    
-    /**
-     * 
-     *
-     * @param value
-     * @return
-     */
-    public boolean isSuppressionAlwaysEnabled(String value) {return value.equals(getSuppressionAlwaysEnabled());}
-
     /**
      * 
      *
@@ -817,12 +698,4 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isVocabulary(String value) { return value.equals(getVocabulary()); }
-
-    /**
-     * 
-     *
-     * @param value
-     * @return
-     */
-    public boolean isWeight(String value) {return value.equals(getWeight());}
 }

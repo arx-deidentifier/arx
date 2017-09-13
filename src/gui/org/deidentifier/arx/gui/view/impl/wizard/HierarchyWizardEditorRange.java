@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
  */
 
 package org.deidentifier.arx.gui.view.impl.wizard;
-
-import java.text.ParseException;
 
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -52,13 +50,13 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
     private final HierarchyWizardGroupingRange<T> range;
     
     /** Var. */
-    private EditorString                          repeat;
+    private EditorString                          editorSnap;
     
     /** Var. */
-    private EditorString                          snap;
+    private EditorString                          editorTopBottomCoding;
     
     /** Var. */
-    private EditorString                          label;
+    private EditorString                          editorMinMax;
 
     /**
      * Creates a new instance.
@@ -81,23 +79,23 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
         this.model.register(this);
         if (!lower) {
             this.range = model.getUpperRange();
-            createRepeat(model, lower, range);
             createSnap(model, lower, range);
-            createLabel(model, lower, range);
+            createTopBottomCoding(model, lower, range);
+            createMinMax(model, lower, range);
         }
         else {
             this.range = model.getLowerRange();
-            createLabel(model, lower, range);
+            createMinMax(model, lower, range);
+            createTopBottomCoding(model, lower, range);
             createSnap(model, lower, range);
-            createRepeat(model, lower, range);
         }
     }
 
     @Override
     public void update() {
-        repeat.update();
-        snap.update();
-        label.update();
+        editorSnap.update();
+        editorTopBottomCoding.update();
+        editorMinMax.update();
     }
 
     /**
@@ -124,12 +122,12 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
      * @param adjustment
      * @param bottom
      */
-    private void createLabel(final HierarchyWizardModelGrouping<T> model,
+    private void createMinMax(final HierarchyWizardModelGrouping<T> model,
                              final boolean lower,
                              final HierarchyWizardGroupingRange<T> adjustment) {
-        createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.7") : //$NON-NLS-1$
-                                       Resources.getMessage("HierarchyWizardEditorRange.8")); //$NON-NLS-1$
-        label = new EditorString(composite) {
+        createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.10") : //$NON-NLS-1$
+                                       Resources.getMessage("HierarchyWizardEditorRange.11")); //$NON-NLS-1$
+        editorMinMax = new EditorString(composite) {
             
             @Override
             public boolean accepts(final String s) {
@@ -138,7 +136,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
             @Override
             public String getValue() {
-                T value = adjustment.label;
+                T value = adjustment.minMaxBound;
                 if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
@@ -146,31 +144,16 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                try {
-                    if (type.compare(type.format(value), 
-                                     type.format(adjustment.label)) != 0){
-                        adjustment.label = value;
-                        if (lower){
-                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
-                                adjustment.snap = adjustment.label;
-                            }
-                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                        } else {
-                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
-                                adjustment.snap = adjustment.label;
-                            }
-                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                        }
-                        
-                        model.update();
-                    }
-                } catch (NumberFormatException | ParseException e) {
-                    // Ignore
+                adjustment.minMaxBound = value;
+                model.update();
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
                 }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
             }
         };
     }
@@ -182,11 +165,11 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
      * @param lower
      * @param adjustment
      */
-    private void createRepeat(final HierarchyWizardModelGrouping<T> model,
+    private void createSnap(final HierarchyWizardModelGrouping<T> model,
                               final boolean lower,
                               final HierarchyWizardGroupingRange<T> adjustment) {
         createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.4")); //$NON-NLS-1$
-        repeat = new EditorString(composite) {
+        editorSnap = new EditorString(composite) {
             
             @Override
             public boolean accepts(final String s) {
@@ -195,7 +178,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
             @Override
             public String getValue() {
-                T value = adjustment.repeat;
+                T value = adjustment.snapBound;
                 if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
@@ -203,32 +186,16 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                try {
-                    if (type.compare(type.format(value), 
-                                     type.format(adjustment.repeat)) != 0){
-                         
-                        adjustment.repeat = value;
-                        if (lower){
-                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
-                                adjustment.snap = adjustment.repeat;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        } else {
-                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
-                                adjustment.snap = adjustment.repeat;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        }
-                        
-                        model.update();
-                    }
-                } catch (NumberFormatException | ParseException e) {
-                    // Ignore
+                adjustment.snapBound = value;
+                model.update();
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
                 }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
             }
         };
     }
@@ -240,11 +207,14 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
      * @param lower
      * @param adjustment
      */
-    private void createSnap(final HierarchyWizardModelGrouping<T> model,
+    private void createTopBottomCoding(final HierarchyWizardModelGrouping<T> model,
                             final boolean lower,
                             final HierarchyWizardGroupingRange<T> adjustment) {
-        createLabel(composite, Resources.getMessage("HierarchyWizardEditorRange.6")); //$NON-NLS-1$
-        snap = new EditorString(composite) {
+        
+        createLabel(composite, lower ? Resources.getMessage("HierarchyWizardEditorRange.7") //$NON-NLS-1$
+                                     : Resources.getMessage("HierarchyWizardEditorRange.8")); //$NON-NLS-1$
+
+        editorTopBottomCoding = new EditorString(composite) {
             
             @Override
             public boolean accepts(final String s) {
@@ -253,7 +223,7 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
 
             @Override
             public String getValue() {
-                T value = adjustment.snap;
+                T value = adjustment.bottomTopCodingBound;
                 if (value == null) return ""; //$NON-NLS-1$
                 else return type.format(value);
             }
@@ -261,32 +231,16 @@ public class HierarchyWizardEditorRange<T> implements HierarchyWizardView {
             @Override
             public void setValue(final String s) {
                 T value = type.parse(s);
-                try {
-                    if (type.compare(type.format(value), 
-                                     type.format(adjustment.snap)) != 0){
-                        
-                        adjustment.snap = value;
-                        if (lower){
-                            if (type.compare(adjustment.repeat, adjustment.snap) < 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) < 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        } else {
-                            if (type.compare(adjustment.repeat, adjustment.snap) > 0) {
-                                adjustment.repeat = adjustment.snap;
-                            }
-                            if (type.compare(adjustment.snap, adjustment.label) > 0) {
-                                adjustment.label = adjustment.snap;
-                            }
-                        }
-                        
-                        model.update();
-                    }
-                } catch (NumberFormatException | ParseException e) {
-                    // Ignore
+                adjustment.bottomTopCodingBound = value;
+                model.update();
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
                 }
+                return type.compare(type.parse(value1), type.parse(value2)) != 0;
             }
         };
     }

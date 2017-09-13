@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -143,6 +143,14 @@ public class HierarchyWizardEditorFunction<T> {
                 HierarchyWizardEditorFunction.this.update();
                 parent.setFunction(function);
             }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return value1.equals(value2);
+            }
         };
 
         createLabel(composite, Resources.getMessage("HierarchyWizardEditorFunction.4")); //$NON-NLS-1$
@@ -175,6 +183,14 @@ public class HierarchyWizardEditorFunction<T> {
                     function = ((AggregateFunctionWithParameter<T>)function).newInstance(s);
                     parent.setFunction(function);
                 }
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return value1.equals(value2);
             }
         };
     }

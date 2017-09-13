@@ -122,7 +122,7 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../../org/deidentifier/arx/DataDefinition.html#setAttributeType(java.lang.String,%20org.deidentifier.arx.aggregates.HierarchyBuilder)">setAttributeType</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../../org/deidentifier/arx/DataDefinition.html#setAttributeType(java.lang.String, org.deidentifier.arx.aggregates.HierarchyBuilder)">setAttributeType</a></strong>(java.lang.String&nbsp;attribute,
                 <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;?&gt;&nbsp;builder)</code>
 <div class="block">Defines the given attribute as a quasi-identifier and stores the functional
  representation of the generalization hierarchy.</div>
@@ -130,7 +130,7 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../../org/deidentifier/arx/DataDefinition.html#setHierarchy(java.lang.String,%20org.deidentifier.arx.aggregates.HierarchyBuilder)">setHierarchy</a></strong>(java.lang.String&nbsp;attribute,
+<td class="colLast"><span class="strong">DataDefinition.</span><code><strong><a href="../../../../../org/deidentifier/arx/DataDefinition.html#setHierarchy(java.lang.String, org.deidentifier.arx.aggregates.HierarchyBuilder)">setHierarchy</a></strong>(java.lang.String&nbsp;attribute,
             <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;?&gt;&nbsp;builder)</code>
 <div class="block">Associates the given hierarchy builder</div>
 </td>
@@ -151,25 +151,31 @@
 <tbody>
 <tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderDate</a></strong></code>
+<div class="block">This class enables building hierarchies for dates.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderGroupingBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderGroupingBased</a>&lt;T&gt;</strong></code>
 <div class="block">This abstract base class enables building hierarchies for categorical and non-categorical values.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderIntervalBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderIntervalBased</a>&lt;T&gt;</strong></code>
 <div class="block">This class enables building hierarchies for non-categorical values by mapping them
  into given intervals.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderOrderBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderOrderBased</a>&lt;T&gt;</strong></code>
 <div class="block">This class enables building hierarchies for categorical and non-categorical values
  by ordering the data items and merging into groups with predefined sizes.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>class&nbsp;</code></td>
 <td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderRedactionBased.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderRedactionBased</a>&lt;T&gt;</strong></code>
 <div class="block">This class enables building hierarchies for categorical and non-categorical values
@@ -185,6 +191,39 @@
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
 <tbody>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;java.util.Date&gt;</code></td>
+<td class="colLast"><span class="strong">HierarchyBuilderDate.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html#create(org.deidentifier.arx.DataType, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity...)">create</a></strong>(<a href="../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.util.Date&gt;&nbsp;type,
+      <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Granularity.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Granularity</a>...&nbsp;granularities)</code>
+<div class="block">Creates an hierarchy reflecting the given granularities</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;java.util.Date&gt;</code></td>
+<td class="colLast"><span class="strong">HierarchyBuilderDate.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html#create(org.deidentifier.arx.DataType, java.util.TimeZone, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Format, java.util.Date, java.util.Date, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity...)">create</a></strong>(<a href="../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.util.Date&gt;&nbsp;type,
+      java.util.TimeZone&nbsp;timeZone,
+      <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Format.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Format</a>&nbsp;format,
+      java.util.Date&nbsp;bottomCoding,
+      java.util.Date&nbsp;topCoding,
+      <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Granularity.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Granularity</a>...&nbsp;granularities)</code>
+<div class="block">Creates an hierarchy reflecting the given granularities</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;java.util.Date&gt;</code></td>
+<td class="colLast"><span class="strong">HierarchyBuilderDate.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html#create(org.deidentifier.arx.DataType, java.util.TimeZone, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Format, org.deidentifier.arx.aggregates.HierarchyBuilderDate.Granularity...)">create</a></strong>(<a href="../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;java.util.Date&gt;&nbsp;type,
+      java.util.TimeZone&nbsp;timeZone,
+      <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Format.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Format</a>&nbsp;format,
+      <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.Granularity.html" title="enum in org.deidentifier.arx.aggregates">HierarchyBuilderDate.Granularity</a>...&nbsp;granularities)</code>
+<div class="block">Creates an hierarchy reflecting the given granularities</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>static <a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;java.util.Date&gt;</code></td>
+<td class="colLast"><span class="strong">HierarchyBuilderDate.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilderDate.html#create(java.io.File)">create</a></strong>(java.io.File&nbsp;file)</code>
+<div class="block">Loads a builder specification from the given file.</div>
+</td>
+</tr>
 <tr class="altColor">
 <td class="colFirst"><code>static &lt;T&gt;&nbsp;<a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html" title="class in org.deidentifier.arx.aggregates">HierarchyBuilder</a>&lt;T&gt;</code></td>
 <td class="colLast"><span class="strong">HierarchyBuilder.</span><code><strong><a href="../../../../../org/deidentifier/arx/aggregates/HierarchyBuilder.html#create(java.io.File)">create</a></strong>(java.io.File&nbsp;file)</code>

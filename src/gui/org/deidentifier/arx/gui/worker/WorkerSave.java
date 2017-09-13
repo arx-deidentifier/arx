@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ public class WorkerSave extends Worker<Model> {
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
 
-        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 10); //$NON-NLS-1$
+        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 8); //$NON-NLS-1$
 
         try {
             final FileOutputStream f = new FileOutputStream(path);
@@ -103,11 +103,6 @@ public class WorkerSave extends Worker<Model> {
             arg0.worked(1);
             writeInput(model, zip);
             arg0.worked(1);
-            writeInputSubset(model, zip);
-            arg0.worked(1);
-            writeOutput(model, zip);
-            arg0.worked(1);
-            writeOutputSubset(model, zip);
             arg0.worked(1);
             writeConfiguration(model, zip);
             arg0.worked(1);
@@ -124,7 +119,6 @@ public class WorkerSave extends Worker<Model> {
             return;
         }
 
-        arg0.worked(100);
         arg0.done();
     }
 
@@ -188,8 +182,8 @@ public class WorkerSave extends Worker<Model> {
                 	writer.write(vocabulary.getSuccessors(), n.getSuccessors(), map);
                 }
                 writer.indent(vocabulary.getInfoloss());
-                writer.write(vocabulary.getMax2(), n.getMaximumInformationLoss().toString());
-                writer.write(vocabulary.getMin2(), n.getMinimumInformationLoss().toString());
+                writer.write(vocabulary.getMax2(), n.getHighestScore().toString());
+                writer.write(vocabulary.getMin2(), n.getLowestScore().toString());
                 writer.unindent();
                 writer.unindent();
             }
@@ -502,22 +496,24 @@ public class WorkerSave extends Worker<Model> {
         DataDefinition definition = null;
         if (config == model.getInputConfig()) definition = model.getInputDefinition();
         else definition = model.getOutputDefinition();
-        
-        // Store all from definition that have not yet been stored
-        DataHandle handle = config.getInput().getHandle();
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            final String attr = handle.getAttributeName(i);
-            
-            // Do we have a hierarchy
-            if (!saved.contains(attr) && definition.getHierarchy(attr) != null && 
-                definition.getHierarchy(attr).length != 0 &&
-                definition.getHierarchy(attr)[0].length != 0) {
                 
-                // Store this hierarchy
-                zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(attr) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-                CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-                out.write(definition.getHierarchy(attr));
-                saved.add(attr);
+        // Store all from definition that have not yet been stored
+        if (config.getInput() != null) {
+            DataHandle handle = config.getInput().getHandle();
+            for (int i = 0; i < handle.getNumColumns(); i++) {
+                final String attr = handle.getAttributeName(i);
+
+                // Do we have a hierarchy
+                if (!saved.contains(attr) && definition.getHierarchy(attr) != null && 
+                    definition.getHierarchy(attr).length != 0 &&
+                    definition.getHierarchy(attr)[0].length != 0) {
+
+                    // Store this hierarchy
+                    zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(attr) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
+                    CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
+                    out.write(definition.getHierarchy(attr));
+                    saved.add(attr);
+                }
             }
         }
     }
@@ -541,24 +537,6 @@ public class WorkerSave extends Worker<Model> {
             }
         }
     }
-
-    /**
-     * Writes the input subset to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
-        if (model.getInputConfig().getInput() != null) {
-            if (model.getInputConfig().getInput().getHandle() != null) {
-                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-                out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
-            }
-        }
-    }
-    
 
     /**
      * Writes the lattice to the file.
@@ -589,15 +567,15 @@ public class WorkerSave extends Worker<Model> {
                              .getAttributeMap());
         oos.flush();
 
-        // Write information loss
+        // Write score
         zip.putNextEntry(new ZipEntry("infoloss.dat")); //$NON-NLS-1$
         final Map<Integer, InformationLoss<?>> max = new HashMap<Integer, InformationLoss<?>>();
         final Map<Integer, InformationLoss<?>> min = new HashMap<Integer, InformationLoss<?>>();
         for (final ARXNode[] level : l.getLevels()) {
             for (final ARXNode n : level) {
                 final String key = Arrays.toString(n.getTransformation());
-                min.put(map.get(key), n.getMinimumInformationLoss());
-                max.put(map.get(key), n.getMaximumInformationLoss());
+                min.put(map.get(key), n.getLowestScore());
+                max.put(map.get(key), n.getHighestScore());
             }
         }
         oos = new ObjectOutputStream(zip);
@@ -663,35 +641,5 @@ public class WorkerSave extends Worker<Model> {
         final Writer w = new OutputStreamWriter(zip);
         w.write(toXML(model));
         w.flush();
-    }
-
-	/**
-     * Writes the output to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
-		if (model.getOutput() != null) {
-			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
-			final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-			out.write(model.getOutput().iterator());
-		}
-	}
-
-    /**
-     * Writes the output to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-    private void writeOutputSubset(final Model model, final ZipOutputStream zip) throws IOException {
-        if (model.getOutput() != null) {
-            zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-            out.write(model.getOutput().getView().iterator());
-        }
     }
 }

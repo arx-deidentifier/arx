@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ public class ModelLocalRecoding implements Serializable {
      */
     public static enum LocalRecodingMode {
         SINGLE_PASS,
+        ITERATIVE,
         MULTI_PASS,
         FIXPOINT,
         FIXPOINT_ADAPTIVE
@@ -51,7 +52,7 @@ public class ModelLocalRecoding implements Serializable {
     private double            adaptionFactor   = 0.05d;
 
     /** The type of recoding to perform */
-    private LocalRecodingMode mode             = LocalRecodingMode.FIXPOINT_ADAPTIVE;
+    private LocalRecodingMode mode             = LocalRecodingMode.ITERATIVE;
 
     /**
      * Getter

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import org.deidentifier.arx.io.IOUtil;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class AttributeType implements Serializable, Cloneable {
+public class AttributeType implements Serializable, Cloneable { // NO_UCD
     
     /**
      * This class implements a generalization hierarchy.
@@ -55,7 +55,7 @@ public class AttributeType implements Serializable, Cloneable {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
-    public static abstract class Hierarchy extends AttributeType implements Serializable {
+    public static abstract class Hierarchy extends AttributeType implements Serializable { // NO_UCD
 
         /**
          * The default implementation of a generalization hierarchy. It allows
@@ -834,7 +834,7 @@ public class AttributeType implements Serializable, Cloneable {
      * This class describes a microaggregation function
      * @author Fabian Prasser
      */
-    public abstract static class MicroAggregationFunctionDescription implements Serializable {
+    public abstract static class MicroAggregationFunctionDescription implements Serializable { // NO_UCD
 
         /** SVUID*/
         private static final long serialVersionUID = -6608355532280843693L;
@@ -880,12 +880,6 @@ public class AttributeType implements Serializable, Cloneable {
 
     /** SVUID. */
     private static final long   serialVersionUID            = -7358540408016873823L;
-
-    /** The shift. */
-    protected static final int  SHIFT                       = 30;
-
-    /** The mask. */
-    protected static final int  MASK                        = 0x3fffffff;
 
     /** Constant for type QI. */
     protected static final int  ATTR_TYPE_QI                = 0;

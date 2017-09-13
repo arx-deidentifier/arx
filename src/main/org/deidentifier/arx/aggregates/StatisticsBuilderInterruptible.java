@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,9 @@ package org.deidentifier.arx.aggregates;
 import java.text.ParseException;
 import java.util.Map;
 
-import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -32,7 +33,7 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * 
  * @author Fabian Prasser
  */
-public class StatisticsBuilderInterruptible {
+public class StatisticsBuilderInterruptible { // NO_UCD
 
     /** The backing builder. */
     private StatisticsBuilder builder;
@@ -460,7 +461,6 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                e.printStackTrace();
                 throw new InterruptedException("Interrupted by exception: " + e.getMessage());
             }
         }
@@ -474,6 +474,42 @@ public class StatisticsBuilderInterruptible {
      */
     public int getProgress() {
         return builder.getProgress();
+    }
+
+    /**
+     * Returns data quality according to various models.
+     * 
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics() throws InterruptedException {
+        try {
+            return builder.getQualityStatistics();
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output) throws InterruptedException {
+        try {
+            return builder.getQualityStatistics(output);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
     }
 
     /**
@@ -494,7 +530,6 @@ public class StatisticsBuilderInterruptible {
             }
         }
     }
-
     /**
      * Interrupts all computations.
      */

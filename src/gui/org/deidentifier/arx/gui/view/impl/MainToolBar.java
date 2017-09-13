@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
@@ -132,7 +133,7 @@ public class MainToolBar extends AbstractMenu {
                     } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
                         anonymityUnknown++;
                     }
-                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) == 0) {
+                    if (node.getHighestScore().compareTo(node.getLowestScore()) == 0) {
                         infolossAvailable++;
                     }
                 }
@@ -225,11 +226,16 @@ public class MainToolBar extends AbstractMenu {
             if (this.optimum != null) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
                   .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
-                  .append(heuristic ? Resources.getMessage("MainToolBar.60") : Resources.getMessage("MainToolBar.61")) //$NON-NLS-1$ //$NON-NLS-2$
+                  .append(SWTUtil.getPrettyString(!this.heuristic))
                   .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
-                  .append(Arrays.toString(optimum.getTransformation()));
+                  .append(Arrays.toString(this.optimum.getTransformation()));
                 sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$
-                  .append(optimum.getMaximumInformationLoss().toString());
+                  .append(this.optimum.getHighestScore().toString());
+                for (QualityMetadata<?> metadata : this.optimum.getHighestScore().getMetadata()) {
+                    sb.append("\n - ") //$NON-NLS-1$
+                      .append(metadata.getParameter()).append(": ") //$NON-NLS-1$
+                      .append(SWTUtil.getPrettyString(metadata.getValue()));
+                }
             }
 
             // Return

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,19 +47,6 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
      */
     public DelayedChangeListener(long delay) {
         this.delay = delay;
-        
-        // Create repeating task
-        final Display display = Display.getCurrent();
-        display.timerExec(TICK, new Runnable() {
-            @Override
-            public void run() {
-                if (event && System.currentTimeMillis() > time) {
-                    delayedEvent();
-                    event = false;
-                }
-                display.timerExec(TICK, this);
-            }
-        });
     }
     
     /**
@@ -70,25 +57,48 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
 
     @Override
     public void handleEvent(Event arg0) {
-        this.event = true;
-        this.time = System.currentTimeMillis() + delay;
+        fire();
     }
 
     @Override
     public void modifyText(ModifyEvent arg0) {
-        this.event = true;
-        this.time = System.currentTimeMillis() + delay;
+        fire();
     }
 
     @Override
     public void widgetDefaultSelected(SelectionEvent arg0) {
-        this.event = true;
-        this.time = System.currentTimeMillis() + delay;
+        fire();
     }
 
     @Override
     public void widgetSelected(SelectionEvent arg0) {
-        this.event = true;
+        fire();
+    }
+
+    /**
+     * Generic fire event
+     */
+    private void fire() {
+
         this.time = System.currentTimeMillis() + delay;
+            
+        if (!event) {
+            
+            this.event = true;
+    
+            // Create repeating task
+            final Display display = Display.getCurrent();
+            display.timerExec(TICK, new Runnable() {
+                @Override
+                public void run() {
+                    if (event && System.currentTimeMillis() > time) {
+                        delayedEvent();
+                        event = false;
+                        return;
+                    }
+                    display.timerExec(TICK, this);
+                }
+            });
+        }
     }
 }

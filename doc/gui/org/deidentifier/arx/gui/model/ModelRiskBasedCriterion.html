@@ -186,7 +186,7 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html#ModelRiskBasedCriterion(int,%20double)">ModelRiskBasedCriterion</a></strong>(int&nbsp;variant,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html#ModelRiskBasedCriterion(int, double)">ModelRiskBasedCriterion</a></strong>(int&nbsp;variant,
                        double&nbsp;threshold)</code>
 <div class="block">Creates a new instance</div>
 </td>
@@ -238,7 +238,7 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
+<td class="colLast"><code><strong><a href="../../../../../org/deidentifier/arx/gui/model/ModelRiskBasedCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></strong>(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
      boolean&nbsp;_default)</code>
 <div class="block">Parse</div>
 </td>
@@ -364,27 +364,27 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="ModelRiskBasedCriterion(int, double)">
+<a name="ModelRiskBasedCriterion(int)">
 <!--   -->
 </a>
 <ul class="blockList">
+<li class="blockList">
+<h4>ModelRiskBasedCriterion</h4>
+<pre>public&nbsp;ModelRiskBasedCriterion(int&nbsp;variant)</pre>
+<div class="block">Creates a new instance</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>variant</code> - </dd></dl>
+</li>
+</ul>
+<a name="ModelRiskBasedCriterion(int, double)">
+<!--   -->
+</a>
+<ul class="blockListLast">
 <li class="blockList">
 <h4>ModelRiskBasedCriterion</h4>
 <pre>public&nbsp;ModelRiskBasedCriterion(int&nbsp;variant,
                        double&nbsp;threshold)</pre>
 <div class="block">Creates a new instance</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>variant</code> - </dd><dd><code>threshold</code> - </dd></dl>
-</li>
-</ul>
-<a name="ModelRiskBasedCriterion(int)">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>ModelRiskBasedCriterion</h4>
-<pre>public&nbsp;ModelRiskBasedCriterion(int&nbsp;variant)</pre>
-<div class="block">Creates a new instance</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>variant</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -451,6 +451,17 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getVariant()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getVariant</h4>
+<pre>public&nbsp;int&nbsp;getVariant()</pre>
+<div class="block">Returns the variant</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">
 <!--   -->
 </a>
@@ -459,11 +470,11 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <h4>parse</h4>
 <pre>public&nbsp;void&nbsp;parse(<a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&nbsp;criterion,
          boolean&nbsp;_default)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">ModelCriterion</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">ModelCriterion</a></code></strong></div>
 <div class="block">Parse</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion,%20boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
+<dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#parse(org.deidentifier.arx.gui.model.ModelCriterion, boolean)">parse</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
 <dd><code>_default</code> - Defines whether the model represents a typical parameter configuration for the criterion</dd></dl>
 </li>
 </ul>
@@ -492,7 +503,7 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <a name="toString()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -502,17 +513,6 @@ extends <a href="../../../../../org/deidentifier/arx/gui/model/ModelImplicitCrit
 <dt><strong>Specified by:</strong></dt>
 <dd><code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html#toString()">toString</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a></code></dd>
 </dl>
-</li>
-</ul>
-<a name="getVariant()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getVariant</h4>
-<pre>public&nbsp;int&nbsp;getVariant()</pre>
-<div class="block">Returns the variant</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,11 +30,12 @@ import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
 public class ModelClassification implements Serializable {
 
     /** SVUID */
-    private static final long serialVersionUID         = 5361564507029617616L;
+    private static final long                  serialVersionUID = 5361564507029617616L;
 
     /** Modified */
     private boolean                            modified         = false;
-    /** Config*/
+
+    /** Config */
     private ARXLogisticRegressionConfiguration config           = null;
 
     /**

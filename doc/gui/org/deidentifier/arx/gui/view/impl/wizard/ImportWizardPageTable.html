@@ -176,33 +176,6 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>protected int</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageTable.html#getNumberOfColumns(java.lang.String)">getNumberOfColumns</a></strong>(java.lang.String&nbsp;table)</code>
-<div class="block">Gets the number of columns for given table
-
- This uses the JDBC connection <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
- columns for given table.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>protected long</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageTable.html#getNumberOfRows(java.lang.String)">getNumberOfRows</a></strong>(java.lang.String&nbsp;table)</code>
-<div class="block">Gets the number of rows for given table
- 
- This uses the JDBC connection <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
- rows for given table.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageTable.html#readPreview()">readPreview</a></strong>()</code>
-<div class="block">Reads in the preview data for currently selected table
- 
- If this can be performed successful, the preview data will be made
- available for the following pages by <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setPreviewData(java.util.List)"><code>ImportWizardModel.setPreviewData(List)</code></a>.</div>
-</td>
-</tr>
-<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageTable.html#setVisible(boolean)">setVisible</a></strong>(boolean&nbsp;visible)</code>
 <div class="block">Applies previously detected tables to <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardPageTable.html#tableViewer"><code>tableViewer</code></a>.</div>
@@ -284,7 +257,7 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
 <a name="setVisible(boolean)">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>setVisible</h4>
 <pre>public&nbsp;void&nbsp;setVisible(boolean&nbsp;visible)</pre>
@@ -295,50 +268,6 @@ extends org.eclipse.jface.wizard.WizardPage</pre>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>setVisible</code>&nbsp;in class&nbsp;<code>org.eclipse.jface.dialogs.DialogPage</code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>visible</code> - </dd></dl>
-</li>
-</ul>
-<a name="getNumberOfColumns(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNumberOfColumns</h4>
-<pre>protected&nbsp;int&nbsp;getNumberOfColumns(java.lang.String&nbsp;table)</pre>
-<div class="block">Gets the number of columns for given table
-
- This uses the JDBC connection <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
- columns for given table.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>table</code> - Table number of rows should be returned for</dd>
-<dt><span class="strong">Returns:</span></dt><dd>Number of rows for given table, -1 in case of error</dd></dl>
-</li>
-</ul>
-<a name="getNumberOfRows(java.lang.String)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getNumberOfRows</h4>
-<pre>protected&nbsp;long&nbsp;getNumberOfRows(java.lang.String&nbsp;table)</pre>
-<div class="block">Gets the number of rows for given table
- 
- This uses the JDBC connection <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#getJdbcConnection()"><code>ImportWizardModel.getJdbcConnection()</code></a> to determine the number of
- rows for given table.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>table</code> - Table number of rows should be returned for</dd>
-<dt><span class="strong">Returns:</span></dt><dd>Number of rows for given table, -1 in case of error</dd></dl>
-</li>
-</ul>
-<a name="readPreview()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>readPreview</h4>
-<pre>protected&nbsp;void&nbsp;readPreview()</pre>
-<div class="block">Reads in the preview data for currently selected table
- 
- If this can be performed successful, the preview data will be made
- available for the following pages by <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/wizard/ImportWizardModel.html#setPreviewData(java.util.List)"><code>ImportWizardModel.setPreviewData(List)</code></a>. Otherwise an appropriate
- error message is set.</div>
 </li>
 </ul>
 </li>

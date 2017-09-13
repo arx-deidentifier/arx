@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +16,6 @@
  */
 
 package org.deidentifier.arx;
-
-import java.text.ParseException;
-import java.util.Date;
 
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 
@@ -100,23 +97,20 @@ public class DataHandleInternal {
     }
 
     /**
+     * Returns the associated configuration, if any. Null otherwise.
+     * @return
+     */
+    public ARXConfiguration getConfiguration() {
+        return handle.getConfiguration();
+    }
+
+    /**
      * Method
      * @param attribute
      * @return
      */
     public DataType<?> getDataType(String attribute) {
         return handle.getDataType(attribute);
-    }
-
-    /**
-     * Delegate
-     * @param row
-     * @param column
-     * @return
-     * @throws ParseException
-     */
-    public Date getDate(int row, int column) throws ParseException {
-        return handle.getDate(row, column);
     }
 
     /**
@@ -135,7 +129,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column) {
         return handle.getDistinctValues(column);
     }
-
+    
     /**
      * Method
      * @param column
@@ -146,7 +140,7 @@ public class DataHandleInternal {
     public String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler stop) {
         return handle.getDistinctValues(column, ignoreSuppression, stop);
     }
-    
+
     /**
      * Method
      * @param column
@@ -155,17 +149,6 @@ public class DataHandleInternal {
      */
     public String[] getDistinctValues(int column, InterruptHandler stop) {
         return handle.getDistinctValues(column, false, stop);
-    }
-
-    /**
-     * Delegate
-     * @param row
-     * @param column
-     * @return
-     * @throws ParseException
-     */
-    public Double getDouble(int row, int column) throws ParseException {
-        return handle.getDouble(row, column);
     }
     
     /**
@@ -178,14 +161,11 @@ public class DataHandleInternal {
     }
 
     /**
-     * Delegate
-     * @param row
-     * @param column
+     * Returns the underlying handle. This should rarely be used.
      * @return
-     * @throws ParseException
      */
-    public Long getLong(int row, int column) throws ParseException {
-        return handle.getLong(row, column);
+    public DataHandle getHandle() {
+        return this.handle;
     }
 
     /**
@@ -203,7 +183,7 @@ public class DataHandleInternal {
     public int getNumRows() {   
         return handle.getNumRows();
     }
-
+  
     public StatisticsBuilder getStatisticsBuilder() {
         return this.handle.getStatistics();
     }
@@ -219,7 +199,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-  
+    
     /**
      * Method
      * @param row
@@ -229,14 +209,14 @@ public class DataHandleInternal {
     public String getValue(int row, int column) {
         return handle.getValue(row, column);
     }
-
+    
     /**
      * Gets the value
      */
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-    
+
     /**
      * Returns the view
      * @return
@@ -244,7 +224,7 @@ public class DataHandleInternal {
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
     }
-    
+
     /**
      * Returns whether the handle is anonymous
      * @return

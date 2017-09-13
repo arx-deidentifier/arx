@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -458,20 +458,6 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data.
-     *
-     * @param i
-     * @return
-     */
-    public static Object createSpanColumnsGridData(final int i) {
-        final GridData d = new GridData();
-        d.grabExcessHorizontalSpace = false;
-        d.grabExcessVerticalSpace = false;
-        d.horizontalSpan = i;
-        return d;
-    }
-
-    /**
      * Returns a table. Implements hacks for fixing OSX bugs.
      * @param parent
      * @param style
@@ -658,15 +644,21 @@ public class SWTUtil {
     }
 
     /**
-     * Converts the integer value to a slider selection.
-     *
-     * @param min
-     * @param max
+     * Fallback for objects of unknown type
      * @param value
      * @return
      */
-    public static int intToSlider(final int min, final int max, final int value) {
-        return doubleToSlider(min, max, value);
+    public static String getPrettyString(Object value) {
+        if (value instanceof Boolean) {
+            return SWTUtil.getPrettyString(((Boolean)value).booleanValue());
+        } else if (value instanceof Double) {
+            return SWTUtil.getPrettyString(((Double)value).doubleValue());
+        } if (value instanceof Integer) {
+            return SWTUtil.getPrettyString(((Integer)value).intValue());
+        } if (value instanceof Long) {
+            return SWTUtil.getPrettyString(((Long)value).longValue());
+        }
+        return String.valueOf(value);
     }
     
     /**
@@ -696,18 +688,6 @@ public class SWTUtil {
             val = max;
         }
         return val;
-    }
-    
-    /**
-     * Converts the slider value to an integer.
-     *
-     * @param min
-     * @param max
-     * @param value
-     * @return
-     */
-    public static int sliderToInt(final int min, final int max, final int value) {
-        return (int)Math.round(sliderToDouble(min, max, value));
     }
     
     /**

@@ -116,8 +116,22 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected </code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.ARXAnonymizer, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a>&nbsp;anonymizer,
+         org.deidentifier.arx.DataRegistry&nbsp;registry,
+         org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+         org.deidentifier.arx.framework.check.NodeChecker&nbsp;checker,
+         <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
+         <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
+         <a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
+         long&nbsp;duration,
+         org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace)</code>
+<div class="block">Creates a new instance.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>&nbsp;</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXLattice,%20int,%20double,%20double,%20org.deidentifier.arx.metric.Metric,%20org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.ARXLattice.ARXNode,%20long,%20org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataHandle, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXLattice, int, double, double, org.deidentifier.arx.metric.Metric, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice.ARXNode, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
          <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
          int&nbsp;historySize,
@@ -129,19 +143,6 @@ extends java.lang.Object</pre>
          long&nbsp;time,
          org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace)</code>
 <div class="block">Internal constructor for deserialization.</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code>protected </code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#ARXResult(org.deidentifier.arx.DataRegistry,%20org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.framework.check.NodeChecker,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXConfiguration,%20org.deidentifier.arx.ARXLattice,%20long,%20org.deidentifier.arx.framework.lattice.SolutionSpace)">ARXResult</a></strong>(org.deidentifier.arx.DataRegistry&nbsp;registry,
-         org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
-         org.deidentifier.arx.framework.check.NodeChecker&nbsp;checker,
-         <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
-         <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config,
-         <a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a>&nbsp;lattice,
-         long&nbsp;duration,
-         org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace)</code>
-<div class="block">Creates a new instance.</div>
 </td>
 </tr>
 </table>
@@ -166,96 +167,126 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getDataDefinition()">getDataDefinition</a></strong>()</code>
+<div class="block">Returns the data definition</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getGlobalOptimum()">getGlobalOptimum</a></strong>()</code>
 <div class="block">Gets the global optimum.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getHandle()">getHandle</a></strong>()</code>
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getHandle(org.deidentifier.arx.ARXLattice.ARXNode)">getHandle</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getLattice()">getLattice</a></strong>()</code>
 <div class="block">Returns the lattice.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput()">getOutput</a></strong>()</code>
 <div class="block">Returns a handle to the data obtained by applying the optimal transformation.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput(org.deidentifier.arx.ARXLattice.ARXNode)">getOutput</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node)</code>
 <div class="block">Returns a handle to data obtained by applying the given transformation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput(org.deidentifier.arx.ARXLattice.ARXNode,%20boolean)">getOutput</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput(org.deidentifier.arx.ARXLattice.ARXNode, boolean)">getOutput</a></strong>(<a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html" title="class in org.deidentifier.arx">ARXLattice.ARXNode</a>&nbsp;node,
          boolean&nbsp;fork)</code>
 <div class="block">Returns a handle to data obtained by applying the given transformation.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getOutput(boolean)">getOutput</a></strong>(boolean&nbsp;fork)</code>
 <div class="block">Returns a handle to the data obtained by applying the optimal transformation.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>long</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#getTime()">getTime</a></strong>()</code>
 <div class="block">Returns the execution time (wall clock).</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#isOptimizable(org.deidentifier.arx.DataHandle)">isOptimizable</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle)</code>
 <div class="block">Returns whether local recoding can be applied to the given handle</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#isResultAvailable()">isResultAvailable</a></strong>()</code>
 <div class="block">Indicates if a result is available.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle)</code>
 <div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle,%20double)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle, double)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
         double&nbsp;gsFactor)</code>
 <div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle,%20double,%20org.deidentifier.arx.ARXListener)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimize(org.deidentifier.arx.DataHandle, double, org.deidentifier.arx.ARXListener)">optimize</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
         double&nbsp;gsFactor,
         <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
 </td>
 </tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeFast(org.deidentifier.arx.DataHandle, double)">optimizeFast</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+            double&nbsp;records)</code>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeFast(org.deidentifier.arx.DataHandle, double, org.deidentifier.arx.ARXListener)">optimizeFast</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+            double&nbsp;records,
+            <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeFast(org.deidentifier.arx.DataHandle, double, double, org.deidentifier.arx.ARXListener)">optimizeFast</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+            double&nbsp;records,
+            double&nbsp;gsFactor,
+            <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</td>
+</tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle,%20double,%20int,%20double)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle, double, int, double)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
                  double&nbsp;gsFactor,
                  int&nbsp;maxIterations,
                  double&nbsp;adaptionFactor)</code>
@@ -264,7 +295,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle,%20double,%20int,%20double,%20org.deidentifier.arx.ARXListener)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterative(org.deidentifier.arx.DataHandle, double, int, double, org.deidentifier.arx.ARXListener)">optimizeIterative</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
                  double&nbsp;gsFactor,
                  int&nbsp;maxIterations,
                  double&nbsp;adaptionFactor,
@@ -273,6 +304,30 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterativeFast(org.deidentifier.arx.DataHandle, double)">optimizeIterativeFast</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                     double&nbsp;records)</code>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterativeFast(org.deidentifier.arx.DataHandle, double, org.deidentifier.arx.ARXListener)">optimizeIterativeFast</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                     double&nbsp;records,
+                     <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#optimizeIterativeFast(org.deidentifier.arx.DataHandle, double, double, org.deidentifier.arx.ARXListener)">optimizeIterativeFast</a></strong>(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                     double&nbsp;records,
+                     double&nbsp;gsFactor,
+                     <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXResult.html#releaseBuffer(org.deidentifier.arx.DataHandleOutput)">releaseBuffer</a></strong>(<a href="../../../org/deidentifier/arx/DataHandleOutput.html" title="class in org.deidentifier.arx">DataHandleOutput</a>&nbsp;handle)</code>
 <div class="block">Releases the buffer.</div>
@@ -321,13 +376,14 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>definition</code> - </dd><dd><code>lattice</code> - </dd><dd><code>historySize</code> - </dd><dd><code>snapshotSizeSnapshot</code> - </dd><dd><code>snapshotSizeDataset</code> - </dd><dd><code>metric</code> - </dd><dd><code>config</code> - </dd><dd><code>optimum</code> - </dd><dd><code>time</code> - </dd><dd><code>solutionSpace</code> - </dd></dl>
 </li>
 </ul>
-<a name="ARXResult(org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">
+<a name="ARXResult(org.deidentifier.arx.ARXAnonymizer, org.deidentifier.arx.DataRegistry, org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.framework.check.NodeChecker, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration, org.deidentifier.arx.ARXLattice, long, org.deidentifier.arx.framework.lattice.SolutionSpace)">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>ARXResult</h4>
-<pre>protected&nbsp;ARXResult(org.deidentifier.arx.DataRegistry&nbsp;registry,
+<pre>protected&nbsp;ARXResult(<a href="../../../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a>&nbsp;anonymizer,
+         org.deidentifier.arx.DataRegistry&nbsp;registry,
          org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
          org.deidentifier.arx.framework.check.NodeChecker&nbsp;checker,
          <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
@@ -336,7 +392,7 @@ extends java.lang.Object</pre>
          long&nbsp;duration,
          org.deidentifier.arx.framework.lattice.SolutionSpace&nbsp;solutionSpace)</pre>
 <div class="block">Creates a new instance.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>registry</code> - </dd><dd><code>manager</code> - </dd><dd><code>checker</code> - </dd><dd><code>definition</code> - </dd><dd><code>config</code> - </dd><dd><code>lattice</code> - </dd><dd><code>duration</code> - </dd><dd><code>solutionSpace</code> - </dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>anonymizer</code> - </dd><dd><code>registry</code> - </dd><dd><code>manager</code> - </dd><dd><code>checker</code> - </dd><dd><code>definition</code> - </dd><dd><code>config</code> - </dd><dd><code>lattice</code> - </dd><dd><code>duration</code> - </dd><dd><code>solutionSpace</code> - </dd></dl>
 </li>
 </ul>
 </li>
@@ -355,6 +411,17 @@ extends java.lang.Object</pre>
 <h4>getConfiguration</h4>
 <pre>public&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getConfiguration()</pre>
 <div class="block">Returns the configuration used.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getDataDefinition()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getDataDefinition</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;getDataDefinition()</pre>
+<div class="block">Returns the data definition</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -555,6 +622,62 @@ public&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class
              throws <a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></pre>
 <div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+                 The default value is 0.5, which means that generalization
+                 and suppression will be treated equally. A factor of 0
+                 will favor suppression, and a factor of 1 will favor
+                 generalization. The values in between can be used for
+                 balancing both methods.</dd><dd><code>listener</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>The number of optimized records</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
+</li>
+</ul>
+<a name="optimizeFast(org.deidentifier.arx.DataHandle, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>optimizeFast</h4>
+<pre>public&nbsp;int&nbsp;optimizeFast(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+               double&nbsp;records)
+                 throws <a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></pre>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>records</code> - A fraction [0,1] of records that need to be optimized.</dd>
+<dt><span class="strong">Returns:</span></dt><dd>The number of optimized records</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
+</li>
+</ul>
+<a name="optimizeFast(org.deidentifier.arx.DataHandle, double, org.deidentifier.arx.ARXListener)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>optimizeFast</h4>
+<pre>public&nbsp;int&nbsp;optimizeFast(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+               double&nbsp;records,
+               <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)
+                 throws <a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></pre>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>records</code> - A fraction [0,1] of records that need to be optimized.</dd><dd><code>listener</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd>The number of optimized records</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
+</li>
+</ul>
+<a name="optimizeFast(org.deidentifier.arx.DataHandle, double, double, org.deidentifier.arx.ARXListener)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>optimizeFast</h4>
+<pre>public&nbsp;int&nbsp;optimizeFast(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+               double&nbsp;records,
+               double&nbsp;gsFactor,
+               <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)
+                 throws <a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></pre>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>records</code> - A fraction [0,1] of records that need to be optimized.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
             The default value is 0.5, which means that generalization
             and suppression will be treated equally. A factor of 0
             will favor suppression, and a factor of 1 will favor
@@ -582,7 +705,7 @@ public&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class
             and suppression will be treated equally. A factor of 0
             will favor suppression, and a factor of 1 will favor
             generalization. The values in between can be used for
-            balancing both methods.</dd><dd><code>maxIterations</code> - The maximal number of iterations to perform</dd><dd><code>adaptionFactor</code> - Is added to the gsFactor when reaching a fixpoint</dd><dd><code>listener</code> - </dd>
+            balancing both methods.</dd><dd><code>maxIterations</code> - The maximal number of iterations to perform</dd><dd><code>adaptionFactor</code> - Is added to the gsFactor when reaching a fixpoint</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
 </li>
@@ -606,6 +729,59 @@ public&nbsp;<a href="../../../org/deidentifier/arx/DataHandle.html" title="class
             will favor suppression, and a factor of 1 will favor
             generalization. The values in between can be used for
             balancing both methods.</dd><dd><code>maxIterations</code> - The maximal number of iterations to perform</dd><dd><code>adaptionFactor</code> - Is added to the gsFactor when reaching a fixpoint</dd><dd><code>listener</code> - </dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
+</li>
+</ul>
+<a name="optimizeIterativeFast(org.deidentifier.arx.DataHandle, double)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>optimizeIterativeFast</h4>
+<pre>public&nbsp;void&nbsp;optimizeIterativeFast(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                         double&nbsp;records)
+                           throws <a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></pre>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>records</code> - A fraction [0,1] of records that need to be optimized in each step.</dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
+</li>
+</ul>
+<a name="optimizeIterativeFast(org.deidentifier.arx.DataHandle, double, org.deidentifier.arx.ARXListener)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>optimizeIterativeFast</h4>
+<pre>public&nbsp;void&nbsp;optimizeIterativeFast(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                         double&nbsp;records,
+                         <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)
+                           throws <a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></pre>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>records</code> - A fraction [0,1] of records that need to be optimized in each step.</dd><dd><code>listener</code> - </dd>
+<dt><span class="strong">Throws:</span></dt>
+<dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
+</li>
+</ul>
+<a name="optimizeIterativeFast(org.deidentifier.arx.DataHandle, double, double, org.deidentifier.arx.ARXListener)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>optimizeIterativeFast</h4>
+<pre>public&nbsp;void&nbsp;optimizeIterativeFast(<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a>&nbsp;handle,
+                         double&nbsp;records,
+                         double&nbsp;gsFactor,
+                         <a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)
+                           throws <a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></pre>
+<div class="block">This method optimizes the given data output with local recoding to improve its utility</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>handle</code> - </dd><dd><code>records</code> - A fraction [0,1] of records that need to be optimized in each step.</dd><dd><code>gsFactor</code> - A factor [0,1] weighting generalization and suppression.
+            The default value is 0.5, which means that generalization
+            and suppression will be treated equally. A factor of 0
+            will favor suppression, and a factor of 1 will favor
+            generalization. The values in between can be used for
+            balancing both methods.</dd><dd><code>listener</code> - </dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code><a href="../../../org/deidentifier/arx/exceptions/RollbackRequiredException.html" title="class in org.deidentifier.arx.exceptions">RollbackRequiredException</a></code></dd></dl>
 </li>

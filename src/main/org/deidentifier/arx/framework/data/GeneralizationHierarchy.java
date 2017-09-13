@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,21 +95,6 @@ public class GeneralizationHierarchy {
         }
     }
 
-    /**
-     * Can be used to create a copy of the generalization hierarchy.
-     *
-     * @param name
-     * @param map
-     * @param distinctValues
-     */
-    protected GeneralizationHierarchy(final String name,
-                                      final int[][] map,
-                                      final int[] distinctValues) {
-        this.attribute = name;
-        this.map = map;
-        this.distinctValues = distinctValues;
-    }
-    
     /**
      * Throws an exception, if the hierarchy is not monotonic.
      * 

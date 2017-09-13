@@ -115,14 +115,14 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#Transformation(int[],%20de.linearbits.jhpl.Lattice,%20org.deidentifier.arx.framework.lattice.SolutionSpace)">Transformation</a></strong>(int[]&nbsp;transformation,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#Transformation(int[], de.linearbits.jhpl.Lattice, org.deidentifier.arx.framework.lattice.SolutionSpace)">Transformation</a></strong>(int[]&nbsp;transformation,
               de.linearbits.jhpl.Lattice&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;lattice,
               <a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
 <div class="block">Instantiates a new transformation.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#Transformation(int[],%20long,%20de.linearbits.jhpl.Lattice,%20org.deidentifier.arx.framework.lattice.SolutionSpace)">Transformation</a></strong>(int[]&nbsp;transformationJHPL,
+<td class="colOne"><code><strong><a href="../../../../../org/deidentifier/arx/framework/lattice/Transformation.html#Transformation(int[], long, de.linearbits.jhpl.Lattice, org.deidentifier.arx.framework.lattice.SolutionSpace)">Transformation</a></strong>(int[]&nbsp;transformationJHPL,
               long&nbsp;identifier,
               de.linearbits.jhpl.Lattice&lt;java.lang.Integer,java.lang.Integer&gt;&nbsp;lattice,
               <a href="../../../../../org/deidentifier/arx/framework/lattice/SolutionSpace.html" title="class in org.deidentifier.arx.framework.lattice">SolutionSpace</a>&nbsp;solutionSpace)</code>
@@ -363,6 +363,29 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getPredecessors()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getPredecessors</h4>
+<pre>public&nbsp;cern.colt.list.LongArrayList&nbsp;getPredecessors()</pre>
+<div class="block">Returns all predeccessors of the transformation with the given identifier</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getSuccessors()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getSuccessors</h4>
+<pre>public&nbsp;cern.colt.list.LongArrayList&nbsp;getSuccessors()</pre>
+<div class="block">Returns all successors</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="hasProperty(de.linearbits.jhpl.PredictiveProperty)">
 <!--   -->
 </a>
@@ -441,22 +464,10 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>property</code> - </dd></dl>
 </li>
 </ul>
-<a name="getPredecessors()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPredecessors</h4>
-<pre>public&nbsp;cern.colt.list.LongArrayList&nbsp;getPredecessors()</pre>
-<div class="block">Returns all predeccessors of the transformation with the given identifier</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>transformation</code> - </dd>
-<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="toString()">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>toString</h4>
 <pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
@@ -465,17 +476,6 @@ extends java.lang.Object</pre>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
-</li>
-</ul>
-<a name="getSuccessors()">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getSuccessors</h4>
-<pre>public&nbsp;cern.colt.list.LongArrayList&nbsp;getSuccessors()</pre>
-<div class="block">Returns all successors</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 </li>

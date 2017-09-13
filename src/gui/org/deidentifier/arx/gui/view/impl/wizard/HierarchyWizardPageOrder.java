@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
@@ -155,16 +156,16 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
             } else if (description.hasFormat()) {
                 final String text1 = Resources.getMessage("AttributeDefinitionView.9"); //$NON-NLS-1$
                 final String text2 = Resources.getMessage("AttributeDefinitionView.10"); //$NON-NLS-1$
-                final String format = controller.actionShowFormatInputDialog(getShell(),
+                final String format[] = controller.actionShowFormatInputDialog(getShell(),
                                                                              text1,
                                                                              text2,
                                                                              model.getLocale(),
                                                                              description,
                                                                              model.getData());
-                if (format == null) {
+                if (format == null || format[0] == null) {
                     type = DataType.STRING;
                 } else {
-                    type = description.newInstance(format, model.getLocale());
+                    type = description.newInstance(format[0], format[1] != null ? getLocale(format[1]) : model.getLocale());
                 }
             } else {
                 type = description.newInstance();
@@ -351,6 +352,20 @@ public class HierarchyWizardPageOrder<T> extends HierarchyWizardPageBuilder<T> {
             idx++;
         }
         return -1;
+    }
+
+    /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
     }
     
     /**

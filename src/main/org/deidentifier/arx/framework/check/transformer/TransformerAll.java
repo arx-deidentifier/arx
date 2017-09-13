@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -39,9 +40,9 @@ public class TransformerAll extends AbstractTransformer {
      * @param dictionarySensFreq
      * @param config
      */
-    public TransformerAll(final int[][] data,
+    public TransformerAll(final DataMatrix data,
                           final GeneralizationHierarchy[] hierarchies,
-                          final int[][] otherValues,
+                          final DataMatrix otherValues,
                           final IntArrayDictionary dictionarySensValue,
                           final IntArrayDictionary dictionarySensFreq,
                           final ARXConfigurationInternal config) {
@@ -56,17 +57,17 @@ public class TransformerAll extends AbstractTransformer {
      */
     @Override
     protected void processAll() {
-        final int dimensions = data[0].length;
         for (int i = startIndex; i < stopIndex; i++) {
-            intuple = data[i];
-            outtuple = buffer[i];
+
+            // Transform
+            buffer.setRow(i);
+            data.setRow(i);
             for (int d = 0; d < dimensions; d++) {
-                final int state = generalization[d];
-                outtuple[d] = map[d][intuple[d]][state];
+                buffer.setValueAtColumn(d, map[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
-            delegate.callAll(outtuple, i);
+            delegate.callAll(i, i);
         }
     }
 
@@ -80,15 +81,16 @@ public class TransformerAll extends AbstractTransformer {
     protected void processGroupify() {
         while (element != null) {
 
-            intuple = data[element.representative];
-            outtuple = buffer[element.representative];
+            // Transform
+            buffer.setRow(element.representative);
+            data.setRow(element.representative);
+
             for (int d = 0; d < dimensions; d++) {
-                final int state = generalization[d];
-                outtuple[d] = map[d][intuple[d]][state];
+                buffer.setValueAtColumn(d, map[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
-            delegate.callGroupify(outtuple, element);
+            delegate.callGroupify(element.representative, element);
 
             // Next element
             element = element.nextOrdered;
@@ -108,15 +110,14 @@ public class TransformerAll extends AbstractTransformer {
         stopIndex *= ssStepWidth;
 
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
-            intuple = data[snapshot[i]];
-            outtuple = buffer[snapshot[i]];
+            buffer.setRow(snapshot[i]);
+            data.setRow(snapshot[i]);
             for (int d = 0; d < dimensions; d++) {
-                final int state = generalization[d];
-                outtuple[d] = map[d][intuple[d]][state];
+                buffer.setValueAtColumn(d, map[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
-            delegate.callSnapshot(outtuple, snapshot, i);
+            delegate.callSnapshot(snapshot[i], snapshot, i);
         }
     }
 }

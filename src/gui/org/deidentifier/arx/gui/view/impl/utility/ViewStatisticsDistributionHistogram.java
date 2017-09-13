@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -80,9 +80,9 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
      * @param reset
      */
     public ViewStatisticsDistributionHistogram(final Composite parent,
-                                     final Controller controller,
-                                     final ModelPart target,
-                                     final ModelPart reset) {
+                                               final Controller controller,
+                                               final ModelPart target,
+                                               final ModelPart reset) {
         
         super(parent, controller, target, reset, true);
         this.manager = new AnalysisManager(parent.getDisplay());

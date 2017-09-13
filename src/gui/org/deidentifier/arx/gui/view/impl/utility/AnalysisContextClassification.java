@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,9 +34,7 @@ public class AnalysisContextClassification implements AnalysisContextVisualizati
     
     /** Context information. */
     public Model         model          = null;
-    
-    /** Context information. */
-    public AnalysisContext context       = null;
+
     
     /**
      * Creates a new context from the given context.
@@ -46,7 +44,6 @@ public class AnalysisContextClassification implements AnalysisContextVisualizati
     public AnalysisContextClassification(AnalysisContext context){
         if (context.getData()==null) return;
         this.handle = context.getData().handle;
-        this.context = context;
         if (handle == null) return;
         this.model = context.getModel();
         if (model==null) return; 

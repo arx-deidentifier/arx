@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,41 +21,14 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.LongDoubleOpenHashMap;
 
 /**
+ * This class implements serialization for maps
  * 
+ * @author Fabian Prasser
  */
 public class IO {
-
-    /**
-     * Reads a hash map from the stream.
-     *
-     * @param stream
-     * @return
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    public static IntIntOpenHashMap readIntIntOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
-        
-        // Read
-        boolean[] allocated = (boolean[]) stream.readObject();
-        int[] keys = (int[]) stream.readObject();
-        int[] values = (int[]) stream.readObject();
-        
-        // Set
-        IntIntOpenHashMap result = new IntIntOpenHashMap();
-        for (int i=0; i<allocated.length; i++) {
-            if (allocated[i]) {
-                result.put(keys[i], values[i]);
-            }
-        }
-        
-        // Return
-        return result;
-    }
-    
 
     /**
      * Reads a hash map from the stream.
@@ -83,22 +56,6 @@ public class IO {
         // Return
         return result;
     }
-
-    /**
-     * Reads a hash map from the stream.
-     *
-     * @param stream
-     * @param hashmap
-     * @throws IOException
-     */
-    public static void writeIntIntOpenHashMap(ObjectOutputStream stream, IntIntOpenHashMap hashmap) throws IOException {
-        
-        // Write
-        stream.writeObject(hashmap.allocated);
-        stream.writeObject(hashmap.keys);
-        stream.writeObject(hashmap.values);
-    }
-    
 
     /**
      * Reads a hash map from the stream.

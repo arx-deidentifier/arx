@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -56,7 +57,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * Creates a new instance.
      */
     protected MetricMDNMPrecision() {
-        super(false, false, AggregateFunction.ARITHMETIC_MEAN);
+        super(true, false, false, AggregateFunction.ARITHMETIC_MEAN);
     }
     
     /**
@@ -65,38 +66,32 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @param function
      */
     protected MetricMDNMPrecision(AggregateFunction function){
-        super(false, false, function);
+        super(true, false, false, function);
     }
 
     /**
      * For subclasses.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      * @param function
      */
-    protected MetricMDNMPrecision(boolean monotonic, boolean independent, AggregateFunction function){
-        super(monotonic, independent, function);
+    protected MetricMDNMPrecision(boolean monotonicWithGeneralization, boolean monotonicWithSuppression, boolean independent, AggregateFunction function){
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, function);
     }
 
     /**
      * For subclasses.
      *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      * @param gsFactor
      * @param function
      */
-    protected MetricMDNMPrecision(boolean monotonic, boolean independent, double gsFactor, AggregateFunction function){
-        super(monotonic, independent, gsFactor, function);
-    }
-    
-    /**
-     * Creates a new instance.
-     * @param gsFactor
-     */
-    protected MetricMDNMPrecision(double gsFactor) {
-        super(false, false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
+    protected MetricMDNMPrecision(boolean monotonicWithGeneralization, boolean monotonicWithSuppression, boolean independent, double gsFactor, AggregateFunction function){
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor, function);
     }
 
     /**
@@ -106,7 +101,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @param function
      */
     protected MetricMDNMPrecision(double gsFactor, AggregateFunction function){
-        super(false, false, gsFactor, function);
+        super(true, false, false, gsFactor, function);
     }
     
     /**
@@ -131,6 +126,16 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     @Override
     public boolean isGSFactorSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Precision");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
     }
 
     @Override
@@ -165,9 +170,10 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
             unsuppressedTuples += m.isNotOutlier ? m.count : 0;
             suppressedTuples += m.isNotOutlier ? 0 : m.count;
 
-            // Calculate avg. MSE
+            // Calculate avg. error
             for (int i = 0; i < dimensionsAggregated; i++) {
-                double share = (double) m.count * microaggregationFunctions[i].getMeanError(m.distributions[microaggregationStart + i]);
+                double share = (double) m.count * super.getError(microaggregationFunctions[i],
+                                                                 m.distributions[microaggregationStart + i]);  
                 result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
                                                                       (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
             }
@@ -190,14 +196,14 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         return new ILMultiDimensionalWithBound(createInformationLoss(result), 
                                                (AbstractILMultiDimensional)getLowerBoundInternal(node).clone());
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-    
+
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         
@@ -220,7 +226,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                                            HashGroupify groupify) {
        return getLowerBoundInternal(node);
     }
-
+    
     /**
      * For backwards compatibility only.
      *
@@ -245,7 +251,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMin(min);
         setMax(max);
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 

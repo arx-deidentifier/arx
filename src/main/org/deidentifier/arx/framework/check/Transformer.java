@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ package org.deidentifier.arx.framework.check;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.TransitionType;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.check.transformer.AbstractTransformer;
 import org.deidentifier.arx.framework.check.transformer.Transformer01;
 import org.deidentifier.arx.framework.check.transformer.Transformer02;
@@ -39,6 +39,7 @@ import org.deidentifier.arx.framework.check.transformer.Transformer13;
 import org.deidentifier.arx.framework.check.transformer.Transformer14;
 import org.deidentifier.arx.framework.check.transformer.Transformer15;
 import org.deidentifier.arx.framework.check.transformer.TransformerAll;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -50,31 +51,31 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 public class Transformer {
 
     /** The config. */
-    protected final ARXConfigurationInternal   config;
+    protected final ARXConfigurationInternal  config;
 
     /** The dictionary for the snapshot compression *. */
-    protected IntArrayDictionary               dictionarySensFreq;
+    protected IntArrayDictionary              dictionarySensFreq;
 
     /** The dictionary for the snapshot compression *. */
-    protected IntArrayDictionary               dictionarySensValue;
+    protected IntArrayDictionary              dictionarySensValue;
 
     /** The dimensions. */
-    protected final int                        dimensions;
+    protected final int                       dimensions;
 
     /** The hierarchies. */
-    protected final GeneralizationHierarchy[]  hierarchies;
+    protected final GeneralizationHierarchy[] hierarchies;
 
     /** Other attribute values. */
-    protected int[][]                          inputAnalyzed;
+    protected DataMatrix                      inputAnalyzed;
 
     /** The data. */
-    protected final int[][]                    inputGeneralized;
+    protected final DataMatrix                inputGeneralized;
 
     /** The instances. */
-    protected final AbstractTransformer[]      instances;
+    protected final AbstractTransformer[]     instances;
 
     /** The buffer. */
-    protected int[][]                          outputGeneralized;
+    protected DataMatrix                      outputGeneralized;
 
     /**
      * Instantiates a new transformer.
@@ -86,8 +87,8 @@ public class Transformer {
      * @param dictionarySensValue
      * @param dictionarySensFreq
      */
-    public Transformer(final int[][] inputGeneralized,
-                       final int[][] inputAnalyzed,
+    public Transformer(final DataMatrix inputGeneralized,
+                       final DataMatrix inputAnalyzed,
                        final GeneralizationHierarchy[] hierarchies,
                        final ARXConfigurationInternal config,
                        final IntArrayDictionary dictionarySensValue,
@@ -97,13 +98,10 @@ public class Transformer {
         this.inputGeneralized = inputGeneralized;
         this.hierarchies = hierarchies;
         this.instances = new AbstractTransformer[16];
-        this.outputGeneralized = new int[inputGeneralized.length][];
-        
-        for (int i = 0; i < inputGeneralized.length; i++) {
-            outputGeneralized[i] = new int[inputGeneralized[0].length];
-        }
+        this.outputGeneralized = new DataMatrix(inputGeneralized.getNumRows(), 
+                                                inputGeneralized.getNumColumns());
 
-        this.dimensions = inputGeneralized[0].length;
+        this.dimensions = inputGeneralized.getNumColumns();
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
         this.inputAnalyzed = inputAnalyzed;
@@ -188,7 +186,7 @@ public class Transformer {
      * 
      * @return the buffer
      */
-    public int[][] getBuffer() {
+    public DataMatrix getBuffer() {
         return outputGeneralized;
     }
 
@@ -321,18 +319,16 @@ public class Transformer {
         int startIndex = 0;
         int stopIndex = 0;
 
-        int bucket = 0;
         HashGroupifyEntry element = null;
 
         switch (transition) {
         case UNOPTIMIZED:
             startIndex = 0;
-            stopIndex = inputGeneralized.length;
+            stopIndex = inputGeneralized.getNumRows();
             break;
         case ROLLUP:
             startIndex = 0;
             stopIndex = source.getNumberOfEquivalenceClasses();
-            bucket = 0;
             element = source.getFirstEquivalenceClass();
             break;
         case SNAPSHOT:
@@ -354,7 +350,6 @@ public class Transformer {
                  transition,
                  startIndex,
                  stopIndex,
-                 bucket,
                  element,
                  outputGeneralized);
 

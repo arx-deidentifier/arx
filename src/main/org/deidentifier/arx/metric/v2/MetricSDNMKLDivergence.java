@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,18 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -44,24 +45,31 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
 
     /** Tuple wrapper*/
     class TupleWrapper {
-        
-        /** Field*/
-        private final int[] tuple;
-        /** Field*/
-        private final int hash;
+
+        /** Field */
+        private final DataMatrix matrix;
+        /** Field */
+        private final int        tuple;
+        /** Field */
+        private final int        hash;
         
         /**
          * Constructor
+         * @param matrix
          * @param tuple
          */
-        public TupleWrapper(int[] tuple) {
+        public TupleWrapper(DataMatrix matrix, int tuple) {
             this.tuple = tuple;
-            this.hash = Arrays.hashCode(tuple);
+            this.hash = matrix.hashCode(tuple);
+            this.matrix = matrix;
         }
 
         @Override
         public boolean equals(Object other) {
-            return Arrays.equals(this.tuple, ((TupleWrapper)other).tuple);
+            if (this.matrix != ((TupleWrapper)other).matrix) {
+                throw new IllegalStateException("Incompatible matrix");
+            }
+            return matrix.equals(this.tuple, ((TupleWrapper)other).tuple);
         }
 
         @Override
@@ -84,31 +92,31 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     }
 
     /** Total number of tuples, depends on existence of research subset. */
-    private Double              tuples            = null;
+    private Double                 tuples            = null;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]       shares;
+    private DomainShare[]          shares;
 
     /** Maximum value */
-    private Double              max               = null;
+    private Double                 max               = null;
 
     /** Tuple matcher */
-    private TupleMatcher        matcher           = null;
+    private transient TupleMatcher matcher           = null;
 
     /** Distribution */
-    private double[]            inputDistribution = null;
+    private double[]               inputDistribution = null;
 
     /** Log 2. */
-    private static final double LOG2              = Math.log(2);
+    private static final double    LOG2              = Math.log(2);
 
     /** Maximal area */
-    private double              maximalArea       = 0d;
+    private double                 maximalArea       = 0d;
 
     /**
      * Default constructor.
      */
     public MetricSDNMKLDivergence(){
-        super(false, false);
+        super(true, false, false);
     }
     
     @Override
@@ -145,26 +153,34 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("KL divergence");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "KL-Divergence";
     }
-
+    
     /**
      * Returns the area
      * @param output
      * @param generalization
      * @return
      */
-    private double getArea(int[] output, int[] generalization) {
+    private double getArea(HashGroupifyEntry entry, int[] generalization) {
         
         double result = 1d;
-        for (int dimension = 0; dimension < output.length; dimension++) {
+        entry.read();
+        for (int dimension = 0; dimension < generalization.length; dimension++) {
             DomainShare share = this.shares[dimension];
-            result *= share.getShare(output[dimension], generalization[dimension]) * share.getDomainSize();
+            result *= share.getShare(entry.next(), generalization[dimension]) * share.getDomainSize();
         }
         return result;
     }
-    
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
@@ -192,7 +208,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
                 HashGroupifyEntry entry = this.matcher.getEntry(row, generalization, g);
                 double outputFrequency = entry.isNotOutlier ? entry.count : outliers;
                 outputFrequency /= this.tuples;
-                outputFrequency /= entry.isNotOutlier ? getArea(entry.key, generalization) : maximalArea;
+                outputFrequency /= entry.isNotOutlier ? getArea(entry, generalization) : maximalArea;
                 
                 // Compute KL-Divergence
                 result += inputFrequency * log2(inputFrequency / outputFrequency);
@@ -202,23 +218,23 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensionalWithBound(result);
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count, entry.count);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node,
                                                         HashGroupify g) {
         return null;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -246,7 +262,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
         RowSet subset = super.getSubset(config);
         
         // Tuple matcher
-        this.matcher = new TupleMatcher(hierarchies, input.getArray());
+        this.matcher = new TupleMatcher(hierarchies);
        
         // Areamax
         this.maximalArea = 1d;
@@ -258,7 +274,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
        Map<TupleWrapper, Integer> groupify = new HashMap<TupleWrapper, Integer>();
        for (int row = 0; row < input.getDataLength(); row++) {
            if (subset == null || subset.contains(row)) {
-               TupleWrapper wrapper = new TupleWrapper(input.getArray()[row]);
+               TupleWrapper wrapper = new TupleWrapper(input.getArray(), row);
                Integer count = groupify.get(wrapper);
                count = count == null ? 1 : count + 1;
                groupify.put(wrapper, count);
@@ -267,13 +283,13 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
        
        // Build input distribution and compute max
        this.max = 0d;
-       this.inputDistribution = new double[input.getArray().length];
+       this.inputDistribution = new double[input.getArray().getNumRows()];
        for (int row = 0; row < input.getDataLength(); row++) {
            if (subset == null || subset.contains(row)) {
-               TupleWrapper wrapper = new TupleWrapper(input.getArray()[row]);
+               TupleWrapper wrapper = new TupleWrapper(input.getArray(), row);
                double frequency = groupify.get(wrapper).doubleValue() / this.tuples;
                this.inputDistribution[row] = frequency ;
-               max += frequency * log2(frequency * maximalArea);
+               this.max += frequency * log2(frequency * maximalArea);
            }
        }
     }

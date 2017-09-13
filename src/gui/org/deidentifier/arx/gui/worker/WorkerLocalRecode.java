@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,6 +89,12 @@ public class WorkerLocalRecode extends Worker<DataHandle> {
                                                     model.getLocalRecodingModel().getNumIterations(),
                                                     0d,
                                                     listener);
+                break;
+            case ITERATIVE:
+                model.getResult().optimizeIterativeFast(model.getOutput(),
+                                                        1d / (double)model.getLocalRecodingModel().getNumIterations(),
+                                                        model.getLocalRecodingModel().getGsFactor(), 
+                                                        listener);
                 break;
             case SINGLE_PASS:
                 model.getResult().optimize(model.getOutput(), model.getLocalRecodingModel().getGsFactor(), listener);

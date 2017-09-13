@@ -192,13 +192,13 @@ extends <a href="../../../../../../org/deidentifier/arx/framework/check/distribu
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>&lt;T&gt;&nbsp;double</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">getMeanError</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</code>
-<div class="block">Returns the normalized mean squared error in [0,1], if supported, 0d otherwise</div>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#getError(org.deidentifier.arx.framework.check.distribution.Distribution)">getError</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</code>
+<div class="block">Returns the normalized error induced by aggregation.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a></strong>(java.lang.String[]&nbsp;dictionary,
           <a href="../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
           int[][]&nbsp;hierarchy)</code>
 <div class="block">Initializes the function</div>
@@ -210,7 +210,7 @@ extends <a href="../../../../../../org/deidentifier/arx/framework/check/distribu
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.framework.check.distribution.<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></h3>
-<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics,%20org.deidentifier.arx.framework.check.distribution.Distribution,%20org.deidentifier.arx.DataType.DataTypeWithRatioScale,%20double)">addAll</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMinMax(java.lang.String[],%20org.deidentifier.arx.DataType.DataTypeWithRatioScale)">getMinMax</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getNMSE(double,%20double,%20double[],%20double)">getNMSE</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#isTypePreserving()">isTypePreserving</a></code></li>
+<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#addAll(org.apache.commons.math3.stat.descriptive.DescriptiveStatistics, org.deidentifier.arx.framework.check.distribution.Distribution, org.deidentifier.arx.DataType.DataTypeWithRatioScale, double)">addAll</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getInformationLoss(org.deidentifier.arx.framework.check.distribution.Distribution)">getInformationLoss</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMinMax(java.lang.String[], org.deidentifier.arx.DataType.DataTypeWithRatioScale)">getMinMax</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getNMSE(double, double, double[], double)">getNMSE</a>, <a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#isTypePreserving()">isTypePreserving</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -281,18 +281,21 @@ extends <a href="../../../../../../org/deidentifier/arx/framework/check/distribu
 </dl>
 </li>
 </ul>
-<a name="getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">
+<a name="getError(org.deidentifier.arx.framework.check.distribution.Distribution)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>getMeanError</h4>
-<pre>public&nbsp;&lt;T&gt;&nbsp;double&nbsp;getMeanError(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">DistributionAggregateFunction</a></code></strong></div>
-<div class="block">Returns the normalized mean squared error in [0,1], if supported, 0d otherwise</div>
+<h4>getError</h4>
+<pre>public&nbsp;&lt;T&gt;&nbsp;double&nbsp;getError(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;distribution)</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getError(org.deidentifier.arx.framework.check.distribution.Distribution)">DistributionAggregateFunction</a></code></strong></div>
+<div class="block">Returns the normalized error induced by aggregation. In most cases this will be the mean squared error 
+ normalized into [0,1]. In case of generalization, it will return the normalized generalization level
+ (also called generalization intensity). In case of intervals, it will return the normalized number
+ of aggregated values.</div>
 <dl>
-<dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getMeanError(org.deidentifier.arx.framework.check.distribution.Distribution)">getMeanError</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></code></dd>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#getError(org.deidentifier.arx.framework.check.distribution.Distribution)">getError</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></code></dd>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -305,11 +308,11 @@ extends <a href="../../../../../../org/deidentifier/arx/framework/check/distribu
 <pre>public&nbsp;void&nbsp;initialize(java.lang.String[]&nbsp;dictionary,
               <a href="../../../../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;&nbsp;type,
               int[][]&nbsp;hierarchy)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">DistributionAggregateFunction</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">DistributionAggregateFunction</a></code></strong></div>
 <div class="block">Initializes the function</div>
 <dl>
 <dt><strong>Overrides:</strong></dt>
-<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[],%20org.deidentifier.arx.DataType,%20int[][])">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></code></dd>
+<dd><code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html#initialize(java.lang.String[], org.deidentifier.arx.DataType, int[][])">initialize</a></code>&nbsp;in class&nbsp;<code><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/DistributionAggregateFunction.html" title="class in org.deidentifier.arx.framework.check.distribution">DistributionAggregateFunction</a></code></dd>
 </dl>
 </li>
 </ul>

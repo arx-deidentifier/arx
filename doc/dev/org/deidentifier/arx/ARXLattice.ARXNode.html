@@ -196,27 +196,39 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getHighestScore()">getHighestScore</a></strong>()</code>
+<div class="block">Returns the highest score.</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.Integer</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getId()">getId</a></strong>()</code>
 <div class="block">Returns a node's internal id.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getLowerBound()">getLowerBound</a></strong>()</code>
 <div class="block">Returns a node's lower bound, if any.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getLowestScore()">getLowestScore</a></strong>()</code>
+<div class="block">Returns the highest score.</div>
+</td>
+</tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getMaximumInformationLoss()">getMaximumInformationLoss</a></strong>()</code>
-<div class="block">Returns the maximal information loss.</div>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#getMinimumInformationLoss()">getMinimumInformationLoss</a></strong>()</code>
-<div class="block">Returns the minimal information loss.</div>
+<div class="block"><strong>Deprecated.</strong>&nbsp;</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -262,6 +274,12 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/certificate/elements/ElementData.html" title="class in org.deidentifier.arx.certificate.elements">ElementData</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#render()">render</a></strong>()</code>
+<div class="block">Renders this object</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXLattice.ARXNode.html#setId(int)">setId</a></strong>(int&nbsp;id)</code>
 <div class="block">Internal method that sets the id.</div>
@@ -375,14 +393,39 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
+<a name="getHighestScore()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getHighestScore</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;getHighestScore()</pre>
+<div class="block">Returns the highest score. Lower is better.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="getLowestScore()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getLowestScore</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;getLowestScore()</pre>
+<div class="block">Returns the highest score. Lower is better.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getMaximumInformationLoss()">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getMaximumInformationLoss</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;getMaximumInformationLoss()</pre>
-<div class="block">Returns the maximal information loss.</div>
+<pre>@Deprecated
+public&nbsp;<a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;getMaximumInformationLoss()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
+<div class="block">Returns the maximal information loss.
+ This method is deprecated. Please use getHighestScore() instead.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -392,8 +435,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>getMinimumInformationLoss</h4>
-<pre>public&nbsp;<a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;getMinimumInformationLoss()</pre>
-<div class="block">Returns the minimal information loss.</div>
+<pre>@Deprecated
+public&nbsp;<a href="../../../org/deidentifier/arx/metric/InformationLoss.html" title="class in org.deidentifier.arx.metric">InformationLoss</a>&lt;?&gt;&nbsp;getMinimumInformationLoss()</pre>
+<div class="block"><span class="strong">Deprecated.</span>&nbsp;</div>
+<div class="block">Returns the minimal information loss.
+ This method is deprecated. Please use getLowestScore() instead.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
@@ -473,6 +519,17 @@ public&nbsp;<a href="../../../org/deidentifier/arx/ARXLattice.Anonymity.html" ti
 <h4>isChecked</h4>
 <pre>public&nbsp;boolean&nbsp;isChecked()</pre>
 <div class="block">Returns if the node has been checked explicitly.</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="render()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>render</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/certificate/elements/ElementData.html" title="class in org.deidentifier.arx.certificate.elements">ElementData</a>&nbsp;render()</pre>
+<div class="block">Renders this object</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>

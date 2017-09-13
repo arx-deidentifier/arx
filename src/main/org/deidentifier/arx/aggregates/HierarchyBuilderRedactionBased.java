@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,21 +37,21 @@ import com.carrotsearch.hppc.CharOpenHashSet;
  * @author Fabian Prasser
  * @param <T>
  */
-public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> implements Serializable {
+public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> implements Serializable { // NO_UCD
 
     /**
      * Order
      */
     public static enum Order {
         
-        /**  TODO */
+        /**  Order */
         LEFT_TO_RIGHT,
         
-        /**  TODO */
+        /**  Order */
         RIGHT_TO_LEFT
     }
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 3625654600380531803L;
 
     /**
@@ -330,9 +330,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
     public int[] prepare(String[] data){
         
         // Check
-        if (this.result == null) {
-            prepareResult(data);
-        }
+        prepareResult(data);
         
         // Compute
         int[] sizes = new int[this.result[0].length];

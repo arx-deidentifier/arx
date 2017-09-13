@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package org.deidentifier.arx.gui.worker;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.deidentifier.arx.ARXAnonymizer;
@@ -84,18 +82,6 @@ public class WorkerLoad extends Worker<Model> {
 	
 	/** The model. */
 	private Model      model;
-
-	/**
-     * Creates a new instance.
-     *
-     * @param file
-     * @param controller
-     * @throws ZipException
-     * @throws IOException
-     */
-    public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
-        this.zipfile = new ZipFile(file);
-    }
 
     /**
      * Constructor.
@@ -248,7 +234,7 @@ public class WorkerLoad extends Worker<Model> {
                                              ARXLattice.getDeserializationContext().minLevel, 
                                              ARXLattice.getDeserializationContext().maxLevel));
         
-        config.getConfig().setMetric(Metric.createMetric(config.getConfig().getMetric(), 
+        config.getConfig().setQualityModel(Metric.createMetric(config.getConfig().getQualityModel(), 
                                                          ARXLattice.getDeserializationContext().minLevel, 
                                                          ARXLattice.getDeserializationContext().maxLevel));
         
@@ -263,7 +249,7 @@ public class WorkerLoad extends Worker<Model> {
             readDefinition(config, output, model.getInputDefinition(), prefix, zip);
             
             // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
-            if (model.getInputPopulationModel() != null) {
+            if (model.getInputConfig().getInput() != null && model.getInputPopulationModel() != null) {
                 model.getInputPopulationModel().makeBackwardsCompatible(config.getInput().getHandle().getNumRows());
             }
         } else {
@@ -728,8 +714,8 @@ public class WorkerLoad extends Worker<Model> {
                     node.access().setAnonymity(anonymity);
                     node.access().setChecked(checked);
                     node.access().setTransformation(transformation);
-                    node.access().setMaximumInformationLoss(max.get(id));
-                    node.access().setMinimumInformationLoss(min.get(id));
+                    node.access().setHighestScore(max.get(id));
+                    node.access().setLowestScore(min.get(id));
                     node.access().setAttributes(attrs.get(id));
                     node.access().setHeadermap(headermap);
                     levels.get(level).add(node);

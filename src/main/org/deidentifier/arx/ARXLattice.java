@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -76,8 +77,8 @@ public class ARXLattice implements Serializable {
         }
 
         /**
+         * Accessor method
          * 
-         *
          * @return
          */
         public Map<String, Integer> getAttributeMap() {
@@ -85,7 +86,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param bottom
          */
@@ -94,7 +95,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param levels
          */
@@ -103,26 +104,25 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
-         * @param metric
+         * @param model
          */
-        public void setMetric(final Metric<?> metric) {
-            lattice.metric = metric;
+        public void setQualityModel(final Metric<?> model) {
+            lattice.metric = model;
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param config
          */
         public void setMonotonicity(ARXConfiguration config) {
-            lattice.monotonicNonAnonymous = lattice.metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
-            lattice.monotonicAnonymous = lattice.metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
+            lattice.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param node
          */
@@ -131,7 +131,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param size
          */
@@ -148,7 +148,7 @@ public class ARXLattice implements Serializable {
         }
         
         /**
-         * 
+         * Accessor method
          *
          * @param top
          */
@@ -157,7 +157,7 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * 
+         * Accessor method
          *
          * @param uncertainty
          */
@@ -167,7 +167,7 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * 
+     * ReflectS different anonymity properties 
      */
     public static enum Anonymity {
         
@@ -207,7 +207,7 @@ public class ARXLattice implements Serializable {
             private final ARXNode node;
 
             /**
-             * 
+             * Accessor class
              *
              * @param node
              */
@@ -272,7 +272,7 @@ public class ARXLattice implements Serializable {
              *
              * @param a
              */
-            public void setMaximumInformationLoss(final InformationLoss<?> a) {
+            public void setHighestScore(final InformationLoss<?> a) {
                 node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
@@ -281,7 +281,7 @@ public class ARXLattice implements Serializable {
              *
              * @param a
              */
-            public void setMinimumInformationLoss(final InformationLoss<?> a) {
+            public void setLowestScore(final InformationLoss<?> a) {
                 node.minInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
@@ -367,7 +367,7 @@ public class ARXLattice implements Serializable {
         public ARXNode(ARXLattice lattice) {
             this.lattice = lattice;
         }
-
+        
         /**
          * Constructor.
          *
@@ -426,14 +426,14 @@ public class ARXLattice implements Serializable {
             // Important for expand operations
             if (!complete) {
                 if (this.maxInformationLoss == null) {
-                    this.maxInformationLoss = metric.createMaxInformationLoss();
+                    this.maxInformationLoss = metric.createInstanceOfHighestScore();
                 }
                 if (this.minInformationLoss == null) {
-                    this.minInformationLoss = metric.createMinInformationLoss();
+                    this.minInformationLoss = metric.createInstanceOfLowestScore();
                 }
             }
         }
-        
+
         /**
          * Alter associated fields.
          *
@@ -449,7 +449,7 @@ public class ARXLattice implements Serializable {
         public void expand() {
             this.lattice.expand(this);
         }
-
+        
         /**
          * Returns the anonymity property.
          *
@@ -458,7 +458,7 @@ public class ARXLattice implements Serializable {
         public Anonymity getAnonymity() {
             return anonymity;
         }
-        
+
         /**
          * Returns the attributes.
          *
@@ -477,7 +477,7 @@ public class ARXLattice implements Serializable {
         public int getDimension(final String attr) {
             return headermap.get(attr);
         }
-
+        
         /**
          * Returns the generalization for the attribute.
          *
@@ -489,22 +489,20 @@ public class ARXLattice implements Serializable {
             if (index == null) { return 0; }
             return transformation[index];
         }
-        
+
         /**
-         * Returns the maximal information loss.
-         *
+         * Returns the highest score. Lower is better.
          * @return
          */
-        public InformationLoss<?> getMaximumInformationLoss() {
+        public InformationLoss<?> getHighestScore() {
             return maxInformationLoss;
         }
 
         /**
-         * Returns the minimal information loss.
-         *
+         * Returns the highest score. Lower is better.
          * @return
          */
-        public InformationLoss<?> getMinimumInformationLoss() {
+        public InformationLoss<?> getLowestScore() {
             return minInformationLoss;
         }
 
@@ -562,22 +560,38 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * Returns the anonymity property.
-         *
-         * @return
-         */
-        @Deprecated
-        public Anonymity isAnonymous() {
-            return anonymity;
-        }
-        
-        /**
          * Returns if the node has been checked explicitly.
          *
          * @return
          */
         public boolean isChecked() {
             return checked;
+        }
+        
+        /**
+         * Renders this object
+         * @return
+         */
+        public ElementData render() {
+            ElementData result = new ElementData("Transformation");
+            result.addProperty("Anonymity", this.anonymity);
+            result.addProperty("Minimum information loss", this.minInformationLoss.toString());
+            result.addProperty("Maximum information loss", this.maxInformationLoss.toString());
+            result.addProperty(null, renderGeneralizationScheme());
+            return result;
+        }
+
+        /**
+         * Renders this object
+         * @return
+         */
+        private ElementData renderGeneralizationScheme() {
+            ElementData result = new ElementData("Generalization scheme");
+            for (String qi : this.getQuasiIdentifyingAttributes()) {
+                result.addProperty(qi, this.getGeneralization(qi) + "/" +
+                                       this.lattice.getTop().getGeneralization(qi));    
+            }
+            return result;
         }
 
         /**
@@ -728,9 +742,8 @@ public class ARXLattice implements Serializable {
 
         // Init
         this.solutions = solutions;
-        this.metric = config.getMetric();
-        this.monotonicNonAnonymous = metric.isMonotonic() || !config.isSuppressionAlwaysEnabled();
-        this.monotonicAnonymous = metric.isMonotonic() || config.getAbsoluteMaxOutliers() == 0;
+        this.metric = config.getQualityModel();
+        this.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
         this.complete = complete;
         this.virtualSize = solutions.getSize();
  
@@ -793,11 +806,6 @@ public class ARXLattice implements Serializable {
      */
     public void expand(ARXNode center) {
         
-        // Break
-        if (this.isComplete()) {
-            return;
-        }
- 
         // Initialize
         int[] indices = center.getTransformation();
         Transformation transformation = solutions.getTransformation(indices);
@@ -879,9 +887,11 @@ public class ARXLattice implements Serializable {
         }
         
         // Update information loss
-        this.estimateInformationLoss();
+        if (!missing.isEmpty()) {
+            this.estimateInformationLoss();
+        }
     }
-
+    
     /**
      * Returns the bottom node.
      *
@@ -892,6 +902,17 @@ public class ARXLattice implements Serializable {
     }
 
     /**
+     * Returns the highest score. Lower is better.
+     * @return
+     */
+    public InformationLoss<?> getHighestScore(){
+        if (this.maximumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
+        return this.maximumInformationLoss;
+    }
+    
+    /**
      * Returns the levels of the generalization lattice.
      *
      * @return
@@ -899,31 +920,18 @@ public class ARXLattice implements Serializable {
     public ARXNode[][] getLevels() {
         return levels;
     }
-    
-    /**
-     * Returns the maximal information loss.
-     *
-     * @return
-     */
-    public InformationLoss<?> getMaximumInformationLoss(){
-        if (this.maximumInformationLoss == null) {
-            this.estimateInformationLoss();
-        }
-        return this.maximumInformationLoss;
-    }
 
     /**
-     * Returns the minimal information loss.
-     *
+     * Returns the lowest score. Lower is better.
      * @return
      */
-    public InformationLoss<?> getMinimumInformationLoss(){
+    public InformationLoss<?> getLowestScore(){
         if (this.minimumInformationLoss == null) {
             this.estimateInformationLoss();
         }
         return this.minimumInformationLoss;
     }
-    
+
     /**
      * Returns the number of nodes.
      *
@@ -932,7 +940,7 @@ public class ARXLattice implements Serializable {
     public int getSize() {
         return size;
     }
-
+    
     /**
      * Returns the top node.
      *
@@ -949,13 +957,27 @@ public class ARXLattice implements Serializable {
     public long getVirtualSize() {
         return virtualSize != null ? virtualSize : size;
     }
-    
+
     /**
      * Returns whether the search space has been characterized completely
+     * (i.e. whether an optimal solution has been determined, *not* whether
+     * all transformations have been materialized).
      * @return
      */
     public boolean isComplete() {
         return this.complete;
+    }
+    
+    /**
+     * Renders this object
+     * @return
+     */
+    public ElementData render() {
+        ElementData result = new ElementData("Search space");
+        result.addProperty("Size", this.virtualSize);
+        result.addProperty("Materialized", this.size);
+        result.addProperty("Completely classified", this.complete);
+        return result;
     }
     
     /**
@@ -1120,8 +1142,9 @@ public class ARXLattice implements Serializable {
         }
         return 0;
     }
+    
     /**
-     * Creates all relationships from the 
+     * Creates all relationships 
      * @param solutions
      * @param map
      * @param id
@@ -1196,7 +1219,7 @@ public class ARXLattice implements Serializable {
 
 
     /**
-     * Creates all relationships from the 
+     * Creates all relationships
      * @param solutions
      * @param map
      * @param id
@@ -1266,6 +1289,20 @@ public class ARXLattice implements Serializable {
     }
     
     /**
+     * Sets the monotonicity based on the current configuration
+     * @param isSuppressionAlwaysEnabled
+     * @param absoluteSuppressionLimit
+     */
+    private void setMonotonicity(boolean isSuppressionAlwaysEnabled, int absoluteSuppressionLimit) {
+        
+
+        this.monotonicNonAnonymous = (this.metric.isMonotonicWithSuppression() && isSuppressionAlwaysEnabled) ||
+                                     (this.metric.isMonotonicWithGeneralization() && !isSuppressionAlwaysEnabled);
+        
+        this.monotonicAnonymous = this.metric.isMonotonic(absoluteSuppressionLimit);
+    }
+    
+    /**
      * This method triggers the estimation of the information loss of all nodes
      * in the lattice regardless of whether they have been checked for anonymity
      * or not. Additionally, it computes global upper and lower bounds on utility
@@ -1281,13 +1318,13 @@ public class ARXLattice implements Serializable {
             this.maximumInformationLoss = null;
             for (ARXNode[] level : this.levels) {
                 for (ARXNode node : level) {
-                    this.minimumInformationLoss = this.minimumInformationLoss == null ? node.getMinimumInformationLoss() : this.minimumInformationLoss;
-                    this.maximumInformationLoss = this.maximumInformationLoss == null ? node.getMaximumInformationLoss() : this.maximumInformationLoss;
-                    if (this.minimumInformationLoss.compareTo(node.getMinimumInformationLoss()) > 0) {
-                        this.minimumInformationLoss = node.getMinimumInformationLoss().clone();
+                    this.minimumInformationLoss = this.minimumInformationLoss == null ? node.getLowestScore() : this.minimumInformationLoss;
+                    this.maximumInformationLoss = this.maximumInformationLoss == null ? node.getHighestScore() : this.maximumInformationLoss;
+                    if (this.minimumInformationLoss.compareTo(node.getLowestScore()) > 0) {
+                        this.minimumInformationLoss = node.getLowestScore().clone();
                     }
-                    if (this.maximumInformationLoss.compareTo(node.getMaximumInformationLoss()) < 0) {
-                        this.maximumInformationLoss = node.getMaximumInformationLoss().clone();
+                    if (this.maximumInformationLoss.compareTo(node.getHighestScore()) < 0) {
+                        this.maximumInformationLoss = node.getHighestScore().clone();
                     }
                 }
             }

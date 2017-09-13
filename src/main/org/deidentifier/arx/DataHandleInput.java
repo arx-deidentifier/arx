@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
@@ -35,20 +36,20 @@ import org.deidentifier.arx.framework.data.Dictionary;
 public class DataHandleInput extends DataHandle {
 
     /** The data. */
-    protected int[][]    data       = null;
+    protected DataMatrix data       = null;
 
     /** The dictionary. */
     protected Dictionary dictionary = null;
 
     /** The data. */
-    private int[][]      dataGH     = null;
+    private DataMatrix   dataGH     = null;
 
     /** The data. */
-    private int[][]      dataDI     = null;
+    private DataMatrix   dataDI     = null;
 
     /** The data. */
-    private int[][]      dataIS     = null;
-    
+    private DataMatrix   dataIS     = null;
+
     /** Is this handle locked?. */
     private boolean      locked     = false;
 
@@ -91,7 +92,10 @@ public class DataHandleInput extends DataHandle {
         }
 
         // Build array
-        this.data = vals.toArray(new int[vals.size()][]);
+        this.data = new DataMatrix(vals.size(), header.length);
+        for (int row = 0; row < vals.size(); row++) {
+            this.data.setRow(row, vals.get(row));
+        }
 
         // finalize dictionary
         this.dictionary.finalizeAll();
@@ -122,7 +126,7 @@ public class DataHandleInput extends DataHandle {
     @Override
     public int getNumRows() {
         checkRegistry();
-        return data.length;
+        return data.getNumRows();
     }
 
     @Override
@@ -134,7 +138,7 @@ public class DataHandleInput extends DataHandle {
     public String getValue(final int row, final int column) {
         checkRegistry();
         checkColumn(column);
-        checkRow(row, data.length);
+        checkRow(row, data.getNumRows());
         return internalGetValue(row, column, false);
     }
 
@@ -152,7 +156,7 @@ public class DataHandleInput extends DataHandle {
 
             @Override
             public boolean hasNext() {
-                return (index < data.length);
+                return (index < data.getNumRows());
             }
 
             @Override
@@ -184,10 +188,8 @@ public class DataHandleInput extends DataHandle {
      * @param row2
      * @param data
      */
-    private void swap(int row1, int row2, int[][] data){
-        final int[] temp = data[row1];
-        data[row1] = data[row2];
-        data[row2] = temp;
+    private void swap(int row1, int row2, DataMatrix data){
+        data.swap(row1, row2);
     }
 
     /**
@@ -243,14 +245,14 @@ public class DataHandleInput extends DataHandle {
      * Returns the input buffer
      * @return
      */
-    protected int[][] getInputBuffer() {
+    protected DataMatrix getInputBuffer() {
         checkRegistry();
         return this.dataGH;
     }
     
     @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
-        return dictionary.getMapping()[column][data[row][column]];
+        return dictionary.getMapping()[column][data.get(row, column)];
     }
     
     @Override
@@ -278,8 +280,8 @@ public class DataHandleInput extends DataHandle {
     protected void internalSwap(final int row1, final int row2) {
 
         // Check
-        checkRow(row1, data.length);
-        checkRow(row2, data.length);
+        checkRow(row1, data.getNumRows());
+        checkRow(row2, data.getNumRows());
 
         // Swap
         swap(row1, row2, data);
@@ -332,13 +334,13 @@ public class DataHandleInput extends DataHandle {
     /**
      * Updates the definition with further data to swap.
      *
-     * @param dataGH
-     * @param dataDI
-     * @param dataIS
+     * @param matrixGH
+     * @param matrixDI
+     * @param matrixIS
      */
-    protected void update(int[][] dataGH, int[][] dataDI, int[][] dataIS) {
-        this.dataGH = dataGH;
-        this.dataDI = dataDI;
-        this.dataIS = dataIS;
+    protected void update(DataMatrix matrixGH, DataMatrix matrixDI, DataMatrix matrixIS) {
+        this.dataGH = matrixGH;
+        this.dataDI = matrixDI;
+        this.dataIS = matrixIS;
     }
 }

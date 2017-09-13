@@ -121,7 +121,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#ARXAnonymizer(int,%20double,%20double)">ARXAnonymizer</a></strong>(int&nbsp;historySize,
+<td class="colOne"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#ARXAnonymizer(int, double, double)">ARXAnonymizer</a></strong>(int&nbsp;historySize,
              double&nbsp;snapshotSizeDataset,
              double&nbsp;snapshotSizeSnapshot)</code>
 <div class="block">Creates a new anonymizer with the given configuration.</div>
@@ -144,14 +144,14 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../org/deidentifier/arx/ARXResult.html" title="class in org.deidentifier.arx">ARXResult</a></code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.Data,%20org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.Data, org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(<a href="../../../org/deidentifier/arx/Data.html" title="class in org.deidentifier.arx">Data</a>&nbsp;data,
          <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Performs data anonymization.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>protected org.deidentifier.arx.ARXAnonymizer.Result</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.framework.data.DataManager,%20org.deidentifier.arx.DataDefinition,%20org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#anonymize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">anonymize</a></strong>(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
          <a href="../../../org/deidentifier/arx/DataDefinition.html" title="class in org.deidentifier.arx">DataDefinition</a>&nbsp;definition,
          <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;config)</code>
 <div class="block">Reset a previous lattice and run the algorithm .</div>
@@ -182,30 +182,36 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>protected void</code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#parse(org.deidentifier.arx.ARXAnonymizer)">parse</a></strong>(<a href="../../../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a>&nbsp;anonymizer)</code>
+<div class="block">Parses the settings provided by the given instance</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setHistorySize(int)">setHistorySize</a></strong>(int&nbsp;historySize)</code>
 <div class="block">Sets the maximum number of snapshots allowed to store in the history.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setListener(org.deidentifier.arx.ARXListener)">setListener</a></strong>(<a href="../../../org/deidentifier/arx/ARXListener.html" title="interface in org.deidentifier.arx">ARXListener</a>&nbsp;listener)</code>
 <div class="block">Sets a listener.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeDataset(double)">setMaximumSnapshotSizeDataset</a></strong>(double&nbsp;snapshotSize)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the dataset size.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaximumSnapshotSizeSnapshot(double)">setMaximumSnapshotSizeSnapshot</a></strong>(double&nbsp;snapshotSizeSnapshot)</code>
 <div class="block">Sets the maximum size of a snapshot relative to the previous snapshot.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/ARXAnonymizer.html#setMaxQuasiIdentifiers(int)">setMaxQuasiIdentifiers</a></strong>(int&nbsp;maxQuasiIdentifiers)</code>
 <div class="block">Sets the maximal number of quasi-identifiers.</div>
@@ -384,7 +390,7 @@ extends java.lang.Object</pre>
 <a name="anonymize(org.deidentifier.arx.framework.data.DataManager, org.deidentifier.arx.DataDefinition, org.deidentifier.arx.ARXConfiguration)">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>anonymize</h4>
 <pre>protected&nbsp;org.deidentifier.arx.ARXAnonymizer.Result&nbsp;anonymize(org.deidentifier.arx.framework.data.DataManager&nbsp;manager,
@@ -396,6 +402,17 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.io.IOException</code></dd></dl>
+</li>
+</ul>
+<a name="parse(org.deidentifier.arx.ARXAnonymizer)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>parse</h4>
+<pre>protected&nbsp;void&nbsp;parse(<a href="../../../org/deidentifier/arx/ARXAnonymizer.html" title="class in org.deidentifier.arx">ARXAnonymizer</a>&nbsp;anonymizer)</pre>
+<div class="block">Parses the settings provided by the given instance</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>anonymizer</code> - </dd></dl>
 </li>
 </ul>
 </li>

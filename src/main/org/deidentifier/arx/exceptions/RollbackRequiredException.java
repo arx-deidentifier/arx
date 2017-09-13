@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,13 +34,6 @@ public class RollbackRequiredException extends Exception {
     public RollbackRequiredException() {
         // Empty by design
     }
-    /**
-     * Constructor
-     * @param message
-     */
-    public RollbackRequiredException(String message) {
-        super(message);
-    }
     
     /** 
      * Constructor
@@ -49,13 +42,5 @@ public class RollbackRequiredException extends Exception {
      */
     public RollbackRequiredException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /** 
-     * Constructor
-     * @param cause
-     */
-    public RollbackRequiredException(Throwable cause) {
-        super(cause);
     }
 }

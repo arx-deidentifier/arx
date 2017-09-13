@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,6 +117,9 @@ public class DataManager {
     /** Map for microaggregated attributes */
     private final int[]                                microaggregationMap;
 
+    /** Map for microaggregated attributes */
+    private final int[]                                microaggregationDomainSizes;
+
     /** The number of microaggregation attributes in the dataDI */
     private final int                                  microaggregationNumAttributes;
 
@@ -143,7 +146,7 @@ public class DataManager {
      * @param function
      */
     public DataManager(final String[] header,
-                       final int[][] data,
+                       final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
                        final Set<PrivacyCriterion> criteria,
@@ -362,6 +365,7 @@ public class DataManager {
 
         // Init microaggregation functions
         microaggregationFunctions = new DistributionAggregateFunction[attributesMicroaggregated.size()];
+        microaggregationDomainSizes = new int[attributesMicroaggregated.size()];
         for (int i = 0; i < header.length; i++) {
             final int idx = i * 2;
             if (attributesMicroaggregated.contains(header[i]) &&
@@ -369,6 +373,7 @@ public class DataManager {
                 final int dictionaryIndex = map[idx + 1] - microaggregationStartIndex;
                 final String name = header[i];
                 if (definition.getMicroAggregationFunction(name) != null) {
+                    microaggregationDomainSizes[dictionaryIndex] = dictionaryAnalyzed.getMapping()[dictionaryIndex + microaggregationStartIndex].length;
                     microaggregationFunctions[dictionaryIndex] = functions.get(name);
                     microaggregationFunctions[dictionaryIndex].initialize(dictionaryAnalyzed.getMapping()[dictionaryIndex + microaggregationStartIndex],
                                                                           definition.getDataType(name),
@@ -411,6 +416,7 @@ public class DataManager {
      * @param microaggregationFunctions
      * @param microaggregationHeader
      * @param microaggregationMap
+     * @param microaggregationDomainSizes
      * @param microaggregationNumAttributes
      * @param microaggregationStartIndex
      * @param minLevels
@@ -429,6 +435,7 @@ public class DataManager {
                           DistributionAggregateFunction[] microaggregationFunctions,
                           String[] microaggregationHeader,
                           int[] microaggregationMap,
+                          int[] microaggregationDomainSizes,
                           int microaggregationNumAttributes,
                           int microaggregationStartIndex,
                           int[] minLevels,
@@ -444,6 +451,7 @@ public class DataManager {
         this.indexesSensitive = indexesSensitive;
         this.maxLevels = maxLevels;
         this.microaggregationFunctions = microaggregationFunctions;
+        this.microaggregationDomainSizes = microaggregationDomainSizes;
         this.microaggregationHeader = microaggregationHeader;
         this.microaggregationMap = microaggregationMap;
         this.microaggregationNumAttributes = microaggregationNumAttributes;
@@ -486,23 +494,23 @@ public class DataManager {
 
     /**
      * Returns the distribution of the attribute in the data array at the given index.
-     * @param data
+     * @param dataMatrix
      * @param index
      * @param distinctValues
      * @return
      */
-    public double[] getDistribution(int[][] data, int index, int distinctValues) {
+    public double[] getDistribution(DataMatrix dataMatrix, int index, int distinctValues) {
 
         // Initialize counts: iterate over all rows or the subset
         final int[] cardinalities = new int[distinctValues];
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < dataMatrix.getNumRows(); i++) {
             if (subset == null || subset.contains(i)) {
-                cardinalities[data[i][index]]++;
+                cardinalities[dataMatrix.get(i, index)]++;
             }
         }
 
         // compute distribution
-        final double total = subset == null ? data.length : subsetSize;
+        final double total = subset == null ? dataMatrix.getNumRows() : subsetSize;
         final double[] distribution = new double[cardinalities.length];
         for (int i = 0; i < distribution.length; i++) {
             distribution[i] = (double) cardinalities[i] / total;
@@ -527,10 +535,9 @@ public class DataManager {
         // Prepare
         int index = indexesSensitive.get(attribute);
         int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
-        int[][] data = dataAnalyzed.getArray();
         
         // Calculate and return
-        return getDistribution(data, index, distinctValues);
+        return getDistribution(dataAnalyzed.getArray(), index, distinctValues);
     }
 
     public DomainShare[] getDomainShares() {
@@ -616,6 +623,14 @@ public class DataManager {
 
     public int[] getHierarchiesMinLevels() {
         return minLevels;
+    }
+
+    /**
+     * Returns the map for the according buffer
+     * @return
+     */
+    public int[] getMicroaggregationDomainSizes() {
+        return microaggregationDomainSizes;
     }
 
     /**
@@ -729,6 +744,7 @@ public class DataManager {
                                      microaggregationFunctions,
                                      this.microaggregationHeader,
                                      this.microaggregationMap,
+                                     this.microaggregationDomainSizes,
                                      this.microaggregationNumAttributes,
                                      this.microaggregationStartIndex,
                                      this.minLevels,
@@ -743,11 +759,11 @@ public class DataManager {
      * @param hierarchy
      * @return tree
      */
-    public int[] getTree(int[][] data,
+    public int[] getTree(DataMatrix data,
                          int index,
                          int[][] hierarchy) {
 
-        final int totalElementsP = subset == null ? data.length : subsetSize;
+        final int totalElementsP = subset == null ? data.getNumRows() : subsetSize;
         final int height = hierarchy[0].length - 1;
         final int numLeafs = hierarchy.length;
 
@@ -764,11 +780,12 @@ public class DataManager {
 
         // Count frequencies
         final int offsetLeafs = 3;
-        for (int i = 0; i < data.length; i++) {
+        for (int i = 0; i < data.getNumRows(); i++) {
             if (subset == null || subset.contains(i)) {
-                int previousFreq = treeList.get(data[i][index] + offsetLeafs);
+                int val = data.get(i, index);
+                int previousFreq = treeList.get(val + offsetLeafs);
                 previousFreq++;
-                treeList.set(data[i][index] + offsetLeafs, previousFreq);
+                treeList.set(val + offsetLeafs, previousFreq);
             }
         }
 
@@ -861,7 +878,7 @@ public class DataManager {
         if (!hierarchiesSensitive.containsKey(attribute)) {
             throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
         }
-        final int[][] data = dataAnalyzed.getArray();
+        final DataMatrix data = dataAnalyzed.getArray();
         final int index = indexesSensitive.get(attribute);
         return getTree(data, index, hierarchiesSensitive.get(attribute).map);
     }
@@ -882,7 +899,7 @@ public class DataManager {
      * @param headerStatic
      * @return
      */
-    private Data[] encode(final int[][] data,
+    private Data[] encode(final DataMatrix data,
                           final int[] map,
                           final int[] mapGeneralized,
                           final int[] mapAnalyzed,
@@ -895,44 +912,43 @@ public class DataManager {
                           final String[] headerStatic) {
 
         // Parse the dataset
-        final int[][] valsGH = headerGeneralized.length == 0 ? null : new int[data.length][];
-        final int[][] valsDI = headerAnalyzed.length == 0 ? null : new int[data.length][];
-        final int[][] valsIS = headerStatic.length == 0 ? null : new int[data.length][];
+        final DataMatrix valsGH = headerGeneralized.length == 0 ? null : new DataMatrix(data.getNumRows(), headerGeneralized.length);
+        final DataMatrix valsDI = headerAnalyzed.length == 0 ? null : new DataMatrix(data.getNumRows(), headerAnalyzed.length);
+        final DataMatrix valsIS = headerStatic.length == 0 ? null : new DataMatrix(data.getNumRows(), headerStatic.length);
 
-        int index = 0;
-        for (final int[] tuple : data) {
+        for (int index = 0; index < data.getNumRows(); index++) {
+            
+            valsGH.setRow(index);
+            if (valsDI != null) valsDI.setRow(index);
+            if (valsIS != null) valsIS.setRow(index);
 
-            // Process a tuple
-            final int[] tupleGH = headerGeneralized.length == 0 ? null : new int[headerGeneralized.length];
-            final int[] tupleDI = headerAnalyzed.length == 0 ? null : new int[headerAnalyzed.length];
-            final int[] tupleIS = headerStatic.length == 0 ? null : new int[headerStatic.length];
-
-            for (int i = 0; i < tuple.length; i++) {
+            data.iterator(index);
+            int i = 0;
+            while (data.iterator_hasNext()) {
+                
                 final int idx = i * 2;
                 int aType = map[idx];
                 final int iPos = map[idx + 1];
+                final int iValue = data.iterator_next();
                 switch (aType) {
                 case AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED:
-                    tupleGH[iPos] = tuple[i];
+                    valsGH.setValueAtColumn(iPos, iValue);
                     break;
                 case AttributeTypeInternal.IDENTIFYING:
                     // Ignore
                     break;
                 case AttributeTypeInternal.INSENSITIVE:
-                    tupleIS[iPos] = tuple[i];
+                    valsIS.setValueAtColumn(iPos, iValue);
                     break;
                 case AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED:
-                    tupleDI[iPos] = tuple[i];
+                    valsDI.setValueAtColumn(iPos, iValue);
                     break;
                 case AttributeTypeInternal.SENSITIVE:
-                    tupleDI[iPos] = tuple[i];
+                    valsDI.setValueAtColumn(iPos, iValue);
                     break;
                 }
+                i++;
             }
-            if (valsGH != null) valsGH[index] = tupleGH;
-            if (valsIS != null) valsIS[index] = tupleIS;
-            if (valsDI != null) valsDI[index] = tupleDI;
-            index++;
         }
 
         // Build data object

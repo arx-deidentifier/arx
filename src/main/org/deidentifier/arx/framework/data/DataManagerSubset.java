@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,6 +64,7 @@ public class DataManagerSubset extends DataManager {
                                 DistributionAggregateFunction[] microaggregationFunctions,
                                 String[] microaggregationHeader,
                                 int[] microaggregationMap,
+                                int[] microaggregationDomainSizes,
                                 int microaggregationNumAttributes,
                                 int microaggregationStartIndex,
                                 int[] minLevels,
@@ -81,6 +82,7 @@ public class DataManagerSubset extends DataManager {
               microaggregationFunctions,
               microaggregationHeader,
               microaggregationMap,
+              microaggregationDomainSizes,
               microaggregationNumAttributes,
               microaggregationStartIndex,
               minLevels,
@@ -90,7 +92,7 @@ public class DataManagerSubset extends DataManager {
     }
 
     @Override
-    public double[] getDistribution(int[][] data, int index, int distinctValues) {
+    public double[] getDistribution(DataMatrix data, int index, int distinctValues) {
         // Delegate to source
         return source.getDistribution(data, index, distinctValues);
     }
@@ -108,7 +110,7 @@ public class DataManagerSubset extends DataManager {
     }
 
     @Override
-    public int[] getTree(int[][] data, int index, int[][] hierarchy) {
+    public int[] getTree(DataMatrix data, int index, int[][] hierarchy) {
         // Delegate to source
         return source.getTree(data, index, hierarchy);
     }

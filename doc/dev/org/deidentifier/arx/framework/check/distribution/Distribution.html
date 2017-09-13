@@ -121,7 +121,7 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#Distribution(int[],%20int[])">Distribution</a></strong>(int[]&nbsp;element,
+<td class="colOne"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#Distribution(int[], int[])">Distribution</a></strong>(int[]&nbsp;element,
             int[]&nbsp;frequency)</code>
 <div class="block">Constructor used to create frequency set from a history entry.</div>
 </td>
@@ -160,18 +160,6 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#getPackedElements()">getPackedElements</a></strong>()</code>
-<div class="block">Gets all elements of the packed table.</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code>int[]</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#getPackedFrequency()">getPackedFrequency</a></strong>()</code>
-<div class="block">Gets the frequency of the packed table.</div>
-</td>
-</tr>
-<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#merge(org.deidentifier.arx.framework.check.distribution.Distribution)">merge</a></strong>(<a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html" title="class in org.deidentifier.arx.framework.check.distribution">Distribution</a>&nbsp;other)</code>
 <div class="block">Merges two frequency sets.</div>
@@ -179,13 +167,13 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#merge(int[],%20int[])">merge</a></strong>(int[]&nbsp;elements,
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#merge(int[], int[])">merge</a></strong>(int[]&nbsp;elements,
      int[]&nbsp;frequency)</code>
 <div class="block">Merge a frequency set with a history entry.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>void</code></td>
+<td class="colFirst"><code>int[][]</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#pack()">pack</a></strong>()</code>
 <div class="block">Packs the frequency table; removes null values and generates
  sortedElements and sortedFrequency arrays.</div>
@@ -197,13 +185,17 @@ extends java.lang.Object</pre>
 <div class="block">Gets the current size.</div>
 </td>
 </tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../../../org/deidentifier/arx/framework/check/distribution/Distribution.html#toString()">toString</a></strong>()</code>&nbsp;</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
-<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
+<code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, wait, wait, wait</code></li>
 </ul>
 </li>
 </ul>
@@ -281,28 +273,6 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
-<a name="getPackedElements()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPackedElements</h4>
-<pre>public&nbsp;int[]&nbsp;getPackedElements()</pre>
-<div class="block">Gets all elements of the packed table.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
-<a name="getPackedFrequency()">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getPackedFrequency</h4>
-<pre>public&nbsp;int[]&nbsp;getPackedFrequency()</pre>
-<div class="block">Gets the frequency of the packed table.</div>
-<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
-</li>
-</ul>
 <a name="merge(org.deidentifier.arx.framework.check.distribution.Distribution)">
 <!--   -->
 </a>
@@ -332,21 +302,34 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>pack</h4>
-<pre>public&nbsp;void&nbsp;pack()</pre>
+<pre>public&nbsp;int[][]&nbsp;pack()</pre>
 <div class="block">Packs the frequency table; removes null values and generates
  sortedElements and sortedFrequency arrays. In case a collission occured
- this method also sorts the elements.</div>
+ this method also sorts the elements. First entry is elements, second entry is frequencies.</div>
 </li>
 </ul>
 <a name="size()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>size</h4>
 <pre>public&nbsp;int&nbsp;size()</pre>
 <div class="block">Gets the current size.</div>
 <dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
+<a name="toString()">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>toString</h4>
+<pre>public&nbsp;java.lang.String&nbsp;toString()</pre>
+<dl>
+<dt><strong>Overrides:</strong></dt>
+<dd><code>toString</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
+</dl>
 </li>
 </ul>
 </li>
