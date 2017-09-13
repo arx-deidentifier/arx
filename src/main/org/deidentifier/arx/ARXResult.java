@@ -656,7 +656,7 @@ public class ARXResult {
         // If anything happens in the above block, the operation needs to be rolled back, because
         // the buffer might be in an inconsistent state
         } catch (Exception e) {
-            throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
+            throw new RollbackRequiredException("Handle must be rebuilt to guarantee privacy", e);
         }
     }
     
