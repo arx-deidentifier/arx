@@ -215,8 +215,7 @@ public class DataHandleOutput extends DataHandle {
     /**
      * Gets the attribute name.
      * 
-     * @param col
-     *            the col
+     * @param col the col
      * @return the attribute name
      */
     @Override
@@ -280,10 +279,8 @@ public class DataHandleOutput extends DataHandle {
     /**
      * Gets the value.
      * 
-     * @param row
-     *            the row
-     * @param col
-     *            the col
+     * @param row the row
+     * @param col the col
      * @return the value
      */
     @Override
@@ -478,13 +475,9 @@ public class DataHandleOutput extends DataHandle {
      * uses string comparison.
      * 
      * @param row1
-     *            the row1
      * @param row2
-     *            the row2
      * @param columns
-     *            the columns
      * @param ascending
-     *            the ascending
      * @return the int
      */
     @Override
@@ -526,10 +519,8 @@ public class DataHandleOutput extends DataHandle {
     /**
      * Gets the value internal.
      * 
-     * @param row
-     *            the row
-     * @param col
-     *            the col
+     * @param row the row
+     * @param col the col
      * @return the value internal
      */
     @Override
@@ -599,10 +590,8 @@ public class DataHandleOutput extends DataHandle {
     /**
      * Swap internal.
      * 
-     * @param row1
-     *            the row1
-     * @param row2
-     *            the row2
+     * @param row1 the row1
+     * @param row2 the row2
      */
     protected void internalSwap(final int row1, final int row2) {
         
