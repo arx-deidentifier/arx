@@ -1086,7 +1086,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * - Subsets in d-presence will be projected accordingly<br>
      * - Utility measures will be cloned<br>
      * - Replaces estimated k-map with according k-anonymity<br>
-     * @param gsFactor 
+     * @param rowset
+     * @param gsFactor May be NaN if it should be ignored 
      *
      * @return
      */
