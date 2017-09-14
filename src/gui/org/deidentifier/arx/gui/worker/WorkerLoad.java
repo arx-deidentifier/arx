@@ -620,15 +620,15 @@ public class WorkerLoad extends Worker<Model> {
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
                                     Charset.defaultCharset(),
                                     model.getCSVSyntax().getDelimiter()));
+
+        // And encode
+        config.getInput().getHandle();
         
         // Disable visualization
         if (model.getMaximalSizeForComplexOperations() > 0 &&
             config.getInput().getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
             model.setVisualizationEnabled(false);
         }
-
-        // And encode
-        config.getInput().getHandle();
     }
 
     /**
