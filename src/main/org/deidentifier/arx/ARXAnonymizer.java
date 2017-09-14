@@ -568,7 +568,7 @@ public class ARXAnonymizer { // NO_UCD
     }
 
     /**
-     * Reset a previous lattice and run the algorithm .
+     * Reset a previous lattice and run the algorithm.
      *
      * @param manager
      * @param definition
