@@ -560,7 +560,7 @@ public class ARXResult {
             throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
-        // We are now ready, to go
+        // We are now ready to go
         // Collect input and row indices
         RowSet rowset = RowSet.create(output.getNumRows());
         for (int row = 0; row < output.getNumRows(); row++) {
