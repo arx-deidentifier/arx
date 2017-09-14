@@ -23,6 +23,9 @@ package org.deidentifier.arx.framework.data;
  */
 public class DataMatrixSubset extends DataMatrix {
 
+    /** SVUID*/
+    private static final long serialVersionUID = 2302168888330117731L;
+
     /** Subset */
     private final int[]      subset;
 

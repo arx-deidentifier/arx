@@ -17,6 +17,11 @@
 
 package org.deidentifier.arx;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -311,9 +316,35 @@ public class DataHandleOutput extends DataHandle {
         return new ResultIterator();
     }
     
+    /**
+     * Internal method: writes some data into the output stream
+     * @param in
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    public void read(InputStream in) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = new ObjectInputStream(in);
+        this.outputGeneralized = (Data) ois.readObject();
+        this.outputMicroaggregated = (Data) ois.readObject();
+        this.dataTypes = (DataType<?>[][]) ois.readObject();
+        this.optimized = true;
+    }
+    
     @Override
     public boolean replace(int column, String original, String replacement) {
         throw new UnsupportedOperationException("This operation is only supported by handles for data input");
+    }
+
+    /**
+     * Internal method: writes some data into the output stream
+     * @param out
+     * @throws IOException 
+     */
+    public void write(OutputStream out) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(this.outputGeneralized);
+        oos.writeObject(this.outputMicroaggregated);
+        oos.writeObject(this.dataTypes);
     }
     
     /**
