@@ -18,6 +18,7 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -94,6 +95,7 @@ public class ARXResult {
      * @param optimum
      * @param time
      * @param solutionSpace
+     * @param in
      */
     public ARXResult(final DataHandle handle,
                      final DataDefinition definition,
@@ -339,7 +341,7 @@ public class ARXResult {
         // Return
         return result;
     }
-
+    
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -353,6 +355,34 @@ public class ARXResult {
     public DataHandle getOutput(boolean fork) {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, fork);
+    }
+
+    /**
+     * Internal method, not for external use
+     * 
+     * @param stream
+     * @param transformation
+     * @return
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    public DataHandle getOutput(InputStream stream, ARXNode transformation) throws ClassNotFoundException, IOException {
+        
+        // Create
+        DataHandleOutput result = new DataHandleOutput(this,
+                                                       registry,
+                                                       manager,
+                                                       stream,
+                                                       transformation,
+                                                       definition,
+                                                       config);
+        
+        // Lock
+        bufferLockedByHandle = result; 
+        bufferLockedByNode = transformation;
+        
+        // Return
+        return result;
     }
 
     /**
