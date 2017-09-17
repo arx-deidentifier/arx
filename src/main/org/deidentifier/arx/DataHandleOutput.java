@@ -17,6 +17,11 @@
 
 package org.deidentifier.arx;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -100,7 +105,7 @@ public class DataHandleOutput extends DataHandle {
     private int[]        inverseMap;
 
     /** The start index of the MA attributes in the dataDI */
-    private final int    microaggregationStartIndex;
+    private int          microaggregationStartIndex;
 
     /** The data. */
     private Data         outputGeneralized;
@@ -112,14 +117,14 @@ public class DataHandleOutput extends DataHandle {
     private ARXResult    result;
 
     /** Suppression handling. */
-    private final int    suppressedAttributeTypes;
+    private int          suppressedAttributeTypes;
 
     /** Flag determining whether this buffer has been optimized */
     private boolean      optimized = false;
 
     /** Flag determining whether this buffer is anonymous */
     private boolean      anonymous = false;
-    
+
     /**
      * Instantiates a new handle.
      * 
@@ -140,6 +145,216 @@ public class DataHandleOutput extends DataHandle {
                                final ARXNode node,
                                final DataDefinition definition,
                                final ARXConfiguration config) {
+        
+        // Initialize
+        initialize(result, registry, manager, outputGeneralized, outputMicroaggregated, node, definition, config);
+
+        // Obtain data types
+        this.dataTypes = getDataTypeArray();
+    }
+        
+    /**
+     * Instantiates a new handle.
+     * 
+     * @param result
+     * @param registry
+     * @param manager
+     * @param stream
+     * @param node
+     * @param definition
+     * @param config
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    protected DataHandleOutput(final ARXResult result,
+                               final DataRegistry registry,
+                               final DataManager manager,
+                               final InputStream stream,
+                               final ARXNode node,
+                               final DataDefinition definition,
+                               final ARXConfiguration config) throws ClassNotFoundException, IOException {
+        
+        // Read data from stream
+        ObjectInputStream ois = new ObjectInputStream(stream);
+        Data outputGeneralized = (Data) ois.readObject();
+        Data outputMicroaggregated = (Data) ois.readObject();
+        DataType<?>[][] dataTypes = (DataType<?>[][]) ois.readObject();
+
+        // Initialize
+        initialize(result, registry, manager, outputGeneralized, outputMicroaggregated, node, definition, config);
+
+        // Obtain data types
+        this.dataTypes = dataTypes;
+        
+        // Mark as optimized
+        this.optimized = true;
+    }
+
+    /**
+     * Gets the attribute name.
+     * 
+     * @param col the col
+     * @return the attribute name
+     */
+    @Override
+    public String getAttributeName(final int col) {
+        checkRegistry();
+        checkColumn(col);
+        return header[col];
+    }
+    
+    @Override
+    public DataType<?> getDataType(String attribute) {
+        
+        checkRegistry();
+        int col = this.getColumnIndexOf(attribute);
+        
+        // Return the according values
+        final int key = col * 2;
+        final int type = inverseMap[key];
+        switch (type) {
+        case AttributeTypeInternal.IDENTIFYING:
+            return DataType.STRING;
+        default:
+            final int index = inverseMap[key + 1];
+            return dataTypes[type][index];
+        }
+    }
+
+    @Override
+    public int getGeneralization(final String attribute) {
+        checkRegistry();
+        return node.getGeneralization(attribute);
+    }
+
+    /**
+     * Gets the num columns.
+     * 
+     * @return the num columns
+     */
+    @Override
+    public int getNumColumns() {
+        checkRegistry();
+        return header.length;
+    }
+    
+    /**
+     * Gets the num rows.
+     * 
+     * @return the num rows
+     */
+    @Override
+    public int getNumRows() {
+        checkRegistry();
+        return outputGeneralized.getDataLength();
+    }
+
+    @Override
+    public StatisticsBuilder getStatistics() {
+        return new StatisticsBuilder(new DataHandleInternal(this));
+    }
+
+    /**
+     * Gets the value.
+     * 
+     * @param row the row
+     * @param col the col
+     * @return the value
+     */
+    @Override
+    public String getValue(final int row, final int col) {
+        
+        // Check
+        checkRegistry();
+        checkColumn(col);
+        checkRow(row, outputGeneralized.getDataLength());
+        
+        // Perform
+        return internalGetValue(row, col, false);
+    }
+
+    @Override
+    public boolean isOptimized() {
+        return this.optimized;
+    }
+    
+    /**
+     * Iterator.
+     * 
+     * @return the iterator
+     */
+    @Override
+    public Iterator<String[]> iterator() {
+        checkRegistry();
+        return new ResultIterator();
+    }
+    
+    @Override
+    public boolean replace(int column, String original, String replacement) {
+        throw new UnsupportedOperationException("This operation is only supported by handles for data input");
+    }
+    
+    /**
+     * Internal method: writes some data into the output stream
+     * @param out
+     * @throws IOException 
+     */
+    public void write(OutputStream out) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(out);
+        oos.writeObject(this.outputGeneralized);
+        oos.writeObject(this.outputMicroaggregated);
+        oos.writeObject(this.dataTypes);
+    }
+
+    /**
+     * Converts the suppressed attribute type bitset to the internal datatypes.
+     * 
+     * @param suppressedAttributeTypes
+     * @return
+     */
+    private int convert(int suppressedAttributeTypes) {
+        int converted = 0;
+        for (int j = 0; j < 32; j++) {
+            if ((suppressedAttributeTypes & (1 << j)) != 0) {
+                switch (j) {
+                case AttributeType.ATTR_TYPE_ID:
+                    converted |= (1 << AttributeTypeInternal.IDENTIFYING);
+                    break;
+                case AttributeType.ATTR_TYPE_IS:
+                    converted |= (1 << AttributeTypeInternal.INSENSITIVE);
+                    break;
+                case AttributeType.ATTR_TYPE_QI:
+                    converted |= (1 << AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) | (1 << AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED);
+                    break;
+                case AttributeType.ATTR_TYPE_SE:
+                    converted |= (1 << AttributeTypeInternal.SENSITIVE);
+                    break;
+                }
+            }
+            
+        }
+        return converted;
+    }
+    
+    /**
+     * Initialization method
+     * @param result
+     * @param registry
+     * @param manager
+     * @param outputGeneralized
+     * @param outputMicroaggregated
+     * @param node
+     * @param definition
+     * @param config
+     */
+    private void initialize(final ARXResult result,
+                            final DataRegistry registry,
+                            final DataManager manager,
+                            final Data outputGeneralized,
+                            final Data outputMicroaggregated,
+                            final ARXNode node,
+                            final DataDefinition definition,
+                            final ARXConfiguration config) {
         
         registry.updateOutput(node, this);
         this.setRegistry(registry);
@@ -207,143 +422,6 @@ public class DataHandleOutput extends DataHandle {
         
         // Create view
         this.getRegistry().createOutputSubset(node, config);
-        
-        // Obtain data types
-        this.dataTypes = getDataTypeArray();
-    }
-    
-    /**
-     * Gets the attribute name.
-     * 
-     * @param col the col
-     * @return the attribute name
-     */
-    @Override
-    public String getAttributeName(final int col) {
-        checkRegistry();
-        checkColumn(col);
-        return header[col];
-    }
-
-    @Override
-    public DataType<?> getDataType(String attribute) {
-        
-        checkRegistry();
-        int col = this.getColumnIndexOf(attribute);
-        
-        // Return the according values
-        final int key = col * 2;
-        final int type = inverseMap[key];
-        switch (type) {
-        case AttributeTypeInternal.IDENTIFYING:
-            return DataType.STRING;
-        default:
-            final int index = inverseMap[key + 1];
-            return dataTypes[type][index];
-        }
-    }
-
-    @Override
-    public int getGeneralization(final String attribute) {
-        checkRegistry();
-        return node.getGeneralization(attribute);
-    }
-    
-    /**
-     * Gets the num columns.
-     * 
-     * @return the num columns
-     */
-    @Override
-    public int getNumColumns() {
-        checkRegistry();
-        return header.length;
-    }
-
-    /**
-     * Gets the num rows.
-     * 
-     * @return the num rows
-     */
-    @Override
-    public int getNumRows() {
-        checkRegistry();
-        return outputGeneralized.getDataLength();
-    }
-
-    @Override
-    public StatisticsBuilder getStatistics() {
-        return new StatisticsBuilder(new DataHandleInternal(this));
-    }
-
-    /**
-     * Gets the value.
-     * 
-     * @param row the row
-     * @param col the col
-     * @return the value
-     */
-    @Override
-    public String getValue(final int row, final int col) {
-        
-        // Check
-        checkRegistry();
-        checkColumn(col);
-        checkRow(row, outputGeneralized.getDataLength());
-        
-        // Perform
-        return internalGetValue(row, col, false);
-    }
-    
-    @Override
-    public boolean isOptimized() {
-        return this.optimized;
-    }
-    
-    /**
-     * Iterator.
-     * 
-     * @return the iterator
-     */
-    @Override
-    public Iterator<String[]> iterator() {
-        checkRegistry();
-        return new ResultIterator();
-    }
-    
-    @Override
-    public boolean replace(int column, String original, String replacement) {
-        throw new UnsupportedOperationException("This operation is only supported by handles for data input");
-    }
-    
-    /**
-     * Converts the suppressed attribute type bitset to the internal datatypes.
-     * 
-     * @param suppressedAttributeTypes
-     * @return
-     */
-    private int convert(int suppressedAttributeTypes) {
-        int converted = 0;
-        for (int j = 0; j < 32; j++) {
-            if ((suppressedAttributeTypes & (1 << j)) != 0) {
-                switch (j) {
-                case AttributeType.ATTR_TYPE_ID:
-                    converted |= (1 << AttributeTypeInternal.IDENTIFYING);
-                    break;
-                case AttributeType.ATTR_TYPE_IS:
-                    converted |= (1 << AttributeTypeInternal.INSENSITIVE);
-                    break;
-                case AttributeType.ATTR_TYPE_QI:
-                    converted |= (1 << AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) | (1 << AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED);
-                    break;
-                case AttributeType.ATTR_TYPE_SE:
-                    converted |= (1 << AttributeTypeInternal.SENSITIVE);
-                    break;
-                }
-            }
-            
-        }
-        return converted;
     }
     
     /**

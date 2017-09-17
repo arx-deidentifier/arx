@@ -279,7 +279,8 @@ public class WorkerLoad extends Worker<Model> {
             } else {
             	outputNode = null;
             }
-            model.setSelectedNode(outputNode);
+            // TODO: This can be improved! Selected node is overwritten, but this is not needed, anymore
+            model.setSelectedNode(outputNode); 
             
             // Create solution space
             ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
@@ -304,6 +305,11 @@ public class WorkerLoad extends Worker<Model> {
                 lattice.access().setSolutionSpace(solutions);
             }
 
+            // Load output data
+            ZipEntry outputEntry = zip.getEntry("data/output.dat"); //$NON-NLS-1$
+            InputStream outputStream = outputEntry == null ? null : new BufferedInputStream(zip.getInputStream(outputEntry));
+            model.setOutput(outputStream);
+            
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();
             model.setAnonymizer(f);
