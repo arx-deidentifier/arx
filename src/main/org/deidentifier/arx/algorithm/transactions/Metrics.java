@@ -1,7 +1,6 @@
 package org.deidentifier.arx.algorithm.transactions;
 
 public class Metrics {
-
     /**
      * @param item the item that is generalized
      * @param g    the generalization that item is generalized to
@@ -20,24 +19,6 @@ public class Metrics {
             return 0;
         else
             return leafCount / h.getDomainItems().length;
-    }
-
-    /**
-     * @param g  the cut for which the information loss is computed
-     * @param h  the generalization hierarchy which g belongs to
-     * @param ct the count-tree for tran
-     * @return the information loss inflicted when applying cut g on the database where ct is generated from
-     */
-    public static double NCP(Cut g, Hierarchy h, CountTree ct) {
-        double sum = 0;
-        int[] Cp = ct.itemFrequencies();
-
-        for (int i = 0; i < h.getDomainItems().length; i++) {
-            if (Cp[i] > 0 && g.generalization[i] > 0)
-                sum += Cp[i] * NCP(i, g.getGeneralization(i), h);
-        }
-
-        return sum / ct.getItemCount();
     }
 
     /**

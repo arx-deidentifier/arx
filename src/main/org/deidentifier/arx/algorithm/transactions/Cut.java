@@ -11,8 +11,6 @@ import java.util.List;
 
 public class Cut {
     int[] generalization;
-    private boolean horizontal;
-    private int level;
     private Hierarchy hierarchy;
 
     /**
@@ -22,7 +20,6 @@ public class Cut {
      */
     public Cut(Hierarchy hierarchy) {
         generalization = new int[hierarchy.getDomainItems().length];
-        horizontal = true;
         this.hierarchy = hierarchy;
     }
 
@@ -35,24 +32,8 @@ public class Cut {
      */
     public Cut(Hierarchy hierarchy, int level) {
         generalization = new int[hierarchy.getDomainItems().length];
-        horizontal = true;
         this.hierarchy = hierarchy;
         Arrays.fill(generalization, level);
-        this.level = level;
-    }
-
-    /**
-     * Checks whether the cut is horizontal which means all items are generalized to the same level
-     *
-     * @return true if the cut is horizontal, else false
-     */
-    private boolean isHorizontal() {
-        for (int i = 0; i < generalization.length - 1; i++) {
-            if (generalization[i] != generalization[i + 1]) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -77,21 +58,6 @@ public class Cut {
         int start = hierarchy.rangeInfo[generalizationItem][1];
         int end = hierarchy.rangeInfo[generalizationItem][2];
         Arrays.fill(this.generalization, start, end + 1, level);
-
-        this.horizontal = isHorizontal();
-        this.level = maxLevel();
-    }
-
-    /**
-     * @return the highest level some item in the hierarchy is generalized to by this cut
-     */
-    private int maxLevel() {
-        int m = 0;
-        for (int aGeneralization : this.generalization) {
-            if (aGeneralization > m)
-                m = aGeneralization;
-        }
-        return m;
     }
 
     /**
@@ -106,7 +72,7 @@ public class Cut {
             int levelNode = this.hierarchy.rangeInfo[l][0];
             int levelFirstLeaf = this.generalization[firstleaf];
 
-            if(levelFirstLeaf <= levelNode )
+            if (levelFirstLeaf <= levelNode)
                 return l;
             else
                 return this.hierarchy.getHierarchy()[firstleaf][this.generalization[firstleaf]];
@@ -122,8 +88,7 @@ public class Cut {
         if (i < generalization.length)
             return generalization[i] > 0;
         else { // i is a inner node of the hierarchy. Return true if i is generalized to a node above i
-            int nodeAtLevel = hierarchy.toRoot(i)[0];
-            return hierarchy.rangeInfo[nodeAtLevel][0] > hierarchy.rangeInfo[i][0];
+            return generalization[hierarchy.rangeInfo[i][1]] > hierarchy.rangeInfo[i][0];
         }
     }
 
@@ -174,13 +139,13 @@ public class Cut {
      * Computes the immediate ancestors in the hierarchy of cuts. See Figure 4 in
      * "M. Terrovitis, N. Mamoulis, and P. Kalnis, “Privacy-preserving anonymization of set-valued data,”" for illustration
      *
-     * @return all ancestors in the hierarchy of cuts.
+     * @return all immediate ancestors in the hierarchy of cuts.
      */
     public List<Cut> ancestors() {
         List<Cut> ancestors = new ArrayList<>();
         IntArrayList nodes = new IntArrayList();
 
-        // add leafs that have not generalized at all to the list
+        // add leafs that have not been generalized  to the list
         for (int i = 0; i < this.generalization.length; ) {
             if (this.generalization[i] > 0) {
                 i++;
@@ -225,7 +190,6 @@ public class Cut {
             int level = hierarchy.rangeInfo[node.value][0];
             System.arraycopy(this.generalization, 0, c.generalization, 0, this.generalization.length);
             Arrays.fill(c.generalization, start, end + 1, level);
-            c.level += c.maxLevel();
             ancestors.add(c);
         }
 
@@ -280,7 +244,4 @@ public class Cut {
         merge(this.generalization, other.generalization);
     }
 
-    public int getLevel() {
-        return level;
-    }
 }

@@ -43,6 +43,7 @@ public class KMAnonymity {
                 ct.insert(expTran);
             }
             ct.sort();
+            // here we could check if ct is already k^m-anonymous. So all m-i other calls of DA are unneccessary
             Cut c = directAnonymization(ct);
             cout.merge(c);
         }
@@ -81,7 +82,7 @@ public class KMAnonymity {
         if (cout.isGeneralized(node.getValue()))
             return;
 
-        if (node.getChildren().size() == 0 && node.getCount() <= k) { // node is a leaf node and has count less than k
+        if (node.getChildren().size() == 0 && node.getCount() <= k) { // node is a leaf node and has count less or equal to k
             int[] J = node.getPath();
             Cut c = getKAnonymousCut(J, k, ct);
             cout.merge(c);
@@ -104,24 +105,38 @@ public class KMAnonymity {
     private Cut getKAnonymousCut(int[] itemset, int k, final CountTree ct) {
         int height = hierarchy.getHierarchy()[0].length - 1;
 
-        IntArrayList levels = new IntArrayList(height*itemset.length);
+        IntArrayList levels = new IntArrayList(height * itemset.length);
 
         // add all levels each item in the itemset can be generalized to
         for (int item : itemset) {
-            for (int i = hierarchy.rangeInfo[item][0]; i < height; i++) {
+            for (int i = 0; i < height; i++) {
                 levels.add(i);
             }
         }
 
         // Generate all possible cuts that contain the items of itemset
         SubsetIterator v = new SubsetIterator(levels.toArray(), itemset.length);
-        Set<IntArrayList> cuts = new HashSet<>();
+        Set<IntArrayList> cuts = new HashSet<>(); // remove possible duplicates
 
+        boolean allBelow = false;
         while (v.hasNext()) {
-            cuts.add(IntArrayList.from(v.next()));
+            int[] next = v.next();
+            for (int i = 0; i < next.length; i++) {
+                if (next[i] >= hierarchy.rangeInfo[itemset[i]][0])
+                    break;
+                if (i == next.length - 1)
+                    allBelow = true;
+            }
+            if (!allBelow)
+                cuts.add(IntArrayList.from(next));
+            allBelow = false;
         }
 
+        return cutLowestIL(cuts, ct, itemset, k);
+    }
 
+    private Cut cutLowestIL(Set<IntArrayList> cuts, CountTree ct, int[] itemset, int k) {
+        int height = hierarchy.getHierarchy()[0].length - 1;
         Cut cutLowestIL = new Cut(hierarchy, height); // The cut that always works is the one that generalizes to the root node of the hierarchy
         double cutLowestILIL = 1;
 
@@ -130,13 +145,11 @@ public class KMAnonymity {
             for (int i = 0; i < cut.size(); i++) {
                 c.generalizeToLevel(itemset[i], cut.get(i));
             }
-            // check if cut provides k-anonymity
             if (ct.providesKAnonymity(itemset, c, k)) {
-                // if it does, compare its information loss with the current best cut and replace if applicable
-                double candidateIL = Metrics.NCP(c, hierarchy, itemFrequencies, itemFrequenciesSum);
-                if (candidateIL < cutLowestILIL) {
+                double ncp = Metrics.NCP(c, hierarchy, itemFrequencies, itemFrequenciesSum);
+                if (ncp < cutLowestILIL) {
                     cutLowestIL = c;
-                    cutLowestILIL = candidateIL;
+                    cutLowestILIL = ncp;
                 }
             }
         }

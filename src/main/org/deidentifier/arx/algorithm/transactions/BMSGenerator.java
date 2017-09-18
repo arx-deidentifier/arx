@@ -1,13 +1,14 @@
 package org.deidentifier.arx.algorithm.transactions;
 
 import com.carrotsearch.hppc.IntOpenHashSet;
-import org.deidentifier.arx.Data;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Generates subsets of the BMS WebView2 dataset based on parameters "size" and "domainsize". Performs modulo on the
@@ -18,49 +19,50 @@ public class BMSGenerator {
 
     public static void main(String[] args) throws IOException {
 
-
-        for (int i = 5000; i < 30000; i += 5000) {
-            int domainSize = 40;
-            String saveFile = String.format("data/BMS2_size%d_domainSize%d.csv", i, domainSize);
-            generateBMS(i, domainSize, saveFile);
+        for (int j = 2000; j <= 20000 ; j+=2000)
+        for (int i = 25; i <= 70; i += 5) {
+            int domainSize = i;
+            int dbSize = j;
+            String saveFile = String.format("data/BMS2_size%d_domainSize%d.csv", dbSize, domainSize);
+            generateBMS(dbSize, domainSize, saveFile);
         }
-
     }
 
 
     public static void generateBMS(int dbSize, int domainSize, String saveFile) throws IOException {
         File f = new File("data/Webview2.csv");
-        Data data = Data.create(f, Charset.defaultCharset(), ',');
 
+        List<String> lines = Files.readAllLines(f.toPath(), Charset.defaultCharset());
+        List<List<String>> aggregatedLines = new ArrayList<>();
 
-        List<IntOpenHashSet> transactions = new ArrayList<>();
-        Iterator<String[]> it = data.getHandle().iterator();
-
-        while (it.hasNext()) {
-            String[] next = it.next();
-            IntOpenHashSet i = new IntOpenHashSet();
-            transactions.add(i);
-            for (String s : next) {
-                i.add(Integer.parseInt(s) % domainSize);
+        String id = lines.get(0).split(",")[0];
+        List<String> tran = new ArrayList<>();
+        for (String line : lines) {
+            String curId = line.split(",")[0];
+            if(!curId.equals(id)){
+                aggregatedLines.add(tran);
+                tran = new ArrayList<>();
+                id = curId;
             }
+            tran.add(line.split(",")[1]);
         }
 
-        int[][] moduloDB = new int[transactions.size()][];
-        for (int i = 0; i < moduloDB.length; i++) {
-            moduloDB[i] = transactions.get(i).toArray();
-        }
+        String[][] fulldb = new String[aggregatedLines.size()][];
 
-        List<int[]> v = new ArrayList<>(moduloDB.length);
-        v.addAll(Arrays.asList(moduloDB));
-
-        Random r = new Random();
-
-        for (int i = 0; i < moduloDB.length; i++) {
-            moduloDB[i] = v.get(r.nextInt(v.size()));
+        for (int i = 0; i < aggregatedLines.size(); i++) {
+            fulldb[i] = aggregatedLines.get(i).toArray(new String[0]);
         }
 
         int[][] sampledTransactions = new int[dbSize][];
-        System.arraycopy(moduloDB, 0, sampledTransactions, 0, dbSize);
+
+        for (int i = 0; i < dbSize; i++) {
+            IntOpenHashSet tra = new IntOpenHashSet();
+            for (String string : fulldb[i]) {
+                tra.add(Integer.parseInt(string) % domainSize);
+            }
+            sampledTransactions[i] = tra.toArray();
+        }
+
 
         FileWriter fw = new FileWriter(saveFile);
 

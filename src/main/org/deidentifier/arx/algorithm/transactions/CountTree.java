@@ -2,7 +2,6 @@ package org.deidentifier.arx.algorithm.transactions;
 
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
-import com.google.common.primitives.Ints;
 
 import java.util.*;
 
@@ -11,8 +10,6 @@ public class CountTree {
     private Node root = null;
     private int m; // The m in k^m-anonymity
     private Hierarchy hierarchy;
-    private int[] itemFrequencies; // the count of occurences of each leaf in the generalization hierarchy
-    private int sumDomainItemCount; // the sum of itemFrequencies
 
     /**
      * Initializes a Count Tree and populates it with itemsets of size <= m
@@ -62,13 +59,17 @@ public class CountTree {
             while (it.hasNext()) {
                 int[] next = it.next();
                 if (!hierarchy.containsGeneralizedItems(next)) { // only insert sets that don't contain two items where one is set generalization of another
-                    sortDescending(next); // sorting the items reduces fragmentation of the tree
+                    insertionSortDescending(next); // sorting the items reduces fragmentation of the tree
                     root.insert(next, 0);
                 }
             }
         }
     }
 
+    /**
+     *
+     * @return the Count Trees root node
+     */
     protected Node getRoot() {
         return root;
     }
@@ -84,64 +85,37 @@ public class CountTree {
 
 
     /**
-     * @return the count of each item in the domain
-     */
-    public int[] itemFrequencies() {
-        if (itemFrequencies != null) // itemFrequencies aren't cached
-            return itemFrequencies;
-
-        int[] c = new int[hierarchy.getDomainItems().length];
-        for (Node child : root.children) {
-            if (child.value < hierarchy.getDomainItems().length)
-                c[child.value] = child.count;
-        }
-        itemFrequencies = c;
-
-        //calculate count of all items combined. Used in NCP
-        for (int itemFrequency : itemFrequencies) {
-            sumDomainItemCount += itemFrequency;
-        }
-        return c;
-    }
-
-    public int getItemCount() {
-        return sumDomainItemCount;
-    }
-
-    /**
-     * @param path the </strong>descending sorted<strong> set to be inserted
+     * @param path the set to be inserted
      * @param c    the cut that is used to generalize path
      * @param k    an integer
      * @return true if path, generalized by c occurs at least k+1 times in the tree, false if less than k
      */
     public boolean providesKAnonymity(int[] path, Cut c, int k) {
-       // sortDescending(path);
+         insertionSortDescending(path);
         Node n = root;
         int oldCount;
-        int uu = 0;
 
         for (int i : path) {
             n = n.getChild(i);
-            uu++;
-            if(n == null)
+            if (n == null)
                 throw new RuntimeException("Path does not exist");
         }
 
+
         oldCount = n.count;
-        uu = 0;
+
         n = root;
         int[] genPath = c.generalizeTransaction(path);
-        sortDescending(genPath);
-
+        insertionSortDescending(genPath); // since m is almost always small, insertionsort is faster than built-in sorting algorithms
 
         if (Arrays.equals(genPath, path)) // no item in path was generalized by c
-            return uu == path.length && oldCount > k;
+            return oldCount > k;
+
 
 
         for (int i : genPath) {
             n = n.getChild(i);
-            uu++;
-            if(n == null)
+            if (n == null)
                 throw new RuntimeException("Path does not exist for generalized transaction");
         }
 
@@ -154,7 +128,6 @@ public class CountTree {
     public void sort() {
         root.sortRecursive();
     }
-
 
 
     // A node in the count-tree
@@ -209,7 +182,7 @@ public class CountTree {
             }
         }
 
-        public Node getChild(int value){
+        public Node getChild(int value) {
             return insertLookup.get(value);
         }
 
@@ -275,10 +248,18 @@ public class CountTree {
 
     /**
      * Sorts the array in descending order
+     *
      * @param array The array to be sorted
      */
-    private static void sortDescending(int[] array) {
-        List<Integer> integersList = Ints.asList(array); // This works sinces Ints.asList directly uses the array as backing data structure
-        Collections.sort(integersList, Collections.reverseOrder()); // so when the list is sorted, the backing array is sorted, which means the given array is sorted
+    private void insertionSortDescending(int[] array) {
+        for (int j = 1; j < array.length; j++) {
+            int key = array[j];
+            int i = j - 1;
+            while (i >= 0 && array[i] < key) {
+                array[i + 1] = array[i];
+                i = i - 1;
+                array[i + 1] = key;
+            }
+        }
     }
 }

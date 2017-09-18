@@ -115,18 +115,12 @@ public class Hierarchy {
         } else if (extendedHierarchy(item) != null) { // item is not a leaf, but we already computed its path to the root
             return extendedHierarchy(item);
         } else {
-            // the item is not a leaf, so we have to search where the item starts
-            // and return the slice from the starting position to the root
-            for (int[] path : this.hierarchy) {
-                for (int j = 0; j < path.length; j++) {
-                    if (path[j] == item) {
-                        setExtendedHierarchyItem(item, Arrays.copyOfRange(path, j, path.length)); // cache the array
-                        return extendedHierarchy(item);
-                    }
-                }
-            }
+            // the item is not a leaf, so we have to search where the item starts and return the slice from the starting position to the root
+            int nodeLevel = rangeInfo[item][0];
+            int firstLeaf = rangeInfo[item][1];
+            setExtendedHierarchyItem(item, Arrays.copyOfRange(hierarchy[firstLeaf], nodeLevel, hierarchy[firstLeaf].length)); // cache the array
+            return extendedHierarchy(item);
         }
-        return null;
     }
 
     /**
