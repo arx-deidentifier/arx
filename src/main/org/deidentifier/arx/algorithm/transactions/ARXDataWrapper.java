@@ -36,6 +36,7 @@ public class ARXDataWrapper {
                 l = new HashSet<>();
                 aggregates.put(row[pkey], l);
                 l.add(row[aggregateOn]);
+
             } else {
                 aggregates.get(row[pkey]).add(row[aggregateOn]);
             }

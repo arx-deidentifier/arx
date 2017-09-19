@@ -4,30 +4,39 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-//Class that manages the conversion from string labels to integer representations
+/**
+ * This class represents a bidirectional dictionary that maps strings <-> int. Used to convert databases to internal
+ * int representation
+ */
 public class Dict {
 
     private Map<String, Integer> m = new HashMap<>();
     private String[] reps;
 
-    /*
-    builds the dictionary based on a string hierarchy. Works in a breadth first fashion, so the labels that are less
-    generalized have smaller ids. Not really cache-friendly but neccessary right now for a more compact count-tree
-    */
+
+    /**
+     * Builds the dictionary based on a string hierarchy. Works in a breadth first fashion, so the labels that are less
+     * generalized have smaller ids
+     *
+     * @param hierarchy the hierarchy that the dict should be built on
+     */
     public Dict(String[][] hierarchy) {
         ArrayList<String> reps = new ArrayList<>(hierarchy[0].length);
+        Map<String, Integer> keys = new HashMap<>(hierarchy[0].length * hierarchy.length);
 
         int idcounter = 0;
         int generalizationLevel = 0;
-        int biggestTran = hierarchy[0].length;
-        for (int i = 0; i < biggestTran; i++) {
+        for (int i = 0; i < hierarchy[0].length; i++) {
             for (String[] item : hierarchy) {
-                if (item.length > biggestTran)
-                    biggestTran = item.length;
-                if (item.length > generalizationLevel && !m.containsKey(item[generalizationLevel])) {
-                    m.put(item[generalizationLevel], idcounter++);
-                    reps.add(idcounter - 1, item[generalizationLevel]);
+                String key = item[generalizationLevel];
+
+                Integer genlevel = keys.put(key, generalizationLevel);
+                if (genlevel != null && genlevel != generalizationLevel) // Hierarchy contains same item on different levels. This is not supported
+                    throw new RuntimeException(String.format("Item %s already contained at level %d. Replace item with distinct value.\n", key, generalizationLevel));
+
+                if (item.length > generalizationLevel && !m.containsKey(key)) {
+                    m.put(key, idcounter++);
+                    reps.add(idcounter - 1, key);
                 }
             }
             generalizationLevel++;
@@ -35,10 +44,19 @@ public class Dict {
         this.reps = reps.toArray(new String[0]);
     }
 
+    /**
+     * @param s the string representation of an item
+     * @return the integer representation of an item. null if not in this dict
+     */
     public int getRepresentation(String s) {
         return m.get(s);
     }
 
+
+    /**
+     * @param i the integer representation of an item
+     * @return the string representation of an item
+     */
     public String getString(int i) {
         return reps[i];
     }
@@ -56,6 +74,21 @@ public class Dict {
             }
         }
         return it;
+    }
+
+    /**
+     * @param t a database with string items
+     * @return the database converted with items in integer representation
+     */
+    public String[][] convertTransactions(int[][] t) {
+        String[][] stringDB = new String[t.length][];
+        for (int i = 0; i < t.length; i++) {
+            stringDB[i] = new String[t[i].length];
+            for (int j = 0; j < t[i].length; j++) {
+                stringDB[i][j] = reps[t[i][j]];
+            }
+        }
+        return stringDB;
     }
 }
 
