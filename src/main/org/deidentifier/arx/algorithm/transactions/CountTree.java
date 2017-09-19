@@ -91,27 +91,10 @@ public class CountTree {
      * @return true if path, generalized by c occurs at least k+1 times in the tree, false if less than k
      */
     public boolean providesKAnonymity(int[] path, Cut c, int k) {
-         insertionSortDescending(path);
         Node n = root;
-        int oldCount;
 
-        for (int i : path) {
-            n = n.getChild(i);
-            if (n == null)
-                throw new RuntimeException("Path does not exist");
-        }
-
-
-        oldCount = n.count;
-
-        n = root;
         int[] genPath = c.generalizeTransaction(path);
         insertionSortDescending(genPath); // since m is almost always small, insertionsort is faster than built-in sorting algorithms
-
-        if (Arrays.equals(genPath, path)) // no item in path was generalized by c
-            return oldCount > k;
-
-
 
         for (int i : genPath) {
             n = n.getChild(i);
@@ -119,7 +102,7 @@ public class CountTree {
                 throw new RuntimeException("Path does not exist for generalized transaction");
         }
 
-        return n.count + oldCount > k; // if the count of the old endnode of the path plus the endnode
+        return n.count > k; // if the count of the old endnode of the path plus the endnode
     }
 
     /**
@@ -182,6 +165,11 @@ public class CountTree {
             }
         }
 
+        /**
+         *
+         * @param value the value to which the children is returned. Value is a node in the hierarchy
+         * @return the child with value value
+         */
         public Node getChild(int value) {
             return insertLookup.get(value);
         }

@@ -3,6 +3,8 @@ package org.deidentifier.arx.algorithm.transactions;
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.cursors.IntIntCursor;
+import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.Data;
 
 import java.util.*;
 
@@ -14,15 +16,29 @@ public class KMAnonymity {
     private int[] itemFrequencies;
     private int itemFrequenciesSum;
     private Cut resultingCut;
+    private Dict dict;
 
-    public KMAnonymity(int k, int m, Hierarchy h, int[][] d) {
-        if (d.length < k)
-            throw new IllegalArgumentException(String.format("k (%s) < database size (%s)", k, d.length));
+
+    public KMAnonymity(int k, int m, AttributeType.Hierarchy hierarchy, Data db){
+        Hierarchy h2 = ARXHierarchyWrapper.convert(hierarchy);
+        Dict d = new Dict(hierarchy.getHierarchy());
+        List<String[]> transactions = new ArrayList<>();
+        Iterator<String[]> it = db.getHandle().iterator();
+
+        while (it.hasNext()) {
+            String[] next = it.next();
+            transactions.add(next);
+        }
+
+        int[][] intTran = d.convertTransactions(ARXDataWrapper.aggregate(transactions.toArray(new String[0][]), 0, 1));
+
         this.k = k;
         this.m = m;
-        this.hierarchy = h;
-        D = d;
-        countItems(); // for calculation of information loss
+        this.hierarchy = h2;
+        this.D = intTran;
+        this.dict = d;
+        countItems();
+
     }
 
     /**
@@ -109,7 +125,7 @@ public class KMAnonymity {
 
         // add all levels each item in the itemset can be generalized to
         for (int item : itemset) {
-            for (int i = 0; i < height; i++) {
+            for (int i = hierarchy.rangeInfo[item][0]; i < height; i++) {
                 levels.add(i);
             }
         }
@@ -199,12 +215,22 @@ public class KMAnonymity {
 
     public double informationLoss() {
         if (resultingCut == null)
-            return -1;
+            throw new IllegalStateException("No algorithm has been called yet.");
         return Metrics.NCP(resultingCut, hierarchy, itemFrequencies, itemFrequenciesSum);
     }
 
     public Cut getResultingCut() {
         return resultingCut;
+    }
+
+    /**
+     *
+     * @return the generalized database according to the resulting cut
+     */
+    public String[][] generalizedDatabase(){
+        if(resultingCut == null)
+            throw new IllegalStateException("No algorithm has been called yet.");
+        return dict.convertTransactions(resultingCut.generalize(D));
     }
 
     private void countItems() {

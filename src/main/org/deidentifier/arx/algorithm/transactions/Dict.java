@@ -75,6 +75,21 @@ public class Dict {
         }
         return it;
     }
+
+    /**
+     * @param t a database with string items
+     * @return the database converted with items in integer representation
+     */
+    public String[][] convertTransactions(int[][] t) {
+        String[][] stringDB = new String[t.length][];
+        for (int i = 0; i < t.length; i++) {
+            stringDB[i] = new String[t[i].length];
+            for (int j = 0; j < t[i].length; j++) {
+                stringDB[i][j] = reps[t[i][j]];
+            }
+        }
+        return stringDB;
+    }
 }
 
 
