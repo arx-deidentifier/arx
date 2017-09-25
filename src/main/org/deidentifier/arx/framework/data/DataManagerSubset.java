@@ -19,7 +19,6 @@ package org.deidentifier.arx.framework.data;
 
 import java.util.Map;
 
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 
 /**
@@ -41,14 +40,13 @@ public class DataManagerSubset extends DataManager {
      * @param hierarchiesGeneralized
      * @param hierarchiesSensitive
      * @param indexesSensitive
-     * @param maxLevels
+     * @param generalizationLevelsMinimum
+     * @param generalizationLevelsMaximum
      * @param microaggregationFunctions
      * @param microaggregationHeader
      * @param microaggregationMap
      * @param microaggregationNumAttributes
      * @param microaggregationStartIndex
-     * @param minLevels
-     * @param dataTypesSensitive 
      */
     protected DataManagerSubset(DataManager source,
                                 Data dataAnalyzed,
@@ -58,15 +56,14 @@ public class DataManagerSubset extends DataManager {
                                 GeneralizationHierarchy[] hierarchiesGeneralized,
                                 Map<String, GeneralizationHierarchy> hierarchiesSensitive,
                                 Map<String, Integer> indexesSensitive,
-                                int[] maxLevels,
+                                int[] generalizationLevelsMinimum,
+                                int[] generalizationLevelsMaximum,
                                 DistributionAggregateFunction[] microaggregationFunctions,
                                 String[] microaggregationHeader,
                                 int[] microaggregationMap,
                                 int[] microaggregationDomainSizes,
                                 int microaggregationNumAttributes,
-                                int microaggregationStartIndex,
-                                int[] minLevels,
-                                Map<String, DataType<?>> dataTypesSensitive) {
+                                int microaggregationStartIndex) {
         super(source.getDataDefinition(),
               dataAnalyzed,
               dataGeneralized,
@@ -75,15 +72,14 @@ public class DataManagerSubset extends DataManager {
               hierarchiesGeneralized,
               hierarchiesSensitive,
               indexesSensitive,
-              maxLevels,
+              generalizationLevelsMinimum,
+              generalizationLevelsMaximum,
               microaggregationFunctions,
               microaggregationHeader,
               microaggregationMap,
               microaggregationDomainSizes,
               microaggregationNumAttributes,
-              microaggregationStartIndex,
-              minLevels,
-              dataTypesSensitive);
+              microaggregationStartIndex);
         
         this.source = source;
     }
