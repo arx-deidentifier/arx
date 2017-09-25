@@ -17,9 +17,8 @@
 
 package org.deidentifier.arx.framework.data;
 
-import java.util.Map;
-
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.metric.v2.DomainShare;
 
 /**
  * A data manager that is projected onto a given subset. Used for post-optimization.
@@ -28,58 +27,48 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
  */
 public class DataManagerSubset extends DataManager {
 
+    /** The source manager*/
     private final DataManager source;
     
-    /**
+    /** 
      * Constructor
      * @param source
      * @param dataAnalyzed
      * @param dataGeneralized
      * @param dataStatic
+     * @param definition
+     * @param shares
      * @param header
      * @param hierarchiesGeneralized
-     * @param hierarchiesSensitive
-     * @param indexesSensitive
+     * @param hierarchiesAnalyzed
      * @param generalizationLevelsMinimum
      * @param generalizationLevelsMaximum
-     * @param microaggregationFunctions
-     * @param microaggregationHeader
-     * @param microaggregationMap
-     * @param microaggregationNumAttributes
-     * @param microaggregationStartIndex
+     * @param microaggregationData
      */
     protected DataManagerSubset(DataManager source,
                                 Data dataAnalyzed,
                                 Data dataGeneralized,
                                 Data dataStatic,
+                                DataDefinition definition,
+                                DomainShare[] shares,
                                 String[] header,
                                 GeneralizationHierarchy[] hierarchiesGeneralized,
-                                Map<String, GeneralizationHierarchy> hierarchiesSensitive,
-                                Map<String, Integer> indexesSensitive,
+                                GeneralizationHierarchy[] hierarchiesAnalyzed,
                                 int[] generalizationLevelsMinimum,
                                 int[] generalizationLevelsMaximum,
-                                DistributionAggregateFunction[] microaggregationFunctions,
-                                String[] microaggregationHeader,
-                                int[] microaggregationMap,
-                                int[] microaggregationDomainSizes,
-                                int microaggregationNumAttributes,
-                                int microaggregationStartIndex) {
-        super(source.getDataDefinition(),
-              dataAnalyzed,
+                                DataMicroAggregation microaggregationData) {
+        
+        super(dataAnalyzed,
               dataGeneralized,
               dataStatic,
+              source.getDataDefinition(),
+              shares,
               header,
               hierarchiesGeneralized,
-              hierarchiesSensitive,
-              indexesSensitive,
+              hierarchiesAnalyzed,
               generalizationLevelsMinimum,
               generalizationLevelsMaximum,
-              microaggregationFunctions,
-              microaggregationHeader,
-              microaggregationMap,
-              microaggregationDomainSizes,
-              microaggregationNumAttributes,
-              microaggregationStartIndex);
+              microaggregationData);
         
         this.source = source;
     }

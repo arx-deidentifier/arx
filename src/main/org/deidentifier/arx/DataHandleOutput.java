@@ -381,25 +381,25 @@ public class DataHandleOutput extends DataHandle {
             this.inverseMap[i] = AttributeTypeInternal.IDENTIFYING;
             this.inverseMap[i + 1] = -1;
         }
-        for (int i = 0; i < this.outputGeneralized.getMap().length; i++) {
-            final int pos = outputGeneralized.getMap()[i] * 2;
+        for (int i = 0; i < this.outputGeneralized.getColumns().length; i++) {
+            final int pos = outputGeneralized.getColumns()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED;
             this.inverseMap[pos + 1] = i;
         }
         for (int i = 0; i < this.microaggregationStartIndex; i++) {
-            final int pos = inputAnalyzed.getMap()[i] * 2;
+            final int pos = inputAnalyzed.getColumns()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.SENSITIVE;
             this.inverseMap[pos + 1] = i;
         }
         
-        for (int i = 0; i < outputMicroaggregated.getMap().length; i++) {
-            final int pos = outputMicroaggregated.getMap()[i] * 2;
+        for (int i = 0; i < outputMicroaggregated.getColumns().length; i++) {
+            final int pos = outputMicroaggregated.getColumns()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.QUASI_IDENTIFYING_MICROAGGREGATED;
             this.inverseMap[pos + 1] = i;
         }
         
-        for (int i = 0; i < inputStatic.getMap().length; i++) {
-            final int pos = inputStatic.getMap()[i] * 2;
+        for (int i = 0; i < inputStatic.getColumns().length; i++) {
+            final int pos = inputStatic.getColumns()[i] * 2;
             this.inverseMap[pos] = AttributeTypeInternal.INSENSITIVE;
             this.inverseMap[pos + 1] = i;
         }

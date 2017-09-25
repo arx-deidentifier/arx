@@ -29,7 +29,6 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
@@ -652,37 +651,6 @@ public class DataDefinition implements Cloneable{
                         hierarchy[i] = new String[]{data[i]};
                     }
                     this.hierarchies.put(qi, Hierarchy.create(hierarchy));
-                }
-            }
-        }
-
-        // For each qi with microaggregation
-        for (String qi : this.getQuasiIdentifiersWithMicroaggregation()) {
-            
-            if (this.getMicroAggregationFunction(qi).getFunction() instanceof DistributionAggregateFunctionGeneralization) {
-                
-                // If no hierarchy is available
-                if (!isHierarchyAvailable(qi)) {
-                    
-                    // Obtain data
-                    String[] data = handle.getDistinctValues(handle.getColumnIndexOf(qi));
-                    
-                    // If builder is available
-                    if (isHierarchyBuilderAvailable(qi)) {
-                        // Compute and store hierarchy
-                        try {
-                            this.hierarchies.put(qi, this.getHierarchyBuilder(qi).build(data));
-                        } catch (Exception e) {
-                            throw new IllegalStateException("Error building hierarchy for attribute ("+qi+")", e);
-                        }
-                    } else {
-                        // Create empty hierarchy
-                        String[][] hierarchy = new String[data.length][];
-                        for (int i=0; i<data.length; i++) {
-                            hierarchy[i] = new String[]{data[i]};
-                        }
-                        this.hierarchies.put(qi, Hierarchy.create(hierarchy));
-                    }
                 }
             }
         }

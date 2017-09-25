@@ -25,6 +25,7 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMicroAggregation;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
@@ -229,9 +230,10 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
                                       final ARXConfiguration config) {
 
         // Handle microaggregation
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationHeader = manager.getMicroaggregationHeader();
+        DataMicroAggregation microaggregationData = manager.getMicroAggregationData();
+        this.microaggregationFunctions = microaggregationData.functions;
+        this.microaggregationStartIndex = microaggregationData.startIndex;
+        this.microaggregationHeader = microaggregationData.header;
         this.microaggregationUseMeanSquaredError = config.isUtilityBasedMicroaggregationUseMeanSquaredError();
         if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
             this.microaggregationFunctions = new DistributionAggregateFunction[0];

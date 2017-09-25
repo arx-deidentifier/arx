@@ -20,13 +20,13 @@ package org.deidentifier.arx.framework.check;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.StateMachine.Transition;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataMatrix;
+import org.deidentifier.arx.framework.data.DataMicroAggregation;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -84,21 +84,9 @@ public class NodeChecker {
     /** The data. */
     private final Data                            dataGeneralized;
 
-    /** The microaggregation functions. */
-    private final DistributionAggregateFunction[] microaggregationFunctions;
-
-    /** The start index of the attributes with microaggregation in the data array */
-    private final int                             microaggregationStartIndex;
-
-    /** The number of attributes with microaggregation in the data array */
-    private final int                             microaggregationNumAttributes;
-
-    /** Map for the microaggregated data subset */
-    private final int[]                           microaggregationMap;
-
-    /** Header of the microaggregated data subset */
-    private final String[]                        microaggregationHeader;
-
+    /** Data about microaggregation*/
+    private final DataMicroAggregation            microAggregationData;
+    
     /** The current hash groupify. */
     private HashGroupify                          currentGroupify;
 
@@ -146,11 +134,7 @@ public class NodeChecker {
         this.metric = metric;
         this.config = config;
         this.dataGeneralized = manager.getDataGeneralized();
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationNumAttributes = manager.getMicroaggregationNumAttributes();
-        this.microaggregationMap = manager.getMicroaggregationMap();
-        this.microaggregationHeader = manager.getMicroaggregationHeader();
+        this.microAggregationData = manager.getMicroAggregationData();
         this.solutionSpace = solutionSpace;
         this.minimalClassSizeRequired = config.getMinimalGroupSize() != Integer.MAX_VALUE;
         
@@ -200,7 +184,7 @@ public class NodeChecker {
      */
     public TransformedData applyTransformation(final Transformation transformation) {
         return applyTransformation(transformation,
-                                   new Dictionary(microaggregationNumAttributes));
+                                   new Dictionary(microAggregationData.header.length));
     }
         
     /**
@@ -229,16 +213,12 @@ public class NodeChecker {
         }
         
         // Prepare buffers
-        Data microaggregatedOutput = new Data(new DataMatrix(0,0), new String[0], new int[0], new Dictionary(0));
-        Data generalizedOutput = new Data(transformer.getBuffer(), dataGeneralized.getHeader(), dataGeneralized.getMap(), dataGeneralized.getDictionary());
+        Data microaggregatedOutput = Data.createWrapper(new DataMatrix(0,0), new String[0], new int[0], new Dictionary(0));
+        Data generalizedOutput = Data.createWrapper(transformer.getBuffer(), dataGeneralized.getHeader(), dataGeneralized.getColumns(), dataGeneralized.getDictionary());
         
         // Perform microaggregation. This has to be done before suppression.
-        if (microaggregationFunctions.length > 0) {
-            microaggregatedOutput = currentGroupify.performMicroaggregation(microaggregationStartIndex,
-                                                                            microaggregationNumAttributes,
-                                                                            microaggregationFunctions,
-                                                                            microaggregationMap,
-                                                                            microaggregationHeader,
+        if (microAggregationData.functions.length > 0) {
+            microaggregatedOutput = currentGroupify.performMicroaggregation(microAggregationData,
                                                                             microaggregationDictionary);
         }
         

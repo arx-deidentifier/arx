@@ -38,13 +38,13 @@ import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.metric.v2.MetricSDClassification;
 
 /**
  * This class offers several methods to define parameters and execute the ARX
@@ -356,13 +356,21 @@ public class ARXAnonymizer { // NO_UCD
         final int[] maxLevels = manager.getHierarchiesMaxLevels();
 
         for (int i = 0; i < hierarchyHeights.length; i++) {
-            if (minLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
-                                                                                               minLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
-            if (minLevels[i] < 0) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "' has to be positive!"); }
-            if (maxLevels[i] > (hierarchyHeights[i] - 1)) { throw new IllegalArgumentException("Invalid maximum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
-                                                                                               maxLevels[i] + " > " + (hierarchyHeights[i] - 1)); }
-            if (maxLevels[i] < minLevels[i]) { throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() +
-                                                                                  "' has to be lower than or equal to the defined maximum!"); }
+            if (minLevels[i] > (hierarchyHeights[i] - 1)) { 
+                throw new IllegalArgumentException("Invalid minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
+                                                                                                      minLevels[i] + " > " + (hierarchyHeights[i] - 1));
+            }
+            if (minLevels[i] < 0) { 
+                throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "' has to be positive");
+            }
+            if (maxLevels[i] > (hierarchyHeights[i] - 1)) {
+                throw new IllegalArgumentException("Invalid maximum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
+                                                                                                      maxLevels[i] + " > " + (hierarchyHeights[i] - 1));
+            }
+            if (maxLevels[i] < minLevels[i]) { 
+                throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() +
+                                                   "' has to be lower than or equal to the defined maximum");
+            }
         }
     }
 
@@ -377,12 +385,38 @@ public class ARXAnonymizer { // NO_UCD
     private void checkBeforeEncoding(final DataHandle handle, final ARXConfiguration config) {
 
 
-        // Lots of checks
-        if (handle == null) { throw new NullPointerException("Data must not be null!"); }
+        // Check for null
+        if (handle == null) { throw new NullPointerException("Data must not be null"); }
+        
+        // Check sensitive attributes
         if (config.isPrivacyModelSpecified(LDiversity.class) ||
-            config.isPrivacyModelSpecified(TCloseness.class)){
-            if (handle.getDefinition().getSensitiveAttributes().size() == 0) { throw new IllegalArgumentException("You need to specify a sensitive attribute!"); }
+            config.isPrivacyModelSpecified(TCloseness.class) ||
+            config.isPrivacyModelSpecified(DDisclosurePrivacy.class) ||
+            config.isPrivacyModelSpecified(BasicBLikeness.class) ||
+            config.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
+            
+            if (handle.getDefinition().getSensitiveAttributes().size() == 0) { 
+                throw new IllegalArgumentException("You need to specify a sensitive attribute");
+            }
         }
+        
+        // Check class attributes
+        if (config.getQualityModel() instanceof MetricSDClassification) {
+            for (String attribute : ((MetricSDClassification)config.getQualityModel()).getClassAttributes()) {
+                if (!(handle.getDefinition().getSensitiveAttributes().contains(attribute) ||
+                      handle.getDefinition().getInsensitiveAttributes().contains(attribute))) {
+                    throw new IllegalArgumentException("Class attributes may only be insensitive or sensitive");
+                }
+            }
+        }
+        
+        // Check if all needed hierarchies have been defined
+        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
+            if (handle.getDefinition().getHierarchy(attribute) == null) {
+                throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
+            }
+        }
+        
         for (String attr : handle.getDefinition().getSensitiveAttributes()){
             boolean found = false;
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
@@ -424,37 +458,39 @@ public class ARXAnonymizer { // NO_UCD
                 }
             }
             if (!found) {
-                throw new IllegalArgumentException("No privacy model specified for sensitive attribute: '"+attr+"'!");
+                throw new IllegalArgumentException("No privacy model specified for sensitive attribute: '" + attr + "'");
             }
         }
         for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("L-Diversity model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("L-Diversity model defined for non-sensitive attribute '" + c.getAttribute()+ "'");
             }
         }
         for (TCloseness c : config.getPrivacyModels(TCloseness.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("T-Closeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("T-Closeness model defined for non-sensitive attribute '" + c.getAttribute()+ "'");
             }
         }
         for (DDisclosurePrivacy c : config.getPrivacyModels(DDisclosurePrivacy.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("D-Disclosure privacy model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("D-Disclosure privacy model defined for non-sensitive attribute '" + c.getAttribute()+ "'");
             }
         }
         for (BasicBLikeness c : config.getPrivacyModels(BasicBLikeness.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("Basic-b-likeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("Basic-b-likeness model defined for non-sensitive attribute '" + c.getAttribute()+ "'");
             }
         }
         for (EnhancedBLikeness c : config.getPrivacyModels(EnhancedBLikeness.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("Enhanced-b-likeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("Enhanced-b-likeness model defined for non-sensitive attribute '" + c.getAttribute()+ "'");
             }
         }
 
         // Check handle
-        if (!(handle instanceof DataHandleInput)) { throw new IllegalArgumentException("Invalid data handle provided!"); }
+        if (!(handle instanceof DataHandleInput)) { 
+            throw new IllegalArgumentException("Invalid data handle provided!"); 
+        }
 
         // Check if all defines are correct
         DataDefinition definition = handle.getDefinition();
@@ -484,15 +520,15 @@ public class ARXAnonymizer { // NO_UCD
         }
         
         for (String attribute : handle.getDefinition().getQuasiIdentifiersWithMicroaggregation()) {
+            
+            if (handle.getDefinition().getMicroAggregationFunction(attribute)==null) {
+                throw new IllegalArgumentException("No aggregation function specified for attribute '" + attribute + "'");
+            }
+            
             MicroAggregationFunction f = (MicroAggregationFunction) definition.getMicroAggregationFunction(attribute);
             DataType<?> t = definition.getDataType(attribute);
             if (!t.getDescription().getScale().provides(f.getRequiredScale())) {
                 throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a datatype with a scale of measure of at least " + f.getRequiredScale());
-            }
-            if (f.getFunction() instanceof DistributionAggregateFunctionGeneralization) {
-                if (definition.getHierarchy(attribute) == null) {
-                    throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a generalization hierarchy");
-                }
             }
         }
         
@@ -505,10 +541,14 @@ public class ARXAnonymizer { // NO_UCD
         
         // Perform sanity checks
         Set<String> genQis = definition.getQuasiIdentifiersWithGeneralization();
-        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); }
-        if (genQis.size() == 0) { throw new IllegalArgumentException("You need to specify at least one quasi-identifier with generalization"); }
+        if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { 
+            throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); 
+        }
+        if (genQis.size() == 0) { 
+            throw new IllegalArgumentException("You need to specify at least one quasi-identifier with generalization"); 
+        }
         if (genQis.size() > maxQuasiIdentifiers) { 
-            throw new IllegalArgumentException("Too many quasi-identifiers (" + genQis.size()+"). This restriction is configurable."); 
+            throw new IllegalArgumentException("Too many quasi-identifiers (" + genQis.size()+"). This restriction is configurable"); 
         }
     }
 
@@ -560,10 +600,20 @@ public class ARXAnonymizer { // NO_UCD
     private DataManager getDataManager(final DataHandle handle, final DataDefinition definition, final ARXConfiguration config) throws IOException {
 
         // Extract data
-        final String[] header = ((DataHandleInput) handle).header;
-        final DataMatrix dataArray = ((DataHandleInput) handle).data;
-        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getPrivacyModels(), getAggregateFunctions(definition));
+        String[] header = ((DataHandleInput) handle).header;
+        DataMatrix dataArray = ((DataHandleInput) handle).data;
+        Dictionary dictionary = ((DataHandleInput) handle).dictionary;
+        Set<String> classAttributes = new HashSet<String>();
+        if (config.getQualityModel() instanceof MetricSDClassification) {
+            classAttributes = ((MetricSDClassification)config.getQualityModel()).getClassAttributes();
+        }
+        final DataManager manager = new DataManager(header,
+                                                    dataArray,
+                                                    dictionary,
+                                                    definition,
+                                                    config.getPrivacyModels(),
+                                                    getAggregateFunctions(definition),
+                                                    classAttributes);
         return manager;
     }
 
