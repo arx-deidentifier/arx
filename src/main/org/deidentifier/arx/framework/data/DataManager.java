@@ -366,8 +366,7 @@ public class DataManager {
                                                                           definition.getDataType(name),
                                                                           hierarchiesMA.get(name));
                 } else {
-                    throw new IllegalStateException("No microaggregation function defined for attribute (" +
-                                                    header[i] + ")");
+                    throw new IllegalStateException("No microaggregation function defined for attribute (" + header[i] + ")");
                 }
             }
         }
