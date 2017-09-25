@@ -39,7 +39,6 @@ public class DataManagerSubset extends DataManager {
      * @param dataStatic
      * @param header
      * @param hierarchiesGeneralized
-     * @param hierarchiesHeights
      * @param hierarchiesSensitive
      * @param indexesSensitive
      * @param maxLevels
@@ -57,7 +56,6 @@ public class DataManagerSubset extends DataManager {
                                 Data dataStatic,
                                 String[] header,
                                 GeneralizationHierarchy[] hierarchiesGeneralized,
-                                int[] hierarchiesHeights,
                                 Map<String, GeneralizationHierarchy> hierarchiesSensitive,
                                 Map<String, Integer> indexesSensitive,
                                 int[] maxLevels,
@@ -75,7 +73,6 @@ public class DataManagerSubset extends DataManager {
               dataStatic,
               header,
               hierarchiesGeneralized,
-              hierarchiesHeights,
               hierarchiesSensitive,
               indexesSensitive,
               maxLevels,

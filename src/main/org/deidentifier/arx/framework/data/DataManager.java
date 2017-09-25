@@ -56,13 +56,7 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 public class DataManager {
 
     /**
-     * Internal representation of attribute types. Quasi-identifiers are split
-     * into the ones to which generalization is applied and the ones to which
-     * microaggregation is applied
-     * 
-     * @author Florian Kohlmayer
-     * @author Fabian Prasser
-     * 
+     * Internal representation of attribute types.
      */
     public static class AttributeTypeInternal {
         public static final int IDENTIFYING                       = 3;
@@ -92,9 +86,6 @@ public class DataManager {
 
     /** The generalization hierarchiesQI. */
     private final GeneralizationHierarchy[]            hierarchiesGeneralized;
-
-    /** The hierarchy heights for each QI. */
-    private final int[]                                hierarchiesHeights;
 
     /** The sensitive attributes. */
     private final Map<String, GeneralizationHierarchy> hierarchiesSensitive;
@@ -251,7 +242,6 @@ public class DataManager {
 
         // Initialize minlevels
         minLevels = new int[attributesGeneralized.size()];
-        hierarchiesHeights = new int[attributesGeneralized.size()];
         maxLevels = new int[attributesGeneralized.size()];
 
         // Build hierarchiesQI
@@ -270,13 +260,13 @@ public class DataManager {
                 } else {
                     throw new IllegalStateException("No hierarchy available for attribute (" + header[i] + ")");
                 }
-                // Initialize hierarchy height and minimum / maximum
-                // generalization
-                hierarchiesHeights[dictionaryIndex] = hierarchiesGeneralized[dictionaryIndex].getArray()[0].length;
+                
+                // Initialize hierarchy height and minimum / maximum generalization
+                int hierarchiesHeight = hierarchiesGeneralized[dictionaryIndex].getArray()[0].length;
                 final Integer minGenLevel = definition.getMinimumGeneralization(name);
                 minLevels[dictionaryIndex] = minGenLevel == null ? 0 : minGenLevel;
                 final Integer maxGenLevel = definition.getMaximumGeneralization(name);
-                maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchiesHeights[dictionaryIndex] - 1 : maxGenLevel;
+                maxLevels[dictionaryIndex] = maxGenLevel == null ? hierarchiesHeight - 1 : maxGenLevel;
             }
         }
         
@@ -409,7 +399,6 @@ public class DataManager {
      * @param dataStatic
      * @param header
      * @param hierarchiesGeneralized
-     * @param hierarchiesHeights
      * @param hierarchiesSensitive
      * @param indexesSensitive
      * @param maxLevels
@@ -428,7 +417,6 @@ public class DataManager {
                           Data dataStatic,
                           String[] header,
                           GeneralizationHierarchy[] hierarchiesGeneralized,
-                          int[] hierarchiesHeights,
                           Map<String, GeneralizationHierarchy> hierarchiesSensitive,
                           Map<String, Integer> indexesSensitive,
                           int[] maxLevels,
@@ -446,7 +434,6 @@ public class DataManager {
         this.dataStatic = dataStatic;
         this.header = header;
         this.hierarchiesGeneralized = hierarchiesGeneralized;
-        this.hierarchiesHeights = hierarchiesHeights;
         this.hierarchiesSensitive = hierarchiesSensitive;
         this.indexesSensitive = indexesSensitive;
         this.maxLevels = maxLevels;
@@ -588,13 +575,16 @@ public class DataManager {
     }
 
     /**
-     * Returns the heights of the hierarchiesQI.
+     * Returns the heights of the hierarchies used for generalizing quasi-identifiers
      * 
      * @return
      */
-
     public int[] getHierachiesHeights() {
-        return hierarchiesHeights;
+        int[] result = new int[hierarchiesGeneralized.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = hierarchiesGeneralized[i].getArray()[0].length;
+        }
+        return result;
     }
 
     /**
@@ -737,7 +727,6 @@ public class DataManager {
                                      this.dataStatic.getSubsetInstance(rowset),
                                      this.header,
                                      this.hierarchiesGeneralized,
-                                     this.hierarchiesHeights,
                                      this.hierarchiesSensitive,
                                      this.indexesSensitive,
                                      this.maxLevels,
