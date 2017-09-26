@@ -195,7 +195,7 @@ public class DataManager {
         }
 
         // Build map with hierarchies for sensitive attributes
-        this.hierarchiesAnalyzed = new GeneralizationHierarchy[this.dataAnalyzed.getArray().getNumColumns()];
+        this.hierarchiesAnalyzed = new GeneralizationHierarchy[this.dataAnalyzed.getColumns().length];
         for (PrivacyCriterion c : criteria) {
             if (c instanceof HierarchicalDistanceTCloseness) {
                 HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness) c;
@@ -226,11 +226,10 @@ public class DataManager {
                this.microaggregationData.functions[index] = functions.get(attribute);
                this.microaggregationData.functions[index].initialize(dataAnalyzed.getDictionary().getMapping()[dictionaryIndex],
                                                            definition.getDataType(attribute));
-               
-            }
 
-            // Next aggregated quasi-identifier
-            index++;
+               // Next aggregated quasi-identifier
+               index++;               
+            }
         }
 
         // Store research subset

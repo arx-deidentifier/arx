@@ -70,8 +70,8 @@ public class Data implements Cloneable, Serializable {
             data.setRow(row);
             
             // Copy each column
-            for (int column : columns) {
-                matrix.setValueAtColumn(column, data.getValueAtColumn(column));
+            for (int index = 0; index < columns.length; index++) {
+                matrix.setValueAtColumn(index, data.getValueAtColumn(columns[index]));
             }
         }
         

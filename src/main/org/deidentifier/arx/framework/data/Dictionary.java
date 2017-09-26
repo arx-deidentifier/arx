@@ -48,7 +48,7 @@ public class Dictionary implements Serializable {
         maps = new ObjectIntOpenHashMap[columns.length];
         mapping = new String[columns.length][];
         for (int i = 0; i < columns.length; i++) {
-            maps[i] = input.maps[columns[i]].clone();
+            maps[i] = input.maps == null ? null : input.maps[columns[i]].clone();
             mapping[i] = input.mapping[columns[i]].clone();
         }
     }
