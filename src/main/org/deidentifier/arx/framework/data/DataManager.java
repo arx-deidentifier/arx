@@ -677,13 +677,15 @@ public class DataManager {
         int index = 0;
         // First but not second
         for (int i = 0; i < header.length; i++) {
-            if (first.contains(header[i]) && !second.contains(header)) {
+            String attribute = header[i];
+            if (first.contains(attribute) && !second.contains(attribute)) {
                 result[index++] = i;
             }
         }
         // First and second
         for (int i = 0; i < header.length; i++) {
-            if (first.contains(header[i]) && second.contains(header)) {
+            String attribute = header[i];
+            if (first.contains(attribute) && second.contains(attribute)) {
                 result[index++] = i;
             }
         }
