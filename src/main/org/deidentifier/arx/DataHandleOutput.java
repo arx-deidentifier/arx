@@ -88,7 +88,7 @@ public class DataHandleOutput extends DataHandle {
     }
 
     /** A specific slice of data */
-    private Data          dataStatic;
+    private Data          dataInput;
 
     /** A specific slice of data */
     private Data          dataGeneralized;
@@ -286,7 +286,7 @@ public class DataHandleOutput extends DataHandle {
         // Extract data
         this.dataGeneralized = outputGeneralized;
         this.dataAggregated = outputMicroaggregated;
-        this.dataStatic = manager.getDataStatic();
+        this.dataInput = manager.getDataInput();
         this.setHeader(manager.getHeader());
 
         // Prepare column mappings
@@ -294,7 +294,7 @@ public class DataHandleOutput extends DataHandle {
         this.columnToIndex = new int[header.length];
         
         // For each different block of data
-        for (Data data : new Data[]{dataStatic, dataGeneralized, dataAggregated}) {
+        for (Data data : new Data[]{dataGeneralized, dataAggregated}) {
             
             // For each attribute in this block
             for (int i = 0; i < data.getHeader().length; i++) {
@@ -305,6 +305,21 @@ public class DataHandleOutput extends DataHandle {
                 // Store
                 this.columnToIndex[column] = i;
                 this.columnToData[column] = data;
+            }
+        }
+        
+        // Handle sensitive and insensitive data
+        for (int column = 0; column < header.length; column++) {
+            
+            String attribute = header[column];
+                        
+            // Sensitive attributes
+            if (definition.getSensitiveAttributes().contains(attribute) || 
+                definition.getInsensitiveAttributes().contains(attribute)) {
+
+                // Store
+                this.columnToIndex[column] = column;
+                this.columnToData[column] = dataInput;
             }
         }
         
@@ -325,7 +340,7 @@ public class DataHandleOutput extends DataHandle {
     protected void doRelease() {
         result.releaseBuffer(this);
         node = null;
-        dataStatic = null;
+        dataInput = null;
         dataGeneralized = null;
         dataAggregated = null;
         registry = null;
@@ -612,10 +627,10 @@ public class DataHandleOutput extends DataHandle {
      */
     protected void internalSwap(final int row1, final int row2) {
         
-        // Swap GH
+        // Swap generalized data
         dataGeneralized.getArray().swap(row1, row2);
         
-        // Swap OT
+        // Swap aggregated data
         if (dataAggregated.getArray().getNumRows() != 0) {
             dataAggregated.getArray().swap(row1, row2);
         }

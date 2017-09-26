@@ -36,22 +36,19 @@ import org.deidentifier.arx.framework.data.Dictionary;
 public class DataHandleInput extends DataHandle {
 
     /** The data. */
-    protected DataMatrix data       = null;
+    protected DataMatrix data            = null;
 
     /** The dictionary. */
-    protected Dictionary dictionary = null;
+    protected Dictionary dictionary      = null;
 
     /** The data. */
-    private DataMatrix   dataGH     = null;
+    private DataMatrix   dataGeneralized = null;
 
     /** The data. */
-    private DataMatrix   dataDI     = null;
-
-    /** The data. */
-    private DataMatrix   dataIS     = null;
+    private DataMatrix   dataAnalyzed    = null;
 
     /** Is this handle locked?. */
-    private boolean      locked     = false;
+    private boolean      locked          = false;
 
     /**
      * Creates a new data handle.
@@ -182,24 +179,12 @@ public class DataHandleInput extends DataHandle {
     }
     
     /**
-     * Swaps two rows.
-     *
-     * @param row1
-     * @param row2
-     * @param data
-     */
-    private void swap(int row1, int row2, DataMatrix data){
-        data.swap(row1, row2);
-    }
-
-    /**
      * Releases all resources.
      */
     protected void doRelease() {
         this.setLocked(false);
-        dataGH = null;
-        dataDI = null;
-        dataIS = null;
+        dataGeneralized = null;
+        dataAnalyzed = null;
     }
     
     @Override
@@ -247,7 +232,7 @@ public class DataHandleInput extends DataHandle {
      */
     protected DataMatrix getInputBuffer() {
         checkRegistry();
-        return this.dataGH;
+        return this.dataGeneralized;
     }
     
     @Override
@@ -284,10 +269,9 @@ public class DataHandleInput extends DataHandle {
         checkRow(row2, data.getNumRows());
 
         // Swap
-        swap(row1, row2, data);
-        if (dataGH != null) swap(row1, row2, dataGH);
-        if (dataDI != null) swap(row1, row2, dataDI);
-        if (dataIS != null) swap(row1, row2, dataIS);
+        data.swap(row1, row2);
+        if (dataGeneralized != null) dataGeneralized.swap(row1, row2);
+        if (dataAnalyzed != null) dataAnalyzed.swap(row1, row2);
     }
 
     /**
@@ -334,13 +318,12 @@ public class DataHandleInput extends DataHandle {
     /**
      * Updates the definition with further data to swap.
      *
-     * @param matrixGH
-     * @param matrixDI
+     * @param dataGeneralized
+     * @param dataAnalyzed
      * @param matrixIS
      */
-    protected void update(DataMatrix matrixGH, DataMatrix matrixDI, DataMatrix matrixIS) {
-        this.dataGH = matrixGH;
-        this.dataDI = matrixDI;
-        this.dataIS = matrixIS;
+    protected void update(DataMatrix dataGeneralized, DataMatrix dataAnalyzed) {
+        this.dataGeneralized = dataGeneralized;
+        this.dataAnalyzed = dataAnalyzed;
     }
 }

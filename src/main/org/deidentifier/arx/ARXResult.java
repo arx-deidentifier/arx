@@ -139,8 +139,7 @@ public class ARXResult {
 
         // Update handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
-                                         manager.getDataAnalyzed().getArray(),
-                                         manager.getDataStatic().getArray());
+                                         manager.getDataAnalyzed().getArray());
         
         // Lock handle
         ((DataHandleInput)handle).setLocked(true);

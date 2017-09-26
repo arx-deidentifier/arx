@@ -35,7 +35,7 @@ public class DataManagerSubset extends DataManager {
      * @param source
      * @param dataAnalyzed
      * @param dataGeneralized
-     * @param dataStatic
+     * @param dataInput
      * @param definition
      * @param shares
      * @param header
@@ -48,7 +48,7 @@ public class DataManagerSubset extends DataManager {
     protected DataManagerSubset(DataManager source,
                                 Data dataAnalyzed,
                                 Data dataGeneralized,
-                                Data dataStatic,
+                                Data dataInput,
                                 DataDefinition definition,
                                 DomainShare[] shares,
                                 String[] header,
@@ -60,7 +60,7 @@ public class DataManagerSubset extends DataManager {
         
         super(dataAnalyzed,
               dataGeneralized,
-              dataStatic,
+              dataInput,
               source.getDataDefinition(),
               shares,
               header,

@@ -204,8 +204,7 @@ public class ARXAnonymizer { // NO_UCD
         
         // Attach arrays to data handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
-                                         manager.getDataAnalyzed().getArray(),
-                                         manager.getDataStatic().getArray());
+                                         manager.getDataAnalyzed().getArray());
 
 
         // Execute

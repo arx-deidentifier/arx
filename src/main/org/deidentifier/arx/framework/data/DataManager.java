@@ -62,7 +62,7 @@ public class DataManager {
     private final Data                            dataGeneralized;
 
     /** Data. */
-    private final Data                            dataStatic;
+    private final Data                            dataInput;
     
     /** The data definition */
     private final DataDefinition                  definition;
@@ -127,7 +127,7 @@ public class DataManager {
         // Create data objects
         this.dataGeneralized = Data.createProjection(data, header, getColumns(header, attributesGeneralized), dictionary);
         this.dataAnalyzed = Data.createProjection(data, header, getColumns(header, attributesAnalyzed, attributesAggregated), dictionary);
-        this.dataStatic = Data.createProjection(data, header, getColumns(header, definition.getInsensitiveAttributes()), dictionary);
+        this.dataInput = Data.createWrapper(data, header, getColumns(header), dictionary);
         
         // Make the dictionaries ready for additions
         this.dataGeneralized.getDictionary().definalizeAll();
@@ -252,7 +252,7 @@ public class DataManager {
      * For creating a projected instance
      * @param dataAnalyzed
      * @param dataGeneralized
-     * @param dataStatic
+     * @param dataInput
      * @param definition
      * @param shares
      * @param header
@@ -267,7 +267,7 @@ public class DataManager {
      */
     protected DataManager(Data dataAnalyzed,
                           Data dataGeneralized,
-                          Data dataStatic,
+                          Data dataInput,
                           DataDefinition definition,
                           DomainShare[] shares,
                           String[] header,
@@ -280,7 +280,7 @@ public class DataManager {
         // Just store
         this.dataAnalyzed = dataAnalyzed;
         this.dataGeneralized = dataGeneralized;
-        this.dataStatic = dataStatic;
+        this.dataInput = dataInput;
         this.definition = definition;
         this.shares = shares;
         this.header = header;
@@ -315,12 +315,12 @@ public class DataManager {
     }
 
     /**
-     * Returns the input data that will be kept as-is.
+     * Returns the input data.
      * 
      * @return the data
      */
-    public Data getDataStatic() {
-        return dataStatic;
+    public Data getDataInput() {
+        return dataInput;
     }
 
     /**
@@ -510,7 +510,7 @@ public class DataManager {
         return new DataManagerSubset(this,
                                      dataAnalyzed.getSubsetInstance(rowset),
                                      dataGeneralized.getSubsetInstance(rowset),
-                                     dataStatic.getSubsetInstance(rowset),
+                                     dataInput.getSubsetInstance(rowset),
                                      definition,
                                      shares,
                                      header,
@@ -634,7 +634,7 @@ public class DataManager {
 
         return treeArray;
     }
-    
+
     /**
      * Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.
      * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
@@ -646,6 +646,19 @@ public class DataManager {
         final int index = dataAnalyzed.getIndexOf(attribute);
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
+    }
+    
+    /**
+     * Simple returns the set of all columns
+     * @param header
+     * @return
+     */
+    private int[] getColumns(String[] header) {
+        int[] result = new int[header.length];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = i;
+        }
+        return result;
     }
 
     /**
