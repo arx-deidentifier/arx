@@ -73,7 +73,7 @@ public class DataHandleInput extends DataHandle {
 
         // Obtain header
         final String[] columns = iterator.next();
-        super.header = Arrays.copyOf(columns, columns.length);
+        super.setHeader(Arrays.copyOf(columns, columns.length));
 
         // Init dictionary
         this.dictionary = new Dictionary(header.length);
@@ -101,7 +101,7 @@ public class DataHandleInput extends DataHandle {
         this.dictionary.finalizeAll();
 
         // Create datatype array
-        this.dataTypes = getDataTypeArray();
+        this.columnToDataType = getColumnToDataType();
     }
 
     @Override
@@ -213,15 +213,15 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected DataType<?>[][] getDataTypeArray() {
+    protected DataType<?>[] getColumnToDataType() {
         checkRegistry();
-        DataType<?>[][] dataTypes = new DataType[1][header.length];
+        DataType<?>[] dataTypes = new DataType[header.length];
         for (int i = 0; i < header.length; i++) {
             final DataType<?> type = definition.getDataType(header[i]);
             if (type != null) {
-                dataTypes[0][i] = type;
+                dataTypes[i] = type;
             } else {
-                dataTypes[0][i] = DataType.STRING;
+                dataTypes[i] = DataType.STRING;
             }
         }
         return dataTypes;
@@ -326,7 +326,7 @@ public class DataHandleInput extends DataHandle {
 
         if (!this.isLocked()) {
             this.definition = data.getDefinition().clone();
-            this.dataTypes = getDataTypeArray();
+            this.columnToDataType = getColumnToDataType();
             this.definition.setLocked(true);
         }
     }

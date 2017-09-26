@@ -45,9 +45,9 @@ public class DataHandleSubset extends DataHandle {
      */
     public DataHandleSubset(DataHandle source, DataSubset subset) {
         this.source = source;
-        this.dataTypes = source.dataTypes;
+        this.columnToDataType = source.columnToDataType;
         this.definition = source.definition;
-        this.header = source.header;
+        this.setHeader(source.header);
         this.subset = subset;
     }
 
@@ -170,8 +170,8 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected DataType<?>[][] getDataTypeArray() {
-        return source.dataTypes;
+    protected DataType<?>[] getColumnToDataType() {
+        return source.columnToDataType;
     }    
 
     @Override
