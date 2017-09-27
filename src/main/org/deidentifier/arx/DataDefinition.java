@@ -64,6 +64,9 @@ public class DataDefinition implements Cloneable{
     /** The mapped maximum generalization. */
     private final Map<String, Integer>                  maxGeneralization = new HashMap<String, Integer>();
 
+    /** Whether to perform clustering before aggregation. */
+    private final Map<String, Boolean>                  clustering        = new HashMap<String, Boolean>();
+    
     @Override
     public DataDefinition clone() {
 
@@ -89,6 +92,11 @@ public class DataDefinition implements Cloneable{
         }
         for (final String attr : builders.keySet()) {
             d.builders.put(attr, builders.get(attr));
+        }
+        if (this.clustering != null) {
+            for (final String attr : clustering.keySet()) {
+                d.clustering.put(attr, clustering.get(attr));
+            }
         }
         d.setLocked(this.isLocked());
         return d;
@@ -213,6 +221,23 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
+     * Returns the quasi-identifiers for which clustering and microaggregation has been specified. The
+     * result of this method is a subset of the attributes returned by 
+     * <code>getQuasiIdentifiersWithMicroaggregation()</code>.
+     * @return
+     */
+    public Set<String> getQuasiIdentifiersWithClusteringAndMicroaggregation() {
+        final Set<String> result = new HashSet<String>();
+        for (String attr : getAttributesByType(AttributeType.ATTR_TYPE_QI)) {
+            if (getMicroAggregationFunction(attr) != null &&
+                clustering != null && clustering.containsKey(attr) && clustering.get(attr)) {
+                result.add(attr);
+            }
+        }
+        return result;
+    }
+    
+    /**
      * Returns the quasi-identifiers for which generalization is specified.
      * @return
      */
@@ -225,7 +250,7 @@ public class DataDefinition implements Cloneable{
         }
         return result;
     }
-    
+
     /**
      * Returns the quasi-identifiers for which microaggregation is specified.
      * @return
@@ -333,6 +358,10 @@ public class DataDefinition implements Cloneable{
         this.minGeneralization.putAll(other.minGeneralization);
         this.maxGeneralization.clear();
         this.maxGeneralization.putAll(other.maxGeneralization);
+        if (this.clustering != null) {
+            this.clustering.clear();
+            this.clustering.putAll(other.clustering);
+        }
     }
 
     /**
@@ -486,21 +515,33 @@ public class DataDefinition implements Cloneable{
      * Define the maximal generalization of a given attribute.
      *
      * @param attribute
-     * @param maximum
+     * @param maximumLevel
      */
     public void setMaximumGeneralization(final String attribute,
-                                         final int maximum) {
+                                         final int maximumLevel) {
         
         checkLocked();
-        maxGeneralization.put(attribute, maximum);
+        maxGeneralization.put(attribute, maximumLevel);
+    }
+
+    /**
+     * Associates the given microaggregation function. When configuring microaggregation with this method
+     * generalization hierarchies will not be used for clustering attribute values before aggregation.
+     * @param attribute
+     * @param function
+     */
+    public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function) {
+        this.setMicroAggregationFunction(attribute, function, false);
     }
 
     /**
      * Associates the given microaggregation function
      * @param attribute
-     * @param builder
+     * @param function
+     * @param performClustering When set to true, available generalization hierarchies will 
+     *                          be used for clustering attribute values before aggregation.
      */
-    public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function) {
+    public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function, boolean performClustering) {
         this.functions.put(attribute, function);
     }
     
@@ -508,13 +549,13 @@ public class DataDefinition implements Cloneable{
      * Define the minimal generalization of a given attribute.
      *
      * @param attribute
-     * @param minimum
+     * @param minimumLevel
      */
     public void setMinimumGeneralization(final String attribute,
-                                         final int minimum) {
+                                         final int minimumLevel) {
         
         checkLocked();
-        minGeneralization.put(attribute, minimum);
+        minGeneralization.put(attribute, minimumLevel);
     }
     
     /**
@@ -598,6 +639,9 @@ public class DataDefinition implements Cloneable{
         result.addProperty("Attribute", attribute);
         if (function != null) {
             result.addProperty("Type", function.getLabel());
+        }
+        if (clustering != null && clustering.containsKey(attribute)) {
+            result.addProperty("Clustering", clustering.get(attribute));
         }
         return result;
     }
