@@ -409,7 +409,7 @@ public class CSVDataInput {
                 
                 // Check schema
                 if (next != null && result != null && result.length != next.length) {
-                    throw new IllegalStateException("Not a tabular data file: irregular number of columns");
+                    throw new IllegalStateException("Not tabular data: irregular number of columns encountered");
                 }
 
                 // Replace each non matching value with the special NULL string
