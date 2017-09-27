@@ -408,7 +408,7 @@ public class CSVDataInput {
                 next = parser.parseNext();
                 
                 // Check schema
-                if (result.length != next.length) {
+                if (next != null && result != null && result.length != next.length) {
                     throw new IllegalStateException("Not a tabular data file: irregular number of columns");
                 }
 
