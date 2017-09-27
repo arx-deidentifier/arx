@@ -53,7 +53,6 @@ public class CSVDataInput {
         private InputStreamReader reader = null;
         /** File */
         private final File file;
-        
         /** Charset */
         private final Charset charset;
 
@@ -407,12 +406,17 @@ public class CSVDataInput {
                 initParser();
                 String[] result = next;
                 next = parser.parseNext();
+                
+                // Check schema
+                if (result.length != next.length) {
+                    throw new IllegalStateException("Not a tabular data file: irregular number of columns");
+                }
 
                 // Replace each non matching value with the special NULL string
                 if (cleansing) {
 
                     if (result.length != datatypes.length) {
-                        throw new IllegalArgumentException("More columns available in CSV file than data types specified!");
+                        throw new IllegalArgumentException("More columns available in CSV file than data types specified");
                     }
 
                     for (int i = 0; i < result.length; i++) {
