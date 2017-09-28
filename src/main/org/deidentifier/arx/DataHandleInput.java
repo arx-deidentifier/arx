@@ -61,7 +61,7 @@ public class DataHandleInput extends DataHandle {
     protected DataHandleInput(final Data data) {
         
         // Obtain and check iterator
-        final Iterator<String[]> iterator = data.iterator();
+        Iterator<String[]> iterator = data.iterator();
         if (!iterator.hasNext()) { 
             throw new IllegalArgumentException("Data object is empty!"); 
         }
@@ -72,7 +72,7 @@ public class DataHandleInput extends DataHandle {
         this.definition = data.getDefinition().clone();
 
         // Obtain header
-        final String[] columns = iterator.next();
+        String[] columns = iterator.next();
         super.header = Arrays.copyOf(columns, columns.length);
 
         // Init dictionary
@@ -83,10 +83,12 @@ public class DataHandleInput extends DataHandle {
         while (iterator.hasNext()) {
 
             // Process a tuple
-            final String[] strings = iterator.next();
-            final int[] tuple = new int[header.length];
-            for (int i = 0; i < strings.length; i++) {
-                tuple[i] = dictionary.register(i, strings[i]);
+            String[] strings = iterator.next();
+            int[] tuple = new int[header.length];
+            for (int i = 0; i < header.length; i++) {
+                String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
+                value = (value != null) ? value : DataType.NULL_VALUE;
+                tuple[i] = dictionary.register(i, value);
             }
             vals.add(tuple);
         }
