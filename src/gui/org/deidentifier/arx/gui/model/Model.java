@@ -379,15 +379,24 @@ public class Model implements Serializable {
             
             // Set attribute type
             definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-            
+
+            // Prepare for micro-aggregation
             if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
 
-                // Prepare for microaggregation
-                MicroAggregationFunction function = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                MicroAggregationFunction function = config.getMicroAggregationFunction(attr)
+                                                          .createInstance(config.getMicroAggregationIgnoreMissingData(attr));
                 definition.setMicroAggregationFunction(attr, function);
-            } else {
+
+            // Prepare for micro-aggregation with clustering
+            } else if (config.getTransformationMode(attr) == ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION) {
+
+                MicroAggregationFunction function = config.getMicroAggregationFunction(attr)
+                                                          .createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                definition.setMicroAggregationFunction(attr, function, true);
                 
-                // Prepare for generalization
+            // Prepare for generalization
+            } else {
+
                 definition.setMicroAggregationFunction(attr, null);
                 Integer min = config.getMinimumGeneralization(attr);
                 Integer max = config.getMaximumGeneralization(attr);
