@@ -70,7 +70,7 @@ public class DataHandleInput extends DataHandle {
 
         // Obtain header
         String[] columns = iterator.next();
-        super.header = Arrays.copyOf(columns, columns.length);
+        super.setHeader(Arrays.copyOf(columns, columns.length));
 
         // Init dictionary
         this.dictionary = new Dictionary(header.length);
