@@ -407,11 +407,6 @@ public class CSVDataInput {
                 String[] result = next;
                 next = parser.parseNext();
                 
-                // Check schema
-                if (next != null && result != null && result.length != next.length) {
-                    throw new IllegalStateException("Not tabular data: irregular number of columns encountered");
-                }
-
                 // Replace each non matching value with the special NULL string
                 if (cleansing) {
 
