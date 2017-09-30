@@ -671,22 +671,25 @@ public class DataDefinition implements Cloneable{
      */
     protected void materializeHierarchies(DataHandle handle) {
         
-        // For each qi with generalization
-        for (String qi : this.getQuasiIdentifiersWithGeneralization()) {
+        Set<String> attributes = new HashSet<>(this.getQuasiIdentifiersWithGeneralization());
+        attributes.addAll(this.getQuasiIdentifiersWithClusteringAndMicroaggregation());
+        
+        // For each relevant attribute
+        for (String attribute : attributes) {
             
             // If no hierarchy is available
-            if (!isHierarchyAvailable(qi)) {
+            if (!isHierarchyAvailable(attribute)) {
                 
                 // Obtain data
-                String[] data = handle.getDistinctValues(handle.getColumnIndexOf(qi));
+                String[] data = handle.getDistinctValues(handle.getColumnIndexOf(attribute));
                 
                 // If builder is available
-                if (isHierarchyBuilderAvailable(qi)) {
+                if (isHierarchyBuilderAvailable(attribute)) {
                     // Compute and store hierarchy
                     try {
-                        this.hierarchies.put(qi, this.getHierarchyBuilder(qi).build(data));
+                        this.hierarchies.put(attribute, this.getHierarchyBuilder(attribute).build(data));
                     } catch (Exception e) {
-                        throw new IllegalStateException("Error building hierarchy for attribute ("+qi+")", e);
+                        throw new IllegalStateException("Error building hierarchy for attribute ("+attribute+")", e);
                     }
                 } else {
                     // Create empty hierarchy
@@ -694,7 +697,7 @@ public class DataDefinition implements Cloneable{
                     for (int i=0; i<data.length; i++) {
                         hierarchy[i] = new String[]{data[i]};
                     }
-                    this.hierarchies.put(qi, Hierarchy.create(hierarchy));
+                    this.hierarchies.put(attribute, Hierarchy.create(hierarchy));
                 }
             }
         }
