@@ -1002,25 +1002,25 @@ public class StatisticsBuilder {
      * @param hierarchy
      * @return
      */
-    private <U, V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(final int generalization,
-                                                                        final DataType<U> dataType,
-                                                                        final DataType<V> baseDataType,
-                                                                        final String[][] hierarchy) {
+    private <U, V> StatisticsSummaryOrdinal<?> getSummaryStatisticsOrdinal(final int generalization,
+                                                                           final DataType<U> dataType,
+                                                                           final DataType<V> baseDataType,
+                                                                           final String[][] hierarchy) {
         
         // TODO: It would be cleaner to return an ARXOrderedString for generalized variables
-        // TODO: that have a suitable data type directly from the DataHandle
+        // TODO: that have a suitable data type directly obtained from the DataHandle
         if (generalization == 0 || !(dataType instanceof ARXString)) {
-            return new StatisticsSummaryOrdinal(dataType);
+            return new StatisticsSummaryOrdinal<U>(dataType);
         } else if (baseDataType instanceof ARXString) {
-            return new StatisticsSummaryOrdinal(dataType);
+            return new StatisticsSummaryOrdinal<U>(dataType);
         } else if (hierarchy == null) {
-            return new StatisticsSummaryOrdinal(dataType);
+            return new StatisticsSummaryOrdinal<U>(dataType);
         } else {
             final Map<String, String> map = new HashMap<String, String>();
             for (int i = 0; i < hierarchy.length; i++) {
                 map.put(hierarchy[i][generalization], hierarchy[i][0]);
             }
-            return new StatisticsSummaryOrdinal(new Comparator<String>() {
+            return new StatisticsSummaryOrdinal<V>(new Comparator<String>() {
                 public int compare(String o1, String o2) {
                     V _o1 = null;
                     try {
