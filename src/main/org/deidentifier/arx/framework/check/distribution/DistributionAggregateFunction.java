@@ -90,7 +90,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
             addAll(stats, distribution, rType, 0d);
-            return type.format(rType.fromDouble(stats.getMean()));
+            return stats.getN() == 0 ? DataType.NULL_VALUE : type.format(rType.fromDouble(stats.getMean()));
         }
 
         /**
@@ -178,7 +178,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
             addAll(stats, distribution, rType, 1d);
-            return type.format(rType.fromDouble(stats.getGeometricMean() - 1d));
+            return stats.getN() == 0 ? DataType.NULL_VALUE : type.format(rType.fromDouble(stats.getGeometricMean() - 1d));
         }
 
         /**
