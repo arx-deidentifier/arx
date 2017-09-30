@@ -448,6 +448,8 @@ public class StatisticsBuilder {
         final DataType<?> datatype = handle.getDataType(attribute);
         final int level = handle.getGeneralization(attribute);
         
+        progress.value = 20;
+        
         // Sort by data type
         if (hierarchy == null || level == 0) {
             sort(list, datatype);
@@ -501,6 +503,8 @@ public class StatisticsBuilder {
             // Sort
             sort(list, order);
         }
+        
+        progress.value = 40;
         
         // Done
         return list;
@@ -646,13 +650,15 @@ public class StatisticsBuilder {
         // Init
         String[] values = getDistinctValuesOrdered(column, hierarchy);
         double[] frequencies = new double[values.length];
-        
+
         // Create map of indexes
         Map<String, Integer> indexes = new HashMap<String, Integer>();
         for (int i = 0; i < values.length; i++) {
             checkInterrupt();
             indexes.put(values[i], i);
         }
+        
+        progress.value = 60;
         
         // Count frequencies
         for (int row = 0; row < handle.getNumRows(); row++) {
@@ -661,12 +667,16 @@ public class StatisticsBuilder {
             frequencies[indexes.get(value)]++;
         }
         
+        progress.value = 80;
+        
         // Divide by count
         int count = handle.getNumRows();
         for (int i = 0; i < frequencies.length; i++) {
             checkInterrupt();
             frequencies[i] /= (double) count;
         }
+        
+        progress.value = 100;
         
         // Return
         return new StatisticsFrequencyDistribution(values, frequencies, count);

@@ -24,6 +24,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -249,6 +250,19 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     }
 
     @Override
+    protected ComponentStatusLabelProgressProvider getProgressProvider() {
+        return new ComponentStatusLabelProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
+    }
+
+    @Override
     protected void doUpdate(AnalysisContextDistribution context) {
 
         // The statistics builder
@@ -265,7 +279,7 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
 
             @Override
             public int getProgress() {
-                return 0;
+                return builder.getProgress();
             }
             
             @Override
