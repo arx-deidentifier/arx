@@ -688,7 +688,7 @@ public class DataDefinition implements Cloneable{
                 } catch (Exception e) {
                     throw new IllegalStateException("Error building hierarchy for attribute (" + attribute + ")", e);
                 }
-            } else {
+            } else if (!isHierarchyAvailable(attribute)){
                 // Create empty hierarchy
                 String[][] hierarchy = new String[data.length][];
                 for (int i = 0; i < data.length; i++) {
