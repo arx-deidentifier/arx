@@ -543,6 +543,7 @@ public class DataDefinition implements Cloneable{
      */
     public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function, boolean performClustering) {
         this.functions.put(attribute, function);
+        this.clustering.put(attribute, performClustering);
     }
     
     /**

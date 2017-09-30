@@ -293,7 +293,9 @@ public class DataHandleOutput extends DataHandle {
         this.columnToData = new Data[header.length];
         this.columnToIndex = new int[header.length];
         
-        // For each different block of data
+        // For each different block of data: it is important that generalized data is
+        // processed before aggregated data, so that pointers for attributes that
+        // have been clustered and aggregated are overwritten accordingly.
         for (Data data : new Data[]{dataGeneralized, dataAggregated}) {
             
             // For each attribute in this block

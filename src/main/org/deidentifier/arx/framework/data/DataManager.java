@@ -119,6 +119,7 @@ public class DataManager {
 
         // Collect types of data
         Set<String> attributesGeneralized = new HashSet<>(definition.getQuasiIdentifiersWithGeneralization());
+        attributesGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
         Set<String> attributesAggregated = new HashSet<>(definition.getQuasiIdentifiersWithMicroaggregation());
         Set<String> attributesAnalyzed = new HashSet<>(definition.getSensitiveAttributes());
         attributesAnalyzed.addAll(attributesAggregated);
