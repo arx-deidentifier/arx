@@ -25,6 +25,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
+import org.deidentifier.arx.exceptions.UnexpectedErrorException;
 
 
 /**
@@ -62,7 +63,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -83,7 +84,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -117,8 +118,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -149,8 +149,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -173,8 +172,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -213,8 +211,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -251,8 +248,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -277,8 +273,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -297,8 +292,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -321,8 +315,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -346,8 +339,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -371,8 +363,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -391,8 +382,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -414,8 +404,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -438,8 +427,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -461,7 +449,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -488,7 +476,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -507,7 +495,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -526,7 +514,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
