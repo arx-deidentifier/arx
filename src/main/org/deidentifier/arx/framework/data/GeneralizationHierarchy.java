@@ -98,8 +98,6 @@ public class GeneralizationHierarchy {
     /**
      * Throws an exception, if the hierarchy is not monotonic.
      * 
-     * TODO: This is a potentially expensive check that should be done when loading the hierarchy
-     *
      * @param manager
      */
     public void checkMonotonicity(DataManager manager) {
