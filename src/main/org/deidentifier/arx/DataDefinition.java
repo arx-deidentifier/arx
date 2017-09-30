@@ -676,29 +676,25 @@ public class DataDefinition implements Cloneable{
         
         // For each relevant attribute
         for (String attribute : attributes) {
-            
-            // If no hierarchy is available
-            if (!isHierarchyAvailable(attribute)) {
-                
-                // Obtain data
-                String[] data = handle.getDistinctValues(handle.getColumnIndexOf(attribute));
-                
-                // If builder is available
-                if (isHierarchyBuilderAvailable(attribute)) {
-                    // Compute and store hierarchy
-                    try {
-                        this.hierarchies.put(attribute, this.getHierarchyBuilder(attribute).build(data));
-                    } catch (Exception e) {
-                        throw new IllegalStateException("Error building hierarchy for attribute ("+attribute+")", e);
-                    }
-                } else {
-                    // Create empty hierarchy
-                    String[][] hierarchy = new String[data.length][];
-                    for (int i=0; i<data.length; i++) {
-                        hierarchy[i] = new String[]{data[i]};
-                    }
-                    this.hierarchies.put(attribute, Hierarchy.create(hierarchy));
+
+            // Obtain data
+            String[] data = handle.getDistinctValues(handle.getColumnIndexOf(attribute));
+
+            // If builder is available
+            if (isHierarchyBuilderAvailable(attribute)) {
+                // Compute and store hierarchy
+                try {
+                    this.hierarchies.put(attribute, this.getHierarchyBuilder(attribute).build(data));
+                } catch (Exception e) {
+                    throw new IllegalStateException("Error building hierarchy for attribute (" + attribute + ")", e);
                 }
+            } else {
+                // Create empty hierarchy
+                String[][] hierarchy = new String[data.length][];
+                for (int i = 0; i < data.length; i++) {
+                    hierarchy[i] = new String[] { data[i] };
+                }
+                this.hierarchies.put(attribute, Hierarchy.create(hierarchy));
             }
         }
     }
