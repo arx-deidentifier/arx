@@ -112,6 +112,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         this.status = new ComponentStatus(controller,
                                           parent, 
                                           control,
+                                          this,
                                           getProgressProvider());
         
         // Reset
@@ -395,7 +396,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     /**
      * Triggers an update
      */
-    protected void triggerUpdate() {
+    public void triggerUpdate() {
         this.viewContext = null;
         this.update();
     }
