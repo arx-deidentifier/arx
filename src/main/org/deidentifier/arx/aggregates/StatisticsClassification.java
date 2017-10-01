@@ -32,6 +32,7 @@ import org.deidentifier.arx.aggregates.classification.MultiClassZeroR;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
+import org.deidentifier.arx.exceptions.UnexpectedErrorException;
 
 /**
  * Statistics representing the prediction accuracy of a data mining
@@ -286,7 +287,11 @@ public class StatisticsClassification {
                     this.progress.value = (int)((++done) * total);
                 }
             } catch (Exception e) {
-                throw new RuntimeException(e);
+                if (e instanceof ComputationInterruptedException) {
+                    throw e;
+                } else {
+                    throw new UnexpectedErrorException(e);
+                }
             }
         }
         
