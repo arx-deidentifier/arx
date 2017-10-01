@@ -538,7 +538,9 @@ public abstract class ViewStatisticsLogisticRegression extends ViewStatistics<An
 
             @Override
             public void onInterrupt() {
-                if (!isEnabled() || getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty()) {
+                if (!isEnabled() || 
+                    getModel().getSelectedFeatures().isEmpty() || 
+                    getModel().getSelectedClasses().isEmpty()) {
                     setStatusEmpty();
                 } else {
                     setStatusWorking();

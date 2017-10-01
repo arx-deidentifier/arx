@@ -153,9 +153,9 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * Stops all computations
      */
     public void triggerStop() {
+        this.viewContext = null;
         this.doReset();
         this.setStatusEmpty();
-        this.viewContext = null;
     }
 
     /**
@@ -348,7 +348,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @return
      */
     protected boolean isEnabled() {
-        return enabled;
+        return viewContext != null && enabled;
     }
 
     /**

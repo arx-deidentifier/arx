@@ -154,9 +154,9 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * Stops all computations
      */
     public void triggerStop() {
+        this.viewContext = null;
         this.doReset();
         this.setStatusEmpty();
-        this.viewContext = null;
     }
 
     /**
@@ -382,9 +382,9 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      */
     protected boolean isValid() {
         if (this.target == ModelPart.INPUT) {
-            return this.model != null && this.model.getInputConfig() != null && this.model.getInputConfig().getInput() != null;
+            return this.viewContext != null && this.model != null && this.model.getInputConfig() != null && this.model.getInputConfig().getInput() != null;
         } else {
-            return this.model != null && this.model.getOutput() != null;
+            return this.viewContext != null && this.model != null && this.model.getOutput() != null;
         }
     }
     
