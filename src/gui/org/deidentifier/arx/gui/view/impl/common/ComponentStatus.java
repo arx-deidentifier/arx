@@ -29,7 +29,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -191,7 +190,7 @@ public class ComponentStatus {
         label.setText(Resources.getMessage("ComponentStatus.1"));
         label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.BOTTOM).grab(true, true).create());
         Button update = new Button(composite, SWT.DEFAULT);
-        update.setText("Update");
+        update.setText(Resources.getMessage("ComponentStatus.2")); //$NON-NLS-1$
         update.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).grab(false, true).create());
         update.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -214,9 +213,12 @@ public class ComponentStatus {
      * @return
      */
     private Composite getWorkingComposite(Composite parent, ComponentStatusLabelProgressProvider provider) {
+        
         Composite composite = new Composite(parent, SWT.NONE);
-        composite.setLayout(new FillLayout());
+        composite.setLayout(SWTUtil.createGridLayout(1));
+        
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
+        label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.FILL, SWT.BOTTOM).grab(true, true).create());
         InputStream stream = controller.getResources().getStream("working.gif"); //$NON-NLS-1$
         try {
             label.setGIF(stream);
@@ -233,6 +235,21 @@ public class ComponentStatus {
         if (provider != null) {
             label.setProgressProvider(provider);
         }
+
+        Button stop = new Button(composite, SWT.DEFAULT);
+        stop.setText(Resources.getMessage("ComponentStatus.4")); //$NON-NLS-1$
+        stop.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).grab(false, true).create());
+        stop.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (view1 != null) {
+                    view1.triggerStop();
+                }
+                if (view2 != null) {
+                    view2.triggerStop();
+                }
+            }
+        });
         return composite;
     }
 }

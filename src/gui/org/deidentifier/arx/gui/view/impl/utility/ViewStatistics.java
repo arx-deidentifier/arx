@@ -150,13 +150,22 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     }
 
     /**
+     * Stops all computations
+     */
+    public void triggerStop() {
+        this.doReset();
+        this.setStatusEmpty();
+        this.viewContext = null;
+    }
+
+    /**
      * Triggers an update
      */
     public void triggerUpdate() {
         this.viewContext = null;
         this.update();
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -226,8 +235,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
 
         // Disable the view
         if (model != null && !model.isVisualizationEnabled()) {
-            this.doReset();
-            this.setStatusEmpty();
+            this.triggerStop();
             this.enabled = false;
             return;
         }
