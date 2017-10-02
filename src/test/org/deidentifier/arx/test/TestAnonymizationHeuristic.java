@@ -29,7 +29,9 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests the heuristic lightning algorithm
+ * Tests the heuristic lightning algorithm.
+ * 
+ * TODO: These tests use a time limit, so they may fail if executed on different hardware 
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -53,9 +55,9 @@ public class TestAnonymizationHeuristic extends AbstractAnonymizationTest {
              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addPrivacyModel(new KAnonymity(100)), "./data/adult.csv", 353204.98690739064, new int[] {1, 0, 1, 2, 3, 2, 2, 1, 1}, false) },
              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/adult.csv", 0.26611081915757495, new int[] {0, 3, 0, 1, 1, 1, 1, 2, 0}, true) },
              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addPrivacyModel(new KAnonymity(100)), "./data/adult.csv", 353204.98690739064, new int[] {1, 0, 1, 2, 3, 2, 2, 1, 1}, true) },
-             { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/cup.csv", 0.23696228235236938, new int[] {4, 2, 0, 1, 0, 1, 2, 4}, false) },
+             { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/cup.csv", 0.16168926109132675, new int[] {4, 3, 0, 0, 0, 1, 2, 2}, false) },
              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addPrivacyModel(new KAnonymity(100)), "./data/cup.csv", 1994002.8308631124, new int[] {3, 4, 1, 1, 0, 4, 4, 4}, false) },
-             { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/cup.csv", 0.23696228235236938, new int[] {4, 2, 0, 1, 0, 1, 2, 4}, false) },
+             { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/cup.csv", 0.16168926109132675, new int[] {4, 3, 0, 0, 0, 1, 2, 2}, false) },
              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addPrivacyModel(new KAnonymity(100)), "./data/cup.csv", 1994002.8308631124, new int[] {3, 4, 1, 1, 0, 4, 4, 4}, false) },
              /* 10 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addPrivacyModel(new KAnonymity(5)), "./data/cup.csv", 1890771.4071861554, new int[] {4, 1, 0, 1, 0, 4, 4, 4}, true) },
              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d, false)).addPrivacyModel(new KAnonymity(100)), "./data/cup.csv", 1994002.8308631124, new int[] {3, 4, 1, 1, 0, 4, 4, 4}, true) },
