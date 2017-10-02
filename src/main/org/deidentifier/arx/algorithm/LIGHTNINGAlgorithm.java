@@ -24,6 +24,7 @@ import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.metric.InformationLoss;
 
 import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
@@ -49,15 +50,18 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                                            int timeLimit) {
         return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
     }
+    
     /** Property */
     private final PredictiveProperty propertyChecked;
     /** Property */
     private final PredictiveProperty propertyExpanded;
+    /** Property */
+    private final PredictiveProperty propertyInsufficientUtility;
+    
     /** The number indicating how often a depth-first-search will be performed */
     private final int                stepping;
     /** Time limit */
     private final int                timeLimit;
-
     /** The start time */
     private long                     timeStart;
     
@@ -74,6 +78,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         this.stepping = stepping > 0 ? stepping : 1;
         this.propertyChecked = space.getPropertyChecked();
         this.propertyExpanded = space.getPropertyExpanded();
+        this.propertyInsufficientUtility = space.getPropertyInsufficientUtility();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.timeLimit = timeLimit;
         if (timeLimit <= 0) { 
@@ -146,13 +151,13 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @return
     */
     private Transformation expand(PriorityQueue<Long> queue, Transformation transformation) {
+        
         Transformation result = null;
-
         LongArrayList list = transformation.getSuccessors();
         for (int i = 0; i < list.size(); i++) {
             long id = list.getQuick(i);
             Transformation successor = solutionSpace.getTransformation(id);
-            if (!successor.hasProperty(propertyExpanded)) {
+            if (!successor.hasProperty(propertyExpanded) && !successor.hasProperty(propertyInsufficientUtility)) {
                 assureChecked(successor);
                 queue.add(successor.getIdentifier());
                 if (result == null || successor.getInformationLoss().compareTo(result.getInformationLoss()) < 0) {
@@ -181,18 +186,26 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @return
     */
     private boolean prune(Transformation transformation) {
-        // Depending on monotony of metric we choose to compare either IL or monotonic subset with the global optimum
-        boolean prune = false;
-        if (getGlobalOptimum() != null) {
+        
+        // Already expanded
+        if (transformation.hasProperty(propertyExpanded) ||
+            transformation.hasProperty(propertyInsufficientUtility)){
+            return true;
+        }
+        
+        // If a current optimum has been discovered
+        Transformation optimum = getGlobalOptimum();
+        if (optimum != null) {
             
-            // A Transformation (and it's direct and indirect successors, respectively) can be pruned if
-            // the information loss is monotonic and the nodes's IL is greater or equal than the IL of the
-            // global maximum (regardless of the anonymity criterion's monotonicity)
-            // TODO: We could use this for predictive tagging as well!
-            if (checker.getMetric().isMonotonic(checker.getConfiguration().getMaxOutliers())) {
-                prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
+            // We can compare lower bounds on quality
+            InformationLoss<?> bound = transformation.getLowerBound();
+            if (bound.compareTo(optimum.getInformationLoss()) >= 0) {
+                transformation.setProperty(propertyInsufficientUtility);
+                return true;
             }
         }
-        return (prune || transformation.hasProperty(propertyExpanded));
+        
+        // We have to process this transformation
+        return false;
     }
 }
