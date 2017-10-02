@@ -540,13 +540,14 @@ public class ARXAnonymizer { // NO_UCD
         
         // Perform sanity checks
         Set<String> genQis = definition.getQuasiIdentifiersWithGeneralization();
+        Set<String> clusterQis = definition.getQuasiIdentifiersWithClusteringAndMicroaggregation();
         if ((config.getMaxOutliers() < 0d) || (config.getMaxOutliers() > 1d)) { 
             throw new IllegalArgumentException("Suppression rate " + config.getMaxOutliers() + "must be in [0, 1]"); 
         }
-        if (genQis.size() == 0) { 
+        if ((genQis.size() + clusterQis.size()) == 0) { 
             throw new IllegalArgumentException("You need to specify at least one quasi-identifier with generalization"); 
         }
-        if (genQis.size() > maxQuasiIdentifiers) { 
+        if ((genQis.size() + clusterQis.size()) > maxQuasiIdentifiers) { 
             throw new IllegalArgumentException("Too many quasi-identifiers (" + genQis.size()+"). This restriction is configurable"); 
         }
     }
