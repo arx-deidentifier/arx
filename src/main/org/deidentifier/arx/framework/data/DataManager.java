@@ -56,43 +56,46 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 public class DataManager {
 
     /** Data. */
-    private final Data                            dataAnalyzed;
+    private final Data                      dataAnalyzed;
 
     /** Data */
-    private final Data                            dataGeneralized;
+    private final Data                      dataGeneralized;
 
     /** Data. */
-    private final Data                            dataInput;
-    
+    private final Data                      dataInput;
+
     /** The data definition */
-    private final DataDefinition                  definition;
+    private final DataDefinition            definition;
 
     /** The domain shares */
-    private DomainShare[]                         shares;
+    private DomainShare[]                   shares;
+
+    /** Centroid distances */
+    private DataCentroidDistances<?>[]      centroidDistances;
 
     /** The original input header. */
-    private final String[]                        header;
+    private final String[]                  header;
 
     /** Hierarchies for generalized attributes */
-    private final GeneralizationHierarchy[]       hierarchiesGeneralized;
+    private final GeneralizationHierarchy[] hierarchiesGeneralized;
 
     /** Hierarchies for analyzed attributes */
-    private final GeneralizationHierarchy[]       hierarchiesAnalyzed;
+    private final GeneralizationHierarchy[] hierarchiesAnalyzed;
 
     /** The maximum level for each QI. */
-    private final int[]                           generalizationLevelsMinimum;
+    private final int[]                     generalizationLevelsMinimum;
 
     /** The minimum level for each QI. */
-    private final int[]                           generalizationLevelsMaximum;
-    
-    /** Information about micro-aggregation*/
-    private final DataMicroAggregation            microaggregationData;
+    private final int[]                     generalizationLevelsMaximum;
+
+    /** Information about micro-aggregation */
+    private final DataMicroAggregation      microaggregationData;
 
     /** The research subset, if any. */
-    private RowSet                                subset     = null;
+    private RowSet                          subset     = null;
 
     /** The size of the research subset. */
-    private int                                   subsetSize = 0;
+    private int                             subsetSize = 0;
 
     /**
      * Creates a new data manager from pre-encoded data.
@@ -298,6 +301,32 @@ public class DataManager {
     }
 
     /**
+     * Returns centroid distances
+     * @return
+     */
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    public DataCentroidDistances<?>[] getCentroidDistances() {
+
+        // Build on-demand
+        if (this.centroidDistances == null) {
+            
+            // Compute domain shares
+            this.centroidDistances = new DataCentroidDistances[dataGeneralized.getHeader().length];
+            for (int column=0; column<centroidDistances.length; column++) {
+                
+                // Extract info
+                String attribute = dataGeneralized.getHeader()[column];
+                this.centroidDistances[column] = new DataCentroidDistances(dataGeneralized, column,
+                                                                      definition.getDataType(attribute),
+                                                                      hierarchiesGeneralized[column].map);
+            }
+        }
+        
+        // Return
+        return this.centroidDistances;
+    }
+
+    /**
      * Returns the input data that will be analyzed.
      * 
      * @return the data
@@ -314,7 +343,7 @@ public class DataManager {
     public Data getDataGeneralized() {
         return dataGeneralized;
     }
-
+    
     /**
      * Returns the input data.
      * 

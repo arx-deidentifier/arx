@@ -440,7 +440,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic) {
         return createPrecisionMetric(monotonic, AggregateFunction.ARITHMETIC_MEAN);
     }
-    
+
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -475,7 +475,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor) {
         return createPrecisionMetric(monotonic, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
     }
-
+    
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -513,8 +513,7 @@ public class __MetricV2 {
         result.initialize(heights, cells);
         return result;
     }
-
-
+    
     /**
      * Creates an instance of the non-monotonic precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -532,7 +531,6 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(double gsFactor) {
         return createPrecisionMetric(false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
     }
-
 
     /**
      * Creates an instance of the non-monotonic precision metric.
@@ -581,6 +579,7 @@ public class __MetricV2 {
         return createPrecomputedEntropyMetric(threshold, monotonic, AggregateFunction.SUM);
     }
 
+
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -599,6 +598,7 @@ public class __MetricV2 {
             return new MetricMDNUNMEntropyPotentiallyPrecomputed(threshold, 0.5d, function);
         }
     }
+
 
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
@@ -666,7 +666,6 @@ public class __MetricV2 {
         return createPrecomputedEntropyMetric(threshold, false, gsFactor, AggregateFunction.SUM);
     }
 
-
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization
      * and suppression equally.
@@ -714,7 +713,6 @@ public class __MetricV2 {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, AggregateFunction.GEOMETRIC_MEAN);
     }
 
-    
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
      * This metric will respect attribute weights defined in the configuration.
@@ -735,6 +733,7 @@ public class __MetricV2 {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, function);
     }
 
+
     /**
      * Creates a potentially precomputed instance of the normalized entropy metric.
      * The default aggregate function, which is the sum function, will be used.
@@ -749,7 +748,6 @@ public class __MetricV2 {
         return new MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed(threshold);
     }
 
-
     /**
      * Creates a potentially precomputed instance of the normalized entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -763,7 +761,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold, AggregateFunction function) {
         return new MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed(threshold, function);
     }
-    
+
     /**
      * Creates an instance of the model for maximizing publisher benefit in the game-theoretic privacy
      * model based on a cost/benefit analysis.
@@ -782,6 +780,65 @@ public class __MetricV2 {
     public static MetricSDNMPublisherPayout createPublisherBenefitMetric(boolean journalistAttackerModel,
                                                                          double gsFactor) {
         return new MetricSDNMPublisherPayout(journalistAttackerModel, gsFactor);
+    }
+
+    
+    /**
+     * Creates an instance of the SSE metric which treats generalization and suppression equally.
+     * The default aggregate function, which is the arithmetic mean, will be used.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric() {
+        return new MetricMDNMSSE();
+    }
+
+    /**
+     * Creates an instance of the SSE metric which treats generalization and suppression equally.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric(AggregateFunction function) {
+        return new MetricMDNMSSE(function);
+    }
+
+
+    /**
+     * Creates an instance of the SSE metric with factors for weighting generalization and suppression.
+     * The default aggregate function, which is the arithmetic mean, will be used.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric(double gsFactor) {
+        return new MetricMDNMSSE(gsFactor, AggregateFunction.ARITHMETIC_MEAN);
+    }
+    
+    /**
+     * Creates an instance of the SSE metric with factors for weighting generalization and suppression.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric(double gsFactor, AggregateFunction function) {
+        return new MetricMDNMSSE(gsFactor, function);
     }
     
     /**
