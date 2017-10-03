@@ -578,9 +578,8 @@ public class ARXAnonymizer { // NO_UCD
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
         
-        if (config.isHeuristicSearchEnabled() ||
-            solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
+        if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());

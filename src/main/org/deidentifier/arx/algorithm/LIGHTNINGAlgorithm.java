@@ -43,35 +43,39 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
      * @param solutionSpace
      * @param checker
      * @param timeLimit
+     * @param checkLimit 
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace,
-                                           NodeChecker checker,
-                                           int timeLimit) {
-        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker, int timeLimit, int checkLimit) {
+        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit, checkLimit);
     }
-    
+
     /** Property */
     private final PredictiveProperty propertyChecked;
     /** Property */
     private final PredictiveProperty propertyExpanded;
     /** Property */
     private final PredictiveProperty propertyInsufficientUtility;
-    
+
     /** The number indicating how often a depth-first-search will be performed */
     private final int                stepping;
     /** Time limit */
     private final int                timeLimit;
     /** The start time */
     private long                     timeStart;
+    /** The number of checks */
+    private int                      checkCount;
+    /** The number of checks */
+    private final int                checkLimit;
     
     /**
     * Constructor
     * @param space
     * @param checker
     * @param timeLimit
+    * @param checkLimit
     */
-    private LIGHTNINGAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit) {
+    private LIGHTNINGAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit, int checkLimit) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         int stepping = space.getTop().getLevel();
@@ -81,14 +85,19 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         this.propertyInsufficientUtility = space.getPropertyInsufficientUtility();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.timeLimit = timeLimit;
+        this.checkLimit = checkLimit;
         if (timeLimit <= 0) { 
             throw new IllegalArgumentException("Invalid time limit. Must be greater than zero."); 
+        }
+        if (checkLimit <= 0) { 
+            throw new IllegalArgumentException("Invalid step limit. Must be greater than zero."); 
         }
     }
 
     @Override
     public void traverse() {
         timeStart = System.currentTimeMillis();
+        checkCount = 0;
         PriorityQueue<Long> queue = new PriorityQueue<Long>(stepping, new Comparator<Long>() {
             @Override
             public int compare(Long arg0, Long arg1) {
@@ -110,7 +119,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                 } else {
                     expand(queue, next);
                 }
-                if (getTime() > timeLimit) {
+                if (mustStop()) {
                     return;
                 }
             }
@@ -125,7 +134,10 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true));
             trackOptimum(transformation);
-            progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
+            checkCount++;
+            double progressSteps = (double)checkCount / (double)checkLimit;
+            double progressTime = (double)(System.currentTimeMillis() - timeStart) / (double)timeLimit;
+            progress(Math.max(progressSteps, progressTime));
         }
     }
 
@@ -135,7 +147,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param transformation
     */
     private void dfs(PriorityQueue<Long> queue, Transformation transformation) {
-        if (getTime() > timeLimit) {
+        if (mustStop()) {
             return;
         }
         Transformation next = expand(queue, transformation);
@@ -144,6 +156,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
             dfs(queue, next);
         }
     }
+    
     /**
     * Returns the successor with minimal information loss, if any, null otherwise.
     * @param queue
@@ -164,7 +177,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                     result = successor;
                 }
             }
-            if (getTime() > timeLimit) {
+            if (mustStop()) {
                 return null;
             }
         }
@@ -173,11 +186,12 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
     
     /**
-     * Returns the current execution time
+     * Returns whether we have exceeded the allowed number of steps or time.
      * @return
      */
-    private int getTime() {
-        return (int)(System.currentTimeMillis() - timeStart);
+    private boolean mustStop() {
+        return ((int)(System.currentTimeMillis() - timeStart) > timeLimit) ||
+               (checkCount >= checkLimit);
     }
 
     /**
