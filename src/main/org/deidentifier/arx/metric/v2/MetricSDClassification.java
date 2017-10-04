@@ -200,7 +200,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
                     //         --> top1 is set to new frequency
                     top1 = largerThanTop1 ? frequency : top1;
                     
-                    // Step 3: If frequency is > top2 but not > top1 (which implies that it is now equal to top1, because of step 2)
+                    // Step 3: If frequency is > top2 but not > top1 (which implies frequency != top1, because of step 2)
                     //         --> top2 is set to new frequency
                     top2 = largerThanTop2 && frequency != top1 ? frequency : top2;
                 }
@@ -213,7 +213,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
                 } else {
                     
                     // All records get penalized
-                    result += (entry.count - top1) * penaltyNoMajorityResponse;
+                    result += entry.count * penaltyNoMajorityResponse;
                 }
             }
         }
