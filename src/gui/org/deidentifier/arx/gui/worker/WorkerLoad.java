@@ -18,7 +18,6 @@
 package org.deidentifier.arx.gui.worker;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -31,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.deidentifier.arx.ARXAnonymizer;
@@ -84,18 +82,6 @@ public class WorkerLoad extends Worker<Model> {
 	
 	/** The model. */
 	private Model      model;
-
-	/**
-     * Creates a new instance.
-     *
-     * @param file
-     * @param controller
-     * @throws ZipException
-     * @throws IOException
-     */
-    public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
-        this.zipfile = new ZipFile(file);
-    }
 
     /**
      * Constructor.
@@ -293,7 +279,8 @@ public class WorkerLoad extends Worker<Model> {
             } else {
             	outputNode = null;
             }
-            model.setSelectedNode(outputNode);
+            // TODO: This can be improved! Selected node is overwritten, but this is not needed, anymore
+            model.setSelectedNode(outputNode); 
             
             // Create solution space
             ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
@@ -318,6 +305,11 @@ public class WorkerLoad extends Worker<Model> {
                 lattice.access().setSolutionSpace(solutions);
             }
 
+            // Load output data
+            ZipEntry outputEntry = zip.getEntry("data/output.dat"); //$NON-NLS-1$
+            InputStream outputStream = outputEntry == null ? null : new BufferedInputStream(zip.getInputStream(outputEntry));
+            model.setOutput(outputStream);
+            
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();
             model.setAnonymizer(f);
@@ -634,15 +626,15 @@ public class WorkerLoad extends Worker<Model> {
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
                                     Charset.defaultCharset(),
                                     model.getCSVSyntax().getDelimiter()));
+
+        // And encode
+        config.getInput().getHandle();
         
         // Disable visualization
         if (model.getMaximalSizeForComplexOperations() > 0 &&
             config.getInput().getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
             model.setVisualizationEnabled(false);
         }
-
-        // And encode
-        config.getInput().getHandle();
     }
 
     /**

@@ -65,17 +65,6 @@ public class DataTableDecorator extends CellPainterWrapper {
 
     /**
      * Creates a new LabelLineBorderDecorator wrapping the given interior
-     * painter and no default border style.
-     * 
-     * @param interiorPainter
-     *            The painter to be wrapped by this decorator.
-     */
-    public DataTableDecorator(ICellPainter interiorPainter) {
-        this(interiorPainter, null);
-    }
-
-    /**
-     * Creates a new LabelLineBorderDecorator wrapping the given interior
      * painter using the given BorderStyle as default.
      * 
      * @param interiorPainter

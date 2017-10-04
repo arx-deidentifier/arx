@@ -23,7 +23,10 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 
 
 /**
- * This class provides an implementation of normalized non-uniform entropy
+ * This class provides an implementation of normalized non-uniform entropy. See:<br>
+ * A. De Waal and L. Willenborg: 
+ * "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

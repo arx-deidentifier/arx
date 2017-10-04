@@ -61,7 +61,8 @@ public class LayoutUtility implements ILayout {
         EQUIVALENCE_CLASSES,
         SUMMARY,
         PROPERTIES,
-        LOCAL_RECODING
+        LOCAL_RECODING,
+        QUALITY_MODELS
     }
 
     /** Constant */
@@ -131,12 +132,8 @@ public class LayoutUtility implements ILayout {
         centerRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        dataInputView = new ViewDataInput(centerLeft,
-                                          controller, 
-                                          "help.utility.data"); //$NON-NLS-1$
-        dataOutputView = new ViewDataOutput(centerRight,
-                                            controller, 
-                                            "help.utility.data"); //$NON-NLS-1$
+        dataInputView = new ViewDataInput(centerLeft, controller, "help.utility.data"); //$NON-NLS-1$
+        dataOutputView = new ViewDataOutput(centerRight, controller, "help.utility.data"); //$NON-NLS-1$
 
         // Sync tables
         dataInputView.addScrollBarListener(new Listener() {
@@ -164,7 +161,7 @@ public class LayoutUtility implements ILayout {
         classificationInput.setLayout(new FillLayout());
         new ViewStatisticsClassificationInput(classificationInput, controller);
 
-        Composite classificationInputROCCurves = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite classificationInputROCCurves = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.12"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInputROCCurves.setLayout(new FillLayout());
         new ViewStatisticsClassificationROCCurves(classificationInputROCCurves, controller, ModelPart.INPUT);
         
@@ -172,9 +169,17 @@ public class LayoutUtility implements ILayout {
         classificationOutput.setLayout(new FillLayout());
         new ViewStatisticsClassificationOutput(classificationOutput, controller);
 
-        Composite classificationOutputROCCurves = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
+        Composite classificationOutputROCCurves = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.12"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutputROCCurves.setLayout(new FillLayout());
         new ViewStatisticsClassificationROCCurves(classificationOutputROCCurves, controller, ModelPart.OUTPUT);
+
+        Composite qualityInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
+        qualityInput.setLayout(new FillLayout());
+        new ViewStatisticsQuality(qualityInput, controller, ModelPart.INPUT, ModelPart.INPUT);
+        
+        Composite qualityOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
+        qualityOutput.setLayout(new FillLayout());
+        new ViewStatisticsQuality(qualityOutput, controller, ModelPart.OUTPUT, ModelPart.INPUT);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);

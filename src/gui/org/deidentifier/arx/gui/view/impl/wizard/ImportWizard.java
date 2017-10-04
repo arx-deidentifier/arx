@@ -52,9 +52,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
     /** Reference of controller being used by this wizard. */
     private Controller              controller;
 
-    /** Reference of model being used by this wizard. */
-    private Model                   model;
-
     /**  View */
     private ImportWizardPageSource  sourcePage;
     
@@ -106,7 +103,6 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
                                                                            .getManagedImage("import.png"))); //$NON-NLS-1$
         this.data = new ImportWizardModel(model);
         this.controller = controller;
-        this.model = model;
     }
 
     /**
@@ -299,14 +295,5 @@ public class ImportWizard extends ARXWizard<ImportConfiguration> {
      */
     ImportWizardModel getData() {
         return data;
-    }
-
-    /**
-     * Returns a reference to the model being used by this wizard.
-     *
-     * @return
-     */
-    Model getModel() {
-        return model;
     }
 }

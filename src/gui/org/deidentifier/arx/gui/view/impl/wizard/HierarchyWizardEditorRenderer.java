@@ -54,9 +54,6 @@ public class HierarchyWizardEditorRenderer<T> {
         public Rectangle rectangle2;
         
         /** Var. */
-        public int       depth;
-        
-        /** Var. */
         public boolean   enabled;
         
         /** Var. */
@@ -418,7 +415,6 @@ public class HierarchyWizardEditorRenderer<T> {
                 List<HierarchyWizardGroupingGroup<T>> list = modelGroups.get(i);
                 HierarchyWizardGroupingGroup<T> group = list.get(j % list.size());
                 RenderedGroup<T> element = new RenderedGroup<T>();
-                element.depth = i + 1;
                 element.enabled = j < list.size();
                 
                 if (layout.isPretty() && showIntervals){
@@ -508,7 +504,6 @@ public class HierarchyWizardEditorRenderer<T> {
                     int factor = i / modelIntervals.size();
                     element.offset = dtype.multiply(width, factor);
                 }
-                element.depth = 0;
                 element.enabled = i < modelIntervals.size();
                 T min = interval.min;
                 T max = interval.max;

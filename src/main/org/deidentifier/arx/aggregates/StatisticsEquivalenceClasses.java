@@ -57,16 +57,16 @@ public class StatisticsEquivalenceClasses {
      * @param numberOfTuples
      * @param numberOfOutlyingTuples
      */
-    public StatisticsEquivalenceClasses(double averageEquivalenceClassSize,
-                                        double averageEquivalenceClassSizeIncludingOutliers,
-                                        int maximalEquivalenceClassSize,
-                                        int maximalEquivalenceClassSizeIncludingOutliers,
-                                        int minimalEquivalenceClassSize,
-                                        int minimalEquivalenceClassSizeIncludingOutliers,
-                                        int numberOfEquivalenceClasses,
-                                        int numberOfEquivalenceClassesIncludingOutliers,
-                                        int numberOfTuples,
-                                        int numberOfOutlyingTuples) {
+    StatisticsEquivalenceClasses(double averageEquivalenceClassSize,
+                                 double averageEquivalenceClassSizeIncludingOutliers,
+                                 int maximalEquivalenceClassSize,
+                                 int maximalEquivalenceClassSizeIncludingOutliers,
+                                 int minimalEquivalenceClassSize,
+                                 int minimalEquivalenceClassSizeIncludingOutliers,
+                                 int numberOfEquivalenceClasses,
+                                 int numberOfEquivalenceClassesIncludingOutliers,
+                                 int numberOfTuples,
+                                 int numberOfOutlyingTuples) {
         this.averageEquivalenceClassSize = averageEquivalenceClassSize;
         this.averageEquivalenceClassSizeIncludingOutliers = averageEquivalenceClassSizeIncludingOutliers;
         this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;

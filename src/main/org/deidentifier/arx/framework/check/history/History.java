@@ -245,16 +245,6 @@ public class History {
     }
     
     /**
-     * 
-     *
-     * @return
-     */
-    public int size() {
-        return cache.size();
-
-    }
-
-    /**
      * Stores a snapshot in the buffer.
      *
      * @param transformation The transformation

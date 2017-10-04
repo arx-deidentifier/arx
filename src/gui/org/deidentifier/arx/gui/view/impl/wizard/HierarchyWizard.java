@@ -115,23 +115,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
 
     /** Var. */
     private HierarchyWizardPageType<T>      pageType;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param controller
-     * @param attribute
-     * @param datatype
-     * @param locale
-     * @param items
-     */
-    public HierarchyWizard(final Controller controller,
-                           final String attribute,
-                           final DataType<T> datatype,
-                           final Locale locale,
-                           final String[] items) {
-        this(controller, attribute, null, datatype, locale, items);
-    }
     
     /**
      * Creates a new instance.

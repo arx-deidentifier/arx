@@ -31,7 +31,7 @@ import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquen
  * 
  * @author Fabian Prasser
  */
-public class PopulationUniqueness extends RiskBasedCriterion {
+public class PopulationUniqueness extends RiskBasedCriterion { // NO_UCD
 
     /** SVUID */
     private static final long         serialVersionUID = 618039085843721351L;

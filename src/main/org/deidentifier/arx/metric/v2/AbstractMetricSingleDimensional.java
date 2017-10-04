@@ -40,15 +40,6 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     /** Row count. */
     private Double                          tuples           = null;
 
-    /** Number of dimensions. */
-    private int                             dimensions;
-
-    /** Number of dimensions with generalization */
-    private int                             dimensionsGeneralized;
-
-    /** Number of dimensions with aggregation */
-    private int                             dimensionsAggregated;
-
     /** The microaggregation functions. */
     private DistributionAggregateFunction[] microaggregationFunctions;
 
@@ -84,15 +75,6 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     /**
      * Create a loss object
      * @param loss
-     * @return
-     */
-    public ILSingleDimensional createInformationLoss(double loss) {
-        return new ILSingleDimensional(loss);
-    }
-
-    /**
-     * Create a loss object
-     * @param loss
      * @param bound
      * @return
      */
@@ -108,33 +90,6 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         return new ILSingleDimensional(0d);
-    }
-
-
-    /**
-     * Returns the number of dimensions.
-     *
-     * @return
-     */
-    protected int getDimensions() {
-        return dimensions;
-    }
-
-    /**
-     * Returns the number of dimensions.
-     *
-     * @return
-     */
-    protected int getDimensionsAggregated() {
-        return dimensionsAggregated;
-    }
-    /**
-     * Returns the number of dimensions.
-     *
-     * @return
-     */
-    protected int getDimensionsGeneralized() {
-        return dimensionsGeneralized;
     }
 
     /**
@@ -187,11 +142,6 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
             this.microaggregationFunctions = new DistributionAggregateFunction[0];
             this.microaggregationDomainSizes = new int[0];
         }
-        
-        // Initialize dimensions
-        this.dimensionsGeneralized = hierarchies.length;
-        this.dimensionsAggregated = microaggregationFunctions.length;
-        this.dimensions = dimensionsGeneralized + dimensionsAggregated;
     }
 
     /**
