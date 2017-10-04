@@ -859,15 +859,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 data[1] = c2;
             }
         }
-
-        // Table
-        rocTable.setFocus();
-        
-        // Update
-        if (!values.isEmpty()) {
-            rocTable.select(0);
-            rocSetChartSeries((ROCCurve[])rocTable.getItem(0).getData());
-        }
     }
 
     /**
@@ -1062,7 +1053,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 setStatusDone();
                 
                 // Select first element in folder
-                folder.setSelection(0);
+                if (folder.getSelectionIndex() == -1) {
+                    folder.setSelection(0);
+                }
             }
 
             @Override
