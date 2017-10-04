@@ -24,6 +24,7 @@ import java.util.List;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -41,25 +42,25 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     /** SVUID. */
-    private static final long serialVersionUID = -7940144844158472876L;
+    private static final long serialVersionUID             = -7940144844158472876L;
 
     /** Indices of response variables in distributions */
-    private int[]             responseVariables               = null;
+    private int[]             responseVariables            = null;
     /** Number of response variables in quasi-identifiers */
     private int               responseVariablesNotAnalyzed = 0;
 
-    /** Penalty. TODO: Make configurable via ARXConfiguration */
-    private double            penaltySuppressed               = 0.5d;
-    /** Penalty. TODO: Make configurable via ARXConfiguration */
-    private double            penaltyDifferentFromMajority    = 1d;
-    /** Penalty. TODO: Make configurable via ARXConfiguration */
-    private double            penaltyNoMajority               = 1d;
+    /** Penalty */
+    private double            penaltySuppressed            = 1d;
+    /** Penalty */
+    private double            penaltyInfrequentResponse    = 1d;
+    /** Penalty */
+    private double            penaltyNoMajorityResponse    = 1d;
 
     /**
      * Creates a new instance.
      */
     protected MetricSDClassification() {
-        super(true, false, false);
+        super(false, false, false);
     }
 
     /**
@@ -68,32 +69,33 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      * @param gsFactor
      */
     protected MetricSDClassification(double gsFactor) {
-        super(true, false, false, gsFactor);
+        super(false, false, false, gsFactor);
     }
 
-    /**
-     * Creates a new instance. Preinitialized
-     *
-     * @param rowCount
-     */
-    protected MetricSDClassification(int rowCount) {
-        super(true, false, false);
-        super.setNumTuples((double)rowCount);
-    }
-    
     @Override
     public ILSingleDimensional createMaxInformationLoss() {
         Double rows = getNumTuples();
         if (rows == null) {
+            
             throw new IllegalStateException("Metric must be initialized first");
+            
         } else {
-            return new ILSingleDimensional(rows);
+            
+            // Non-analyzed response variables are only penalized if they are suppressed
+            double max = rows * responseVariablesNotAnalyzed * penaltySuppressed;
+            
+            // Use maximal penalty for other response variables
+            double maxPenalty = Math.max(penaltySuppressed, Math.max(penaltyInfrequentResponse, penaltyNoMajorityResponse));
+            max += rows * responseVariables.length * maxPenalty;
+            
+            // Done
+            return new ILSingleDimensional(max);
         }
     }
     
     @Override
     public ILSingleDimensional createMinInformationLoss() {
-        return new ILSingleDimensional(1d);
+        return new ILSingleDimensional(0d);
     }
     
     /**
@@ -105,22 +107,47 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         return new MetricConfiguration(false, // monotonic
                                        super.getGeneralizationSuppressionFactor(), // gs-factor
                                        false, // precomputed
-                                       0.0d, // precomputation threshold
+                                       0.0d,  // precomputation threshold
                                        AggregateFunction.SUM // aggregate function
         );
     }
     
+    /**
+     * Penalty for records with non-majority response
+     * @return the penaltyDifferentFromMajority
+     */
+    public double getPenaltyInfrequentResponse() {
+        return penaltyInfrequentResponse;
+    }
+    
+    /**
+     * Penalty for records without a majority response
+     * @return the penaltyNoMajority
+     */
+    public double getPenaltyNoMajorityResponse() {
+        return penaltyNoMajorityResponse;
+    }
+
+    /**
+     * Penalty for suppressed features
+     * @return the penaltySuppressed
+     */
+    public double getPenaltySuppressed() {
+        return penaltySuppressed;
+    }
+
     @Override
     public boolean isGSFactorSupported() {
         return true;
     }
-    
+
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Classification metric");
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
-        result.addProperty("Generalization factor", this.getGeneralizationFactor());
-        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        result.addProperty("Penalty for suppressed features", this.getPenaltySuppressed());
+        result.addProperty("Penalty for records with non-majority response", this.getPenaltyInfrequentResponse());
+        result.addProperty("Penalty for records without a majority response", this.getPenaltyNoMajorityResponse());
         return result;
     }
 
@@ -128,59 +155,114 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     public String toString() {
         return "Classification metric";
     }
+    
+    /**
+     * Returns the penalty for the given entry
+     * @param entry
+     * @return
+     */
+    private double getPenalty(HashGroupifyEntry entry) {
 
+        // Prepare
+        double result = 0d;
+        
+        // Suppressed
+        if (!entry.isNotOutlier) {
+            
+            // According penalty for all records and response variables in this class
+            result += entry.count * (responseVariablesNotAnalyzed + responseVariables.length) * penaltySuppressed;
+            
+        // Not suppressed
+        } else {
+            
+            // For each analyzed response variable
+            for (int index : this.responseVariables) {
+                
+                // Find frequencies of most frequent and second most frequent attribute values
+                int top1 = -1;
+                int top2 = -1;
+                
+                // For each bucket
+                Distribution distribution = entry.distributions[index];
+                int[] buckets = distribution.getBuckets();
+                for (int i = 0; i < buckets.length; i += 2) {
+                    
+                    // Get frequency
+                    int frequency = buckets[i + 1];
+                    boolean largerThanTop1 = frequency > top1;
+                    boolean largerThanTop2 = frequency > top2;
+                    
+                    // Step 1: If frequency is > top1 
+                    //         --> top1 is moved down to top2
+                    top2 = largerThanTop1 ? top1 : top2;
+    
+                    // Step 2: If frequency is > top1 
+                    //         --> top1 is set to new frequency
+                    top1 = largerThanTop1 ? frequency : top1;
+                    
+                    // Step 3: If frequency is > top2 but not > top1 (which implies that it is now equal to top1, because of step 2)
+                    //         --> top2 is set to new frequency
+                    top2 = largerThanTop2 && frequency != top1 ? frequency : top2;
+                }
+                
+                // If a majority class label exists
+                if (top1 != top2) {
+                    
+                    // Records with other than majority class label get penalized
+                    result += (entry.count - top1) * penaltyInfrequentResponse;
+                } else {
+                    
+                    // All records get penalized
+                    result += (entry.count - top1) * penaltyNoMajorityResponse;
+                }
+            }
+        }
+        
+        // Return overall penalty
+        return result;
+    }
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
-
-        // The total number of groups with and without suppression
-        double groupsWithSuppression = 0;
-        double groupsWithoutSuppression = 0;
-        double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
-        double sFactor = super.getGeneralizationFactor(); // Note: factors are switched on purpose
-        
+       
+        // Prepare
+        double penalty = 0d;
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
+        
+        // For each group
         while (m != null) {
             if (m.count > 0) {
-                groupsWithSuppression += m.isNotOutlier ? 1 : 0;
-                groupsWithoutSuppression++;
+                penalty += getPenalty(m);
             }
             m = m.nextOrdered;
         }
-        
-        // If there are suppressed tuples, they form one additional group
-        boolean someRecordsSuppressed = (groupsWithSuppression != groupsWithoutSuppression);
-        groupsWithSuppression *= gFactor;
-        groupsWithSuppression = !someRecordsSuppressed ? groupsWithSuppression : groupsWithSuppression + 1 * sFactor;
-        
-        // Compute AECS
-        return new ILSingleDimensionalWithBound(getNumTuples() / groupsWithSuppression,
-                                                getNumTuples() / (groupsWithoutSuppression * gFactor));
+
+        // Return
+        // TODO: Can a lower bound be calculated for this model?
+        return createInformationLoss(penalty);
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry m) {
+
+        if (m.count > 0) {
+            // TODO: Can a lower bound be calculated for this model?
+            return createInformationLoss(getPenalty(m));
+        } else {
+            return createInformationLoss(0d);
+        }
     }
 
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
+        // TODO: Can a lower bound be calculated for this model?
         return null;
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation node,
-                                                        HashGroupify groupify) {
-        // Ignore suppression for the lower bound
-        int groups = 0;
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            groups += (m.count > 0) ? 1 : 0;
-            m = m.nextOrdered;
-        }
-        
-        // Compute AECS
-        double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
-        return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
+    protected ILSingleDimensional getLowerBoundInternal(Transformation node, HashGroupify groupify) {
+        // TODO: Can a lower bound be calculated for this model?
+        return null;
     }
 
     @Override
@@ -199,16 +281,20 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             int index = manager.getDataAnalyzed().getIndexOf(variable);
             if (index != -1) {
                 indices.add(index);
-                break;
             }
         }
         
-        // Store
+        // Store information about response variables
         Collections.sort(indices);
         this.responseVariables = new int[indices.size()];
         for (int i = 0; i < indices.size(); i++) {
             responseVariables[i] = indices.get(i);
         }
         this.responseVariablesNotAnalyzed = definition.getResponseVariables().size() - responseVariables.length;
+        
+        // Set penalties using the gs-factor. This is sort of a hack but should be OK for now.
+        penaltySuppressed            = super.getSuppressionFactor();
+        penaltyInfrequentResponse    = super.getGeneralizationFactor();
+        penaltyNoMajorityResponse    = super.getGeneralizationFactor();
     }
 }

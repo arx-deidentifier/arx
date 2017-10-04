@@ -76,6 +76,15 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     /**
      * Create a loss object
      * @param loss
+     * @return
+     */
+    public ILSingleDimensionalWithBound createInformationLoss(double loss) {
+        return new ILSingleDimensionalWithBound(loss);
+    }
+
+    /**
+     * Create a loss object
+     * @param loss
      * @param bound
      * @return
      */
