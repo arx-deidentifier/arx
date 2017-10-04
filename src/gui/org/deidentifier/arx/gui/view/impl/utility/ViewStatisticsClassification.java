@@ -185,9 +185,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         
         if (event.part == ModelPart.SELECTED_CLASS_VALUE) {
             int index = 0;
-            for (TableItem item : precisionRecallTable.getItems()) {
+            for (TableItem item : rocTable.getItems()) {
                 if (item.getText(0).equals(super.getModel().getSelectedClassValue())) {
-                    precisionRecallTable.select(index);
+                    rocTable.select(index);
                     if (item.getData() != null) {
                         rocSetChartSeries((ROCCurve[]) item.getData());
                     }
