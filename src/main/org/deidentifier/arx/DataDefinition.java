@@ -65,7 +65,10 @@ public class DataDefinition implements Cloneable{
     private final Map<String, Integer>                  maxGeneralization = new HashMap<String, Integer>();
 
     /** Whether to perform clustering before aggregation. */
-    private final Map<String, Boolean>                  clustering        = new HashMap<String, Boolean>();
+    private Map<String, Boolean>                        clustering        = new HashMap<String, Boolean>();
+
+    /** Set of response variables. */
+    private Map<String, Boolean>                        response          = new HashMap<String, Boolean>();
     
     @Override
     public DataDefinition clone() {
@@ -96,6 +99,11 @@ public class DataDefinition implements Cloneable{
         if (this.clustering != null) {
             for (final String attr : clustering.keySet()) {
                 d.clustering.put(attr, clustering.get(attr));
+            }
+        }
+        if (this.response != null) {
+            for (final String attr : response.keySet()) {
+                d.response.put(attr, response.get(attr));
             }
         }
         d.setLocked(this.isLocked());
@@ -275,6 +283,22 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Returns the set of defined response variables
+     * @return
+     */
+    public Set<String> getResponseVariables() {
+        Set<String> result = new HashSet<>();
+        if (response != null) {
+            for (String attribute : response.keySet()) {
+                if (response.get(attribute) != null && response.get(attribute)) {
+                    result.add(attribute);
+                }
+            }
+        }
+        return result;
+    }
+    
+    /**
      * Returns the sensitive attributes.
      *
      * @return
@@ -283,6 +307,7 @@ public class DataDefinition implements Cloneable{
         return getAttributesByType(AttributeType.ATTR_TYPE_SE);
     }
     
+
     /**
      * Returns whether a hierarchy is available.
      *
@@ -303,7 +328,6 @@ public class DataDefinition implements Cloneable{
     public boolean isHierarchyBuilderAvailable(String attribute) {
         return getHierarchyBuilder(attribute) != null;
     }
-    
 
     /**
      * Returns whether this definition can be altered.
@@ -336,6 +360,15 @@ public class DataDefinition implements Cloneable{
         checkQuasiIdentifier(attribute);
         return true;
     }
+    
+    /**
+     * Returns whether the given attribute is a response variable
+     * @param attribute
+     * @return
+     */
+    public boolean isResponseVariable(String attribute) {
+        return this.response != null && this.response.get(attribute) != null && this.response.get(attribute);
+    }
 
     /**
      * Reads all settings from the given definition
@@ -362,6 +395,10 @@ public class DataDefinition implements Cloneable{
             this.clustering.clear();
             this.clustering.putAll(other.clustering);
         }
+        if (this.response != null) {
+            this.response.clear();
+            this.response.putAll(other.response);
+        }
     }
 
     /**
@@ -376,6 +413,7 @@ public class DataDefinition implements Cloneable{
         result.add(render("Sensitive attributes", getSensitiveAttributes()));
         result.add(render("Identifying attributes", getIdentifyingAttributes()));
         result.add(render("Quasi-identifying attributes", getQuasiIdentifyingAttributes()));
+        result.add(render("Response variables", getResponseVariables()));
 
         // Render hierarchies
         Set<String> attributes = new HashSet<>();
@@ -399,50 +437,50 @@ public class DataDefinition implements Cloneable{
 
     /**
      * Resets the according setting
-     * @param attr
+     * @param attribute
      */
-    public void resetAttributeType(String attr) {
-        this.attributeTypes.remove(attr);
+    public void resetAttributeType(String attribute) {
+        this.attributeTypes.remove(attribute);
     }
 
     /**
      * Resets the according setting
-     * @param attr
+     * @param attribute
      */
-    public void resetHierarchy(String attr) {
-        this.hierarchies.remove(attr);
+    public void resetHierarchy(String attribute) {
+        this.hierarchies.remove(attribute);
     }
 
     /**
      * Resets the according setting
-     * @param attr
+     * @param attribute
      */
-    public void resetHierarchyBuilder(String attr) {
-        this.builders.remove(attr);
-    }
-
-    /**
-     * Resets the according setting
-     * @param attr
-     */
-    public void resetMaximumGeneralization(String attr) {
-        this.minGeneralization.remove(attr);
+    public void resetHierarchyBuilder(String attribute) {
+        this.builders.remove(attribute);
     }
     
     /**
      * Resets the according setting
-     * @param attr
+     * @param attribute
      */
-    public void resetMicroAggregationFunction(String attr) {
-        this.functions.remove(attr);
+    public void resetMaximumGeneralization(String attribute) {
+        this.minGeneralization.remove(attribute);
     }
 
     /**
      * Resets the according setting
-     * @param attr
+     * @param attribute
      */
-    public void resetMinimumGeneralization(String attr) {
-        this.maxGeneralization.remove(attr);
+    public void resetMicroAggregationFunction(String attribute) {
+        this.functions.remove(attribute);
+    }
+    
+    /**
+     * Resets the according setting
+     * @param attribute
+     */
+    public void resetMinimumGeneralization(String attribute) {
+        this.maxGeneralization.remove(attribute);
     }
 
     /**
@@ -543,6 +581,9 @@ public class DataDefinition implements Cloneable{
      */
     public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function, boolean performClustering) {
         this.functions.put(attribute, function);
+        if (this.clustering == null) {
+            this.clustering = new HashMap<>();
+        }
         this.clustering.put(attribute, performClustering);
     }
     
@@ -559,6 +600,18 @@ public class DataDefinition implements Cloneable{
         minGeneralization.put(attribute, minimumLevel);
     }
     
+    /**
+     * Sets whether the given attribute is a response variable
+     * @param attribute
+     * @param value
+     */
+    public void setResponseVariable(String attribute, boolean value) {
+        if (this.response == null) {
+            this.response = new HashMap<>();
+        }
+        this.response.put(attribute,  value);
+    }
+
     /**
      * Checks whether this handle is locked.
      *
@@ -578,7 +631,7 @@ public class DataDefinition implements Cloneable{
     private void checkNullArgument(Object argument, String name) throws IllegalArgumentException {
         if (argument == null) { throw new NullPointerException(name + " must not be null"); }
     }
-
+    
     /**
      * Checks whether the attribute is a quasi-identifier.
      *
@@ -591,7 +644,7 @@ public class DataDefinition implements Cloneable{
             throw new IllegalArgumentException("Attribute ("+attribute+") is not a quasi-identifier");
         }
     }
-    
+
     /**
      * Returns attributes by type
      * @param type
@@ -699,7 +752,7 @@ public class DataDefinition implements Cloneable{
             }
         }
     }
-
+    
     /**
      * Parses the configuration of the import adapter.
      *
@@ -712,7 +765,7 @@ public class DataDefinition implements Cloneable{
             this.setDataType(header[i], config.getColumns().get(i).getDataType());
         }
     }
-    
+
     /**
      * Lock/unlock the definition.
      *

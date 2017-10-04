@@ -106,15 +106,13 @@ public class DataManager {
      * @param definition
      * @param criteria
      * @param functions
-     * @param classAttributes
      */
     public DataManager(final String[] header,
                        final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
                        final Set<PrivacyCriterion> criteria,
-                       final Map<String, DistributionAggregateFunction> functions,
-                       final Set<String> classAttributes) {
+                       final Map<String, DistributionAggregateFunction> functions) {
 
         // Store basic info
         this.header = header;
@@ -123,10 +121,11 @@ public class DataManager {
         // Collect types of data
         Set<String> attributesGeneralized = new HashSet<>(definition.getQuasiIdentifiersWithGeneralization());
         attributesGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
+        Set<String> attributesResponse = new HashSet<>(definition.getResponseVariables());
         Set<String> attributesAggregated = new HashSet<>(definition.getQuasiIdentifiersWithMicroaggregation());
         Set<String> attributesAnalyzed = new HashSet<>(definition.getSensitiveAttributes());
         attributesAnalyzed.addAll(attributesAggregated);
-        attributesAnalyzed.addAll(classAttributes);
+        attributesAnalyzed.addAll(attributesResponse);
         
         // Create data objects
         this.dataGeneralized = Data.createProjection(data, header, getColumns(header, attributesGeneralized), dictionary);

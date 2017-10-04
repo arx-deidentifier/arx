@@ -192,12 +192,12 @@ public class Data implements Cloneable, Serializable {
     }
     
     /**
-     * Returns the index of the given attribute
+     * Returns the index of the given attribute. Returns -1 if the attribute is not contained.
      * @param attribute
      * @return
      */
     public int getIndexOf(String attribute) {
-        return map.get(attribute);
+        return !map.containsKey(attribute) ? -1 : map.get(attribute);
     }
 
     /**

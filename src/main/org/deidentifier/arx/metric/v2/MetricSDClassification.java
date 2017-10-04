@@ -17,18 +17,23 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of the classification metric.
- * TODO: Placeholder
  * 
  * @author Fabian Prasser
  * @author Johanna Eicher
@@ -37,6 +42,18 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     /** SVUID. */
     private static final long serialVersionUID = -7940144844158472876L;
+
+    /** Indices of response variables in distributions */
+    private int[]             responseVariables               = null;
+    /** Number of response variables in quasi-identifiers */
+    private int               responseVariablesNotAnalyzed = 0;
+
+    /** Penalty. TODO: Make configurable via ARXConfiguration */
+    private double            penaltySuppressed               = 0.5d;
+    /** Penalty. TODO: Make configurable via ARXConfiguration */
+    private double            penaltyDifferentFromMajority    = 1d;
+    /** Penalty. TODO: Make configurable via ARXConfiguration */
+    private double            penaltyNoMajority               = 1d;
 
     /**
      * Creates a new instance.
@@ -98,14 +115,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         return true;
     }
     
-    /**
-     * Returns the set of specified class attributes
-     * @return
-     */
-    public Set<String> getClassAttributes() {
-        return null; // TODO
-    }
-
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Classification metric");
@@ -172,5 +181,34 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         // Compute AECS
         double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
         return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
+    }
+
+    @Override
+    protected void initializeInternal(DataManager manager,
+                                      DataDefinition definition,
+                                      Data input,
+                                      GeneralizationHierarchy[] hierarchies,
+                                      ARXConfiguration config) {
+
+        // Super
+        super.initializeInternal(manager, definition, input, hierarchies, config);
+        
+        // Extract indices of response variables
+        List<Integer> indices = new ArrayList<>();
+        for (String variable : definition.getResponseVariables()){
+            int index = manager.getDataAnalyzed().getIndexOf(variable);
+            if (index != -1) {
+                indices.add(index);
+                break;
+            }
+        }
+        
+        // Store
+        Collections.sort(indices);
+        this.responseVariables = new int[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            responseVariables[i] = indices.get(i);
+        }
+        this.responseVariablesNotAnalyzed = definition.getResponseVariables().size() - responseVariables.length;
     }
 }

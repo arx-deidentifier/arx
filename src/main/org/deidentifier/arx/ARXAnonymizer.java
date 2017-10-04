@@ -399,13 +399,10 @@ public class ARXAnonymizer { // NO_UCD
             }
         }
         
-        // Check class attributes
+        // Check response variables
         if (config.getQualityModel() instanceof MetricSDClassification) {
-            for (String attribute : ((MetricSDClassification)config.getQualityModel()).getClassAttributes()) {
-                if (!(handle.getDefinition().getSensitiveAttributes().contains(attribute) ||
-                      handle.getDefinition().getInsensitiveAttributes().contains(attribute))) {
-                    throw new IllegalArgumentException("Class attributes may only be insensitive or sensitive");
-                }
+            if (handle.getDefinition().getResponseVariables().isEmpty()) {
+                    throw new IllegalArgumentException("At least one response variable must be defined");
             }
         }
         
@@ -602,17 +599,12 @@ public class ARXAnonymizer { // NO_UCD
         String[] header = ((DataHandleInput) handle).header;
         DataMatrix dataArray = ((DataHandleInput) handle).data;
         Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        Set<String> classAttributes = new HashSet<String>();
-        if (config.getQualityModel() instanceof MetricSDClassification) {
-            classAttributes = ((MetricSDClassification)config.getQualityModel()).getClassAttributes();
-        }
         final DataManager manager = new DataManager(header,
                                                     dataArray,
                                                     dictionary,
                                                     definition,
                                                     config.getPrivacyModels(),
-                                                    getAggregateFunctions(definition),
-                                                    classAttributes);
+                                                    getAggregateFunctions(definition));
         return manager;
     }
 

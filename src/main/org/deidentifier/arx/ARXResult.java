@@ -20,9 +20,7 @@ package org.deidentifier.arx;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
@@ -38,7 +36,6 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.metric.v2.MetricSDClassification;
 
 /**
  * Encapsulates the results of an execution of the ARX algorithm.
@@ -123,19 +120,14 @@ public class ARXResult {
         String[] header = ((DataHandleInput) handle).header;
         DataMatrix dataArray = ((DataHandleInput) handle).data;
         Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        Set<String> classAttributes = new HashSet<String>();
-        if (config.getQualityModel() instanceof MetricSDClassification) {
-            classAttributes = ((MetricSDClassification)config.getQualityModel()).getClassAttributes();
-        }
-        
+     
         // Create manager
         DataManager manager = new DataManager(header,
                                               dataArray,
                                               dictionary,
                                               handle.getDefinition(),
                                               config.getPrivacyModels(),
-                                              getAggregateFunctions(handle.getDefinition()),
-                                              classAttributes);
+                                              getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
