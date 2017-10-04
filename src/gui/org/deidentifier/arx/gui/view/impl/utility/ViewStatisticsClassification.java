@@ -91,6 +91,10 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     private AnalysisManager                    manager;
 
     /** View */
+    private ViewStatisticsClassification       other;
+    /** View */
+    private ComponentTitledFolder              folder;
+    /** View */
     private DynamicTable                       precisionRecallTable;
     /** View */
     private Composite                          precisionRecallRoot;
@@ -108,7 +112,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     private Chart                              rocChart;
     /** Widget */
     private Combo                              rocCombo;
-    
+
     /** Model */
     private boolean                            isOutput;
     /** Model */
@@ -143,7 +147,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     public LayoutUtility.ViewUtilityType getType() {
         return LayoutUtility.ViewUtilityType.CLASSIFICATION_PRECISION_RECALL;
     }
-
+    
     @Override
     public void update(ModelEvent event) {
         super.update(event);
@@ -166,54 +170,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             rocUpdateSelection();
         }
     }
-    
-    /**
-     * Update the selection on precision/recall data
-     */
-    private void precisionRecallUpdateSelection() {
-        
-        // Update table
-        int index = 0;
-        for (TableItem item : precisionRecallTable.getItems()) {
-            if (item.getText(0).equals(super.getModel().getSelectedAttribute())) {
-                precisionRecallTable.select(index);
-                if (item.getData() != null && item.getData() instanceof PrecisionRecallMatrix) {
-                    precisionRecallSetChartSeries((PrecisionRecallMatrix) item.getData());
-                }
-                break;
-            }
-            index++;
-        }
-    }
-    
-    /**
-     * Updates the selection on ROC data
-     */
-    private void rocUpdateSelection() {
-        
-        // Update table
-        int index = 0;
-        for (TableItem item : rocTable.getItems()) {
-            if (item.getText(0).equals(super.getModel().getSelectedClassValue())) {
-                rocTable.select(index);
-                if (item.getData() != null) {
-                    rocSetChartSeries((ROCCurve[]) item.getData());
-                }
-                return;
-            }
-            index++;
-        }
-        
-        // Update combo
-        String selectedAttribute = getModel().getSelectedAttribute();
-        for (int i = 0; i < rocCombo.getItemCount(); i++) {
-            if (rocCombo.getItem(i).equals(selectedAttribute)) {
-                rocCombo.select(i);
-                rocUpdateTableAndChart(selectedAttribute);
-                break;
-            }
-        }
-    }
 
     /**
      * Returns the value of the given point
@@ -232,7 +188,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         }
         return index;
     }
-
+    
     /**
      * Returns the index of the given value, 0 if it is not found
      * @param values
@@ -249,7 +205,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         }
         return 0;
     }
-
+    
     /**
      * Builds the precision/recall view
      * @param parent
@@ -451,7 +407,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         precisionRecallChart.setEnabled(false);
         updateCategories(precisionRecallChart);
     }
-    
+
     /**
      * Updates the chart with a new matrix
      * @param matrix
@@ -518,6 +474,25 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         precisionRecallChart.updateLayout();
         precisionRecallChart.update();
         precisionRecallChart.redraw();
+    }
+
+    /**
+     * Update the selection on precision/recall data
+     */
+    private void precisionRecallUpdateSelection() {
+        
+        // Update table
+        int index = 0;
+        for (TableItem item : precisionRecallTable.getItems()) {
+            if (item.getText(0).equals(super.getModel().getSelectedAttribute())) {
+                precisionRecallTable.select(index);
+                if (item.getData() != null && item.getData() instanceof PrecisionRecallMatrix) {
+                    precisionRecallSetChartSeries((PrecisionRecallMatrix) item.getData());
+                }
+                break;
+            }
+            index++;
+        }
     }
 
     private Control rocCreateControl(Composite parent) {
@@ -669,7 +644,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         return this.rocRoot;
     }
     
-    
     /**
      * Resets the chart
      */
@@ -753,7 +727,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         updateCategories(rocChart);
     }
 
-
     /**
      * Updates the chart with a new ROC Curve
      * 
@@ -815,6 +788,37 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         rocChart.update();
         rocChart.redraw();
     }
+    
+    
+    /**
+     * Updates the selection on ROC data
+     */
+    private void rocUpdateSelection() {
+        
+        // Update table
+        int index = 0;
+        for (TableItem item : rocTable.getItems()) {
+            if (item.getText(0).equals(super.getModel().getSelectedClassValue())) {
+                rocTable.select(index);
+                if (item.getData() != null) {
+                    rocSetChartSeries((ROCCurve[]) item.getData());
+                }
+                return;
+            }
+            index++;
+        }
+        
+        // Update combo
+        String selectedAttribute = getModel().getSelectedAttribute();
+        for (int i = 0; i < rocCombo.getItemCount(); i++) {
+            if (rocCombo.getItem(i).equals(selectedAttribute)) {
+                rocCombo.select(i);
+                rocUpdateTableAndChart(selectedAttribute);
+                break;
+            }
+        }
+    }
+
 
     /**
      * Updates class values and AUC in table and roc curve according to this clazz.
@@ -885,14 +889,14 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             }
         }
     }
-    
+
     @Override
     protected Control createControl(Composite parent) {
 
         // Create top composite
         Composite root = new Composite(parent, SWT.NONE);
         root.setLayout(new FillLayout());
-        ComponentTitledFolder folder = new ComponentTitledFolder(root, null, null, null, true, false);
+        this.folder = new ComponentTitledFolder(root, null, null, null, true, false);
         
         // Precision and recall
         Composite item1 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.27"), null); //$NON-NLS-1$
@@ -904,16 +908,25 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         item2.setLayoutData(SWTUtil.createFillGridData());
         this.rocCreateControl(item2);
         
+        // Synchronize
+        this.folder.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (other != null) {
+                    other.setSelectionIndex(folder.getSelectionIndex());
+                }
+            }
+        });
+        
         // Return
         return root;
     }
-    
     
     @Override
     protected AnalysisContextClassification createViewConfig(AnalysisContext context) {
         return new AnalysisContextClassification(context);
     }
-
+    
     @Override
     protected void doReset() {
         
@@ -1019,7 +1032,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 }
 
                 // Update precision/recall view
-                int index = getIndexOf(classes, getModel().getSelectedAttribute());
+                String clazz = getModel().getSelectedAttribute();
+                int index = getIndexOf(classes, clazz);
                 precisionRecallTable.setFocus();
                 precisionRecallTable.select(index);
                 precisionRecallSetChartSeries(matrixes.get(index));
@@ -1031,10 +1045,24 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 rocCombo.select(index);
                 
                 // Update ROC View
+                String clazzValue = getModel().getSelectedClassValue();
                 rocUpdateTableAndChart(classes[index]);
+                rocTable.setFocus();
+                index = 0;
+                for (int i=0; i<rocTable.getItemCount(); i++) {
+                    if (rocTable.getItem(i).getText().equals(clazzValue)) {
+                        index = i;
+                        break;
+                    }
+                }
+                rocTable.select(index);
+                rocSetChartSeries(((ROCCurve[])rocTable.getItem(index).getData()));
                 rocRoot.layout();
                 rocSash.setWeights(new int[] {2, 2});
                 setStatusDone();
+                
+                // Select first element in folder
+                folder.setSelection(0);
             }
 
             @Override
@@ -1135,5 +1163,21 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
      */
     protected boolean isRunning() {
         return manager != null && manager.isRunning();
+    }
+
+    /**
+     * Sets the other view for synchronization
+     * @param other
+     */
+    protected void setOtherView(ViewStatisticsClassification other) {
+        this.other = other;
+    }
+
+    /**
+     * Sets the selection index in the underlying folder
+     * @param index
+     */
+    protected void setSelectionIndex(int index) {
+        this.folder.setSelection(index);
     }
 }

@@ -158,11 +158,11 @@ public class LayoutUtility implements ILayout {
         
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
-        new ViewStatisticsClassificationInput(classificationInput, controller);
+        ViewStatisticsClassificationInput viewClassificationInput = new ViewStatisticsClassificationInput(classificationInput, controller);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
-        new ViewStatisticsClassificationOutput(classificationOutput, controller);
+        ViewStatisticsClassificationOutput viewClassificationOutput = new ViewStatisticsClassificationOutput(classificationOutput, controller);
 
         Composite qualityInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
         qualityInput.setLayout(new FillLayout());
@@ -213,6 +213,8 @@ public class LayoutUtility implements ILayout {
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }
         });
+        viewClassificationInput.setOtherView(viewClassificationOutput);
+        viewClassificationOutput.setOtherView(viewClassificationInput);
         dataOutputView.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
