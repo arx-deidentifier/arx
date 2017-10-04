@@ -41,19 +41,19 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     /** SVUID. */
-    private static final long serialVersionUID = -7940144844158472876L;
+    private static final long serialVersionUID             = -7940144844158472876L;
 
     /** Indices of response variables in distributions */
-    private int[]             responseVariables               = null;
+    private int[]             responseVariables            = null;
     /** Number of response variables in quasi-identifiers */
     private int               responseVariablesNotAnalyzed = 0;
 
-    /** Penalty. TODO: Make configurable via ARXConfiguration */
-    private double            penaltySuppressed               = 0.5d;
-    /** Penalty. TODO: Make configurable via ARXConfiguration */
-    private double            penaltyDifferentFromMajority    = 1d;
-    /** Penalty. TODO: Make configurable via ARXConfiguration */
-    private double            penaltyNoMajority               = 1d;
+    /** Penalty. TODO: Make configurable */
+    private double            penaltySuppressed            = 0.5d;
+    /** Penalty. TODO: Make configurable */
+    private double            penaltyDifferentFromMajority = 1d;
+    /** Penalty. TODO: Make configurable */
+    private double            penaltyNoMajority            = 1d;
 
     /**
      * Creates a new instance.
@@ -128,38 +128,79 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     public String toString() {
         return "Classification metric";
     }
+    
+    /**
+     * Returns an array of length 3: [0]: number of suppressed cells, [1]:
+     * number of cells with a different class label than the majority class
+     * label, [2]: number of cells in an entry without majority class label.
+     * 
+     * @param entry
+     * @return
+     */
+    private int[] getCountsForEntry(HashGroupifyEntry entry, int index) {
+        // [suppressed, differentThanMajority, noMajority]
+        int[] counts = new int[3];
 
+        // Suppressed
+        if (!entry.isNotOutlier) {
+            counts[0] = entry.count;
+        } else {
+            int[] buckets = entry.distributions[index].getBuckets();
+            List<Integer> frequencies = new ArrayList<Integer>();
+            for (int i = 0; i < buckets.length; i += 2) {
+                int frequencyInC = buckets[i + 1];
+                frequencies.add(frequencyInC);
+            }
+            Collections.sort(frequencies);
+            Collections.reverse(frequencies);
+            // If first (max) element exists once, this is the frequency of the majority class label
+            boolean majorityClassExists = Collections.frequency(frequencies, frequencies.get(0)) == 1;
+
+            if (majorityClassExists) {
+                // Records with other than majority class label get penalized
+                counts[1] = entry.count - frequencies.get(0);
+            } else {
+                // All records get penalized
+                counts[2] = entry.count;
+            }
+        }
+        return counts;
+    }
+    
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node,
+                                                                      final HashGroupify g) {
+        // Counts for suppressed cells [0], cells with class label different from majority class label [1], cells in entry without majority class label [2]
+        int[] counts = new int[3];
 
-        // The total number of groups with and without suppression
-        double groupsWithSuppression = 0;
-        double groupsWithoutSuppression = 0;
-        double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
-        double sFactor = super.getGeneralizationFactor(); // Note: factors are switched on purpose
-        
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count > 0) {
-                groupsWithSuppression += m.isNotOutlier ? 1 : 0;
-                groupsWithoutSuppression++;
+                updateEntryCounts(counts, m);
             }
             m = m.nextOrdered;
         }
-        
-        // If there are suppressed tuples, they form one additional group
-        boolean someRecordsSuppressed = (groupsWithSuppression != groupsWithoutSuppression);
-        groupsWithSuppression *= gFactor;
-        groupsWithSuppression = !someRecordsSuppressed ? groupsWithSuppression : groupsWithSuppression + 1 * sFactor;
-        
-        // Compute AECS
-        return new ILSingleDimensionalWithBound(getNumTuples() / groupsWithSuppression,
-                                                getNumTuples() / (groupsWithoutSuppression * gFactor));
+
+        // Collect penalties
+        double penalties = counts[0] * penaltySuppressed + counts[1] * penaltyDifferentFromMajority + counts[2] * penaltyNoMajority;
+
+        // Return
+        return new ILSingleDimensionalWithBound(penalties / getNumTuples());
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
-        return new ILSingleDimensionalWithBound(entry.count);
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node,
+                                                                      HashGroupifyEntry entry) {
+        double result = 0;
+        if (entry.count > 0) {
+            // Counts for suppressed cells [0], cells with class label different from majority class label [1], cells in entry without majority class label [2]
+            int[] counts = new int[3];
+            updateEntryCounts(counts, entry);
+            // Collect penalties
+            double penalties = counts[0] * penaltySuppressed + counts[1] * penaltyDifferentFromMajority + counts[2] * penaltyNoMajority;
+            result = penalties / entry.count;
+        }
+        return new ILSingleDimensionalWithBound(result);
     }
 
     @Override
@@ -170,17 +211,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node,
                                                         HashGroupify groupify) {
-        // Ignore suppression for the lower bound
-        int groups = 0;
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            groups += (m.count > 0) ? 1 : 0;
-            m = m.nextOrdered;
-        }
-        
-        // Compute AECS
-        double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
-        return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
+        return null;
     }
 
     @Override
@@ -210,5 +241,24 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             responseVariables[i] = indices.get(i);
         }
         this.responseVariablesNotAnalyzed = definition.getResponseVariables().size() - responseVariables.length;
+    }
+    
+    /**
+     * For an entry, update counts for suppressed cells, cells with class label different from majority class label and cells in entry without majority class label.
+     * @param counts
+     * @param m
+     */
+    private void updateEntryCounts(int[] counts, HashGroupifyEntry m) {
+        // For each response variable
+        for (int index : responseVariables) {
+            // Get counts for suppressed, different from majority and no majority class
+            int[] countsForVar = getCountsForEntry(m, index);
+            counts[0] += countsForVar[0];
+            counts[1] += countsForVar[1];
+            counts[2] += countsForVar[2];
+        }
+
+        // Response variables not analyzed, count cells if suppressed
+        counts[0] += m.isNotOutlier ? 0 : responseVariablesNotAnalyzed;
     }
 }
