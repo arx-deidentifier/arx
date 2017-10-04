@@ -890,12 +890,14 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         this.folder = new ComponentTitledFolder(root, null, null, null, true, false);
         
         // Precision and recall
-        Composite item1 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.27"), null); //$NON-NLS-1$
+        Composite item1 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.27"), //$NON-NLS-1$
+                                            getController().getResources().getManagedImage("precision_recall.png")); //$NON-NLS-1$
         item1.setLayoutData(SWTUtil.createFillGridData());
         this.precisionRecallCreateControl(item1);
         
         // Precision and recall
-        Composite item2 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.28"), null); //$NON-NLS-1$
+        Composite item2 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.28"), //$NON-NLS-1$
+                                            getController().getResources().getManagedImage("roc.png")); //$NON-NLS-1$
         item2.setLayoutData(SWTUtil.createFillGridData());
         this.rocCreateControl(item2);
         
