@@ -260,7 +260,7 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
         Arrays.fill(min, 0d);
         double[] max = new double[getDimensions()];
         for (int i=0; i<distances.length; i++) {
-            max[i] = this.distances[i].getAverageDistance();
+            max[i] = this.distances[i].getAverageDistance() * super.getNumRecords(config, input);
         }
         super.setMin(min);
         super.setMax(max);
