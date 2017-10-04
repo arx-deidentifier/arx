@@ -41,19 +41,19 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     /** SVUID. */
-    private static final long serialVersionUID             = -7940144844158472876L;
+    private static final long serialVersionUID = -7940144844158472876L;
 
     /** Indices of response variables in distributions */
-    private int[]             responseVariables            = null;
+    private int[]             responseVariables               = null;
     /** Number of response variables in quasi-identifiers */
     private int               responseVariablesNotAnalyzed = 0;
 
     /** Penalty. TODO: Make configurable */
-    private double            penaltySuppressed            = 0.5d;
+    private double            penaltySuppressed               = 0.5d;
     /** Penalty. TODO: Make configurable */
-    private double            penaltyDifferentFromMajority = 1d;
+    private double            penaltyDifferentFromMajority    = 1d;
     /** Penalty. TODO: Make configurable */
-    private double            penaltyNoMajority            = 1d;
+    private double            penaltyNoMajority               = 1d;
 
     /**
      * Creates a new instance.
@@ -168,8 +168,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node,
-                                                                      final HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         // Counts for suppressed cells [0], cells with class label different from majority class label [1], cells in entry without majority class label [2]
         int[] counts = new int[3];
 
@@ -189,8 +188,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node,
-                                                                      HashGroupifyEntry entry) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double result = 0;
         if (entry.count > 0) {
             // Counts for suppressed cells [0], cells with class label different from majority class label [1], cells in entry without majority class label [2]
