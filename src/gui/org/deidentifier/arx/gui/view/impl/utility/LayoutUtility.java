@@ -52,7 +52,6 @@ public class LayoutUtility implements ILayout {
     public static enum ViewUtilityType {
         CLASSIFICATION,
         CLASSIFICATION_PRECISION_RECALL,
-        CLASSIFICATION_ROC,
         DATA,
         CONTINGENCY,
         CONTINGENCY_TABLE,
@@ -160,18 +159,10 @@ public class LayoutUtility implements ILayout {
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
         new ViewStatisticsClassificationInput(classificationInput, controller);
-
-        Composite classificationInputROCCurves = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.12"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
-        classificationInputROCCurves.setLayout(new FillLayout());
-        new ViewStatisticsClassificationROCCurves(classificationInputROCCurves, controller, ModelPart.INPUT);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
         new ViewStatisticsClassificationOutput(classificationOutput, controller);
-
-        Composite classificationOutputROCCurves = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.12"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
-        classificationOutputROCCurves.setLayout(new FillLayout());
-        new ViewStatisticsClassificationROCCurves(classificationOutputROCCurves, controller, ModelPart.OUTPUT);
 
         Composite qualityInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
         qualityInput.setLayout(new FillLayout());
@@ -213,7 +204,7 @@ public class LayoutUtility implements ILayout {
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
                 }
                 // Hack to show classification stuff
-                if (dataInputView.getSelectionIndex() == 1 || dataInputView.getSelectionIndex() == 2) {
+                if (dataInputView.getSelectionIndex() == 1) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }
@@ -233,7 +224,7 @@ public class LayoutUtility implements ILayout {
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
                 }
                 // Hack to show classification stuff
-                if (dataOutputView.getSelectionIndex() == 1 || dataOutputView.getSelectionIndex() == 2) {
+                if (dataOutputView.getSelectionIndex() == 1) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }

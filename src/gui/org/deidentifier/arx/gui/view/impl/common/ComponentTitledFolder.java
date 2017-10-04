@@ -170,8 +170,10 @@ public class ComponentTitledFolder implements IComponent {
         this.folder.setSimple(false);
         
         // Create help button
-        if (bar == null) SWTUtil.createHelpButton(controller, folder, id, helpids);
-        else createBar(controller, folder, bar);
+        if (controller != null) {
+            if (bar == null) SWTUtil.createHelpButton(controller, folder, id, helpids);
+            else createBar(controller, folder, bar);
+        }
 
         // Prevent closing
         this.folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
