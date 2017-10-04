@@ -402,7 +402,12 @@ public class ARXAnonymizer { // NO_UCD
         // Check response variables
         if (config.getQualityModel() instanceof MetricSDClassification) {
             if (handle.getDefinition().getResponseVariables().isEmpty()) {
-                    throw new IllegalArgumentException("At least one response variable must be defined");
+                throw new IllegalArgumentException("At least one response variable must be defined");
+            }
+            for (String attribute : handle.getDefinition().getResponseVariables()) {
+                if (handle.getDefinition().getIdentifyingAttributes().contains(attribute)) {
+                    throw new IllegalArgumentException("Response variables must not be identifying");
+                }
             }
         }
         
