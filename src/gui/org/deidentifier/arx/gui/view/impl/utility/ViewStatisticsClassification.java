@@ -164,7 +164,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 if (item.getText(0).equals(super.getModel().getSelectedAttribute())) {
                     precisionRecallTable.select(index);
                     if (item.getData() != null && item.getData() instanceof PrecisionRecallMatrix) {
-                        setPrecisionRecallChartSeries((PrecisionRecallMatrix) item.getData());
+                        precisionRecallSetChartSeries((PrecisionRecallMatrix) item.getData());
                     }
                     break;
                 }
@@ -177,7 +177,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             for (int i = 0; i < rocCombo.getItemCount(); i++) {
                 if (rocCombo.getItem(i).equals(selectedAttribute)) {
                     rocCombo.select(i);
-                    updateROCTableAndChart(selectedAttribute);
+                    rocUpdateTableAndChart(selectedAttribute);
                     break;
                 }
             }
@@ -189,7 +189,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 if (item.getText(0).equals(super.getModel().getSelectedClassValue())) {
                     precisionRecallTable.select(index);
                     if (item.getData() != null) {
-                        setROCChartSeries((ROCCurve[]) item.getData());
+                        rocSetChartSeries((ROCCurve[]) item.getData());
                     }
                     return;
                 }
@@ -199,11 +199,46 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     }
 
     /**
+     * Returns the value of the given point
+     * 
+     * @param data
+     * @param value
+     * @return
+     */
+    private int getIndex(double[] data, double value){
+        int index = Arrays.binarySearch(data, value);
+        if (index < 0) {
+            index = -index + 1;
+        }
+        if (index > data.length - 1) {
+            index = data.length - 1;
+        }
+        return index;
+    }
+
+    /**
+     * Returns the index of the given value, 0 if it is not found
+     * @param values
+     * @param value
+     * @return
+     */
+    private int getIndexOf(String[] values, String value) {
+        int index = 0;
+        for (String element : values) {
+            if (element.equals(value)) {
+                return index; 
+            }
+            index++;
+        }
+        return 0;
+    }
+
+    /**
      * Builds the precision/recall view
      * @param parent
      * @return
      */
-    private Control createPrecisionRecallControl(Composite parent) {
+    private Control precisionRecallCreateControl(Composite parent) {
 
         // Root
         this.precisionRecallRoot = parent;
@@ -239,7 +274,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         SWTUtil.createGenericTooltip(precisionRecallTable);
 
         // Chart and sash
-        resetPrecisionRecallChart();
+        precisionRecallResetChart();
         this.precisionRecallSash.setWeights(new int[] {2, 2});
         
         // Tool tip
@@ -295,7 +330,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                         if (rect.contains(pt)) {
                             if (item.getData() != null &&
                                 item.getData() instanceof PrecisionRecallMatrix) {
-                                setPrecisionRecallChartSeries((PrecisionRecallMatrix) item.getData());
+                                precisionRecallSetChartSeries((PrecisionRecallMatrix) item.getData());
                             }
                             getModel().setSelectedAttribute(item.getText(0));
                             getController().update(new ModelEvent(ViewStatisticsClassification.this,
@@ -316,193 +351,10 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         return this.precisionRecallRoot;
     }
 
-    private Control createROCControl(Composite parent) {
-        
-        // Root
-        this.rocRoot = parent;
-        this.rocRoot.setLayout(new FillLayout());
-        
-        // Shash
-        this.rocSash = new SashForm(this.rocRoot, SWT.VERTICAL);
-        
-        final Composite composite = new Composite(this.rocSash, SWT.NONE);
-        composite.setLayout(SWTUtil.createGridLayout(1));
-
-        // Table
-        this.rocTable = SWTUtil.createTableDynamic(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-        this.rocTable.setHeaderVisible(true);
-        this.rocTable.setLinesVisible(true);
-        this.rocTable.setMenu(new ClipboardHandlerTable(rocTable).getMenu());
-        this.rocTable.setLayoutData(SWTUtil.createFillGridData(2));
-
-        // Columns
-        String width = "50%"; //$NON-NLS-1$
-        if (getTarget() == ModelPart.OUTPUT) {
-            width = "33%"; //$NON-NLS-1$
-        }
-        DynamicTableColumn c = new DynamicTableColumn(rocTable, SWT.LEFT);
-        c.setWidth(width, "100px"); //$NON-NLS-1$
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.22")); //$NON-NLS-1$
-        c = new DynamicTableColumn(rocTable, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(rocTable, c);
-        c.setWidth(width, "100px"); //$NON-NLS-1$ 
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.23")); //$NON-NLS-1$
-        if (getTarget() == ModelPart.OUTPUT) {
-            c = new DynamicTableColumn(rocTable, SWT.LEFT);
-            SWTUtil.createColumnWithBarCharts(rocTable, c);
-            c.setWidth(width, "100px"); //$NON-NLS-1$ 
-            c.setText(Resources.getMessage("ViewStatisticsClassificationInput.24")); //$NON-NLS-1$           
-        }
-        for (final TableColumn col : rocTable.getColumns()) {
-            col.pack();
-        }
-        SWTUtil.createGenericTooltip(rocTable);
-        
-        // Combo for selecting a class attributes
-        final Composite composite2 = new Composite(composite, SWT.NONE);
-        composite2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        composite2.setLayout(SWTUtil.createGridLayout(2, false));
-        final Label lblClassAtt = new Label(composite2, SWT.PUSH);
-        lblClassAtt.setText(Resources.getMessage("ViewStatisticsClassificationInput.21")); //$NON-NLS-1$        
-        this.rocCombo = new Combo(composite2, SWT.READ_ONLY);
-        this.rocCombo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.rocCombo.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                if(rocCombo.getSelectionIndex() >=0){
-                    String selectedClass = rocCombo.getItem(rocCombo.getSelectionIndex());
-                    updateROCTableAndChart(selectedClass);
-                    getModel().setSelectedAttribute(selectedClass);
-                    getController().update(new ModelEvent(ViewStatisticsClassification.this,
-                                                          ModelPart.SELECTED_ATTRIBUTE,
-                                                          selectedClass));
-                }
-            }
-        });
-        
-        // Chart and sash
-        resetROCChart();
-        this.rocSash.setWeights(new int[] {2, 2});
-        
-        // Tool tip
-        final StringBuilder builder = new StringBuilder();
-        this.rocSash.addListener(SWT.MouseMove, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                if (rocChart != null) {
-                    IAxisSet axisSet = rocChart.getAxisSet();
-                    if (axisSet != null) {
-                        IAxis xAxis = axisSet.getXAxis(0);
-                        IAxis yAxis = axisSet.getYAxis(0);
-                        if (xAxis != null && yAxis != null) {
-                            Point cursor = rocChart.getPlotArea().toControl(Display.getCurrent().getCursorLocation());
-                            if (cursor.x >= 0 && cursor.x < rocChart.getPlotArea().getSize().x && cursor.y >= 0 && cursor.y < rocChart.getPlotArea().getSize().y) {
-                                ISeries[] data = rocChart.getSeriesSet().getSeries();
-                                if (data != null && data.length > 0) {
-                                    double[] x;
-                                    double[] y;
-                                    int index;
-                                    if (getTarget() == ModelPart.OUTPUT) {
-                                        x = data[1].getXSeries();
-                                        y = data[1].getYSeries();
-                                    } else {
-                                        x = data[0].getXSeries();
-                                        y = data[0].getYSeries();
-                                    }
-                                    index = getIndex(x, xAxis.getDataCoordinate(cursor.x));
-                                    if (index >= 0) {
-                                        builder.setLength(0);
-                                        builder.append("("); //$NON-NLS-1$
-                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.20")).append(": "); //$NON-NLS-1$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(x[index])).append(", "); //$NON-NLS-1$
-                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.19")).append(": "); //$NON-NLS-1$ //$NON-NLS-3$
-                                        builder.append(SWTUtil.getPrettyString(y[index]));
-                                        builder.append(")"); //$NON-NLS-1$
-                                        rocSash.setToolTipText(builder.toString());
-                                        return;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    rocSash.setToolTipText(null);
-                }
-            }
-        });
-
-        // Update curve
-        rocTable.addListener(SWT.MouseDown, new Listener() {
-            public void handleEvent(Event event) {
-                Rectangle clientArea = rocTable.getClientArea();
-                Point pt = new Point(event.x, event.y);
-                int index = rocTable.getTopIndex();
-                while (index < rocTable.getItemCount()) {
-                    boolean visible = false;
-                    TableItem item = rocTable.getItem(index);
-                    for (int i = 0; i < rocTable.getColumnCount(); i++) {
-                        Rectangle rect = item.getBounds(i);
-                        if (rect.contains(pt)) {
-                            if (item.getData() != null) {
-                                setROCChartSeries((ROCCurve[]) item.getData());
-                            }
-                            getModel().setSelectedClassValue(item.getText(0));
-                            getController().update(new ModelEvent(ViewStatisticsClassification.this,
-                                                                  ModelPart.SELECTED_CLASS_VALUE,
-                                                                  item.getText(0)));
-                            return;
-                        }
-                        if (!visible && rect.intersects(clientArea)) {
-                            visible = true;
-                        }
-                    }
-                    if (!visible) return;
-                    index++;
-                }
-            }
-        });
-
-        return this.rocRoot;
-    }
-
-    /**
-     * Returns the value of the given point
-     * 
-     * @param data
-     * @param value
-     * @return
-     */
-    private int getIndex(double[] data, double value){
-        int index = Arrays.binarySearch(data, value);
-        if (index < 0) {
-            index = -index + 1;
-        }
-        if (index > data.length - 1) {
-            index = data.length - 1;
-        }
-        return index;
-    }
-
-    /**
-     * Returns the index of the given value, 0 if it is not found
-     * @param values
-     * @param value
-     * @return
-     */
-    private int getIndexOf(String[] values, String value) {
-        int index = 0;
-        for (String element : values) {
-            if (element.equals(value)) {
-                return index; 
-            }
-            index++;
-        }
-        return 0;
-    }
-    
     /**
      * Resets the chart
      */
-    private void resetPrecisionRecallChart() {
+    private void precisionRecallResetChart() {
 
         if (precisionRecallChart != null) {
             precisionRecallChart.dispose();
@@ -581,11 +433,228 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         precisionRecallChart.setEnabled(false);
         updateCategories(precisionRecallChart);
     }
+    
+    /**
+     * Updates the chart with a new matrix
+     * @param matrix
+     */
+    private void precisionRecallSetChartSeries(PrecisionRecallMatrix matrix) {
+        
+        // Init data
+        String[] xAxisLabels = new String[matrix.getConfidenceThresholds().length];
+        double[] ySeriesPrecision = new double[matrix.getConfidenceThresholds().length];
+        double[] ySeriesRecall = new double[matrix.getConfidenceThresholds().length];
+        double[] ySeriesFscore = new double[matrix.getConfidenceThresholds().length];
+        for (int i = 0; i < xAxisLabels.length; i++) {
+            xAxisLabels[i] = SWTUtil.getPrettyString(matrix.getConfidenceThresholds()[i] * 100d);
+            ySeriesPrecision[i] = matrix.getPrecision()[i] * 100d;
+            ySeriesRecall[i] = matrix.getRecall()[i] * 100d;
+            ySeriesFscore[i] = matrix.getFscore()[i] * 100d;
+        }
+        
+        precisionRecallChart.setRedraw(false);
 
+        ISeriesSet seriesSet = precisionRecallChart.getSeriesSet();
+
+        ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.15")); //$NON-NLS-1$
+        series1.getLabel().setVisible(false);
+        series1.getLabel().setFont(precisionRecallChart.getFont());
+        series1.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
+        series1.setYSeries(ySeriesPrecision);
+        series1.setAntialias(SWT.ON);
+        series1.setSymbolType(PlotSymbolType.NONE);
+        series1.enableArea(true);
+        
+        ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
+        series2.getLabel().setVisible(false);
+        series2.getLabel().setFont(precisionRecallChart.getFont());
+        series2.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+        series2.setYSeries(ySeriesRecall);
+        series2.setSymbolType(PlotSymbolType.NONE);
+        series2.enableArea(true);
+        
+        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.18")); //$NON-NLS-1$
+        series3.getLabel().setVisible(false);
+        series3.getLabel().setFont(precisionRecallChart.getFont());
+        series3.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
+        series3.setYSeries(ySeriesFscore);
+        series3.setSymbolType(PlotSymbolType.NONE);
+        series3.enableArea(true);
+        
+        seriesSet.bringToFront(Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
+        
+        precisionRecallChart.getLegend().setVisible(true);
+        precisionRecallChart.getLegend().setPosition(SWT.TOP);
+
+        IAxisSet axisSet = precisionRecallChart.getAxisSet();
+
+        IAxis yAxis = axisSet.getYAxis(0);
+        yAxis.setRange(new Range(0d, 100d));
+
+        IAxis xAxis = axisSet.getXAxis(0);
+        xAxis.setCategorySeries(xAxisLabels);
+        xAxis.adjustRange();
+        updateCategories(precisionRecallChart);
+
+        precisionRecallChart.setRedraw(true);
+        precisionRecallChart.updateLayout();
+        precisionRecallChart.update();
+        precisionRecallChart.redraw();
+    }
+
+    private Control rocCreateControl(Composite parent) {
+        
+        // Root
+        this.rocRoot = parent;
+        this.rocRoot.setLayout(new FillLayout());
+        
+        // Shash
+        this.rocSash = new SashForm(this.rocRoot, SWT.VERTICAL);
+        
+        final Composite composite = new Composite(this.rocSash, SWT.NONE);
+        composite.setLayout(SWTUtil.createGridLayout(1));
+
+        // Table
+        this.rocTable = SWTUtil.createTableDynamic(composite, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+        this.rocTable.setHeaderVisible(true);
+        this.rocTable.setLinesVisible(true);
+        this.rocTable.setMenu(new ClipboardHandlerTable(rocTable).getMenu());
+        this.rocTable.setLayoutData(SWTUtil.createFillGridData(2));
+
+        // Columns
+        String width = "50%"; //$NON-NLS-1$
+        if (getTarget() == ModelPart.OUTPUT) {
+            width = "33%"; //$NON-NLS-1$
+        }
+        DynamicTableColumn c = new DynamicTableColumn(rocTable, SWT.LEFT);
+        c.setWidth(width, "100px"); //$NON-NLS-1$
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.22")); //$NON-NLS-1$
+        c = new DynamicTableColumn(rocTable, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(rocTable, c);
+        c.setWidth(width, "100px"); //$NON-NLS-1$ 
+        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.23")); //$NON-NLS-1$
+        if (getTarget() == ModelPart.OUTPUT) {
+            c = new DynamicTableColumn(rocTable, SWT.LEFT);
+            SWTUtil.createColumnWithBarCharts(rocTable, c);
+            c.setWidth(width, "100px"); //$NON-NLS-1$ 
+            c.setText(Resources.getMessage("ViewStatisticsClassificationInput.24")); //$NON-NLS-1$           
+        }
+        for (final TableColumn col : rocTable.getColumns()) {
+            col.pack();
+        }
+        SWTUtil.createGenericTooltip(rocTable);
+        
+        // Combo for selecting a class attributes
+        final Composite composite2 = new Composite(composite, SWT.NONE);
+        composite2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        composite2.setLayout(SWTUtil.createGridLayout(2, false));
+        final Label lblClassAtt = new Label(composite2, SWT.PUSH);
+        lblClassAtt.setText(Resources.getMessage("ViewStatisticsClassificationInput.21")); //$NON-NLS-1$        
+        this.rocCombo = new Combo(composite2, SWT.READ_ONLY);
+        this.rocCombo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.rocCombo.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                if(rocCombo.getSelectionIndex() >=0){
+                    String selectedClass = rocCombo.getItem(rocCombo.getSelectionIndex());
+                    rocUpdateTableAndChart(selectedClass);
+                    getModel().setSelectedAttribute(selectedClass);
+                    getController().update(new ModelEvent(ViewStatisticsClassification.this,
+                                                          ModelPart.SELECTED_ATTRIBUTE,
+                                                          selectedClass));
+                }
+            }
+        });
+        
+        // Chart and sash
+        rocResetChart();
+        this.rocSash.setWeights(new int[] {2, 2});
+        
+        // Tool tip
+        final StringBuilder builder = new StringBuilder();
+        this.rocSash.addListener(SWT.MouseMove, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (rocChart != null) {
+                    IAxisSet axisSet = rocChart.getAxisSet();
+                    if (axisSet != null) {
+                        IAxis xAxis = axisSet.getXAxis(0);
+                        IAxis yAxis = axisSet.getYAxis(0);
+                        if (xAxis != null && yAxis != null) {
+                            Point cursor = rocChart.getPlotArea().toControl(Display.getCurrent().getCursorLocation());
+                            if (cursor.x >= 0 && cursor.x < rocChart.getPlotArea().getSize().x && cursor.y >= 0 && cursor.y < rocChart.getPlotArea().getSize().y) {
+                                ISeries[] data = rocChart.getSeriesSet().getSeries();
+                                if (data != null && data.length > 0) {
+                                    double[] x;
+                                    double[] y;
+                                    int index;
+                                    if (getTarget() == ModelPart.OUTPUT) {
+                                        x = data[1].getXSeries();
+                                        y = data[1].getYSeries();
+                                    } else {
+                                        x = data[0].getXSeries();
+                                        y = data[0].getYSeries();
+                                    }
+                                    index = getIndex(x, xAxis.getDataCoordinate(cursor.x));
+                                    if (index >= 0) {
+                                        builder.setLength(0);
+                                        builder.append("("); //$NON-NLS-1$
+                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.20")).append(": "); //$NON-NLS-1$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(x[index])).append(", "); //$NON-NLS-1$
+                                        builder.append(Resources.getMessage("ViewStatisticsClassificationInput.19")).append(": "); //$NON-NLS-1$ //$NON-NLS-3$
+                                        builder.append(SWTUtil.getPrettyString(y[index]));
+                                        builder.append(")"); //$NON-NLS-1$
+                                        rocSash.setToolTipText(builder.toString());
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    rocSash.setToolTipText(null);
+                }
+            }
+        });
+
+        // Update curve
+        rocTable.addListener(SWT.MouseDown, new Listener() {
+            public void handleEvent(Event event) {
+                Rectangle clientArea = rocTable.getClientArea();
+                Point pt = new Point(event.x, event.y);
+                int index = rocTable.getTopIndex();
+                while (index < rocTable.getItemCount()) {
+                    boolean visible = false;
+                    TableItem item = rocTable.getItem(index);
+                    for (int i = 0; i < rocTable.getColumnCount(); i++) {
+                        Rectangle rect = item.getBounds(i);
+                        if (rect.contains(pt)) {
+                            if (item.getData() != null) {
+                                rocSetChartSeries((ROCCurve[]) item.getData());
+                            }
+                            getModel().setSelectedClassValue(item.getText(0));
+                            getController().update(new ModelEvent(ViewStatisticsClassification.this,
+                                                                  ModelPart.SELECTED_CLASS_VALUE,
+                                                                  item.getText(0)));
+                            return;
+                        }
+                        if (!visible && rect.intersects(clientArea)) {
+                            visible = true;
+                        }
+                    }
+                    if (!visible) return;
+                    index++;
+                }
+            }
+        });
+
+        return this.rocRoot;
+    }
+    
+    
     /**
      * Resets the chart
      */
-    private void resetROCChart() {
+    private void rocResetChart() {
 
         if (rocChart != null) {
             rocChart.dispose();
@@ -664,75 +733,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         rocChart.setEnabled(false);
         updateCategories(rocChart);
     }
-    
-    
-    /**
-     * Updates the chart with a new matrix
-     * @param matrix
-     */
-    private void setPrecisionRecallChartSeries(PrecisionRecallMatrix matrix) {
-        
-        // Init data
-        String[] xAxisLabels = new String[matrix.getConfidenceThresholds().length];
-        double[] ySeriesPrecision = new double[matrix.getConfidenceThresholds().length];
-        double[] ySeriesRecall = new double[matrix.getConfidenceThresholds().length];
-        double[] ySeriesFscore = new double[matrix.getConfidenceThresholds().length];
-        for (int i = 0; i < xAxisLabels.length; i++) {
-            xAxisLabels[i] = SWTUtil.getPrettyString(matrix.getConfidenceThresholds()[i] * 100d);
-            ySeriesPrecision[i] = matrix.getPrecision()[i] * 100d;
-            ySeriesRecall[i] = matrix.getRecall()[i] * 100d;
-            ySeriesFscore[i] = matrix.getFscore()[i] * 100d;
-        }
-        
-        precisionRecallChart.setRedraw(false);
-
-        ISeriesSet seriesSet = precisionRecallChart.getSeriesSet();
-
-        ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.15")); //$NON-NLS-1$
-        series1.getLabel().setVisible(false);
-        series1.getLabel().setFont(precisionRecallChart.getFont());
-        series1.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-        series1.setYSeries(ySeriesPrecision);
-        series1.setAntialias(SWT.ON);
-        series1.setSymbolType(PlotSymbolType.NONE);
-        series1.enableArea(true);
-        
-        ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
-        series2.getLabel().setVisible(false);
-        series2.getLabel().setFont(precisionRecallChart.getFont());
-        series2.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
-        series2.setYSeries(ySeriesRecall);
-        series2.setSymbolType(PlotSymbolType.NONE);
-        series2.enableArea(true);
-        
-        ILineSeries series3 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewStatisticsClassificationInput.18")); //$NON-NLS-1$
-        series3.getLabel().setVisible(false);
-        series3.getLabel().setFont(precisionRecallChart.getFont());
-        series3.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN));
-        series3.setYSeries(ySeriesFscore);
-        series3.setSymbolType(PlotSymbolType.NONE);
-        series3.enableArea(true);
-        
-        seriesSet.bringToFront(Resources.getMessage("ViewStatisticsClassificationInput.16")); //$NON-NLS-1$
-        
-        precisionRecallChart.getLegend().setVisible(true);
-        precisionRecallChart.getLegend().setPosition(SWT.TOP);
-
-        IAxisSet axisSet = precisionRecallChart.getAxisSet();
-
-        IAxis yAxis = axisSet.getYAxis(0);
-        yAxis.setRange(new Range(0d, 100d));
-
-        IAxis xAxis = axisSet.getXAxis(0);
-        xAxis.setCategorySeries(xAxisLabels);
-        xAxis.adjustRange();
-        updateCategories(precisionRecallChart);
-
-        precisionRecallChart.setRedraw(true);
-        precisionRecallChart.updateLayout();
-        precisionRecallChart.update();
-        precisionRecallChart.redraw();
-    }
 
 
     /**
@@ -740,7 +740,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
      * 
      * @param data
      */
-    private void setROCChartSeries(ROCCurve[] data) {
+    private void rocSetChartSeries(ROCCurve[] data) {
         
         ROCCurve original = data[0];
         ROCCurve output = data[1];
@@ -798,31 +798,11 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     }
 
     /**
-     * Makes the chart show category labels or not.
-     */
-    private void updateCategories(Chart chart){
-        if (chart != null){
-            IAxisSet axisSet = chart.getAxisSet();
-            if (axisSet != null) {
-                IAxis xAxis = axisSet.getXAxis(0);
-                if (xAxis != null) {
-                    String[] series = xAxis.getCategorySeries();
-                    if (series != null) {
-                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
-                        xAxis.enableCategory(enoughSpace);
-                        xAxis.getTick().setVisible(enoughSpace);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Updates class values and AUC in table and roc curve according to this clazz.
      * 
      * @param clazz
      */
-    private void updateROCTableAndChart(String clazz){
+    private void rocUpdateTableAndChart(String clazz){
         
         // Check
         if (originalRocCurves.isEmpty() || !originalRocCurves.containsKey(clazz)) {
@@ -863,7 +843,27 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         // Update
         if (!values.isEmpty()) {
             rocTable.select(0);
-            setROCChartSeries((ROCCurve[])rocTable.getItem(0).getData());
+            rocSetChartSeries((ROCCurve[])rocTable.getItem(0).getData());
+        }
+    }
+
+    /**
+     * Makes the chart show category labels or not.
+     */
+    private void updateCategories(Chart chart){
+        if (chart != null){
+            IAxisSet axisSet = chart.getAxisSet();
+            if (axisSet != null) {
+                IAxis xAxis = axisSet.getXAxis(0);
+                if (xAxis != null) {
+                    String[] series = xAxis.getCategorySeries();
+                    if (series != null) {
+                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
+                        xAxis.enableCategory(enoughSpace);
+                        xAxis.getTick().setVisible(enoughSpace);
+                    }
+                }
+            }
         }
     }
     
@@ -876,14 +876,14 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         ComponentTitledFolder folder = new ComponentTitledFolder(root, null, null, null, true, false);
         
         // Precision and recall
-        Composite item1 = folder.createItem("Precision and recall", null);
+        Composite item1 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.27"), null); //$NON-NLS-1$
         item1.setLayoutData(SWTUtil.createFillGridData());
-        this.createPrecisionRecallControl(item1);
+        this.precisionRecallCreateControl(item1);
         
         // Precision and recall
-        Composite item2 = folder.createItem("ROC curve analysis", null);
+        Composite item2 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.28"), null); //$NON-NLS-1$
         item2.setLayoutData(SWTUtil.createFillGridData());
-        this.createROCControl(item2);
+        this.rocCreateControl(item2);
         
         // Return
         return root;
@@ -909,7 +909,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             i.dispose();
         }
         precisionRecallTable.setRedraw(true);
-        resetPrecisionRecallChart();
+        precisionRecallResetChart();
         
         // ROC
         rocTable.setRedraw(false);
@@ -924,7 +924,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         if (originalRocCurves != null) {
             originalRocCurves.clear();
         }
-        resetROCChart();
+        rocResetChart();
         
         // Reset view
         setStatusEmpty();
@@ -1002,7 +1002,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 // Update precision/recall view
                 precisionRecallTable.setFocus();
                 precisionRecallTable.select(0);
-                setPrecisionRecallChartSeries(matrixes.get(0));
+                precisionRecallSetChartSeries(matrixes.get(0));
                 precisionRecallRoot.layout();
                 precisionRecallSash.setWeights(new int[] {2, 2});
                 
@@ -1012,7 +1012,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 rocCombo.select(index);
                 
                 // Update ROC View
-                updateROCTableAndChart(classes[index]);
+                rocUpdateTableAndChart(classes[index]);
                 rocRoot.layout();
                 rocSash.setWeights(new int[] {2, 2});
                 setStatusDone();
