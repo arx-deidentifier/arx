@@ -87,13 +87,18 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         if (rows == null) {
             throw new IllegalStateException("Metric must be initialized first");
         } else {
-            return new ILSingleDimensional(rows);
+            // Not analyzed response variables are only penalized if they are suppressed
+            double max = rows * responseVariablesNotAnalyzed * penaltySuppressed;
+            // Use maximal penalty for other response variables
+            max += rows * responseVariables.length * Math.max(penaltySuppressed, Math.max(penaltyDifferentFromMajority, penaltyNoMajority));
+            // Normalize by number of cells
+            return new ILSingleDimensional(max);
         }
     }
     
     @Override
     public ILSingleDimensional createMinInformationLoss() {
-        return new ILSingleDimensional(1d);
+        return new ILSingleDimensional(0d);
     }
     
     /**
@@ -184,7 +189,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         double penalties = counts[0] * penaltySuppressed + counts[1] * penaltyDifferentFromMajority + counts[2] * penaltyNoMajority;
 
         // Return
-        return new ILSingleDimensionalWithBound(penalties / getNumTuples());
+        return new ILSingleDimensionalWithBound(penalties);
     }
 
     @Override
@@ -195,8 +200,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             int[] counts = new int[3];
             updateEntryCounts(counts, entry);
             // Collect penalties
-            double penalties = counts[0] * penaltySuppressed + counts[1] * penaltyDifferentFromMajority + counts[2] * penaltyNoMajority;
-            result = penalties / entry.count;
+            result = counts[0] * penaltySuppressed + counts[1] * penaltyDifferentFromMajority + counts[2] * penaltyNoMajority;
         }
         return new ILSingleDimensionalWithBound(result);
     }
@@ -228,7 +232,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             int index = manager.getDataAnalyzed().getIndexOf(variable);
             if (index != -1) {
                 indices.add(index);
-                break;
             }
         }
         

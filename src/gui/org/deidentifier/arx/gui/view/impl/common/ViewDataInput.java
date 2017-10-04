@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.MenuItem;
  * A view on a <code>Data</code> object.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class ViewDataInput extends ViewData {
  
@@ -151,7 +152,7 @@ public class ViewDataInput extends ViewData {
             // Update the attribute types
             table.getHeaderImages().clear();
             for (int i = 0; i < handle.getNumColumns(); i++) {
-                updateHeaderImage(i, definition.getAttributeType(handle.getAttributeName(i)));
+                updateHeaderImage(i, handle.getAttributeName(i), definition);
             }
             
             // Redraw
@@ -199,8 +200,23 @@ public class ViewDataInput extends ViewData {
     
                     // Update the attribute types
                     final int index = handle.getColumnIndexOf(attr);
-                    updateHeaderImage(index, definition.getAttributeType(attr));
+                    updateHeaderImage(index, attr, definition);
     
+                    // Redraw
+                    table.setEnabled(true);
+                    table.redraw();
+                }
+            }
+        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            
+            if (model != null) {
+                
+                DataHandle handle = getHandle();
+                
+                if (handle != null) {
+                    
+                    updateHeaderImages(handle, getDefinition());
+                    
                     // Redraw
                     table.setEnabled(true);
                     table.redraw();

@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * A view on a <code>Data</code> object.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public abstract class ViewData implements IView {
 
@@ -364,10 +365,24 @@ public abstract class ViewData implements IView {
      * @param index
      * @param type
      */
-    protected void updateHeaderImage(final int index, final AttributeType type) {
+    protected void updateHeaderImage(final int index, final String attribute, DataDefinition def) {
+        AttributeType type = def.getAttributeType(attribute);
         while (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }
-        table.getHeaderImages().set(index, controller.getResources().getImage(type));
+        table.getHeaderImages().set(index, controller.getResources().getImage(type, def.getResponseVariables().contains(attribute)));
+    }
+    
+    /**
+     * Updates the header images in the table.
+     * 
+     * @param handle
+     * @param def
+     */
+    protected void updateHeaderImages(DataHandle handle, DataDefinition def) {
+        for (int i = 0; i < handle.getNumColumns(); i++) {
+            String attribute = handle.getAttributeName(i);
+            updateHeaderImage(i, attribute, def);
+        }
     }
 }
