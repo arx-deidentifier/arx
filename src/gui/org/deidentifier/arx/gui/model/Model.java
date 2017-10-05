@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.gui.model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -490,25 +492,6 @@ public class Model implements Serializable {
     }
 
     /**
-     * Creates an ARXConfiguration for the subset.
-     *
-     * @return
-     */
-    public ARXConfiguration createSubsetConfig() {
-
-        // Create a temporary config
-        ARXConfiguration config = ARXConfiguration.create();
-
-        // Add an enclosure criterion
-        DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
-                                              getInputConfig().getResearchSubset());
-        config.addPrivacyModel(new Inclusion(subset));
-
-        // Return the config
-        return config;
-    }
-
-    /**
      * Returns the current anonymizer.
      *
      * @return
@@ -539,6 +522,23 @@ public class Model implements Serializable {
     }
 
     /**
+     * Returns the b-Likeness privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
+        if (this.bLikenessModel == null) {
+            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
+            }
+        }
+        return bLikenessModel;
+    }
+    
+    /**
      * Returns the classification model
      * @return
      */
@@ -548,7 +548,7 @@ public class Model implements Serializable {
         }
         return this.classificationModel;
     }
-    
+
     /**
      * Returns the clipboard.
      *
@@ -588,23 +588,6 @@ public class Model implements Serializable {
             }
         }
         return dDisclosurePrivacyModel;
-    }
-
-    /**
-     * Returns the b-Likeness privacy model.
-     *
-     * @return
-     */
-    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
-        if (this.bLikenessModel == null) {
-            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
-            DataHandle handle = inputConfig.getInput().getHandle();
-            for (int col = 0; col < handle.getNumColumns(); col++) {
-                String attribute = handle.getAttributeName(col);
-                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
-            }
-        }
-        return bLikenessModel;
     }
 
     /**
@@ -1440,6 +1423,30 @@ public class Model implements Serializable {
     }
 
     /**
+     * Sets the current output, deserialized from a project
+     *
+     * @param stream
+     * @param node
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    public void setOutput(final InputStream stream) throws ClassNotFoundException, IOException {
+        
+        // Backwards compatibility
+        if (stream == null) {
+            return;
+        }
+        this.outputNode = this.getSelectedNode();
+        if (this.outputNode != null) {
+            this.output = this.result.getOutput(stream, outputNode);
+            this.outputNodeAsString = Arrays.toString(outputNode.getTransformation());
+        } else {
+            this.output = null;
+            this.outputNodeAsString = null;
+        }
+    }
+
+    /**
      * Sets the output config.
      *
      * @param config
@@ -1487,13 +1494,6 @@ public class Model implements Serializable {
             optimalNodeAsString = null;
         }
         setModified();
-    }
-
-    /**
-     * Marks this project as saved.
-     */
-    public void setSaved() {
-        modified = false;
     }
 
     /**

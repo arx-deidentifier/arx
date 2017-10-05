@@ -87,8 +87,9 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
 
         int[] generalization = transformation.getGeneralization();
         double infoLoss = 1d;
+        entry.read();
         for (int dimension = 0; dimension < shares.length; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.next();
             int level = generalization[dimension];
             infoLoss *= shares[dimension].getShare(value, level);
         }

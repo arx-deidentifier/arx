@@ -173,8 +173,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
+                m.read();
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     result[dimension] += m.isNotOutlier ? share * gFactor :
@@ -226,8 +227,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         int[] transformation = node.getGeneralization();
 
         // Compute
+        entry.read();
         for (int dimension = 0; dimension < dimensionsGeneralized; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.next();
             int level = transformation[dimension];
             result[dimension] = (double) entry.count * shares[dimension].getShare(value, level);
         }
@@ -260,8 +262,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
+                m.read();
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     bound[dimension] += share * gFactor;

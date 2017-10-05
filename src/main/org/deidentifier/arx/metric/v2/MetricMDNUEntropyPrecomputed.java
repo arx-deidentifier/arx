@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -37,7 +38,10 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * array that maps identifiers to their frequency for all quasi-identifiers and
  * generalization levels. It further reduces the overhead induced by subsequent
  * calls by caching the results for previous columns and generalization levels.
- * TODO: Add reference
+ * See:<br>
+ * A. De Waal and L. Willenborg: 
+ * "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -311,8 +315,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
         
         // Create reference to the hierarchies
-        final int[][] data = input.getArray();
-        this.hierarchies = new int[data[0].length][][];
+        final DataMatrix data = input.getArray();
+        this.hierarchies = new int[data.getNumColumns()][][];
         for (int i = 0; i < hierarchies.length; i++) {
             this.hierarchies[i] = hierarchies[i].getArray();
         }

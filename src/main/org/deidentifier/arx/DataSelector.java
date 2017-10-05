@@ -36,7 +36,7 @@ import de.linearbits.objectselector.datatypes.DataType;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DataSelector {
+public class DataSelector { // NO_UCD
     
     /**
      * An accessor for data elements.

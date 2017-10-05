@@ -23,20 +23,12 @@ package org.deidentifier.arx.risk;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-class HIPAAMatcherAttributeName {
-    
-    /** TODO*/
+class HIPAAMatcherAttributeName { // NO_UCD
+
+    /** Field */
     private String value;
-    /** TODO*/
+    /** Field */
     private int    tolerance;
-    
-    /**
-     * Constructor.
-     * @param value
-     */
-    HIPAAMatcherAttributeName(String value) {
-        this(value, 0);
-    }
     
     /**
      * Constructor.

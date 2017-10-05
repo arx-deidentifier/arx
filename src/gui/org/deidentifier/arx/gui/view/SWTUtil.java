@@ -469,20 +469,6 @@ public class SWTUtil {
     }
 
     /**
-     * Creates grid data.
-     *
-     * @param i
-     * @return
-     */
-    public static Object createSpanColumnsGridData(final int i) {
-        final GridData d = new GridData();
-        d.grabExcessHorizontalSpace = false;
-        d.grabExcessVerticalSpace = false;
-        d.horizontalSpan = i;
-        return d;
-    }
-
-    /**
      * Returns a table. Implements hacks for fixing OSX bugs.
      * @param parent
      * @param style
@@ -710,18 +696,6 @@ public class SWTUtil {
     }
     
     /**
-     * Converts the integer value to a slider selection.
-     *
-     * @param min
-     * @param max
-     * @param value
-     * @return
-     */
-    public static int intToSlider(final int min, final int max, final int value) {
-        return doubleToSlider(min, max, value);
-    }
-    
-    /**
      * Are we running on an OSX system
      * @return
      */
@@ -766,17 +740,4 @@ public class SWTUtil {
         }
         return val;
     }
-
-    /**
-     * Converts the slider value to an integer.
-     *
-     * @param min
-     * @param max
-     * @param value
-     * @return
-     */
-    public static int sliderToInt(final int min, final int max, final int value) {
-        return (int)Math.round(sliderToDouble(min, max, value));
-    }
-
 }

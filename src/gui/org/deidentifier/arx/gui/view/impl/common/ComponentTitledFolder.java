@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
@@ -171,8 +170,10 @@ public class ComponentTitledFolder implements IComponent {
         this.folder.setSimple(false);
         
         // Create help button
-        if (bar == null) SWTUtil.createHelpButton(controller, folder, id, helpids);
-        else createBar(controller, folder, bar);
+        if (controller != null) {
+            if (bar == null) SWTUtil.createHelpButton(controller, folder, id, helpids);
+            else createBar(controller, folder, bar);
+        }
 
         // Prevent closing
         this.folder.addCTabFolder2Listener(new CTabFolder2Adapter() {
@@ -183,15 +184,6 @@ public class ComponentTitledFolder implements IComponent {
         });
     }
     
-    /**
-     * @param arg0
-     * @param arg1
-     * @see org.eclipse.swt.widgets.Widget#addListener(int, org.eclipse.swt.widgets.Listener)
-     */
-    public void addListener(int arg0, Listener arg1) {
-        folder.addListener(arg0, arg1);
-    }
-
     /**
      * Adds a selection listener.
      *
@@ -274,24 +266,6 @@ public class ComponentTitledFolder implements IComponent {
         return composite;
     }
 
-    /**
-     * Disposes the given item.
-     *
-     * @param text
-     */
-    public void disposeItem(String text) {
-        for (CTabItem item : folder.getItems()) {
-            if (item.getText().equals(text)) {
-                Iterator<TitledFolderEntry> iter = this.entries.iterator();
-                while (iter.hasNext()) {
-                    if (iter.next().control == item.getControl()) {
-                        iter.remove();
-                    }
-                }
-                item.dispose();
-            }
-        }
-    }
     
     /**
      * Returns the button item for the given text.
@@ -342,21 +316,6 @@ public class ComponentTitledFolder implements IComponent {
      */
     public Point getSize() {
         return folder.getSize();
-    }
-
-    /**
-     * Returns the tab item for the given text.
-     *
-     * @param text
-     * @return
-     */
-    public CTabItem getTabItem(String text) {
-        for (CTabItem item : folder.getItems()){
-            if (item.getText().equals(text)) {
-                return item;
-            }
-        }
-        return null;
     }
 
     /**

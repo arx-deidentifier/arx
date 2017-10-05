@@ -27,7 +27,6 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 import de.linearbits.swt.widgets.Knob;
@@ -181,18 +180,6 @@ public abstract class EditorCriterion<T extends ModelCriterion> {
      */
     protected abstract void parse(T model, boolean defaultParameters);
     
-    /**
-     * Updates the label and tool tip text.
-     *
-     * @param label
-     * @param value
-     */
-    protected void updateLabel(Label label, int value) {
-        String text = String.valueOf(value);
-        label.setText(" " + text);
-        label.setToolTipText(text);
-    }
-
     /**
      * Updates the label and tool tip text.
      *

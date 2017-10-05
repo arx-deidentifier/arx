@@ -97,13 +97,6 @@ public class StatisticsSummary<T> {
         }
         
         /**
-         * Clears the data
-         */
-        public void clear() {
-            this.values.clear();
-        }
-
-        /**
          * Returns a summary
          * @return
          */

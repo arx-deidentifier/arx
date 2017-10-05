@@ -18,6 +18,7 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +31,7 @@ import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -93,6 +95,7 @@ public class ARXResult {
      * @param optimum
      * @param time
      * @param solutionSpace
+     * @param in
      */
     public ARXResult(final DataHandle handle,
                      final DataDefinition definition,
@@ -115,7 +118,7 @@ public class ARXResult {
 
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final DataMatrix dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
         final DataManager manager = new DataManager(header,
                                                     dataArray,
@@ -194,8 +197,6 @@ public class ARXResult {
         this.solutionSpace = solutionSpace;
     }
 
-
-
     /**
      * Returns the configuration used.
      *
@@ -222,37 +223,6 @@ public class ARXResult {
         return optimalNode;
     }
 
-    /**
-     * Returns a handle to the data obtained by applying the optimal transformation. This method will not copy the buffer, 
-     * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
-     * obtained. Use this only if you know exactly what you are doing.<br>
-     * <br>
-     * This method is obsolete. Please use getOutput() instead.
-     * 
-     * @return
-     */
-    @Deprecated
-    public DataHandle getHandle() {
-        if (optimalNode == null) { return null; }
-        return getOutput(optimalNode, false);
-    }
-
-    /**
-     * Returns a handle to data obtained by applying the given transformation. This method will not copy the buffer, 
-     * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
-     * obtained. Use this only if you know exactly what you are doing.<br>
-     * <br>
-     * This method is obsolete. Please use getOutput(...) instead.
-     * 
-     * @param node the transformation
-     * 
-     * @return
-     */
-    @Deprecated
-    public DataHandle getHandle(ARXNode node) {
-        return getOutput(node, false);
-    }
-    
     /**
      * Returns the lattice.
      *
@@ -371,7 +341,7 @@ public class ARXResult {
         // Return
         return result;
     }
-
+    
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
@@ -385,6 +355,34 @@ public class ARXResult {
     public DataHandle getOutput(boolean fork) {
         if (optimalNode == null) { return null; }
         return getOutput(optimalNode, fork);
+    }
+
+    /**
+     * Internal method, not for external use
+     * 
+     * @param stream
+     * @param transformation
+     * @return
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    public DataHandle getOutput(InputStream stream, ARXNode transformation) throws ClassNotFoundException, IOException {
+        
+        // Create
+        DataHandleOutput result = new DataHandleOutput(this,
+                                                       registry,
+                                                       manager,
+                                                       stream,
+                                                       transformation,
+                                                       definition,
+                                                       config);
+        
+        // Lock
+        bufferLockedByHandle = result; 
+        bufferLockedByNode = transformation;
+        
+        // Return
+        return result;
     }
 
     /**
@@ -565,8 +563,8 @@ public class ARXResult {
         }
 
         // Check bounds
-        if (!Double.isNaN(records) && (records < 0d || records > 1d)) {
-            throw new IllegalArgumentException("Number of records to optimize must be in [0, 1]");
+        if (!Double.isNaN(records) && (records <= 0d || records > 1d)) {
+            throw new IllegalArgumentException("Number of records to optimize must be in ]0, 1]");
         }
         
         // Check bounds
@@ -592,7 +590,7 @@ public class ARXResult {
             throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
-        // We are now ready, to go
+        // We are now ready to go
         // Collect input and row indices
         RowSet rowset = RowSet.create(output.getNumRows());
         for (int row = 0; row < output.getNumRows(); row++) {
@@ -653,10 +651,10 @@ public class ARXResult {
         // Else, merge the results back into the given handle
         TransformedData data = result.checker.applyTransformation(result.optimum, output.getOutputBufferMicroaggregated().getDictionary());
         int newIndex = -1;
-        int[][] oldGeneralized = output.getOutputBufferGeneralized().getArray();
-        int[][] oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
-        int[][] newGeneralized = data.bufferGeneralized.getArray();
-        int[][] newMicroaggregated = data.bufferMicroaggregated.getArray();
+        DataMatrix oldGeneralized = output.getOutputBufferGeneralized().getArray();
+        DataMatrix oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();
+        DataMatrix newGeneralized = data.bufferGeneralized.getArray();
+        DataMatrix newMicroaggregated = data.bufferMicroaggregated.getArray();
         
         try {
             
@@ -664,12 +662,12 @@ public class ARXResult {
             for (int oldIndex = 0; oldIndex < rowset.length(); oldIndex++) {
                 if (rowset.contains(oldIndex)) {
                     newIndex++;
-                    if (oldGeneralized != null && oldGeneralized.length != 0) {
-                        System.arraycopy(newGeneralized[newIndex], 0, oldGeneralized[oldIndex], 0, newGeneralized[newIndex].length);
-                        optimized += (newGeneralized[newIndex][0] & Data.OUTLIER_MASK) != 0 ? 0 : 1;
+                    if (oldGeneralized != null && oldGeneralized.getNumRows() != 0) {
+                        oldGeneralized.copyFrom(oldIndex, newGeneralized, newIndex);
+                        optimized += (newGeneralized.get(newIndex, 0) & Data.OUTLIER_MASK) != 0 ? 0 : 1;
                     }
-                    if (oldMicroaggregated != null && oldMicroaggregated.length != 0) {
-                        System.arraycopy(newMicroaggregated[newIndex], 0, oldMicroaggregated[oldIndex], 0, newMicroaggregated[newIndex].length);
+                    if (oldMicroaggregated != null && oldMicroaggregated.getNumRows() != 0) {
+                        oldMicroaggregated.copyFrom(oldIndex, newMicroaggregated, newIndex);
                     }
                 }
             }
@@ -688,7 +686,7 @@ public class ARXResult {
         // If anything happens in the above block, the operation needs to be rolled back, because
         // the buffer might be in an inconsistent state
         } catch (Exception e) {
-            throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
+            throw new RollbackRequiredException("Handle must be rebuilt to guarantee privacy", e);
         }
     }
     

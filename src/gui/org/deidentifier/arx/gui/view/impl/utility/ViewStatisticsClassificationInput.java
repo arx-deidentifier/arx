@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsClassificationInput extends ViewStatisticsClassification{
+public class ViewStatisticsClassificationInput extends ViewStatisticsClassification {
 
     /**
      * Creates a new instance.

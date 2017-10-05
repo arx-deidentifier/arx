@@ -98,7 +98,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
      * @author Fabian Prasser
      * @param <U>
      */
-    public static class Level<U> implements Serializable{
+    public static class Level<U> implements Serializable { // NO_UCD
         
         /**  TODO */
         private static final long serialVersionUID = 1410005675926162598L;
