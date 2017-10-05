@@ -119,7 +119,10 @@ public class ModelEvent {
         ATTRIBUTE_WEIGHT,
         
         /** COST/BENEFIT MODEL*/
-        COST_BENEFIT_MODEL
+        COST_BENEFIT_MODEL,
+        
+        /** RESPONSE VARIABLES */
+        RESPONSE_VARIABLES
     }
 
     /** The part of the model that has changed. */

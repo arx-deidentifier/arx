@@ -45,8 +45,6 @@ import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class provides access to basic resources.
- *  
- * Images by FAMFAMFAM, http://www.famfamfam.com/.
  *
  * @author Fabian Prasser
  * @author Johanna Eicher

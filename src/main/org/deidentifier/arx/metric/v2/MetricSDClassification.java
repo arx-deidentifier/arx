@@ -221,7 +221,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         // Return overall penalty
         return result;
     }
- 
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
        

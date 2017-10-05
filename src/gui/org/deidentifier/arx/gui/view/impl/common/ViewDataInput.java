@@ -78,6 +78,7 @@ public class ViewDataInput extends ViewData {
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
+        controller.addListener(ModelPart.RESPONSE_VARIABLES, this);
         
         // Make editable
         if (editable) {
@@ -185,7 +186,7 @@ public class ViewDataInput extends ViewData {
             table.setResearchSubset(model.getInputConfig().getResearchSubset());
             table.redraw();
             
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.RESPONSE_VARIABLES) {
             
             if (model != null){
                 
@@ -202,21 +203,6 @@ public class ViewDataInput extends ViewData {
                     final int index = handle.getColumnIndexOf(attr);
                     updateHeaderImage(index, attr, definition);
     
-                    // Redraw
-                    table.setEnabled(true);
-                    table.redraw();
-                }
-            }
-        } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            
-            if (model != null) {
-                
-                DataHandle handle = getHandle();
-                
-                if (handle != null) {
-                    
-                    updateHeaderImages(handle, getDefinition());
-                    
                     // Redraw
                     table.setEnabled(true);
                     table.redraw();

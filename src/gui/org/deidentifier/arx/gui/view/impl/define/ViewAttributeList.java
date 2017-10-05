@@ -255,7 +255,15 @@ public class ViewAttributeList implements IView {
         
         this.table.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
-                updateSelection();
+                if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
+                    return;
+                }
+                int index = table.getSelectionIndex();
+                if (index >= 0 && index <= model.getInputConfig().getInput().getHandle().getNumColumns()) {
+                    String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
+                    model.setSelectedAttribute(attribute);
+                    controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute));
+                }
             }
         });
         
@@ -287,16 +295,12 @@ public class ViewAttributeList implements IView {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
                             if (i == 4) {
-                                String responseVariable = model.getInputConfig().getInput().getHandle().getAttributeName(index);
-                                // If already contained, remove
-                                boolean isResponseVariable = true;
-                                if(model.getInputDefinition().isResponseVariable(responseVariable)) {
-                                    isResponseVariable = false;
-                                }
-                                model.getInputDefinition().setResponseVariable(responseVariable, isResponseVariable);
-                                updateEntries();
-                                table.setSelection(index);
-                                updateSelection();
+                                String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
+                                boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
+                                model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
+                                item.setImage(0, controller.getResources().getImage(model.getInputDefinition().getAttributeType(attribute), isResponseVariable));
+                                item.setImage(4, isResponseVariable ? IMAGE_ENABLED : IMAGE_DISABLED);
+                                controller.update(new ModelEvent(this, ModelPart.RESPONSE_VARIABLES, attribute));
                                 return;
                             }
                         }
@@ -448,7 +452,7 @@ public class ViewAttributeList implements IView {
             for (int i = 0; i < data.getNumColumns(); i++) {
                 String attribute = data.getAttributeName(i);
                 AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-                table.getItem(i).setImage(0, controller.getResources().getImage(type, model.getInputDefinition().getResponseVariables().contains(attribute)));
+                table.getItem(i).setImage(0, controller.getResources().getImage(type, model.getInputDefinition().isResponseVariable(attribute)));
             }
             table.setRedraw(true);
             SWTUtil.enable(table);
@@ -492,11 +496,11 @@ public class ViewAttributeList implements IView {
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(new String[] { "", attribute, getDataType(attribute), getDataTypeFormat(attribute) }); //$NON-NLS-1$
             AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-            item.setImage(0, controller.getResources().getImage(type, model.getInputDefinition().getResponseVariables().contains(attribute)));  
-            if (model.getInputDefinition().getResponseVariables().contains(attribute)) {
-                item.setImage(4, IMAGE_ENABLED);
-            } else {
-                item.setImage(4, IMAGE_DISABLED);
+            boolean isResponseVariable = model.getInputDefinition().isResponseVariable(attribute);
+            item.setImage(0, controller.getResources().getImage(type, isResponseVariable));
+            item.setImage(4, isResponseVariable ? IMAGE_ENABLED : IMAGE_DISABLED);
+            if (model.getSelectedAttribute() != null && model.getSelectedAttribute().equals(attribute)) {
+                table.select(i);
             }
         }
         
@@ -517,20 +521,6 @@ public class ViewAttributeList implements IView {
                     break;
                 }
             }   
-        }
-    }
-    
-    /**
-     * Update selection
-     */
-    private void updateSelection() {
-        if (model == null || model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null) { return; }
-        int index = table.getSelectionIndex();
-        if (index >= 0 && index <= model.getInputConfig().getInput().getHandle().getNumColumns()) {
-            String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
-            model.setSelectedAttribute(attribute);
-            controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute));
         }
     }
 }

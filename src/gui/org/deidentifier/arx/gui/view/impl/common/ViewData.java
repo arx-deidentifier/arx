@@ -372,17 +372,4 @@ public abstract class ViewData implements IView {
         }
         table.getHeaderImages().set(index, controller.getResources().getImage(type, def.getResponseVariables().contains(attribute)));
     }
-    
-    /**
-     * Updates the header images in the table.
-     * 
-     * @param handle
-     * @param def
-     */
-    protected void updateHeaderImages(DataHandle handle, DataDefinition def) {
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            String attribute = handle.getAttributeName(i);
-            updateHeaderImage(i, attribute, def);
-        }
-    }
 }
