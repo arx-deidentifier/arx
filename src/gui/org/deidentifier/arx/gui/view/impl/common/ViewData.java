@@ -370,6 +370,6 @@ public abstract class ViewData implements IView {
         while (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }
-        table.getHeaderImages().set(index, controller.getResources().getImage(type, def.getResponseVariables().contains(attribute)));
+        table.getHeaderImages().set(index, controller.getResources().getImage(type, def.isResponseVariable(attribute)));
     }
 }
