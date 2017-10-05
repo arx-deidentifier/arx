@@ -235,19 +235,19 @@ public class ViewAttributeList implements IView {
         SWTUtil.createGenericTooltip(table);
         DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.NONE);
         column0.setText(""); //$NON-NLS-1$
-        column0.setWidth("5%", "25px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column0.setWidth("4%", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
         column1.setText(Resources.getMessage("ViewAttributeList.0")); //$NON-NLS-1$
-        column1.setWidth("20%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column1.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.NONE);
         column2.setText(Resources.getMessage("ViewAttributeList.1")); //$NON-NLS-1$
-        column2.setWidth("20%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column2.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.NONE);
         column3.setText(Resources.getMessage("ViewAttributeList.2")); //$NON-NLS-1$
-        column3.setWidth("20%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column3.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.NONE);
         column4.setText(Resources.getMessage("ViewAttributeList.3")); //$NON-NLS-1$
-        column4.setWidth("15%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column4.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         column1.pack();
         column2.pack();
         column3.pack();
