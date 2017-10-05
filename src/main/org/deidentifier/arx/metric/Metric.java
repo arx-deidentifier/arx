@@ -54,6 +54,7 @@ import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPr
 import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDPrecision;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
+import org.deidentifier.arx.metric.v2.MetricSDClassification;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
@@ -151,6 +152,25 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public static Metric<ILSingleDimensional> createAmbiguityMetric() {
         return __MetricV2.createAmbiguityMetric();
+    }
+   
+    /**
+     * Creates an instance of the classification metric.
+     * 
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric() {
+        return __MetricV2.createClassificationMetric();
+    }
+
+    /**
+     * Creates an instance of the classification metric.
+     * 
+     * @param gsFactor
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric(double gsFactor) {
+        return __MetricV2.createClassificationMetric(gsFactor);
     }
 
     /**
@@ -1186,6 +1206,28 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                       public boolean isInstance(Metric<?> metric) {
                                           return (metric instanceof MetricMDNMSSE);
                                       }
+               },
+               new MetricDescription("Classification metric",
+                                     false, // monotonic variant supported
+                                     false, // attribute weights supported
+                                     true, // configurable coding model supported
+                                     false, // pre-computation supported
+                                     false, // aggregate function supported
+                                     false) { // attacker model supported
+                   
+                   
+                                     /** SVUID */
+                                     private static final long serialVersionUID = 6211930528963931179L;
+                                     
+                                     @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createClassificationMetric(config.getGsFactor());
+                                     }
+                                     
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDClassification);
+                                     }
                }
         });
     }

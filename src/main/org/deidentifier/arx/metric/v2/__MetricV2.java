@@ -76,6 +76,24 @@ public class __MetricV2 {
     }
     
     /**
+     * Creates an instance of the classification metric.
+     * 
+     * @param gsFactor
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric(double gsFactor) {
+        return new MetricSDClassification(gsFactor);
+    }
+
+    /**
+     * Creates an instance of the classification metric.
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric() {
+        return new MetricSDClassification();
+    }
+    
+    /**
      * Creates an instance of the discernability metric.
      *
      * @return
