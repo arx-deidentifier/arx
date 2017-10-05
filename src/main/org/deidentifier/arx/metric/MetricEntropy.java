@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -189,26 +190,26 @@ public class MetricEntropy extends MetricDefault {
         RowSet rSubset = super.getSubset(config);
 
         // Create reference to the hierarchies
-        final int[][] data = input.getArray();
-        hierarchies = new int[data[0].length][][];
+        final DataMatrix data = input.getArray();
+        hierarchies = new int[data.getNumColumns()][][];
         for (int i = 0; i < ahierarchies.length; i++) {
             hierarchies[i] = ahierarchies[i].getArray();
             // Column -> Id -> Level -> Output
         }
 
         // Initialize counts
-        cardinalities = new int[data[0].length][][];
+        cardinalities = new int[data.getNumColumns()][][];
         for (int i = 0; i < cardinalities.length; i++) {
             cardinalities[i] = new int[dictionary.getMapping()[i].length][ahierarchies[i].getArray()[0].length];
             // Column -> Id -> Level -> Count
         }
 
-		for (int i = 0; i < data.length; i++) { 
+		for (int i = 0; i < data.getNumRows(); i++) { 
 			// only use the rows contained in the research subset
 			if (rSubset == null || rSubset.contains(i)) {
-				final int[] row = data[i];
-				for (int column = 0; column < row.length; column++) {
-					cardinalities[column][row[column]][0]++;
+			    data.setRow(i);
+				for (int column = 0; column < data.getNumColumns(); column++) {
+					cardinalities[column][data.getValueAtColumn(column)][0]++;
 				}
 			}
 		}

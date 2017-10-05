@@ -435,29 +435,10 @@ class DataRegistry {
     /**
      * Update the registry.
      *
-     * @param inputSubset
-     */
-    protected void updateInputSubset(DataHandleSubset inputSubset){
-        this.inputSubset = inputSubset;
-    }
-
-    /**
-     * Update the registry.
-     *
      * @param node
      * @param output
      */
     protected void updateOutput(ARXNode node, DataHandleOutput output){
         this.output.put(node, output);
-    }
-
-    /**
-     * Update the registry.
-     *
-     * @param node
-     * @param outputSubset
-     */
-    protected void updateOutputSubset(ARXNode node, DataHandleSubset outputSubset){
-        this.outputSubset.put(node, outputSubset);
     }
 }

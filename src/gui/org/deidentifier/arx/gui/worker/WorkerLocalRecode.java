@@ -90,6 +90,12 @@ public class WorkerLocalRecode extends Worker<DataHandle> {
                                                     0d,
                                                     listener);
                 break;
+            case ITERATIVE:
+                model.getResult().optimizeIterativeFast(model.getOutput(),
+                                                        1d / (double)model.getLocalRecodingModel().getNumIterations(),
+                                                        model.getLocalRecodingModel().getGsFactor(), 
+                                                        listener);
+                break;
             case SINGLE_PASS:
                 model.getResult().optimize(model.getOutput(), model.getLocalRecodingModel().getGsFactor(), listener);
                 break;

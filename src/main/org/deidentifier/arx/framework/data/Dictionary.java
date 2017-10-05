@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.io.Serializable;
+
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
@@ -25,13 +27,16 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Dictionary {
+public class Dictionary implements Serializable {
+
+    /** SVUID */
+    private static final long                        serialVersionUID = 6448285732641604559L;
 
     /** The resulting array mapping dimension->integer->string. */
-    private final String[][]               mapping;
+    private final String[][]                         mapping;
 
     /** Map used when building the dictionary. */
-    private ObjectIntOpenHashMap<String>[] maps;
+    private transient ObjectIntOpenHashMap<String>[] maps;
 
     /**
      * Instantiates a new dictionary.

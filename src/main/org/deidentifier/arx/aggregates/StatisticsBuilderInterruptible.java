@@ -23,6 +23,7 @@ import java.util.Map;
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -33,7 +34,7 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * 
  * @author Fabian Prasser
  */
-public class StatisticsBuilderInterruptible {
+public class StatisticsBuilderInterruptible { // NO_UCD
 
     /** The backing builder. */
     private StatisticsBuilder builder;
@@ -500,6 +501,42 @@ public class StatisticsBuilderInterruptible {
     }
 
     /**
+     * Returns data quality according to various models.
+     * 
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics() throws InterruptedException {
+        try {
+            return builder.getQualityStatistics();
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output) throws InterruptedException {
+        try {
+            return builder.getQualityStatistics(output);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
      * Returns summary statistics for all attributes. 
      * 
      * @param listwiseDeletion A flag enabling list-wise deletion
@@ -517,7 +554,6 @@ public class StatisticsBuilderInterruptible {
             }
         }
     }
-
     /**
      * Interrupts all computations.
      */

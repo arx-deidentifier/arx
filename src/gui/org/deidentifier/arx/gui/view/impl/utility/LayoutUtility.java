@@ -52,7 +52,6 @@ public class LayoutUtility implements ILayout {
     public static enum ViewUtilityType {
         CLASSIFICATION,
         CLASSIFICATION_PRECISION_RECALL,
-        CLASSIFICATION_ROC,
         DATA,
         CONTINGENCY,
         CONTINGENCY_TABLE,
@@ -61,7 +60,8 @@ public class LayoutUtility implements ILayout {
         EQUIVALENCE_CLASSES,
         SUMMARY,
         PROPERTIES,
-        LOCAL_RECODING
+        LOCAL_RECODING,
+        QUALITY_MODELS
     }
 
     /** Constant */
@@ -131,12 +131,8 @@ public class LayoutUtility implements ILayout {
         centerRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
-        dataInputView = new ViewDataInput(centerLeft,
-                                          controller, 
-                                          "help.utility.data"); //$NON-NLS-1$
-        dataOutputView = new ViewDataOutput(centerRight,
-                                            controller, 
-                                            "help.utility.data"); //$NON-NLS-1$
+        dataInputView = new ViewDataInput(centerLeft, controller, "help.utility.data"); //$NON-NLS-1$
+        dataOutputView = new ViewDataOutput(centerRight, controller, "help.utility.data"); //$NON-NLS-1$
 
         // Sync tables
         dataInputView.addScrollBarListener(new Listener() {
@@ -162,19 +158,19 @@ public class LayoutUtility implements ILayout {
         
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
-        new ViewStatisticsClassificationInput(classificationInput, controller);
-
-        Composite classificationInputROCCurves = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
-        classificationInputROCCurves.setLayout(new FillLayout());
-        new ViewStatisticsClassificationROCCurves(classificationInputROCCurves, controller, ModelPart.INPUT);
+        ViewStatisticsClassificationInput viewClassificationInput = new ViewStatisticsClassificationInput(classificationInput, controller);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
-        new ViewStatisticsClassificationOutput(classificationOutput, controller);
+        ViewStatisticsClassificationOutput viewClassificationOutput = new ViewStatisticsClassificationOutput(classificationOutput, controller);
 
-        Composite classificationOutputROCCurves = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
-        classificationOutputROCCurves.setLayout(new FillLayout());
-        new ViewStatisticsClassificationROCCurves(classificationOutputROCCurves, controller, ModelPart.OUTPUT);
+        Composite qualityInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
+        qualityInput.setLayout(new FillLayout());
+        new ViewStatisticsQuality(qualityInput, controller, ModelPart.INPUT, ModelPart.INPUT);
+        
+        Composite qualityOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
+        qualityOutput.setLayout(new FillLayout());
+        new ViewStatisticsQuality(qualityOutput, controller, ModelPart.OUTPUT, ModelPart.INPUT);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
@@ -208,7 +204,7 @@ public class LayoutUtility implements ILayout {
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
                 }
                 // Hack to show classification stuff
-                if (dataInputView.getSelectionIndex() == 1 || dataInputView.getSelectionIndex() == 2) {
+                if (dataInputView.getSelectionIndex() == 1) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }
@@ -217,6 +213,8 @@ public class LayoutUtility implements ILayout {
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }
         });
+        viewClassificationInput.setOtherView(viewClassificationOutput);
+        viewClassificationOutput.setOtherView(viewClassificationInput);
         dataOutputView.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -228,7 +226,7 @@ public class LayoutUtility implements ILayout {
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
                 }
                 // Hack to show classification stuff
-                if (dataOutputView.getSelectionIndex() == 1 || dataOutputView.getSelectionIndex() == 2) {
+                if (dataOutputView.getSelectionIndex() == 1) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }

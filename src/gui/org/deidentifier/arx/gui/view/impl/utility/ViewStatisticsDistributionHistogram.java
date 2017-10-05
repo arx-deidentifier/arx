@@ -80,9 +80,9 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
      * @param reset
      */
     public ViewStatisticsDistributionHistogram(final Composite parent,
-                                     final Controller controller,
-                                     final ModelPart target,
-                                     final ModelPart reset) {
+                                               final Controller controller,
+                                               final ModelPart target,
+                                               final ModelPart reset) {
         
         super(parent, controller, target, reset, true);
         this.manager = new AnalysisManager(parent.getDisplay());

@@ -31,7 +31,7 @@ import java.util.List;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class CSVHierarchyInput {
+public class CSVHierarchyInput { // NO_UCD
 
     /** The data. */
     private String[][] data;

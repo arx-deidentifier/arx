@@ -92,7 +92,7 @@ public class DataManagerSubset extends DataManager {
     }
 
     @Override
-    public double[] getDistribution(int[][] data, int index, int distinctValues) {
+    public double[] getDistribution(DataMatrix data, int index, int distinctValues) {
         // Delegate to source
         return source.getDistribution(data, index, distinctValues);
     }
@@ -110,7 +110,7 @@ public class DataManagerSubset extends DataManager {
     }
 
     @Override
-    public int[] getTree(int[][] data, int index, int[][] hierarchy) {
+    public int[] getTree(DataMatrix data, int index, int[][] hierarchy) {
         // Delegate to source
         return source.getTree(data, index, hierarchy);
     }

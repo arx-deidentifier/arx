@@ -465,18 +465,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Delegates to an instance of ARXConfiguration.
-     *
-     * @param <T>
-     * @param c
-     * @return
-     */
-    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion c) {
-        setModified();
-        return config.removeCriterion(c);
-    }
-    
-    /**
      * Removes a hierarchy.
      *
      * @param attribute
