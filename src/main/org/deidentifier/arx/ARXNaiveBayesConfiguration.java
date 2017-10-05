@@ -47,41 +47,11 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     private Type    type          = Type.BERNOULLI;
     /** Prior count */
     private double  sigma         = 1.0d;
-    /** Configuration */
-    private int     vectorLength  = 1000;
-
-    /** Max records */
-    private int     maxRecords    = 100000;
-    /** Seed */
-    private long    seed          = Integer.MAX_VALUE;
-    /** Folds */
-    private int     numberOfFolds = 10;
-    /** Deterministic */
-    private boolean deterministic = true;
-
     /**
      * Constructor
      */
     private ARXNaiveBayesConfiguration(){
         // Empty by design
-    }
-
-    @Override
-    public int getMaxRecords() {
-        return maxRecords;
-    }
-    /**
-     * @return the numberOfFolds
-     */
-    public int getNumFolds() {
-        return numberOfFolds;
-    }
-
-    /**
-     * @return the seed
-     */
-    public long getSeed() {
-        return seed;
     }
 
     /**
@@ -99,74 +69,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
     public Type getType() {
         return type;
     }
-    /**
-     * @return the vectorLength
-     */
-    public int getVectorLength() {
-        return vectorLength;
-    }
-
-    /**
-     * Returns whether the process should be deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
-    }
-    
-    /**
-     * Sets whether the process should be deterministic
-     * @param deterministic
-     * @return
-     */
-    public ARXNaiveBayesConfiguration setDeterministic(boolean deterministic) {
-        if (this.deterministic != deterministic) {
-            setModified();
-            this.deterministic = deterministic;
-        }
-        return this;
-    }
-    
-    /**
-     * @param maxRecords the maxRecords to set
-     */
-    public ARXNaiveBayesConfiguration setMaxRecords(int maxRecords) {
-        if (maxRecords <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.maxRecords != maxRecords) {
-            setModified();
-            this.maxRecords = maxRecords;
-        }
-        return this;
-    }
-
-    /**
-     * @param numberOfFolds the numberOfFolds to set
-     */
-    public ARXNaiveBayesConfiguration setNumFolds(int numberOfFolds) {
-        if (numberOfFolds <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.numberOfFolds != numberOfFolds) {
-            setModified();
-            this.numberOfFolds = numberOfFolds;
-        }
-        return this;
-    }
-
-    /**
-     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
-     * @param seed the seed to set
-     */
-    public ARXNaiveBayesConfiguration setSeed(int seed) {
-        if (this.seed != seed) {
-            setModified();
-            this.seed = seed;
-        }
-        return this;
-    }
-
     /**
      * Sets the prior count of add-k smoothing of evidence.
      * @param sigma the sigma to set
@@ -193,20 +95,6 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration i
         if (this.type != type) {
             setModified();
             this.type = type;
-        }
-        return this;
-    }
-
-    /**
-     * @param vectorLength the vectorLength to set
-     */
-    public ARXNaiveBayesConfiguration setVectorLength(int vectorLength) {
-        if (vectorLength <= 0) {
-            throw new IllegalArgumentException("Must be >0");
-        }
-        if (this.vectorLength != vectorLength) {
-            setModified();
-            this.vectorLength = vectorLength;
         }
         return this;
     }
