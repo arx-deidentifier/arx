@@ -30,9 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
-import org.deidentifier.arx.ARXNaiveBayesConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -145,8 +144,9 @@ public class TestClassification {
 
     @Test
     public void testLogisticRegression() throws IOException, ParseException {
+        
         // Config
-        ARXLogisticRegressionConfiguration config = ARXLogisticRegressionConfiguration.create();
+        ARXClassificationConfiguration<?> config = ARXClassificationConfiguration.createLogisticRegression();
 
         // Classify
         StatisticsClassification classResult = getResult().getOutput().getStatistics().getClassificationPerformance(getFeatures(), getClazz(), config);
@@ -190,7 +190,8 @@ public class TestClassification {
     @Test
     public void testNaiveBayes() throws IOException, ParseException {
 
-        ARXNaiveBayesConfiguration config = ARXNaiveBayesConfiguration.create();
+        // Config
+        ARXClassificationConfiguration<?> config = ARXClassificationConfiguration.createNaiveBayes();
 
         // Classify
         StatisticsClassification classResult = getResult().getOutput().getStatistics().getClassificationPerformance(getFeatures(), getClazz(), config);

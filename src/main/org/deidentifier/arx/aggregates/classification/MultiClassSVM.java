@@ -26,8 +26,8 @@ import org.apache.mahout.math.function.DoubleDoubleFunction;
 import org.apache.mahout.math.function.DoubleFunction;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
-import org.deidentifier.arx.ARXSVMConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
 
 import smile.classification.SVM;
 import smile.classification.SVM.Multiclass;
@@ -112,7 +112,7 @@ public class MultiClassSVM implements ClassificationMethod {
     }
 
     /** Config */
-    private final ARXSVMConfiguration             config;
+    private final ClassificationConfigurationSVM             config;
     /** Encoder */
     private final ConstantValueEncoder            interceptEncoder;
     /** Instance */
@@ -133,7 +133,7 @@ public class MultiClassSVM implements ClassificationMethod {
      * @param config
      */
     public MultiClassSVM(ClassificationDataSpecification specification,
-                         ARXSVMConfiguration config) {
+                         ClassificationConfigurationSVM config) {
 
         // Store
         this.config = config;
@@ -158,7 +158,7 @@ public class MultiClassSVM implements ClassificationMethod {
      * @param config
      * @return
      */
-    private Multiclass getMulticlass(ARXSVMConfiguration config) {
+    private Multiclass getMulticlass(ClassificationConfigurationSVM config) {
 
         switch(config.getMulticlassType()) {
         case ONE_VS_ALL:
@@ -175,7 +175,7 @@ public class MultiClassSVM implements ClassificationMethod {
      * @param config
      * @return
      */
-    private MercerKernel<double[]> getKernel(ARXSVMConfiguration config) {
+    private MercerKernel<double[]> getKernel(ClassificationConfigurationSVM config) {
 
        switch(config.getKernelType()) {
        case LAPLACIAN:

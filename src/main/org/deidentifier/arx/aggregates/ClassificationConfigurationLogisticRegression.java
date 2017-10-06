@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx;
+package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
+
+import org.deidentifier.arx.ARXClassificationConfiguration;
 
 /**
  * Configuration for logistic regression
  * @author Fabian Prasser
  */
-public class ARXLogisticRegressionConfiguration extends ARXClassificationConfiguration<ARXLogisticRegressionConfiguration> implements Serializable {
+public class ClassificationConfigurationLogisticRegression extends ARXClassificationConfiguration<ClassificationConfigurationLogisticRegression> implements Serializable {
 
     /** 
      * Prior function for regularization
@@ -40,8 +42,8 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * Returns a new instance
      * @return
      */
-    public static ARXLogisticRegressionConfiguration create() {
-        return new ARXLogisticRegressionConfiguration();
+    public static ClassificationConfigurationLogisticRegression create() {
+        return new ClassificationConfigurationLogisticRegression();
     }
 
     /** Configuration */
@@ -70,7 +72,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * Constructor
      */
-    private ARXLogisticRegressionConfiguration(){
+    private ClassificationConfigurationLogisticRegression(){
         // Empty by design
     }
 
@@ -155,7 +157,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param alpha the alpha to set
      */
-    public ARXLogisticRegressionConfiguration setAlpha(double alpha) {
+    public ClassificationConfigurationLogisticRegression setAlpha(double alpha) {
         if (this.alpha != alpha) {
             setModified();
             this.alpha = alpha;
@@ -166,7 +168,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param decayExponent the decayExponent to set
      */
-    public ARXLogisticRegressionConfiguration setDecayExponent(double decayExponent) {
+    public ClassificationConfigurationLogisticRegression setDecayExponent(double decayExponent) {
         if (this.decayExponent != decayExponent) {
             setModified();
             this.decayExponent = decayExponent;
@@ -179,7 +181,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * @param deterministic
      * @return
      */
-    public ARXLogisticRegressionConfiguration setDeterministic(boolean deterministic) {
+    public ClassificationConfigurationLogisticRegression setDeterministic(boolean deterministic) {
         if (this.deterministic != deterministic) {
             setModified();
             this.deterministic = deterministic;
@@ -190,7 +192,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param lambda the lambda to set
      */
-    public ARXLogisticRegressionConfiguration setLambda(double lambda) {
+    public ClassificationConfigurationLogisticRegression setLambda(double lambda) {
         if (this.lambda != lambda) {
             setModified();
             this.lambda = lambda;
@@ -201,7 +203,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param learningRate the learningRate to set
      */
-    public ARXLogisticRegressionConfiguration setLearningRate(double learningRate) {
+    public ClassificationConfigurationLogisticRegression setLearningRate(double learningRate) {
         if (this.learningRate != learningRate) {
             setModified();
             this.learningRate = learningRate;
@@ -212,7 +214,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param maxRecords the maxRecords to set
      */
-    public ARXLogisticRegressionConfiguration setMaxRecords(int maxRecords) {
+    public ClassificationConfigurationLogisticRegression setMaxRecords(int maxRecords) {
         if (maxRecords <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
@@ -226,7 +228,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param numberOfFolds the numberOfFolds to set
      */
-    public ARXLogisticRegressionConfiguration setNumFolds(int numberOfFolds) {
+    public ClassificationConfigurationLogisticRegression setNumFolds(int numberOfFolds) {
         if (numberOfFolds <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
@@ -240,7 +242,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param priorFunction the priorFunction to set
      */
-    public ARXLogisticRegressionConfiguration setPriorFunction(PriorFunction priorFunction) {
+    public ClassificationConfigurationLogisticRegression setPriorFunction(PriorFunction priorFunction) {
         if (this.prior != priorFunction) {
             setModified();
             this.prior = priorFunction;
@@ -252,7 +254,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
      * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
      * @param seed the seed to set
      */
-    public ARXLogisticRegressionConfiguration setSeed(int seed) {
+    public ClassificationConfigurationLogisticRegression setSeed(int seed) {
         if (this.seed != seed) {
             setModified();
             this.seed = seed;
@@ -263,7 +265,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param stepOffset the stepOffset to set
      */
-    public ARXLogisticRegressionConfiguration setStepOffset(int stepOffset) {
+    public ClassificationConfigurationLogisticRegression setStepOffset(int stepOffset) {
         if (this.stepOffset != stepOffset) {
             setModified();
             this.stepOffset = stepOffset;
@@ -274,7 +276,7 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     /**
      * @param vectorLength the vectorLength to set
      */
-    public ARXLogisticRegressionConfiguration setVectorLength(int vectorLength) {
+    public ClassificationConfigurationLogisticRegression setVectorLength(int vectorLength) {
         if (vectorLength <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }

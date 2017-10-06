@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXFeatureScaling;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.aggregates.StatisticsClassification.PrecisionRecallMatrix;
@@ -962,7 +962,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
-        final ARXLogisticRegressionConfiguration config = context.model.getClassificationModel().getLogisticRegressionConfiguration();
+        final ClassificationConfigurationLogisticRegression config = context.model.getClassificationModel().getLogisticRegressionConfiguration();
         final ARXFeatureScaling scaling = context.model.getClassificationModel().getFeatureScaling();
         
         // Break, if nothing do

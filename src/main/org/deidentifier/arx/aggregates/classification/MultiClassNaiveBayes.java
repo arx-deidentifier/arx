@@ -23,8 +23,8 @@ import org.apache.mahout.math.function.DoubleDoubleFunction;
 import org.apache.mahout.math.function.DoubleFunction;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
-import org.deidentifier.arx.ARXNaiveBayesConfiguration;
-import org.deidentifier.arx.ARXNaiveBayesConfiguration.Type;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes.Type;
 import org.deidentifier.arx.DataHandleInternal;
 
 import smile.classification.NaiveBayes;
@@ -93,7 +93,7 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
     }
 
     /** Config */
-    private final ARXNaiveBayesConfiguration      config;
+    private final ClassificationConfigurationNaiveBayes      config;
     /** Encoder */
     private final ConstantValueEncoder            interceptEncoder;
     /** Instance */
@@ -109,7 +109,7 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
      * @param config
      */
     public MultiClassNaiveBayes(ClassificationDataSpecification specification,
-                                ARXNaiveBayesConfiguration config) {
+                                ClassificationConfigurationNaiveBayes config) {
 
         // Store
         this.config = config;

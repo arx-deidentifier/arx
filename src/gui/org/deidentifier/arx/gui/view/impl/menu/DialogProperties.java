@@ -21,9 +21,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression.PriorFunction;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelRisk.RiskModelForAttributes;

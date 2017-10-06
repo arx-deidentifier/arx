@@ -52,6 +52,7 @@ import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.io.BackwardsCompatibleObjectInputStream;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLHandler;
@@ -1015,7 +1016,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.11")); } //$NON-NLS-1$
 
         // Read model
-        final ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
+        final ObjectInputStream oos = new BackwardsCompatibleObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         model = (Model) oos.readObject();
         oos.close();
     }

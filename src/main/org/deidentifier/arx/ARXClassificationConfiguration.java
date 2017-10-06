@@ -18,6 +18,11 @@ package org.deidentifier.arx;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
+
 /**
  * An base class for configuration classes for classification experiments
  * 
@@ -39,6 +44,38 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     private int               vectorLength     = 1000;
     /** Modified */
     private boolean           modified         = false;
+    
+    /**
+     * Creates a new instance for logistic regression classifiers
+     * @return
+     */
+    public static ClassificationConfigurationLogisticRegression createLogisticRegression() {
+        return ClassificationConfigurationLogisticRegression.create();
+    }
+
+    /**
+     * Creates a new instance for naive bayes classifiers
+     * @return
+     */
+    public static ClassificationConfigurationNaiveBayes createNaiveBayes() {
+        return ClassificationConfigurationNaiveBayes.create();
+    }
+
+    /**
+     * Creates a new instance for random forest classifiers
+     * @return
+     */
+    public static ClassificationConfigurationRandomForest createRandomForest() {
+        return ClassificationConfigurationRandomForest.create();
+    }
+
+    /**
+     * Creates a new instance for SVM classifiers
+     * @return
+     */
+    public static ClassificationConfigurationSVM createSVM() {
+        return ClassificationConfigurationSVM.create();
+    }
 
     /**
      * @return the maxRecords to consider

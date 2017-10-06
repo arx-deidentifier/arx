@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx;
+package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
+
+import org.deidentifier.arx.ARXClassificationConfiguration;
 
 /**
  * Configuration for Random Forest classifiers
  * @author Fabian Prasser
  */
-public class ARXRandomForestConfiguration extends ARXClassificationConfiguration<ARXRandomForestConfiguration> implements Serializable {
+public class ClassificationConfigurationRandomForest extends ARXClassificationConfiguration<ClassificationConfigurationRandomForest> implements Serializable {
 
     /** SVUID */
     private static final long serialVersionUID = 7928077920858462047L;
@@ -31,8 +33,8 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
      * Returns a new instance
      * @return
      */
-    public static ARXRandomForestConfiguration create() {
-        return new ARXRandomForestConfiguration();
+    public static ClassificationConfigurationRandomForest create() {
+        return new ClassificationConfigurationRandomForest();
     }
 
     /** Number of trees */
@@ -41,7 +43,7 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     /**
      * Constructor
      */
-    private ARXRandomForestConfiguration(){
+    private ClassificationConfigurationRandomForest(){
         // Empty by design
     }
 
@@ -55,7 +57,7 @@ public class ARXRandomForestConfiguration extends ARXClassificationConfiguration
     /**
      * @param numberOfTrees the numberOfTrees to set
      */
-    public ARXRandomForestConfiguration setNumberOfTrees(int numberOfTrees) {
+    public ClassificationConfigurationRandomForest setNumberOfTrees(int numberOfTrees) {
         if (this.numberOfTrees != numberOfTrees) {
             setModified();
             this.numberOfTrees = numberOfTrees;

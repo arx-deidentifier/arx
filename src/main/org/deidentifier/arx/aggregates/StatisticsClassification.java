@@ -27,10 +27,6 @@ import java.util.Set;
 
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
-import org.deidentifier.arx.ARXNaiveBayesConfiguration;
-import org.deidentifier.arx.ARXRandomForestConfiguration;
-import org.deidentifier.arx.ARXSVMConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.classification.ClassificationDataSpecification;
 import org.deidentifier.arx.aggregates.classification.ClassificationMethod;
@@ -265,17 +261,17 @@ public class StatisticsClassification {
      */
     private static ClassificationMethod getClassifier(ClassificationDataSpecification specification,
                                                       ARXClassificationConfiguration<?> config) {
-        if (config instanceof ARXLogisticRegressionConfiguration) {
-            return new MultiClassLogisticRegression(specification, (ARXLogisticRegressionConfiguration)config);
-        } else if (config instanceof ARXNaiveBayesConfiguration) {
+        if (config instanceof ClassificationConfigurationLogisticRegression) {
+            return new MultiClassLogisticRegression(specification, (ClassificationConfigurationLogisticRegression)config);
+        } else if (config instanceof ClassificationConfigurationNaiveBayes) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassNaiveBayes(specification, (ARXNaiveBayesConfiguration)config);
-        } else if (config instanceof ARXSVMConfiguration) {
+            return new MultiClassNaiveBayes(specification, (ClassificationConfigurationNaiveBayes)config);
+        } else if (config instanceof ClassificationConfigurationSVM) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassSVM(specification, (ARXSVMConfiguration)config);
-        } else if (config instanceof ARXRandomForestConfiguration) {
+            return new MultiClassSVM(specification, (ClassificationConfigurationSVM)config);
+        } else if (config instanceof ClassificationConfigurationRandomForest) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassRandomForest(specification, (ARXRandomForestConfiguration)config);
+            return new MultiClassRandomForest(specification, (ClassificationConfigurationRandomForest)config);
         } else {
             throw new IllegalArgumentException("Unknown type of configuration");
         }

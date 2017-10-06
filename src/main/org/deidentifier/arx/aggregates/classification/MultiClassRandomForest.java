@@ -26,8 +26,8 @@ import org.apache.mahout.math.function.DoubleDoubleFunction;
 import org.apache.mahout.math.function.DoubleFunction;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
-import org.deidentifier.arx.ARXRandomForestConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 
 import smile.classification.RandomForest;
 
@@ -102,7 +102,7 @@ public class MultiClassRandomForest implements ClassificationMethod {
     }
 
     /** Config */
-    private final ARXRandomForestConfiguration    config;
+    private final ClassificationConfigurationRandomForest    config;
     /** Encoder */
     private final ConstantValueEncoder            interceptEncoder;
     /** Instance */
@@ -123,7 +123,7 @@ public class MultiClassRandomForest implements ClassificationMethod {
      * @param config
      */
     public MultiClassRandomForest(ClassificationDataSpecification specification,
-                                  ARXRandomForestConfiguration config) {
+                                  ClassificationConfigurationRandomForest config) {
 
         // Store
         this.config = config;

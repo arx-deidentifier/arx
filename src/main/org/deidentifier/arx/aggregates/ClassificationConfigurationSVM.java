@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx;
+package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
+
+import org.deidentifier.arx.ARXClassificationConfiguration;
 
 /**
  * Configuration for SVM classifiers
  * @author Fabian Prasser
  */
-public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMConfiguration> implements Serializable {
+public class ClassificationConfigurationSVM extends ARXClassificationConfiguration<ClassificationConfigurationSVM> implements Serializable {
 
     /** 
      * Type of multiclass SVM
@@ -39,8 +41,8 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMCo
      * Returns a new instance
      * @return
      */
-    public static ARXSVMConfiguration create() {
-        return new ARXSVMConfiguration();
+    public static ClassificationConfigurationSVM create() {
+        return new ClassificationConfigurationSVM();
     }
 
     /** Type */
@@ -105,7 +107,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMCo
     /**
      * Constructor
      */
-    private ARXSVMConfiguration(){
+    private ClassificationConfigurationSVM(){
         // Empty by design
     }
 
@@ -119,7 +121,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMCo
     /**
      * @param c the c to set
      */
-    public ARXSVMConfiguration setC(double c) {
+    public ClassificationConfigurationSVM setC(double c) {
         if (this.c != c) {
             setModified();
             this.c = c;
@@ -137,7 +139,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMCo
     /**
      * @param kernelSigma the kernelSigma to set
      */
-    public ARXSVMConfiguration setKernelSigma(double kernelSigma) {
+    public ClassificationConfigurationSVM setKernelSigma(double kernelSigma) {
         if (this.kernelSigma != kernelSigma) {
             setModified();
             this.kernelSigma = kernelSigma;
@@ -155,7 +157,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMCo
     /**
      * @param kernelDegree the kernelDegree to set
      */
-    public ARXSVMConfiguration setKernelDegree(int kernelDegree) {
+    public ClassificationConfigurationSVM setKernelDegree(int kernelDegree) {
         if (this.kernelDegree != kernelDegree) {
             setModified();
             this.kernelDegree = kernelDegree;
@@ -173,7 +175,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMCo
     /**
      * @param kernel the kernel to set
      */
-    public ARXSVMConfiguration setKernelType(Kernel kernelType) {
+    public ClassificationConfigurationSVM setKernelType(Kernel kernelType) {
         if (this.kernelType != kernelType) {
             setModified();
             this.kernelType = kernelType;
@@ -191,7 +193,7 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMCo
     /**
      * @param multiclassType the multiclassType to set
      */
-    public ARXSVMConfiguration setMulticlassType(MulticlassType multiclassType) {
+    public ClassificationConfigurationSVM setMulticlassType(MulticlassType multiclassType) {
         if (this.multiclassType != multiclassType) {
             setModified();
             this.multiclassType = multiclassType;

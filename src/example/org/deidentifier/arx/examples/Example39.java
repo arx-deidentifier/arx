@@ -26,12 +26,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
-import org.deidentifier.arx.ARXNaiveBayesConfiguration;
-import org.deidentifier.arx.ARXRandomForestConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.ARXSVMConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
@@ -122,12 +119,12 @@ public class Example39 extends Example {
         
         ARXResult result = anonymizer.anonymize(data, config);
         System.out.println("5-anonymous dataset (logistic regression)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createLogisticRegression()));
         System.out.println("5-anonymous dataset (naive bayes)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXNaiveBayesConfiguration.create()));
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createNaiveBayes()));
         System.out.println("5-anonymous dataset (random forest)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXRandomForestConfiguration.create()));
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createRandomForest()));
         System.out.println("5-anonymous dataset (SVM)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXSVMConfiguration.create()));
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createSVM()));
     }
 }

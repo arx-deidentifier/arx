@@ -14,15 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx;
+package org.deidentifier.arx.aggregates;
 
 import java.io.Serializable;
+
+import org.deidentifier.arx.ARXClassificationConfiguration;
 
 /**
  * Configuration for naive bayes classification
  * @author Fabian Prasser
  */
-public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration<ARXNaiveBayesConfiguration> implements Serializable {
+public class ClassificationConfigurationNaiveBayes extends ARXClassificationConfiguration<ClassificationConfigurationNaiveBayes> implements Serializable {
 
     /** 
      * Type of bayes classifier
@@ -39,8 +41,8 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration<A
      * Returns a new instance
      * @return
      */
-    public static ARXNaiveBayesConfiguration create() {
-        return new ARXNaiveBayesConfiguration();
+    public static ClassificationConfigurationNaiveBayes create() {
+        return new ClassificationConfigurationNaiveBayes();
     }
 
     /** Type */
@@ -50,7 +52,7 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration<A
     /**
      * Constructor
      */
-    private ARXNaiveBayesConfiguration(){
+    private ClassificationConfigurationNaiveBayes(){
         // Empty by design
     }
 
@@ -73,7 +75,7 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration<A
      * Sets the prior count of add-k smoothing of evidence.
      * @param sigma the sigma to set
      */
-    public ARXNaiveBayesConfiguration setSigma(double sigma) {
+    public ClassificationConfigurationNaiveBayes setSigma(double sigma) {
         if (sigma < 0) {
             throw new IllegalArgumentException("Invalid add-k smoothing parameter: " + sigma);
         }
@@ -88,7 +90,7 @@ public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration<A
      * Type
      * @param type the type to set
      */
-    public ARXNaiveBayesConfiguration setType(Type type) {
+    public ClassificationConfigurationNaiveBayes setType(Type type) {
         if (type == null) {
             throw new IllegalArgumentException("Invalid type parameter: " + type);
         }

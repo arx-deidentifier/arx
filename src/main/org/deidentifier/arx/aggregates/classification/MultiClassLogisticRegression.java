@@ -26,8 +26,8 @@ import org.apache.mahout.math.DenseVector;
 import org.apache.mahout.math.Vector;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 
 /**
  * Implements a classifier
@@ -36,7 +36,7 @@ import org.deidentifier.arx.DataHandleInternal;
 public class MultiClassLogisticRegression implements ClassificationMethod {
 
     /** Config */
-    private final ARXLogisticRegressionConfiguration config;
+    private final ClassificationConfigurationLogisticRegression config;
     /** Encoder */
     private final ConstantValueEncoder               interceptEncoder;
     /** Instance */
@@ -52,7 +52,7 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
      * @param config
      */
     public MultiClassLogisticRegression(ClassificationDataSpecification specification,
-                                        ARXLogisticRegressionConfiguration config) {
+                                        ClassificationConfigurationLogisticRegression config) {
 
         // Store
         this.config = config;

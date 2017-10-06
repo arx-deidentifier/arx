@@ -21,10 +21,10 @@ import java.io.Serializable;
 
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
-import org.deidentifier.arx.ARXNaiveBayesConfiguration;
-import org.deidentifier.arx.ARXRandomForestConfiguration;
-import org.deidentifier.arx.ARXSVMConfiguration;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
 
 /**
  * This class represents a model
@@ -41,13 +41,13 @@ public class ModelClassification implements Serializable {
     /** Current configuration */
     private ARXClassificationConfiguration<?>  configCurrent      = null;
     /** Configuration logistic regression */
-    private ARXLogisticRegressionConfiguration config             = null;
+    private ClassificationConfigurationLogisticRegression config             = null;
     /** Configuration naive bayes */
-    private ARXNaiveBayesConfiguration         configNaiveBayes   = null;
+    private ClassificationConfigurationNaiveBayes         configNaiveBayes   = null;
     /** Configuration random forest */
-    private ARXRandomForestConfiguration       configRandomForest = null;
+    private ClassificationConfigurationRandomForest       configRandomForest = null;
     /** Configuration SVM */
-    private ARXSVMConfiguration                configSVM          = null;
+    private ClassificationConfigurationSVM                configSVM          = null;
     /** Feature scaling */
     private ARXFeatureScaling                  featureScaling;
 
@@ -77,9 +77,9 @@ public class ModelClassification implements Serializable {
      * Returns a logistic regression configuration for ARX
      * @return
      */
-    public ARXLogisticRegressionConfiguration getLogisticRegressionConfiguration() {
+    public ClassificationConfigurationLogisticRegression getLogisticRegressionConfiguration() {
         if (this.config == null) {
-            this.config = ARXLogisticRegressionConfiguration.create();
+            this.config = ClassificationConfigurationLogisticRegression.create();
         }
         return this.config;
     }
@@ -88,9 +88,9 @@ public class ModelClassification implements Serializable {
      * Returns a naive bayes configuration for ARX
      * @return
      */
-    public ARXNaiveBayesConfiguration getNaiveBayesConfiguration() {
+    public ClassificationConfigurationNaiveBayes getNaiveBayesConfiguration() {
         if (this.configNaiveBayes == null) {
-            this.configNaiveBayes = ARXNaiveBayesConfiguration.create();
+            this.configNaiveBayes = ClassificationConfigurationNaiveBayes.create();
         }
         return this.configNaiveBayes;
     }
@@ -99,9 +99,9 @@ public class ModelClassification implements Serializable {
      * Returns a random forest configuration for ARX
      * @return
      */
-    public ARXRandomForestConfiguration getRandomForestConfiguration() {
+    public ClassificationConfigurationRandomForest getRandomForestConfiguration() {
         if (this.configRandomForest == null) {
-            this.configRandomForest = ARXRandomForestConfiguration.create();
+            this.configRandomForest = ClassificationConfigurationRandomForest.create();
         }
         return this.configRandomForest;
     }
@@ -110,9 +110,9 @@ public class ModelClassification implements Serializable {
      * Returns a SVM configuration for ARX
      * @return
      */
-    public ARXSVMConfiguration getSVMConfiguration() {
+    public ClassificationConfigurationSVM getSVMConfiguration() {
         if (this.configSVM == null) {
-            this.configSVM = ARXSVMConfiguration.create();
+            this.configSVM = ClassificationConfigurationSVM.create();
         }
         return this.configSVM;
     }
