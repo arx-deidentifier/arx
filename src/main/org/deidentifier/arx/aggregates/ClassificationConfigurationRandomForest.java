@@ -24,7 +24,7 @@ import org.deidentifier.arx.ARXClassificationConfiguration;
  * Configuration for Random Forest classifiers
  * @author Fabian Prasser
  */
-public class ClassificationConfigurationRandomForest extends ARXClassificationConfiguration<ClassificationConfigurationRandomForest> implements Serializable {
+public class ClassificationConfigurationRandomForest extends ARXClassificationConfiguration<ClassificationConfigurationRandomForest> implements Serializable, Cloneable {
 
     /** SVUID */
     private static final long serialVersionUID = 7928077920858462047L;
@@ -47,12 +47,50 @@ public class ClassificationConfigurationRandomForest extends ARXClassificationCo
         // Empty by design
     }
 
+    /** 
+     * Clone constructor
+     * @param deterministic
+     * @param maxRecords
+     * @param numberOfFolds
+     * @param seed
+     * @param vectorLength
+     * @param numberOfTrees
+     */
+    protected ClassificationConfigurationRandomForest(boolean deterministic,
+                                                    int maxRecords,
+                                                    int numberOfFolds,
+                                                    long seed,
+                                                    int vectorLength,
+                                                    int numberOfTrees) {
+        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength);
+        this.numberOfTrees = numberOfTrees;
+    }
+
+    @Override
+    public ClassificationConfigurationRandomForest clone() {
+        return new ClassificationConfigurationRandomForest(super.isDeterministic(),
+                                                         super.getMaxRecords(),
+                                                         super.getNumFolds(),
+                                                         super.getSeed(),
+                                                         super.getVectorLength(),
+                                                         numberOfTrees);
+    }
+    
     /**
      * @return the numberOfTrees
      */
     public int getNumberOfTrees() {
         return numberOfTrees;
     }
+
+    @Override
+    public void parse(ARXClassificationConfiguration<?> config) {
+        super.parse(config);
+        if (config instanceof ClassificationConfigurationRandomForest) {
+            ClassificationConfigurationRandomForest iconfig = (ClassificationConfigurationRandomForest)config;
+            this.setNumberOfTrees(iconfig.numberOfTrees);
+        }
+    }    
 
     /**
      * @param numberOfTrees the numberOfTrees to set
@@ -63,5 +101,5 @@ public class ClassificationConfigurationRandomForest extends ARXClassificationCo
             this.numberOfTrees = numberOfTrees;
         }
         return this;
-    }    
+    }
 }

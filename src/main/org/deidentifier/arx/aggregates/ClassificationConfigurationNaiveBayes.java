@@ -24,7 +24,7 @@ import org.deidentifier.arx.ARXClassificationConfiguration;
  * Configuration for naive bayes classification
  * @author Fabian Prasser
  */
-public class ClassificationConfigurationNaiveBayes extends ARXClassificationConfiguration<ClassificationConfigurationNaiveBayes> implements Serializable {
+public class ClassificationConfigurationNaiveBayes extends ARXClassificationConfiguration<ClassificationConfigurationNaiveBayes> implements Serializable, Cloneable {
 
     /** 
      * Type of bayes classifier
@@ -56,6 +56,39 @@ public class ClassificationConfigurationNaiveBayes extends ARXClassificationConf
         // Empty by design
     }
 
+    /** 
+     * Clone constructor
+     * @param deterministic
+     * @param maxRecords
+     * @param numberOfFolds
+     * @param seed
+     * @param vectorLength
+     * @param type
+     * @param sigma
+     */
+    protected ClassificationConfigurationNaiveBayes(boolean deterministic,
+                                                    int maxRecords,
+                                                    int numberOfFolds,
+                                                    long seed,
+                                                    int vectorLength,
+                                                    Type type,
+                                                    double sigma) {
+        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength);
+        this.type = type;
+        this.sigma = sigma;
+    }
+
+    @Override
+    public ClassificationConfigurationNaiveBayes clone() {
+        return new ClassificationConfigurationNaiveBayes(super.isDeterministic(),
+                                                         super.getMaxRecords(),
+                                                         super.getNumFolds(),
+                                                         super.getSeed(),
+                                                         super.getVectorLength(),
+                                                         type,
+                                                         sigma);
+    }
+
     /**
      * Gets the prior count of add-k smoothing of evidence.
      * @return the sigma
@@ -71,6 +104,16 @@ public class ClassificationConfigurationNaiveBayes extends ARXClassificationConf
     public Type getType() {
         return type;
     }
+    @Override
+    public void parse(ARXClassificationConfiguration<?> config) {
+        super.parse(config);
+        if (config instanceof ClassificationConfigurationNaiveBayes) {
+            ClassificationConfigurationNaiveBayes iconfig = (ClassificationConfigurationNaiveBayes)config;
+            this.setSigma(iconfig.sigma);
+            this.setType(iconfig.type);
+        }
+    }
+
     /**
      * Sets the prior count of add-k smoothing of evidence.
      * @param sigma the sigma to set

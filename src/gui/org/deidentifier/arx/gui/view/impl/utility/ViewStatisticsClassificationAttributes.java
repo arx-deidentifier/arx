@@ -63,7 +63,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  * @author Johanna Eicher
  */
-public class ViewStatisticsClassificationAttributesInput implements IView, ViewStatisticsBasic {
+public class ViewStatisticsClassificationAttributes implements IView, ViewStatisticsBasic {
     
     /**
      * Internal state management
@@ -176,12 +176,11 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
      * @param parent
      * @param controller
      */
-    public ViewStatisticsClassificationAttributesInput(final Composite parent,
+    public ViewStatisticsClassificationAttributes(final Composite parent,
                                     final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.OUTPUT, this);
@@ -210,7 +209,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
                 boolean update = fireEvent(arg0, features, model.getSelectedFeatures(), newSelection);
                 if (update) {
                     model.setSelectedFeatures(newSelection);
-                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
                 }
             }
         });
@@ -232,7 +231,7 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
                 boolean update = fireEvent(arg0, classes, model.getSelectedClasses(), newSelection);
                 if (update) {
                    model.setSelectedClasses(newSelection);
-                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributesInput.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
                 }
             }
         });
@@ -289,7 +288,6 @@ public class ViewStatisticsClassificationAttributesInput implements IView, ViewS
            this.model = (Model) event.data;
            update();
         } else if (event.part == ModelPart.INPUT ||
-                   event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
                    event.part == ModelPart.ATTRIBUTE_TYPE || 
                    event.part == ModelPart.OUTPUT ||
                    event.part == ModelPart.DATA_TYPE) {

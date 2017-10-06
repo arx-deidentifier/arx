@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -54,6 +55,7 @@ import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
+import org.deidentifier.arx.gui.view.impl.menu.DialogClassificationConfiguration;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboDoubleSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
@@ -338,6 +340,19 @@ public class MainWindow implements IView {
     }
     
     /**
+     * Shows a preference dialog for editing parameter values of classification
+     * configurations.
+     * @param config 
+     * 
+     * @param model
+     */
+    public ARXClassificationConfiguration<?> showClassificationConfigurationDialog(ARXClassificationConfiguration<?> config) {
+        DialogClassificationConfiguration dialog = new DialogClassificationConfiguration(shell, config);
+        dialog.open();
+        return dialog.getResult();
+    }
+
+    /**
      * Shows a dialog for configuring privacy criteria.
      *
      * @param criteria
@@ -349,7 +364,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-
+    
     /**
      * Shows a debug dialog.
      */
@@ -358,7 +373,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows an error dialog.
      *
@@ -396,7 +411,7 @@ public class MainWindow implements IView {
     public void showErrorDialog(final String message, final Throwable throwable) {
         showErrorDialog(this.shell, message, throwable);
     }
-
+    
     /**
      * Shows a find & replace dialog
      * @param handle
@@ -410,7 +425,7 @@ public class MainWindow implements IView {
         dialog.open();
         return dialog.getValue();
     }
-    
+
     /**
      * Shows an input dialog for selecting formats string for data types.
      *
@@ -497,7 +512,7 @@ public class MainWindow implements IView {
             return null;
         }
     }
-
+    
     /**
      * Shows a help dialog.
      *
@@ -511,7 +526,7 @@ public class MainWindow implements IView {
     		this.showErrorDialog(Resources.getMessage("MainWindow.12"), e); //$NON-NLS-1$
     	}
     }
-    
+
     /**
      * Shows an info dialog.
      *
@@ -554,7 +569,6 @@ public class MainWindow implements IView {
             return null;
         }
     }
-
     /**
      * Shows a dialog for local anonymization
      * @return Returns the parameters selected by the user. Returns a pair. 
@@ -566,6 +580,7 @@ public class MainWindow implements IView {
         dialog.open();
         return dialog.getResult();
     }
+
     /**
      * Shows a dialog that allows selecting multiple elements
      * @param shell
@@ -692,6 +707,7 @@ public class MainWindow implements IView {
         dialog.setFilterIndex(0);
         return dialog.open();
     }
+    
 
     /**
      * Shows a dialog for selecting privacy criteria.
@@ -710,7 +726,6 @@ public class MainWindow implements IView {
             return dialog.getCriterion();
         }
     }
-    
 
     /**
      * Shows a top/bottom coding dialog
@@ -725,7 +740,7 @@ public class MainWindow implements IView {
         dialog.open();
         return dialog.getValue();
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -738,6 +753,7 @@ public class MainWindow implements IView {
         }
     }
     
+
     /**
      * Returns the local for the given isoLanguage
      * @param isoLanguage
@@ -751,7 +767,7 @@ public class MainWindow implements IView {
         }
         throw new IllegalStateException("Unknown locale");
     }
-    
+
 
     /**
      * Creates the global menu
@@ -768,7 +784,6 @@ public class MainWindow implements IView {
         
         return menu;
     }
-
 
     /**
      * Creates the edit menu
@@ -1194,4 +1209,5 @@ public class MainWindow implements IView {
             }  
         };
     }
+
 }

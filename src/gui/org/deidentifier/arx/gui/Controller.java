@@ -40,6 +40,7 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.ARXResult;
@@ -1577,6 +1578,15 @@ public class Controller implements IView {
     }
     
     /**
+     * Shows a dialog for configuring classifiers
+     * @param config 
+     * @return 
+     */
+    public ARXClassificationConfiguration<?> actionShowClassificationConfigurationDialog(ARXClassificationConfiguration<?> config) {
+        return main.showClassificationConfigurationDialog(config);
+    }
+
+    /**
      * Shows an error dialog.
      *
      * @param shell
@@ -1628,7 +1638,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-
+    
     /**
      * Shows a help dialog.
      *
@@ -1637,7 +1647,7 @@ public class Controller implements IView {
     public void actionShowHelpDialog(String id) {
         main.showHelpDialog(id);
     }
-    
+
     /**
      * Shows an info dialog.
      *
@@ -1648,7 +1658,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1664,6 +1673,7 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1745,7 +1755,6 @@ public class Controller implements IView {
                                          final Worker<?> worker) {
         main.showProgressDialog(text, worker);
     }
-
     /**
      * Shows a question dialog.
      *
@@ -1759,6 +1768,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
+    
     /**
      * Shows a question dialog.
      *
@@ -1770,7 +1780,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(this.main.getShell(), header, text);
     }
-    
+
     /**
      * Internal method for showing a "save file" dialog.
      *
@@ -1872,7 +1882,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Creates a subset via random sampling
      */
@@ -1920,7 +1930,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-    
+
     /**
      * Registers a listener at the controller.
      *

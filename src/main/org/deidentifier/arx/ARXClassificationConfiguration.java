@@ -28,23 +28,10 @@ import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
  * 
  * @author Fabian Prasser
  */
-public abstract class ARXClassificationConfiguration<T extends ARXClassificationConfiguration<?>> implements Serializable {
+public abstract class ARXClassificationConfiguration<T extends ARXClassificationConfiguration<?>> implements Serializable, Cloneable {
 
     /** SVUID */
     private static final long serialVersionUID = -8751059558718015927L;
-    /** Deterministic */
-    private boolean           deterministic    = true;
-    /** Max records */
-    private int               maxRecords       = 100000;
-    /** Folds */
-    private int               numberOfFolds    = 10;
-    /** Seed */
-    private long              seed             = Integer.MAX_VALUE;
-    /** Configuration */
-    private int               vectorLength     = 1000;
-    /** Modified */
-    private boolean           modified         = false;
-    
     /**
      * Creates a new instance for logistic regression classifiers
      * @return
@@ -52,7 +39,6 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static ClassificationConfigurationLogisticRegression createLogisticRegression() {
         return ClassificationConfigurationLogisticRegression.create();
     }
-
     /**
      * Creates a new instance for naive bayes classifiers
      * @return
@@ -60,7 +46,6 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static ClassificationConfigurationNaiveBayes createNaiveBayes() {
         return ClassificationConfigurationNaiveBayes.create();
     }
-
     /**
      * Creates a new instance for random forest classifiers
      * @return
@@ -68,7 +53,6 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static ClassificationConfigurationRandomForest createRandomForest() {
         return ClassificationConfigurationRandomForest.create();
     }
-
     /**
      * Creates a new instance for SVM classifiers
      * @return
@@ -76,6 +60,48 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static ClassificationConfigurationSVM createSVM() {
         return ClassificationConfigurationSVM.create();
     }
+    /** Deterministic */
+    private boolean           deterministic    = true;
+    /** Max records */
+    private int               maxRecords       = 100000;
+    
+    /** Folds */
+    private int               numberOfFolds    = 10;
+    
+    /** Seed */
+    private long              seed             = Integer.MAX_VALUE;
+    
+    /** Configuration */
+    private int               vectorLength     = 1000;
+
+    /** Modified */
+    private boolean           modified         = false;
+
+    /**
+     * Creates a new instance with default settings
+     */
+    public ARXClassificationConfiguration() {
+        // Empty by design
+    }
+
+    /**
+     * Clone constructor
+     * @param deterministic
+     * @param maxRecords
+     * @param numberOfFolds
+     * @param seed
+     * @param vectorLength
+     */
+    protected ARXClassificationConfiguration(boolean deterministic, int maxRecords, int numberOfFolds, long seed, int vectorLength) {
+        this.deterministic = deterministic;
+        this.maxRecords = maxRecords;
+        this.numberOfFolds = numberOfFolds;
+        this.seed = seed;
+        this.vectorLength = vectorLength;
+    }
+
+    @Override
+    public abstract ARXClassificationConfiguration<T> clone();
 
     /**
      * @return the maxRecords to consider
@@ -119,6 +145,18 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
      */
     public boolean isModified() {
         return modified;
+    }
+    
+    /**
+     * Parses another configuration
+     * @param config
+     */
+    public void parse(ARXClassificationConfiguration<?> config) {
+        this.setDeterministic(config.deterministic);
+        this.setMaxRecords(config.maxRecords);
+        this.setNumFolds(config.numberOfFolds);
+        this.setSeed((int)config.seed);
+        this.setVectorLength(config.vectorLength);
     }
     
     /**

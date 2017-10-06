@@ -24,37 +24,7 @@ import org.deidentifier.arx.ARXClassificationConfiguration;
  * Configuration for SVM classifiers
  * @author Fabian Prasser
  */
-public class ClassificationConfigurationSVM extends ARXClassificationConfiguration<ClassificationConfigurationSVM> implements Serializable {
-
-    /** 
-     * Type of multiclass SVM
-     */
-    public static enum MulticlassType {
-        ONE_VS_ALL,
-        ONE_VS_ONE
-    }
-
-    /** SVUID */
-    private static final long serialVersionUID = -4043281971961479819L;
-
-    /**
-     * Returns a new instance
-     * @return
-     */
-    public static ClassificationConfigurationSVM create() {
-        return new ClassificationConfigurationSVM();
-    }
-
-    /** Type */
-    private MulticlassType multiclassType = MulticlassType.ONE_VS_ALL;
-    /** Soft margin penalty */
-    private double         c              = 1.0d;
-    /** The smooth/width parameter of the kernel. */
-    private double         kernelSigma    = 1.0d;
-    /** The degree of the kernel. */
-    private int            kernelDegree   = 2;
-    /** Kernel */
-    private Kernel         kernelType     = Kernel.GAUSSIAN;
+public class ClassificationConfigurationSVM extends ARXClassificationConfiguration<ClassificationConfigurationSVM> implements Serializable, Cloneable {
 
     /**
      * Kernel for the SVM
@@ -103,6 +73,36 @@ public class ClassificationConfigurationSVM extends ARXClassificationConfigurati
 //        /** Kernel*/
 //        SPARSE_THIN_PLATE_SPLINE,
     }
+
+    /** 
+     * Type of multiclass SVM
+     */
+    public static enum MulticlassType {
+        ONE_VS_ALL,
+        ONE_VS_ONE
+    }
+
+    /** SVUID */
+    private static final long serialVersionUID = -4043281971961479819L;
+
+    /**
+     * Returns a new instance
+     * @return
+     */
+    public static ClassificationConfigurationSVM create() {
+        return new ClassificationConfigurationSVM();
+    }
+    /** Type */
+    private MulticlassType multiclassType = MulticlassType.ONE_VS_ALL;
+    /** Soft margin penalty */
+    private double         c              = 1.0d;
+    /** The smooth/width parameter of the kernel. */
+    private double         kernelSigma    = 1.0d;
+    /** The degree of the kernel. */
+    private int            kernelDegree   = 2;
+
+    /** Kernel */
+    private Kernel         kernelType     = Kernel.GAUSSIAN;
     
     /**
      * Constructor
@@ -111,11 +111,93 @@ public class ClassificationConfigurationSVM extends ARXClassificationConfigurati
         // Empty by design
     }
 
+    /** 
+     * Clone constructor
+     * @param deterministic
+     * @param maxRecords
+     * @param numberOfFolds
+     * @param seed
+     * @param vectorLength
+     * @param numberOfTrees
+     */
+    protected ClassificationConfigurationSVM(boolean deterministic,
+                                                    int maxRecords,
+                                                    int numberOfFolds,
+                                                    long seed,
+                                                    int vectorLength,
+                                                    MulticlassType multiclassType,
+                                                    double c,
+                                                    double kernelSigma,
+                                                    int kernelDegree,
+                                                    Kernel kernelType) {
+        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength);
+        this.multiclassType = multiclassType;
+        this.c = c;
+        this.kernelSigma = kernelSigma;
+        this.kernelDegree = kernelDegree;
+        this.kernelType = kernelType;
+    }
+
+    @Override
+    public ClassificationConfigurationSVM clone() {
+        return new ClassificationConfigurationSVM(super.isDeterministic(),
+                                                         super.getMaxRecords(),
+                                                         super.getNumFolds(),
+                                                         super.getSeed(),
+                                                         super.getVectorLength(),
+                                                         multiclassType,
+                                                         c,
+                                                         kernelSigma,
+                                                         kernelDegree,
+                                                         kernelType);
+    }
+    
     /**
      * @return the c
      */
     public double getC() {
         return c;
+    }
+
+    /**
+     * @return the kernelDegree
+     */
+    public int getKernelDegree() {
+        return kernelDegree;
+    }
+
+    /**
+     * @return the kernelSigma
+     */
+    public double getKernelSigma() {
+        return kernelSigma;
+    }
+
+    /**
+     * @return the kernel
+     */
+    public Kernel getKernelType() {
+        return kernelType;
+    }
+
+    /**
+     * @return the multiclassType
+     */
+    public MulticlassType getMulticlassType() {
+        return multiclassType;
+    }
+
+    @Override
+    public void parse(ARXClassificationConfiguration<?> config) {
+        super.parse(config);
+        if (config instanceof ClassificationConfigurationSVM) {
+            ClassificationConfigurationSVM iconfig = (ClassificationConfigurationSVM)config;
+            this.setC(iconfig.c);
+            this.setKernelDegree(iconfig.kernelDegree);
+            this.setKernelSigma(iconfig.kernelSigma);
+            this.setKernelType(iconfig.kernelType);
+            this.setMulticlassType(iconfig.multiclassType);
+        }
     }
 
     /**
@@ -130,10 +212,14 @@ public class ClassificationConfigurationSVM extends ARXClassificationConfigurati
     }
 
     /**
-     * @return the kernelSigma
+     * @param kernelDegree the kernelDegree to set
      */
-    public double getKernelSigma() {
-        return kernelSigma;
+    public ClassificationConfigurationSVM setKernelDegree(int kernelDegree) {
+        if (this.kernelDegree != kernelDegree) {
+            setModified();
+            this.kernelDegree = kernelDegree;
+        }
+        return this;
     }
 
     /**
@@ -148,31 +234,6 @@ public class ClassificationConfigurationSVM extends ARXClassificationConfigurati
     }
 
     /**
-     * @return the kernelDegree
-     */
-    public int getKernelDegree() {
-        return kernelDegree;
-    }
-
-    /**
-     * @param kernelDegree the kernelDegree to set
-     */
-    public ClassificationConfigurationSVM setKernelDegree(int kernelDegree) {
-        if (this.kernelDegree != kernelDegree) {
-            setModified();
-            this.kernelDegree = kernelDegree;
-        }
-        return this;
-    }
-
-    /**
-     * @return the kernel
-     */
-    public Kernel getKernelType() {
-        return kernelType;
-    }
-
-    /**
      * @param kernel the kernel to set
      */
     public ClassificationConfigurationSVM setKernelType(Kernel kernelType) {
@@ -181,13 +242,6 @@ public class ClassificationConfigurationSVM extends ARXClassificationConfigurati
             this.kernelType = kernelType;
         }
         return this;
-    }
-
-    /**
-     * @return the multiclassType
-     */
-    public MulticlassType getMulticlassType() {
-        return multiclassType;
     }
 
     /**

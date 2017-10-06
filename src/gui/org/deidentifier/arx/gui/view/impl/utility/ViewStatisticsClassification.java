@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.aggregates.StatisticsClassification.PrecisionRecallMatrix;
@@ -137,7 +137,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         this.rocCurves = new HashMap<>();
         this.originalRocCurves = new HashMap<>();
         
-        controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
+        controller.addListener(ModelPart.CLASSIFICATION_CONFIGURATION, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.SELECTED_CLASS_VALUE, this);
@@ -151,7 +151,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
+        if (event.part == ModelPart.CLASSIFICATION_CONFIGURATION ||
             event.part == ModelPart.DATA_TYPE) {
             if (getModel() != null && (getModel().getSelectedFeatures().isEmpty() || getModel().getSelectedClasses().isEmpty())) {
                 doReset();
@@ -962,7 +962,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
         final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
         final String[] classes = context.model.getSelectedClasses().toArray(new String[0]);
-        final ClassificationConfigurationLogisticRegression config = context.model.getClassificationModel().getLogisticRegressionConfiguration();
+        final ARXClassificationConfiguration<?> config = context.model.getClassificationModel().getCurrentConfiguration();
         final ARXFeatureScaling scaling = context.model.getClassificationModel().getFeatureScaling();
         
         // Break, if nothing do

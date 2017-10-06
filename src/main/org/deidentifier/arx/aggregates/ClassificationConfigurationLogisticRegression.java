@@ -24,7 +24,7 @@ import org.deidentifier.arx.ARXClassificationConfiguration;
  * Configuration for logistic regression
  * @author Fabian Prasser
  */
-public class ClassificationConfigurationLogisticRegression extends ARXClassificationConfiguration<ClassificationConfigurationLogisticRegression> implements Serializable {
+public class ClassificationConfigurationLogisticRegression extends ARXClassificationConfiguration<ClassificationConfigurationLogisticRegression> implements Serializable, Cloneable {
 
     /** 
      * Prior function for regularization
@@ -74,6 +74,60 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
      */
     private ClassificationConfigurationLogisticRegression(){
         // Empty by design
+    }
+    
+    /**
+     * Clone constructor
+     * @param alpha
+     * @param decayExponent
+     * @param lambda
+     * @param learningRate
+     * @param stepOffset
+     * @param vectorLength
+     * @param maxRecords
+     * @param seed
+     * @param numberOfFolds
+     * @param deterministic
+     * @param prior
+     */
+    protected ClassificationConfigurationLogisticRegression(double alpha,
+                                                            double decayExponent,
+                                                            double lambda,
+                                                            double learningRate,
+                                                            int stepOffset,
+                                                            int vectorLength,
+                                                            int maxRecords,
+                                                            int seed,
+                                                            int numberOfFolds,
+                                                            boolean deterministic,
+                                                            PriorFunction prior) {
+        super(deterministic, maxRecords, numberOfFolds, seed, vectorLength);
+        this.alpha = alpha;
+        this.decayExponent = decayExponent;
+        this.lambda = lambda;
+        this.learningRate = learningRate;
+        this.stepOffset = stepOffset;
+        this.vectorLength = vectorLength;
+        this.maxRecords = maxRecords;
+        this.seed = seed;
+        this.numberOfFolds = numberOfFolds;
+        this.deterministic = deterministic;
+        this.prior = prior;
+    }
+
+    @Override
+    public ClassificationConfigurationLogisticRegression clone() {
+        return new ClassificationConfigurationLogisticRegression(alpha,
+                                                                 decayExponent,
+                                                                 lambda,
+                                                                 learningRate,
+                                                                 stepOffset,
+                                                                 vectorLength,
+                                                                 maxRecords,
+                                                                 seed,
+                                                                 numberOfFolds,
+                                                                 deterministic,
+                                                                 prior);
     }
 
     /**
@@ -152,6 +206,20 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
      */
     public boolean isDeterministic() {
         return deterministic;
+    }
+
+    @Override
+    public void parse(ARXClassificationConfiguration<?> config) {
+        super.parse(config);
+        if (config instanceof ClassificationConfigurationLogisticRegression) {
+            ClassificationConfigurationLogisticRegression iconfig = (ClassificationConfigurationLogisticRegression)config;
+            this.setAlpha(iconfig.alpha);
+            this.setDecayExponent(iconfig.decayExponent);
+            this.setLambda(iconfig.lambda);
+            this.setLearningRate(iconfig.learningRate);
+            this.setPriorFunction(iconfig.prior);
+            this.setStepOffset(iconfig.stepOffset);
+        }
     }
 
     /**

@@ -34,12 +34,12 @@ import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
 public class ModelClassification implements Serializable {
 
     /** SVUID */
-    private static final long                  serialVersionUID   = 5361564507029617616L;
+    private static final long                             serialVersionUID   = 5361564507029617616L;
 
     /** Modified */
-    private boolean                            modified           = false;
+    private boolean                                       modified           = false;
     /** Current configuration */
-    private ARXClassificationConfiguration<?>  configCurrent      = null;
+    private ARXClassificationConfiguration<?>             configCurrent      = null;
     /** Configuration logistic regression */
     private ClassificationConfigurationLogisticRegression config             = null;
     /** Configuration naive bayes */
@@ -49,7 +49,7 @@ public class ModelClassification implements Serializable {
     /** Configuration SVM */
     private ClassificationConfigurationSVM                configSVM          = null;
     /** Feature scaling */
-    private ARXFeatureScaling                  featureScaling;
+    private ARXFeatureScaling                             featureScaling;
 
     /**
      * Returns the current classification configuration
@@ -123,7 +123,8 @@ public class ModelClassification implements Serializable {
      * @return
      */
     public boolean isModified() {
-        return this.modified || getLogisticRegressionConfiguration().isModified() || getNaiveBayesConfiguration().isModified() || getRandomForestConfiguration().isModified() || getSVMConfiguration().isModified();
+        return this.modified || getLogisticRegressionConfiguration().isModified() || getNaiveBayesConfiguration().isModified() ||
+                                getRandomForestConfiguration().isModified() || getSVMConfiguration().isModified();
     }
     
     /**
@@ -136,12 +137,41 @@ public class ModelClassification implements Serializable {
     }
     
     /**
-     * Sets modified
+     * TODO: Ugly hack to set base-parameters for all methods
+     * @param t
      */
-    private void setModified() {
-        this.modified = true;
+    public void setDeterministic(Boolean t) {
+        this.config.setDeterministic(t);
+        this.configNaiveBayes.setDeterministic(t);
+        this.configRandomForest.setDeterministic(t);
+        this.configSVM.setDeterministic(t);
+        this.setModified();
     }
     
+    /**
+     * TODO: Ugly hack to set base-parameters for all methods
+     * @param t
+     */
+    public void setMaxRecords(Integer t) {
+        this.config.setMaxRecords(t);
+        this.configNaiveBayes.setMaxRecords(t);
+        this.configRandomForest.setMaxRecords(t);
+        this.configSVM.setMaxRecords(t);
+        this.setModified();
+    }
+    
+    /**
+     * TODO: Ugly hack to set base-parameters for all methods
+     * @param t
+     */
+    public void setNumFolds(Integer t) {
+        this.config.setNumFolds(t);
+        this.configNaiveBayes.setNumFolds(t);
+        this.configRandomForest.setNumFolds(t);
+        this.configSVM.setNumFolds(t);
+        this.setModified();
+    }
+
     /**
      * Sets a feature scaling function
      * @param attribute
@@ -151,7 +181,7 @@ public class ModelClassification implements Serializable {
         this.setModified();
         this.getFeatureScaling().setScalingFunction(attribute, function);
     }
-    
+
     /**
      * Set this model and all configurations unmodified
      */
@@ -161,5 +191,24 @@ public class ModelClassification implements Serializable {
         getNaiveBayesConfiguration().setUnmodified();
         getRandomForestConfiguration().setUnmodified();
         getSVMConfiguration().setUnmodified();
+    }
+
+    /**
+     * TODO: Ugly hack to set base-parameters for all methods
+     * @param t
+     */
+    public void setVectorLength(Integer t) {
+        this.config.setVectorLength(t);
+        this.configNaiveBayes.setVectorLength(t);
+        this.configRandomForest.setVectorLength(t);
+        this.configSVM.setVectorLength(t);
+        this.setModified();
+    }
+
+    /**
+     * Sets modified
+     */
+    private void setModified() {
+        this.modified = true;
     }
 }
