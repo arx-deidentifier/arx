@@ -163,21 +163,21 @@ public class StatisticsClassification {
          * @param handleIndex
          */
         private ROCCurve(String value,
-                         List<double[]> confidences,
+                         Map<Integer, double[]> confidences,
                          int confidenceIndex,
                          DataHandleInternal handle,
                          int handleIndex) {
             
-            // Determine correct values
-            int records = handle.getNumRows(); // TODO: Sampling?
-            int positive = 0;
+            int positives = 0;
             int valueID = handle.getValueIdentifier(handleIndex, value);
-            final boolean[] correct = new boolean[confidences.size()]; // TODO: Sampling?
-            final double[] confidence = new double[confidences.size()]; // TODO: Sampling?
-            for (int i = 0; i < correct.length; i++) {
-                correct[i] = (handle.getEncodedValue(i, handleIndex, true) == valueID);
-                positive += correct[i] ? 1 : 0;
-                confidence[i] = confidences.get(i)[confidenceIndex];
+            final boolean[] correct = new boolean[confidences.size()];
+            final double[] confidence = new double[confidences.size()];
+            int j = 0;
+            for (int index : confidences.keySet()) {
+                correct[j] = (handle.getEncodedValue(index, handleIndex, true) == valueID);
+                positives += correct[j] ? 1 : 0;
+                confidence[j] = confidences.get(index)[confidenceIndex];
+                j++;
             }
             
             // Sort by confidence
@@ -201,14 +201,15 @@ public class StatisticsClassification {
             falsePositive = new double[confidences.size()];
             
             // Draw curve
+            int negatives = confidences.size() - positives;
             int x = 0;
             int y = 0;
             int offset=0;
             for (int i = correct.length - 1; i >= 0; i--) {
                 x += correct[i] ? 0 : 1;
                 y += correct[i] ? 1 : 0;
-                falsePositive[offset] = (double)x/(double)(records-positive);
-                truePositive[offset] = (double)y/(double)positive;
+                falsePositive[offset] = (double)x/(double)(negatives);
+                truePositive[offset] = (double)y/(double)positives;
                 offset++;
             }
 
@@ -348,15 +349,10 @@ public class StatisticsClassification {
         this.interrupt = interrupt;
         this.progress = progress;
         
-        // Check and clean up
-        double samplingFraction = (double)config.getMaxRecords() / (double)inputHandle.getNumRows();
-        if (samplingFraction <= 0d) {
-            throw new IllegalArgumentException("Sampling fraction must be >0");
-        }
-        // TODO: Sampling fraction is not considered!
-        if (samplingFraction > 1d) {
-            samplingFraction = 1d;
-        }
+        // Number of rows
+        int numRecords = inputHandle.getNumRows();
+        // Sampling size
+        int numSamples = getNumSamples(numRecords, config);
        
         // Initialize random
         if (!config.isDeterministic()) {
@@ -374,26 +370,17 @@ public class StatisticsClassification {
                                                                                             interrupt);
         
         // Train and evaluate
-        int k = inputHandle.getNumRows() > config.getNumFolds() ? config.getNumFolds() : inputHandle.getNumRows();
-        List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), k);
+        int k = numSamples > config.getNumFolds() ? config.getNumFolds() : numSamples;
+        List<List<Integer>> folds = getFolds(numRecords, numSamples, k);
 
         // Track
         int classifications = 0;
-        double total = 100d / ((double)inputHandle.getNumRows() * (double)folds.size()); // TODO: Sampling!
+        double total = 100d / ((double)numSamples * (double)folds.size());
         double done = 0d;
         
         // ROC
-        List<double[]> originalConfidences = new ArrayList<double[]>();
-        for (int i = 0; i < inputHandle.getNumRows(); i++) {
-            originalConfidences.add(null);
-        }
-        List<double[]> confidences = null;
-        if (inputHandle != outputHandle) {
-            confidences = new ArrayList<double[]>();
-            for (int i = 0; i < inputHandle.getNumRows(); i++) {
-                confidences.add(null);
-            }
-        }
+        Map<Integer, double[]> originalConfidences = new HashMap<Integer, double[]>();
+        Map<Integer, double[]> confidences = new HashMap<Integer, double[]>();
                 
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
@@ -460,7 +447,7 @@ public class StatisticsClassification {
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
                         this.originalMatrix.add(resultInputLR.confidence(), correct);
-                        originalConfidences.set(index, resultInputLR.confidences());
+                        originalConfidences.put(index, resultInputLR.confidences());
                         
                         // Maintain data about outputLR                        
                         if (resultOutputLR != null) {
@@ -468,7 +455,7 @@ public class StatisticsClassification {
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
                             this.matrix.add(resultOutputLR.confidence(), correct);
-                            confidences.set(index, resultOutputLR.confidences());
+                            confidences.put(index, resultOutputLR.confidences());
                         }
                     }
                     this.progress.value = (int)((++done) * total);
@@ -492,7 +479,7 @@ public class StatisticsClassification {
             originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
         }
         // Initialize ROC curves on anonymized data
-        if (confidences != null) {
+        if (!confidences.isEmpty()) {
             for (String attr : specification.classMap.keySet()) {
                 ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
             }    
@@ -660,20 +647,25 @@ public class StatisticsClassification {
 
     /**
      * Creates the folds
-     * @param length
+     * @param numRecords
+     * @param numSamples
      * @param k
-     * @param random
      * @return
      */
-    private List<List<Integer>> getFolds(int length, int k) {
+    private List<List<Integer>> getFolds(int numRecords, int numSamples, int k) {
         
-        // Prepare indexes
+        // Prepare indexes of all records
         List<Integer> rows = new ArrayList<>();
-        for (int row = 0; row < length; row++) {
+        for (int row = 0; row < numRecords; row++) {
             rows.add(row);
         }
+        
+        // Shuffle
         Collections.shuffle(rows, random);
         
+        // Select subset of size numSamples
+        rows = rows.subList(0, numSamples);
+
         // Create folds
         List<List<Integer>> folds = new ArrayList<>();
         int size = rows.size() / k;
@@ -700,5 +692,22 @@ public class StatisticsClassification {
         rows.clear();
         rows = null;
         return folds;
+    }
+    
+    /**
+     * Returns the number of samples as the minimum of actual number of rows in
+     * the dataset and maximal number of rows as specified in config.
+     * 
+     * @param numRows
+     * @param config
+     * @return
+     */
+    private int getNumSamples(int numRows,
+                              ARXClassificationConfiguration config) {
+        int numSamples = numRows;
+        if (config.getMaxRecords() > 0) {
+            numSamples = Math.min(config.getMaxRecords(), numSamples);
+        }
+        return numSamples;
     }
 }
