@@ -52,6 +52,7 @@ import cern.colt.function.IntComparator;
  * Statistics representing the performance of various classifiers
  * 
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class StatisticsClassification {
 
