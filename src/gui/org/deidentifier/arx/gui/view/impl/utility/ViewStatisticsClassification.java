@@ -37,6 +37,7 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -887,7 +888,17 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         // Create top composite
         Composite root = new Composite(parent, SWT.NONE);
         root.setLayout(new FillLayout());
-        this.folder = new ComponentTitledFolder(root, null, null, null, true, false);
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar();
+
+        // Add update button
+        bar.add(Resources.getMessage("ViewStatisticsClassificationInput.29"), getController().getResources().getManagedImage("arrow_refresh.png"), new Runnable(){ //$NON-NLS-1$ //$NON-NLS-2$ 
+            public void run() {
+                triggerUpdate();
+            }
+        });
+        
+        this.folder = new ComponentTitledFolder(root, null, bar, null, true, false);
+        
         
         // Precision and recall
         Composite item1 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.27"), //$NON-NLS-1$

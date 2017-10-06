@@ -170,7 +170,7 @@ public class ComponentTitledFolder implements IComponent {
         this.folder.setSimple(false);
         
         // Create help button
-        if (controller != null) {
+        if (bar != null || controller != null) {
             if (bar == null) SWTUtil.createHelpButton(controller, folder, id, helpids);
             else createBar(controller, folder, bar);
         }
@@ -473,21 +473,22 @@ public class ComponentTitledFolder implements IComponent {
             });
         }
         
-        ToolItem item = new ToolItem( toolbar, SWT.PUSH );
-        item.setImage(controller.getResources().getManagedImage("help.png"));  //$NON-NLS-1$
-        item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
-        SWTUtil.createDisabledImage(item);
-        item.addSelectionListener(new SelectionAdapter(){
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                if (bar.getHelpIds() == null || bar.getHelpIds().get(folder.getSelection().getControl()) == null) {
-                    controller.actionShowHelpDialog(bar.getHelpId());
-                } else {
-                    controller.actionShowHelpDialog(bar.getHelpIds().get(folder.getSelection().getControl()));
+        if (bar.getHelpId() != null || (bar.getHelpIds() != null && !bar.getHelpIds().isEmpty())) {
+            ToolItem item = new ToolItem( toolbar, SWT.PUSH );
+            item.setImage(controller.getResources().getManagedImage("help.png"));  //$NON-NLS-1$
+            item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
+            SWTUtil.createDisabledImage(item);
+            item.addSelectionListener(new SelectionAdapter(){
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    if (bar.getHelpIds() == null || bar.getHelpIds().get(folder.getSelection().getControl()) == null) {
+                        controller.actionShowHelpDialog(bar.getHelpId());
+                    } else {
+                        controller.actionShowHelpDialog(bar.getHelpIds().get(folder.getSelection().getControl()));
+                    }
                 }
-            }
-        });
-        
+            });
+        }   
         int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
         folder.setTabHeight(Math.max(height, folder.getTabHeight()));
     }
