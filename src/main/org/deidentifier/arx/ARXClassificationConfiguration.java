@@ -31,14 +31,14 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     private boolean           deterministic    = true;
     /** Max records */
     private int               maxRecords       = 100000;
-    /** Modified */
-    private boolean           modified         = false;
     /** Folds */
     private int               numberOfFolds    = 10;
     /** Seed */
     private long              seed             = Integer.MAX_VALUE;
     /** Configuration */
     private int               vectorLength     = 1000;
+    /** Modified */
+    private boolean           modified         = false;
 
     /**
      * @return the maxRecords to consider

@@ -54,15 +54,15 @@ public class ARXLogisticRegressionConfiguration extends ARXClassificationConfigu
     private double        learningRate  = 1d;
     /** Configuration */
     private int           stepOffset    = 10000;
-    /** Configuration */
+    /** Configuration. TODO: We needed to replicate this here for backwards compatibility */
     private int           vectorLength  = 1000;
-    /** Max records */
+    /** Max records TODO: We needed to replicate this here for backwards compatibility */
     private int           maxRecords    = 100000;
-    /** Seed */
+    /** Seed TODO: We needed to replicate this here for backwards compatibility */
     private int           seed          = Integer.MAX_VALUE;
-    /** Folds */
+    /** Folds TODO: We needed to replicate this here for backwards compatibility */
     private int           numberOfFolds = 10;
-    /** Deterministic */
+    /** Deterministic TODO: We needed to replicate this here for backwards compatibility */
     private boolean       deterministic = true;
     /** Configuration */
     private PriorFunction prior         = PriorFunction.L1;
