@@ -27,20 +27,54 @@ public abstract class ARXClassificationConfiguration implements Serializable{
 
     /** SVUID */
     private static final long serialVersionUID = -8751059558718015927L;
+    /** Deterministic */
+    private boolean           deterministic    = true;
+    /** Max records */
+    private int               maxRecords       = 100000;
     /** Modified */
     private boolean           modified         = false;
+    /** Folds */
+    private int               numberOfFolds    = 10;
+    /** Seed */
+    private long              seed             = Integer.MAX_VALUE;
+    /** Configuration */
+    private int               vectorLength     = 1000;
 
-    /** Maximal number of records to consider*/
-    public abstract int getMaxRecords();
+    /**
+     * @return the maxRecords to consider
+     */
+    public int getMaxRecords() {
+        return maxRecords;
+    }
 
-    /** Number of folds*/
-    public abstract int getNumFolds();
+    /**
+     * @return the numberOfFolds
+     */
+    public int getNumFolds() {
+        return numberOfFolds;
+    }
 
-    /** Seed for drawing records*/
-    public abstract long getSeed();
+    /**
+     * @return the seed
+     */
+    public long getSeed() {
+        return seed;
+    }
+    
+    /**
+     * @return the vectorLength
+     */
+    public int getVectorLength() {
+        return vectorLength;
+    }
 
-    /** Deterministic*/
-    public abstract boolean isDeterministic();
+    /**
+     * Returns whether the process should be deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
+    }
     
     /**
      * Is this configuration modified
@@ -51,6 +85,33 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     }
     
     /**
+     * Sets whether the process should be deterministic
+     * @param deterministic
+     * @return
+     */
+    public ARXClassificationConfiguration setDeterministic(boolean deterministic) {
+        if (this.deterministic != deterministic) {
+            setModified();
+            this.deterministic = deterministic;
+        }
+        return this;
+    }
+    
+    /**
+     * @param maxRecords the maxRecords to set
+     */
+    public ARXClassificationConfiguration setMaxRecords(int maxRecords) {
+        if (maxRecords <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.maxRecords != maxRecords) {
+            setModified();
+            this.maxRecords = maxRecords;
+        }
+        return this;
+    }
+    
+    /**
      * Sets modified
      */
     protected void setModified() {
@@ -58,9 +119,49 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     }
     
     /**
+     * @param numberOfFolds the numberOfFolds to set
+     */
+    public ARXClassificationConfiguration setNumFolds(int numberOfFolds) {
+        if (numberOfFolds <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.numberOfFolds != numberOfFolds) {
+            setModified();
+            this.numberOfFolds = numberOfFolds;
+        }
+        return this;
+    }
+    
+    /**
+     * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
+     * @param seed the seed to set
+     */
+    public ARXClassificationConfiguration setSeed(int seed) {
+        if (this.seed != seed) {
+            setModified();
+            this.seed = seed;
+        }
+        return this;
+    }
+    
+    /**
      * Set unmodified
      */
     public void setUnmodified() {
         this.modified = false;
+    }
+    
+    /**
+     * @param vectorLength the vectorLength to set
+     */
+    public ARXClassificationConfiguration setVectorLength(int vectorLength) {
+        if (vectorLength <= 0) {
+            throw new IllegalArgumentException("Must be >0");
+        }
+        if (this.vectorLength != vectorLength) {
+            setModified();
+            this.vectorLength = vectorLength;
+        }
+        return this;
     }
 }
