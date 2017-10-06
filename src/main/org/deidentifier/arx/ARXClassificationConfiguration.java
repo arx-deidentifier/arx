@@ -23,7 +23,7 @@ import java.io.Serializable;
  * 
  * @author Fabian Prasser
  */
-public abstract class ARXClassificationConfiguration implements Serializable{
+public abstract class ARXClassificationConfiguration<T extends ARXClassificationConfiguration<?>> implements Serializable {
 
     /** SVUID */
     private static final long serialVersionUID = -8751059558718015927L;
@@ -89,18 +89,20 @@ public abstract class ARXClassificationConfiguration implements Serializable{
      * @param deterministic
      * @return
      */
-    public ARXClassificationConfiguration setDeterministic(boolean deterministic) {
+    @SuppressWarnings("unchecked")
+    public T setDeterministic(boolean deterministic) {
         if (this.deterministic != deterministic) {
             setModified();
             this.deterministic = deterministic;
         }
-        return this;
+        return (T)this;
     }
     
     /**
      * @param maxRecords the maxRecords to set
      */
-    public ARXClassificationConfiguration setMaxRecords(int maxRecords) {
+    @SuppressWarnings("unchecked")
+    public T setMaxRecords(int maxRecords) {
         if (maxRecords <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
@@ -108,20 +110,21 @@ public abstract class ARXClassificationConfiguration implements Serializable{
             setModified();
             this.maxRecords = maxRecords;
         }
-        return this;
+        return (T)this;
     }
     
     /**
      * Sets modified
      */
-    protected void setModified() {
+    public void setModified() {
         this.modified = true;
     }
     
     /**
      * @param numberOfFolds the numberOfFolds to set
      */
-    public ARXClassificationConfiguration setNumFolds(int numberOfFolds) {
+    @SuppressWarnings("unchecked")
+    public T setNumFolds(int numberOfFolds) {
         if (numberOfFolds <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
@@ -129,19 +132,20 @@ public abstract class ARXClassificationConfiguration implements Serializable{
             setModified();
             this.numberOfFolds = numberOfFolds;
         }
-        return this;
+        return (T)this;
     }
     
     /**
      * Seed for randomization. Set to Integer.MAX_VALUE for randomization.
      * @param seed the seed to set
      */
-    public ARXClassificationConfiguration setSeed(int seed) {
+    @SuppressWarnings("unchecked")
+    public T setSeed(int seed) {
         if (this.seed != seed) {
             setModified();
             this.seed = seed;
         }
-        return this;
+        return (T)this;
     }
     
     /**
@@ -154,7 +158,8 @@ public abstract class ARXClassificationConfiguration implements Serializable{
     /**
      * @param vectorLength the vectorLength to set
      */
-    public ARXClassificationConfiguration setVectorLength(int vectorLength) {
+    @SuppressWarnings("unchecked")
+    public T setVectorLength(int vectorLength) {
         if (vectorLength <= 0) {
             throw new IllegalArgumentException("Must be >0");
         }
@@ -162,6 +167,6 @@ public abstract class ARXClassificationConfiguration implements Serializable{
             setModified();
             this.vectorLength = vectorLength;
         }
-        return this;
+        return (T)this;
     }
 }

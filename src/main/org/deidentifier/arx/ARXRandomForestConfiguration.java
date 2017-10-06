@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Configuration for Random Forest classifiers
  * @author Fabian Prasser
  */
-public class ARXRandomForestConfiguration extends ARXClassificationConfiguration implements Serializable {
+public class ARXRandomForestConfiguration extends ARXClassificationConfiguration<ARXRandomForestConfiguration> implements Serializable {
 
     /** SVUID */
     private static final long serialVersionUID = 7928077920858462047L;

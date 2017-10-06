@@ -264,7 +264,7 @@ public class StatisticsClassification {
      * @return
      */
     private static ClassificationMethod getClassifier(ClassificationDataSpecification specification,
-                                                      ARXClassificationConfiguration config) {
+                                                      ARXClassificationConfiguration<?> config) {
         if (config instanceof ARXLogisticRegressionConfiguration) {
             return new MultiClassLogisticRegression(specification, (ARXLogisticRegressionConfiguration)config);
         } else if (config instanceof ARXNaiveBayesConfiguration) {
@@ -341,7 +341,7 @@ public class StatisticsClassification {
                              DataHandleInternal outputHandle,
                              String[] features,
                              String clazz,
-                             ARXClassificationConfiguration config,
+                             ARXClassificationConfiguration<?> config,
                              ARXFeatureScaling scaling, 
                              WrappedBoolean interrupt,
                              WrappedInteger progress) throws ParseException {
@@ -703,8 +703,7 @@ public class StatisticsClassification {
      * @param config
      * @return
      */
-    private int getNumSamples(int numRows,
-                              ARXClassificationConfiguration config) {
+    private int getNumSamples(int numRows, ARXClassificationConfiguration<?> config) {
         int numSamples = numRows;
         if (config.getMaxRecords() > 0) {
             numSamples = Math.min(config.getMaxRecords(), numSamples);

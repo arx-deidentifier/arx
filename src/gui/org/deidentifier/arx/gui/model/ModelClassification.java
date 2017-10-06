@@ -39,7 +39,7 @@ public class ModelClassification implements Serializable {
     /** Modified */
     private boolean                            modified           = false;
     /** Current configuration */
-    private ARXClassificationConfiguration     configCurrent      = null;
+    private ARXClassificationConfiguration<?>  configCurrent      = null;
     /** Configuration logistic regression */
     private ARXLogisticRegressionConfiguration config             = null;
     /** Configuration naive bayes */
@@ -55,7 +55,7 @@ public class ModelClassification implements Serializable {
      * Returns the current classification configuration
      * @return
      */
-    public ARXClassificationConfiguration getCurrentConfiguration(){
+    public ARXClassificationConfiguration<?> getCurrentConfiguration(){
         if (this.configCurrent == null) {
             this.configCurrent = getLogisticRegressionConfiguration();
         }
@@ -131,7 +131,7 @@ public class ModelClassification implements Serializable {
      * 
      * @param configCurrent
      */
-    public void setCurrentConfiguration(ARXClassificationConfiguration configCurrent){
+    public void setCurrentConfiguration(ARXClassificationConfiguration<?> configCurrent){
         this.configCurrent = configCurrent;
     }
     

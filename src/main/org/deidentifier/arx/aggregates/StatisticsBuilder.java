@@ -84,7 +84,7 @@ public class StatisticsBuilder {
      * @param config - The configuration
      * @throws ParseException
      */
-    public StatisticsClassification getClassificationPerformance(String clazz, ARXClassificationConfiguration config) throws ParseException {
+    public StatisticsClassification getClassificationPerformance(String clazz, ARXClassificationConfiguration<?> config) throws ParseException {
         return getClassificationPerformance(new String[] {}, clazz, config);
     }
 
@@ -97,7 +97,7 @@ public class StatisticsBuilder {
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXClassificationConfiguration config) throws ParseException {
+                                                                 ARXClassificationConfiguration<?> config) throws ParseException {
     
         // Return
         return getClassificationPerformance(features, clazz, config, null);
@@ -113,7 +113,7 @@ public class StatisticsBuilder {
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXClassificationConfiguration config,
+                                                                 ARXClassificationConfiguration<?> config,
                                                                  ARXFeatureScaling scaling) throws ParseException {
     
         // Reset stop flag

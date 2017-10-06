@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Configuration for naive bayes classification
  * @author Fabian Prasser
  */
-public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration implements Serializable {
+public class ARXNaiveBayesConfiguration extends ARXClassificationConfiguration<ARXNaiveBayesConfiguration> implements Serializable {
 
     /** 
      * Type of bayes classifier

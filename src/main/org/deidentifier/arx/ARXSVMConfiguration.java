@@ -22,7 +22,7 @@ import java.io.Serializable;
  * Configuration for SVM classifiers
  * @author Fabian Prasser
  */
-public class ARXSVMConfiguration extends ARXClassificationConfiguration implements Serializable {
+public class ARXSVMConfiguration extends ARXClassificationConfiguration<ARXSVMConfiguration> implements Serializable {
 
     /** 
      * Type of multiclass SVM
@@ -44,15 +44,15 @@ public class ARXSVMConfiguration extends ARXClassificationConfiguration implemen
     }
 
     /** Type */
-    private MulticlassType multiclassType         = MulticlassType.ONE_VS_ALL;
+    private MulticlassType multiclassType = MulticlassType.ONE_VS_ALL;
     /** Soft margin penalty */
-    private double         c            = 1.0d;
+    private double         c              = 1.0d;
     /** The smooth/width parameter of the kernel. */
-    private double         kernelSigma  = 1.0d;
+    private double         kernelSigma    = 1.0d;
     /** The degree of the kernel. */
-    private int            kernelDegree = 2;
+    private int            kernelDegree   = 2;
     /** Kernel */
-    private Kernel         kernelType       = Kernel.GAUSSIAN;
+    private Kernel         kernelType     = Kernel.GAUSSIAN;
 
     /**
      * Kernel for the SVM

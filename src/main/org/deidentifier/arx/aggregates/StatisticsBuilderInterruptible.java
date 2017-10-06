@@ -56,7 +56,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 ARXClassificationConfiguration config) throws InterruptedException {
+                                                                 ARXClassificationConfiguration<?> config) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(clazz, config);
         } catch (Exception e) {
@@ -77,7 +77,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXClassificationConfiguration config) throws InterruptedException {
+                                                                 ARXClassificationConfiguration<?> config) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(features, clazz, config);
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class StatisticsBuilderInterruptible { // NO_UCD
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXClassificationConfiguration config,
+                                                                 ARXClassificationConfiguration<?> config,
                                                                  ARXFeatureScaling scaling) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(features, clazz, config, scaling);
