@@ -42,6 +42,7 @@ import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
 import org.deidentifier.arx.metric.v2.MetricMDNMLossPotentiallyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDNMLossPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
+import org.deidentifier.arx.metric.v2.MetricMDNMSSE;
 import org.deidentifier.arx.metric.v2.MetricMDNUEntropy;
 import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPotentiallyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDNUEntropyPrecomputed;
@@ -53,6 +54,7 @@ import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPr
 import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDPrecision;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
+import org.deidentifier.arx.metric.v2.MetricSDClassification;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
@@ -150,6 +152,25 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public static Metric<ILSingleDimensional> createAmbiguityMetric() {
         return __MetricV2.createAmbiguityMetric();
+    }
+   
+    /**
+     * Creates an instance of the classification metric.
+     * 
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric() {
+        return __MetricV2.createClassificationMetric();
+    }
+
+    /**
+     * Creates an instance of the classification metric.
+     * 
+     * @param gsFactor
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric(double gsFactor) {
+        return __MetricV2.createClassificationMetric(gsFactor);
     }
 
     /**
@@ -459,7 +480,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic) {
         return __MetricV2.createPrecisionMetric(monotonic);
     }
-    
 
     /**
      * Creates an instance of the precision metric.
@@ -526,6 +546,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(double gsFactor) {
         return __MetricV2.createPrecisionMetric(gsFactor);
     }
+    
 
     /**
      * Creates an instance of the non-monotonic precision metric.
@@ -545,7 +566,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecisionMetric(gsFactor, function);
     }
 
-    
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -559,7 +579,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold) {
         return __MetricV2.createPrecomputedEntropyMetric(threshold);
     }
-
+    
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -574,7 +594,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic) {
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic);
     }
-
 
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric.
@@ -591,7 +610,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, function);
     }
 
-    
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -613,6 +631,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, gsFactor);
     }
 
+    
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -633,7 +652,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedEntropyMetric(double threshold, boolean monotonic, double gsFactor, AggregateFunction function) {
         return __MetricV2.createPrecomputedEntropyMetric(threshold, monotonic, gsFactor, function);
     }
-    
+
     /**
      * Creates a potentially precomputed instance of the non-monotonic non-uniform entropy metric. The default aggregate function,
      * which is the sum-function, will be used for comparing results.
@@ -660,6 +679,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedEntropyMetric(threshold, gsFactor);
     }
 
+
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization
      * and suppression equally.
@@ -674,6 +694,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return __MetricV2.createPrecomputedLossMetric(threshold);
     }
 
+    
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization and suppression equally.
      * This metric will respect attribute weights defined in the configuration.
@@ -726,7 +747,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createPrecomputedLossMetric(double threshold, double gsFactor, AggregateFunction function) {
         return __MetricV2.createPrecomputedLossMetric(threshold, gsFactor, function);
     }
-    
 
     /**
      * Creates a potentially precomputed instance of the normalized entropy metric.
@@ -767,7 +787,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static MetricSDNMPublisherPayout createPublisherPayoutMetric(boolean journalistAttackerModel) {
         return __MetricV2.createPublisherBenefitMetric(journalistAttackerModel, 0.5d);
     }
-
+    
     /**
      * Creates an instance of the model for maximizing publisher benefit in the game-theoretic privacy
      * model based on a cost/benefit analysis.
@@ -786,6 +806,64 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static MetricSDNMPublisherPayout createPublisherPayoutMetric(boolean journalistAttackerModel,
                                                                         double gsFactor) {
         return __MetricV2.createPublisherBenefitMetric(journalistAttackerModel, gsFactor);
+    }
+    
+
+    /**
+     * Creates an instance of the SSE metric which treats generalization and suppression equally.
+     * The default aggregate function, which is the arithmetic mean function, will be used.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric() {
+        return __MetricV2.createSSEMetric();
+    }
+
+    /**
+     * Creates an instance of the SSE metric which treats generalization and suppression equally.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric(AggregateFunction function) {
+        return __MetricV2.createSSEMetric(function);
+    }
+
+    /**
+     * Creates an instance of the SSE metric with factors for weighting generalization and suppression.
+     * The default aggregate function, which is the arithmetic mean function, will be used.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric(double gsFactor) {
+        return __MetricV2.createSSEMetric(gsFactor);
+    }
+
+    /**
+     * Creates an instance of the SSE metric with factors for weighting generalization and suppression.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createSSEMetric(double gsFactor, AggregateFunction function) {
+        return __MetricV2.createSSEMetric(gsFactor, function);
     }
     
     /**
@@ -1107,7 +1185,49 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                      @Override
                                      public boolean isInstance(Metric<?> metric) {
                                          return (metric instanceof MetricSDNMEntropyBasedInformationLoss);
-                                     } 
+                                     }
+               },
+               new MetricDescription("SSE",
+                                      false, // monotonic variant supported
+                                      false, // attribute weights supported
+                                      true, // configurable coding model supported
+                                      false, // pre-computation supported
+                                      true, // aggregate function supported
+                                      false) { // attacker model supported
+
+                                      private static final long serialVersionUID = -8432852977438469251L;
+
+                                      @Override
+                                      public Metric<?> createInstance(MetricConfiguration config) {
+                                          return createSSEMetric(config.getGsFactor(), config.getAggregateFunction());
+                                      }
+                  
+                                      @Override
+                                      public boolean isInstance(Metric<?> metric) {
+                                          return (metric instanceof MetricMDNMSSE);
+                                      }
+               },
+               new MetricDescription("Classification metric",
+                                     false, // monotonic variant supported
+                                     false, // attribute weights supported
+                                     true, // configurable coding model supported
+                                     false, // pre-computation supported
+                                     false, // aggregate function supported
+                                     false) { // attacker model supported
+                   
+                   
+                                     /** SVUID */
+                                     private static final long serialVersionUID = 6211930528963931179L;
+                                     
+                                     @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createClassificationMetric(config.getGsFactor());
+                                     }
+                                     
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDClassification);
+                                     }
                }
         });
     }

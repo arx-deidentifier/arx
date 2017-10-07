@@ -17,26 +17,26 @@
 package org.deidentifier.arx.exceptions;
 
 /**
- * Internal class for interrupts.
+ * Internal class for unexpected errors.
  *
  * @author Fabian Prasser
  */
-public class ComputationInterruptedException extends RuntimeException { // NO_UCD
+public class UnexpectedErrorException extends RuntimeException { // NO_UCD
     
     /** SVUID */
-    private static final long serialVersionUID = 5339918851212367422L;
+    private static final long serialVersionUID = 3465383124059681997L;
 
     /**
      * Constructor
      */
-    public ComputationInterruptedException() {
+    public UnexpectedErrorException() {
         // Empty by design
     }
     /**
      * Constructor
      * @param message
      */
-    public ComputationInterruptedException(String message) {
+    public UnexpectedErrorException(String message) {
         super(message);
     }
     
@@ -45,7 +45,7 @@ public class ComputationInterruptedException extends RuntimeException { // NO_UC
      * @param message
      * @param cause
      */
-    public ComputationInterruptedException(String message, Throwable cause) {
+    public UnexpectedErrorException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -53,7 +53,7 @@ public class ComputationInterruptedException extends RuntimeException { // NO_UC
      * Constructor
      * @param cause
      */
-    public ComputationInterruptedException(Throwable cause) {
+    public UnexpectedErrorException(Throwable cause) {
         super(cause);
     }
 }

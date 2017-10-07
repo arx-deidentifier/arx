@@ -24,6 +24,7 @@ import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMicroAggregation;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.MetricSDNMEntropyBasedInformationLoss;
@@ -109,9 +110,10 @@ public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
         this.riskModel = new RiskModelCostBenefit(this.config);
 
         // Prepare consideration of microaggregation
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
+        DataMicroAggregation microaggregationData = manager.getMicroAggregationData();
+        this.microaggregationFunctions = microaggregationData.functions;
+        this.microaggregationStartIndex = microaggregationData.startIndex;
+        this.microaggregationDomainSizes = microaggregationData.domainSizes;
                 
         // Calculate MaxIL
         this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, this.microaggregationDomainSizes);

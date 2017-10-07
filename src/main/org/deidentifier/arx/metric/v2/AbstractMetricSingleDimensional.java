@@ -22,6 +22,7 @@ import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMicroAggregation;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
@@ -72,6 +73,15 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor);
     }
     
+    /**
+     * Create a loss object
+     * @param loss
+     * @return
+     */
+    public ILSingleDimensionalWithBound createInformationLoss(double loss) {
+        return new ILSingleDimensionalWithBound(loss);
+    }
+
     /**
      * Create a loss object
      * @param loss
@@ -135,9 +145,10 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         this.tuples = (double) getNumRecords(config, input);
 
         // Handle microaggregation
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
+        DataMicroAggregation microaggregationData = manager.getMicroAggregationData();
+        this.microaggregationFunctions = microaggregationData.functions;
+        this.microaggregationStartIndex = microaggregationData.startIndex;
+        this.microaggregationDomainSizes = microaggregationData.domainSizes;
         if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
             this.microaggregationFunctions = new DistributionAggregateFunction[0];
             this.microaggregationDomainSizes = new int[0];

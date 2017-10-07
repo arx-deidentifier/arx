@@ -424,6 +424,9 @@ public class WorkerLoad extends Worker<Model> {
                         if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
                             MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
                             definition.setMicroAggregationFunction(attr, microaggregation);
+                        } else if (config.getTransformationMode(attr) == ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION) {
+                            MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                            definition.setMicroAggregationFunction(attr, microaggregation, true);
                         }
                         
                         Hierarchy hierarchy = config.getHierarchy(attr);

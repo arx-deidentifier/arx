@@ -123,6 +123,9 @@ public class ModelEvent {
         
         /** SELECTED_CLASS_VALUE */
         SELECTED_CLASS_VALUE,
+
+        /** RESPONSE VARIABLES */
+        RESPONSE_VARIABLES
     }
 
     /** The part of the model that has changed. */

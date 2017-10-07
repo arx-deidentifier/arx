@@ -102,35 +102,28 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
                 // Check
                 if (input != null && output != null) {
                     
-                    // Calculate min and max
-                    double[] minmax = getMinMax(input);
-                    double inmin = minmax[0];
-                    double inmax = minmax[1];
+                    // For normalization
+                    double avg = getAvg(input);
                     
                     // 1 / N * SUM_i (x_i - y_i)^2
                     for (int index = 0; index < output.length; index++) {
                         
-                        // For normalization
-                        double mindiff = input[index] - inmin;
-                        mindiff *= mindiff; // Square
-                        double maxdiff = input[index] - inmax;
-                        inmax *= inmax; // Square
-
-                        // From output
-                        double diff = 0d;
-                        if (!Double.isNaN(output[index])) {
-                            diff = input[index] - output[index];
-                            diff *= diff; // Square
-                        } else {
-                            diff = Math.max(mindiff, maxdiff);
-                        }
+                        // Calculate
+                        double maxdiff = input[index] - avg;
+                        double diff = (!Double.isNaN(output[index])) ? input[index] - output[index] : maxdiff;
                         
-                        // Store
-                        result[i] += diff;
-                        max[i] += Math.max(mindiff, maxdiff);
+                        // Square and store
+                        result[i] += diff * diff;
+                        max[i] += maxdiff * maxdiff;
 
                         // Check
                         checkInterrupt();
+                    }
+                    
+                    // We use the average (dataset centroid) for normalization. When very weird things happen, 
+                    // the actual result may even be worse. That's why we sanitize results here.
+                    if (max[i] < result[i]) {
+                        max[i] = result[i];
                     }
                     
                 // Not available
@@ -155,25 +148,16 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
     }
 
     /**
-     * Returns minimum, maximum for the given column
-     * @param data
+     * Returns the average of the given vector
+     * @param input
      * @return
      */
-    private double[] getMinMax(double[] data) {
-        
-        // Init
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
-        
-        // Calculate min and max
-        for (int i = 0; i < data.length; i++) {
-            double value = data[i];
-            min = Math.min(min, value);
-            max = Math.max(max, value);
+    private double getAvg(double[] input) {
+        double result = 0d;
+        for (double value : input) {
+            result += value;
         }
-        
-        // Return
-        return new double[]{min, max};
+        return result / (double)input.length;
     }
 
     /**

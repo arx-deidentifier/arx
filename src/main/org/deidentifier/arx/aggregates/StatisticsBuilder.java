@@ -468,18 +468,23 @@ public class StatisticsBuilder {
         interrupt.value = false;
         
         // Obtain list and data type
-        final String[] list = getDistinctValues(column);
-        final String attribute = handle.getAttributeName(column);
-        final DataType<?> datatype = handle.getDataType(attribute);
-        final int level = handle.getGeneralization(attribute);
+        String[] list = getDistinctValues(column);
+        String attribute = handle.getAttributeName(column);
+        DataType<?> datatype = handle.getDataType(attribute);
+        int level = handle.getGeneralization(attribute);
+        
+        progress.value = 20;
         
         // Sort by data type
-        if (hierarchy == null || level == 0) {
+        if ((datatype instanceof DataTypeWithRatioScale) || hierarchy == null || level == 0) {
+            
             sort(list, datatype);
-            // Sort by hierarchy and data type
+            
+        // Sort by hierarchy and data type
         } else {
+            
             // Build order directly from the hierarchy
-            final Map<String, Integer> order = new HashMap<String, Integer>();
+            Map<String, Integer> order = new HashMap<String, Integer>();
             int max = 0; // The order to use for the suppression string
             
             // Create base order
@@ -490,7 +495,6 @@ public class StatisticsBuilder {
                 checkInterrupt();
                 // Make sure that only elements from the hierarchy
                 // are added that are included in the data
-                // TODO: Calling isValid is only a work-around
                 if (baseType.isValid(element)) baseSet.add(element);
             }
             String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
@@ -503,12 +507,15 @@ public class StatisticsBuilder {
             
             // Handle optimized handles
             int lower = handle.isOptimized() ? 0 : level;
-            int upper = handle.isOptimized() ? hierarchy[0].length: level + 1;
+            int upper = handle.isOptimized() ? hierarchy[0].length : level + 1;
             
             // Build higher level order from base order
             for (int i = 0; i < hierarchy.length; i++) {
+                
+                // Check
                 checkInterrupt();
                 
+                // Add data from all relevant levels
                 for (int j = lower; j < upper; j++) {
                     if (!order.containsKey(hierarchy[i][j])) {
                         Integer position = baseOrder.get(hierarchy[i][0]);
@@ -522,10 +529,33 @@ public class StatisticsBuilder {
             
             // Add suppression string
             order.put(DataType.ANY_VALUE, max);
+
+            // Progress
+            progress.value = 30;
             
-            // Sort
-            sort(list, order);
+            // Check if all values are covered by the order
+            boolean allCovered = true;
+            for (String value : list) {
+                if (!order.containsKey(value)) {
+                    allCovered = false;
+                    break;
+                }
+            }
+            
+            // Progress
+            progress.value = 35;
+            
+            // Sort according to the given order
+            if (allCovered) {
+                sort(list, order);
+                
+            // Sort lexicographically
+            } else {
+                sort(list);
+            }
         }
+        
+        progress.value = 40;
         
         // Done
         return list;
@@ -647,8 +677,7 @@ public class StatisticsBuilder {
      *
      * @param column The column
      * @param orderFromDefinition Indicates whether the order that should be assumed for string data items
-     *            can (and should) be derived from the hierarchy provided in the data
-     *            definition (if any)
+     *                            should be derived from the hierarchy provided in the data definition (if any)
      * @return
      */
     public StatisticsFrequencyDistribution getFrequencyDistribution(int column, boolean orderFromDefinition) {
@@ -671,13 +700,15 @@ public class StatisticsBuilder {
         // Init
         String[] values = getDistinctValuesOrdered(column, hierarchy);
         double[] frequencies = new double[values.length];
-        
+
         // Create map of indexes
         Map<String, Integer> indexes = new HashMap<String, Integer>();
         for (int i = 0; i < values.length; i++) {
             checkInterrupt();
             indexes.put(values[i], i);
         }
+        
+        progress.value = 60;
         
         // Count frequencies
         for (int row = 0; row < handle.getNumRows(); row++) {
@@ -686,12 +717,16 @@ public class StatisticsBuilder {
             frequencies[indexes.get(value)]++;
         }
         
+        progress.value = 80;
+        
         // Divide by count
         int count = handle.getNumRows();
         for (int i = 0; i < frequencies.length; i++) {
             checkInterrupt();
             frequencies[i] /= (double) count;
         }
+        
+        progress.value = 100;
         
         // Return
         return new StatisticsFrequencyDistribution(values, frequencies, count);
@@ -1027,25 +1062,25 @@ public class StatisticsBuilder {
      * @param hierarchy
      * @return
      */
-    private <U, V> StatisticsSummaryOrdinal getSummaryStatisticsOrdinal(final int generalization,
-                                                                        final DataType<U> dataType,
-                                                                        final DataType<V> baseDataType,
-                                                                        final String[][] hierarchy) {
+    private <U, V> StatisticsSummaryOrdinal<?> getSummaryStatisticsOrdinal(final int generalization,
+                                                                           final DataType<U> dataType,
+                                                                           final DataType<V> baseDataType,
+                                                                           final String[][] hierarchy) {
         
         // TODO: It would be cleaner to return an ARXOrderedString for generalized variables
-        // TODO: that have a suitable data type directly from the DataHandle
+        //       that have a suitable data type directly obtained from the DataHandle
         if (generalization == 0 || !(dataType instanceof ARXString)) {
-            return new StatisticsSummaryOrdinal(dataType);
+            return new StatisticsSummaryOrdinal<U>(dataType);
         } else if (baseDataType instanceof ARXString) {
-            return new StatisticsSummaryOrdinal(dataType);
+            return new StatisticsSummaryOrdinal<U>(dataType);
         } else if (hierarchy == null) {
-            return new StatisticsSummaryOrdinal(dataType);
+            return new StatisticsSummaryOrdinal<U>(dataType);
         } else {
             final Map<String, String> map = new HashMap<String, String>();
             for (int i = 0; i < hierarchy.length; i++) {
                 map.put(hierarchy[i][generalization], hierarchy[i][0]);
             }
-            return new StatisticsSummaryOrdinal(new Comparator<String>() {
+            return new StatisticsSummaryOrdinal<V>(new Comparator<String>() {
                 public int compare(String o1, String o2) {
                     V _o1 = null;
                     try {
@@ -1070,6 +1105,28 @@ public class StatisticsBuilder {
     }
     
     /**
+     * Orders the given array lexicographically
+     *
+     * @param array
+     */
+    private void sort(final String[] array) {
+        GenericSorting.mergeSort(0, array.length, new IntComparator() {
+            @Override
+            public int compare(int arg0, int arg1) {
+                checkInterrupt();
+                return array[arg0].compareTo(array[arg1]);
+            }
+        }, new Swapper() {
+            @Override
+            public void swap(int arg0, int arg1) {
+                String temp = array[arg0];
+                array[arg0] = array[arg1];
+                array[arg1] = temp;
+            }
+        });
+    }
+    
+    /**
      * Orders the given array by data type.
      *
      * @param array
@@ -1088,9 +1145,7 @@ public class StatisticsBuilder {
                             : (s1 == DataType.ANY_VALUE ? +1
                                     : (s2 == DataType.ANY_VALUE ? -1
                                             : type.compare(s1, s2)));
-                } catch (
-                        IllegalArgumentException
-                        | ParseException e) {
+                } catch (IllegalArgumentException | ParseException e) {
                     throw new RuntimeException("Some values seem to not conform to the data type", e);
                 }
             }
@@ -1103,7 +1158,7 @@ public class StatisticsBuilder {
             }
         });
     }
-    
+
     /**
      * Orders the given array by the given sort order.
      *

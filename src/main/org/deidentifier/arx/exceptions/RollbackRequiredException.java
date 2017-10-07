@@ -16,10 +16,10 @@
  */
 package org.deidentifier.arx.exceptions;
 
-
 /**
- * This exception is raised, if the method that was called has left something in an
- * invalid state that may breach privacy. To ensure privacy, you must roll-back the operation that you performed.
+ * This exception is raised if the method that was called has left output data in an
+ * inconsistent state that may breach privacy. To ensure privacy you must roll-back 
+ * the operation that has been performed.
  *
  * @author Fabian Prasser
  */

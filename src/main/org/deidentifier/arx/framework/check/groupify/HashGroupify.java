@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataMatrix;
+import org.deidentifier.arx.framework.data.DataMicroAggregation;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
@@ -323,23 +324,22 @@ public class HashGroupify {
 
     /**
      * Returns a data object with microaggregation performed
-     * @param start
-     * @param num
-     * @param functions
-     * @param map
-     * @param header
+     * @param microaggregationData
      * @param dictionary
      * @return
      */
-    public Data performMicroaggregation(int start,
-                                        int num,
-                                        DistributionAggregateFunction[] functions,
-                                        int[] map,
-                                        String[] header,
+    public Data performMicroaggregation(DataMicroAggregation microaggregationData,
                                         Dictionary dictionary) {
         
+        // Initialize
+        int start = microaggregationData.startIndex;
+        int num = microaggregationData.header.length;
+        DistributionAggregateFunction[] functions = microaggregationData.functions;
+        int[] map = microaggregationData.columns;
+        String[] header = microaggregationData.header;
+        
         // Prepare result
-        Data result = new Data(new DataMatrix(dataOutput.getNumRows(), num), header, map, dictionary);
+        Data result = Data.createWrapper(new DataMatrix(dataOutput.getNumRows(), num), header, map, dictionary);
 
         // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
         ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();

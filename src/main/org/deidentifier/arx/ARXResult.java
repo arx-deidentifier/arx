@@ -117,20 +117,21 @@ public class ARXResult {
         lattice.access().setOptimum(optimum);
 
         // Extract data
-        final String[] header = ((DataHandleInput) handle).header;
-        final DataMatrix dataArray = ((DataHandleInput) handle).data;
-        final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header,
-                                                    dataArray,
-                                                    dictionary,
-                                                    handle.getDefinition(),
-                                                    config.getPrivacyModels(),
-                                                    getAggregateFunctions(handle.getDefinition()));
+        String[] header = ((DataHandleInput) handle).header;
+        DataMatrix dataArray = ((DataHandleInput) handle).data;
+        Dictionary dictionary = ((DataHandleInput) handle).dictionary;
+     
+        // Create manager
+        DataManager manager = new DataManager(header,
+                                              dataArray,
+                                              dictionary,
+                                              handle.getDefinition(),
+                                              config.getPrivacyModels(),
+                                              getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
-                                         manager.getDataAnalyzed().getArray(),
-                                         manager.getDataStatic().getArray());
+                                         manager.getDataAnalyzed().getArray());
         
         // Lock handle
         ((DataHandleInput)handle).setLocked(true);
