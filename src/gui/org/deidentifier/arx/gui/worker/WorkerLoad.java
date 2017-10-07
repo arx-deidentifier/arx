@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
@@ -345,7 +346,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max, format;
+            String attr, dtype, atype, ref, min, max, format, locale;
 
             @Override
             protected boolean end(final String uri,
@@ -382,9 +383,19 @@ public class WorkerLoad extends Worker<Model> {
                                     if (!description.hasFormat()) {
                                         throw new RuntimeException(Resources.getMessage("WorkerLoad.14")); //$NON-NLS-1$
                                     }
-                                    datatype = description.newInstance(format);
+                                    if (locale != null) {
+                                        Locale lLocale = getLocale(locale);
+                                        datatype = description.newInstance(format, lLocale);
+                                    } else {
+                                        datatype = description.newInstance(format);
+                                    }
                                 } else {
-                                    datatype = description.newInstance();
+                                    if (locale != null) {
+                                        Locale lLocale = getLocale(locale);
+                                        datatype = description.newInstance(lLocale);
+                                    } else {
+                                        datatype = description.newInstance();
+                                    }
                                 }
                                 break;
                             }
@@ -392,7 +403,7 @@ public class WorkerLoad extends Worker<Model> {
                         
                         // Check if found
                         if (datatype == null){
-                            throw new RuntimeException(Resources.getMessage("WorkerLoad.15")+attr); //$NON-NLS-1$
+                            throw new RuntimeException(Resources.getMessage("WorkerLoad.15") + attr); //$NON-NLS-1$
                         }
                         
                         // Store
@@ -500,7 +511,7 @@ public class WorkerLoad extends Worker<Model> {
                     min = null;
                     max = null;
                     format = null;
-                    
+                    locale = null;
                     return true;
 
                 } else if (vocabulary.isName(localName)) {
@@ -514,6 +525,9 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
                 } else if (vocabulary.isFormat(localName)) {
                     format = payload;
+                    return true;
+                } else if (vocabulary.isLocale(localName)) {
+                    locale = payload;
                     return true;
                 } else if (vocabulary.isRef(localName)) {
                     ref = payload;
@@ -547,6 +561,8 @@ public class WorkerLoad extends Worker<Model> {
                     attr = null;
                     dtype = null;
                     atype = null;
+                    format = null;
+                    locale = null;
                     ref = null;
                     min = null;
                     max = null;
@@ -555,6 +571,7 @@ public class WorkerLoad extends Worker<Model> {
                            vocabulary.isType(localName) ||
                            vocabulary.isDatatype(localName) ||
                            vocabulary.isFormat(localName) ||
+                           vocabulary.isLocale(localName) ||
                            vocabulary.isRef(localName) ||
                            vocabulary.isMin(localName) ||
                            vocabulary.isMax(localName) ||
@@ -1043,5 +1060,19 @@ public class WorkerLoad extends Worker<Model> {
         if (lattice != null && model != null && model.getOutputConfig() != null && model.getOutputConfig().getConfig() != null) {
             lattice.access().setMonotonicity(model.getOutputConfig().getConfig());
         }
+    }
+
+    /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
     }
 }

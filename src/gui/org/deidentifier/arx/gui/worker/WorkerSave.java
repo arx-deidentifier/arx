@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -334,6 +335,10 @@ public class WorkerSave extends Worker<Model> {
                 String format = ((DataTypeWithFormat)dt).getFormat();
                 if (format != null){
                     writer.write(vocabulary.getFormat(), format);
+                }
+                Locale locale = ((DataTypeWithFormat)dt).getLocale();
+                if (locale != null){
+                    writer.write(vocabulary.getLocale(), locale.getLanguage().toUpperCase());
                 }
             }
             

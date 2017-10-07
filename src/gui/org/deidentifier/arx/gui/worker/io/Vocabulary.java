@@ -566,6 +566,13 @@ public abstract class Vocabulary {
 	public boolean isLevel(String value){return value.equals(getLevel());}
 	
 	/**
+	 * 
+	 * @param value
+	 * @return
+	 */
+    public boolean isLocale(String value) { return value.equals(getLocale()); }
+	
+	/**
      * 
      *
      * @param value
@@ -588,21 +595,21 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isMetadata(String value){ return value.equals(getMetadata()); }
-	
-	/**
+
+    /**
 	 * 
 	 * @param value
 	 * @return
 	 */
 	public boolean isMicroaggregationFunction(String value){return value.equals(getMicroAggregationFunction());}
-
-    /**
+    
+	/**
      * 
      * @param value
      * @return
      */
     public boolean isMicroaggregationIgnoreMissingData(String value){return value.equals(getMicroAggregationIgnoreMissingData());}
-    
+	
 	/**
      * 
      *
@@ -651,14 +658,14 @@ public abstract class Vocabulary {
      */
 	public boolean isPredecessors(String value){return value.equals(getPredecessors());}
 	
-	/**
+    /**
      * 
      *
      * @param value
      * @return
      */
 	public boolean isRef(String value){return value.equals(getRef());}
-	
+    
     /**
      * 
      *
@@ -690,8 +697,8 @@ public abstract class Vocabulary {
      * @return
      */
 	public boolean isVersion(String value){return value.equals(getVersion());}
-    
-    /**
+
+	/**
      * 
      *
      * @param value

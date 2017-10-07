@@ -1345,6 +1345,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
          * @return
          */
         public abstract DataType<T> newInstance(String format, Locale locale);
+
+        /**
+         * Creates a new instance with default format and the given locale.
+         *
+         * @param locale
+         * @return
+         */
+        public DataType<T> newInstance(Locale locale) {
+            return newInstance(null, locale);
+        }
     }
     
     /**
