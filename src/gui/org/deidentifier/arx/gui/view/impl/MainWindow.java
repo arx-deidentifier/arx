@@ -753,7 +753,6 @@ public class MainWindow implements IView {
         }
     }
     
-
     /**
      * Returns the local for the given isoLanguage
      * @param isoLanguage
@@ -767,7 +766,6 @@ public class MainWindow implements IView {
         }
         throw new IllegalStateException("Unknown locale");
     }
-
 
     /**
      * Creates the global menu
