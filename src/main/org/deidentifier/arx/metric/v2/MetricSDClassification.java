@@ -143,7 +143,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     @Override
     public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("Classification metric");
+        ElementData result = new ElementData("Classification accuracy");
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         result.addProperty("Penalty for suppressed features", this.getPenaltySuppressed());
         result.addProperty("Penalty for records with non-majority response", this.getPenaltyInfrequentResponse());
@@ -153,7 +153,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     @Override
     public String toString() {
-        return "Classification metric";
+        return "Classification accuracy";
     }
     
     /**
@@ -295,6 +295,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         // Set penalties using the gs-factor. This is sort of a hack but should be OK for now.
         penaltySuppressed            = super.getSuppressionFactor();
         penaltyInfrequentResponse    = super.getGeneralizationFactor();
-        penaltyNoMajorityResponse    = super.getGeneralizationFactor();
+        penaltyNoMajorityResponse    = super.getGeneralizationSuppressionFactor();
     }
 }
