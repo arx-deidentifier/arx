@@ -67,7 +67,6 @@ public class ViewAttributeList implements IView {
 
     /** Model */
     private Model            model;
-
     /** Model */
     private String[]         dataTypes;
 
