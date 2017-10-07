@@ -1207,7 +1207,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                           return (metric instanceof MetricMDNMSSE);
                                       }
                },
-               new MetricDescription("Classification metric",
+               new MetricDescription("Classification accuracy",
                                      false, // monotonic variant supported
                                      false, // attribute weights supported
                                      true, // configurable coding model supported
