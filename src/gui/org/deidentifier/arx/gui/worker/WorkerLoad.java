@@ -347,7 +347,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max, format, locale;
+            String attr, dtype, atype, ref, min, max, format, locale, response;
 
             @Override
             protected boolean end(final String uri,
@@ -409,6 +409,11 @@ public class WorkerLoad extends Worker<Model> {
                         
                         // Store
                         definition.setDataType(attr, datatype);
+                    }
+                    
+                    // Response variables
+                    if (response != null && response.equals("true")) { //$NON-NLS-1$
+                        definition.setResponseVariable(attr, true);
                     }
 
                     // Attribute type
@@ -516,6 +521,7 @@ public class WorkerLoad extends Worker<Model> {
                     max = null;
                     format = null;
                     locale = null;
+                    response = null;
                     return true;
 
                 } else if (vocabulary.isName(localName)) {
@@ -532,6 +538,9 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
                 } else if (vocabulary.isLocale(localName)) {
                     locale = payload;
+                    return true;
+                } else if (vocabulary.isResponseVariable(localName)) {
+                    response = payload;
                     return true;
                 } else if (vocabulary.isRef(localName)) {
                     ref = payload;
@@ -570,6 +579,7 @@ public class WorkerLoad extends Worker<Model> {
                     ref = null;
                     min = null;
                     max = null;
+                    response = null;
                     return true;
                 } else if (vocabulary.isName(localName) ||
                            vocabulary.isType(localName) ||
@@ -577,6 +587,7 @@ public class WorkerLoad extends Worker<Model> {
                            vocabulary.isFormat(localName) ||
                            vocabulary.isLocale(localName) ||
                            vocabulary.isRef(localName) ||
+                           vocabulary.isResponseVariable(localName) ||
                            vocabulary.isMin(localName) ||
                            vocabulary.isMax(localName) ||
                            vocabulary.isMicroaggregationFunction(localName) ||

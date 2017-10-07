@@ -342,6 +342,11 @@ public class WorkerSave extends Worker<Model> {
                 }
             }
             
+            // Response variables
+            if (definition.isResponseVariable(attr)) {
+                writer.write(vocabulary.getResponseVariable(), "true"); //$NON-NLS-1$
+            }
+            
             // Do we have a hierarchy
             if (definition.getHierarchy(attr) != null && definition.getHierarchy(attr).length != 0 &&
                 definition.getHierarchy(attr)[0].length != 0) {
