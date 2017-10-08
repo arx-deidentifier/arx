@@ -41,6 +41,7 @@ import org.deidentifier.arx.metric.v2.MetricMDHeight;
 import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
 import org.deidentifier.arx.metric.v2.MetricMDNMLossPotentiallyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDNMLossPrecomputed;
+import org.deidentifier.arx.metric.v2.MetricMDNMNormalizedSSE;
 import org.deidentifier.arx.metric.v2.MetricMDNMPrecision;
 import org.deidentifier.arx.metric.v2.MetricMDNMSSE;
 import org.deidentifier.arx.metric.v2.MetricMDNUEntropy;
@@ -865,7 +866,64 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public static Metric<AbstractILMultiDimensional> createSSEMetric(double gsFactor, AggregateFunction function) {
         return __MetricV2.createSSEMetric(gsFactor, function);
     }
-    
+
+    /**
+     * Creates an instance of the normalized (by standard deviation) SSE metric which treats generalization and suppression equally.
+     * The default aggregate function, which is the arithmetic mean function, will be used.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedSSEMetric() {
+        return __MetricV2.createNormalizedSSEMetric();
+    }
+
+    /**
+     * Creates an instance of the normalized (by standard deviation) SSE metric which treats generalization and suppression equally.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedSSEMetric(AggregateFunction function) {
+        return __MetricV2.createNormalizedSSEMetric(function);
+    }
+
+    /**
+     * Creates an instance of the normalized (by standard deviation) SSE metric with factors for weighting generalization and suppression.
+     * The default aggregate function, which is the arithmetic mean function, will be used.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedSSEMetric(double gsFactor) {
+        return __MetricV2.createNormalizedSSEMetric(gsFactor);
+    }
+
+    /**
+     * Creates an instance of the normalized (by standard deviation) SSE metric with factors for weighting generalization and suppression.
+     * This metric will not respect attribute weights defined in the configuration.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * 
+     * @param function The aggregate function to use for comparing results
+     * @return
+     */
+    public static Metric<AbstractILMultiDimensional> createNormalizedSSEMetric(double gsFactor, AggregateFunction function) {
+        return __MetricV2.createNormalizedSSEMetric(gsFactor, function);
+    }
+
     /**
      * Creates an instance of a metric with statically defined information loss. 
      * The default aggregate function, which is the sum-function, will be used for comparing results.
@@ -1207,6 +1265,26 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                           return (metric instanceof MetricMDNMSSE);
                                       }
                },
+               new MetricDescription("Normalized SSE",
+                                     false, // monotonic variant supported
+                                     false, // attribute weights supported
+                                     true, // configurable coding model supported
+                                     false, // pre-computation supported
+                                     true, // aggregate function supported
+                                     false) { // attacker model supported
+
+                                     private static final long serialVersionUID = 6211930528963931179L;
+
+                                     @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createNormalizedSSEMetric(config.getGsFactor(), config.getAggregateFunction());
+                                     }
+                 
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricMDNMNormalizedSSE);
+                                     }
+              },
                new MetricDescription("Classification accuracy",
                                      false, // monotonic variant supported
                                      false, // attribute weights supported

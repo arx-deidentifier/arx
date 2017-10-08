@@ -70,9 +70,6 @@ public class DataManager {
     /** The domain shares */
     private DomainShare[]                   shares;
 
-    /** Centroid distances */
-    private DataCentroidDistances<?>[]      centroidDistances;
-
     /** The original input header. */
     private final String[]                  header;
 
@@ -301,28 +298,26 @@ public class DataManager {
 
     /**
      * Returns centroid distances
+     * @param normalized 
      * @return
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public DataCentroidDistances<?>[] getCentroidDistances() {
+    public DataCentroidDistances<?>[] getCentroidDistances(boolean normalized) {
 
-        // Build on-demand
-        if (this.centroidDistances == null) {
-            
-            // Compute domain shares
-            this.centroidDistances = new DataCentroidDistances[dataGeneralized.getHeader().length];
-            for (int column=0; column<centroidDistances.length; column++) {
-                
-                // Extract info
-                String attribute = dataGeneralized.getHeader()[column];
-                this.centroidDistances[column] = new DataCentroidDistances(dataGeneralized, column,
-                                                                      definition.getDataType(attribute),
-                                                                      hierarchiesGeneralized[column].map);
-            }
+        // Compute centroid distances
+        DataCentroidDistances[] result = new DataCentroidDistances[dataGeneralized.getHeader().length];
+        for (int column = 0; column < result.length; column++) {
+
+            // Extract info
+            String attribute = dataGeneralized.getHeader()[column];
+            result[column] = new DataCentroidDistances(dataGeneralized, column,
+                                                       definition.getDataType(attribute),
+                                                       hierarchiesGeneralized[column].map,
+                                                       normalized);
         }
-        
+
         // Return
-        return this.centroidDistances;
+        return result;
     }
 
     /**

@@ -52,12 +52,15 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
 
     /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
     private final double               sFactor;
-    
+
+    /** Whether this instance is normalized*/
+    private final boolean              normalized;
+
     /**
      * Default constructor which treats all transformation methods equally.
      */
     public MetricMDNMSSE(){
-        this(0.5d, AggregateFunction.ARITHMETIC_MEAN);
+        this(false);
     }
 
     /**
@@ -66,7 +69,7 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
      * @param function
      */
     public MetricMDNMSSE(AggregateFunction function){
-        this(0.5d, function);
+        this(function, false);
     }
     
     /**
@@ -81,6 +84,39 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
      * @param function
      */
     public MetricMDNMSSE(double gsFactor, AggregateFunction function){
+        this(gsFactor, function, false);
+    }
+    
+    /**
+     * For internal use only. Default constructor which treats all transformation methods equally.
+     * @param normalized
+     */
+    protected MetricMDNMSSE(boolean normalized){
+        this(0.5d, AggregateFunction.ARITHMETIC_MEAN, normalized);
+    }
+
+    /**
+     * For internal use only. Default constructor which treats all transformation methods equally.
+     * @param function
+     * @param normalized
+     */
+    protected MetricMDNMSSE(AggregateFunction function, boolean normalized){
+        this(0.5d, function, normalized);
+    }
+    
+    /**
+     * For internal use only. A constructor that allows to define a factor weighting generalization and suppression.
+     *
+     * @param gsFactor A factor [0,1] weighting generalization and suppression.
+     *            The default value is 0.5, which means that generalization
+     *            and suppression will be treated equally. A factor of 0
+     *            will favor suppression, and a factor of 1 will favor
+     *            generalization. The values in between can be used for
+     *            balancing both methods.
+     * @param function
+     * @param normalized
+     */
+    protected MetricMDNMSSE(double gsFactor, AggregateFunction function, boolean normalized){
         super(true, false, false, function);
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Parameter must be in [0, 1]");
@@ -88,6 +124,7 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
         this.gsFactor = gsFactor;
         this.sFactor = gsFactor <  0.5d ? 2d * gsFactor : 1d;
         this.gFactor = gsFactor <= 0.5d ? 1d            : 1d - 2d * (gsFactor - 0.5d);
+        this.normalized = normalized;
     }
     
     /**
@@ -118,7 +155,7 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
 
     @Override
     public String getName() {
-        return "SSE";
+        return (normalized ? "Normalized " : "") + "SSE";
     }
     
     @Override
@@ -139,7 +176,7 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
 
     @Override
     public ElementData render(ARXConfiguration config) {
-        ElementData result = new ElementData("SSE");
+        ElementData result = new ElementData((normalized ? "Normalized " : "") + "SSE");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
         result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
@@ -149,7 +186,7 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
     
     @Override
     public String toString() {
-        return "SSE ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
+        return (normalized ? "Normalized " : "") + "SSE ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
     }
 
     @Override
@@ -253,7 +290,7 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
         super.initializeInternal(manager, definition, input, hierarchies, config);
 
         // Save domain shares
-        this.distances = manager.getCentroidDistances();
+        this.distances = manager.getCentroidDistances(normalized);
         
         // Min and max
         double[] min = new double[getDimensions()];

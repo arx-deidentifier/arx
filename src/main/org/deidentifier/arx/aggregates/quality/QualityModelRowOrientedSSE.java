@@ -264,6 +264,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      */
     private double getMaximumEuclideanDistance(double[][] input, double[][] output, Double[] inputStdDev) {
         
+        // TODO: Normalization should probably be performed using distances from the dataset centroid,
+        // TODO: analogously to the implementation of the metric
+        
         // Calculate minimum and maximum
         double[] minimum = new double[input.length];
         double[] maximum = new double[input.length];

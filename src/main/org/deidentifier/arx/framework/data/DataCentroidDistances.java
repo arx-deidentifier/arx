@@ -60,16 +60,19 @@ public class DataCentroidDistances<T> implements Serializable {
      * @param column
      * @param type
      * @param hierarchy
+     * @param normalized Normalize by standard deviation
      */
     DataCentroidDistances(Data data,
                           int column,
                           DataType<T> type,
-                          int[][] hierarchy) {
+                          int[][] hierarchy,
+                          boolean normalized) {
 
         // Prepare
         String[] dictionary = data.getDictionary().getMapping()[column];
         double[] values = getValues(data, column, type);
         DataMatrix matrix = data.getArray();
+        double stdDev = normalized ? getStandardDeviation(values) : -1d;
         
         // We do not store distances for values on level zero
         // The number of such values is stored in this variable
@@ -118,6 +121,7 @@ public class DataCentroidDistances<T> implements Serializable {
 
                 // Store
                 double error = (values[row] - array1[generalized - offset]);
+                error = (stdDev == -1d) ? error : (stdDev == 0d ? 0d : error / stdDev);
                 array2[generalized - offset] += error * error;
             }
 
@@ -165,6 +169,7 @@ public class DataCentroidDistances<T> implements Serializable {
         double average = 0d;
         for (int row = 0; row < matrix.getNumRows(); row++) {
             double error = values[row] - var1;
+            error = (stdDev == -1d) ? error : (stdDev == 0d ? 0d : error / stdDev);
             average += error * error;
         }
     
@@ -256,6 +261,37 @@ public class DataCentroidDistances<T> implements Serializable {
 
         // Return
         return result;
+    }
+    
+
+    /**
+     * Returns the standard deviation for the given values
+     * @param values
+     * @return
+     */
+    private double getStandardDeviation(double[] values) {
+        
+        // Calculate mean
+        double mean = 0d;
+        for (int i = 0; i < values.length; i += 2) {
+            double value = values[i];
+            mean += value;
+        }
+        mean /= (double)(values.length / 2);
+        
+        // Calculate standard deviation
+        double stdDev = 0d;
+        for (int i = 0; i < values.length; i += 2) {
+            double value = values[i];
+            double temp = value - mean;
+            temp = temp * temp;
+            stdDev += temp;
+        }
+        stdDev /= (double)(values.length / 2);
+        stdDev = Math.sqrt(stdDev);
+        
+        // Return
+        return stdDev;
     }
 
     /**
