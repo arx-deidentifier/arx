@@ -167,7 +167,7 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * Reflects different anonymity properties 
+     * Reflects different anonymity properties.
      */
     public static enum Anonymity {
         
