@@ -160,7 +160,7 @@ public class WorkerSave extends Worker<Model> {
 
         // Write directly because of size
         final FileBuilder b = new FileBuilder(new OutputStreamWriter(zip));
-        final XMLWriter writer = new XMLWriter(b);
+        final XMLWriter writer = new XMLWriter(b, true);
         
         writer.write(vocabulary.getHeader());
 
