@@ -81,6 +81,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             
         } else {
             
+            // TODO: This is probably crap. Non-analyzed RVs need to be treated differently.
             // Non-analyzed response variables are only penalized if they are suppressed
             double max = rows * responseVariablesNotAnalyzed * penaltySuppressed;
             
@@ -215,6 +216,8 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
                     // All records get penalized
                     result += entry.count * penaltyNoMajorityResponse;
                 }
+                
+                // TODO: Non-analyzed RVs need to also be treated.
             }
         }
         
@@ -290,6 +293,8 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         for (int i = 0; i < indices.size(); i++) {
             responseVariables[i] = indices.get(i);
         }
+        
+        // TODO: This is probably crap. Non-analyzed RVs need to be treated differently.
         this.responseVariablesNotAnalyzed = definition.getResponseVariables().size() - responseVariables.length;
         
         // Set penalties using the gs-factor. This is sort of a hack but should be OK for now.
