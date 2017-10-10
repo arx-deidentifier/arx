@@ -128,7 +128,9 @@ public class DataManager {
             attributesAggregated.addAll(attributesGeneralized);
             throw new RuntimeException("Not implemented"); // TODO
         }
-        attributesResponse.removeAll(attributesGeneralized); // Do not analyze generalized response variables
+        // Do not analyze generalized response variables
+        // TODO: We should probably analyze them, if they are microaggregated, though
+        attributesResponse.removeAll(attributesGeneralized);
         attributesAnalyzed.addAll(attributesAggregated);
         attributesAnalyzed.addAll(attributesResponse);
         
