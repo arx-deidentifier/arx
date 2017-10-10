@@ -36,6 +36,7 @@ import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
@@ -101,15 +102,17 @@ public class DataManager {
      * @param data
      * @param dictionary
      * @param definition
-     * @param criteria
+     * @param privacyModels
      * @param functions
+     * @param qualityModel
      */
     public DataManager(final String[] header,
                        final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
-                       final Set<PrivacyCriterion> criteria,
-                       final Map<String, DistributionAggregateFunction> functions) {
+                       final Set<PrivacyCriterion> privacyModels,
+                       final Map<String, DistributionAggregateFunction> functions,
+                       final Metric<?> qualityModel) {
 
         // Store basic info
         this.header = header;
@@ -118,9 +121,13 @@ public class DataManager {
         // Collect types of data
         Set<String> attributesGeneralized = new HashSet<>(definition.getQuasiIdentifiersWithGeneralization());
         attributesGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
-        Set<String> attributesResponse = new HashSet<>(definition.getResponseVariables());
-        Set<String> attributesAggregated = new HashSet<>(definition.getQuasiIdentifiersWithMicroaggregation());
         Set<String> attributesAnalyzed = new HashSet<>(definition.getSensitiveAttributes());
+        Set<String> attributesResponse = new HashSet<>(definition.getResponseVariables());
+        Set<String> attributesAggregated = new HashSet<>();
+        if (qualityModel.isAggregatedInputRequired()) { // Only analyze aggregated variables, if required by the quality model
+            attributesAggregated.addAll(definition.getQuasiIdentifiersWithMicroaggregation());
+        }
+        attributesResponse.removeAll(attributesGeneralized); // Do not analyze generalized response variables
         attributesAnalyzed.addAll(attributesAggregated);
         attributesAnalyzed.addAll(attributesResponse);
         
@@ -170,7 +177,7 @@ public class DataManager {
         
         // Change to fixed generalization scheme when using differential privacy
         index = 0;
-        for (PrivacyCriterion c : criteria) {
+        for (PrivacyCriterion c : privacyModels) {
             
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
@@ -196,7 +203,7 @@ public class DataManager {
 
         // Build map with hierarchies for sensitive attributes
         this.hierarchiesAnalyzed = new GeneralizationHierarchy[this.dataAnalyzed.getColumns().length];
-        for (PrivacyCriterion c : criteria) {
+        for (PrivacyCriterion c : privacyModels) {
             if (c instanceof HierarchicalDistanceTCloseness) {
                 HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness) c;
                 String attribute = t.getAttribute();
@@ -233,7 +240,7 @@ public class DataManager {
         }
 
         // Store research subset
-        for (PrivacyCriterion c : criteria) {
+        for (PrivacyCriterion c : privacyModels) {
             if (c instanceof EDDifferentialPrivacy) {
                 ((EDDifferentialPrivacy) c).initialize(this, null);
             }
