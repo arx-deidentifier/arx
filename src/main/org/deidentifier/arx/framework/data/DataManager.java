@@ -124,10 +124,13 @@ public class DataManager {
         Set<String> attributesAnalyzed = new HashSet<>(definition.getSensitiveAttributes());
         Set<String> attributesResponse = new HashSet<>(definition.getResponseVariables());
         Set<String> attributesAggregated = new HashSet<>();
-        if (qualityModel.isAggregatedInputRequired()) { // Only analyze aggregated variables, if required by the quality model
+        
+        // Only analyze aggregated variables, if required by the quality model
+        // TODO: What about aggregated but non-clustered variables? Does this even work anymore?
+        if (qualityModel.isAggregatedInputRequired()) {
             attributesAggregated.addAll(attributesGeneralized);
             throw new RuntimeException("Not implemented"); // TODO
-        }
+        } 
         // Do not analyze generalized response variables
         // TODO: We should probably analyze them, if they are microaggregated, though
         attributesResponse.removeAll(attributesGeneralized);
