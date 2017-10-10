@@ -142,13 +142,11 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationFactor() {
         return gFactor;
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
@@ -159,7 +157,6 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getSuppressionFactor() {
         return sFactor;
     }
