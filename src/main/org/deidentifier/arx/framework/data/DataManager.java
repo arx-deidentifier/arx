@@ -125,8 +125,7 @@ public class DataManager {
         Set<String> attributesResponse = new HashSet<>(definition.getResponseVariables());
         Set<String> attributesAggregated = new HashSet<>();
         if (qualityModel.isAggregatedInputRequired()) { // Only analyze aggregated variables, if required by the quality model
-            attributesAggregated.addAll(definition.getQuasiIdentifiersWithMicroaggregation());
-            attributesAggregated.addAll(definition.getQuasiIdentifiersWithGeneralization());
+            attributesAggregated.addAll(attributesGeneralized);
             throw new RuntimeException("Not implemented"); // TODO
         }
         attributesResponse.removeAll(attributesGeneralized); // Do not analyze generalized response variables
