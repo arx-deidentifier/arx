@@ -44,13 +44,13 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
     /** Distances for each dimension. */
     private DataCentroidDistances<?>[] distances;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double               gFactor;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double               gsFactor;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double               sFactor;
 
     /** Whether this instance is normalized*/
