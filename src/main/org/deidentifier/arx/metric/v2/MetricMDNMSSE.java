@@ -302,4 +302,10 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
         super.setMin(min);
         super.setMax(max);
     }
+
+    @Override
+    public boolean isAggregatedInputRequired() {
+     // TODO: Handle accordingly. Maybe also remove calls to getMSE() from quality models, such as Loss?
+        return true;
+    }
 }
