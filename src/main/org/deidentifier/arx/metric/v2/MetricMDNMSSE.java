@@ -60,6 +60,9 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
      * Default constructor which treats all transformation methods equally.
      */
     public MetricMDNMSSE(){
+        // TODO: This metric should be enhanced to
+        // (1) support attribute weights
+        // (1) support generalized values
         this(false);
     }
 
