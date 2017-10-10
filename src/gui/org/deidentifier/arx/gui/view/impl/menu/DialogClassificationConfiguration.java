@@ -24,8 +24,11 @@ import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression.PriorFunction;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes.Type;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM.Kernel;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM.MulticlassType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -65,11 +68,11 @@ public class DialogClassificationConfiguration implements IDialog {
         if (config instanceof ClassificationConfigurationLogisticRegression) {
             createContentForLogisticRegression((ClassificationConfigurationLogisticRegression) config);
         } else if (config instanceof ClassificationConfigurationNaiveBayes) {
-            // TODO
+            createContentForNaiveBayes((ClassificationConfigurationNaiveBayes) config);
         } else if (config instanceof ClassificationConfigurationRandomForest) {
-            // TODO
+            createContentForRandomForest((ClassificationConfigurationRandomForest) config);
         } else if (config instanceof ClassificationConfigurationSVM) {
-            // TODO
+            createContentForSVM((ClassificationConfigurationSVM) config);
         } else {
             throw new IllegalArgumentException("Unknown classification configuration");
         }
@@ -120,7 +123,98 @@ public class DialogClassificationConfiguration implements IDialog {
             protected Integer getValue() { return config.getStepOffset(); }
             protected void setValue(Object t) { config.setStepOffset((Integer)t); }});
     }
+    
+    /**
+     * Creates content for naive bayes.
+     * @param config
+     */
+    private void createContentForNaiveBayes(final ClassificationConfigurationNaiveBayes config) {
+        this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.3")); //$NON-NLS-1$
+        
+        // Sigma
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.22")) { //$NON-NLS-1$
+            protected Double getValue() { return config.getSigma(); }
+            protected void setValue(Object t) { config.setSigma((Double)t); }});
+        
+        // Type
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.23"), getTypes()) { //$NON-NLS-1$
+            protected String getValue() { return config.getType().name(); }
+            protected void setValue(Object arg0) { config.setType(Type.valueOf((String)arg0));  }
+        });
+    }
 
+    /**
+     * Creates content for random forest
+     * @param config
+     */
+    private void createContentForRandomForest(final ClassificationConfigurationRandomForest config) {
+        this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.4")); //$NON-NLS-1$
+        
+        // Number of trees
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.24")) { //$NON-NLS-1$
+            protected Integer getValue() { return config.getNumberOfTrees(); }
+            protected void setValue(Object t) { config.setNumberOfTrees((Integer)t); }});
+    }
+    
+    /**
+     * Creates content for SVM
+     * @param config
+     */
+    private void createContentForSVM(final ClassificationConfigurationSVM config) {
+        this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.5")); //$NON-NLS-1$
+        
+        // C
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.25")) { //$NON-NLS-1$
+            protected Double getValue() { return config.getC(); }
+            protected void setValue(Object t) { config.setC((Double)t); }});
+        
+        // Kernel degree
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.26")) { //$NON-NLS-1$
+            protected Integer getValue() { return config.getKernelDegree(); }
+            protected void setValue(Object t) { config.setKernelDegree((Integer)t); }});
+
+        // Kernel sigma
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.27")) { //$NON-NLS-1$
+            protected Double getValue() { return config.getKernelSigma(); }
+            protected void setValue(Object t) { config.setKernelSigma((Double)t); }});
+        
+        // Kernel type
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.28"), getKernels()) { //$NON-NLS-1$
+            protected String getValue() { return config.getKernelType().name(); }
+            protected void setValue(Object arg0) { config.setKernelType(Kernel.valueOf((String)arg0));  }
+        });
+
+        // Multiclass type
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.29"), getMulticlassTypes()) { //$NON-NLS-1$
+            protected String getValue() { return config.getMulticlassType().name(); }
+            protected void setValue(Object arg0) { config.setMulticlassType(MulticlassType.valueOf((String)arg0));  }
+        });
+    }
+    
+    /**
+     * Creates a list of kernels
+     * @return
+     */
+    private String[] getKernels() {
+        List<String> result = new ArrayList<String>();
+        for (Kernel kernel : Kernel.values()) {
+            result.add(kernel.name());
+        }
+        return result.toArray(new String[result.size()]);
+    }
+
+    /**
+     * Creates a list of multiclass types
+     * @return
+     */
+    private String[] getMulticlassTypes() {
+        List<String> result = new ArrayList<String>();
+        for (MulticlassType multiclassType : MulticlassType.values()) {
+            result.add(multiclassType.name());
+        }
+        return result.toArray(new String[result.size()]);
+    }
+    
     /**
      * Creates a list of prior functions
      * @return
@@ -132,7 +226,7 @@ public class DialogClassificationConfiguration implements IDialog {
         }
         return result.toArray(new String[result.size()]);
     }
-
+    
     /**
      * Returns a modified configuration, if available, <code>null</code>, otherwise.
      * @return
@@ -143,5 +237,17 @@ public class DialogClassificationConfiguration implements IDialog {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Creates a list of types
+     * @return
+     */
+    private String[] getTypes() {
+        List<String> result = new ArrayList<String>();
+        for (Type type : Type.values()) {
+            result.add(type.name());
+        }
+        return result.toArray(new String[result.size()]);
     }
 }
