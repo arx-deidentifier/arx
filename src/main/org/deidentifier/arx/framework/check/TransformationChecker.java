@@ -79,37 +79,37 @@ public class TransformationChecker {
     }
 
     /** The config. */
-    private final ARXConfigurationInternal        config;
+    private final ARXConfigurationInternal          config;
 
     /** The data. */
-    private final Data                            dataGeneralized;
+    private final Data                              dataGeneralized;
 
-    /** Data about microaggregation*/
-    private final DataMicroAggregation            microAggregationData;
-    
+    /** Data about microaggregation */
+    private final DataMicroAggregation              microAggregationData;
+
     /** The current hash groupify. */
-    private HashGroupify                          currentGroupify;
+    private HashGroupify                            currentGroupify;
 
     /** The last hash groupify. */
-    private HashGroupify                          lastGroupify;
+    private HashGroupify                            lastGroupify;
 
     /** The history. */
-    private final History                         history;
+    private final History                           history;
 
     /** The metric. */
-    private final Metric<?>                       metric;
+    private final Metric<?>                         metric;
 
     /** The state machine. */
-    private final TransformationCheckerStateMachine                    stateMachine;
+    private final TransformationCheckerStateMachine stateMachine;
 
     /** The data transformer. */
-    private final Transformer                     transformer;
+    private final Transformer                       transformer;
 
     /** The solution space */
-    private final SolutionSpace                   solutionSpace;
+    private final SolutionSpace                     solutionSpace;
 
     /** Is a minimal class size required */
-    private final boolean                         minimalClassSizeRequired;
+    private final boolean                           minimalClassSizeRequired;
 
     /**
      * Creates a new NodeChecker instance.
