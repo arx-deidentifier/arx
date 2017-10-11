@@ -443,28 +443,18 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     }
 
     /**
-     * Inits the.
+     * Prepares the next transformation
      * 
-     * @param projection
-     *            the projection
-     * @param state
-     *            the state
-     * @param groupify
-     *            the groupify
-     * @param source
-     *            the source
-     * @param snapshot
-     *            the snapshot
-     * @param transition
-     *            the transition
-     * @param startIndex
-     *            the start index
-     * @param stopIndex
-     *            the stop index
-     * @param element
-     *            the element
-     * @param buffer
-     *            the buffer
+     * @param projection the projection
+     * @param state the state
+     * @param groupify the groupify
+     * @param source the source
+     * @param snapshot the snapshot
+     * @param transition the transition
+     * @param startIndex the start index
+     * @param stopIndex the stop index
+     * @param element the element
+     * @param buffer the buffer
      */
     public void init(final long projection,
                      final int[] state,
