@@ -44,13 +44,13 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
     /** Distances for each dimension. */
     private DataCentroidDistances<?>[] distances;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double               gFactor;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double               gsFactor;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double               sFactor;
 
     /** Whether this instance is normalized*/
@@ -60,6 +60,9 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
      * Default constructor which treats all transformation methods equally.
      */
     public MetricMDNMSSE(){
+        // TODO: This metric should be enhanced to
+        // (1) support attribute weights
+        // (1) support generalized values
         this(false);
     }
 
@@ -142,13 +145,11 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationFactor() {
         return gFactor;
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
@@ -159,7 +160,6 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getSuppressionFactor() {
         return sFactor;
     }
@@ -301,5 +301,11 @@ public class MetricMDNMSSE extends AbstractMetricMultiDimensional {
         }
         super.setMin(min);
         super.setMax(max);
+    }
+
+    @Override
+    public boolean isAggregatedInputRequired() {
+     // TODO: Handle accordingly. Maybe also remove calls to getMSE() from quality models, such as Loss?
+        return true;
     }
 }
