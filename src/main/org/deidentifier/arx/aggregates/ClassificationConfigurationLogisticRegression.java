@@ -45,29 +45,42 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
     public static ClassificationConfigurationLogisticRegression create() {
         return new ClassificationConfigurationLogisticRegression();
     }
+    
+    /** Default value */
+    public static final double        DEFAULT_ALPHA          = 1 - 1.0e-3;
+    /** Default value */
+    public static final double        DEFAULT_DECAY_EXPONENT = -0.5d;
+    /** Default value */
+    public static final double        DEFAULT_LAMBDA         = 1.0e-5;
+    /** Default value */
+    public static final double        DEFAULT_LEARNING_RATE  = 1d;
+    /** Default value */
+    public static final int           DEFAULT_STEP_OFFSET    = 10000;
+    /** Default value */
+    public static final PriorFunction DEFAULT_PRIOR          = PriorFunction.L1;
 
     /** Configuration */
-    private double        alpha         = 1d;
+    private double                    alpha                  = DEFAULT_ALPHA;
+    /** -1 equals even weighting of all examples, 0 means only use exponential annealing */
+    private double                    decayExponent          = DEFAULT_DECAY_EXPONENT;
     /** Configuration */
-    private double        decayExponent = 0.2d;
+    private double                    lambda                 = DEFAULT_LAMBDA;
     /** Configuration */
-    private double        lambda        = 0.000001d;
+    private double                    learningRate           = DEFAULT_LEARNING_RATE;
     /** Configuration */
-    private double        learningRate  = 1d;
-    /** Configuration */
-    private int           stepOffset    = 10000;
+    private int                       stepOffset             = DEFAULT_STEP_OFFSET;
     /** Configuration. TODO: We needed to replicate this here for backwards compatibility */
-    private int           vectorLength  = 1000;
+    private int                       vectorLength           = 1000;
     /** Max records TODO: We needed to replicate this here for backwards compatibility */
-    private int           maxRecords    = 100000;
+    private int                       maxRecords             = 100000;
     /** Seed TODO: We needed to replicate this here for backwards compatibility */
-    private int           seed          = Integer.MAX_VALUE;
+    private int                       seed                   = Integer.MAX_VALUE;
     /** Folds TODO: We needed to replicate this here for backwards compatibility */
-    private int           numberOfFolds = 10;
+    private int                       numberOfFolds          = 10;
     /** Deterministic TODO: We needed to replicate this here for backwards compatibility */
-    private boolean       deterministic = true;
+    private boolean                   deterministic          = true;
     /** Configuration */
-    private PriorFunction prior         = PriorFunction.L1;
+    private PriorFunction             prior                  = DEFAULT_PRIOR;
 
     /**
      * Constructor

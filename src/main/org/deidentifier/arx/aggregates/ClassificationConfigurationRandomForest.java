@@ -36,9 +36,12 @@ public class ClassificationConfigurationRandomForest extends ARXClassificationCo
     public static ClassificationConfigurationRandomForest create() {
         return new ClassificationConfigurationRandomForest();
     }
+    
+    /** Default value */
+    public static final int DEFAULT_NUMBER_OF_TREES = 10;
 
     /** Number of trees */
-    private int     numberOfTrees = 10;
+    private int             numberOfTrees           = DEFAULT_NUMBER_OF_TREES;
 
     /**
      * Constructor

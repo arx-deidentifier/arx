@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
@@ -293,20 +294,20 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.14")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.15"), 1000, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().getMaxRecords(); }
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.15"), 1000, Integer.MAX_VALUE, ARXClassificationConfiguration.DEFAULT_MAX_RECORDS) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getMaxRecords(); }
             protected void setValue(Object t) { model.getClassificationModel().setMaxRecords((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().isDeterministic(); }
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17"), ARXClassificationConfiguration.DEFAULT_DETERMINISTIC) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getClassificationModel().getCurrentConfiguration().isDeterministic(); }
             protected void setValue(Object t) { model.getClassificationModel().setDeterministic((Boolean)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, 10) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().getNumFolds(); }
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, ARXClassificationConfiguration.DEFAULT_NUMBER_OF_FOLDS) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getNumFolds(); }
             protected void setValue(Object t) { model.getClassificationModel().setNumFolds((Integer)t); }});
 
-        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getLogisticRegressionConfiguration().getVectorLength(); }
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, ARXClassificationConfiguration.DEFAULT_VECTOR_LENGTH) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getVectorLength(); }
             protected void setValue(Object t) { model.getClassificationModel().setVectorLength((Integer)t); }});
     }
     
