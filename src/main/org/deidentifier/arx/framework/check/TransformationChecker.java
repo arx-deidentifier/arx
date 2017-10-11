@@ -24,9 +24,9 @@ import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataMatrix;
-import org.deidentifier.arx.framework.data.DataMicroAggregation;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -85,7 +85,7 @@ public class TransformationChecker {
     private final Data                              dataGeneralized;
 
     /** Data about microaggregation */
-    private final DataMicroAggregation              microAggregationData;
+    private final DataAggregationInformation        aggregationData;
 
     /** The current hash groupify. */
     private HashGroupify                            currentGroupify;
@@ -134,7 +134,7 @@ public class TransformationChecker {
         this.metric = metric;
         this.config = config;
         this.dataGeneralized = manager.getDataGeneralized();
-        this.microAggregationData = manager.getMicroAggregationData();
+        this.aggregationData = manager.getMicroAggregationData();
         this.solutionSpace = solutionSpace;
         this.minimalClassSizeRequired = config.getMinimalGroupSize() != Integer.MAX_VALUE;
         
@@ -184,7 +184,7 @@ public class TransformationChecker {
      */
     public TransformedData applyTransformation(final Transformation transformation) {
         return applyTransformation(transformation,
-                                   new Dictionary(microAggregationData.header.length));
+                                   new Dictionary(aggregationData.header.length));
     }
         
     /**
@@ -217,8 +217,10 @@ public class TransformationChecker {
         Data generalizedOutput = Data.createWrapper(transformer.getBuffer(), dataGeneralized.getHeader(), dataGeneralized.getColumns(), dataGeneralized.getDictionary());
         
         // Perform microaggregation. This has to be done before suppression.
-        if (microAggregationData.functions.length > 0) {
-            microaggregatedOutput = currentGroupify.performMicroaggregation(microAggregationData,
+        if (aggregationData.coldQIsFunctions.length > 0 ||
+            aggregationData.hotQIsNotGeneralizedFunctions.length > 0 ||
+            aggregationData.hotQIsGeneralizedFunctions.length > 0) {
+            microaggregatedOutput = currentGroupify.performMicroaggregation(aggregationData,
                                                                             microaggregationDictionary);
         }
         

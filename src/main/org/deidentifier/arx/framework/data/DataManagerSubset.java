@@ -56,7 +56,7 @@ public class DataManagerSubset extends DataManager {
                                 GeneralizationHierarchy[] hierarchiesAnalyzed,
                                 int[] generalizationLevelsMinimum,
                                 int[] generalizationLevelsMaximum,
-                                DataMicroAggregation microaggregationData) {
+                                DataAggregationInformation microaggregationData) {
         
         super(dataAnalyzed,
               dataGeneralized,

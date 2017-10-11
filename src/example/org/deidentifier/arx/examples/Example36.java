@@ -87,7 +87,6 @@ public class Example36 extends Example {
         config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(1d);
         config.setAttributeWeight("age", 100d);
-        config.setUtilityBasedMicroaggregation(true);
         config.setQualityModel(Metric.createLossMetric());
 
         // Obtain result

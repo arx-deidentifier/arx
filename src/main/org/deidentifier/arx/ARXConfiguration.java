@@ -351,12 +351,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
     private Boolean                            suppressionAlwaysEnabled                         = true;
 
-    /** Should microaggregation be based on data utility measurements */
-    private boolean                            utilityBasedMicroaggregation                     = false;
-
-    /** Should the mean-squared error be used to measure the impact of microaggregation */
-    private boolean                            utilityBasedMicroaggregationUseMeanSquaredError  = false;
-
     /** Internal variant of the class providing a broader interface. */
     private transient ARXConfigurationInternal accessibleInstance                               = null;
 
@@ -504,7 +498,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchEnabled = this.heuristicSearchEnabled;
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
-        result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
@@ -819,24 +812,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns whether the impact of microaggregation on data utility should be considered
-     * @return
-     */
-    public boolean isUtilityBasedMicroaggregation() {
-        return this.utilityBasedMicroaggregation;
-    }
-    
-    /**
-     * If set to true, mean squared error will be used to measure the impact of microaggregation
-     * on data quality. If set to false, a more simple measure of information loss will be used.
-     * Default is <code>false</code>.
-     * @return
-     */
-    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
-        return this.utilityBasedMicroaggregationUseMeanSquaredError;
-    }
-
-    /**
      * Removes the given criterion.
      *
      * @param <T>
@@ -1014,24 +989,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Sets whether the impact of microaggregation on data utility should be considered 
-     * @return
-     */
-    public void setUtilityBasedMicroaggregation(boolean value) {
-        this.utilityBasedMicroaggregation = value;
-    }
-
-    /**
-     * If set to true, mean squared error will be used to measure the impact of microaggregation
-     * on data quality. If set to false, a more simple measure of information loss will be used.
-     * Default is <code>false</code>.
-     * @return
-     */
-    public void setUtilityBasedMicroaggregationUseMeanSquaredError(boolean useMSE) {
-        this.utilityBasedMicroaggregationUseMeanSquaredError = useMSE;
-    }
-
-    /**
      * Checks an argument.
      *
      * @param argument
@@ -1062,7 +1019,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         ElementData result = new ElementData("Settings");
         result.addProperty("Assume monotonicity", this.practicalMonotonicity);
         result.addProperty("Suppression limit", this.relMaxOutliers);
-        result.addProperty("Consider mean squared error", this.utilityBasedMicroaggregation);
         return result;
     }
     

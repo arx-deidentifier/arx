@@ -150,8 +150,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
+        DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
         
         int[] transformation = node.getGeneralization();
         double[] result = new double[dimensions];
@@ -172,8 +172,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
             // Calculate avg. error
             for (int i = 0; i < dimensionsAggregated; i++) {
-                double share = (double) m.count * super.getError(microaggregationFunctions[i],
-                                                                 m.distributions[microaggregationStart + i]);  
+                double share = (double) m.count * microaggregationFunctions[i].getInformationLoss(m.distributions[microaggregationIndices[i]]);
                 result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
                                                                       (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
             }

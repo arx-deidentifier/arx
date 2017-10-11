@@ -1582,6 +1582,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final void initialize(final DataManager manager, final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         initializeInternal(manager, definition, input, hierarchies, config);
     }
+
     /**
      * Returns whether this metric handles microaggregation
      * @return
@@ -1591,12 +1592,10 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
 
     /**
-     * Returns whether this metric requires aggregated input values
-     * per equivalence class
-     * 
+     * Returns whether this metric handles clustering and microaggregation
      * @return
      */
-    public boolean isAggregatedInputRequired() {
+    public boolean isAbleToHandleClusteredMicroaggregation() {
         return false;
     }
 

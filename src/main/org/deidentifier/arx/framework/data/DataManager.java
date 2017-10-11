@@ -19,8 +19,8 @@ package org.deidentifier.arx.framework.data;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -87,7 +87,7 @@ public class DataManager {
     private final int[]                     generalizationLevelsMaximum;
 
     /** Information about micro-aggregation */
-    private final DataMicroAggregation      microaggregationData;
+    private final DataAggregationInformation      microaggregationData;
 
     /** The research subset, if any. */
     private RowSet                          subset     = null;
@@ -118,30 +118,71 @@ public class DataManager {
         this.header = header;
         this.definition = definition;
 
-        // Collect types of data
-        Set<String> attributesGeneralized = new HashSet<>(definition.getQuasiIdentifiersWithGeneralization());
-        attributesGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
-        Set<String> attributesAnalyzed = new HashSet<>(definition.getSensitiveAttributes());
+        /* *************************************************
+         * Collect attributes which need to be generalized
+         ***************************************************/
+        Set<String> qisGeneralized = new HashSet<>(definition.getQuasiIdentifiersWithGeneralization());
+        qisGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
+        
+        /* *************************************************
+         * Collect quasi-identifiers which need not be generalized
+         ***************************************************/
+        Set<String> qisNotGeneralized =  new HashSet<>(definition.getQuasiIdentifiersWithMicroaggregation());
+        qisNotGeneralized.removeAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
+        
+        /* ************************************************************************
+         * Collect all attributes which need to be analyzed (whether hot or cold)
+         **************************************************************************/
+        Set<String> attributesAnalyzed = new HashSet<>();
+        // Add sensitive attributes
+        attributesAnalyzed.addAll(definition.getSensitiveAttributes());
+        // Add all microaggregated QIs
+        attributesAnalyzed.addAll(definition.getQuasiIdentifiersWithMicroaggregation());
+        // Add non-generalized response variables
         Set<String> attributesResponse = new HashSet<>(definition.getResponseVariables());
-
-        // Only analyze quasi-identifying variables, if required by the quality model
-        Set<String> attributesAggregated = new HashSet<>();
-        if (qualityModel.isAggregatedInputRequired()) {
-            attributesAggregated.addAll(definition.getQuasiIdentifyingAttributes());
-            throw new RuntimeException("Not implemented"); // TODO
-        } 
-        attributesAnalyzed.addAll(attributesAggregated);
-        
-        // Do not analyze generalized response variables
-        attributesResponse.removeAll(attributesGeneralized);
+        attributesResponse.removeAll(qisGeneralized);  
         attributesAnalyzed.addAll(attributesResponse);
+
+        /* *************************************************
+         * Collect non-generalized aggregated QIs which are hot
+         ***************************************************/
+        Set<String> hotQIsNotGeneralized = new HashSet<String>();
+        if (qualityModel.isAbleToHandleMicroaggregation()) {
+            hotQIsNotGeneralized.addAll(qisNotGeneralized);
+        } 
+
+        /* *************************************************
+         * Collect generalized aggregated QIs which are hot
+         ***************************************************/
+        Set<String> hotQIsGeneralized = new HashSet<String>();
+        if (qualityModel.isAbleToHandleClusteredMicroaggregation()) {
+            hotQIsGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
+            throw new RuntimeException("Not implemented"); // TODO: SSE
+        }
+
+        /* *************************************************
+         * Collect aggregated QIs which are cold
+         ***************************************************/
+        Set<String> coldQIs = new HashSet<String>();
+        coldQIs.addAll(definition.getQuasiIdentifiersWithMicroaggregation());
+        coldQIs.removeAll(hotQIsNotGeneralized);
+        coldQIs.removeAll(hotQIsGeneralized);
         
-        // Collect attributes which are aggregated but not analyzed
-        // TODO
+        /* *************************************************
+         * Collect hot attributes which are not QIs
+         ***************************************************/
+        Set<String> hotOtherAttributes = new HashSet<String>();
+        hotOtherAttributes.addAll(attributesAnalyzed);
+        hotOtherAttributes.removeAll(definition.getQuasiIdentifiersWithMicroaggregation());
         
         // Create data objects
-        this.dataGeneralized = Data.createProjection(data, header, getColumns(header, attributesGeneralized), dictionary);
-        this.dataAnalyzed = Data.createProjection(data, header, getColumns(header, attributesAnalyzed, attributesAggregated), dictionary);
+        this.dataGeneralized = Data.createProjection(data, header, getColumns(header, qisGeneralized), dictionary);
+        this.dataAnalyzed = Data.createProjection(data, header, getColumns(header, 
+                                                                           hotOtherAttributes,
+                                                                           hotQIsNotGeneralized,
+                                                                           hotQIsGeneralized,
+                                                                           coldQIs), 
+                                                                           dictionary);
         this.dataInput = Data.createWrapper(data, header, getColumns(header), dictionary);
         
         // Make the dictionaries ready for additions
@@ -149,22 +190,24 @@ public class DataManager {
         this.dataAnalyzed.getDictionary().definalizeAll();
         
         // Store information about aggregated attributes
-        this.microaggregationData = new DataMicroAggregation();
-        this.microaggregationData.startIndex = dataAnalyzed.getColumns().length - attributesAggregated.size();
-        this.microaggregationData.header = Arrays.copyOfRange(dataAnalyzed.getHeader(), microaggregationData.startIndex, dataAnalyzed.getHeader().length);
-        this.microaggregationData.columns = Arrays.copyOfRange(dataAnalyzed.getColumns(), microaggregationData.startIndex, dataAnalyzed.getColumns().length);
-
+        this.microaggregationData = new DataAggregationInformation(dataAnalyzed, 
+                                                                   functions,
+                                                                   definition,
+                                                                   hotQIsNotGeneralized,
+                                                                   hotQIsGeneralized,
+                                                                   coldQIs);
+        
         // Register hierarchies used for generalization
-        this.generalizationLevelsMaximum = new int[attributesGeneralized.size()];
-        this.generalizationLevelsMinimum = new int[attributesGeneralized.size()];
-        this.hierarchiesGeneralized = new GeneralizationHierarchy[attributesGeneralized.size()];
+        this.generalizationLevelsMaximum = new int[qisGeneralized.size()];
+        this.generalizationLevelsMinimum = new int[qisGeneralized.size()];
+        this.hierarchiesGeneralized = new GeneralizationHierarchy[qisGeneralized.size()];
         int index = 0;
         
         // For each attribute
         for (final String attribute : header) {
             
             // This is a generalized quasi-identifier
-            if (attributesGeneralized.contains(attribute)) {
+            if (qisGeneralized.contains(attribute)) {
                 
                 // Register at the dictionary and encode
                 this.hierarchiesGeneralized[index] = new GeneralizationHierarchy(attribute,
@@ -197,7 +240,7 @@ public class DataManager {
                 for (final String attribute : header) {
                     
                     // This is a generalized quasi-identifier
-                    if (attributesGeneralized.contains(attribute)) {
+                    if (qisGeneralized.contains(attribute)) {
                         this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
                         this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
                     }
@@ -224,28 +267,6 @@ public class DataManager {
         // finalize dictionary
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
-
-        // Initialize aggregation functions
-        this.microaggregationData.functions = new DistributionAggregateFunction[this.microaggregationData.header.length];
-        this.microaggregationData.domainSizes = new int[this.microaggregationData.header.length];
-        index = 0;
-        
-        // For each attribute
-        for (final String attribute : header) {
-            
-            // This is an aggregated quasi-identifier
-            if (attributesAggregated.contains(attribute)) {
-               
-               int dictionaryIndex = dataAnalyzed.getIndexOf(attribute);
-               this.microaggregationData.domainSizes[index] = dataAnalyzed.getDictionary().getMapping()[dictionaryIndex].length;
-               this.microaggregationData.functions[index] = functions.get(attribute);
-               this.microaggregationData.functions[index].initialize(dataAnalyzed.getDictionary().getMapping()[dictionaryIndex],
-                                                           definition.getDataType(attribute));
-
-               // Next aggregated quasi-identifier
-               index++;               
-            }
-        }
 
         // Store research subset
         for (PrivacyCriterion c : privacyModels) {
@@ -290,7 +311,7 @@ public class DataManager {
                           GeneralizationHierarchy[] hierarchiesAnalyzed,
                           int[] generalizationLevelsMinimum,
                           int[] generalizationLevelsMaximum,
-                          DataMicroAggregation microaggregationData) {
+                          DataAggregationInformation microaggregationData) {
         
         // Just store
         this.dataAnalyzed = dataAnalyzed;
@@ -498,7 +519,7 @@ public class DataManager {
      * Returns data configuring microaggregation
      * @return
      */
-    public DataMicroAggregation getMicroAggregationData() {
+    public DataAggregationInformation getMicroAggregationData() {
         return this.microaggregationData;
     }
 
@@ -701,48 +722,45 @@ public class DataManager {
     }
 
     /**
-     * Returns an array of indices for the given subset of strings
+     * Returns an array of indices for the given subsets of strings. All sets most be mutually exclusive.
      * @param header
-     * @param set
+     * @param sets...
      * @return
      */
-    private int[] getColumns(String[] header, Set<String> set) {
-        int[] result = new int[set.size()];
-        int index = 0;
-        for (int i = 0; i < header.length; i++) {
-            if (set.contains(header[i])) {
-                result[index++] = i;
-            }
+    @SafeVarargs
+    private final int[] getColumns(String[] header, Set<String>... sets) {
+        
+        // Prepare
+        List<Integer> result = new ArrayList<>();
+        
+        // For each set
+        for (Set<String> set : sets) {
+            
+            // Add elements
+            for (int i = 0; i < header.length; i++) {
+                String attribute = header[i];
+                if (set.contains(attribute)) {
+                    result.add(i);
+                }
+            }    
         }
-        return result;
+        
+        // Sanity check
+        Set<Integer> temp = new HashSet<Integer>(result);
+        if (temp.size() != result.size()) {
+            throw new IllegalStateException("Internal error: handling of attribute is not clearly defined");
+        }
+        
+        // Convert
+        int[] array = new int[result.size()];
+        for (int i=0; i < result.size(); i++) {
+            array[i] = result.get(i);
+        }
+        
+        // Done
+        return array;
     }
-    /**
-     * Returns an array of indices for the given subset of strings. The first set will be encoded first.
-     * The second must be a subset of the first.
-     * @param header
-     * @param first
-     * @param second
-     * @return
-     */
-    private int[] getColumns(String[] header, Set<String> first, Set<String> second) {
-        int[] result = new int[first.size()];
-        int index = 0;
-        // First but not second
-        for (int i = 0; i < header.length; i++) {
-            String attribute = header[i];
-            if (first.contains(attribute) && !second.contains(attribute)) {
-                result[index++] = i;
-            }
-        }
-        // First and second
-        for (int i = 0; i < header.length; i++) {
-            String attribute = header[i];
-            if (first.contains(attribute) && second.contains(attribute)) {
-                result[index++] = i;
-            }
-        }
-        return result;
-    }
+    
     
     /**
      * Returns the data definitions

@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataMatrix;
-import org.deidentifier.arx.framework.data.DataMicroAggregation;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
@@ -328,13 +328,13 @@ public class HashGroupify {
      * @param dictionary
      * @return
      */
-    public Data performMicroaggregation(DataMicroAggregation microaggregationData,
+    public Data performMicroaggregation(DataAggregationInformation microaggregationData,
                                         Dictionary dictionary) {
         
         // Initialize
         int start = microaggregationData.startIndex;
         int num = microaggregationData.header.length;
-        DistributionAggregateFunction[] functions = microaggregationData.functions;
+        DistributionAggregateFunction[] functions = microaggregationData.allFunctions;
         int[] map = microaggregationData.columns;
         String[] header = microaggregationData.header;
         
