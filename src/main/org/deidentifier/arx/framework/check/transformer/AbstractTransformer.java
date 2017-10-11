@@ -260,36 +260,6 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     
     /** The generalization hierarchies. */
     protected int[][][]                       map;
-    /** The outindices. */
-    protected int                             outindex0;
-    /** The outindices. */
-    protected int                             outindex1;
-    /** The outindices. */
-    protected int                             outindex10;
-    /** The outindices. */
-    protected int                             outindex11;
-    /** The outindices. */
-    protected int                             outindex12;
-    /** The outindices. */
-    protected int                             outindex13;
-    /** The outindices. */
-    protected int                             outindex14;
-    /** The outindices. */
-    protected int                             outindex2;
-    /** The outindices. */
-    protected int                             outindex3;
-    /** The outindices. */
-    protected int                             outindex4;
-    /** The outindices. */
-    protected int                             outindex5;
-    /** The outindices. */
-    protected int                             outindex6;
-    /** The outindices. */
-    protected int                             outindex7;
-    /** The outindices. */
-    protected int                             outindex8;
-    /** The outindices. */
-    protected int                             outindex9;
     /** The sensitive values. */
     protected final DataMatrix                otherData;
     /** The snapshot. */
@@ -467,15 +437,17 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
                      final HashGroupifyEntry element,
                      final DataMatrix buffer) {
 
+        // Store data
         this.buffer = buffer;
-
         this.startIndex = startIndex;
         this.stopIndex = stopIndex;
         this.element = element;
-
         this.generalization = state;
         this.transition = transition;
+        this.groupify = groupify;
+        this.snapshot = snapshot;
 
+        // Calculate mapping
         int index = 0;
         for (int i = 0; i < dimensions; i++) {
             if ((projection & (1L << i)) == 0) {
@@ -486,80 +458,56 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
             }
         }
 
-        // Store groupify
-        this.groupify = groupify;
-
-        // Store snapshot
-        this.snapshot = snapshot;
-
         // Store values
-        index0 = columnIndexArray[0];
-        index1 = columnIndexArray[1];
-        index2 = columnIndexArray[2];
-        index3 = columnIndexArray[3];
-        index4 = columnIndexArray[4];
-        index5 = columnIndexArray[5];
-        index6 = columnIndexArray[6];
-        index7 = columnIndexArray[7];
-        index8 = columnIndexArray[8];
-        index9 = columnIndexArray[9];
-        index10 = columnIndexArray[10];
-        index11 = columnIndexArray[11];
-        index12 = columnIndexArray[12];
-        index13 = columnIndexArray[13];
-        index14 = columnIndexArray[14];
+        this.index0 = columnIndexArray[0];
+        this.index1 = columnIndexArray[1];
+        this.index2 = columnIndexArray[2];
+        this.index3 = columnIndexArray[3];
+        this.index4 = columnIndexArray[4];
+        this.index5 = columnIndexArray[5];
+        this.index6 = columnIndexArray[6];
+        this.index7 = columnIndexArray[7];
+        this.index8 = columnIndexArray[8];
+        this.index9 = columnIndexArray[9];
+        this.index10 = columnIndexArray[10];
+        this.index11 = columnIndexArray[11];
+        this.index12 = columnIndexArray[12];
+        this.index13 = columnIndexArray[13];
+        this.index14 = columnIndexArray[14];
 
-        // Store values
-        outindex0 = columnIndexArray[0];
-        outindex1 = columnIndexArray[1];
-        outindex2 = columnIndexArray[2];
-        outindex3 = columnIndexArray[3];
-        outindex4 = columnIndexArray[4];
-        outindex5 = columnIndexArray[5];
-        outindex6 = columnIndexArray[6];
-        outindex7 = columnIndexArray[7];
-        outindex8 = columnIndexArray[8];
-        outindex9 = columnIndexArray[9];
-        outindex10 = columnIndexArray[10];
-        outindex11 = columnIndexArray[11];
-        outindex12 = columnIndexArray[12];
-        outindex13 = columnIndexArray[13];
-        outindex14 = columnIndexArray[14];
+        // Store generalization levels
+        this.generalizationindex0 = generalizationIndexArray[0];
+        this.generalizationindex1 = generalizationIndexArray[1];
+        this.generalizationindex2 = generalizationIndexArray[2];
+        this.generalizationindex3 = generalizationIndexArray[3];
+        this.generalizationindex4 = generalizationIndexArray[4];
+        this.generalizationindex5 = generalizationIndexArray[5];
+        this.generalizationindex6 = generalizationIndexArray[6];
+        this.generalizationindex7 = generalizationIndexArray[7];
+        this.generalizationindex8 = generalizationIndexArray[8];
+        this.generalizationindex9 = generalizationIndexArray[9];
+        this.generalizationindex10 = generalizationIndexArray[10];
+        this.generalizationindex11 = generalizationIndexArray[11];
+        this.generalizationindex12 = generalizationIndexArray[12];
+        this.generalizationindex13 = generalizationIndexArray[13];
+        this.generalizationindex14 = generalizationIndexArray[14];
 
-        // Store values
-        generalizationindex0 = generalizationIndexArray[0];
-        generalizationindex1 = generalizationIndexArray[1];
-        generalizationindex2 = generalizationIndexArray[2];
-        generalizationindex3 = generalizationIndexArray[3];
-        generalizationindex4 = generalizationIndexArray[4];
-        generalizationindex5 = generalizationIndexArray[5];
-        generalizationindex6 = generalizationIndexArray[6];
-        generalizationindex7 = generalizationIndexArray[7];
-        generalizationindex8 = generalizationIndexArray[8];
-        generalizationindex9 = generalizationIndexArray[9];
-        generalizationindex10 = generalizationIndexArray[10];
-        generalizationindex11 = generalizationIndexArray[11];
-        generalizationindex12 = generalizationIndexArray[12];
-        generalizationindex13 = generalizationIndexArray[13];
-        generalizationindex14 = generalizationIndexArray[14];
-
-        // Store values
-        idindex0 = columnMapArray[0];
-        idindex1 = columnMapArray[1];
-        idindex2 = columnMapArray[2];
-        idindex3 = columnMapArray[3];
-        idindex4 = columnMapArray[4];
-        idindex5 = columnMapArray[5];
-        idindex6 = columnMapArray[6];
-        idindex7 = columnMapArray[7];
-        idindex8 = columnMapArray[8];
-        idindex9 = columnMapArray[9];
-        idindex10 = columnMapArray[10];
-        idindex11 = columnMapArray[11];
-        idindex12 = columnMapArray[12];
-        idindex13 = columnMapArray[13];
-        idindex14 = columnMapArray[14];
-
+        // Store generalization hierarchies
+        this.idindex0 = columnMapArray[0];
+        this.idindex1 = columnMapArray[1];
+        this.idindex2 = columnMapArray[2];
+        this.idindex3 = columnMapArray[3];
+        this.idindex4 = columnMapArray[4];
+        this.idindex5 = columnMapArray[5];
+        this.idindex6 = columnMapArray[6];
+        this.idindex7 = columnMapArray[7];
+        this.idindex8 = columnMapArray[8];
+        this.idindex9 = columnMapArray[9];
+        this.idindex10 = columnMapArray[10];
+        this.idindex11 = columnMapArray[11];
+        this.idindex12 = columnMapArray[12];
+        this.idindex13 = columnMapArray[13];
+        this.idindex14 = columnMapArray[14];
     }
 
     /**
@@ -576,5 +524,4 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
      * Process snapshot.
      */
     protected abstract void processSnapshot();
-
 }

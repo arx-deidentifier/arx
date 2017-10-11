@@ -61,12 +61,12 @@ public class Transformer06 extends AbstractTransformer {
             // Transform
             buffer.setRow(i);
             data.setRow(i);
-            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
-            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
-            buffer.setValueAtColumn(outindex5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
+            buffer.setValueAtColumn(index0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
+            buffer.setValueAtColumn(index1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
+            buffer.setValueAtColumn(index2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
+            buffer.setValueAtColumn(index3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(index4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(index5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
 
             // Call
             delegate.callAll(i, i);
@@ -87,12 +87,12 @@ public class Transformer06 extends AbstractTransformer {
             // Transform
             buffer.setRow(element.representative);
             data.setRow(element.representative);
-            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
-            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
-            buffer.setValueAtColumn(outindex5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
+            buffer.setValueAtColumn(index0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
+            buffer.setValueAtColumn(index1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
+            buffer.setValueAtColumn(index2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
+            buffer.setValueAtColumn(index3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(index4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(index5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
  
             // Call
             delegate.callGroupify(element.representative, element);
@@ -118,12 +118,12 @@ public class Transformer06 extends AbstractTransformer {
             // Transform
             buffer.setRow(snapshot[i]);
             data.setRow(snapshot[i]);
-            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
-            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
-            buffer.setValueAtColumn(outindex5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
+            buffer.setValueAtColumn(index0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
+            buffer.setValueAtColumn(index1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
+            buffer.setValueAtColumn(index2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
+            buffer.setValueAtColumn(index3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(index4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(index5, idindex5[data.getValueAtColumn(index5)][generalizationindex5]);
 
             // Call
             delegate.callSnapshot(snapshot[i], snapshot, i);
