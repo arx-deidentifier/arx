@@ -51,13 +51,19 @@ public class TransformerAll extends AbstractTransformer {
 
     @Override
     protected void processAll() {
+        
+        int[][][] mHierarchies = new int[dimensions][][];
+        for (int i = 0; i < dimensions; i++) {
+            mHierarchies[i] = hierarchies[i].getArray();
+        }
+        
         for (int i = startIndex; i < stopIndex; i++) {
 
             // Transform
             buffer.setRow(i);
             data.setRow(i);
             for (int d = 0; d < dimensions; d++) {
-                buffer.setValueAtColumn(d, map[d][data.getValueAtColumn(d)][generalization[d]]);
+                buffer.setValueAtColumn(d, mHierarchies[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
@@ -67,6 +73,12 @@ public class TransformerAll extends AbstractTransformer {
 
     @Override
     protected void processGroupify() {
+
+        int[][][] mHierarchies = new int[dimensions][][];
+        for (int i = 0; i < dimensions; i++) {
+            mHierarchies[i] = hierarchies[i].getArray();
+        }
+        
         while (element != null) {
 
             // Transform
@@ -74,7 +86,7 @@ public class TransformerAll extends AbstractTransformer {
             data.setRow(element.representative);
 
             for (int d = 0; d < dimensions; d++) {
-                buffer.setValueAtColumn(d, map[d][data.getValueAtColumn(d)][generalization[d]]);
+                buffer.setValueAtColumn(d, mHierarchies[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
@@ -88,6 +100,11 @@ public class TransformerAll extends AbstractTransformer {
     @Override
     protected void processSnapshot() {
 
+        int[][][] mHierarchies = new int[dimensions][][];
+        for (int i = 0; i < dimensions; i++) {
+            mHierarchies[i] = hierarchies[i].getArray();
+        }
+        
         startIndex *= ssStepWidth;
         stopIndex *= ssStepWidth;
 
@@ -95,7 +112,7 @@ public class TransformerAll extends AbstractTransformer {
             buffer.setRow(snapshot[i]);
             data.setRow(snapshot[i]);
             for (int d = 0; d < dimensions; d++) {
-                buffer.setValueAtColumn(d, map[d][data.getValueAtColumn(d)][generalization[d]]);
+                buffer.setValueAtColumn(d, mHierarchies[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call

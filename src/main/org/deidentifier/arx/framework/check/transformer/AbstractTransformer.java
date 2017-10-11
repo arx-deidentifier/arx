@@ -78,8 +78,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
             
             // TODO: Improve!
-            int[][] values = new int[otherData.getNumColumns()][];
-            int[][] frequencies = new int[otherData.getNumColumns()][];
+            int[][] values = new int[dataAnalyzed.getNumColumns()][];
+            int[][] frequencies = new int[dataAnalyzed.getNumColumns()][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
@@ -135,8 +135,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[otherData.getNumColumns()][];
-            int[][] frequencies = new int[otherData.getNumColumns()][];
+            int[][] values = new int[dataAnalyzed.getNumColumns()][];
+            int[][] frequencies = new int[dataAnalyzed.getNumColumns()][];
             int index = 0;
             int offset = i + 3;
             int length = config.getSnapshotLength() - 1 - 3;
@@ -170,8 +170,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
 
             // TODO: Improve!
-            int[][] values = new int[otherData.getNumColumns()][];
-            int[][] frequencies = new int[otherData.getNumColumns()][];
+            int[][] values = new int[dataAnalyzed.getNumColumns()][];
+            int[][] frequencies = new int[dataAnalyzed.getNumColumns()][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
@@ -216,19 +216,13 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
          */
         public abstract void callSnapshot(final int outtuple, final int[] snapshot, final int i);
     }
-    
+
     /** The hash groupify. */
-    private HashGroupify                     groupify;
-    
+    private HashGroupify                      groupify;
+
     /** The buffer. */
     protected DataMatrix                      buffer;
-    
-    /** The column index array. */
-    protected final int[]                     columnIndexArray;
-    
-    /** The column map array. */
-    protected final int[][][]                 columnMapArray;
-    
+
     /** The mode of operation *. */
     protected final ARXConfigurationInternal  config;
 
@@ -237,113 +231,79 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
 
     /** The delegate. */
     protected final IGroupify                 delegate;
-    
+
     /** The dictionary for the snapshot compression *. */
     protected final IntArrayDictionary        dictionarySensFreq;
-    
+
     /** The dictionary for the snapshot compression *. */
     protected final IntArrayDictionary        dictionarySensValue;
-    
+
     /** The dimensions. */
     protected final int                       dimensions;
-    
+
     /** The element. */
     protected HashGroupifyEntry               element;
+
     /** The hierarchies. */
     protected final GeneralizationHierarchy[] hierarchies;
-    /** The idindex14. */
-    protected int[][]                         idindex0, idindex1, idindex2, idindex3, idindex4, idindex5,
-                                              idindex6, idindex7, idindex8, idindex9, idindex10, idindex11, idindex12, idindex13, idindex14;
-    /** The index14. */
-    protected int                             index0, index1, index2, index3, index4, index5, index6, index7,
-                                              index8, index9, index10, index11, index12, index13, index14;
     
-    /** The generalization hierarchies. */
-    protected int[][][]                       map;
+    /** The hierarchies */
+    protected int[][]                         hierarchy0, hierarchy1, hierarchy2, hierarchy3, hierarchy4, hierarchy5,
+                                              hierarchy6, hierarchy7, hierarchy8, hierarchy9, hierarchy10, hierarchy11, hierarchy12, hierarchy13, hierarchy14;
+    /** The columns. */
+    protected int                             column0, column1, column2, column3, column4, column5, column6, column7,
+                                              column8, column9, column10, column11, column12, column13, column14;
+
+    /** The levels. */
+    protected int                             level0, level1, level10, level11, level12, level13, level14, level2, level3, level4, level5, 
+                                              level6, level7, level8, level9;
+
     /** The sensitive values. */
-    protected final DataMatrix                otherData;
+    protected final DataMatrix                dataAnalyzed;
     /** The snapshot. */
     protected int[]                           snapshot;
-    
+
     /** The size of one snapshopt entry *. */
     protected final int                       ssStepWidth;
+
     /** The start index. */
     protected int                             startIndex;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex0;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex1;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex10;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex11;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex12;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex13;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex14;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex2;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex3;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex4;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex5;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex6;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex7;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex8;
-    
-    /** The stateindices. */
-    protected int                             generalizationindex9;
-    /** The state index array. */
-    protected final int[]                     generalizationIndexArray;
-    
-    /** The states. */
-    protected int[]                           generalization;
     /** The stop index. */
     protected int                             stopIndex;
+
+    /** The states. */
+    protected int[]                           generalization;
+
     /** The transition. */
     protected TransitionType                  transition;
 
+    /** The state index array. */
+    protected final int[]                     mappedLevels;
+    /** The column index array. */
+    protected final int[]                     mappedColumns;
+    /** The column map array. */
+    protected final int[][][]                 mappedHierarchies;
+    
     /**
      * Instantiates a new abstract transformer.
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param otherData
+     * @param dataAnalyzed
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
     public AbstractTransformer(final DataMatrix data,
                                final GeneralizationHierarchy[] hierarchies,
-                               final DataMatrix otherData,
+                               final DataMatrix dataAnalyzed,
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
                                final ARXConfigurationInternal config) {
         this.config = config;
         this.data = data;
         this.hierarchies = hierarchies;
-        this.otherData = otherData;
+        this.dataAnalyzed = dataAnalyzed;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
         this.ssStepWidth = config.getSnapshotLength();
@@ -354,13 +314,9 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         if (this.dimensions > arraySizes) {
             arraySizes = this.dimensions;
         }
-        this.generalizationIndexArray = new int[arraySizes];
-        this.columnIndexArray = new int[arraySizes];
-        this.columnMapArray = new int[arraySizes][][];
-        this.map = new int[hierarchies.length][][];
-        for (int i = 0; i < hierarchies.length; i++) {
-            this.map[i] = hierarchies[i].getArray();
-        }
+        this.mappedLevels = new int[arraySizes];
+        this.mappedColumns = new int[arraySizes];
+        this.mappedHierarchies = new int[arraySizes][][];
 
         // Prepare delegate
         switch (config.getRequirements()) {
@@ -385,16 +341,13 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.util.concurrent.Callable#call()
-     */
     @Override
     public HashGroupify call() {
-        // clear local groupify
+        
+        // Clear local groupify
         groupify.stateClear();
 
+        // Decide
         switch (transition) {
         case UNOPTIMIZED:
             processAll();
@@ -451,63 +404,63 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         int index = 0;
         for (int i = 0; i < dimensions; i++) {
             if ((projection & (1L << i)) == 0) {
-                generalizationIndexArray[index] = state[i];
-                columnIndexArray[index] = i;
-                columnMapArray[index] = hierarchies[i].getArray();
+                mappedLevels[index] = state[i];
+                mappedColumns[index] = i;
+                mappedHierarchies[index] = hierarchies[i].getArray();
                 index++;
             }
         }
 
         // Store values
-        this.index0 = columnIndexArray[0];
-        this.index1 = columnIndexArray[1];
-        this.index2 = columnIndexArray[2];
-        this.index3 = columnIndexArray[3];
-        this.index4 = columnIndexArray[4];
-        this.index5 = columnIndexArray[5];
-        this.index6 = columnIndexArray[6];
-        this.index7 = columnIndexArray[7];
-        this.index8 = columnIndexArray[8];
-        this.index9 = columnIndexArray[9];
-        this.index10 = columnIndexArray[10];
-        this.index11 = columnIndexArray[11];
-        this.index12 = columnIndexArray[12];
-        this.index13 = columnIndexArray[13];
-        this.index14 = columnIndexArray[14];
+        this.column0 = mappedColumns[0];
+        this.column1 = mappedColumns[1];
+        this.column2 = mappedColumns[2];
+        this.column3 = mappedColumns[3];
+        this.column4 = mappedColumns[4];
+        this.column5 = mappedColumns[5];
+        this.column6 = mappedColumns[6];
+        this.column7 = mappedColumns[7];
+        this.column8 = mappedColumns[8];
+        this.column9 = mappedColumns[9];
+        this.column10 = mappedColumns[10];
+        this.column11 = mappedColumns[11];
+        this.column12 = mappedColumns[12];
+        this.column13 = mappedColumns[13];
+        this.column14 = mappedColumns[14];
 
         // Store generalization levels
-        this.generalizationindex0 = generalizationIndexArray[0];
-        this.generalizationindex1 = generalizationIndexArray[1];
-        this.generalizationindex2 = generalizationIndexArray[2];
-        this.generalizationindex3 = generalizationIndexArray[3];
-        this.generalizationindex4 = generalizationIndexArray[4];
-        this.generalizationindex5 = generalizationIndexArray[5];
-        this.generalizationindex6 = generalizationIndexArray[6];
-        this.generalizationindex7 = generalizationIndexArray[7];
-        this.generalizationindex8 = generalizationIndexArray[8];
-        this.generalizationindex9 = generalizationIndexArray[9];
-        this.generalizationindex10 = generalizationIndexArray[10];
-        this.generalizationindex11 = generalizationIndexArray[11];
-        this.generalizationindex12 = generalizationIndexArray[12];
-        this.generalizationindex13 = generalizationIndexArray[13];
-        this.generalizationindex14 = generalizationIndexArray[14];
+        this.level0 = mappedLevels[0];
+        this.level1 = mappedLevels[1];
+        this.level2 = mappedLevels[2];
+        this.level3 = mappedLevels[3];
+        this.level4 = mappedLevels[4];
+        this.level5 = mappedLevels[5];
+        this.level6 = mappedLevels[6];
+        this.level7 = mappedLevels[7];
+        this.level8 = mappedLevels[8];
+        this.level9 = mappedLevels[9];
+        this.level10 = mappedLevels[10];
+        this.level11 = mappedLevels[11];
+        this.level12 = mappedLevels[12];
+        this.level13 = mappedLevels[13];
+        this.level14 = mappedLevels[14];
 
         // Store generalization hierarchies
-        this.idindex0 = columnMapArray[0];
-        this.idindex1 = columnMapArray[1];
-        this.idindex2 = columnMapArray[2];
-        this.idindex3 = columnMapArray[3];
-        this.idindex4 = columnMapArray[4];
-        this.idindex5 = columnMapArray[5];
-        this.idindex6 = columnMapArray[6];
-        this.idindex7 = columnMapArray[7];
-        this.idindex8 = columnMapArray[8];
-        this.idindex9 = columnMapArray[9];
-        this.idindex10 = columnMapArray[10];
-        this.idindex11 = columnMapArray[11];
-        this.idindex12 = columnMapArray[12];
-        this.idindex13 = columnMapArray[13];
-        this.idindex14 = columnMapArray[14];
+        this.hierarchy0 = mappedHierarchies[0];
+        this.hierarchy1 = mappedHierarchies[1];
+        this.hierarchy2 = mappedHierarchies[2];
+        this.hierarchy3 = mappedHierarchies[3];
+        this.hierarchy4 = mappedHierarchies[4];
+        this.hierarchy5 = mappedHierarchies[5];
+        this.hierarchy6 = mappedHierarchies[6];
+        this.hierarchy7 = mappedHierarchies[7];
+        this.hierarchy8 = mappedHierarchies[8];
+        this.hierarchy9 = mappedHierarchies[9];
+        this.hierarchy10 = mappedHierarchies[10];
+        this.hierarchy11 = mappedHierarchies[11];
+        this.hierarchy12 = mappedHierarchies[12];
+        this.hierarchy13 = mappedHierarchies[13];
+        this.hierarchy14 = mappedHierarchies[14];
     }
 
     /**

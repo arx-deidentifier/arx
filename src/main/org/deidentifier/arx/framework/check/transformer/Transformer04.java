@@ -55,10 +55,10 @@ public class Transformer04 extends AbstractTransformer {
             // Transform
             buffer.setRow(i);
             data.setRow(i);
-            buffer.setValueAtColumn(index0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(index1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(index2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(index3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
 
             // Call
             delegate.callAll(i, i);
@@ -72,10 +72,10 @@ public class Transformer04 extends AbstractTransformer {
             // Transform
             buffer.setRow(element.representative);
             data.setRow(element.representative);
-            buffer.setValueAtColumn(index0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(index1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(index2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(index3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
 
             // Call
             delegate.callGroupify(element.representative, element);
@@ -95,10 +95,10 @@ public class Transformer04 extends AbstractTransformer {
             // Transform
             buffer.setRow(snapshot[i]);
             data.setRow(snapshot[i]);
-            buffer.setValueAtColumn(index0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(index1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(index2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(index3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
 
             // Call
             delegate.callSnapshot(snapshot[i], snapshot, i);
