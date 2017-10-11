@@ -211,7 +211,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             this.table2 = SWTUtil.createTableDynamic(lower, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
             this.table2.setHeaderVisible(true);
             this.table2.setLinesVisible(true);
-            this.table2.setMenu(new ClipboardHandlerTable(table).getMenu());
+            this.table2.setMenu(new ClipboardHandlerTable(table2).getMenu());
             this.table2.setLayoutData(SWTUtil.createFillGridData());
             
             // Create columns
