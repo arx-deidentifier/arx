@@ -189,7 +189,7 @@ public class ComponentStatus {
         ComponentStatusLabel label = new ComponentStatusLabel(composite, SWT.CENTER);
         label.setText(Resources.getMessage("ComponentStatus.1"));
         label.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.BOTTOM).grab(true, true).create());
-        Button update = new Button(composite, SWT.DEFAULT);
+        Button update = new Button(composite, SWT.PUSH);
         update.setText(Resources.getMessage("ComponentStatus.2")); //$NON-NLS-1$
         update.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).grab(false, true).create());
         update.addSelectionListener(new SelectionAdapter() {
@@ -236,7 +236,7 @@ public class ComponentStatus {
             label.setProgressProvider(provider);
         }
 
-        Button stop = new Button(composite, SWT.DEFAULT);
+        Button stop = new Button(composite, SWT.PUSH);
         stop.setText(Resources.getMessage("ComponentStatus.4")); //$NON-NLS-1$
         stop.setLayoutData(GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.TOP).grab(false, true).create());
         stop.addSelectionListener(new SelectionAdapter() {
