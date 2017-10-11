@@ -36,10 +36,9 @@ public class MRUCacheEntry<T> {
     public MRUCacheEntry<T> prev;
 
     /**
-     * Instantiates a new mRU cache entry.
+     * Creates a new instance
      * 
-     * @param node
-     *            the node
+     * @param node the node
      */
     public MRUCacheEntry(final T node) {
         this.data = node;
