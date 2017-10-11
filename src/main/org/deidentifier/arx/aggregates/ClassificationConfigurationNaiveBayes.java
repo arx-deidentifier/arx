@@ -44,11 +44,16 @@ public class ClassificationConfigurationNaiveBayes extends ARXClassificationConf
     public static ClassificationConfigurationNaiveBayes create() {
         return new ClassificationConfigurationNaiveBayes();
     }
+    
+    /** Default value */
+    public static final Type   DEFAULT_TYPE  = Type.BERNOULLI;
+    /** Default value */
+    public static final double DEFAULT_SIGMA = 1.0d;
 
     /** Type */
-    private Type    type          = Type.BERNOULLI;
+    private Type               type          = DEFAULT_TYPE;
     /** Prior count */
-    private double  sigma         = 1.0d;
+    private double             sigma         = DEFAULT_SIGMA;
     /**
      * Constructor
      */

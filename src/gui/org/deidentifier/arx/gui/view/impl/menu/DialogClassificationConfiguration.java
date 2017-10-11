@@ -93,33 +93,33 @@ public class DialogClassificationConfiguration implements IDialog {
         this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.2")); //$NON-NLS-1$
                   
         // Alpha
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.11")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.11"), 0d, 1d, ClassificationConfigurationLogisticRegression.DEFAULT_ALPHA) { //$NON-NLS-1$
             protected Double getValue() { return config.getAlpha(); }
             protected void setValue(Object t) { config.setAlpha((Double)t); }});
         
         // Decay exponent
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12"), -1d, 0d, ClassificationConfigurationLogisticRegression.DEFAULT_DECAY_EXPONENT) { //$NON-NLS-1$
             protected Double getValue() { return config.getDecayExponent(); }
             protected void setValue(Object t) { config.setDecayExponent((Double)t); }});
         
         // Lambda
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14"), Double.MAX_VALUE, ClassificationConfigurationLogisticRegression.DEFAULT_LAMBDA) { //$NON-NLS-1$
             protected Double getValue() { return config.getLambda(); }
             protected void setValue(Object t) { config.setLambda((Double)t); }});
         
         // Learning rate
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.15")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.15"), 0d, Double.MAX_VALUE, ClassificationConfigurationLogisticRegression.DEFAULT_LEARNING_RATE) { //$NON-NLS-1$
             protected Double getValue() { return config.getLearningRate(); }
             protected void setValue(Object t) { config.setLearningRate((Double)t); }});
         
         // Prior function
-        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.18"), getPriorFunctions()) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.18"), getPriorFunctions(), ClassificationConfigurationLogisticRegression.DEFAULT_PRIOR.toString()) { //$NON-NLS-1$
             protected String getValue() { return config.getPriorFunction().name(); }
             protected void setValue(Object arg0) { config.setPriorFunction(PriorFunction.valueOf((String)arg0));  }
         });
         
         // Step offset
-        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.20")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.20"), 0, Integer.MAX_VALUE, ClassificationConfigurationLogisticRegression.DEFAULT_STEP_OFFSET) { //$NON-NLS-1$
             protected Integer getValue() { return config.getStepOffset(); }
             protected void setValue(Object t) { config.setStepOffset((Integer)t); }});
     }
@@ -132,12 +132,12 @@ public class DialogClassificationConfiguration implements IDialog {
         this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.3")); //$NON-NLS-1$
         
         // Sigma
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.22")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.22"), 0d, Double.MAX_VALUE, ClassificationConfigurationNaiveBayes.DEFAULT_SIGMA) { //$NON-NLS-1$
             protected Double getValue() { return config.getSigma(); }
             protected void setValue(Object t) { config.setSigma((Double)t); }});
         
         // Type
-        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.23"), getTypes()) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.23"), getTypes(), ClassificationConfigurationNaiveBayes.DEFAULT_TYPE.toString()) { //$NON-NLS-1$
             protected String getValue() { return config.getType().name(); }
             protected void setValue(Object arg0) { config.setType(Type.valueOf((String)arg0));  }
         });
@@ -151,7 +151,7 @@ public class DialogClassificationConfiguration implements IDialog {
         this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.4")); //$NON-NLS-1$
         
         // Number of trees
-        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.24")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.24"), 1, Integer.MAX_VALUE, ClassificationConfigurationRandomForest.DEFAULT_NUMBER_OF_TREES) { //$NON-NLS-1$
             protected Integer getValue() { return config.getNumberOfTrees(); }
             protected void setValue(Object t) { config.setNumberOfTrees((Integer)t); }});
     }
@@ -164,28 +164,28 @@ public class DialogClassificationConfiguration implements IDialog {
         this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.5")); //$NON-NLS-1$
         
         // C
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.25")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.25"), 0d, Double.MAX_VALUE, ClassificationConfigurationSVM.DEFAULT_C) { //$NON-NLS-1$
             protected Double getValue() { return config.getC(); }
             protected void setValue(Object t) { config.setC((Double)t); }});
         
         // Kernel degree
-        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.26")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.26"), 0, Integer.MAX_VALUE, ClassificationConfigurationSVM.DEFAULT_KERNEL_DEGREE) { //$NON-NLS-1$
             protected Integer getValue() { return config.getKernelDegree(); }
             protected void setValue(Object t) { config.setKernelDegree((Integer)t); }});
 
         // Kernel sigma
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.27")) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.27"), 0d, Double.MAX_VALUE, ClassificationConfigurationSVM.DEFAULT_KERNEL_SIGMA) { //$NON-NLS-1$
             protected Double getValue() { return config.getKernelSigma(); }
             protected void setValue(Object t) { config.setKernelSigma((Double)t); }});
         
         // Kernel type
-        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.28"), getKernels()) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.28"), getKernels(), ClassificationConfigurationSVM.DEFAULT_KERNEL_TYPE.toString()) { //$NON-NLS-1$
             protected String getValue() { return config.getKernelType().name(); }
             protected void setValue(Object arg0) { config.setKernelType(Kernel.valueOf((String)arg0));  }
         });
 
         // Multiclass type
-        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.29"), getMulticlassTypes()) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.29"), getMulticlassTypes(), ClassificationConfigurationSVM.DEFAULT_MULTICLASS_TYPE.toString()) { //$NON-NLS-1$
             protected String getValue() { return config.getMulticlassType().name(); }
             protected void setValue(Object arg0) { config.setMulticlassType(MulticlassType.valueOf((String)arg0));  }
         });

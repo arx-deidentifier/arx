@@ -92,17 +92,28 @@ public class ClassificationConfigurationSVM extends ARXClassificationConfigurati
     public static ClassificationConfigurationSVM create() {
         return new ClassificationConfigurationSVM();
     }
-    /** Type */
-    private MulticlassType multiclassType = MulticlassType.ONE_VS_ALL;
-    /** Soft margin penalty */
-    private double         c              = 1.0d;
-    /** The smooth/width parameter of the kernel. */
-    private double         kernelSigma    = 1.0d;
-    /** The degree of the kernel. */
-    private int            kernelDegree   = 2;
+    
+    /** Default value */
+    public static final MulticlassType DEFAULT_MULTICLASS_TYPE = MulticlassType.ONE_VS_ALL;
+    /** Default value */
+    public static final double         DEFAULT_C               = 1.0d;
+    /** Default value */
+    public static final double         DEFAULT_KERNEL_SIGMA    = 1.0d;
+    /** Default value */
+    public static final int            DEFAULT_KERNEL_DEGREE   = 2;
+    /** Default value */
+    public static final Kernel         DEFAULT_KERNEL_TYPE     = Kernel.GAUSSIAN;
 
+    /** Type */
+    private MulticlassType             multiclassType          = DEFAULT_MULTICLASS_TYPE;
+    /** Soft margin penalty */
+    private double                     c                       = DEFAULT_C;
+    /** The smooth/width parameter of the kernel. */
+    private double                     kernelSigma             = DEFAULT_KERNEL_SIGMA;
+    /** The degree of the kernel. */
+    private int                        kernelDegree            = DEFAULT_KERNEL_DEGREE;
     /** Kernel */
-    private Kernel         kernelType     = Kernel.GAUSSIAN;
+    private Kernel                     kernelType              = DEFAULT_KERNEL_TYPE;
     
     /**
      * Constructor

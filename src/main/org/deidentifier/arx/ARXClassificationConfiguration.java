@@ -60,22 +60,28 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
     public static ClassificationConfigurationSVM createSVM() {
         return ClassificationConfigurationSVM.create();
     }
-    /** Deterministic */
-    private boolean           deterministic    = true;
-    /** Max records */
-    private int               maxRecords       = 100000;
     
-    /** Folds */
-    private int               numberOfFolds    = 10;
-    
-    /** Seed */
-    private long              seed             = Integer.MAX_VALUE;
-    
-    /** Configuration */
-    private int               vectorLength     = 1000;
+    /** Default value */
+    public static final boolean DEFAULT_DETERMINISTIC   = true;
+    /** Default value */
+    public static final int     DEFAULT_MAX_RECORDS     = 100000;
+    /** Default value */
+    public static final int     DEFAULT_NUMBER_OF_FOLDS = 10;
+    /** Default value */
+    public static final int     DEFAULT_VECTOR_LENGTH   = 1000;
 
+    /** Deterministic */
+    private boolean             deterministic           = DEFAULT_DETERMINISTIC;
+    /** Max records */
+    private int                 maxRecords              = DEFAULT_MAX_RECORDS;
+    /** Folds */
+    private int                 numberOfFolds           = DEFAULT_NUMBER_OF_FOLDS;
+    /** Seed */
+    private long                seed                    = Integer.MAX_VALUE;
+    /** Configuration */
+    private int                 vectorLength            = DEFAULT_VECTOR_LENGTH;
     /** Modified */
-    private boolean           modified         = false;
+    private boolean             modified                = false;
 
     /**
      * Creates a new instance with default settings
