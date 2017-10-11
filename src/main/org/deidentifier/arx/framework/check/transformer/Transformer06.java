@@ -49,12 +49,6 @@ public class Transformer06 extends AbstractTransformer {
         super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkAll()
-     */
     @Override
     protected void processAll() {
         for (int i = startIndex; i < stopIndex; i++) {
@@ -73,12 +67,6 @@ public class Transformer06 extends AbstractTransformer {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkGroupify ()
-     */
     @Override
     protected void processGroupify() {
 
@@ -102,12 +90,6 @@ public class Transformer06 extends AbstractTransformer {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkSnapshot ()
-     */
     @Override
     protected void processSnapshot() {
 
