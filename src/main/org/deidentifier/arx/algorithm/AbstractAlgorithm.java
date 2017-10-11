@@ -19,7 +19,7 @@ package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -44,7 +44,7 @@ public abstract class AbstractAlgorithm {
     private ARXListener      listener               = null;
 
     /** A node checker. */
-    protected NodeChecker      checker                = null;
+    protected TransformationChecker      checker                = null;
 
     /** The lattice. */
     protected SolutionSpace    solutionSpace          = null;
@@ -56,7 +56,7 @@ public abstract class AbstractAlgorithm {
      * @param checker The checker
      */
     protected AbstractAlgorithm(final SolutionSpace  solutionSpace,
-                                final NodeChecker checker) {
+                                final TransformationChecker checker) {
         this.checker = checker;
         this.solutionSpace = solutionSpace;
     }

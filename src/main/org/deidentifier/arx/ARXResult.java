@@ -26,7 +26,7 @@ import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
@@ -55,7 +55,7 @@ public class ARXResult {
     private ARXNode                bufferLockedByNode   = null;
 
     /** The node checker. */
-    private final NodeChecker      checker;
+    private final TransformationChecker      checker;
 
     /** The config. */
     private final ARXConfiguration config;
@@ -144,7 +144,7 @@ public class ARXResult {
         metric.initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Create a node checker
-        final NodeChecker checker = new NodeChecker(manager,
+        final TransformationChecker checker = new TransformationChecker(manager,
                                                      metric,
                                                      config.getInternalConfiguration(),
                                                      historySize,
@@ -180,7 +180,7 @@ public class ARXResult {
     protected ARXResult(ARXAnonymizer anonymizer,
                         DataRegistry registry,
                         DataManager manager,
-                        NodeChecker checker,
+                        TransformationChecker checker,
                         DataDefinition definition,
                         ARXConfiguration config,
                         ARXLattice lattice,

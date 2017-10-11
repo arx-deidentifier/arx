@@ -36,7 +36,7 @@ import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataMatrix;
@@ -67,7 +67,7 @@ public class ARXAnonymizer { // NO_UCD
         final AbstractAlgorithm algorithm;
 
         /** The checker. */
-        final NodeChecker       checker;
+        final TransformationChecker       checker;
 
         /** The solution space. */
         final SolutionSpace     solutionSpace;
@@ -91,7 +91,7 @@ public class ARXAnonymizer { // NO_UCD
          * @param algorithm
          * @param time
          */
-        Result(final NodeChecker checker,
+        Result(final TransformationChecker checker,
                final SolutionSpace solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
@@ -578,7 +578,7 @@ public class ARXAnonymizer { // NO_UCD
     private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
                                           final DataManager manager,
                                           final SolutionSpace solutionSpace,
-                                          final NodeChecker checker) {
+                                          final TransformationChecker checker) {
         
         if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
@@ -640,7 +640,7 @@ public class ARXAnonymizer { // NO_UCD
         config.getQualityModel().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
         // Build a node checker
-        final NodeChecker checker = new NodeChecker(manager,
+        final TransformationChecker checker = new TransformationChecker(manager,
                                                     config.getQualityModel(),
                                                     config.getInternalConfiguration(),
                                                     historySize,

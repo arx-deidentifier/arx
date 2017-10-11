@@ -19,7 +19,7 @@ package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
-import org.deidentifier.arx.framework.check.StateMachine.Transition;
+import org.deidentifier.arx.framework.check.TransformationCheckerStateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
@@ -40,7 +40,7 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class NodeChecker {
+public class TransformationChecker {
 
     /**
      * The result of a check.
@@ -100,7 +100,7 @@ public class NodeChecker {
     private final Metric<?>                       metric;
 
     /** The state machine. */
-    private final StateMachine                    stateMachine;
+    private final TransformationCheckerStateMachine                    stateMachine;
 
     /** The data transformer. */
     private final Transformer                     transformer;
@@ -122,13 +122,13 @@ public class NodeChecker {
      * @param snapshotSizeSnapshot A history threshold
      * @param solutionSpace
      */
-    public NodeChecker(final DataManager manager,
-                       final Metric<?> metric,
-                       final ARXConfigurationInternal config,
-                       final int historyMaxSize,
-                       final double snapshotSizeDataset,
-                       final double snapshotSizeSnapshot,
-                       final SolutionSpace solutionSpace) {
+    public TransformationChecker(final DataManager manager,
+                                 final Metric<?> metric,
+                                 final ARXConfigurationInternal config,
+                                 final int historyMaxSize,
+                                 final double snapshotSizeDataset,
+                                 final double snapshotSizeSnapshot,
+                                 final SolutionSpace solutionSpace) {
         
         // Initialize all operators
         this.metric = metric;
@@ -159,7 +159,7 @@ public class NodeChecker {
                                    dictionarySensFreq,
                                    solutionSpace);
         
-        this.stateMachine = new StateMachine(history);
+        this.stateMachine = new TransformationCheckerStateMachine(history);
         this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
                                            manager.getDataAnalyzed().getArray(),
                                            manager.getHierarchies(),
@@ -239,7 +239,7 @@ public class NodeChecker {
      * @param node
      * @return
      */
-    public NodeChecker.Result check(final Transformation node) {
+    public TransformationChecker.Result check(final Transformation node) {
         return check(node, false);
     }
     
@@ -249,16 +249,16 @@ public class NodeChecker {
      * @param forceMeasureInfoLoss
      * @return
      */
-    public NodeChecker.Result check(final Transformation node, final boolean forceMeasureInfoLoss) {
+    public TransformationChecker.Result check(final Transformation node, final boolean forceMeasureInfoLoss) {
         
         // If the result is already know, simply return it
-        if (node.getData() != null && node.getData() instanceof NodeChecker.Result) {
-            return (NodeChecker.Result) node.getData();
+        if (node.getData() != null && node.getData() instanceof TransformationChecker.Result) {
+            return (TransformationChecker.Result) node.getData();
         }
         
         // Store snapshot from last check
-        if (stateMachine.getLastNode() != null) {
-            history.store(solutionSpace.getTransformation(stateMachine.getLastNode()), currentGroupify, stateMachine.getLastTransition().snapshot);
+        if (stateMachine.getLastTransformation() != null) {
+            history.store(solutionSpace.getTransformation(stateMachine.getLastTransformation()), currentGroupify, stateMachine.getLastTransition().snapshot);
         }
         
         // Transition
@@ -295,7 +295,7 @@ public class NodeChecker {
         InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
         
         // Return result;
-        return new NodeChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
+        return new TransformationChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
                                       minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
                                       loss,
                                       bound);

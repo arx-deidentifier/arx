@@ -123,19 +123,21 @@ public class DataManager {
         attributesGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
         Set<String> attributesAnalyzed = new HashSet<>(definition.getSensitiveAttributes());
         Set<String> attributesResponse = new HashSet<>(definition.getResponseVariables());
+
+        // Only analyze quasi-identifying variables, if required by the quality model
         Set<String> attributesAggregated = new HashSet<>();
-        
-        // Only analyze aggregated variables, if required by the quality model
-        // TODO: What about aggregated but non-clustered variables? Does this even work anymore?
         if (qualityModel.isAggregatedInputRequired()) {
-            attributesAggregated.addAll(attributesGeneralized);
+            attributesAggregated.addAll(definition.getQuasiIdentifyingAttributes());
             throw new RuntimeException("Not implemented"); // TODO
         } 
-        // Do not analyze generalized response variables
-        // TODO: We should probably analyze them, if they are microaggregated, though
-        attributesResponse.removeAll(attributesGeneralized);
         attributesAnalyzed.addAll(attributesAggregated);
+        
+        // Do not analyze generalized response variables
+        attributesResponse.removeAll(attributesGeneralized);
         attributesAnalyzed.addAll(attributesResponse);
+        
+        // Collect attributes which are aggregated but not analyzed
+        // TODO
         
         // Create data objects
         this.dataGeneralized = Data.createProjection(data, header, getColumns(header, attributesGeneralized), dictionary);
