@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty;
+import org.deidentifier.arx.framework.check.TransformationResult;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.DependentAction;
@@ -111,7 +112,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         Transformation top = solutionSpace.getTop();
 
         // Check bottom for speed and remember the result to prevent repeated checks
-        TransformationChecker.Result result = checker.check(bottom);
+        TransformationResult result = checker.check(bottom);
         bottom.setProperty(solutionSpace.getPropertyForceSnapshot());
         bottom.setData(result);
 

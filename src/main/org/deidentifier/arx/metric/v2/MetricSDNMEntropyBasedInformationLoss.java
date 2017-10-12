@@ -94,8 +94,8 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
         }
         
         if (aggregation != null) {
-            int[] microaggregationIndices = aggregation.hotQIsNotGeneralized;
-            DistributionAggregateFunction[] microaggregationFunctions = aggregation.hotQIsNotGeneralizedFunctions;
+            int[] microaggregationIndices = aggregation.getHotQIsNotGeneralized();
+            DistributionAggregateFunction[] microaggregationFunctions = aggregation.getHotQIsNotGeneralizedFunctions();
             for (int dimension=0; dimension<microaggregationFunctions.length; dimension++){
                 infoLoss *= microaggregationFunctions[dimension].getInformationLoss(entry.distributions[microaggregationIndices[dimension]]);
             }
@@ -130,7 +130,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
             maxIL *= share.getDomainSize();
         }
         if (aggregation != null) {
-            for (int size : aggregation.hotQIsNotGeneralizedDomainSizes) {
+            for (int size : aggregation.getHotQIsNotGeneralizedDomainSizes()) {
                 maxIL *= size;
             }
         }

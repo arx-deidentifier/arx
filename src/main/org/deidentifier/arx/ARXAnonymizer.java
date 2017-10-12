@@ -639,14 +639,14 @@ public class ARXAnonymizer { // NO_UCD
         // Initialize the metric
         config.getQualityModel().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
-        // Build a node checker
+        // Build a transformation checker
         final TransformationChecker checker = new TransformationChecker(manager,
-                                                    config.getQualityModel(),
-                                                    config.getInternalConfiguration(),
-                                                    historySize,
-                                                    snapshotSizeDataset,
-                                                    snapshotSizeSnapshot,
-                                                    solutionSpace);
+                                                                        config.getQualityModel(),
+                                                                        config.getInternalConfiguration(),
+                                                                        historySize,
+                                                                        snapshotSizeDataset,
+                                                                        snapshotSizeSnapshot,
+                                                                        solutionSpace);
 
         // Create an algorithm instance
         AbstractAlgorithm algorithm = getAlgorithm(config,

@@ -26,6 +26,7 @@ import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
+import org.deidentifier.arx.framework.check.TransformationApplicator;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -54,8 +55,8 @@ public class ARXResult {
     /** Lock the buffer. */
     private ARXNode                bufferLockedByNode   = null;
 
-    /** The node checker. */
-    private final TransformationChecker      checker;
+    /** The output buffer. */
+    private final DataMatrix       buffer;
 
     /** The config. */
     private final ARXConfiguration config;
@@ -143,19 +144,12 @@ public class ARXResult {
         // Initialize the metric
         metric.initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 
-        // Create a node checker
-        final TransformationChecker checker = new TransformationChecker(manager,
-                                                     metric,
-                                                     config.getInternalConfiguration(),
-                                                     historySize,
-                                                     snapshotSizeDataset,
-                                                     snapshotSizeSnapshot,
-                                                     solutionSpace);
-
+        this.buffer = new DataMatrix(manager.getDataGeneralized().getArray().getNumRows(), 
+                                     manager.getDataGeneralized().getArray().getNumColumns());
+        
         // Initialize the result
         this.registry = handle.getRegistry();
         this.manager = manager;
-        this.checker = checker;
         this.definition = definition;
         this.config = config;
         this.lattice = lattice;
@@ -190,7 +184,7 @@ public class ARXResult {
         this.anonymizer = anonymizer;
         this.registry = registry;
         this.manager = manager;
-        this.checker = checker;
+        this.buffer = checker.getOutputBuffer();
         this.definition = definition;
         this.config = config;
         this.lattice = lattice;
@@ -299,8 +293,12 @@ public class ARXResult {
 
         // Apply the transformation
         final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
-        TransformedData information = checker.applyTransformation(transformation);
-        checker.reset();
+        TransformationApplicator applicator = new TransformationApplicator(this.manager,
+                                                                           this.buffer,
+                                                                           this.config.getQualityModel(),
+                                                                           this.config.getInternalConfiguration());
+        
+        TransformedData information = applicator.applyTransformation(transformation);
         transformation.setChecked(information.properties);
 
         // Store
@@ -412,7 +410,7 @@ public class ARXResult {
         DataHandleOutput output = (DataHandleOutput)handle;
         
         // Check, if input matches
-        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.checker.getInputBuffer())) {
+        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.manager.getDataGeneralized())) {
             return false;
         }
         
@@ -588,7 +586,7 @@ public class ARXResult {
         DataHandleOutput output = (DataHandleOutput)handle;
         
         // Check, if input matches
-        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.checker.getInputBuffer())) {
+        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.manager.getDataGeneralized())) {
             throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
@@ -651,7 +649,7 @@ public class ARXResult {
         }
         
         // Else, merge the results back into the given handle
-        TransformedData data = result.checker.applyTransformation(result.optimum, output.getOutputBufferMicroaggregated().getDictionary());
+        TransformedData data = result.checker.getApplicator().applyTransformation(result.optimum, output.getOutputBufferMicroaggregated().getDictionary());
         int newIndex = -1;
         DataMatrix oldGeneralized = output.getOutputBufferGeneralized().getArray();
         DataMatrix oldMicroaggregated = output.getOutputBufferMicroaggregated().getArray();

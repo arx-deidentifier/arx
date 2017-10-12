@@ -150,7 +150,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      */
     protected DistributionAggregateFunction[] getAggregationFunctionsGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsGeneralizedFunctions;
+            return aggregation.getHotQIsGeneralizedFunctions();
         } else {
             return null;
         }
@@ -162,7 +162,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      */
     protected DistributionAggregateFunction[] getAggregationFunctionsNonGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsNotGeneralizedFunctions;
+            return aggregation.getHotQIsNotGeneralizedFunctions();
         } else {
             return null;
         }
@@ -174,7 +174,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      */
     protected int[] getAggregationIndicesGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsGeneralized;
+            return aggregation.getHotQIsGeneralized();
         } else {
             return null;
         }
@@ -186,7 +186,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
      */
     protected int[] getAggregationIndicesNonGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsNotGeneralized;
+            return aggregation.getHotQIsNotGeneralized();
         } else {
             return null;
         }
@@ -246,9 +246,9 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
                                       final ARXConfiguration config) {
 
         // Initialize
-        this.aggregation = manager.getMicroAggregationData();
+        this.aggregation = manager.getAggregationInformation();
         this.dimensionsGeneralized = hierarchies.length;
-        this.dimensionsAggregated = this.aggregation.hotQIsNotGeneralized.length;
+        this.dimensionsAggregated = this.aggregation.getHotQIsNotGeneralized().length;
         this.dimensions = this.dimensionsGeneralized + this.dimensionsAggregated;
         
         // Initialize weights
@@ -261,7 +261,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             maximum = Math.max(maximum, weight);
         }
         for (int i = 0; i < this.dimensionsAggregated; i++) {
-            String attribute = this.aggregation.header[this.aggregation.hotQIsNotGeneralized[i]];
+            String attribute = this.aggregation.getHeader()[this.aggregation.getHotQIsNotGeneralized()[i]];
             double weight = config.getAttributeWeight(attribute);
             this.weights[this.dimensionsGeneralized + i] = weight;
             maximum = Math.max(maximum, weight);

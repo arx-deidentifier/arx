@@ -35,18 +35,20 @@ public class Transformer11 extends AbstractTransformer {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param otherValues
+     * @param dataAnalyzed
+     * @param dataAnalyzedNumberOfColumns
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
     public Transformer11(final DataMatrix data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final DataMatrix otherValues,
+                         final DataMatrix dataAnalyzed,
+                         final int dataAnalyzedNumberOfColumns,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfigurationInternal config) {
-        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, hierarchies, dataAnalyzed, dataAnalyzedNumberOfColumns, dictionarySensValue, dictionarySensFreq, config);
     }
 
     @Override

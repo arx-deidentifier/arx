@@ -1302,7 +1302,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute snapshot length
         this.snapshotLength = 2;
         if (this.requires(REQUIREMENT_DISTRIBUTION)) {
-            this.snapshotLength += 2 * manager.getDataAnalyzed().getHeader().length;
+            this.snapshotLength += 2 * manager.getAggregationInformation().getHotThreshold();
         }
         if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
             this.snapshotLength += 1;

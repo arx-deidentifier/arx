@@ -77,9 +77,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         @Override
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
             
-            // TODO: Improve!
-            int[][] values = new int[dataAnalyzed.getNumColumns()][];
-            int[][] frequencies = new int[dataAnalyzed.getNumColumns()][];
+            int[][] values = new int[dataAnalyzedNumberOfColumns][];
+            int[][] frequencies = new int[dataAnalyzedNumberOfColumns][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
@@ -134,9 +133,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         @Override
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
 
-            // TODO: Improve!
-            int[][] values = new int[dataAnalyzed.getNumColumns()][];
-            int[][] frequencies = new int[dataAnalyzed.getNumColumns()][];
+            int[][] values = new int[dataAnalyzedNumberOfColumns][];
+            int[][] frequencies = new int[dataAnalyzedNumberOfColumns][];
             int index = 0;
             int offset = i + 3;
             int length = config.getSnapshotLength() - 1 - 3;
@@ -169,9 +167,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         @Override
         public final void callSnapshot(final int outtuple, final int[] snapshot, final int i) {
 
-            // TODO: Improve!
-            int[][] values = new int[dataAnalyzed.getNumColumns()][];
-            int[][] frequencies = new int[dataAnalyzed.getNumColumns()][];
+            int[][] values = new int[dataAnalyzedNumberOfColumns][];
+            int[][] frequencies = new int[dataAnalyzedNumberOfColumns][];
             int index = 0;
             int offset = i + 2;
             int length = config.getSnapshotLength() - 1 - 2;
@@ -260,6 +257,8 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
 
     /** The sensitive values. */
     protected final DataMatrix                dataAnalyzed;
+    /** Analyzed number of columns. */
+    protected final int                       dataAnalyzedNumberOfColumns;
     /** The snapshot. */
     protected int[]                           snapshot;
 
@@ -290,6 +289,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
      * @param data the data
      * @param hierarchies the hierarchies
      * @param dataAnalyzed
+     * @param dataAnalyzedNumberOfColumns 
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
@@ -297,6 +297,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
     public AbstractTransformer(final DataMatrix data,
                                final GeneralizationHierarchy[] hierarchies,
                                final DataMatrix dataAnalyzed,
+                               int dataAnalyzedNumberOfColumns, 
                                final IntArrayDictionary dictionarySensValue,
                                final IntArrayDictionary dictionarySensFreq,
                                final ARXConfigurationInternal config) {
@@ -304,6 +305,7 @@ public abstract class AbstractTransformer implements Callable<HashGroupify> {
         this.data = data;
         this.hierarchies = hierarchies;
         this.dataAnalyzed = dataAnalyzed;
+        this.dataAnalyzedNumberOfColumns = dataAnalyzedNumberOfColumns;
         this.dictionarySensValue = dictionarySensValue;
         this.dictionarySensFreq = dictionarySensFreq;
         this.ssStepWidth = config.getSnapshotLength();

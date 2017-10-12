@@ -103,7 +103,7 @@ public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
         this.riskModel = new RiskModelCostBenefit(this.config);
 
         // Prepare consideration of microaggregation
-        this.aggregation = manager.getMicroAggregationData();
+        this.aggregation = manager.getAggregationInformation();
                 
         // Calculate MaxIL
         this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, this.aggregation);

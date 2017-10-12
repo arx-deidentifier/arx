@@ -617,6 +617,7 @@ public class DataHandleOutput extends DataHandle {
         // Handle all other values
         } else {
             
+            
             // Decode
             int value = data.getArray().get(row, index) & Data.REMOVE_OUTLIER_MASK;
             String[][] dictionary = data.getDictionary().getMapping();

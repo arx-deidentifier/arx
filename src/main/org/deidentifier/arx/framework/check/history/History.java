@@ -282,11 +282,11 @@ public class History {
         // Create the snapshot
         final int[] data = createSnapshot(groupify);
 
-
-        // assign snapshot and keep reference for cache
+        // Assign snapshot and keep reference for cache
         nodeToSnapshot.put(transformation.getIdentifier(), data);
         cache.append(new MRUCacheEntryMetadata(transformation));
 
+        // Success
         return true;
     }
 

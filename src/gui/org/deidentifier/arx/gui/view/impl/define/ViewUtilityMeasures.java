@@ -207,17 +207,7 @@ public class ViewUtilityMeasures implements IView {
             }
         });
 
-        // Create microaggreation combo
-        final Label mLabel4 = new Label(mBase, SWT.PUSH);
-        mLabel4.setText(Resources.getMessage("CriterionDefinitionView.90")); //$NON-NLS-1$
-        GridData d24 = new GridData();
-        d24.heightHint = LABEL_HEIGHT;
-        d24.minimumHeight = LABEL_HEIGHT;
-        d24.grabExcessVerticalSpace = true;
-        d24.verticalAlignment = GridData.CENTER;
-        mLabel4.setLayoutData(d24);
-
-        // Create monotonicity button
+        // Create section about aggregate functions
         final Label mLabel3 = new Label(mBase, SWT.PUSH);
         mLabel3.setText(Resources.getMessage("CriterionDefinitionView.72")); //$NON-NLS-1$
         GridData d23 = new GridData();

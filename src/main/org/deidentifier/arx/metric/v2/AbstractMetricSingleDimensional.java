@@ -102,7 +102,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      */
     protected DistributionAggregateFunction[] getAggregationFunctionsGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsGeneralizedFunctions;
+            return aggregation.getHotQIsGeneralizedFunctions();
         } else {
             return null;
         }
@@ -114,7 +114,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      */
     protected DistributionAggregateFunction[] getAggregationFunctionsNonGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsNotGeneralizedFunctions;
+            return aggregation.getHotQIsNotGeneralizedFunctions();
         } else {
             return null;
         }
@@ -126,7 +126,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      */
     protected int[] getAggregationIndicesGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsGeneralized;
+            return aggregation.getHotQIsGeneralized();
         } else {
             return null;
         }
@@ -138,7 +138,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
      */
     protected int[] getAggregationIndicesNonGeneralized() {
         if (aggregation != null) {
-            return aggregation.hotQIsNotGeneralized;
+            return aggregation.getHotQIsNotGeneralized();
         } else {
             return null;
         }
@@ -170,7 +170,7 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
         
         // Init
         this.tuples = (double) getNumRecords(config, input);
-        this.aggregation = manager.getMicroAggregationData();
+        this.aggregation = manager.getAggregationInformation();
     }
 
     /**

@@ -185,10 +185,6 @@ public class DataManager {
                                                                            dictionary);
         this.dataInput = Data.createWrapper(data, header, getColumns(header), dictionary);
         
-        // Make the dictionaries ready for additions
-        this.dataGeneralized.getDictionary().definalizeAll();
-        this.dataAnalyzed.getDictionary().definalizeAll();
-        
         // Store information about aggregated attributes
         this.microaggregationData = new DataAggregationInformation(dataAnalyzed, 
                                                                    functions,
@@ -196,6 +192,10 @@ public class DataManager {
                                                                    hotQIsNotGeneralized,
                                                                    hotQIsGeneralized,
                                                                    coldQIs);
+
+        // Make the dictionaries ready for additions
+        this.dataGeneralized.getDictionary().definalizeAll();
+        this.dataAnalyzed.getDictionary().definalizeAll();
         
         // Register hierarchies used for generalization
         this.generalizationLevelsMaximum = new int[qisGeneralized.size()];
@@ -519,7 +519,7 @@ public class DataManager {
      * Returns data configuring microaggregation
      * @return
      */
-    public DataAggregationInformation getMicroAggregationData() {
+    public DataAggregationInformation getAggregationInformation() {
         return this.microaggregationData;
     }
 
