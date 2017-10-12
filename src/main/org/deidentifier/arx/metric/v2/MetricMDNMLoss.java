@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -35,6 +36,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * This class implements a variant of the Loss metric.
  *
  * @author Fabian Prasser
+ * @author Raffael Bild
  */
 public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
@@ -55,6 +57,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     
     /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      sFactor;
+    
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double            k;
     
     /**
      * Default constructor which treats all transformation methods equally.
@@ -137,6 +142,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
@@ -310,6 +320,12 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Save domain shares
         this.shares = manager.getDomainShares();
         
+        // Store minimal size of equivalence classes
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            k = (double)dpCriterion.getMinimalClassSize();
+        }
+        
         // Min and max
         double[] min = new double[getDimensions()];
         Arrays.fill(min, 0d);
@@ -346,5 +362,36 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
         return round(result);
+    }
+    
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify) {
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+
+        // Compute score
+        double score = 0d;
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            if (m.count>0) {
+                m.read();
+                for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+                    int value = m.next();
+                    int level = transformation[dimension];
+                    double share = (double)m.count * shares[dimension].getShare(value, level);
+                    score += m.isNotOutlier ? share : m.count;
+                }
+                score += m.pcount - m.count;
+            }
+            m = m.nextOrdered;
+        }
+        
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        score *= -1d / getDimensionsGeneralized();
+        if (k > 1) score /= k - 1d;
+        
+        // Return score
+        return score;
     }
 }

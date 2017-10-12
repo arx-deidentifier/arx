@@ -1477,6 +1477,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Returns whether the metric provides a score function
+     * @return
+     */
+    public boolean isScoreFunctionSupported() {
+        return false;
+    }
+    
+    /**
      * Renders the privacy model
      * @return
      */
@@ -1491,6 +1499,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
         return this.getClass().getSimpleName();
     }
 
+    /**
+     * Calculates the score.
+     * Note: All score functions are expected to have a sensitivity of one.
+     * 
+     * @param node
+     * @param groupify
+     * @return
+     */
+    public double getScore(final Transformation node, final HashGroupify groupify) {
+        throw new RuntimeException("Data-dependent differential privacy for the quality model "
+            + getName() + " is not yet implemented");
+    }
+    
     /**
      * Evaluates the metric for the given node.
      *
