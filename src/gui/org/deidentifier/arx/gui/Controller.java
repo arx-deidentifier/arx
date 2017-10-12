@@ -1535,7 +1535,7 @@ public class Controller implements IView {
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
                               model.getInputConfig().getResearchSubset()));
-
+        
         // Update view config
         if (model.getOutput() != null) {
             update(new ModelEvent(this,
@@ -1547,7 +1547,13 @@ public class Controller implements IView {
         if (tempSelectedNode != null) {
             this.model.setSelectedNode(tempSelectedNode);
             this.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            this.actionApplySelectedTransformation();
+            
+            // Backwards compatibility
+            if (model.getOutput() == null) {
+                this.actionApplySelectedTransformation();
+            } else {
+                this.update(new ModelEvent(this, ModelPart.OUTPUT, model.getOutput()));
+            }
         }
 
         // We just loaded the model, so there are no changes

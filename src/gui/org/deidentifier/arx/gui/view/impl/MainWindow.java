@@ -752,7 +752,6 @@ public class MainWindow implements IView {
         throw new IllegalStateException("Unknown locale");
     }
     
-
     /**
      * Creates the global menu
      * @return

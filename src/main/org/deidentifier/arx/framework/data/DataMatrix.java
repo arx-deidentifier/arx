@@ -17,31 +17,36 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.io.Serializable;
+
 
 /**
  * A fast implementation of an array of arrays of equal size
  * 
  * @author Fabian Prasser
  */
-public class DataMatrix {
-    
+public class DataMatrix implements Serializable {
+
+    /** SVUID */
+    private static final long serialVersionUID = 1626391500373995527L;
+
     /** Backing array */
-    private final int[]          array;
+    private final int[]       array;
 
     /** The number of rows. */
-    private final int            rows;
+    private final int         rows;
 
     /** The number of columns. */
-    private final int            columns;
+    private final int         columns;
 
     /** Iterate */
-    private int                  iteratorI = 0;
-    
-    /** Iterate */
-    private int                  iteratorOffset = 0;
+    private int               iteratorI        = 0;
 
     /** Iterate */
-    private int                  baseOffset   = 0;
+    private int               iteratorOffset   = 0;
+
+    /** Iterate */
+    private int               baseOffset       = 0;
 
     /**
      * Instantiates a new memory block.

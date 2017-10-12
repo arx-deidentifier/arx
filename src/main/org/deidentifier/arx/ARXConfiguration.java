@@ -75,15 +75,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
-         * @param clazz
-         * @return
-         * @see org.deidentifier.arx.ARXConfiguration#isPrivacyModelSpecified(java.lang.Class)
-         */
-        public boolean isPrivacyModelSpecified(Class<? extends PrivacyCriterion> clazz) {
-            return config.isPrivacyModelSpecified(clazz);
-        }
-
-        /**
          * Returns the maximum number of allowed outliers.
          *
          * @return
@@ -103,13 +94,39 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
-         * Returns all criteria.
+         * Returns the max relative number of outliers.
+         *
          * @return
          */
-        public Set<PrivacyCriterion> getPrivacyModels() {
-            return config.getPrivacyModels();
+        public double getMaxOutliers() {
+            return config.getMaxOutliers();
+        }
+
+        /**
+         * Returns the minimal size of an equivalence class induced by the contained criteria.
+         * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
+         * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
+         */
+        public int getMinimalGroupSize() {
+            return config.getMinimalGroupSize();
         }
         
+        /**
+         * Returns a monotonicity property
+         * @return
+         */
+        public Monotonicity getMonotonicityOfPrivacy() {
+            return config.getMonotonicityOfPrivacy();
+        }
+
+        /**
+         * Returns a monotonicity property
+         * @return
+         */
+        public Monotonicity getMonotonicityOfUtility() {
+            return config.getMonotonicityOfUtility();
+        }
+
         /**
          * 
          *
@@ -123,12 +140,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
-         * Returns the max relative number of outliers.
-         *
+         * Returns all criteria.
          * @return
          */
-        public double getMaxOutliers() {
-            return config.getMaxOutliers();
+        public Set<PrivacyCriterion> getPrivacyModels() {
+            return config.getPrivacyModels();
         }
 
         /**
@@ -139,32 +155,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         public Metric<?> getQualityModel() {
             return config.getQualityModel();
         }
-
-        /**
-         * Returns the minimal size of an equivalence class induced by the contained criteria.
-         * @return If k-anonymity is contained, k is returned. If l-diversity is contained, l is returned.
-         * If both are contained max(k,l) is returned. Otherwise, Integer.MAX_VALUE is returned.
-         */
-        public int getMinimalGroupSize() {
-            return config.getMinimalGroupSize();
-        }
-
-        /**
-         * Returns a monotonicity property
-         * @return
-         */
-        public Monotonicity getMonotonicityOfPrivacy() {
-            return config.getMonotonicityOfPrivacy();
-        }
         
-        /**
-         * Returns a monotonicity property
-         * @return
-         */
-        public Monotonicity getMonotonicityOfUtility() {
-            return config.getMonotonicityOfUtility();
-        }
-
         /**
          * Returns the criteria's requirements.
          *
@@ -215,6 +206,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
          */
         public boolean isPracticalMonotonicity() {
             return config.isPracticalMonotonicity();
+        }
+
+        /**
+         * @param clazz
+         * @return
+         * @see org.deidentifier.arx.ARXConfiguration#isPrivacyModelSpecified(java.lang.Class)
+         */
+        public boolean isPrivacyModelSpecified(Class<? extends PrivacyCriterion> clazz) {
+            return config.isPrivacyModelSpecified(clazz);
         }
 
         /**
@@ -366,14 +366,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Should we use the heuristic search algorithm? */
     private boolean                            heuristicSearchEnabled                           = false;
 
-    /**
-     * We will use the heuristic algorithm, if the size of the search space
-     * exceeds this threshold
-     */
+    /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
     private Integer                            heuristicSearchThreshold                         = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
     private Integer                            heuristicSearchTimeLimit                         = 30000;
+
+    /** The heuristic algorithm will terminate after the given time limit */
+    private Integer                            heuristicSearchStepLimit                         = Integer.MAX_VALUE;
 
     /** Cost/benefit configuration */
     private ARXCostBenefitConfiguration        costBenefitConfiguration                         = ARXCostBenefitConfiguration.create();
@@ -515,20 +515,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns whether the configuration contains a privacy model which is an instance of the given class.
-     *
-     * @param clazz
-     * @return
-     */
-    public boolean isPrivacyModelSpecified(Class<? extends PrivacyCriterion> clazz) {
-        checkArgument(clazz);
-        for (PrivacyCriterion c : criteria) {
-            if (clazz.isInstance(c)) { return true; }
-        }
-        return false;
-    }
-    
-    /**
      * Returns the weight for the given attribute.
      *
      * @param attribute
@@ -571,6 +557,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * The heuristic search algorithm will terminate after the returned number of transformations
+     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * @return
+     */
+    public int getHeuristicSearchStepLimit() {
+        if (this.heuristicSearchStepLimit == null) {
+            this.heuristicSearchStepLimit = Integer.MAX_VALUE;
+        }
+        return this.heuristicSearchStepLimit;
+    }
+    
+    /**
      * When the size of the solution space exceeds the returned number of transformations,
      * ARX will use a heuristic search strategy. The default is 100.000.
      * @return
@@ -582,11 +580,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return this.heuristicSearchThreshold;
     }
   
-
     /**
      * The heuristic search algorithm will terminate after the returned number of milliseconds.
      * The default is 30 seconds.
-     * @param timeInMillis
+     * @return
      */
     public int getHeuristicSearchTimeLimit() {
         if (this.heuristicSearchTimeLimit == null) {
@@ -594,13 +591,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchTimeLimit;
     }
-    
+
     /**
      * Returns the maximum number of allowed outliers.
      *
      * @return
      */
-    public final double getMaxOutliers() {
+    public double getMaxOutliers() {
         return relMaxOutliers;
     }
     
@@ -643,7 +640,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Full
         return Monotonicity.FULL;
     }
-
+    
     /**
      * Returns whether the utility measure is monotonic
      * @return
@@ -689,7 +686,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public Set<PrivacyCriterion> getPrivacyModels() {
         return this.criteria;
     }
-    
+
     /**
      * Returns all privacy models which are instances of the given class.
      *
@@ -717,7 +714,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public Metric<?> getQualityModel() {
         return this.metric;
     }
-
+    
     /**
      * Return journalist risk threshold, 1 if there is none
      * @return
@@ -729,7 +726,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-    
+
     /**
      * Return marketer risk threshold, 1 if there is none
      * @return
@@ -784,6 +781,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public boolean isPracticalMonotonicity() {
         return practicalMonotonicity;
+    }
+    
+    /**
+     * Returns whether the configuration contains a privacy model which is an instance of the given class.
+     *
+     * @param clazz
+     * @return
+     */
+    public boolean isPrivacyModelSpecified(Class<? extends PrivacyCriterion> clazz) {
+        checkArgument(clazz);
+        for (PrivacyCriterion c : criteria) {
+            if (clazz.isInstance(c)) { return true; }
+        }
+        return false;
     }
     
     /**
@@ -919,13 +930,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * The heuristic search algorithm will terminate after the given number of transformations
+     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * @param numberOfTransformations
+     */
+    public void setHeuristicSearchStepLimit(int numberOfTransformations) {
+        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.heuristicSearchStepLimit = numberOfTransformations;
+    }
+
+    /**
      * When the size of the solution space exceeds the given number of transformations,
      * ARX will use a heuristic search strategy. The default is 100.000.
      * @param numberOfTransformations
      * @return
      */
     public void setHeuristicSearchThreshold(int numberOfTransformations) {
-        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchThreshold = numberOfTransformations;
     }
 
@@ -935,10 +956,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @param timeInMillis
      */
     public void setHeuristicSearchTimeLimit(int timeInMillis) {
-        if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchTimeLimit = timeInMillis;
     }
-
     /**
      * Allows for a certain percentage of outliers and thus
      * triggers tuple suppression.
@@ -1072,21 +1092,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
-     * group size should be obtained and enforced 
-     * @return
-     */
-    protected PrivacyCriterion[] getPrivacyModelsAsArray() {
-        return this.aCriteria;
-    }
-
-    /**
      * Clones this config and projects everything onto the given subset.<br>
      * - All privacy models will be cloned<br>
      * - Subsets in d-presence will be projected accordingly<br>
      * - Utility measures will be cloned<br>
      * - Replaces estimated k-map with according k-anonymity<br>
-     * @param gsFactor 
+     * @param rowset
+     * @param gsFactor May be NaN if it should be ignored 
      *
      * @return
      */
@@ -1180,6 +1192,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Check & return
         if (result == -1) return Integer.MAX_VALUE;
         else return result;
+    }
+
+    /**
+     * Returns all criteria (except k-anonymity) as an array. Only used internally. If k-anonymity is included the minimal
+     * group size should be obtained and enforced 
+     * @return
+     */
+    protected PrivacyCriterion[] getPrivacyModelsAsArray() {
+        return this.aCriteria;
     }
 
     /**

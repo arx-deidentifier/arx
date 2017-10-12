@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -103,6 +105,7 @@ public class WorkerSave extends Worker<Model> {
             arg0.worked(1);
             writeInput(model, zip);
             arg0.worked(1);
+            writeOutput(model, zip);
             arg0.worked(1);
             writeConfiguration(model, zip);
             arg0.worked(1);
@@ -157,7 +160,7 @@ public class WorkerSave extends Worker<Model> {
 
         // Write directly because of size
         final FileBuilder b = new FileBuilder(new OutputStreamWriter(zip));
-        final XMLWriter writer = new XMLWriter(b);
+        final XMLWriter writer = new XMLWriter(b, true);
         
         writer.write(vocabulary.getHeader());
 
@@ -332,6 +335,10 @@ public class WorkerSave extends Worker<Model> {
                 String format = ((DataTypeWithFormat)dt).getFormat();
                 if (format != null){
                     writer.write(vocabulary.getFormat(), format);
+                }
+                Locale locale = ((DataTypeWithFormat)dt).getLocale();
+                if (locale != null){
+                    writer.write(vocabulary.getLocale(), locale.getLanguage().toUpperCase());
                 }
             }
             
@@ -602,7 +609,7 @@ public class WorkerSave extends Worker<Model> {
         // Return mapping
         return map;
     }
-    
+
     /**
      * Writes the meta data to the file.
      *
@@ -623,7 +630,7 @@ public class WorkerSave extends Worker<Model> {
         w.flush();
 
     }
-
+    
     /**
      * Writes the project to the file.
      *
@@ -641,5 +648,19 @@ public class WorkerSave extends Worker<Model> {
         final Writer w = new OutputStreamWriter(zip);
         w.write(toXML(model));
         w.flush();
+    }
+
+    /**
+     * Writes the output to the file.
+     *
+     * @param model
+     * @param zip
+     * @throws IOException
+     */
+    private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
+        if (model.getOutput() != null) {
+            zip.putNextEntry(new ZipEntry("data/output.dat")); //$NON-NLS-1$
+            ((DataHandleOutput) model.getOutput()).write(zip);
+        }
     }
 }

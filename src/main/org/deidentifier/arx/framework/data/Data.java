@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.io.Serializable;
+
 import org.deidentifier.arx.RowSet;
 
 /**
@@ -27,25 +29,28 @@ import org.deidentifier.arx.RowSet;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class Data implements Cloneable{
+public class Data implements Cloneable, Serializable {
+
+    /** SVUID */
+    private static final long serialVersionUID    = 9088882549074658790L;
 
     /** The outliers mask. */
-    public static final int  OUTLIER_MASK             = 1 << 31;
+    public static final int   OUTLIER_MASK        = 1 << 31;
 
     /** The inverse outliers mask. */
-    public static final int  REMOVE_OUTLIER_MASK      = ~OUTLIER_MASK;
+    public static final int   REMOVE_OUTLIER_MASK = ~OUTLIER_MASK;
 
     /** Row, Dimension. */
-    private final DataMatrix data;
+    private final DataMatrix  data;
 
     /** The header. */
-    private final String[]   header;
+    private final String[]    header;
 
     /** The associated dictionary. */
-    private final Dictionary dictionary;
+    private final Dictionary  dictionary;
 
     /** The associated map. */
-    private final int[]      map;
+    private final int[]       map;
 
     /**
      * Creates a new data object.

@@ -538,9 +538,8 @@ public class ARXAnonymizer { // NO_UCD
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
         
-        if (config.isHeuristicSearchEnabled() ||
-            solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
+        if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
@@ -568,7 +567,7 @@ public class ARXAnonymizer { // NO_UCD
     }
 
     /**
-     * Reset a previous lattice and run the algorithm .
+     * Reset a previous lattice and run the algorithm.
      *
      * @param manager
      * @param definition
