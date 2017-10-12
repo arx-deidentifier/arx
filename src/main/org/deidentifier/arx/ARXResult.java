@@ -410,7 +410,7 @@ public class ARXResult {
         DataHandleOutput output = (DataHandleOutput)handle;
         
         // Check, if input matches
-        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.manager.getDataGeneralized())) {
+        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.manager.getDataGeneralized().getArray())) {
             return false;
         }
         
@@ -586,7 +586,7 @@ public class ARXResult {
         DataHandleOutput output = (DataHandleOutput)handle;
         
         // Check, if input matches
-        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.manager.getDataGeneralized())) {
+        if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.manager.getDataGeneralized().getArray())) {
             throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
