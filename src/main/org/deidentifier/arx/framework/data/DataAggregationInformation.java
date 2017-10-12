@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.framework.data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +31,10 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
  * 
  * @author Fabian Prasser
  */
-public class DataAggregationInformation {
+public class DataAggregationInformation implements Serializable {
+
+    /** SVUID */
+    private static final long                     serialVersionUID = 6666226136889537126L;
 
     /** Name of all attributes */
     private final String[]                        header;
