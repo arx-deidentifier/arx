@@ -57,43 +57,43 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 public class DataManager {
 
     /** Data. */
-    private final Data                      dataAnalyzed;
+    private final Data                       dataAnalyzed;
 
     /** Data */
-    private final Data                      dataGeneralized;
+    private final Data                       dataGeneralized;
 
     /** Data. */
-    private final Data                      dataInput;
+    private final Data                       dataInput;
 
     /** The data definition */
-    private final DataDefinition            definition;
+    private final DataDefinition             definition;
 
     /** The domain shares */
-    private DomainShare[]                   shares;
+    private DomainShare[]                    shares;
 
     /** The original input header. */
-    private final String[]                  header;
+    private final String[]                   header;
 
     /** Hierarchies for generalized attributes */
-    private final GeneralizationHierarchy[] hierarchiesGeneralized;
+    private final GeneralizationHierarchy[]  hierarchiesGeneralized;
 
     /** Hierarchies for analyzed attributes */
-    private final GeneralizationHierarchy[] hierarchiesAnalyzed;
+    private final GeneralizationHierarchy[]  hierarchiesAnalyzed;
 
     /** The maximum level for each QI. */
-    private final int[]                     generalizationLevelsMinimum;
+    private final int[]                      generalizationLevelsMinimum;
 
     /** The minimum level for each QI. */
-    private final int[]                     generalizationLevelsMaximum;
+    private final int[]                      generalizationLevelsMaximum;
 
     /** Information about micro-aggregation */
-    private final DataAggregationInformation      microaggregationData;
+    private final DataAggregationInformation aggregationInformation;
 
     /** The research subset, if any. */
-    private RowSet                          subset     = null;
+    private RowSet                           subset     = null;
 
     /** The size of the research subset. */
-    private int                             subsetSize = 0;
+    private int                              subsetSize = 0;
 
     /**
      * Creates a new data manager from pre-encoded data.
@@ -186,7 +186,7 @@ public class DataManager {
         this.dataInput = Data.createWrapper(data, header, getColumns(header), dictionary);
         
         // Store information about aggregated attributes
-        this.microaggregationData = new DataAggregationInformation(dataAnalyzed, 
+        this.aggregationInformation = new DataAggregationInformation(dataAnalyzed, 
                                                                    functions,
                                                                    definition,
                                                                    hotQIsNotGeneralized,
@@ -324,7 +324,7 @@ public class DataManager {
         this.hierarchiesAnalyzed = hierarchiesAnalyzed;
         this.generalizationLevelsMinimum = generalizationLevelsMinimum;
         this.generalizationLevelsMaximum = generalizationLevelsMaximum;
-        this.microaggregationData = microaggregationData;
+        this.aggregationInformation = microaggregationData;
         
         // Both variables are only used for getDistribution() and getTree()
         // The projected instance delegates these methods to the original data manager
@@ -520,7 +520,7 @@ public class DataManager {
      * @return
      */
     public DataAggregationInformation getAggregationInformation() {
-        return this.microaggregationData;
+        return this.aggregationInformation;
     }
 
     /**
@@ -578,7 +578,7 @@ public class DataManager {
                                      hierarchiesAnalyzed,
                                      generalizationLevelsMinimum,
                                      generalizationLevelsMaximum,
-                                     microaggregationData.getSubsetInstance());
+                                     aggregationInformation.getSubsetInstance());
     }
 
     /**
