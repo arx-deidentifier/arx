@@ -51,8 +51,16 @@ public class WorkerLocalRecode extends Worker<DataHandle> {
             return;
         }
         
+        // Listener
         ARXListener listener = new ARXListener() {
-            int previous = 0;
+            
+            /** Progress*/
+            private int previous = 0;
+
+            /** Time */
+            private long time = System.currentTimeMillis();
+            
+            @Override
             public void progress(final double progress) {
                 if (arg0.isCanceled()) { 
                     throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); //$NON-NLS-1$ 
@@ -61,6 +69,8 @@ public class WorkerLocalRecode extends Worker<DataHandle> {
                 if (current != previous) {
                     arg0.worked(current - previous);
                     previous = current;
+                    long remaining = (long)(((double)(System.currentTimeMillis() - time) / (double)(current)) * (100d - (double)current));
+                    arg0.subTask(Resources.getMessage("Worker.1") + " " + Worker.getTimeLeft(remaining)); //$NON-NLS-1$ 
                 }
             }
         };

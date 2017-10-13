@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.worker;
 
+import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 
 /**
@@ -27,9 +28,58 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  */
 public abstract class Worker<T> implements IRunnableWithProgress {
 
-	/** Error, if any. */
-    protected Exception error  = null;
+	/**
+     * Returns the time left as a string
+     * @param millis
+     * @return
+     */
+    public static String getTimeLeft(long millis) {
+        long seconds = millis / 1000;
+        long minutes = seconds / 60;
+        long hours = minutes / 60;
+        long days = hours / 24;
+        StringBuffer result = new StringBuffer();
+        
+        if (seconds > 59) {
+            seconds = 0;
+        }
+        if (minutes > 59) {
+            minutes = 0;
+        }
+        if (hours > 24) {
+            hours = 0;
+        }
+        if (days == 0 && hours == 0 && minutes == 0 && seconds == 0) {
+            seconds = 1;
+        }
+        
+        if (days != 0) {
+            result.append(days).append(" ").append(Resources.getMessage("Worker.2")); //$NON-NLS-1$
+        }
+        if (hours != 0) {
+            if (result.length() != 0) {
+                result.append(", ");
+            }
+            result.append(hours).append(" ").append(Resources.getMessage("Worker.3")); //$NON-NLS-1$ 
+        }
+        if (minutes != 0) {
+            if (result.length() != 0) {
+                result.append(", ");
+            }
+            result.append(minutes).append(" ").append(Resources.getMessage("Worker.4")); //$NON-NLS-1$ 
+        }
+        if (seconds != 0) {
+            if (result.length() != 0) {
+                result.append(", ");
+            }
+            result.append(seconds).append(" ").append(Resources.getMessage("Worker.5")); //$NON-NLS-1$ 
+        }
+        return result.toString(); 
+    }
     
+    /** Error, if any. */
+    protected Exception error  = null;
+
     /** Result, if any. */
     protected T         result = null;
 
@@ -50,7 +100,7 @@ public abstract class Worker<T> implements IRunnableWithProgress {
     public T getResult() {
         return result;
     }
-
+    
     /**
      * Sets the error.
      *

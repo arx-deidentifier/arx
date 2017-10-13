@@ -57,6 +57,9 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
         /** State*/
         private int previous = 0;
         
+        /** Time */
+        private long time = System.currentTimeMillis();
+        
         /**
          * Progress
          * 
@@ -70,6 +73,8 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
             if (current != previous) {
                 monitor.worked(current - previous);
                 previous = current;
+                long remaining = (long)(((double)(System.currentTimeMillis() - time) / (double)(current)) * (100d - (double)current));
+                monitor.subTask(Resources.getMessage("Worker.1") + " " + Worker.getTimeLeft(remaining)); //$NON-NLS-1$ 
             }
         }
     }
