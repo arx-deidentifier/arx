@@ -56,6 +56,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
@@ -587,6 +588,19 @@ public class Controller implements IView {
             main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
             return;
         }
+        
+        // Check if optimizable
+        if (localRecoding) {
+            model.createConfig();
+            for (PrivacyCriterion c : model.getInputConfig().getCriteria()) {
+                if (!c.isLocalRecodingSupported()) {
+                    final String message = Resources.getMessage("Controller.158"); //$NON-NLS-1$
+                    main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
+                    return;
+                }
+            }
+        }
+        
 
         // Query for parameters
         int maxTimePerIteration = 0;

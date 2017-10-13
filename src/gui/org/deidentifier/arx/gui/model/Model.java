@@ -449,7 +449,7 @@ public class Model implements Serializable {
                 entry.getValue().isEnabled()) {
                 
                 if (entry.getValue().getVariant()==1){ // EMD with hierarchy
-                    if (config.getHierarchy(entry.getValue().getAttribute())==null){
+                    if (config.getHierarchy(entry.getValue().getAttribute()) == null){
                         config.setHierarchy(entry.getValue().getAttribute(), Hierarchy.create());
                     }
                 }
