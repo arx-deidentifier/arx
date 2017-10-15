@@ -67,28 +67,19 @@ public class MainToolBar extends AbstractMenu {
         private final long    numTransformationsInSearchSpace;
 
         /** Count. */
-        private final int     numMaterializedTransformations;
+        private final long     numMaterializedTransformations;
 
         /** Count. */
-        private final int     numTransformationsPruned;
+        private final long     numTransformationsPruned;
 
         /** Count. */
-        private final int     numTransformationsAnonymous;
+        private final long     numTransformationsAnonymous;
 
         /** Count. */
-        private final int     numTransformationsNotAnonymous;
+        private final long     numTransformationsNotAnonymous;
 
         /** Count. */
-        private final int     numTransformationsProbablyAnonymous;
-
-        /** Count. */
-        private final int     numTransformationsProbablyNotAnonymous;
-
-        /** Count. */
-        private final int     numTransformationsAnonymityUnknown;
-
-        /** Count. */
-        private final int     numTransformationsInfolossAvailable;
+        private final long     numTransformationsAnonymityUnknown;
 
         /** Time in seconds. */
         private final double  executionTime;
@@ -108,34 +99,24 @@ public class MainToolBar extends AbstractMenu {
         private SearchSpaceStatistics(Model model, ARXResult result){
             
             // Prepare
-            int pruned = 0;
+            int notPruned = 0;
             int anonymous = 0;
             int notAnonymous = 0;
-            int probablyAnonymous = 0;
-            int probablyNotAnonymous = 0;
             int anonymityUnknown = 0;
-            int infolossAvailable = 0;
             ARXLattice lattice = result.getLattice();
             
             // Compute statistics
             for (final ARXNode[] level : lattice.getLevels()) {
                 for (final ARXNode node : level) {
-                    if (!node.isChecked()) {
-                        pruned++;
+                    if (node.isChecked() || node.getHighestScore().compareTo(node.getLowestScore()) == 0) {
+                        notPruned++;
                     }
                     if (node.getAnonymity() == Anonymity.ANONYMOUS) {
                         anonymous++;
                     } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
                         notAnonymous++;
-                    } else if (node.getAnonymity() == Anonymity.PROBABLY_ANONYMOUS) {
-                        probablyAnonymous++;
-                    } else if (node.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
-                        probablyNotAnonymous++;
-                    } else if (node.getAnonymity() == Anonymity.UNKNOWN) {
+                    } else {
                         anonymityUnknown++;
-                    }
-                    if (node.getHighestScore().compareTo(node.getLowestScore()) == 0) {
-                        infolossAvailable++;
                     }
                 }
             }
@@ -144,13 +125,10 @@ public class MainToolBar extends AbstractMenu {
             this.executionTime = (double)Math.max(result.getTime(), model.getDuration()) / 1000d;
             this.numTransformationsInSearchSpace = lattice.getVirtualSize();
             this.numMaterializedTransformations = lattice.getSize();
-            this.numTransformationsPruned = pruned;
+            this.numTransformationsPruned = numTransformationsInSearchSpace - (long)notPruned;
             this.numTransformationsAnonymous = anonymous;
             this.numTransformationsNotAnonymous = notAnonymous;
             this.numTransformationsAnonymityUnknown = anonymityUnknown;
-            this.numTransformationsProbablyAnonymous = probablyAnonymous;
-            this.numTransformationsProbablyNotAnonymous = probablyNotAnonymous;
-            this.numTransformationsInfolossAvailable = infolossAvailable;
             this.optimum = result.getGlobalOptimum();
             this.heuristic = !result.getLattice().isComplete();
         }
@@ -160,7 +138,7 @@ public class MainToolBar extends AbstractMenu {
 
             // Prepare
             double prunedPercentage = (double) this.numTransformationsPruned /
-                                      (double) this.numMaterializedTransformations * 100d;
+                                      (double) this.numTransformationsInSearchSpace * 100d;
             
             double materializedPercentage = (double) this.numMaterializedTransformations /
                                             (double) this.numTransformationsInSearchSpace * 100d;
@@ -190,10 +168,7 @@ public class MainToolBar extends AbstractMenu {
             
             if (this.numTransformationsAnonymous != 0 ||
                 this.numTransformationsNotAnonymous != 0 ||
-                this.numTransformationsProbablyAnonymous != 0 ||
-                this.numTransformationsProbablyNotAnonymous != 0 ||
-                this.numTransformationsAnonymityUnknown != 0 ||
-                this.numTransformationsInfolossAvailable != 0) {
+                this.numTransformationsAnonymityUnknown != 0) {
                 
                 // Render the classification result
                 sb.append(Resources.getMessage("MainToolBar.22")); //$NON-NLS-1$
@@ -205,21 +180,9 @@ public class MainToolBar extends AbstractMenu {
                     sb.append(Resources.getMessage("MainToolBar.26")) //$NON-NLS-1$
                       .append(this.numTransformationsNotAnonymous);
                 }
-                if (this.numTransformationsProbablyAnonymous != 0) {
-                    sb.append(Resources.getMessage("MainToolBar.28")) //$NON-NLS-1$
-                      .append(this.numTransformationsProbablyAnonymous);
-                }
-                if (this.numTransformationsProbablyNotAnonymous != 0) {
-                    sb.append(Resources.getMessage("MainToolBar.30")) //$NON-NLS-1$
-                      .append(this.numTransformationsProbablyNotAnonymous);
-                }
                 if (this.numTransformationsAnonymityUnknown != 0) {
                     sb.append(Resources.getMessage("MainToolBar.34")) //$NON-NLS-1$
                       .append(this.numTransformationsAnonymityUnknown);
-                }
-                if (this.numTransformationsInfolossAvailable != 0) {
-                    sb.append(Resources.getMessage("MainToolBar.35")) //$NON-NLS-1$
-                      .append(this.numTransformationsInfolossAvailable);
                 }
                 sb.append("\n");
             }
