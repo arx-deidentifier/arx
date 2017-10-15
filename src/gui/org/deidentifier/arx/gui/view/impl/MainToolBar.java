@@ -88,7 +88,7 @@ public class MainToolBar extends AbstractMenu {
         private final ARXNode optimum;
 
         /** Heuristic */
-        private final boolean heuristic;
+        private final boolean optimumFound;
 
         /**
          * Creates the statistics.
@@ -130,7 +130,7 @@ public class MainToolBar extends AbstractMenu {
             this.numTransformationsNotAnonymous = notAnonymous;
             this.numTransformationsAnonymityUnknown = anonymityUnknown;
             this.optimum = result.getGlobalOptimum();
-            this.heuristic = !result.getLattice().isComplete();
+            this.optimumFound = result.getLattice().isComplete() || model.getOptimumFound();
         }
 
         @Override
@@ -190,7 +190,7 @@ public class MainToolBar extends AbstractMenu {
             if (this.optimum != null) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
                   .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
-                  .append(SWTUtil.getPrettyString(!this.heuristic))
+                  .append(SWTUtil.getPrettyString(this.optimumFound))
                   .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
                   .append(Arrays.toString(this.optimum.getTransformation()));
                 sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$

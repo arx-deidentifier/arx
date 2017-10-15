@@ -288,7 +288,10 @@ public class Model implements Serializable {
     /* *****************************************
      * Information about the last anonymization process
      * ******************************************/
+    /** Duration of the process */
     private long                                          duration                        = 0;
+    /** Whether the optimum has been found */
+    private boolean                                       optimumFound                    = false;
 
     /**
      * Creates a new instance.
@@ -312,7 +315,7 @@ public class Model implements Serializable {
         this.getAuditTrail().add(entry);
         this.setModified();
     }
-    
+
     /**
      * Creates an anonymizer for the current config.
      *
@@ -340,7 +343,7 @@ public class Model implements Serializable {
         outputConfig = inputConfig.clone();
         this.setModified();
     }
-
+    
     /**
      * Creates an ARXConfiguration.
      */
@@ -499,7 +502,7 @@ public class Model implements Serializable {
             }            
         }
     }
-    
+
     /**
      * Returns the current anonymizer.
      *
@@ -518,7 +521,7 @@ public class Model implements Serializable {
         if (pair == null) pair = new String[] { null, null };
         return pair;
     }
-
+    
     /**
      * Returns the audit trail
      * @return
@@ -546,7 +549,7 @@ public class Model implements Serializable {
         }
         return bLikenessModel;
     }
-    
+
     /**
      * Returns the classification model
      * @return
@@ -598,7 +601,7 @@ public class Model implements Serializable {
         }
         return dDisclosurePrivacyModel;
     }
-
+    
     /**
      * Returns the project description.
      *
@@ -654,7 +657,7 @@ public class Model implements Serializable {
     public int getHistorySize() {
         return historySize;
     }
-    
+
     /**
      * Returns an upper bound on the number of nodes that will initially
      * be displayed in the lattice viewer.
@@ -673,7 +676,7 @@ public class Model implements Serializable {
     public long getInputBytes() {
         return inputBytes;
     }
-
+    
     /**
      * Returns the input configuration.
      *
@@ -722,7 +725,7 @@ public class Model implements Serializable {
         }
         return kMapModel;
     }
-    
+
     /**
      * Returns the l-diversity model.
      *
@@ -734,7 +737,7 @@ public class Model implements Serializable {
             }
         return lDiversityModel;
     }
-    
+
     /**
      * Returns the project locale.
      *
@@ -747,7 +750,7 @@ public class Model implements Serializable {
             return locale;
         }
     }
-
+    
     /**
      * Returns the model for local recoding
      * @return
@@ -758,7 +761,7 @@ public class Model implements Serializable {
         }
         return localRecodingModel;
     }
-
+    
     /**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -840,6 +843,13 @@ public class Model implements Serializable {
     }
 
     /**
+     * @return the optimumFound
+     */
+    public boolean getOptimumFound() {
+        return optimumFound;
+    }
+
+    /**
      * @return the output
      */
     public DataHandle getOutput() {
@@ -913,7 +923,7 @@ public class Model implements Serializable {
     public String getPath() {
         return path;
     }
-    
+
     /**
      * @return the perspective
      */
@@ -932,7 +942,7 @@ public class Model implements Serializable {
     public String getQuery() {
         return query;
     }
-
+    
     /**
      * Returns the current result.
      *
@@ -967,7 +977,7 @@ public class Model implements Serializable {
         }
         return riskModel;
     }
-    
+
     /**
      * Returns the currently selected attribute.
      *
@@ -976,8 +986,7 @@ public class Model implements Serializable {
     public String getSelectedAttribute() {
         return selectedAttribute;
     }
-
-
+    
     /**
      * Returns the selected features
      * @return
@@ -988,7 +997,8 @@ public class Model implements Serializable {
         }
         return this.selectedClasses;
     }
-    
+
+
     /**
      * Returns the currently selected class value.
      * 
@@ -997,7 +1007,6 @@ public class Model implements Serializable {
     public String getSelectedClassValue() {
         return selectedClassValue;
     }
-
     
     /**
      * Returns the selected features
@@ -1010,6 +1019,7 @@ public class Model implements Serializable {
         return this.selectedFeatures;
     }
 
+    
     /**
      * Returns the selected transformation.
      *
@@ -1204,7 +1214,7 @@ public class Model implements Serializable {
     public boolean isSensitiveAttributeSelected() {
         return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
     }
-    
+
     /**
      * Returns whether visualization is enabled.
      *
@@ -1217,7 +1227,7 @@ public class Model implements Serializable {
             return this.showVisualization;
         }
     }
-
+    
     /**
      * Resets the model.
      */
@@ -1236,7 +1246,7 @@ public class Model implements Serializable {
         this.groups = null;
         this.classificationModel = new ModelClassification();
     }
-    
+
     /**
      * Returns the last two selected attributes.
      */
@@ -1286,7 +1296,7 @@ public class Model implements Serializable {
         setModified();
         this.anonymizer = anonymizer;
     }
-
+    
     /**
      * Enables debugging.
      *
@@ -1372,7 +1382,7 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1401,7 +1411,7 @@ public class Model implements Serializable {
     public void setMetricDescription(MetricDescription description) {
         this.metricDescription = description;
     }
-
+    
     /**
      * Marks this project as modified.
      */
@@ -1427,6 +1437,13 @@ public class Model implements Serializable {
     public void setNodeFilter(final ModelNodeFilter filter) {
         nodeFilter = filter;
         setModified();
+    }
+
+    /**
+     * @param optimumFound the optimumFound to set
+     */
+    public void setOptimumFound(boolean optimumFound) {
+        this.optimumFound = optimumFound;
     }
 
     /**

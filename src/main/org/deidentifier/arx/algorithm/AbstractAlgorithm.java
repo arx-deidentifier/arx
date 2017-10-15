@@ -80,8 +80,10 @@ public abstract class AbstractAlgorithm {
     
     /**
      * Implement this method in order to provide a new algorithm.
+     * 
+     * @return Whether the result is optimal
      */
-    public abstract void traverse();
+    public abstract boolean traverse();
 
     /**
      * Determine information loss of the given node if it can be

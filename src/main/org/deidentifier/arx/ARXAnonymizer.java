@@ -64,22 +64,25 @@ public class ARXAnonymizer { // NO_UCD
     class Result {
 
         /** The algorithm. */
-        final AbstractAlgorithm algorithm;
+        final AbstractAlgorithm     algorithm;
 
         /** The checker. */
-        final TransformationChecker       checker;
+        final TransformationChecker checker;
 
         /** The solution space. */
-        final SolutionSpace     solutionSpace;
+        final SolutionSpace         solutionSpace;
 
         /** The data manager. */
-        final DataManager       manager;
+        final DataManager           manager;
 
         /** The time. */
-        final long              time;
+        final long                  time;
 
         /** The global optimum */
-        final Transformation    optimum;
+        final Transformation        optimum;
+
+        /** Whether the optimum has been found */
+        final boolean               optimumFound;
 
         /**
          * Creates a new instance.
@@ -95,13 +98,15 @@ public class ARXAnonymizer { // NO_UCD
                final SolutionSpace solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
-               final long time) {
+               final long time,
+               final boolean optimumFound) {
             this.checker = checker;
             this.solutionSpace = solutionSpace;
             this.manager = manager;
             this.algorithm = algorithm;
             this.time = time;
             this.optimum = algorithm.getGlobalOptimum();
+            this.optimumFound = optimumFound;
         }
 
         /**
@@ -130,7 +135,8 @@ public class ARXAnonymizer { // NO_UCD
                                  config,
                                  lattice,
                                  System.currentTimeMillis() - time,
-                                 solutionSpace);      
+                                 solutionSpace,
+                                 optimumFound);      
         }
     }
 
@@ -658,14 +664,14 @@ public class ARXAnonymizer { // NO_UCD
         
         // Execute
 
-        final long time = System.currentTimeMillis();
-        algorithm.traverse();
+        long time = System.currentTimeMillis();
+        boolean optimumFound = algorithm.traverse();
         
         // Free resources
         checker.reset();
         
         // Return the result
-        return new Result(checker, solutionSpace, manager, algorithm, time);
+        return new Result(checker, solutionSpace, manager, algorithm, time, optimumFound);
     }
 
     /**

@@ -79,8 +79,11 @@ public class ARXResult {
     /** The registry. */
     private final DataRegistry     registry;
 
-    /** The registry. */
+    /** The solution space. */
     private final SolutionSpace    solutionSpace;
+
+    /** Whether the optimum has been found */
+    private final boolean          optimumFound;
 
     /**
      * Internal constructor for deserialization.
@@ -97,18 +100,20 @@ public class ARXResult {
      * @param time
      * @param solutionSpace
      * @param in
+     * @param optimumFound
      */
-    public ARXResult(final DataHandle handle,
-                     final DataDefinition definition,
-                     final ARXLattice lattice,
-                     final int historySize,
-                     final double snapshotSizeSnapshot,
-                     final double snapshotSizeDataset,
-                     final Metric<?> metric,
-                     final ARXConfiguration config,
-                     final ARXNode optimum,
-                     final long time,
-                     final SolutionSpace solutionSpace) {
+    public ARXResult(DataHandle handle,
+                     DataDefinition definition,
+                     ARXLattice lattice,
+                     int historySize,
+                     double snapshotSizeSnapshot,
+                     double snapshotSizeDataset,
+                     Metric<?> metric,
+                     ARXConfiguration config,
+                     ARXNode optimum,
+                     long time,
+                     SolutionSpace solutionSpace,
+                     boolean optimumFound) {
 
         // Set registry and definition
         ((DataHandleInput)handle).setDefinition(definition);
@@ -156,6 +161,7 @@ public class ARXResult {
         this.optimalNode = lattice.getOptimum();
         this.duration = time;
         this.solutionSpace = solutionSpace;
+        this.optimumFound = optimumFound;
     }
     
     /**
@@ -170,6 +176,7 @@ public class ARXResult {
      * @param lattice
      * @param duration
      * @param solutionSpace
+     * @param optimumFound
      */
     protected ARXResult(ARXAnonymizer anonymizer,
                         DataRegistry registry,
@@ -179,7 +186,8 @@ public class ARXResult {
                         ARXConfiguration config,
                         ARXLattice lattice,
                         long duration,
-                        SolutionSpace solutionSpace) {
+                        SolutionSpace solutionSpace,
+                        boolean optimumFound) {
 
         this.anonymizer = anonymizer;
         this.registry = registry;
@@ -191,6 +199,7 @@ public class ARXResult {
         this.optimalNode = lattice.getOptimum();
         this.duration = duration;
         this.solutionSpace = solutionSpace;
+        this.optimumFound = optimumFound;
     }
 
     /**
@@ -226,6 +235,14 @@ public class ARXResult {
      */
     public ARXLattice getLattice() {
         return lattice;
+    }
+    
+    /**
+     * Returns whether the global optimum has been found
+     * @return
+     */
+    public boolean getOptimumFound() {
+        return this.optimumFound;
     }
     
     /**

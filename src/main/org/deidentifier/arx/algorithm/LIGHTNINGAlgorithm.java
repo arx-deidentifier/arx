@@ -95,7 +95,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
 
     @Override
-    public void traverse() {
+    public boolean traverse() {
         timeStart = System.currentTimeMillis();
         checkCount = 0;
         PriorityQueue<Long> queue = new PriorityQueue<Long>(stepping, new Comparator<Long>() {
@@ -120,10 +120,14 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                     expand(queue, next);
                 }
                 if (mustStop()) {
-                    return;
+                    break;
                 }
             }
         }
+        
+
+        // Return whether the optimum has been found
+        return !this.mustStop() && (this.getGlobalOptimum() != null);
     }
     
     /**

@@ -693,6 +693,7 @@ public class Controller implements IView {
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
+            model.setOptimumFound(result.getOptimumFound());
 
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
@@ -985,6 +986,7 @@ public class Controller implements IView {
         model.setOutput(null, null);
         model.setSelectedNode(null);
         model.getClipboard().clearClipboard();
+        model.setOptimumFound(false);
 
         update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
         update(new ModelEvent(this, ModelPart.RESULT, null));

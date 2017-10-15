@@ -93,7 +93,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     }
 
     @Override
-    public void traverse() {
+    public boolean traverse() {
         
         // Determine configuration for the outer loop
         FLASHPhaseConfiguration outerLoopConfiguration;
@@ -141,6 +141,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         if (potentiallyInsufficientUtility != null) {
         	potentiallyInsufficientUtility.clear();
         }
+        
+        // Return whether the optimum has been found
+        return this.getGlobalOptimum() != null;
     }
 
     /**
