@@ -613,6 +613,7 @@ public class Controller implements IView {
             }
             maxTimePerIteration = Double.valueOf(output.getFirst() * 1000d).intValue();
             minRecordsPerIteration = output.getSecond();
+            model.getLocalRecodingModel().setMinRecordsPerIteration(minRecordsPerIteration);
 
         // Query for execution time
         } else if (heuristicSearch) {
@@ -1711,7 +1712,7 @@ public class Controller implements IView {
      *         First: max. time per iteration. Second: min. records per iteration.
      */
     public Pair<Double, Double> actionShowLocalAnonymizationDialog() {
-        return main.showLocalAnonymizationDialog();
+        return main.showLocalAnonymizationDialog(model);
     }
 
     /**

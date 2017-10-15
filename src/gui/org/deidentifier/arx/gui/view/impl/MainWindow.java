@@ -571,11 +571,12 @@ public class MainWindow implements IView {
     }
     /**
      * Shows a dialog for local anonymization
+     * @param model
      * @return Returns the parameters selected by the user. Returns a pair. 
      *         First: max. time per iteration. Second: min. records per iteration.
      */
-    public Pair<Double, Double> showLocalAnonymizationDialog() {
-        DialogLocalAnonymization dialog = new DialogLocalAnonymization(shell);
+    public Pair<Double, Double> showLocalAnonymizationDialog(Model model) {
+        DialogLocalAnonymization dialog = new DialogLocalAnonymization(shell, model);
         dialog.create();
         dialog.open();
         return dialog.getResult();
