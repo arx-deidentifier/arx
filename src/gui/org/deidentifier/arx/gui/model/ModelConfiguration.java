@@ -152,8 +152,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @return
      */
-    public double getAllowedOutliers() {
-        return config.getMaxOutliers();
+    public double getSuppressionLimit() {
+        return config.getSuppressionLimit();
     }
     
     /**
@@ -494,9 +494,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @param supp
      */
-    public void setAllowedOutliers(double supp) {
+    public void setSuppressionLimit(double supp) {
         setModified();
-        config.setMaxOutliers(supp);
+        config.setSuppressionLimit(supp);
     }
     
     /**

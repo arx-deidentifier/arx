@@ -93,7 +93,7 @@ public class Example37 extends Example {
 
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(criterion);
-        config.setMaxOutliers(1d);
+        config.setSuppressionLimit(1d);
         ARXResult result = anonymizer.anonymize(data, config);
 
         // Access output

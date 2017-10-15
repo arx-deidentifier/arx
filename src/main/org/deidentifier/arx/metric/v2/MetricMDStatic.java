@@ -91,7 +91,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Static");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
     

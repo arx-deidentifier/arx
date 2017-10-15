@@ -66,7 +66,7 @@ public class Example48 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new OrderedDistanceTCloseness("Salary", 0.3751));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);

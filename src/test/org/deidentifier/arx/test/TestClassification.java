@@ -133,7 +133,7 @@ public class TestClassification {
             // Config
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(5));
-            config.setMaxOutliers(1d);
+            config.setSuppressionLimit(1d);
 
             ARXAnonymizer anonymizer = new ARXAnonymizer();
             result = anonymizer.anonymize(data, config);

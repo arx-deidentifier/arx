@@ -62,7 +62,7 @@ public class MetricPrecision extends MetricWeighted<InformationLossDefault> {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Precision");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
 

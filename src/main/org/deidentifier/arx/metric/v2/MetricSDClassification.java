@@ -145,7 +145,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Classification accuracy");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Penalty for suppressed features", this.getPenaltySuppressed());
         result.addProperty("Penalty for records with non-majority response", this.getPenaltyInfrequentResponse());
         result.addProperty("Penalty for records without a majority response", this.getPenaltyNoMajorityResponse());

@@ -587,9 +587,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /**
      * Returns the maximum number of allowed outliers.
+     * Deprecated. Use <code>getSuppressionLimit()</code> instead.
      *
      * @return
      */
+    @Deprecated
     public double getMaxOutliers() {
         return relMaxOutliers;
     }
@@ -745,6 +747,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns the suppression limit
+     * @return
+     */
+    public double getSuppressionLimit() {
+        return this.getMaxOutliers();
+    }
+    
+    /**
      * Returns whether values of the given attribute type will be replaced by the suppression 
      * string in suppressed tuples.
      * @param type
@@ -789,7 +799,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return false;
     }
-    
+
     /**
      * Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -822,7 +832,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         checkArgument(arg);
         return criteria.remove(arg);
     }
-
+    
     /**
      * Renders this object 
      * @return
@@ -836,7 +846,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.add(renderReidentificationThresholds());
         return result;
     }
-    
+
     /**
      * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.
      * With default settings, only quasi-identifiers will be suppressed.
@@ -924,7 +934,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchThreshold = numberOfTransformations;
     }
-
     /**
      * The heuristic search algorithm will terminate after the given number of milliseconds.
      * The default is 30 seconds.
@@ -934,16 +943,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchTimeLimit = timeInMillis;
     }
+    
     /**
      * Allows for a certain percentage of outliers and thus
      * triggers tuple suppression.
+     * Deprecated. Use <code>setSuppressionLimit()</code> instead.
      *
      * @param max
      */
+    @Deprecated
     public void setMaxOutliers(double max) {
         this.relMaxOutliers = max;
     }
-    
+
     /**
      * Set, if practical monotonicity assumed.
      *
@@ -952,7 +964,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
     }
-
+    
     /**
      * Sets the quality model to be used for optimizing output data.
      *
@@ -962,7 +974,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (model == null) { throw new NullPointerException("Quality model must not be null"); }
         this.metric = model;
     }
-    
+
     /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -987,7 +999,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setUseHeuristicSearchForSampleBasedCriteria(boolean value) {
         this.heuristicSearchForSampleBasedCriteria = value;
     }
-
+    
     /**
      * Checks an argument.
      *
@@ -998,7 +1010,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             throw new IllegalArgumentException("Argument must not be null"); 
         }
     }
-    
+
     /**
      * Renders stuff
      * @return
@@ -1010,7 +1022,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.addProperty("Marketer risk", this.getRiskThresholdMarketer());
         return result;
     }
-
+    
     /**
      * Renders the weights
      * @return
@@ -1046,7 +1058,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected final int getAbsoluteMaxOutliers() {
         return this.absMaxOutliers;
     }
-    
+
     /**
      * Clones this config and projects everything onto the given subset.<br>
      * - All privacy models will be cloned<br>
@@ -1158,7 +1170,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected PrivacyCriterion[] getPrivacyModelsAsArray() {
         return this.aCriteria;
     }
-
+    
     /**
      * Returns the criteria's requirements.
      *
@@ -1175,7 +1187,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected SampleBasedCriterion[] getSampleBasedPrivacyModelsAsArray() {
         return this.bCriteria;
     }
-    
+
     /**
      * Returns the specific length of each entry in a snapshot.
      *
@@ -1184,7 +1196,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected int getSnapshotLength() {
         return this.snapshotLength;
     }
-
+    
     /**
      * Returns the data subset, if any subset is defined.
      * You may only call this, after the configuration has be initialized.
@@ -1201,7 +1213,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return null;
     }
-    
+
     /**
      * Returns an integer representing all attribute types that must be suppressed.
      *

@@ -280,7 +280,7 @@ public class WorkerSave extends Worker<Model> {
         writer.unindent();
         
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
-        writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
+        writer.write(vocabulary.getRelativeMaxOutliers(), config.getSuppressionLimit());
         writer.write(vocabulary.getMetric(), config.getMetric().toString());
 
         // Write weights

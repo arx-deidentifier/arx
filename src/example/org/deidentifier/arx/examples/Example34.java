@@ -98,7 +98,7 @@ public class Example34 extends Example {
         config.setHeuristicSearchEnabled(true);
         config.setHeuristicSearchTimeLimit(10);
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0.5d);
+        config.setSuppressionLimit(0.5d);
 
         // Obtain result
         ARXResult result = anonymizer.anonymize(data, config);

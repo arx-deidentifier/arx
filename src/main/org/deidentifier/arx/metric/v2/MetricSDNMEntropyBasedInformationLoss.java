@@ -211,7 +211,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Entropy-based information loss");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;

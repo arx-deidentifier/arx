@@ -613,7 +613,7 @@ public class ARXResult {
             double relativeRecords = absoluteRecords / (double)rowset.size();
             relativeRecords = relativeRecords < 0d ? 0d : relativeRecords;
             relativeRecords = relativeRecords > 1d ? 1d : relativeRecords;
-            config.setMaxOutliers(1d - relativeRecords);
+            config.setSuppressionLimit(1d - relativeRecords);
         }
         
         // In the data definition, only microaggregation functions maintain a state, but these 

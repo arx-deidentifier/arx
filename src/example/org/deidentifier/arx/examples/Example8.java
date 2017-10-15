@@ -140,7 +140,7 @@ public class Example8 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(3));
         config.addPrivacyModel(new HierarchicalDistanceTCloseness("disease", 0.6d, disease));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         config.setQualityModel(Metric.createEntropyMetric());
 
         // Now anonymize

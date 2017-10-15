@@ -155,7 +155,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Publisher payout");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         result.addProperty("Attacker model", (journalistAttackerModel ? "Journalist" : "Prosecutor"));

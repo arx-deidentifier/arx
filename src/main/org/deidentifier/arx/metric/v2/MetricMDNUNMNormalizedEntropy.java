@@ -76,7 +76,7 @@ public class MetricMDNUNMNormalizedEntropy extends MetricMDNUNMNormalizedEntropy
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Normalized non-uniform entropy");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
 

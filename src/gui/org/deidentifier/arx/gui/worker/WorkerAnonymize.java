@@ -114,6 +114,7 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
         ARXConfiguration config = model.getInputConfig().getConfig();
         boolean heuristicSearchEnabled = config.isHeuristicSearchEnabled();
         int heuristicSearchTimeLimit = config.getHeuristicSearchTimeLimit();
+        double suppressionLimit = config.getSuppressionLimit();
         
         // Perform all tasks
         try {
@@ -132,6 +133,7 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
                 MetricConfiguration metricConfig = config.getQualityModel().getConfiguration();
                 metricConfig.setGsFactor(0d);
                 config.setQualityModel(config.getQualityModel().getDescription().createInstance(metricConfig));
+                config.setSuppressionLimit(1d - minRecordsPerIteration);
             }
             
             // Prepare progress tracking
@@ -171,6 +173,7 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
             // Reset to user-defined settings
             config.setHeuristicSearchEnabled(heuristicSearchEnabled);
             config.setHeuristicSearchTimeLimit(heuristicSearchTimeLimit);
+            config.setSuppressionLimit(suppressionLimit);
         }
     }
 }

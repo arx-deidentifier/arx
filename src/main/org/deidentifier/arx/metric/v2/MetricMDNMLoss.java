@@ -141,7 +141,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Loss");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;

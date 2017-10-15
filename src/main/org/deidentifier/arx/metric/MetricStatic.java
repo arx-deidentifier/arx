@@ -72,7 +72,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> { // NO
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Static");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
     
