@@ -642,9 +642,11 @@ public class Controller implements IView {
         actionMenuEditReset();
         
         // Run the worker
+        long time = System.currentTimeMillis();
         final WorkerAnonymize worker = new WorkerAnonymize(model, maxTimePerIteration, minRecordsPerIteration);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
-
+        time = System.currentTimeMillis() - time;
+        
         // Show errors
         if (worker.getError() != null) {
             
@@ -681,6 +683,9 @@ public class Controller implements IView {
 
         // Distribute results
         if (worker.getResult() != null) {
+            
+            // Store time
+            model.setDuration(time);
 
             // Retrieve optimal result
             Pair<ARXResult, DataHandle> workerResult = worker.getResult();
@@ -688,7 +693,6 @@ public class Controller implements IView {
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
-            
 
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 

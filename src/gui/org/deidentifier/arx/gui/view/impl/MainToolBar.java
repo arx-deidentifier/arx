@@ -102,9 +102,10 @@ public class MainToolBar extends AbstractMenu {
         /**
          * Creates the statistics.
          *
+         * @param model
          * @param result
          */
-        private SearchSpaceStatistics(ARXResult result){
+        private SearchSpaceStatistics(Model model, ARXResult result){
             
             // Prepare
             int pruned = 0;
@@ -140,7 +141,7 @@ public class MainToolBar extends AbstractMenu {
             }
             
             // Store
-            this.executionTime = (double)result.getTime() / 1000d;
+            this.executionTime = (double)Math.max(result.getTime(), model.getDuration()) / 1000d;
             this.numTransformationsInSearchSpace = lattice.getVirtualSize();
             this.numMaterializedTransformations = lattice.getSize();
             this.numTransformationsPruned = pruned;
@@ -351,10 +352,11 @@ public class MainToolBar extends AbstractMenu {
                 toolbar.setRedraw(true);
             }
         } else if (event.part == ModelPart.OUTPUT) {
+            
             if (model.getOutputNode() != null) {
 
                 // Update tool tip
-                SearchSpaceStatistics stats = new SearchSpaceStatistics(model.getResult());
+                SearchSpaceStatistics stats = new SearchSpaceStatistics(model, model.getResult());
                 setToolTip(stats);
                 
                 // Update labels
@@ -377,7 +379,7 @@ public class MainToolBar extends AbstractMenu {
             if (model.getResult() != null) {
                 
                 // Update tool tip
-                SearchSpaceStatistics stats = new SearchSpaceStatistics(model.getResult());
+                SearchSpaceStatistics stats = new SearchSpaceStatistics(model, model.getResult());
                 setToolTip(stats);
 
                 // Update labels

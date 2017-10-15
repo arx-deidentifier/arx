@@ -285,6 +285,11 @@ public class Model implements Serializable {
     /** Model */
     private ModelClassification                           classificationModel             = new ModelClassification();
 
+    /* *****************************************
+     * Information about the last anonymization process
+     * ******************************************/
+    private long                                          duration                        = 0;
+
     /**
      * Creates a new instance.
      *
@@ -327,13 +332,11 @@ public class Model implements Serializable {
         // Return the anonymizer
         return anonymizer;
     }
-    
+
     /**
      * Replaces the output config with a clone of the input config.
      */
     public void createClonedConfig() {
-
-        // Clone the config
         outputConfig = inputConfig.clone();
         this.setModified();
     }
@@ -496,7 +499,7 @@ public class Model implements Serializable {
             }            
         }
     }
-
+    
     /**
      * Returns the current anonymizer.
      *
@@ -515,7 +518,7 @@ public class Model implements Serializable {
         if (pair == null) pair = new String[] { null, null };
         return pair;
     }
-    
+
     /**
      * Returns the audit trail
      * @return
@@ -566,7 +569,7 @@ public class Model implements Serializable {
         }
         return clipboard;
     }
-
+    
     /**
      * Gets the csv config model.
      * @return
@@ -627,6 +630,13 @@ public class Model implements Serializable {
     }
 
     /**
+     * @return the duration
+     */
+    public long getDuration() {
+        return duration;
+    }
+
+    /**
      * Returns a list of indices of all equivalence classes.
      *
      * @return
@@ -635,7 +645,7 @@ public class Model implements Serializable {
         // TODO: Refactor to colors[groups[row]]
         return this.groups;
     }
-    
+
     /**
      * Returns the according parameter.
      *
@@ -644,7 +654,7 @@ public class Model implements Serializable {
     public int getHistorySize() {
         return historySize;
     }
-
+    
     /**
      * Returns an upper bound on the number of nodes that will initially
      * be displayed in the lattice viewer.
@@ -700,7 +710,7 @@ public class Model implements Serializable {
     public ModelKAnonymityCriterion getKAnonymityModel() {
         return kAnonymityModel;
     }
-    
+
     /**
      * Returns the k-map model.
      *
@@ -724,7 +734,7 @@ public class Model implements Serializable {
             }
         return lDiversityModel;
     }
-
+    
     /**
      * Returns the project locale.
      *
@@ -894,7 +904,7 @@ public class Model implements Serializable {
         }
         return null;
     }
-    
+
     /**
      * Returns the path of the project.
      *
@@ -913,7 +923,7 @@ public class Model implements Serializable {
         }
         return perspective;
     }
-
+    
     /**
      * Returns the current query.
      *
@@ -946,7 +956,7 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-    
+
     /**
      * Returns the risk model
      * @return the risk model
@@ -957,8 +967,7 @@ public class Model implements Serializable {
         }
         return riskModel;
     }
-
-
+    
     /**
      * Returns the currently selected attribute.
      *
@@ -966,6 +975,18 @@ public class Model implements Serializable {
      */
     public String getSelectedAttribute() {
         return selectedAttribute;
+    }
+
+
+    /**
+     * Returns the selected features
+     * @return
+     */
+    public Set<String> getSelectedClasses() {
+        if (this.selectedClasses == null) {
+            this.selectedClasses = new HashSet<String>();
+        }
+        return this.selectedClasses;
     }
     
     /**
@@ -978,17 +999,6 @@ public class Model implements Serializable {
     }
 
     
-    /**
-     * Returns the selected features
-     * @return
-     */
-    public Set<String> getSelectedClasses() {
-        if (this.selectedClasses == null) {
-            this.selectedClasses = new HashSet<String>();
-        }
-        return this.selectedClasses;
-    }
-
     /**
      * Returns the selected features
      * @return
@@ -1185,7 +1195,7 @@ public class Model implements Serializable {
     public boolean isQuasiIdentifierSelected() {
         return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
     }
-    
+
     /**
      * Returns whether a sensitive attribute is selected.
      *
@@ -1194,7 +1204,7 @@ public class Model implements Serializable {
     public boolean isSensitiveAttributeSelected() {
         return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.SENSITIVE_ATTRIBUTE);
     }
-
+    
     /**
      * Returns whether visualization is enabled.
      *
@@ -1207,7 +1217,7 @@ public class Model implements Serializable {
             return this.showVisualization;
         }
     }
-    
+
     /**
      * Resets the model.
      */
@@ -1266,7 +1276,7 @@ public class Model implements Serializable {
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
     }
-
+    
     /**
      * Sets the anonymizer.
      *
@@ -1295,6 +1305,14 @@ public class Model implements Serializable {
     public void setDescription(final String description) {
         this.description = description;
         setModified();
+    }
+
+    /**
+     * @param duration the duration to set
+     */
+    public void setDuration(long duration) {
+        this.duration = duration;
+        this.setModified();
     }
 
     /**
@@ -1527,20 +1545,20 @@ public class Model implements Serializable {
     }
     
     /**
-     * Sets the selected class value.
-     * @param classValue
-     */
-    public void setSelectedClassValue(final String classValue) {
-        selectedClassValue = classValue;
-    }
-
-    /**
      * Sets a set of selected attributes
      * @param set
      */
     public void setSelectedClasses(Set<String> set) {
         this.selectedClasses = set;
         this.setModified();
+    }
+
+    /**
+     * Sets the selected class value.
+     * @param classValue
+     */
+    public void setSelectedClassValue(final String classValue) {
+        selectedClassValue = classValue;
     }
 
     /**
