@@ -620,7 +620,7 @@ public class Controller implements IView {
             String output = this.actionShowInputDialog(main.getShell(), 
                                                        Resources.getMessage("Controller.38"),  //$NON-NLS-1$
                                                        Resources.getMessage("Controller.79") + //$NON-NLS-1$
-                                                       Resources.getMessage("Controller.80"), "0.5", //$NON-NLS-1$ //$NON-NLS-2$
+                                                       Resources.getMessage("Controller.80"), String.valueOf(model.getInputConfig().getHeuristicSearchTimeLimit() / 1000d), //$NON-NLS-1$ //$NON-NLS-2$
                                                        new IInputValidator(){
                                                         public String isValid(String arg0) {
                                                             try { 
@@ -635,6 +635,7 @@ public class Controller implements IView {
                 return;
             }
             maxTimePerIteration = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
+            model.getInputConfig().setHeuristicSearchTimeLimit(maxTimePerIteration);
         }
 
         // Reset
