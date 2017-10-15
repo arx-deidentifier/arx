@@ -35,19 +35,19 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 public abstract class AbstractAlgorithm {
 
     /** The optimal transformation. */
-    private Transformation     globalOptimum          = null;
+    private Transformation          globalOptimum          = null;
 
     /** The optimal information loss. */
-    private InformationLoss<?> optimalInformationLoss = null;
+    private InformationLoss<?>      optimalInformationLoss = null;
 
     /** The listener */
-    private ARXListener      listener               = null;
+    private ARXListener             listener               = null;
 
     /** A node checker. */
-    protected TransformationChecker      checker                = null;
+    protected TransformationChecker checker                = null;
 
     /** The lattice. */
-    protected SolutionSpace    solutionSpace          = null;
+    protected SolutionSpace         solutionSpace          = null;
 
     /**
      * Walks the lattice.
