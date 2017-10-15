@@ -69,122 +69,120 @@ public class Model implements Serializable {
     }
 
     /** SVUID. */
-    private static final long                     serialVersionUID                = -7669920657919151279L;
+    private static final long                             serialVersionUID                = -7669920657919151279L;
 
     /* *****************************************
      * TRANSIENT VARIABLES
      *******************************************/
 
     /** The current anonymizer, if any. */
-    private transient ARXAnonymizer               anonymizer                      = null;
-    
-    /** The current output data. */
-    private transient DataHandle                  output                          = null;
-    
-    /** The currently displayed transformation. */
-    private transient ARXNode                     outputNode                      = null;
-    
-    /** The path to the project file. */
-    private transient String                      path                            = null;
-    
-    /** The current result. */
-    private transient ARXResult                   result                          = null;
-    
-    /** The currently selected node. */
-    private transient ARXNode                     selectedNode                    = null;
-    
-    /** The clip board. */
-    private transient ModelClipboard              clipboard                       = null;
-    
-    /** The perspective */
-    private transient Perspective                 perspective                     = Perspective.CONFIGURATION;
+    private transient ARXAnonymizer                       anonymizer                      = null;
 
+    /** The current output data. */
+    private transient DataHandle                          output                          = null;
+
+    /** The currently displayed transformation. */
+    private transient ARXNode                             outputNode                      = null;
+
+    /** The path to the project file. */
+    private transient String                              path                            = null;
+
+    /** The current result. */
+    private transient ARXResult                           result                          = null;
+
+    /** The currently selected node. */
+    private transient ARXNode                             selectedNode                    = null;
+
+    /** The clip board. */
+    private transient ModelClipboard                      clipboard                       = null;
+
+    /** The perspective */
+    private transient Perspective                         perspective                     = Perspective.CONFIGURATION;
 
     /* *****************************************
      * PARAMETERS AND THRESHOLDS
      *******************************************/
 
     /** Anonymization parameter. */
-    private double                                snapshotSizeDataset             = 0.2d;
-    
+    private double                                        snapshotSizeDataset             = 0.2d;
+
     /** Anonymization parameter. */
-    private double                                snapshotSizeSnapshot            = 0.8d;
-    
+    private double                                        snapshotSizeSnapshot            = 0.8d;
+
     /** Anonymization parameter. */
-    private int                                   historySize                     = 200;
-    
+    private int                                           historySize                     = 200;
+
     /** Threshold. */
-    private int                                   maximalSizeForComplexOperations = 5000000;
-    
+    private int                                           maximalSizeForComplexOperations = 5000000;
+
     /** Threshold. */
-    private int                                   initialNodesInViewer            = 100;
-    
+    private int                                           initialNodesInViewer            = 100;
+
     /** Threshold. */
-    private int                                   maxNodesInViewer                = 700;
+    private int                                           maxNodesInViewer                = 700;
 
     /* *****************************************
      * PROJECT METADATA
      ******************************************/
 
     /** The project description. */
-    private String                                description;
-    
+    private String                                        description;
+
     /** The size of the input file. */
-    private long                                  inputBytes                      = 0L;                                       //$NON-NLS-1$
-    
+    private long                                          inputBytes                      = 0L;
+
     /** Is the project file modified. */
-    private boolean                               modified                        = false;
-    
+    private boolean                                       modified                        = false;
+
     /** The project name. */
-    private String                                name                            = null;
-    
+    private String                                        name                            = null;
+
     /** Left for backwards compatibility only! */
-    private char                                  separator                       = ';';                                            //$NON-NLS-1$
+    private char                                          separator                       = ';';                                                    //$NON-NLS-1$
 
     /** The projects CSV syntax */
-    private CSVSyntax                             csvSyntax;
-    
-    /** Execution time of last anonymization. */
-    private long                                  time;
-    
-    /** Locale. */
-    // TODO: This is only a quick-fix. A locale should be definable for each data type individually.
-    private Locale                                locale                          = null;
+    private CSVSyntax                                     csvSyntax;
 
-    /** The audit trail*/
-    private List<ModelAuditTrailEntry>            auditTrail                      = new ArrayList<ModelAuditTrailEntry>();
+    /** Execution time of last anonymization. */
+    private long                                          time;
+
+    /** Locale. */
+    private Locale                                        locale                          = null;
+
+    /** The audit trail */
+    private List<ModelAuditTrailEntry>                    auditTrail                      = new ArrayList<ModelAuditTrailEntry>();
 
     /* *****************************************
      * DEBUGGING
      ******************************************/
 
     /** Is the debugging mode enabled. */
-    private boolean                               debugEnabled                    = false;
+    private boolean                                       debugEnabled                    = false;
 
     /* *****************************************
      * VISUALIZATIONS
      ******************************************/
 
     /** Indices of groups in the current output view. */
-    private int[]                                 groups;
-    
+    private int[]                                         groups;
+
     /** Label. */
-    private String                                optimalNodeAsString;
-    
+    private String                                        optimalNodeAsString;
+
     /** Label. */
-    private String                                outputNodeAsString;
-    
+    private String                                        outputNodeAsString;
+
     /** Current selection. */
-    private String                                selectedClassValue              = null;
-    
+    private String                                        selectedClassValue              = null;
+
     /** Current selection. */
-    private String                                selectedAttribute               = null;
-    
+    private String                                        selectedAttribute               = null;
+
     /** Enable/disable. */
-    private Boolean                               showVisualization               = true;
-    
+    private Boolean                                       showVisualization               = true;
+
     /** Last two selections. */
-    private String[]                              pair                            = new String[] { null, null };
+    private String[]                                      pair                            = new String[] { null, null };
 
     /* *****************************************
      * SUBSET MANAGEMENT
@@ -201,19 +199,19 @@ public class Model implements Serializable {
      ******************************************/
 
     /** The current input configuration. */
-    private ModelConfiguration                    inputConfig                     = new ModelConfiguration();
-    
+    private ModelConfiguration                            inputConfig                     = new ModelConfiguration();
+
     /** A filter describing which transformations are currently selected. */
-    private ModelNodeFilter                       nodeFilter                      = null;
-    
+    private ModelNodeFilter                               nodeFilter                      = null;
+
     /** Configuration of the data view. */
-    private ModelViewConfig                       viewConfig                      = new ModelViewConfig();
-    
+    private ModelViewConfig                               viewConfig                      = new ModelViewConfig();
+
     /** The current output configuration. */
-    private ModelConfiguration                    outputConfig                    = null;
+    private ModelConfiguration                            outputConfig                    = null;
 
     /** The current risk model. */
-    private ModelRisk                             riskModel                       = null;
+    private ModelRisk                                     riskModel                       = null;
 
     /* *****************************************
      * PRIVACY CRITERIA
@@ -252,25 +250,24 @@ public class Model implements Serializable {
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
-    
+
     /** Configuration. */
-    private MetricConfiguration                   metricConfig                    = null;
-    
+    private MetricConfiguration                           metricConfig                    = null;
+
     /** Description. */
-    private MetricDescription                     metricDescription               = null;
-    
+    private MetricDescription                             metricDescription               = null;
+
     /** Summary statistics */
-    private Boolean                               useListwiseDeletion             = true;
+    private Boolean                                       useListwiseDeletion             = true;
 
     /** Utility estimation during anonymization */
-    private Boolean                               useFunctionalHierarchies        = true;
-    
+    private Boolean                                       useFunctionalHierarchies        = true;
+
     /* *****************************************
      * RISK ANALYSIS
      ******************************************/
-    /** Selected quasi identifiers*/
-    private Set<String>                           selectedQuasiIdentifiers        = null;
-    
+    /** Selected quasi identifiers */
+    private Set<String>                                   selectedQuasiIdentifiers        = null;    
 
     /* *****************************************
      * LOCAL RECODING
@@ -287,7 +284,7 @@ public class Model implements Serializable {
     private Set<String>                                   selectedClasses                 = null;
     /** Model */
     private ModelClassification                           classificationModel             = new ModelClassification();
-    
+
     /**
      * Creates a new instance.
      *
