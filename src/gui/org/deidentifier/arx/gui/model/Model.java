@@ -187,12 +187,12 @@ public class Model implements Serializable {
     /* *****************************************
      * SUBSET MANAGEMENT
      ******************************************/
-    
+
     /** Query. */
-    private String                                query                           = "";                                             //$NON-NLS-1$
-    
+    private String                                        query                           = "";                                                     //$NON-NLS-1$
+
     /** Origin of current subset. */
-    private String                                subsetOrigin                    = "All";                                          //$NON-NLS-1$
+    private String                                        subsetOrigin                    = "All";                                                  //$NON-NLS-1$
 
     /* *****************************************
      * SUB-MODELS
