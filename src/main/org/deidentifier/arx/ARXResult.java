@@ -47,43 +47,46 @@ import org.deidentifier.arx.metric.Metric;
 public class ARXResult {
 
     /** Anonymizer */
-    private ARXAnonymizer          anonymizer;
+    private ARXAnonymizer                   anonymizer;
 
     /** Lock the buffer. */
-    private DataHandle             bufferLockedByHandle = null;
+    private DataHandle                      bufferLockedByHandle = null;
 
     /** Lock the buffer. */
-    private ARXNode                bufferLockedByNode   = null;
+    private ARXNode                         bufferLockedByNode   = null;
 
     /** The output buffer. */
-    private final DataMatrix       buffer;
+    private final DataMatrix                buffer;
 
     /** The config. */
-    private final ARXConfiguration config;
+    private final ARXConfiguration          config;
 
     /** The data definition. */
-    private final DataDefinition   definition;
+    private final DataDefinition            definition;
 
     /** Wall clock. */
-    private final long             duration;
+    private final long                      duration;
 
     /** The lattice. */
-    private final ARXLattice       lattice;
+    private final ARXLattice                lattice;
 
     /** The data manager. */
-    private final DataManager      manager;
+    private final DataManager               manager;
 
     /** The global optimum. */
-    private final ARXNode          optimalNode;
+    private final ARXNode                   optimalTransformation;
 
     /** The registry. */
-    private final DataRegistry     registry;
+    private final DataRegistry              registry;
 
     /** The solution space. */
-    private final SolutionSpace    solutionSpace;
+    private final SolutionSpace             solutionSpace;
 
     /** Whether the optimum has been found */
-    private final boolean          optimumFound;
+    private final boolean                   optimumFound;
+
+    /** Optimization statistics */
+    private final ARXProcessStatistics statistics;
 
     /**
      * Internal constructor for deserialization.
@@ -97,10 +100,8 @@ public class ARXResult {
      * @param metric
      * @param config
      * @param optimum
-     * @param time
      * @param solutionSpace
-     * @param in
-     * @param optimumFound
+     * @param statistics
      */
     public ARXResult(DataHandle handle,
                      DataDefinition definition,
@@ -111,9 +112,9 @@ public class ARXResult {
                      Metric<?> metric,
                      ARXConfiguration config,
                      ARXNode optimum,
-                     long time,
+                     final long time,
                      SolutionSpace solutionSpace,
-                     boolean optimumFound) {
+                     ARXProcessStatistics statistics) {
 
         // Set registry and definition
         ((DataHandleInput)handle).setDefinition(definition);
@@ -158,10 +159,11 @@ public class ARXResult {
         this.definition = definition;
         this.config = config;
         this.lattice = lattice;
-        this.optimalNode = lattice.getOptimum();
-        this.duration = time;
+        this.optimalTransformation = lattice.getOptimum();
         this.solutionSpace = solutionSpace;
-        this.optimumFound = optimumFound;
+        this.statistics = statistics != null ? statistics : new ARXProcessStatistics(lattice, optimalTransformation, lattice.isComplete(), time);
+        this.optimumFound = this.statistics.isSolutationAvailable() ? this.statistics.getStep(0).isOptimal() : false;
+        this.duration = this.statistics.getDuration();
     }
     
     /**
@@ -196,10 +198,11 @@ public class ARXResult {
         this.definition = definition;
         this.config = config;
         this.lattice = lattice;
-        this.optimalNode = lattice.getOptimum();
+        this.optimalTransformation = lattice.getOptimum();
         this.duration = duration;
         this.solutionSpace = solutionSpace;
         this.optimumFound = optimumFound;
+        this.statistics = new ARXProcessStatistics(lattice, optimalTransformation, optimumFound, duration);
     }
 
     /**
@@ -225,9 +228,9 @@ public class ARXResult {
      * @return the global optimum
      */
     public ARXNode getGlobalOptimum() {
-        return optimalNode;
+        return optimalTransformation;
     }
-
+    
     /**
      * Returns the lattice.
      *
@@ -236,7 +239,7 @@ public class ARXResult {
     public ARXLattice getLattice() {
         return lattice;
     }
-    
+
     /**
      * Returns whether the global optimum has been found
      * @return
@@ -253,8 +256,8 @@ public class ARXResult {
      * @return
      */
     public DataHandle getOutput() {
-        if (optimalNode == null) { return null; }
-        return getOutput(optimalNode, true);
+        if (optimalTransformation == null) { return null; }
+        return getOutput(optimalTransformation, true);
     }
     
     /**
@@ -370,10 +373,10 @@ public class ARXResult {
      * @return
      */
     public DataHandle getOutput(boolean fork) {
-        if (optimalNode == null) { return null; }
-        return getOutput(optimalNode, fork);
+        if (optimalTransformation == null) { return null; }
+        return getOutput(optimalTransformation, fork);
     }
-
+    
     /**
      * Internal method, not for external use
      * 
@@ -400,6 +403,14 @@ public class ARXResult {
         
         // Return
         return result;
+    }
+
+    /**
+     * Returns statistics for the anonymization process
+     * @return
+     */
+    public ARXProcessStatistics getProcessStatistics() {
+        return this.statistics;
     }
 
     /**
@@ -466,7 +477,7 @@ public class ARXResult {
      * @return
      */
     public boolean isResultAvailable() {
-        return optimalNode != null;
+        return optimalTransformation != null;
     }
 
     /**
@@ -475,7 +486,7 @@ public class ARXResult {
      * @return The number of optimized records
      * @throws RollbackRequiredException 
      */
-    public int optimize(DataHandle handle) throws RollbackRequiredException {
+    public ARXProcessStatistics optimize(DataHandle handle) throws RollbackRequiredException {
         return this.optimize(handle, 0.5d, new ARXListener(){
             @Override
             public void progress(double progress) {
@@ -496,7 +507,7 @@ public class ARXResult {
      * @return The number of optimized records
      * @throws RollbackRequiredException 
      */
-    public int optimize(DataHandle handle, double gsFactor) throws RollbackRequiredException {
+    public ARXProcessStatistics optimize(DataHandle handle, double gsFactor) throws RollbackRequiredException {
         return this.optimize(handle, gsFactor, new ARXListener(){
             @Override
             public void progress(double progress) {
@@ -517,7 +528,7 @@ public class ARXResult {
      * @param listener 
      * @return The number of optimized records
      */
-    public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
+    public ARXProcessStatistics optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
         return optimizeFast(handle, gsFactor, Double.NaN, listener);
     }
 
@@ -527,8 +538,7 @@ public class ARXResult {
      * @param records A fraction [0,1] of records that need to be optimized.
      * @return The number of optimized records
      */
-    public int optimizeFast(DataHandle handle, 
-                            double records) throws RollbackRequiredException {
+    public ARXProcessStatistics optimizeFast(DataHandle handle, double records) throws RollbackRequiredException {
         return optimizeFast(handle, records, Double.NaN, new ARXListener(){
             @Override
             public void progress(double progress) {
@@ -544,9 +554,7 @@ public class ARXResult {
      * @param listener 
      * @return The number of optimized records
      */
-    public int optimizeFast(DataHandle handle, 
-                            double records, 
-                            ARXListener listener) throws RollbackRequiredException {
+    public ARXProcessStatistics optimizeFast(DataHandle handle, double records, ARXListener listener) throws RollbackRequiredException {
         return optimizeFast(handle, records, Double.NaN, listener);
     }
     
@@ -564,10 +572,10 @@ public class ARXResult {
      * @param listener 
      * @return The number of optimized records
      */
-    public int optimizeFast(DataHandle handle, 
-                            double records, 
-                            double gsFactor, 
-                            ARXListener listener) throws RollbackRequiredException {
+    public ARXProcessStatistics optimizeFast(DataHandle handle,
+                                             double records,
+                                             double gsFactor,
+                                             ARXListener listener) throws RollbackRequiredException {
         
         // Check if null
         if (listener == null) {
@@ -596,8 +604,11 @@ public class ARXResult {
         
         // Check if optimizable
         if (!isOptimizable(handle)) {
-            return 0;
+            return new ARXProcessStatistics();
         }
+        
+        // Prepare tracking of duration
+        long time = System.currentTimeMillis();
         
         // Extract
         DataHandleOutput output = (DataHandleOutput)handle;
@@ -609,12 +620,15 @@ public class ARXResult {
         
         // We are now ready to go
         // Collect input and row indices
+        int initialRecords = 0;
         RowSet rowset = RowSet.create(output.getNumRows());
         for (int row = 0; row < output.getNumRows(); row++) {
             if (output.isOutlier(row)) {
                 rowset.add(row);
+                initialRecords++;
             }
         }
+        initialRecords = output.getNumRows() - initialRecords;
         
         // Everything that is used from here on, needs to be either
         // (a) state-less, or
@@ -662,7 +676,7 @@ public class ARXResult {
         
         // Break, if no solution has been found
         if (result.optimum == null) {
-            return 0;
+            return new ARXProcessStatistics();
         }
         
         // Else, merge the results back into the given handle
@@ -697,8 +711,9 @@ public class ARXResult {
                 output.setOptimized(true);
             }
             
-            // Return
-            return optimized;
+            // Done
+            time = System.currentTimeMillis() - time;
+            return new ARXProcessStatistics(result, initialRecords, optimized, time);
             
         // If anything happens in the above block, the operation needs to be rolled back, because
         // the buffer might be in an inconsistent state
@@ -720,11 +735,12 @@ public class ARXResult {
      * @param adaptionFactor Is added to the gsFactor when reaching a fixpoint 
      * @throws RollbackRequiredException 
      */
-    public void optimizeIterative(DataHandle handle,
-                                  double gsFactor,
-                                  int maxIterations,
-                                  double adaptionFactor) throws RollbackRequiredException {
-        this.optimizeIterative(handle, gsFactor, maxIterations, adaptionFactor, new ARXListener(){
+    public ARXProcessStatistics optimizeIterative(DataHandle handle,
+                                                       double gsFactor,
+                                                       int maxIterations,
+                                                       double adaptionFactor) throws RollbackRequiredException {
+        
+        return this.optimizeIterative(handle, gsFactor, maxIterations, adaptionFactor, new ARXListener(){
             @Override
             public void progress(double progress) {
                 // Empty by design
@@ -746,11 +762,11 @@ public class ARXResult {
      * @param listener 
      * @throws RollbackRequiredException 
      */
-    public void optimizeIterative(final DataHandle handle,
-                                  double gsFactor,
-                                  final int maxIterations,
-                                  final double adaptionFactor,
-                                  final ARXListener listener) throws RollbackRequiredException {
+    public ARXProcessStatistics optimizeIterative(final DataHandle handle,
+                                                       double gsFactor,
+                                                       final int maxIterations,
+                                                       final double adaptionFactor,
+                                                       final ARXListener listener) throws RollbackRequiredException {
         
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
@@ -770,6 +786,9 @@ public class ARXResult {
         for (int row = 0; row < handle.getNumRows(); row++) {
             optimizedGoal += handle.isOutlier(row) ? 1 : 0;
         }
+        
+        // Statistics
+        ARXProcessStatistics statistics = new ARXProcessStatistics();
 
         // Progress
         listener.progress(0d);
@@ -778,7 +797,12 @@ public class ARXResult {
         while (isOptimizable(handle) && iterationsTotal < maxIterations && optimizedCurrent > 0) {
 
             // Perform individual optimization
-            optimizedCurrent = optimize(handle, gsFactor);
+            ARXProcessStatistics _statistics = optimize(handle, gsFactor);
+            optimizedCurrent = 0;
+            if (_statistics.isSolutationAvailable()) {
+                optimizedCurrent = _statistics.getStep(0).getNumberOfRecordsTransformed();
+                statistics = statistics.merge(_statistics);
+            }
             optimizedTotal += optimizedCurrent;
             
             // Try to adapt, if possible
@@ -800,6 +824,9 @@ public class ARXResult {
 
         // Progress
         listener.progress(1d);
+        
+        // Done
+        return statistics;
     }
 
     /**
@@ -808,9 +835,9 @@ public class ARXResult {
      * @param records A fraction [0,1] of records that need to be optimized in each step.
      * @throws RollbackRequiredException 
      */
-    public void optimizeIterativeFast(DataHandle handle,
-                                      double records) throws RollbackRequiredException {
-        this.optimizeIterativeFast(handle, records, Double.NaN, new ARXListener(){
+    public ARXProcessStatistics optimizeIterativeFast(DataHandle handle,
+                                                           double records) throws RollbackRequiredException {
+        return this.optimizeIterativeFast(handle, records, Double.NaN, new ARXListener(){
             @Override
             public void progress(double progress) {
                 // Empty by design
@@ -825,10 +852,10 @@ public class ARXResult {
      * @param listener
      * @throws RollbackRequiredException 
      */
-    public void optimizeIterativeFast(DataHandle handle,
-                                      double records,
-                                      ARXListener listener) throws RollbackRequiredException {
-        this.optimizeIterativeFast(handle, records, Double.NaN, listener);
+    public ARXProcessStatistics optimizeIterativeFast(DataHandle handle,
+                                                           double records,
+                                                           ARXListener listener) throws RollbackRequiredException {
+        return this.optimizeIterativeFast(handle, records, Double.NaN, listener);
     }
     
     /**
@@ -844,10 +871,10 @@ public class ARXResult {
      * @param listener 
      * @throws RollbackRequiredException 
      */
-    public void optimizeIterativeFast(final DataHandle handle,
-                                      double records,
-                                      double gsFactor,
-                                      final ARXListener listener) throws RollbackRequiredException {
+    public ARXProcessStatistics optimizeIterativeFast(final DataHandle handle,
+                                                           double records,
+                                                           double gsFactor,
+                                                           final ARXListener listener) throws RollbackRequiredException {
         
         if (!Double.isNaN(gsFactor) && (gsFactor < 0d || gsFactor > 1d)) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
@@ -863,6 +890,9 @@ public class ARXResult {
         for (int row = 0; row < handle.getNumRows(); row++) {
             optimizedGoal += handle.isOutlier(row) ? 1 : 0;
         }
+        
+        // Statistics
+        ARXProcessStatistics statistics = new ARXProcessStatistics();
 
         // Progress
         listener.progress(0d);
@@ -875,12 +905,17 @@ public class ARXResult {
             final double maxProgress = minProgress + records;
             
             // Perform individual optimization
-            optimizedCurrent = optimizeFast(handle, records, gsFactor, new ARXListener() {
+            ARXProcessStatistics _statistics = optimizeFast(handle, records, gsFactor, new ARXListener() {
                 @Override
                 public void progress(double progress) {
                     listener.progress(minProgress + progress * (maxProgress - minProgress));
                 }
             });
+            optimizedCurrent = 0;
+            if (_statistics.isSolutationAvailable()) {
+                optimizedCurrent = _statistics.getStep(0).getNumberOfRecordsTransformed();
+                statistics = statistics.merge(_statistics);
+            }
             optimizedTotal += optimizedCurrent;
             
             // Progress
@@ -889,6 +924,9 @@ public class ARXResult {
 
         // Progress
         listener.progress(1d);
+        
+        // Done
+        return statistics;
     }
     
     /**

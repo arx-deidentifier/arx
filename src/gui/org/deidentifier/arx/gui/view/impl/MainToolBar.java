@@ -20,10 +20,7 @@ package org.deidentifier.arx.gui.view.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.deidentifier.arx.ARXLattice;
-import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -57,155 +54,6 @@ import cern.colt.Arrays;
  * @author Florian Kohlmayer
  */
 public class MainToolBar extends AbstractMenu {
-
-    /**
-     * Helper class including some statistics.
-     */
-    private static class SearchSpaceStatistics {
-
-        /** Count. */
-        private final long    numTransformationsInSearchSpace;
-
-        /** Count. */
-        private final long     numMaterializedTransformations;
-
-        /** Count. */
-        private final long     numTransformationsPruned;
-
-        /** Count. */
-        private final long     numTransformationsAnonymous;
-
-        /** Count. */
-        private final long     numTransformationsNotAnonymous;
-
-        /** Count. */
-        private final long     numTransformationsAnonymityUnknown;
-
-        /** Time in seconds. */
-        private final double  executionTime;
-
-        /** Optimal transformation. */
-        private final ARXNode optimum;
-
-        /** Heuristic */
-        private final boolean optimumFound;
-
-        /**
-         * Creates the statistics.
-         *
-         * @param model
-         * @param result
-         */
-        private SearchSpaceStatistics(Model model, ARXResult result){
-            
-            // Prepare
-            int notPruned = 0;
-            int anonymous = 0;
-            int notAnonymous = 0;
-            int anonymityUnknown = 0;
-            ARXLattice lattice = result.getLattice();
-            
-            // Compute statistics
-            for (final ARXNode[] level : lattice.getLevels()) {
-                for (final ARXNode node : level) {
-                    if (node.isChecked() || node.getHighestScore().compareTo(node.getLowestScore()) == 0) {
-                        notPruned++;
-                    }
-                    if (node.getAnonymity() == Anonymity.ANONYMOUS) {
-                        anonymous++;
-                    } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
-                        notAnonymous++;
-                    } else {
-                        anonymityUnknown++;
-                    }
-                }
-            }
-            
-            // Store
-            this.executionTime = (double)Math.max(result.getTime(), model.getDuration()) / 1000d;
-            this.numTransformationsInSearchSpace = lattice.getVirtualSize();
-            this.numMaterializedTransformations = lattice.getSize();
-            this.numTransformationsPruned = numTransformationsInSearchSpace - (long)notPruned;
-            this.numTransformationsAnonymous = anonymous;
-            this.numTransformationsNotAnonymous = notAnonymous;
-            this.numTransformationsAnonymityUnknown = anonymityUnknown;
-            this.optimum = result.getGlobalOptimum();
-            this.optimumFound = result.getLattice().isComplete() || model.getOptimumFound();
-        }
-
-        @Override
-        public String toString() {
-
-            // Prepare
-            double prunedPercentage = (double) this.numTransformationsPruned /
-                                      (double) this.numTransformationsInSearchSpace * 100d;
-            
-            double materializedPercentage = (double) this.numMaterializedTransformations /
-                                            (double) this.numTransformationsInSearchSpace * 100d;
-
-            // Render statistics about the solution space
-            StringBuilder sb = new StringBuilder();
-            sb.append(Resources.getMessage("MainToolBar.1")); //$NON-NLS-1$
-            sb.append(Resources.getMessage("MainToolBar.2")) //$NON-NLS-1$
-              .append(this.numTransformationsInSearchSpace)
-              .append("\n"); //$NON-NLS-1$
-            
-            sb.append(Resources.getMessage("MainToolBar.41")) //$NON-NLS-1$
-            .append(this.numMaterializedTransformations);
-            sb.append(" [") //$NON-NLS-1$
-            .append(SWTUtil.getPrettyString(materializedPercentage))
-            .append("%]\n"); //$NON-NLS-1$
-            
-            sb.append(Resources.getMessage("MainToolBar.12")) //$NON-NLS-1$
-              .append(this.numTransformationsPruned);
-            sb.append(" [") //$NON-NLS-1$
-              .append(SWTUtil.getPrettyString(prunedPercentage))
-              .append("%]\n"); //$NON-NLS-1$
-            
-            sb.append(Resources.getMessage("MainToolBar.18")) //$NON-NLS-1$
-              .append(SWTUtil.getPrettyString(this.executionTime))
-              .append("s\n"); //$NON-NLS-1$
-            
-            if (this.numTransformationsAnonymous != 0 ||
-                this.numTransformationsNotAnonymous != 0 ||
-                this.numTransformationsAnonymityUnknown != 0) {
-                
-                // Render the classification result
-                sb.append(Resources.getMessage("MainToolBar.22")); //$NON-NLS-1$
-                if (this.numTransformationsAnonymous != 0) {
-                    sb.append(Resources.getMessage("MainToolBar.24")) //$NON-NLS-1$
-                      .append(this.numTransformationsAnonymous);
-                }
-                if (this.numTransformationsNotAnonymous != 0) {
-                    sb.append(Resources.getMessage("MainToolBar.26")) //$NON-NLS-1$
-                      .append(this.numTransformationsNotAnonymous);
-                }
-                if (this.numTransformationsAnonymityUnknown != 0) {
-                    sb.append(Resources.getMessage("MainToolBar.34")) //$NON-NLS-1$
-                      .append(this.numTransformationsAnonymityUnknown);
-                }
-                sb.append("\n");
-            }
-            // Render information about the optimum
-            if (this.optimum != null) {
-                sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
-                  .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
-                  .append(SWTUtil.getPrettyString(this.optimumFound))
-                  .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
-                  .append(Arrays.toString(this.optimum.getTransformation()));
-                sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$
-                  .append(this.optimum.getHighestScore().toString());
-                for (QualityMetadata<?> metadata : this.optimum.getHighestScore().getMetadata()) {
-                    sb.append("\n - ") //$NON-NLS-1$
-                      .append(metadata.getParameter()).append(": ") //$NON-NLS-1$
-                      .append(SWTUtil.getPrettyString(metadata.getValue()));
-                }
-            }
-
-            // Return
-            return sb.toString();
-        }
-    }
 
     /** Static offset. */
     private static final int     OFFSET    = 10;
@@ -316,39 +164,48 @@ public class MainToolBar extends AbstractMenu {
             }
         } else if (event.part == ModelPart.OUTPUT) {
             
-            if (model.getOutputNode() != null) {
+            if (model.getOutputTransformation() != null) {
 
+                // Statistics
+                ARXProcessStatistics statistics = model.getProcessStatistics();
+                
                 // Update tool tip
-                SearchSpaceStatistics stats = new SearchSpaceStatistics(model, model.getResult());
-                setToolTip(stats);
+                setToolTip(statistics);
                 
                 // Update labels
                 toolbar.setRedraw(false);
                 labelTransformations.setText(Resources.getMessage("MainToolBar.6") + //$NON-NLS-1$
-                                             SWTUtil.getPrettyString(stats.numTransformationsInSearchSpace));
+                                             SWTUtil.getPrettyString(statistics.getTransformationsAvailable()));
                 labelTransformations.pack();
                 
                 labelApplied.setText(Resources.getMessage("MainToolBar.4") + //$NON-NLS-1$
-                                     Arrays.toString(model.getOutputNode().getTransformation()));
+                                     Arrays.toString(model.getOutputTransformation().getTransformation()));
                 labelApplied.pack();
                 
+                // Layout
                 layout();
                 
                 toolbar.setRedraw(true);
+                
             } else {
+                
                 reset();
+                
             }
         } else if (event.part == ModelPart.RESULT) {
+            
             if (model.getResult() != null) {
                 
+                // Statistics
+                ARXProcessStatistics statistics = model.getProcessStatistics();
+                
                 // Update tool tip
-                SearchSpaceStatistics stats = new SearchSpaceStatistics(model, model.getResult());
-                setToolTip(stats);
+                setToolTip(statistics);
 
                 // Update labels
                 toolbar.setRedraw(false);
                 labelTransformations.setText(Resources.getMessage("MainToolBar.6") + //$NON-NLS-1$
-                                             SWTUtil.getPrettyString(stats.numTransformationsInSearchSpace)); 
+                                             SWTUtil.getPrettyString(statistics.getTransformationsAvailable())); 
                 labelTransformations.pack();
 
                 labelSelected.setText(Resources.getMessage("MainToolBar.7")); //$NON-NLS-1$
@@ -361,17 +218,21 @@ public class MainToolBar extends AbstractMenu {
                 
                 toolbar.setRedraw(true);
             }
+            
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            String attribute = (String)event.data;
 
             // Update label
+            String attribute = (String)event.data;
             toolbar.setRedraw(false);
             labelAttribute.setText(Resources.getMessage("MainToolBar.50") + trim(attribute)); //$NON-NLS-1$
             labelAttribute.pack();
             layout();
             toolbar.setRedraw(true);
+            
         }  else if (event.part == ModelPart.MODEL) {
+            
             model = (Model) event.data;
+            
         }
     }
 
@@ -532,12 +393,66 @@ public class MainToolBar extends AbstractMenu {
     }
 
     /**
-     * Sets the tooltip.
+     * Sets the tool tip
      *
      * @param stats
      */
-    private void setToolTip(SearchSpaceStatistics stats) {
-        this.tooltip = stats.toString();
+    private void setToolTip(ARXProcessStatistics stats) {
+        
+        // Prepare
+        double prunedPercentage = (double) (stats.getTransformationsAvailable() - stats.getTransformationsChecked()) /
+                                  (double) (stats.getTransformationsAvailable()) * 100d;
+        
+        // Render statistics about the solution space
+        StringBuilder sb = new StringBuilder();
+        sb.append(Resources.getMessage("MainToolBar.1")); //$NON-NLS-1$
+        sb.append(Resources.getMessage("MainToolBar.2")) //$NON-NLS-1$
+          .append(stats.getTransformationsAvailable())
+          .append("\n"); //$NON-NLS-1$
+        
+        sb.append(Resources.getMessage("MainToolBar.12")) //$NON-NLS-1$
+          .append(stats.getTransformationsAvailable() - stats.getTransformationsChecked());
+        sb.append(" [") //$NON-NLS-1$
+          .append(SWTUtil.getPrettyString(prunedPercentage))
+          .append("%]\n"); //$NON-NLS-1$
+        
+        sb.append(Resources.getMessage("MainToolBar.18")) //$NON-NLS-1$
+          .append(SWTUtil.getPrettyString((double)stats.getDuration() / 1000d))
+          .append("s\n"); //$NON-NLS-1$
+        
+        // Render information about the selected transformation
+        if (stats.isSolutationAvailable()) {
+            
+            // Global transformation scheme
+            if (stats.getNumberOfSteps() == 1) {
+                sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
+                .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
+                .append(SWTUtil.getPrettyString(stats.getStep(0).isOptimal()))
+                .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
+                .append(Arrays.toString(stats.getStep(0).getTransformation()));
+              sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$
+                .append(stats.getStep(0).getScore().toString());
+              for (QualityMetadata<?> metadata : stats.getStep(0).getMetadata()) {
+                  sb.append("\n - ") //$NON-NLS-1$
+                    .append(metadata.getParameter()).append(": ") //$NON-NLS-1$
+                    .append(SWTUtil.getPrettyString(metadata.getValue()));
+              }
+              
+            // Complex transformation
+            } else {
+                sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
+                  .append(Resources.getMessage("MainToolBar.70")) //$NON-NLS-1$
+                  .append(SWTUtil.getPrettyString(stats.getNumberOfSteps()))
+                  .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
+                  .append(SWTUtil.getPrettyString(false));
+            }
+            
+        // No solution found
+        } else {
+            sb.append(Resources.getMessage("MainToolBar.71")); //$NON-NLS-1$
+        }
+        
+        this.tooltip = sb.toString();
         this.labelSelected.setToolTipText(tooltip);
         this.labelApplied.setToolTipText(tooltip);
         this.labelTransformations.setToolTipText(tooltip);

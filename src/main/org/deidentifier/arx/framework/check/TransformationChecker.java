@@ -210,13 +210,29 @@ public class TransformationChecker {
     }
     
     /**
+     * Returns an associated transformation applicator
+     * @return
+     */
+    public TransformationApplicator getApplicator() {
+        return new TransformationApplicator(this.manager, this.getOutputBuffer(), this.metric, this.config);
+    }
+
+    /**
      * Returns the configuration
      * @return
      */
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
-
+    
+    /**
+     * Returns the header of generalized data
+     * @return
+     */
+    public String[] getHeader() {
+        return dataGeneralized.getHeader();
+    }
+    
     /**
      * Returns the checkers history, if any.
      *
@@ -249,15 +265,7 @@ public class TransformationChecker {
     public DataMatrix getOutputBuffer() {
         return this.transformer.getBuffer();
     }
-    
-    /**
-     * Returns an associated transformation applicator
-     * @return
-     */
-    public TransformationApplicator getApplicator() {
-        return new TransformationApplicator(this.manager, this.getOutputBuffer(), this.metric, this.config);
-    }
-    
+
     /**
      * Frees memory
      */

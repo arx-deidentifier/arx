@@ -300,7 +300,7 @@ public class WorkerLoad extends Worker<Model> {
                                           optimalNode,
                                           time,
                                           solutions,
-                                          model.getOptimumFound()));
+                                          model.getProcessStatistics()));
             
             // Update lattice
             ARXLattice lattice = model.getResult().getLattice();

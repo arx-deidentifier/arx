@@ -43,6 +43,7 @@ import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -642,10 +643,8 @@ public class Controller implements IView {
         actionMenuEditReset();
         
         // Run the worker
-        long time = System.currentTimeMillis();
         final WorkerAnonymize worker = new WorkerAnonymize(model, maxTimePerIteration, minRecordsPerIteration);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
-        time = System.currentTimeMillis() - time;
         
         // Show errors
         if (worker.getError() != null) {
@@ -683,17 +682,15 @@ public class Controller implements IView {
 
         // Distribute results
         if (worker.getResult() != null) {
-            
-            // Store time
-            model.setDuration(time);
 
             // Retrieve optimal result
-            Pair<ARXResult, DataHandle> workerResult = worker.getResult();
+            Pair<Pair<ARXResult, DataHandle>, ARXProcessStatistics> allResults = worker.getResult();
+            Pair<ARXResult, DataHandle> workerResult = allResults.getFirst();
             final ARXResult result = workerResult.getFirst();
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
-            model.setOptimumFound(result.getOptimumFound());
+            model.setProcessStatistics(allResults.getSecond());
 
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
@@ -986,7 +983,7 @@ public class Controller implements IView {
         model.setOutput(null, null);
         model.setSelectedNode(null);
         model.getClipboard().clearClipboard();
-        model.setOptimumFound(false);
+        model.setProcessStatistics(null);
 
         update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
         update(new ModelEvent(this, ModelPart.RESULT, null));
@@ -1039,7 +1036,7 @@ public class Controller implements IView {
         }
 
         // Check node
-        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+        if (model.getOutputTransformation().getAnonymity() != Anonymity.ANONYMOUS) {
             if (!main.showQuestionDialog(main.getShell(),
                                          Resources.getMessage("Controller.34"), //$NON-NLS-1$
                                          Resources.getMessage("Controller.156"))) //$NON-NLS-1$
@@ -1064,7 +1061,7 @@ public class Controller implements IView {
                                                                            model.getOutputDefinition(),
                                                                            model.getOutputConfig().getConfig(),
                                                                            model.getResult(),
-                                                                           model.getOutputNode(),
+                                                                           model.getOutputTransformation(),
                                                                            model.getOutput(),
                                                                            model);
 
@@ -1153,7 +1150,7 @@ public class Controller implements IView {
         }
 
         // Check node
-        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+        if (model.getOutputTransformation().getAnonymity() != Anonymity.ANONYMOUS) {
             if (!main.showQuestionDialog(main.getShell(),
                                          Resources.getMessage("Controller.34"), //$NON-NLS-1$
                                          Resources.getMessage("Controller.35"))) //$NON-NLS-1$

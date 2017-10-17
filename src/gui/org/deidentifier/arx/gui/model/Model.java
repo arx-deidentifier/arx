@@ -33,6 +33,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
@@ -288,10 +289,8 @@ public class Model implements Serializable {
     /* *****************************************
      * Information about the last anonymization process
      * ******************************************/
-    /** Duration of the process */
-    private long                                          duration                        = 0;
-    /** Whether the optimum has been found */
-    private boolean                                       optimumFound                    = false;
+    /** Statistics about the last optimization process*/
+    private ARXProcessStatistics                     optimizationStatistics          = null;
 
     /**
      * Creates a new instance.
@@ -343,7 +342,7 @@ public class Model implements Serializable {
         outputConfig = inputConfig.clone();
         this.setModified();
     }
-    
+
     /**
      * Creates an ARXConfiguration.
      */
@@ -511,7 +510,7 @@ public class Model implements Serializable {
     public ARXAnonymizer getAnonymizer() {
         return anonymizer;
     }
-
+    
     /**
      * Returns the last two selected attributes.
      *
@@ -521,7 +520,7 @@ public class Model implements Serializable {
         if (pair == null) pair = new String[] { null, null };
         return pair;
     }
-    
+
     /**
      * Returns the audit trail
      * @return
@@ -549,7 +548,7 @@ public class Model implements Serializable {
         }
         return bLikenessModel;
     }
-
+    
     /**
      * Returns the classification model
      * @return
@@ -572,7 +571,7 @@ public class Model implements Serializable {
         }
         return clipboard;
     }
-    
+
     /**
      * Gets the csv config model.
      * @return
@@ -622,7 +621,7 @@ public class Model implements Serializable {
         }
         return differentialPrivacyModel;
     }
-
+    
     /**
      * Returns the d-presence model.
      *
@@ -630,13 +629,6 @@ public class Model implements Serializable {
      */
     public ModelDPresenceCriterion getDPresenceModel() {
         return dPresenceModel;
-    }
-
-    /**
-     * @return the duration
-     */
-    public long getDuration() {
-        return duration;
     }
 
     /**
@@ -676,7 +668,7 @@ public class Model implements Serializable {
     public long getInputBytes() {
         return inputBytes;
     }
-    
+
     /**
      * Returns the input configuration.
      *
@@ -696,7 +688,7 @@ public class Model implements Serializable {
         else if (inputConfig.getInput()==null) return null;
         else return inputConfig.getInput().getDefinition();
     }
-
+    
     /**
      * Returns the input population model
      * @return
@@ -750,7 +742,7 @@ public class Model implements Serializable {
             return locale;
         }
     }
-    
+
     /**
      * Returns the model for local recoding
      * @return
@@ -761,7 +753,7 @@ public class Model implements Serializable {
         }
         return localRecodingModel;
     }
-    
+
     /**
      * When a dataset has more records than this threshold,
      * visualization of statistics will be disabled.
@@ -771,7 +763,7 @@ public class Model implements Serializable {
     public int getMaximalSizeForComplexOperations(){
         return this.maximalSizeForComplexOperations;
     }
-
+    
     /**
      * Returns the maximal size of a sub-lattice that will be displayed
      * by the viewer.
@@ -781,7 +773,7 @@ public class Model implements Serializable {
     public int getMaxNodesInViewer() {
         return maxNodesInViewer;
     }
-
+    
     /**
      * Returns the configuration of the metric.
      *
@@ -843,13 +835,6 @@ public class Model implements Serializable {
     }
 
     /**
-     * @return the optimumFound
-     */
-    public boolean getOptimumFound() {
-        return optimumFound;
-    }
-
-    /**
      * @return the output
      */
     public DataHandle getOutput() {
@@ -886,7 +871,7 @@ public class Model implements Serializable {
      *
      * @return
      */
-    public ARXNode getOutputNode() {
+    public ARXNode getOutputTransformation() {
         return outputNode;
     }
 
@@ -933,7 +918,17 @@ public class Model implements Serializable {
         }
         return perspective;
     }
-    
+
+    /**
+     * @return the optimizationStatistics
+     */
+    public ARXProcessStatistics getProcessStatistics() {
+        if (optimizationStatistics == null && this.result != null) {
+            return this.result.getProcessStatistics();
+        }
+        return optimizationStatistics;
+    }
+
     /**
      * Returns the current query.
      *
@@ -951,7 +946,7 @@ public class Model implements Serializable {
     public ARXResult getResult() {
         return result;
     }
-
+    
     /**
      * Returns the risk-based model.
      *
@@ -986,7 +981,7 @@ public class Model implements Serializable {
     public String getSelectedAttribute() {
         return selectedAttribute;
     }
-    
+
     /**
      * Returns the selected features
      * @return
@@ -997,8 +992,7 @@ public class Model implements Serializable {
         }
         return this.selectedClasses;
     }
-
-
+    
     /**
      * Returns the currently selected class value.
      * 
@@ -1007,7 +1001,8 @@ public class Model implements Serializable {
     public String getSelectedClassValue() {
         return selectedClassValue;
     }
-    
+
+
     /**
      * Returns the selected features
      * @return
@@ -1018,7 +1013,6 @@ public class Model implements Serializable {
         }
         return this.selectedFeatures;
     }
-
     
     /**
      * Returns the selected transformation.
@@ -1029,6 +1023,7 @@ public class Model implements Serializable {
         return selectedNode;
     }
 
+    
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -1227,7 +1222,7 @@ public class Model implements Serializable {
             return this.showVisualization;
         }
     }
-    
+
     /**
      * Resets the model.
      */
@@ -1246,7 +1241,7 @@ public class Model implements Serializable {
         this.groups = null;
         this.classificationModel = new ModelClassification();
     }
-
+    
     /**
      * Returns the last two selected attributes.
      */
@@ -1256,7 +1251,7 @@ public class Model implements Serializable {
         pair[0] = null;
         pair[1] = null;
     }
-    
+
     /**
      * Resets the configuration of the privacy criteria.
      */
@@ -1306,7 +1301,7 @@ public class Model implements Serializable {
         this.debugEnabled = value;
         this.setModified();
     }
-
+    
     /**
      * Sets the project description.
      *
@@ -1315,14 +1310,6 @@ public class Model implements Serializable {
     public void setDescription(final String description) {
         this.description = description;
         setModified();
-    }
-
-    /**
-     * @param duration the duration to set
-     */
-    public void setDuration(long duration) {
-        this.duration = duration;
-        this.setModified();
     }
 
     /**
@@ -1392,7 +1379,7 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1418,7 +1405,7 @@ public class Model implements Serializable {
     public void setModified() {
         modified = true;
     }
-
+    
     /**
      * Sets the project name.
      *
@@ -1437,13 +1424,6 @@ public class Model implements Serializable {
     public void setNodeFilter(final ModelNodeFilter filter) {
         nodeFilter = filter;
         setModified();
-    }
-
-    /**
-     * @param optimumFound the optimumFound to set
-     */
-    public void setOptimumFound(boolean optimumFound) {
-        this.optimumFound = optimumFound;
     }
 
     /**
@@ -1504,12 +1484,20 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-    
+
     /**
      * @param perspective the perspective to set
      */
     public void setPerspective(Perspective perspective) {
         this.perspective = perspective;
+    }
+    
+    /**
+     * @param optimizationStatistics the optimizationStatistics to set
+     */
+    public void setProcessStatistics(ARXProcessStatistics optimizationStatistics) {
+        this.optimizationStatistics = optimizationStatistics;
+        this.setModified();
     }
     
     /**
