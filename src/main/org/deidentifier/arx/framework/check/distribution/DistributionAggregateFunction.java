@@ -90,7 +90,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
             addAll(stats, distribution, rType, 0d);
-            return type.format(rType.fromDouble(stats.getMean()));
+            return stats.getN() == 0 ? DataType.NULL_VALUE : type.format(rType.fromDouble(stats.getMean()));
         }
 
         /**
@@ -101,7 +101,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
                                                                                                                  this.minimum,
                                                                                                                  this.maximum);
             if (dictionary != null) {
-                result.initialize(dictionary, type, hierarchy);
+                result.initialize(dictionary, type);
             }
             return result;
         }
@@ -116,8 +116,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
 
         @Override
-        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
-            super.initialize(dictionary, type, hierarchy);
+        public void initialize(String[] dictionary, DataType<?> type) {
+            super.initialize(dictionary, type);
             this.stats = new DescriptiveStatistics();
             if (minimum == null || maximum == null) {
                 double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
@@ -125,113 +125,6 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 this.maximum = values[1];
             }
         }        
-    }
-
-    /**
-     * This class generalizes the given distribution.
-     * 
-     * @author Fabian Prasser
-     * @author Florian Kohlmayer
-     * 
-     */
-    public static class DistributionAggregateFunctionGeneralization extends DistributionAggregateFunction {
-
-        /** SVUID. */
-        private static final long serialVersionUID = 5010485066464965464L;
-
-        /**
-         * Creates a new instance
-         * @param ignoreMissingData
-         */
-        public DistributionAggregateFunctionGeneralization(boolean ignoreMissingData) {
-            super(ignoreMissingData, false);
-        }
-
-        @Override
-        public <T> String aggregate(Distribution distribution) {
-
-            // Prepare iteration
-            int[] buckets = distribution.getBuckets();
-            int[] state = new int[] { -1, 0 }; // value, next offset
-            read(buckets, state);
-            int current = state[0];
-            int previous = -1;
-
-            int lvl = 0;
-            int val = hierarchy[current][0];
-            while (read(buckets, state)) {
-                previous = current;
-                current = state[0];
-                while (hierarchy[current][lvl] != val) {
-                    lvl++;
-                    if (lvl == hierarchy[previous].length) {
-                        return DataType.ANY_VALUE;
-                    }
-                    val = hierarchy[previous][lvl];
-                }
-            }
-            
-            return dictionary[val];
-        }
-
-        /**
-         * Clone method
-         */
-        public DistributionAggregateFunctionGeneralization clone() {
-            DistributionAggregateFunctionGeneralization result = new DistributionAggregateFunctionGeneralization(this.ignoreMissingData);
-            if (dictionary != null) {
-                result.initialize(dictionary, type, hierarchy);
-            }
-            return result;
-        }
-
-        @Override
-        public <T> double getError(Distribution distribution) {
-
-            // Prepare iteration
-            int[] buckets = distribution.getBuckets();
-            int[] state = new int[] { -1, 0 }; // value, next offset
-            read(buckets, state);
-            int current = state[0];
-            int previous = -1;
-
-            // Compute the generalization level
-            int lvl = 0;
-            int val = hierarchy[current][0];
-            outer: while (read(buckets, state)) {
-                previous = current;
-                current = state[0];
-                while (hierarchy[current][lvl] != val) {
-                    lvl++;
-                    if (lvl == hierarchy[previous].length -1) {
-                        break outer;
-                    }
-                    val = hierarchy[previous][lvl];
-                }
-            }
-            
-            // Return error
-            return (double) lvl / (double) (hierarchy[0].length - 1);
-        }
-
-        /**
-         * Reads data into the provided array
-         * @param buckets
-         * @param state
-         * @return True, if data was read
-         */
-        private boolean read(int[] buckets, int[] state) {
-            while (state[1] < buckets.length && buckets[state[1]] == -1) {
-                state[1] += 2;
-            }
-            if (state[1] >= buckets.length) {
-                return false;
-            } else {
-                state[0] = buckets[state[1]];
-                state[1] += 2;
-                return true;
-            }
-        }
     }
 
     /**
@@ -285,7 +178,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
             @SuppressWarnings("unchecked")
             DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>) this.type;
             addAll(stats, distribution, rType, 1d);
-            return type.format(rType.fromDouble(stats.getGeometricMean() - 1d));
+            return stats.getN() == 0 ? DataType.NULL_VALUE : type.format(rType.fromDouble(stats.getGeometricMean() - 1d));
         }
 
         /**
@@ -297,7 +190,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
                                                                                                                this.minimum,
                                                                                                                this.maximum);
             if (dictionary != null) {
-                result.initialize(dictionary, type, hierarchy);
+                result.initialize(dictionary, type);
             }
             return result;
         }
@@ -312,8 +205,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
         
         @Override
-        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
-            super.initialize(dictionary, type, hierarchy);
+        public void initialize(String[] dictionary, DataType<?> type) {
+            super.initialize(dictionary, type);
             this.stats = new DescriptiveStatistics();
             if (minimum == null || maximum == null) {
                 double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
@@ -376,7 +269,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
         public DistributionAggregateFunctionInterval clone() {
             DistributionAggregateFunctionInterval result = new DistributionAggregateFunctionInterval(this.ignoreMissingData);
             if (dictionary != null) {
-                result.initialize(dictionary, type, hierarchy);
+                result.initialize(dictionary, type);
             }
             return result;
         }
@@ -400,10 +293,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         private static final long serialVersionUID = 4877214760061314248L;
 
         /** Minimum */
-        private Double                          minimum          = null;
+        private Double            minimum          = null;
 
         /** Maximum */
-        private Double                          maximum          = null;
+        private Double            maximum          = null;
 
         /**
          * Instantiates.
@@ -502,7 +395,7 @@ public abstract class DistributionAggregateFunction implements Serializable {
                                                                                                  this.minimum,
                                                                                                  this.maximum);
             if (dictionary != null) {
-                result.initialize(dictionary, type, hierarchy);
+                result.initialize(dictionary, type);
             }
             return result;
         }
@@ -538,8 +431,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
         
         @Override
-        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
-            super.initialize(dictionary, type, hierarchy);
+        public void initialize(String[] dictionary, DataType<?> type) {
+            super.initialize(dictionary, type);
             if (type instanceof DataTypeWithRatioScale) {
                 if (minimum == null || maximum == null) {
                     double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
@@ -579,10 +472,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
         private static final long serialVersionUID = -3424849372778696640L;
 
         /** Minimum */
-        private double                          minimum          = 0d;
+        private double            minimum          = 0d;
 
         /** Maximum */
-        private double                          maximum          = 0d;
+        private double            maximum          = 0d;
 
         /**
          * Instantiates.
@@ -620,10 +513,10 @@ public abstract class DistributionAggregateFunction implements Serializable {
          */
         public DistributionAggregateFunctionMode clone() {
             DistributionAggregateFunctionMode result = new DistributionAggregateFunctionMode(this.ignoreMissingData,
-                                                                                                 this.minimum,
-                                                                                                 this.maximum);
+                                                                                             this.minimum,
+                                                                                             this.maximum);
             if (dictionary != null) {
-                result.initialize(dictionary, type, hierarchy);
+                result.initialize(dictionary, type);
             }
             return result;
         }
@@ -659,8 +552,8 @@ public abstract class DistributionAggregateFunction implements Serializable {
         }
 
         @Override
-        public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
-            super.initialize(dictionary, type, hierarchy);
+        public void initialize(String[] dictionary, DataType<?> type) {
+            super.initialize(dictionary, type);
             if (type instanceof DataTypeWithRatioScale) {
                 double[] values = getMinMax(dictionary, (DataTypeWithRatioScale<?>)type);
                 this.minimum = values[0];
@@ -694,14 +587,15 @@ public abstract class DistributionAggregateFunction implements Serializable {
 
     /** Whether or not null values should be ignored */
     protected boolean               ignoreMissingData;
+    
     /** Stores whether this is a type-preserving function */
     private final boolean           typePreserving;
+    
     /** Dictionary */
     protected transient String[]    dictionary;
+    
     /** Type */
     protected transient DataType<?> type;
-    /** Hierarchy */
-    protected transient int[][]     hierarchy;
 
     /**
      * Instantiates a new function.
@@ -762,10 +656,9 @@ public abstract class DistributionAggregateFunction implements Serializable {
      * @param type
      * @param hierarchy
      */
-    public void initialize(String[] dictionary, DataType<?> type, int[][] hierarchy) {
+    public void initialize(String[] dictionary, DataType<?> type) {
         this.dictionary = dictionary;
         this.type = type;
-        this.hierarchy = hierarchy;
     }
     
     /**

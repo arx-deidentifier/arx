@@ -403,18 +403,6 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Returns whether the given generalization is allowed.
-     *
-     * @param dimension
-     * @param level
-     * @return
-     */
-    public boolean
-            isAllowedGeneralization(final int dimension, final int level) {
-        return generalizations[dimension].contains(level);
-    }
-
-    /**
      * Returns setting.
      *
      * @return

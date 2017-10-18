@@ -51,7 +51,7 @@ public class LayoutUtility implements ILayout {
      */
     public static enum ViewUtilityType {
         CLASSIFICATION,
-        LOGISTIC_REGRESSION,
+        CLASSIFICATION_PRECISION_RECALL,
         DATA,
         CONTINGENCY,
         CONTINGENCY_TABLE,
@@ -158,11 +158,11 @@ public class LayoutUtility implements ILayout {
         
         Composite classificationInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationInput.setLayout(new FillLayout());
-        new ViewStatisticsLogisticRegressionInput(classificationInput, controller);
+        ViewStatisticsClassificationInput viewClassificationInput = new ViewStatisticsClassificationInput(classificationInput, controller);
         
         Composite classificationOutput = dataOutputView.createAdditionalItem(Resources.getMessage("StatisticsView.10"), "help.utility.accuracy"); //$NON-NLS-1$ //$NON-NLS-2$
         classificationOutput.setLayout(new FillLayout());
-        new ViewStatisticsLogisticRegressionOutput(classificationOutput, controller);
+        ViewStatisticsClassificationOutput viewClassificationOutput = new ViewStatisticsClassificationOutput(classificationOutput, controller);
 
         Composite qualityInput = dataInputView.createAdditionalItem(Resources.getMessage("StatisticsView.11"), "help.utility.quality"); //$NON-NLS-1$ //$NON-NLS-2$
         qualityInput.setLayout(new FillLayout());
@@ -198,25 +198,39 @@ public class LayoutUtility implements ILayout {
             public void widgetSelected(final SelectionEvent arg0) {
                 dataOutputView.setSelectionIndex(dataInputView.getSelectionIndex());
                 
+                // Hack to show summary for input
+                if (dataInputView.getSelectionIndex() == 0) {
+                    statisticsInputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                    statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                }
                 // Hack to show classification stuff
-                if (dataInputView.getSelectionIndex()==1) {
+                if (dataInputView.getSelectionIndex() == 1) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }
+
                 // Hack to update visualizations
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }
         });
+        viewClassificationInput.setOtherView(viewClassificationOutput);
+        viewClassificationOutput.setOtherView(viewClassificationInput);
         dataOutputView.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 dataInputView.setSelectionIndex(dataOutputView.getSelectionIndex());
                 
+                // Hack to show summary for output
+                if (dataOutputView.getSelectionIndex() == 0) {
+                    statisticsInputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                    statisticsOutputLayout.setSelectedView(ViewUtilityType.SUMMARY);
+                }
                 // Hack to show classification stuff
-                if (dataOutputView.getSelectionIndex()==1) {
+                if (dataOutputView.getSelectionIndex() == 1) {
                     statisticsInputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                     statisticsOutputLayout.setSelectedView(ViewUtilityType.CLASSIFICATION);
                 }
+
                 // Hack to update visualizations
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
             }

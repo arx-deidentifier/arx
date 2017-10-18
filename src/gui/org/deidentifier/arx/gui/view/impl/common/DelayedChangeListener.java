@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.gui.view.impl.common;
 
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,7 +32,7 @@ import org.eclipse.swt.widgets.Listener;
  * 
  * @author Fabian Prasser
  */
-public abstract class DelayedChangeListener implements SelectionListener, ModifyListener, Listener {
+public abstract class DelayedChangeListener implements SelectionListener, ModifyListener, KeyListener, Listener {
 
     /** Tick in milliseconds */
     private static final int TICK  = 100;
@@ -58,6 +60,18 @@ public abstract class DelayedChangeListener implements SelectionListener, Modify
     @Override
     public void handleEvent(Event arg0) {
         fire();
+    }
+
+    @Override
+    public void keyReleased(KeyEvent arg0) {
+        this.event = true;
+        this.time = System.currentTimeMillis() + delay;
+    }
+
+    @Override
+    public void keyPressed(KeyEvent arg0) {
+        this.event = true;
+        this.time = System.currentTimeMillis() + delay;
     }
 
     @Override

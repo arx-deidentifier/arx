@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Shell;
  * This class provides access to basic resources.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class Resources {
 
@@ -292,14 +293,41 @@ public class Resources {
      * @return
      */
     public Image getImage(AttributeType type) {
+        return getImage(type, false);
+    }
+    
+    /**
+     * Returns an image.
+     * 
+     * @param type
+     * @param isResponseVariable
+     * @return
+     */
+    public Image getImage(AttributeType type, boolean isResponseVariable) {
         if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-            return getManagedImage("bullet_red.png");
+            if (isResponseVariable) {
+                return getManagedImage("bullet_red_frame.png");
+            } else {
+                return getManagedImage("bullet_red.png");
+            }
         } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-            return getManagedImage("bullet_green.png");
+            if (isResponseVariable) {
+                return getManagedImage("bullet_green_frame.png");
+            } else {
+                return getManagedImage("bullet_green.png");
+            }
         } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            return getManagedImage("bullet_purple.png");
+            if (isResponseVariable) {
+                return getManagedImage("bullet_purple_frame.png");
+            } else {
+                return getManagedImage("bullet_purple.png");
+            }
         } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-            return getManagedImage("bullet_yellow.png");
+            if (isResponseVariable) {
+                return getManagedImage("bullet_yellow_frame.png");
+            } else {
+                return getManagedImage("bullet_yellow.png");
+            }
         } else {
             throw new IllegalArgumentException("Unknown attribute type '" + type + "'");
         }

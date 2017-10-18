@@ -118,11 +118,13 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         if (provider == null) {
             this.status = new ComponentStatus(controller,
                                               parent, 
-                                              control);
+                                              control,
+                                              this);
         } else {
             this.status = new ComponentStatus(controller,
                                               parent,                                                  
-                                              control,                                             
+                                              control,            
+                                              this,
                                               getProgressProvider());
         }
         
@@ -147,6 +149,23 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         status.setEmpty();
     }
 
+    /**
+     * Stops all computations
+     */
+    public void triggerStop() {
+        this.viewContext = null;
+        this.doReset();
+        this.setStatusEmpty();
+    }
+
+    /**
+     * Triggers an update
+     */
+    public void triggerUpdate() {
+        this.viewContext = null;
+        this.update();
+    }
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -216,8 +235,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
 
         // Disable the view
         if (model != null && !model.isVisualizationEnabled()) {
-            this.doReset();
-            this.setStatusEmpty();
+            this.triggerStop();
             this.enabled = false;
             return;
         }
@@ -277,14 +295,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * Implement this to reset.
      */
     protected abstract void doReset();
-
+    
     /**
      * Implement this to update.
      *
      * @param context
      */
     protected abstract void doUpdate(T context);
-    
+
     /**
      * Returns the controller
      * @return
@@ -292,7 +310,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected Controller getController() {
         return this.controller;
     }
-
+    
     /**
      * Returns the model
      * @return
@@ -300,7 +318,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected Model getModel() {
         return this.model;
     }
-    
+
     /**
      * Returns the parent composite
      */
@@ -308,7 +326,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         return this.parent;
                 
     }
-
+    
     /**
      * Overwrite this to return a progress provider
      * @return
@@ -316,7 +334,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
         return null;
     }
-    
+
     /**
      * Returns the target
      * @return
@@ -330,21 +348,21 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @return
      */
     protected boolean isEnabled() {
-        return enabled;
+        return viewContext != null && enabled;
     }
 
     /**
      * Is a job running
      * @return
      */
-    protected abstract boolean isRunning();
-
+    protected abstract boolean isRunning();           
+    
     /**
      * Status update.
      */
     protected void setStatusDone(){
         this.status.setDone();
-    }           
+    }
     
     /**
      * Status empty.
@@ -352,19 +370,11 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected void setStatusEmpty(){
         this.status.setEmpty();
     }
-    
+
     /**
      * Status working.
      */
     protected void setStatusWorking(){
         this.status.setWorking();
-    }
-
-    /**
-     * Triggers an update
-     */
-    protected void triggerUpdate() {
-        this.viewContext = null;
-        this.update();
     }
 }

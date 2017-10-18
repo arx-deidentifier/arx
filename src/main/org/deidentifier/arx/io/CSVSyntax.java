@@ -25,7 +25,7 @@ import java.util.Arrays;
  * @author Florian Kohlmayer
  * @author Fabian Prasser
  */
-public class CSVSyntax implements Serializable{
+public class CSVSyntax implements Serializable { // NO_UCD
 
     /** SVUID */
     private static final long serialVersionUID = -3978502790060734961L;

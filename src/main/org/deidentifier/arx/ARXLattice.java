@@ -106,15 +106,6 @@ public class ARXLattice implements Serializable {
         /**
          * Accessor method
          *
-         * @param model
-         */
-        public void setQualityModel(final Metric<?> model) {
-            lattice.metric = model;
-        }
-
-        /**
-         * Accessor method
-         *
          * @param config
          */
         public void setMonotonicity(ARXConfiguration config) {
@@ -128,6 +119,15 @@ public class ARXLattice implements Serializable {
          */
         public void setOptimum(final ARXNode node) {
             lattice.optimum = node;
+        }
+
+        /**
+         * Accessor method
+         *
+         * @param model
+         */
+        public void setQualityModel(final Metric<?> model) {
+            lattice.metric = model;
         }
 
         /**
@@ -167,7 +167,7 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * ReflectS different anonymity properties 
+     * Reflects different anonymity properties.
      */
     public static enum Anonymity {
         
@@ -259,21 +259,21 @@ public class ARXLattice implements Serializable {
             }
 
             /**
-             * Sets the lower bound.
-             *
-             * @param a
-             */
-            public void setLowerBound(final InformationLoss<?> a) {
-                node.lowerBound = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
-            }
-
-            /**
              * Sets the maximal information loss.
              *
              * @param a
              */
             public void setHighestScore(final InformationLoss<?> a) {
                 node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
+            }
+
+            /**
+             * Sets the lower bound.
+             *
+             * @param a
+             */
+            public void setLowerBound(final InformationLoss<?> a) {
+                node.lowerBound = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
             /**
@@ -507,26 +507,6 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * Returns the maximal information loss.
-         * This method is deprecated. Please use getHighestScore() instead.
-         * @return
-         */
-        @Deprecated
-        public InformationLoss<?> getMaximumInformationLoss() {
-            return maxInformationLoss;
-        }
-        
-        /**
-         * Returns the minimal information loss.
-         * This method is deprecated. Please use getLowestScore() instead.
-         * @return
-         */
-        @Deprecated
-        public InformationLoss<?> getMinimumInformationLoss() {
-            return minInformationLoss;
-        }
-
-        /**
          * The predecessors.
          *
          * @return
@@ -580,16 +560,6 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * Returns the anonymity property.
-         *
-         * @return
-         */
-        @Deprecated
-        public Anonymity isAnonymous() {
-            return anonymity;
-        }
-
-        /**
          * Returns if the node has been checked explicitly.
          *
          * @return
@@ -608,19 +578,6 @@ public class ARXLattice implements Serializable {
             result.addProperty("Minimum information loss", this.minInformationLoss.toString());
             result.addProperty("Maximum information loss", this.maxInformationLoss.toString());
             result.addProperty(null, renderGeneralizationScheme());
-            return result;
-        }
-
-        /**
-         * Renders this object
-         * @return
-         */
-        private ElementData renderGeneralizationScheme() {
-            ElementData result = new ElementData("Generalization scheme");
-            for (String qi : this.getQuasiIdentifyingAttributes()) {
-                result.addProperty(qi, this.getGeneralization(qi) + "/" +
-                                       this.lattice.getTop().getGeneralization(qi));    
-            }
             return result;
         }
 
@@ -651,6 +608,27 @@ public class ARXLattice implements Serializable {
                                                                             metric, 
                                                                             getDeserializationContext().minLevel, 
                                                                             getDeserializationContext().maxLevel);
+        }
+
+        /**
+         * Renders this object
+         * @return
+         */
+        private ElementData renderGeneralizationScheme() {
+            ElementData result = new ElementData("Generalization scheme");
+            for (String qi : this.getQuasiIdentifyingAttributes()) {
+                result.addProperty(qi, this.getGeneralization(qi) + "/" +
+                                       this.lattice.getTop().getGeneralization(qi));    
+            }
+            return result;
+        }
+
+        /**
+         * Returns the headermap
+         * @return
+         */
+        protected Map<String, Integer> getHeaderMap() {
+            return this.headermap;
         }
 
         /**
@@ -936,7 +914,10 @@ public class ARXLattice implements Serializable {
      * @return
      */
     public InformationLoss<?> getHighestScore(){
-        return this.getMaximumInformationLoss();
+        if (this.maximumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
+        return this.maximumInformationLoss;
     }
     
     /**
@@ -953,29 +934,6 @@ public class ARXLattice implements Serializable {
      * @return
      */
     public InformationLoss<?> getLowestScore(){
-        return this.getMinimumInformationLoss();
-    }
-
-    /**
-     * Returns the maximal information loss.
-     * This method is deprecated. Please use getHighestScore() instead.
-     * @return
-     */
-    @Deprecated
-    public InformationLoss<?> getMaximumInformationLoss(){
-        if (this.maximumInformationLoss == null) {
-            this.estimateInformationLoss();
-        }
-        return this.maximumInformationLoss;
-    }
-    
-    /**
-     * Returns the minimal information loss.
-     * This method is deprecated. Please use getLowestScore() instead.
-     * @return
-     */
-    @Deprecated
-    public InformationLoss<?> getMinimumInformationLoss(){
         if (this.minimumInformationLoss == null) {
             this.estimateInformationLoss();
         }

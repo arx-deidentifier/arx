@@ -109,7 +109,7 @@ public class Example42 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KMap(3, subset));
         config.addPrivacyModel(new DPresence(1d / 2d, 2d / 3d, subset));
-        config.setMaxOutliers(1d);
+        config.setSuppressionLimit(1d);
         config.setQualityModel(Metric.createLossMetric());
 
         // Now anonymize

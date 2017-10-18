@@ -27,6 +27,7 @@ import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 /**
@@ -39,7 +40,7 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 abstract class QualityModel<T> {
 
     /** Log */
-    private static final double          LOG2 = Math.log(2);
+    private static final double          LOG2         = Math.log(2);
 
     /** Input */
     private final DataHandle             input;
@@ -59,6 +60,15 @@ abstract class QualityModel<T> {
     /** Flag */
     private final WrappedBoolean         interrupt;
 
+    /** Counter */
+    private final WrappedInteger         progress;
+
+    /** Workload */
+    private final int                    startWorkload;
+    
+    /** Workload */
+    private final int                    totalWorkload;
+
     /** Hierarchies */
     private final String[][][]           hierarchies;
 
@@ -68,13 +78,21 @@ abstract class QualityModel<T> {
     /** Value */
     private final String                 suppressedValue;
 
-    /** Roots*/
-    private final Map<Integer, String>   roots = new HashMap<>();
+    /** Roots */
+    private final Map<Integer, String>   roots        = new HashMap<>();
+
+    /** Steps */
+    private int                          totalSteps   = 0;
+
+    /** Steps */
+    private int                          currentSteps = 0;
 
     /**
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -85,6 +103,8 @@ abstract class QualityModel<T> {
      * @param config
      */
     QualityModel(WrappedBoolean interrupt,
+                 WrappedInteger progress,
+                 int totalWorkload,
                  DataHandle input,
                  DataHandle output,
                  Groupify<TupleWrapper> groupedInput,
@@ -103,6 +123,9 @@ abstract class QualityModel<T> {
         this.shares = shares;
         this.hierarchies = hierarchies;
         this.interrupt = interrupt;
+        this.progress = progress;
+        this.startWorkload = progress.value;
+        this.totalWorkload = totalWorkload;
         this.suppressedValue = config.getSuppressedValue();
         
         // Collect roots
@@ -125,14 +148,14 @@ abstract class QualityModel<T> {
         }
         return (roots.size() == 1) ? roots.iterator().next() : null;
     }
-
+    
     /**
      * Checks whether an interruption happened.
      */
     void checkInterrupt() {
         if (interrupt.value) { throw new ComputationInterruptedException("Interrupted"); }
     }
-
+    
     /**
      * Evaluates the utility measure
      * 
@@ -146,7 +169,7 @@ abstract class QualityModel<T> {
     QualityDomainShare[] getDomainShares() {
         return shares;
     }
-    
+
     /**
      * Returns grouped input
      */
@@ -167,7 +190,7 @@ abstract class QualityModel<T> {
     String[][][] getHierarchies() {
         return hierarchies;
     }
-
+    
     /**
      * Returns relevant indices
      */
@@ -275,5 +298,29 @@ abstract class QualityModel<T> {
      */
     double log2(double d) {
         return Math.log(d) / LOG2;
+    }
+
+    /**
+     * One step performed
+     */
+    void setStepPerformed() {
+        this.currentSteps++;
+        int value = (int)Math.round((double)totalWorkload * (double)currentSteps / (double)totalSteps);
+        this.progress.value = startWorkload + value;
+    }
+
+    /**
+     * Total number of steps
+     * @param steps
+     */
+    void setSteps(int steps) {
+        this.totalSteps = steps;
+    }
+
+    /**
+     * All steps performed
+     */
+    void setStepsDone() {
+        this.progress.value = startWorkload + totalWorkload;
     }
 }

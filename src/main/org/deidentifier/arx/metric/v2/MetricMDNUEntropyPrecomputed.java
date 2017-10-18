@@ -27,6 +27,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -140,7 +141,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Non-uniform entropy");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
@@ -314,8 +315,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
         
         // Create reference to the hierarchies
-        final int[][] data = input.getArray();
-        this.hierarchies = new int[data[0].length][][];
+        final DataMatrix data = input.getArray();
+        this.hierarchies = new int[data.getNumColumns()][][];
         for (int i = 0; i < hierarchies.length; i++) {
             this.hierarchies[i] = hierarchies[i].getArray();
         }

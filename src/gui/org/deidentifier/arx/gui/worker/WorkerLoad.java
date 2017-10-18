@@ -18,7 +18,6 @@
 package org.deidentifier.arx.gui.worker;
 
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -28,10 +27,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.deidentifier.arx.ARXAnonymizer;
@@ -54,6 +53,7 @@ import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.io.BackwardsCompatibleObjectInputStream;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLHandler;
@@ -84,18 +84,6 @@ public class WorkerLoad extends Worker<Model> {
 	
 	/** The model. */
 	private Model      model;
-
-	/**
-     * Creates a new instance.
-     *
-     * @param file
-     * @param controller
-     * @throws ZipException
-     * @throws IOException
-     */
-    public WorkerLoad(final File file, final Controller controller) throws ZipException, IOException {
-        this.zipfile = new ZipFile(file);
-    }
 
     /**
      * Constructor.
@@ -293,7 +281,8 @@ public class WorkerLoad extends Worker<Model> {
             } else {
             	outputNode = null;
             }
-            model.setSelectedNode(outputNode);
+            // TODO: This can be improved! Selected node is overwritten, but this is not needed, anymore
+            model.setSelectedNode(outputNode); 
             
             // Create solution space
             ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
@@ -310,7 +299,8 @@ public class WorkerLoad extends Worker<Model> {
                                           arxconfig,
                                           optimalNode,
                                           time,
-                                          solutions));
+                                          solutions,
+                                          model.getProcessStatistics()));
             
             // Update lattice
             ARXLattice lattice = model.getResult().getLattice();
@@ -318,6 +308,11 @@ public class WorkerLoad extends Worker<Model> {
                 lattice.access().setSolutionSpace(solutions);
             }
 
+            // Load output data
+            ZipEntry outputEntry = zip.getEntry("data/output.dat"); //$NON-NLS-1$
+            InputStream outputStream = outputEntry == null ? null : new BufferedInputStream(zip.getInputStream(outputEntry));
+            model.setOutput(outputStream);
+            
             // Create anonymizer
             final ARXAnonymizer f = new ARXAnonymizer();
             model.setAnonymizer(f);
@@ -353,7 +348,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max, format;
+            String attr, dtype, atype, ref, min, max, format, locale, response;
 
             @Override
             protected boolean end(final String uri,
@@ -390,9 +385,19 @@ public class WorkerLoad extends Worker<Model> {
                                     if (!description.hasFormat()) {
                                         throw new RuntimeException(Resources.getMessage("WorkerLoad.14")); //$NON-NLS-1$
                                     }
-                                    datatype = description.newInstance(format);
+                                    if (locale != null) {
+                                        Locale lLocale = getLocale(locale);
+                                        datatype = description.newInstance(format, lLocale);
+                                    } else {
+                                        datatype = description.newInstance(format);
+                                    }
                                 } else {
-                                    datatype = description.newInstance();
+                                    if (locale != null) {
+                                        Locale lLocale = getLocale(locale);
+                                        datatype = description.newInstance(lLocale);
+                                    } else {
+                                        datatype = description.newInstance();
+                                    }
                                 }
                                 break;
                             }
@@ -400,11 +405,16 @@ public class WorkerLoad extends Worker<Model> {
                         
                         // Check if found
                         if (datatype == null){
-                            throw new RuntimeException(Resources.getMessage("WorkerLoad.15")+attr); //$NON-NLS-1$
+                            throw new RuntimeException(Resources.getMessage("WorkerLoad.15") + attr); //$NON-NLS-1$
                         }
                         
                         // Store
                         definition.setDataType(attr, datatype);
+                    }
+                    
+                    // Response variables
+                    if (response != null && response.equals("true")) { //$NON-NLS-1$
+                        definition.setResponseVariable(attr, true);
                     }
 
                     // Attribute type
@@ -431,6 +441,9 @@ public class WorkerLoad extends Worker<Model> {
                         if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
                             MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
                             definition.setMicroAggregationFunction(attr, microaggregation);
+                        } else if (config.getTransformationMode(attr) == ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION) {
+                            MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                            definition.setMicroAggregationFunction(attr, microaggregation, true);
                         }
                         
                         Hierarchy hierarchy = config.getHierarchy(attr);
@@ -508,7 +521,8 @@ public class WorkerLoad extends Worker<Model> {
                     min = null;
                     max = null;
                     format = null;
-                    
+                    locale = null;
+                    response = null;
                     return true;
 
                 } else if (vocabulary.isName(localName)) {
@@ -522,6 +536,12 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
                 } else if (vocabulary.isFormat(localName)) {
                     format = payload;
+                    return true;
+                } else if (vocabulary.isLocale(localName)) {
+                    locale = payload;
+                    return true;
+                } else if (vocabulary.isResponseVariable(localName)) {
+                    response = payload;
                     return true;
                 } else if (vocabulary.isRef(localName)) {
                     ref = payload;
@@ -555,15 +575,20 @@ public class WorkerLoad extends Worker<Model> {
                     attr = null;
                     dtype = null;
                     atype = null;
+                    format = null;
+                    locale = null;
                     ref = null;
                     min = null;
                     max = null;
+                    response = null;
                     return true;
                 } else if (vocabulary.isName(localName) ||
                            vocabulary.isType(localName) ||
                            vocabulary.isDatatype(localName) ||
                            vocabulary.isFormat(localName) ||
+                           vocabulary.isLocale(localName) ||
                            vocabulary.isRef(localName) ||
+                           vocabulary.isResponseVariable(localName) ||
                            vocabulary.isMin(localName) ||
                            vocabulary.isMax(localName) ||
                            vocabulary.isMicroaggregationFunction(localName) ||
@@ -634,15 +659,15 @@ public class WorkerLoad extends Worker<Model> {
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
                                     Charset.defaultCharset(),
                                     model.getCSVSyntax().getDelimiter()));
+
+        // And encode
+        config.getInput().getHandle();
         
         // Disable visualization
         if (model.getMaximalSizeForComplexOperations() > 0 &&
             config.getInput().getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
             model.setVisualizationEnabled(false);
         }
-
-        // And encode
-        config.getInput().getHandle();
     }
 
     /**
@@ -1023,7 +1048,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.11")); } //$NON-NLS-1$
 
         // Read model
-        final ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
+        final ObjectInputStream oos = new BackwardsCompatibleObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         model = (Model) oos.readObject();
         oos.close();
     }
@@ -1051,5 +1076,19 @@ public class WorkerLoad extends Worker<Model> {
         if (lattice != null && model != null && model.getOutputConfig() != null && model.getOutputConfig().getConfig() != null) {
             lattice.access().setMonotonicity(model.getOutputConfig().getConfig());
         }
+    }
+
+    /**
+     * Returns the local for the given isoLanguage
+     * @param isoLanguage
+     * @return
+     */
+    private Locale getLocale(String isoLanguage) {
+        for (Locale locale : Locale.getAvailableLocales()) {
+            if (locale.getLanguage().toUpperCase().equals(isoLanguage.toUpperCase())) {
+                return locale;
+            }
+        }
+        throw new IllegalStateException("Unknown locale");
     }
 }

@@ -20,7 +20,7 @@ package org.deidentifier.arx.algorithm;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -46,7 +46,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @param epsilonSearch
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker,
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
                                            Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
         return new DataDependentEDDPAlgorithm(solutionSpace, checker, metric, deterministic, steps, epsilonSearch);
     }
@@ -70,7 +70,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     * @param steps
     * @param epsilonSearch
     */
-    private DataDependentEDDPAlgorithm(SolutionSpace space, NodeChecker checker,
+    private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
                           Metric<?> metric, boolean deterministic, int steps, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
@@ -86,7 +86,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     }
     
     @Override
-    public void traverse() {
+    public boolean traverse() {
         
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
@@ -136,6 +136,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         }
         
         assureChecked(bestTransformation);
+        return false;
     }
     
     /**

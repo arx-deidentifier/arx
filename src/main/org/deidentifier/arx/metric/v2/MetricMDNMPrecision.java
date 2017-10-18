@@ -93,14 +93,6 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     protected MetricMDNMPrecision(boolean monotonicWithGeneralization, boolean monotonicWithSuppression, boolean independent, double gsFactor, AggregateFunction function){
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor, function);
     }
-    
-    /**
-     * Creates a new instance.
-     * @param gsFactor
-     */
-    protected MetricMDNMPrecision(double gsFactor) {
-        super(true, false, false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
-    }
 
     /**
      * Creates a new instance.
@@ -140,7 +132,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Precision");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
@@ -158,8 +150,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
+        DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
         
         int[] transformation = node.getGeneralization();
         double[] result = new double[dimensions];
@@ -180,8 +172,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
             // Calculate avg. error
             for (int i = 0; i < dimensionsAggregated; i++) {
-                double share = (double) m.count * super.getError(microaggregationFunctions[i],
-                                                                 m.distributions[microaggregationStart + i]);  
+                double share = (double) m.count * microaggregationFunctions[i].getInformationLoss(m.distributions[microaggregationIndices[i]]);
                 result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
                                                                       (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
             }

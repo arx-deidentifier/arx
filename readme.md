@@ -5,7 +5,7 @@ ARX is a comprehensive open source software for de-identifying sensitive persona
 It has been designed from the ground up to provide high scalability, ease of use and a 
 tight integration of the many different aspects relevant to data anonymization. Its highlights include:
 
- * Risk-based anonymization using different statistical models
+ * Utility-focused anonymization using different statistical models
  * Syntactic privacy models, such as k-anonymity, ℓ-diversity, t-closeness and δ-presence
  * Semantic privacy models, such as (ɛ, δ)-differential privacy
  * Methods for optimizing the profitability of data publishing based on monetary cost-benefit analyses

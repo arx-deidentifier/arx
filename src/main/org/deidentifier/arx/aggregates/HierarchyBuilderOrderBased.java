@@ -37,7 +37,7 @@ import org.deidentifier.arx.DataType;
  * @author Fabian Prasser
  * @param <T>
  */
-public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> {
+public class HierarchyBuilderOrderBased<T> extends HierarchyBuilderGroupingBased<T> { // NO_UCD
 
     /**
      * A serializable comparator.

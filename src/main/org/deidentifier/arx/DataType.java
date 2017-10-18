@@ -49,7 +49,7 @@ import org.deidentifier.arx.aggregates.AggregateFunction.AggregateFunctionBuilde
  * @author Florian Kohlmayer
  * @param <T>
  */
-public abstract class DataType<T> implements Serializable, Comparator<T> {
+public abstract class DataType<T> implements Serializable, Comparator<T> { // NO_UCD
 
     /**
      * Base class for date/time types.
@@ -1345,6 +1345,16 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
          * @return
          */
         public abstract DataType<T> newInstance(String format, Locale locale);
+
+        /**
+         * Creates a new instance with default format and the given locale.
+         *
+         * @param locale
+         * @return
+         */
+        public DataType<T> newInstance(Locale locale) {
+            return newInstance(null, locale);
+        }
     }
     
     /**

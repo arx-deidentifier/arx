@@ -30,6 +30,12 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  */
 public class Distribution {
 
+    /** The load factor. */
+    private final static float LOADFACTOR       = 0.75f;
+
+    /** The initial default capacity of the hash table. */
+    private static final int   DEFAULT_CAPACITY = 8;    // power of two
+
     /** The size. */
     private int                size;
 
@@ -38,12 +44,6 @@ public class Distribution {
 
     /** The elements. Even index contains value, odd index contains frequency */
     private int[]              elements;
-
-    /** The loadfactor. */
-    private final static float LOADFACTOR       = 0.75f;
-
-    /** The initial default capacity of the hashtable. */
-    private static final int   DEFAULT_CAPACITY = 8;    // power of two
 
     /**
      * Default constructor.
@@ -97,7 +97,7 @@ public class Distribution {
         Arrays.fill(elements, -1);
         size = 0;
     }
-    
+
     /**
      * Gets all buckets of the hash table.
      *
@@ -106,7 +106,7 @@ public class Distribution {
     public int[] getBuckets() {
         return elements;
     }
-
+    
     /**
      * Merges two frequency sets.
      * 

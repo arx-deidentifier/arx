@@ -75,16 +75,6 @@ public class ComponentTitledBorder implements IComponent{
     }
 
     /**
-     * Creates a new instance.
-     *
-     * @param parent
-     * @param title
-     */
-    public ComponentTitledBorder(Composite parent, String title){
-        this(parent, null, title, null);
-    }
-    
-    /**
      * Returns the underlying control.
      *
      * @return

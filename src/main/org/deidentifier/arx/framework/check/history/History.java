@@ -245,16 +245,6 @@ public class History {
     }
     
     /**
-     * 
-     *
-     * @return
-     */
-    public int size() {
-        return cache.size();
-
-    }
-
-    /**
      * Stores a snapshot in the buffer.
      *
      * @param transformation The transformation
@@ -292,11 +282,11 @@ public class History {
         // Create the snapshot
         final int[] data = createSnapshot(groupify);
 
-
-        // assign snapshot and keep reference for cache
+        // Assign snapshot and keep reference for cache
         nodeToSnapshot.put(transformation.getIdentifier(), data);
         cache.append(new MRUCacheEntryMetadata(transformation));
 
+        // Success
         return true;
     }
 

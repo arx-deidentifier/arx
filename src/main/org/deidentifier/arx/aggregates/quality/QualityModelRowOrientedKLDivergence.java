@@ -21,6 +21,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * This class implements the KL Divergence metric.<br>
@@ -36,6 +37,8 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -46,6 +49,8 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
      * @param config
      */
     public QualityModelRowOrientedKLDivergence(WrappedBoolean interrupt,
+                                               WrappedInteger progress,
+                                               int totalWorkload,
                                                DataHandle input,
                                                DataHandle output,
                                                Groupify<TupleWrapper> groupedInput,
@@ -54,8 +59,9 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
                                                QualityDomainShare[] shares,
                                                int[] indices,
                                                QualityConfiguration config) {
-        
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -71,6 +77,9 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
 
         try {
 
+            // Progress
+            setSteps(4);
+            
             // Prepare
             DataHandle input = getInput();
             DataHandle output = getOutput();
@@ -79,6 +88,9 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
             QualityDomainShare[] shares = getDomainShares();
             double[] inputDistribution = getDistribution(getGroupedInput(), input, indices, shares, rows);
 
+            // Progress
+            setStepPerformed();
+            
             // Min and max
             double min = getKLDivergence(input, inputDistribution, inputDistribution, indices, shares, rows);
             double _max = 1d;
@@ -87,9 +99,15 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
             }
             double max = (double) rows * log2(_max);
 
+            // Progress
+            setStepPerformed();
+            
             // Output distribution
             double[] outputDistribution = getDistribution(getGroupedOutput(), output, indices, shares, rows);
-    
+
+            // Progress
+            setStepPerformed();
+            
             // KL divergence
             double result = getKLDivergence(output,
                                             inputDistribution,
@@ -97,11 +115,18 @@ public class QualityModelRowOrientedKLDivergence extends QualityModel<QualityMea
                                             indices, 
                                             shares, 
                                             rows);
+
+            // Progress
+            setStepsDone();
             
             // Return
             return new QualityMeasureRowOriented(min, result, max);
             
         } catch (Exception e) {
+
+            // Progress
+            setStepsDone();
+            
             // Silently catch exceptions
             return new QualityMeasureRowOriented();
         }

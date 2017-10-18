@@ -35,9 +35,6 @@ public class AnalysisContextQuality implements AnalysisContextVisualization{
     /** Context information. */
     public Model         model          = null;
     
-    /** Context information. */
-    public AnalysisContext context       = null;
-    
     /**
      * Creates a new context from the given context.
      *
@@ -46,7 +43,6 @@ public class AnalysisContextQuality implements AnalysisContextVisualization{
     public AnalysisContextQuality(AnalysisContext context){
         if (context.getData()==null) return;
         this.handle = context.getData().handle;
-        this.context = context;
         if (handle == null) return;
         this.model = context.getModel();
         if (model==null) return; 

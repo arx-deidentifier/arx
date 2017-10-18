@@ -58,7 +58,7 @@ public class TestIllegalArguments extends AbstractTest {
                 .setAttributeType("age", AttributeType.IDENTIFYING_ATTRIBUTE);
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(1.2d);
+            config.setSuppressionLimit(1.2d);
             anonymizer.anonymize(provider.getData(), config);
             
         } catch (final IllegalArgumentException e) {
@@ -82,7 +82,7 @@ public class TestIllegalArguments extends AbstractTest {
             
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(1.2d);
+            config.setSuppressionLimit(1.2d);
             anonymizer.anonymize(data, config);
             
         } catch (final IllegalArgumentException e) {
@@ -103,7 +103,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(1.2d);
+            config.setSuppressionLimit(1.2d);
             anonymizer.anonymize(provider.getData(), config);
             
         } catch (final IllegalArgumentException e) {
@@ -126,7 +126,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(1.2d);
+            config.setSuppressionLimit(1.2d);
             anonymizer.anonymize(provider.getData(), config);
             
         } catch (final IllegalArgumentException e) {
@@ -164,7 +164,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(0d);
+            config.setSuppressionLimit(0d);
             anonymizer.anonymize(provider.getData(), config);
             
         } catch (final IllegalArgumentException e) {
@@ -186,7 +186,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(-1));
-            config.setMaxOutliers(0d);
+            config.setSuppressionLimit(0d);
             anonymizer.anonymize(provider.getData(), config);
             
         } catch (final IllegalArgumentException e) {
@@ -208,7 +208,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(8));
-            config.setMaxOutliers(0d);
+            config.setSuppressionLimit(0d);
             anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
@@ -229,7 +229,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(0));
-            config.setMaxOutliers(0d);
+            config.setSuppressionLimit(0d);
             anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
@@ -250,7 +250,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(1d);
+            config.setSuppressionLimit(1d);
             anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
@@ -271,7 +271,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(-0.2d);
+            config.setSuppressionLimit(-0.2d);
             anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
@@ -292,7 +292,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(1.2d);
+            config.setSuppressionLimit(1.2d);
             anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
             return;
@@ -330,7 +330,7 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(0d);
+            config.setSuppressionLimit(0d);
             anonymizer.anonymize(data, config);
         } catch (final IllegalArgumentException e) {
             return;
@@ -351,7 +351,7 @@ public class TestIllegalArguments extends AbstractTest {
             data.getDefinition().setAttributeType("age", (AttributeType) null);
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setMaxOutliers(1.2d);
+            config.setSuppressionLimit(1.2d);
             anonymizer.anonymize(data, config);
         } catch (final NullPointerException e) {
             return;

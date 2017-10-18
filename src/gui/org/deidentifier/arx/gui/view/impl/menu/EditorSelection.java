@@ -56,21 +56,6 @@ public abstract class EditorSelection implements IEditor<String> {
         this.createControl(composite);
     }
 
-    /**
-     * 
-     *
-     * @param category
-     * @param label
-     * @param elems
-     */
-    public EditorSelection(final String category,
-                           final String label,
-                           final String[] elems) {
-        this.category = category;
-        this.label = label;
-        this.elems = elems;
-    }
-
     @Override
     public boolean accepts(final String s) {
         return true;

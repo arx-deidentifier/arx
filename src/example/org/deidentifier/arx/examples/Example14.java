@@ -86,7 +86,7 @@ public class Example14 extends Example {
         config.addPrivacyModel(new KAnonymity(3));
         
         // NDS-specific settings
-        config.setMaxOutliers(1d); // Recommended default: 1d
+        config.setSuppressionLimit(1d); // Recommended default: 1d
         config.setAttributeWeight("age", 0.5d); // attribute weight
         config.setAttributeWeight("gender", 0.3d); // attribute weight
         config.setAttributeWeight("zipcode", 0.5d); // attribute weight

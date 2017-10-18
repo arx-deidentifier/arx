@@ -14,17 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.deidentifier.arx.gui.worker;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXListener;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.metric.MetricConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -32,51 +34,41 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @author Fabian Prasser
  */
-public class WorkerAnonymize extends Worker<ARXResult> {
-
+public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, ARXProcessStatistics>> {
+    
     /** The model. */
-    private final Model model;
+    private final Model  model;
 
     /** Heuristic flag */
-    private final int   timeLimit;
+    private final int    maxTimePerIteration;
+
+    /** Heuristic flag */
+    private final double minRecordsPerIteration;
 
     /**
      * Creates a new instance.
      *
      * @param model
-     * @param heuristicSearch 
+     * @param maxTimePerIteration 
+     * @param minRecordsPerIteration
      */
-    public WorkerAnonymize(final Model model, int timeLimit) {
+    public WorkerAnonymize(final Model model, int maxTimePerIteration, double minRecordsPerIteration) {
         this.model = model;
-        this.timeLimit = timeLimit;
+        this.maxTimePerIteration = maxTimePerIteration;
+        this.minRecordsPerIteration = minRecordsPerIteration;
     }
 
     @Override
-    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                                        InterruptedException {
+    public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
         // Initialize anonymizer
         final ARXAnonymizer anonymizer = model.createAnonymizer();
-
-        // Update the progress bar
-        anonymizer.setListener(new ARXListener() {
-            int previous = 0;
-            public void progress(final double progress) {
-                if (arg0.isCanceled()) { 
-                    throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); //$NON-NLS-1$ 
-                } 
-                int current = (int)(Math.round(progress * 100d));
-                if (current != previous) {
-                    arg0.worked(current - previous);
-                    previous = current;
-                }
-            }
-        });
 
         // Remember user-defined settings
         ARXConfiguration config = model.getInputConfig().getConfig();
         boolean heuristicSearchEnabled = config.isHeuristicSearchEnabled();
         int heuristicSearchTimeLimit = config.getHeuristicSearchTimeLimit();
+        double suppressionLimit = config.getSuppressionLimit();
         
         // Perform all tasks
         try {
@@ -84,32 +76,62 @@ public class WorkerAnonymize extends Worker<ARXResult> {
             // Release
             model.getInputConfig().getInput().getHandle().release();
             
-            // Temporarily overwrite user-defined settings
-            if (timeLimit > 0) {
+            // Temporarily overwrite user-defined settings regarding the heuristic search
+            if (maxTimePerIteration > 0) {
                 config.setHeuristicSearchEnabled(true);
-                config.setHeuristicSearchTimeLimit(timeLimit);
+                config.setHeuristicSearchTimeLimit(maxTimePerIteration);
             }
             
+            // Persistently overwrite user-defined settings to prepare local recoding
+            if (minRecordsPerIteration != 0) {
+                MetricConfiguration metricConfig = config.getQualityModel().getConfiguration();
+                metricConfig.setGsFactor(0d);
+                config.setQualityModel(config.getQualityModel().getDescription().createInstance(metricConfig));
+                config.setSuppressionLimit(1d - minRecordsPerIteration);
+            }
+            
+            // Prepare progress tracking
+            monitor.beginTask(Resources.getMessage("WorkerAnonymize.0"), 100); //$NON-NLS-1$
+            anonymizer.setListener(new ProgressListener(monitor));
+            
             // Anonymize
-            arg0.beginTask(Resources.getMessage("WorkerAnonymize.0"), 110); //$NON-NLS-1$
-        	result = anonymizer.anonymize(model.getInputConfig().getInput(), config);
+        	ARXResult result = anonymizer.anonymize(model.getInputConfig().getInput(), config);
 
             // Apply optimal transformation, if any
+            DataHandle output = null;
             if (result.isResultAvailable()) {
-                result.getOutput(false);
+                output = result.getOutput(false);
             }
+            ARXProcessStatistics statistics = result.getProcessStatistics();
             model.setAnonymizer(anonymizer);
             model.setTime(result.getTime());
-            arg0.worked(10);
-            arg0.done();
+            monitor.worked(10);
+            
+            // Local recoding
+            if (output != null && minRecordsPerIteration != 0d) {
+                monitor.beginTask(Resources.getMessage("WorkerAnonymize.4"), 100); //$NON-NLS-1$
+                statistics = statistics.merge(result.optimizeIterativeFast(output, minRecordsPerIteration, new ProgressListener(monitor)));
+            }
+            
+            // Store results
+            this.result = new Pair<>(new Pair<>(result, output), statistics);
+            
+            // Now we are really done
+            monitor.done();
+            
         } catch (final Exception e) {
+            
+            // Handle errors
             error = e;
-            arg0.done();
+            monitor.done();
             return;
+            
         } finally {
+            
             // Reset to user-defined settings
             config.setHeuristicSearchEnabled(heuristicSearchEnabled);
             config.setHeuristicSearchTimeLimit(heuristicSearchTimeLimit);
+            config.setSuppressionLimit(suppressionLimit);
         }
     }
 }

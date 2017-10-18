@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.gui.model;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,6 +33,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
@@ -67,148 +70,149 @@ public class Model implements Serializable {
     }
 
     /** SVUID. */
-    private static final long                     serialVersionUID                = -7669920657919151279L;
+    private static final long                             serialVersionUID                = -7669920657919151279L;
 
     /* *****************************************
      * TRANSIENT VARIABLES
      *******************************************/
 
     /** The current anonymizer, if any. */
-    private transient ARXAnonymizer               anonymizer                      = null;
-    
-    /** The current output data. */
-    private transient DataHandle                  output                          = null;
-    
-    /** The currently displayed transformation. */
-    private transient ARXNode                     outputNode                      = null;
-    
-    /** The path to the project file. */
-    private transient String                      path                            = null;
-    
-    /** The current result. */
-    private transient ARXResult                   result                          = null;
-    
-    /** The currently selected node. */
-    private transient ARXNode                     selectedNode                    = null;
-    
-    /** The clip board. */
-    private transient ModelClipboard              clipboard                       = null;
-    
-    /** The perspective */
-    private transient Perspective                 perspective                     = Perspective.CONFIGURATION;
+    private transient ARXAnonymizer                       anonymizer                      = null;
 
+    /** The current output data. */
+    private transient DataHandle                          output                          = null;
+
+    /** The currently displayed transformation. */
+    private transient ARXNode                             outputNode                      = null;
+
+    /** The path to the project file. */
+    private transient String                              path                            = null;
+
+    /** The current result. */
+    private transient ARXResult                           result                          = null;
+
+    /** The currently selected node. */
+    private transient ARXNode                             selectedNode                    = null;
+
+    /** The clip board. */
+    private transient ModelClipboard                      clipboard                       = null;
+
+    /** The perspective */
+    private transient Perspective                         perspective                     = Perspective.CONFIGURATION;
 
     /* *****************************************
      * PARAMETERS AND THRESHOLDS
      *******************************************/
 
     /** Anonymization parameter. */
-    private double                                snapshotSizeDataset             = 0.2d;
-    
+    private double                                        snapshotSizeDataset             = 0.2d;
+
     /** Anonymization parameter. */
-    private double                                snapshotSizeSnapshot            = 0.8d;
-    
+    private double                                        snapshotSizeSnapshot            = 0.8d;
+
     /** Anonymization parameter. */
-    private int                                   historySize                     = 200;
-    
+    private int                                           historySize                     = 200;
+
     /** Threshold. */
-    private int                                   maximalSizeForComplexOperations = 5000000;
-    
+    private int                                           maximalSizeForComplexOperations = 5000000;
+
     /** Threshold. */
-    private int                                   initialNodesInViewer            = 100;
-    
+    private int                                           initialNodesInViewer            = 100;
+
     /** Threshold. */
-    private int                                   maxNodesInViewer                = 700;
+    private int                                           maxNodesInViewer                = 700;
 
     /* *****************************************
      * PROJECT METADATA
      ******************************************/
 
     /** The project description. */
-    private String                                description;
-    
+    private String                                        description;
+
     /** The size of the input file. */
-    private long                                  inputBytes                      = 0L;                                       //$NON-NLS-1$
-    
+    private long                                          inputBytes                      = 0L;
+
     /** Is the project file modified. */
-    private boolean                               modified                        = false;
-    
+    private boolean                                       modified                        = false;
+
     /** The project name. */
-    private String                                name                            = null;
-    
+    private String                                        name                            = null;
+
     /** Left for backwards compatibility only! */
-    private char                                  separator                       = ';';                                            //$NON-NLS-1$
+    private char                                          separator                       = ';';                                                    //$NON-NLS-1$
 
     /** The projects CSV syntax */
-    private CSVSyntax                             csvSyntax;
-    
-    /** Execution time of last anonymization. */
-    private long                                  time;
-    
-    /** Locale. */
-    // TODO: This is only a quick-fix. A locale should be definable for each data type individually.
-    private Locale                                locale                          = null;
+    private CSVSyntax                                     csvSyntax;
 
-    /** The audit trail*/
-    private List<ModelAuditTrailEntry>            auditTrail                      = new ArrayList<ModelAuditTrailEntry>();
+    /** Execution time of last anonymization. */
+    private long                                          time;
+
+    /** Locale. */
+    private Locale                                        locale                          = null;
+
+    /** The audit trail */
+    private List<ModelAuditTrailEntry>                    auditTrail                      = new ArrayList<ModelAuditTrailEntry>();
 
     /* *****************************************
      * DEBUGGING
      ******************************************/
 
     /** Is the debugging mode enabled. */
-    private boolean                               debugEnabled                    = false;
+    private boolean                                       debugEnabled                    = false;
 
     /* *****************************************
      * VISUALIZATIONS
      ******************************************/
 
     /** Indices of groups in the current output view. */
-    private int[]                                 groups;
-    
+    private int[]                                         groups;
+
     /** Label. */
-    private String                                optimalNodeAsString;
-    
+    private String                                        optimalNodeAsString;
+
     /** Label. */
-    private String                                outputNodeAsString;
-    
+    private String                                        outputNodeAsString;
+
     /** Current selection. */
-    private String                                selectedAttribute               = null;
-    
+    private String                                        selectedClassValue              = null;
+
+    /** Current selection. */
+    private String                                        selectedAttribute               = null;
+
     /** Enable/disable. */
-    private Boolean                               showVisualization               = true;
-    
+    private Boolean                                       showVisualization               = true;
+
     /** Last two selections. */
-    private String[]                              pair                            = new String[] { null, null };
+    private String[]                                      pair                            = new String[] { null, null };
 
     /* *****************************************
      * SUBSET MANAGEMENT
      ******************************************/
-    
+
     /** Query. */
-    private String                                query                           = "";                                             //$NON-NLS-1$
-    
+    private String                                        query                           = "";                                                     //$NON-NLS-1$
+
     /** Origin of current subset. */
-    private String                                subsetOrigin                    = "All";                                          //$NON-NLS-1$
+    private String                                        subsetOrigin                    = "All";                                                  //$NON-NLS-1$
 
     /* *****************************************
      * SUB-MODELS
      ******************************************/
 
     /** The current input configuration. */
-    private ModelConfiguration                    inputConfig                     = new ModelConfiguration();
-    
+    private ModelConfiguration                            inputConfig                     = new ModelConfiguration();
+
     /** A filter describing which transformations are currently selected. */
-    private ModelNodeFilter                       nodeFilter                      = null;
-    
+    private ModelNodeFilter                               nodeFilter                      = null;
+
     /** Configuration of the data view. */
-    private ModelViewConfig                       viewConfig                      = new ModelViewConfig();
-    
+    private ModelViewConfig                               viewConfig                      = new ModelViewConfig();
+
     /** The current output configuration. */
-    private ModelConfiguration                    outputConfig                    = null;
+    private ModelConfiguration                            outputConfig                    = null;
 
     /** The current risk model. */
-    private ModelRisk                             riskModel                       = null;
+    private ModelRisk                                     riskModel                       = null;
 
     /* *****************************************
      * PRIVACY CRITERIA
@@ -247,25 +251,24 @@ public class Model implements Serializable {
     /* *****************************************
      * UTILITY ANALYSIS
      ******************************************/
-    
+
     /** Configuration. */
-    private MetricConfiguration                   metricConfig                    = null;
-    
+    private MetricConfiguration                           metricConfig                    = null;
+
     /** Description. */
-    private MetricDescription                     metricDescription               = null;
-    
+    private MetricDescription                             metricDescription               = null;
+
     /** Summary statistics */
-    private Boolean                               useListwiseDeletion             = true;
+    private Boolean                                       useListwiseDeletion             = true;
 
     /** Utility estimation during anonymization */
-    private Boolean                               useFunctionalHierarchies        = true;
-    
+    private Boolean                                       useFunctionalHierarchies        = true;
+
     /* *****************************************
      * RISK ANALYSIS
      ******************************************/
-    /** Selected quasi identifiers*/
-    private Set<String>                           selectedQuasiIdentifiers        = null;
-    
+    /** Selected quasi identifiers */
+    private Set<String>                                   selectedQuasiIdentifiers        = null;    
 
     /* *****************************************
      * LOCAL RECODING
@@ -282,7 +285,13 @@ public class Model implements Serializable {
     private Set<String>                                   selectedClasses                 = null;
     /** Model */
     private ModelClassification                           classificationModel             = new ModelClassification();
-    
+
+    /* *****************************************
+     * Information about the last anonymization process
+     * ******************************************/
+    /** Statistics about the last optimization process*/
+    private ARXProcessStatistics                     optimizationStatistics          = null;
+
     /**
      * Creates a new instance.
      *
@@ -305,7 +314,7 @@ public class Model implements Serializable {
         this.getAuditTrail().add(entry);
         this.setModified();
     }
-    
+
     /**
      * Creates an anonymizer for the current config.
      *
@@ -325,13 +334,11 @@ public class Model implements Serializable {
         // Return the anonymizer
         return anonymizer;
     }
-    
+
     /**
      * Replaces the output config with a clone of the input config.
      */
     public void createClonedConfig() {
-
-        // Clone the config
         outputConfig = inputConfig.clone();
         this.setModified();
     }
@@ -377,15 +384,24 @@ public class Model implements Serializable {
             
             // Set attribute type
             definition.setAttributeType(attr, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-            
+
+            // Prepare for micro-aggregation
             if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
 
-                // Prepare for microaggregation
-                MicroAggregationFunction function = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                MicroAggregationFunction function = config.getMicroAggregationFunction(attr)
+                                                          .createInstance(config.getMicroAggregationIgnoreMissingData(attr));
                 definition.setMicroAggregationFunction(attr, function);
-            } else {
+
+            // Prepare for micro-aggregation with clustering
+            } else if (config.getTransformationMode(attr) == ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION) {
+
+                MicroAggregationFunction function = config.getMicroAggregationFunction(attr)
+                                                          .createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                definition.setMicroAggregationFunction(attr, function, true);
                 
-                // Prepare for generalization
+            // Prepare for generalization
+            } else {
+
                 definition.setMicroAggregationFunction(attr, null);
                 Integer min = config.getMinimumGeneralization(attr);
                 Integer max = config.getMaximumGeneralization(attr);
@@ -435,7 +451,7 @@ public class Model implements Serializable {
                 entry.getValue().isEnabled()) {
                 
                 if (entry.getValue().getVariant()==1){ // EMD with hierarchy
-                    if (config.getHierarchy(entry.getValue().getAttribute())==null){
+                    if (config.getHierarchy(entry.getValue().getAttribute()) == null){
                         config.setHierarchy(entry.getValue().getAttribute(), Hierarchy.create());
                     }
                 }
@@ -487,25 +503,6 @@ public class Model implements Serializable {
     }
 
     /**
-     * Creates an ARXConfiguration for the subset.
-     *
-     * @return
-     */
-    public ARXConfiguration createSubsetConfig() {
-
-        // Create a temporary config
-        ARXConfiguration config = ARXConfiguration.create();
-
-        // Add an enclosure criterion
-        DataSubset subset = DataSubset.create(getInputConfig().getInput(), 
-                                              getInputConfig().getResearchSubset());
-        config.addPrivacyModel(new Inclusion(subset));
-
-        // Return the config
-        return config;
-    }
-
-    /**
      * Returns the current anonymizer.
      *
      * @return
@@ -513,7 +510,7 @@ public class Model implements Serializable {
     public ARXAnonymizer getAnonymizer() {
         return anonymizer;
     }
-
+    
     /**
      * Returns the last two selected attributes.
      *
@@ -523,7 +520,7 @@ public class Model implements Serializable {
         if (pair == null) pair = new String[] { null, null };
         return pair;
     }
-    
+
     /**
      * Returns the audit trail
      * @return
@@ -536,6 +533,23 @@ public class Model implements Serializable {
     }
 
     /**
+     * Returns the b-Likeness privacy model.
+     *
+     * @return
+     */
+    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
+        if (this.bLikenessModel == null) {
+            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
+            DataHandle handle = inputConfig.getInput().getHandle();
+            for (int col = 0; col < handle.getNumColumns(); col++) {
+                String attribute = handle.getAttributeName(col);
+                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
+            }
+        }
+        return bLikenessModel;
+    }
+    
+    /**
      * Returns the classification model
      * @return
      */
@@ -545,7 +559,7 @@ public class Model implements Serializable {
         }
         return this.classificationModel;
     }
-    
+
     /**
      * Returns the clipboard.
      *
@@ -586,24 +600,7 @@ public class Model implements Serializable {
         }
         return dDisclosurePrivacyModel;
     }
-
-    /**
-     * Returns the b-Likeness privacy model.
-     *
-     * @return
-     */
-    public Map<String, ModelBLikenessCriterion> getBLikenessModel() {
-        if (this.bLikenessModel == null) {
-            this.bLikenessModel = new HashMap<String, ModelBLikenessCriterion>();
-            DataHandle handle = inputConfig.getInput().getHandle();
-            for (int col = 0; col < handle.getNumColumns(); col++) {
-                String attribute = handle.getAttributeName(col);
-                bLikenessModel.put(attribute, new ModelBLikenessCriterion(attribute));
-            }
-        }
-        return bLikenessModel;
-    }
-
+    
     /**
      * Returns the project description.
      *
@@ -624,7 +621,7 @@ public class Model implements Serializable {
         }
         return differentialPrivacyModel;
     }
-
+    
     /**
      * Returns the d-presence model.
      *
@@ -643,7 +640,7 @@ public class Model implements Serializable {
         // TODO: Refactor to colors[groups[row]]
         return this.groups;
     }
-    
+
     /**
      * Returns the according parameter.
      *
@@ -691,7 +688,7 @@ public class Model implements Serializable {
         else if (inputConfig.getInput()==null) return null;
         else return inputConfig.getInput().getDefinition();
     }
-
+    
     /**
      * Returns the input population model
      * @return
@@ -708,7 +705,7 @@ public class Model implements Serializable {
     public ModelKAnonymityCriterion getKAnonymityModel() {
         return kAnonymityModel;
     }
-    
+
     /**
      * Returns the k-map model.
      *
@@ -720,7 +717,7 @@ public class Model implements Serializable {
         }
         return kMapModel;
     }
-    
+
     /**
      * Returns the l-diversity model.
      *
@@ -766,7 +763,7 @@ public class Model implements Serializable {
     public int getMaximalSizeForComplexOperations(){
         return this.maximalSizeForComplexOperations;
     }
-
+    
     /**
      * Returns the maximal size of a sub-lattice that will be displayed
      * by the viewer.
@@ -776,7 +773,7 @@ public class Model implements Serializable {
     public int getMaxNodesInViewer() {
         return maxNodesInViewer;
     }
-
+    
     /**
      * Returns the configuration of the metric.
      *
@@ -874,7 +871,7 @@ public class Model implements Serializable {
      *
      * @return
      */
-    public ARXNode getOutputNode() {
+    public ARXNode getOutputTransformation() {
         return outputNode;
     }
 
@@ -902,7 +899,7 @@ public class Model implements Serializable {
         }
         return null;
     }
-    
+
     /**
      * Returns the path of the project.
      *
@@ -911,7 +908,7 @@ public class Model implements Serializable {
     public String getPath() {
         return path;
     }
-    
+
     /**
      * @return the perspective
      */
@@ -923,6 +920,16 @@ public class Model implements Serializable {
     }
 
     /**
+     * @return the optimizationStatistics
+     */
+    public ARXProcessStatistics getProcessStatistics() {
+        if (optimizationStatistics == null && this.result != null) {
+            return this.result.getProcessStatistics();
+        }
+        return optimizationStatistics;
+    }
+
+    /**
      * Returns the current query.
      *
      * @return
@@ -930,7 +937,7 @@ public class Model implements Serializable {
     public String getQuery() {
         return query;
     }
-
+    
     /**
      * Returns the current result.
      *
@@ -939,7 +946,7 @@ public class Model implements Serializable {
     public ARXResult getResult() {
         return result;
     }
-
+    
     /**
      * Returns the risk-based model.
      *
@@ -954,7 +961,7 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-    
+
     /**
      * Returns the risk model
      * @return the risk model
@@ -975,7 +982,6 @@ public class Model implements Serializable {
         return selectedAttribute;
     }
 
-    
     /**
      * Returns the selected features
      * @return
@@ -986,6 +992,16 @@ public class Model implements Serializable {
         }
         return this.selectedClasses;
     }
+    
+    /**
+     * Returns the currently selected class value.
+     * 
+     * @return
+     */
+    public String getSelectedClassValue() {
+        return selectedClassValue;
+    }
+
 
     /**
      * Returns the selected features
@@ -997,7 +1013,7 @@ public class Model implements Serializable {
         }
         return this.selectedFeatures;
     }
-
+    
     /**
      * Returns the selected transformation.
      *
@@ -1007,6 +1023,7 @@ public class Model implements Serializable {
         return selectedNode;
     }
 
+    
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -1183,7 +1200,7 @@ public class Model implements Serializable {
     public boolean isQuasiIdentifierSelected() {
         return (getInputDefinition().getAttributeType(getSelectedAttribute()) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
     }
-    
+
     /**
      * Returns whether a sensitive attribute is selected.
      *
@@ -1205,7 +1222,7 @@ public class Model implements Serializable {
             return this.showVisualization;
         }
     }
-    
+
     /**
      * Resets the model.
      */
@@ -1234,7 +1251,7 @@ public class Model implements Serializable {
         pair[0] = null;
         pair[1] = null;
     }
-    
+
     /**
      * Resets the configuration of the privacy criteria.
      */
@@ -1264,7 +1281,7 @@ public class Model implements Serializable {
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
     }
-
+    
     /**
      * Sets the anonymizer.
      *
@@ -1274,7 +1291,7 @@ public class Model implements Serializable {
         setModified();
         this.anonymizer = anonymizer;
     }
-
+    
     /**
      * Enables debugging.
      *
@@ -1284,7 +1301,7 @@ public class Model implements Serializable {
         this.debugEnabled = value;
         this.setModified();
     }
-
+    
     /**
      * Sets the project description.
      *
@@ -1352,7 +1369,7 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1362,7 +1379,7 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1381,14 +1398,14 @@ public class Model implements Serializable {
     public void setMetricDescription(MetricDescription description) {
         this.metricDescription = description;
     }
-
+    
     /**
      * Marks this project as modified.
      */
     public void setModified() {
         modified = true;
     }
-
+    
     /**
      * Sets the project name.
      *
@@ -1427,6 +1444,30 @@ public class Model implements Serializable {
     }
 
     /**
+     * Sets the current output, deserialized from a project
+     *
+     * @param stream
+     * @param node
+     * @throws IOException 
+     * @throws ClassNotFoundException 
+     */
+    public void setOutput(final InputStream stream) throws ClassNotFoundException, IOException {
+        
+        // Backwards compatibility
+        if (stream == null) {
+            return;
+        }
+        this.outputNode = this.getSelectedNode();
+        if (this.outputNode != null) {
+            this.output = this.result.getOutput(stream, outputNode);
+            this.outputNodeAsString = Arrays.toString(outputNode.getTransformation());
+        } else {
+            this.output = null;
+            this.outputNodeAsString = null;
+        }
+    }
+
+    /**
      * Sets the output config.
      *
      * @param config
@@ -1443,12 +1484,20 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-    
+
     /**
      * @param perspective the perspective to set
      */
     public void setPerspective(Perspective perspective) {
         this.perspective = perspective;
+    }
+    
+    /**
+     * @param optimizationStatistics the optimizationStatistics to set
+     */
+    public void setProcessStatistics(ARXProcessStatistics optimizationStatistics) {
+        this.optimizationStatistics = optimizationStatistics;
+        this.setModified();
     }
     
     /**
@@ -1477,13 +1526,6 @@ public class Model implements Serializable {
     }
 
     /**
-     * Marks this project as saved.
-     */
-    public void setSaved() {
-        modified = false;
-    }
-
-    /**
      * Sets the selected attribute.
      *
      * @param attribute
@@ -1506,7 +1548,7 @@ public class Model implements Serializable {
 
         setModified();
     }
-
+    
     /**
      * Sets a set of selected attributes
      * @param set
@@ -1514,6 +1556,14 @@ public class Model implements Serializable {
     public void setSelectedClasses(Set<String> set) {
         this.selectedClasses = set;
         this.setModified();
+    }
+
+    /**
+     * Sets the selected class value.
+     * @param classValue
+     */
+    public void setSelectedClassValue(final String classValue) {
+        selectedClassValue = classValue;
     }
 
     /**

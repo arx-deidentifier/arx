@@ -95,7 +95,7 @@ public class Example22 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new EntropyLDiversity("occupation", 5));
-        config.setMaxOutliers(0.04d);
+        config.setSuppressionLimit(0.04d);
         config.setQualityModel(Metric.createEntropyMetric());
         
         // Anonymize

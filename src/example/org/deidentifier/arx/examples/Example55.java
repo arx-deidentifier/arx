@@ -98,7 +98,7 @@ public class Example55 extends Example {
         // Create a configuration
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(1d - oMin);
+        config.setSuppressionLimit(1d - oMin);
         config.setQualityModel(Metric.createLossMetric(gsFactor));
 
         // Print input

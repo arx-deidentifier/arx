@@ -33,25 +33,29 @@ public class ModelLocalRecoding implements Serializable {
      */
     public static enum LocalRecodingMode {
         SINGLE_PASS,
+        ITERATIVE,
         MULTI_PASS,
         FIXPOINT,
         FIXPOINT_ADAPTIVE
     }
 
     /** SVUID. */
-    private static final long serialVersionUID = -5333464333997155970L;
+    private static final long serialVersionUID       = -5333464333997155970L;
 
     /** GS-Factor */
-    private double            gsFactor         = 0.05d;
+    private double            gsFactor               = 0.05d;
 
     /** The number of iterations to perform */
-    private int               numIterations    = 10;
+    private int               numIterations          = 10;
 
     /** Is the GS-Factor adaptive */
-    private double            adaptionFactor   = 0.05d;
+    private double            adaptionFactor         = 0.05d;
 
     /** The type of recoding to perform */
-    private LocalRecodingMode mode             = LocalRecodingMode.FIXPOINT_ADAPTIVE;
+    private LocalRecodingMode mode                   = LocalRecodingMode.ITERATIVE;
+
+    /** Minimal number of records to transform in each iteration */
+    private Double            minRecordsPerIteration = 0.01d;
 
     /**
      * Getter
@@ -67,6 +71,17 @@ public class ModelLocalRecoding implements Serializable {
      */
     public double getGsFactor() {
         return gsFactor;
+    }
+
+    /**
+     * Getter
+     * @return
+     */
+    public double getMinRecordsPerIteration() {
+        if (this.minRecordsPerIteration == null) {
+            this.minRecordsPerIteration = 0.01d;
+        }
+        return this.minRecordsPerIteration;
     }
 
     /**
@@ -103,12 +118,20 @@ public class ModelLocalRecoding implements Serializable {
 
     /**
      * Setter
+     * @param minRecordsPerIteration
+     */
+    public void setMinRecordsPerIteration(double minRecordsPerIteration) {
+        this.minRecordsPerIteration = minRecordsPerIteration;
+    }
+    
+    /**
+     * Setter
      * @param mode
      */
     public void setMode(LocalRecodingMode mode) {
         this.mode = mode;
     }
-
+    
     /**
      * Setter
      * @param numIterations

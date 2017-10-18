@@ -27,6 +27,7 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Implementation of the Sum of Squared Errors introduced in:<br>
@@ -42,6 +43,8 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -52,6 +55,8 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @param config
      */
     public QualityModelRowOrientedSSE(WrappedBoolean interrupt,
+                                      WrappedInteger progress,
+                                      int totalWorkload,
                                       DataHandle input,
                                       DataHandle output,
                                       Groupify<TupleWrapper> groupedInput,
@@ -61,6 +66,8 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                                       int[] indices,
                                       QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -82,6 +89,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
             List<double[]> columns2 = new ArrayList<>();
             List<Double> stdDevs = new ArrayList<>();
             String[][][] hierarchies = getHierarchies();
+
+            // Progress
+            setSteps(indices.length + 2);
             
             // Collect
             for (int index = 0; index < indices.length; index++) {
@@ -99,10 +109,18 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
                 } catch (Exception e) {
                     // Fail silently
                 }
+
+                // Progress
+                setStepPerformed();
             }
             
             // Check
             if (columns1.isEmpty() || columns2.isEmpty() || stdDevs.isEmpty()) {
+
+                // Progress
+                setStepsDone();
+                
+                // Return
                 return new QualityMeasureRowOriented();
             }
             
@@ -110,6 +128,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
             double realDistance = getEuclideanDistance(columns1.toArray(new double[columns1.size()][]),
                                                        columns2.toArray(new double[columns2.size()][]),
                                                        stdDevs.toArray(new Double[stdDevs.size()]));
+
+            // Progress
+            setStepPerformed();
             
             // Maximal distance
             double maxDistance = getMaximumEuclideanDistance(columns1.toArray(new double[columns1.size()][]),
@@ -121,11 +142,19 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
             realDistance /= (double)getOutput().getNumRows();
             maxDistance /= (double)columns1.size();
             maxDistance /= (double)getOutput().getNumRows();
+
+            // Progress
+            setStepsDone();
             
             // Return
             return new QualityMeasureRowOriented(0d, realDistance, maxDistance);
             
         } catch (Exception e) {
+
+            // Progress
+            setStepsDone();
+            
+            // Silently drop exceptions
             return new QualityMeasureRowOriented();
         }
     }
@@ -234,6 +263,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @return
      */
     private double getMaximumEuclideanDistance(double[][] input, double[][] output, Double[] inputStdDev) {
+        
+        // TODO: Normalization should probably be performed using distances from the dataset centroid,
+        // TODO: analogously to the implementation of the metric
         
         // Calculate minimum and maximum
         double[] minimum = new double[input.length];

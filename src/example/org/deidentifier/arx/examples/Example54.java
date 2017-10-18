@@ -105,7 +105,7 @@ public class Example54 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
-        config.setMaxOutliers(1d);
+        config.setSuppressionLimit(1d);
         config.setQualityModel(Metric.createLossMetric(0d));
         
         ARXResult result = anonymizer.anonymize(data, config);
@@ -120,10 +120,11 @@ public class Example54 extends Example {
         System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
         System.out.println(" - Granularity: " + utility.getGranularity().getArithmeticMean(false));
+        System.out.println(" - Attribute-level SE: " + utility.getAttributeLevelSquaredError().getArithmeticMean(false));
         System.out.println(" - KL-Divergence: " + utility.getKullbackLeiblerDivergence().getValue());
         System.out.println(" - Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
         System.out.println(" - Precision: " + utility.getGeneralizationIntensity().getArithmeticMean(false));
-        System.out.println(" - SSE: " + utility.getSumOfSquaredErrors().getValue());
+        System.out.println(" - Record-level SE: " + utility.getRecordLevelSquaredError().getValue());
         
         // Access statistics
         utility = output.getStatistics().getQualityStatistics();
@@ -132,9 +133,10 @@ public class Example54 extends Example {
         System.out.println(" - AECS: " + utility.getAverageClassSize().getValue());
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
         System.out.println(" - Granularity: " + utility.getGranularity().getArithmeticMean(false));
+        System.out.println(" - MSE: " + utility.getAttributeLevelSquaredError().getArithmeticMean(false));
         System.out.println(" - KL-Divergence: " + utility.getKullbackLeiblerDivergence().getValue());
         System.out.println(" - Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
         System.out.println(" - Precision: " + utility.getGeneralizationIntensity().getArithmeticMean(false));
-        System.out.println(" - SSE: " + utility.getSumOfSquaredErrors().getValue());
+        System.out.println(" - SSE: " + utility.getRecordLevelSquaredError().getValue());
     }
 }

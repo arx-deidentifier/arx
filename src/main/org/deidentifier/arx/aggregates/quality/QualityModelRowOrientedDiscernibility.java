@@ -22,6 +22,7 @@ import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 
 /**
@@ -38,6 +39,8 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -48,6 +51,8 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
      * @param config
      */
     public QualityModelRowOrientedDiscernibility(WrappedBoolean interrupt,
+                                                 WrappedInteger progress,
+                                                 int totalWorkload,
                                                  DataHandle input,
                                                  DataHandle output,
                                                  Groupify<TupleWrapper> groupedInput,
@@ -57,6 +62,8 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
                                                  int[] indices,
                                                  QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -71,13 +78,30 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
     public QualityMeasureRowOriented evaluate() {
         
         try {
+
+            // Progress
+            setSteps(2);
+            
             // Calculate
             double rows = getInput().getNumRows();
             double min = getDiscernibility(getGroupedInput(), rows);
+
+            // Progress
+            setStepPerformed();
+            
             double max = rows * rows;
             double result = getDiscernibility(getGroupedOutput(), rows);
+
+            // Progress
+            setStepsDone();
+            
             return new QualityMeasureRowOriented(min, result, max);
+            
         } catch (Exception e) {
+
+            // Progress
+            setStepsDone();
+            
             // Silently catch exceptions
             return new QualityMeasureRowOriented();
         }

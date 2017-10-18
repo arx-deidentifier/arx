@@ -21,6 +21,7 @@ import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 
 /**
  * Implementation of the Loss measure, as proposed in:<br>
@@ -32,11 +33,12 @@ import org.deidentifier.arx.common.WrappedBoolean;
  */
 public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureColumnOriented> {
     
-
     /**
      * Creates a new instance
      * 
      * @param interrupt
+     * @param progress
+     * @param totalWorkload
      * @param input
      * @param output
      * @param groupedInput
@@ -47,6 +49,8 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
      * @param config
      */
     public QualityModelColumnOrientedLoss(WrappedBoolean interrupt,
+                                          WrappedInteger progress,
+                                          int totalWorkload,
                                           DataHandle input,
                                           DataHandle output,
                                           Groupify<TupleWrapper> groupedInput,
@@ -56,6 +60,8 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
                                           int[] indices,
                                           QualityConfiguration config) {
         super(interrupt,
+              progress,
+              totalWorkload,
               input,
               output,
               groupedInput,
@@ -76,6 +82,9 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
+        
+        // Progress
+        setSteps(result.length);
         
         // For each column
         for (int i = 0; i < result.length; i++) {
@@ -100,6 +109,9 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
                 // Check
                 checkInterrupt();
             }
+
+            // Progress
+            setStepPerformed();
         }
 
         // For each column
@@ -108,6 +120,9 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
             min[i] = shares[i].getDomainSize() == 0d ? 0d : 1d / shares[i].getDomainSize();
             max[i] = 1d;
         }
+
+        // Progress
+        setStepsDone();
 
         // Return
         return new QualityMeasureColumnOriented(output, indices, min, result, max);
