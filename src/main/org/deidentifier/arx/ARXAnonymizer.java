@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
@@ -501,6 +502,10 @@ public class ARXAnonymizer { // NO_UCD
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent() && !config.getQualityModel().isScoreFunctionSupported()) {
+                throw new RuntimeException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+            }
         }
         
         // Perform sanity checks
@@ -537,6 +542,15 @@ public class ARXAnonymizer { // NO_UCD
                                           final DataManager manager,
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
+
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent()) {
+                double epsilonSearch = edpModel.getEpsilon() * config.getEpsilonSearchFraction();
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
+                                                         config.getDBSearchStepNumber(), epsilonSearch);
+            }
+        }
         
         if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());

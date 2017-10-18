@@ -377,6 +377,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Cost/benefit configuration */
     private ARXCostBenefitConfiguration        costBenefitConfiguration                         = ARXCostBenefitConfiguration.create();
+    
+    /** Fraction of the privacy budget to use for the data-dependent differential privacy search algorithm */
+    private Double                             epsilonSearchFraction                            = 0.1d;
+    
+    /** Number of steps to use for the data-dependent differential privacy search algorithm */
+    private Integer                            dbSearchStepNumber                               = 100;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -554,6 +560,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.costBenefitConfiguration = ARXCostBenefitConfiguration.create();
         }
         return this.costBenefitConfiguration;
+    }
+    
+    /**
+     * Returns the fraction of the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @return
+     */
+    public double getEpsilonSearchFraction() {
+        if (this.epsilonSearchFraction == null) {
+            this.epsilonSearchFraction = 0.1d;
+        }
+        return this.epsilonSearchFraction;
+    }
+    
+    /**
+     * Returns the number of steps to use for the data-dependent
+     * differential privacy search algorithm. The default is 100.
+     * @return
+     */
+    public int getDBSearchStepNumber() {
+        if (this.dbSearchStepNumber == null) {
+            this.dbSearchStepNumber = 100;
+        }
+        return this.dbSearchStepNumber;
     }
     
     /**
@@ -937,6 +967,26 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setHeuristicSearchStepLimit(int numberOfTransformations) {
         if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchStepLimit = numberOfTransformations;
+    }
+    
+    /**
+     * Sets the fraction of the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @param fraction
+     */
+    public void setEpsilonSearchFraction(double fraction) {
+        if (fraction <= 0d || fraction >= 1d) { throw new IllegalArgumentException("Parameter must be between 0 and 1"); }
+        this.epsilonSearchFraction = fraction;
+    }
+    
+    /**
+     * Sets the number of steps to use for the data-dependent
+     * differential privacy search algorithm. The default is 100.
+     * @param numberOfSteps
+     */
+    public void setDBSearchStepNumber(int numberOfSteps) {
+        if (numberOfSteps < 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.dbSearchStepNumber = numberOfSteps;
     }
 
     /**
