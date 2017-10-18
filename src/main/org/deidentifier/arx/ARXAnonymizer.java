@@ -548,7 +548,7 @@ public class ARXAnonymizer { // NO_UCD
             if (edpModel.isDataDependent()) {
                 double epsilonSearch = edpModel.getEpsilon() * config.getEpsilonSearchFraction();
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getDBSearchStepNumber(), epsilonSearch);
+                                                         config.getDPSearchStepNumber(), epsilonSearch);
             }
         }
         
@@ -576,7 +576,7 @@ public class ARXAnonymizer { // NO_UCD
         final String[] header = ((DataHandleInput) handle).header;
         final DataMatrix dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
-        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getPrivacyModels(), getAggregateFunctions(definition));
+        final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config, getAggregateFunctions(definition));
         return manager;
     }
 

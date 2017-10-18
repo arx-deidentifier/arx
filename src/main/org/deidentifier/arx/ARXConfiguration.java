@@ -382,7 +382,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Double                             epsilonSearchFraction                            = 0.1d;
     
     /** Number of steps to use for the data-dependent differential privacy search algorithm */
-    private Integer                            dbSearchStepNumber                               = 100;
+    private Integer                            dpSearchStepNumber                               = 100;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -512,6 +512,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
+        result.epsilonSearchFraction = this.epsilonSearchFraction;
+        result.dpSearchStepNumber = this.dpSearchStepNumber;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -579,11 +581,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * differential privacy search algorithm. The default is 100.
      * @return
      */
-    public int getDBSearchStepNumber() {
-        if (this.dbSearchStepNumber == null) {
-            this.dbSearchStepNumber = 100;
+    public int getDPSearchStepNumber() {
+        if (this.dpSearchStepNumber == null) {
+            this.dpSearchStepNumber = 100;
         }
-        return this.dbSearchStepNumber;
+        return this.dpSearchStepNumber;
     }
     
     /**
@@ -984,9 +986,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * differential privacy search algorithm. The default is 100.
      * @param numberOfSteps
      */
-    public void setDBSearchStepNumber(int numberOfSteps) {
+    public void setDPSearchStepNumber(int numberOfSteps) {
         if (numberOfSteps < 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
-        this.dbSearchStepNumber = numberOfSteps;
+        this.dpSearchStepNumber = numberOfSteps;
     }
 
     /**

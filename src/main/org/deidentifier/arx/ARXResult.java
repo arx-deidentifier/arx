@@ -124,7 +124,7 @@ public class ARXResult {
                                                     dataArray,
                                                     dictionary,
                                                     handle.getDefinition(),
-                                                    config.getPrivacyModels(),
+                                                    config,
                                                     getAggregateFunctions(handle.getDefinition()));
 
         // Update handle

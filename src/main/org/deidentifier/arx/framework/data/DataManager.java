@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
@@ -142,14 +143,14 @@ public class DataManager {
      * @param data
      * @param dictionary
      * @param definition
-     * @param criteria
+     * @param config
      * @param function
      */
     public DataManager(final String[] header,
                        final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
-                       final Set<PrivacyCriterion> criteria,
+                       final ARXConfiguration config,
                        final Map<String, DistributionAggregateFunction> functions) {
 
         // Store columns for reordering the output
@@ -280,16 +281,19 @@ public class DataManager {
             }
         }
         
-        // Change min & max, when using (e,d)-DP
-        for (PrivacyCriterion c : criteria) {
+        // Change min & max, when using data-independent (e,d)-DP
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c instanceof EDDifferentialPrivacy) {
-                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
-                for (int i = 0; i < header.length; i++) {
-                    final int idx = i * 2;
-                    if (attributesGeneralized.contains(header[i]) &&
-                        map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
-                        minLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
-                        maxLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
+                EDDifferentialPrivacy edpModel = (EDDifferentialPrivacy)c;
+                if (!edpModel.isDataDependent()) {
+                    DataGeneralizationScheme scheme = edpModel.getGeneralizationScheme();
+                    for (int i = 0; i < header.length; i++) {
+                        final int idx = i * 2;
+                        if (attributesGeneralized.contains(header[i]) &&
+                            map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
+                            minLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
+                            maxLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
+                        }
                     }
                 }
                 break;
@@ -298,7 +302,7 @@ public class DataManager {
 
         // Build map with hierarchies for sensitive attributes
         Map<String, String[][]> sensitiveHierarchies = new HashMap<String, String[][]>();
-        for (PrivacyCriterion c : criteria) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c instanceof HierarchicalDistanceTCloseness) {
                 HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness) c;
                 sensitiveHierarchies.put(t.getAttribute(), t.getHierarchy().getHierarchy());
@@ -386,9 +390,9 @@ public class DataManager {
         }
 
         // Store research subset
-        for (PrivacyCriterion c : criteria) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this, null);
+                ((EDDifferentialPrivacy) c).initialize(this, config);
             }
             if (c.isSubsetAvailable()) {
                 DataSubset _subset = c.getDataSubset();
