@@ -23,6 +23,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -31,6 +32,8 @@ import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class provides an efficient implementation of the non-uniform entropy
@@ -78,6 +81,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
     /** Num rows */
     private double        rows;
+
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double        k;
+
+    /** The root values of all generalization hierarchies or -1 if no single root value exists */
+    private int[]         rootValues;
+
 
     /**
      * Precomputed.
@@ -134,6 +144,11 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
     @Override
     public boolean isPrecomputed() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
@@ -330,7 +345,77 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             max[i] = (input.getDataLength() * log2(input.getDataLength())) * Math.max(gFactor, sFactor);
         }
         
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            
+            // Store minimal size of equivalence classes
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            k = (double)dpCriterion.getMinimalClassSize();
+            
+            // Store root values of generalization hierarchies or null if no single root value exists
+            rootValues = new int[hierarchies.length];
+            for (int i = 0; i < hierarchies.length; i++) {
+                int rootValue = -1;
+                for (int[] row : hierarchies[i].getArray()) {
+                    if (rootValue == -1) {
+                        rootValue = row[row.length-1];
+                    } else if (row[row.length-1] != rootValue) {
+                        rootValue = -1;
+                        break;
+                    }
+                }
+                rootValues[i] = rootValue;
+            }
+        }
+        
         super.setMax(max);
         super.setMin(min);
+    }
+    
+    @Override
+    public double getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Prepare
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+            nonSuppressedValueToCount[dimension] = new IntIntOpenHashMap();
+        }
+
+        // Compute score
+        double score = 0d;
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            if (m.count>0) {
+                m.read();
+                for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+                    int value = m.next();
+                    // Process values of records which have not been suppressed by sampling
+                    if (m.isNotOutlier && (rootValues[dimension] == -1 || value != rootValues[dimension])) {
+                        // The attribute value has neither been suppressed because of record suppression nor because of generalization
+                        nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
+                    } else {
+                        // The attribute value has been suppressed because of record suppression or because of generalization
+                        score += m.count * rows;
+                    }
+                    // Add values for records which have been suppressed by sampling
+                    score += (m.pcount - m.count) * rows;
+                }
+            }
+            m = m.nextOrdered;
+        }
+        // Add values for all attribute values which were not suppressed
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+            final boolean [] states = nonSuppressedValueToCount[dimension].allocated;
+            final int [] counts = nonSuppressedValueToCount[dimension].values;
+            for (int i=0; i<states.length; i++) {
+                if (states[i]) {
+                    score += counts[i] * counts[i];
+                }
+            }
+        }
+
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        score *= -1d / (rows * getDimensionsGeneralized());
+        return (k==1) ? score / 5d : score / (k * k / (k - 1d) + 1d);
     }
 }

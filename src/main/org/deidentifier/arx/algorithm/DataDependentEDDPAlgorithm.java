@@ -90,7 +90,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
-        double score = getScore(pivot);
+        double score = checker.getScore(pivot);
         
         // Initialize variables tracking the best of all pivot elements
         Transformation bestTransformation = pivot;
@@ -111,7 +111,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 long id = list.getQuick(i);
                 if (transformationIDToScore.containsKey(id)) continue;
                 Transformation predecessor = solutionSpace.getTransformation(id);
-                transformationIDToScore.put(id, getScore(predecessor));
+                transformationIDToScore.put(id, checker.getScore(predecessor));
             }
             
             // Remove the current pivot element from the set of candidates
@@ -137,15 +137,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         
         assureChecked(bestTransformation);
         return false;
-    }
-    
-    /**
-     * Returns the score for the given transformation
-     * @param transformation
-     * @return
-     */
-    private Double getScore(Transformation transformation) {
-        return checker.getScore(transformation, metric);
     }
 
     /**

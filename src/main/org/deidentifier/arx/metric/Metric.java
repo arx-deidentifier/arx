@@ -1710,6 +1710,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * Calculates the score.
      * Note: All score functions are expected to have a sensitivity of one.
      * 
+     * @param node
+     * @param groupify
      * @return
      */
     public double getScore(final Transformation node, final HashGroupify groupify) {

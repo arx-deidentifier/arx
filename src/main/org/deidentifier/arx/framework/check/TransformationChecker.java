@@ -267,19 +267,44 @@ public class TransformationChecker {
     }
 
     /**
-     * Calculates a score
+     * Calculates a score.
+     * TODO: This code is basically an exact copy of code from check(...)
      * @param transformation
-     * @param metric
      * @return
      */
-    public double getScore(Transformation transformation, Metric<?> metric) {
+    public double getScore(Transformation transformation) {
         
-        if (true) {
-            throw new RuntimeException("Please don't call apply(...) here!");
-        } else {
-            check(transformation);
-            return metric.getScore(transformation, currentGroupify);
+        // Store snapshot from last check
+        if (stateMachine.getLastTransformation() != null) {
+            history.store(solutionSpace.getTransformation(stateMachine.getLastTransformation()), currentGroupify, stateMachine.getLastTransition().snapshot);
         }
+        
+        // Transition
+        final Transition transition = stateMachine.transition(transformation.getGeneralization());
+        
+        // Switch groupifies
+        final HashGroupify temp = lastGroupify;
+        lastGroupify = currentGroupify;
+        currentGroupify = temp;
+        
+        // Apply transition
+        switch (transition.type) {
+        case UNOPTIMIZED:
+            currentGroupify = transformer.apply(transition.projection, transformation.getGeneralization(), currentGroupify);
+            break;
+        case ROLLUP:
+            currentGroupify = transformer.applyRollup(transition.projection, transformation.getGeneralization(), lastGroupify, currentGroupify);
+            break;
+        case SNAPSHOT:
+            currentGroupify = transformer.applySnapshot(transition.projection, transformation.getGeneralization(), currentGroupify, transition.snapshot);
+            break;
+        }
+        
+        // We are done with transforming and adding
+        currentGroupify.stateAnalyze(transformation, true);
+      
+        // Return
+        return metric.getScore(transformation, currentGroupify);
     }
     
     /**
