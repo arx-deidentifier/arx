@@ -50,6 +50,8 @@ import org.deidentifier.arx.risk.RiskModelHistogram;
 
 import cern.colt.Swapper;
 
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+
 /**
  * This class provides access to dictionary encoded data. Furthermore, the data
  * is linked to the associated input or output data. This means that, e.g., if
@@ -65,22 +67,25 @@ import cern.colt.Swapper;
 public abstract class DataHandle {
 
     /** The data types. */
-    protected DataType<?>[][]   dataTypes  = null;
+    protected DataType<?>[]                columnToDataType = null;
 
     /** The data definition. */
-    protected DataDefinition    definition = null;
+    protected DataDefinition               definition       = null;
 
     /** The header. */
-    protected String[]          header     = null;
+    protected String[]                     header           = null;
+
+    /** The header. */
+    protected ObjectIntOpenHashMap<String> headerMap        = null;
 
     /** The node. */
-    protected ARXNode           node       = null;
+    protected ARXNode                      node             = null;
 
     /** The current registry. */
-    protected DataRegistry      registry   = null;
+    protected DataRegistry                 registry         = null;
 
     /** The current research subset. */
-    protected DataHandle        subset     = null;
+    protected DataHandle                   subset           = null;
     
     /**
      * Returns the name of the specified column.
@@ -98,12 +103,7 @@ public abstract class DataHandle {
      */
     public int getColumnIndexOf(final String attribute) {
         checkRegistry();
-        for (int i = 0; i < header.length; i++) {
-            if (header[i].equals(attribute)) {
-                return i;
-            }
-        }
-        return -1;
+        return headerMap.getOrDefault(attribute, -1);
     }
 
     /**
@@ -904,7 +904,7 @@ public abstract class DataHandle {
      *
      * @return the data type array
      */
-    protected abstract DataType<?>[][] getDataTypeArray();
+    protected abstract DataType<?>[] getColumnToDataType();
 
     /**
      * Returns the distinct values.
@@ -924,6 +924,14 @@ public abstract class DataHandle {
     protected DataRegistry getRegistry() {
         return registry;
     }
+
+    /**
+     * Returns the internal value identifier
+     * @param column
+     * @param value
+     * @return
+     */
+    protected abstract int getValueIdentifier(int column, String value);
 
     /**
      * A negative integer, zero, or a positive integer as the first argument is
@@ -947,8 +955,8 @@ public abstract class DataHandle {
             for (int i = 0; i < columns.length; i++) {
 
                 int index = columns[i];
-                int cmp = dataTypes[0][index].compare(internalGetValue(row1, index, false),
-                                                      internalGetValue(row2, index, false));
+                int cmp = columnToDataType[index].compare(internalGetValue(row1, index, false),
+                                                   internalGetValue(row2, index, false));
                 if (cmp != 0) {
                     return ascending ? cmp : -cmp;
                 }
@@ -958,6 +966,15 @@ public abstract class DataHandle {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Internal representation of get encoded value. Returns -1 for suppressed values.
+     *
+     * @param row the row
+     * @param col the col
+     * @return the value
+     */
+    protected abstract int internalGetEncodedValue(int row, int col, boolean ignoreSuppression);
 
     /**
      * Internal representation of get value.
@@ -987,6 +1004,18 @@ public abstract class DataHandle {
     }
 
     /**
+     * Sets the current header
+     * @param header
+     */
+    protected void setHeader(String[] header) {
+        this.header = header;
+        this.headerMap = new ObjectIntOpenHashMap<String>();
+        for (int i = 0; i < header.length; i++) {
+            headerMap.put(header[i], i);
+        }
+    }
+
+    /**
      * Updates the registry.
      *
      * @param registry the new registry
@@ -994,7 +1023,7 @@ public abstract class DataHandle {
     protected void setRegistry(DataRegistry registry) {
         this.registry = registry;
     }
-
+    
     /**
      * Sets the subset.
      *

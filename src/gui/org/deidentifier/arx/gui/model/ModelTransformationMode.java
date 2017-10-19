@@ -24,5 +24,6 @@ package org.deidentifier.arx.gui.model;
  */
 public enum ModelTransformationMode {
     GENERALIZATION,
-    MICRO_AGGREGATION
+    MICRO_AGGREGATION,
+    CLUSTERING_AND_MICRO_AGGREGATION
 }

@@ -53,6 +53,7 @@ import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
 import org.deidentifier.arx.gui.model.ModelTransformationMode;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.io.BackwardsCompatibleObjectInputStream;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLHandler;
@@ -298,7 +299,8 @@ public class WorkerLoad extends Worker<Model> {
                                           arxconfig,
                                           optimalNode,
                                           time,
-                                          solutions));
+                                          solutions,
+                                          model.getProcessStatistics()));
             
             // Update lattice
             ARXLattice lattice = model.getResult().getLattice();
@@ -346,7 +348,7 @@ public class WorkerLoad extends Worker<Model> {
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            String attr, dtype, atype, ref, min, max, format, locale;
+            String attr, dtype, atype, ref, min, max, format, locale, response;
 
             @Override
             protected boolean end(final String uri,
@@ -409,6 +411,11 @@ public class WorkerLoad extends Worker<Model> {
                         // Store
                         definition.setDataType(attr, datatype);
                     }
+                    
+                    // Response variables
+                    if (response != null && response.equals("true")) { //$NON-NLS-1$
+                        definition.setResponseVariable(attr, true);
+                    }
 
                     // Attribute type
                     if (atype.equals(AttributeType.IDENTIFYING_ATTRIBUTE.toString())) {
@@ -434,6 +441,9 @@ public class WorkerLoad extends Worker<Model> {
                         if (config.getTransformationMode(attr) == ModelTransformationMode.MICRO_AGGREGATION) {
                             MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
                             definition.setMicroAggregationFunction(attr, microaggregation);
+                        } else if (config.getTransformationMode(attr) == ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION) {
+                            MicroAggregationFunction microaggregation = config.getMicroAggregationFunction(attr).createInstance(config.getMicroAggregationIgnoreMissingData(attr));
+                            definition.setMicroAggregationFunction(attr, microaggregation, true);
                         }
                         
                         Hierarchy hierarchy = config.getHierarchy(attr);
@@ -512,6 +522,7 @@ public class WorkerLoad extends Worker<Model> {
                     max = null;
                     format = null;
                     locale = null;
+                    response = null;
                     return true;
 
                 } else if (vocabulary.isName(localName)) {
@@ -528,6 +539,9 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
                 } else if (vocabulary.isLocale(localName)) {
                     locale = payload;
+                    return true;
+                } else if (vocabulary.isResponseVariable(localName)) {
+                    response = payload;
                     return true;
                 } else if (vocabulary.isRef(localName)) {
                     ref = payload;
@@ -566,6 +580,7 @@ public class WorkerLoad extends Worker<Model> {
                     ref = null;
                     min = null;
                     max = null;
+                    response = null;
                     return true;
                 } else if (vocabulary.isName(localName) ||
                            vocabulary.isType(localName) ||
@@ -573,6 +588,7 @@ public class WorkerLoad extends Worker<Model> {
                            vocabulary.isFormat(localName) ||
                            vocabulary.isLocale(localName) ||
                            vocabulary.isRef(localName) ||
+                           vocabulary.isResponseVariable(localName) ||
                            vocabulary.isMin(localName) ||
                            vocabulary.isMax(localName) ||
                            vocabulary.isMicroaggregationFunction(localName) ||
@@ -1032,7 +1048,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.11")); } //$NON-NLS-1$
 
         // Read model
-        final ObjectInputStream oos = new ObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
+        final ObjectInputStream oos = new BackwardsCompatibleObjectInputStream(new BufferedInputStream(zip.getInputStream(entry)));
         model = (Model) oos.readObject();
         oos.close();
     }

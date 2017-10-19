@@ -156,7 +156,7 @@ public class Example51 extends Example {
         ProfitabilityProsecutor profitability = new ProfitabilityProsecutor();
         
         // Configure ARX
-        arxconfig.setMaxOutliers(1d);
+        arxconfig.setSuppressionLimit(1d);
         arxconfig.setQualityModel(maximizePublisherPayout);
         arxconfig.addPrivacyModel(profitability);
 

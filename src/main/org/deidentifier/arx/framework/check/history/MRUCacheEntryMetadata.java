@@ -33,7 +33,7 @@ public class MRUCacheEntryMetadata {
     public final long  id;
 
     /**
-     * 
+     * Creates a new instance
      * @param transformation
      */
     public MRUCacheEntryMetadata(Transformation transformation) {

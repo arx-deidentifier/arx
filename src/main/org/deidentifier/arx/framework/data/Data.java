@@ -18,6 +18,8 @@
 package org.deidentifier.arx.framework.data;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.deidentifier.arx.RowSet;
 
@@ -32,47 +34,116 @@ import org.deidentifier.arx.RowSet;
 public class Data implements Cloneable, Serializable {
 
     /** SVUID */
-    private static final long serialVersionUID    = 9088882549074658790L;
+    private static final long          serialVersionUID    = 9088882549074658790L;
 
     /** The outliers mask. */
-    public static final int   OUTLIER_MASK        = 1 << 31;
+    public static final int            OUTLIER_MASK        = 1 << 31;
 
     /** The inverse outliers mask. */
-    public static final int   REMOVE_OUTLIER_MASK = ~OUTLIER_MASK;
+    public static final int            REMOVE_OUTLIER_MASK = ~OUTLIER_MASK;
+
+    /**
+     * Creates an object which projects the given data onto the given set of columns
+     * 
+     * @param data
+     * @param header
+     * @param columns
+     * @param dictionary
+     * @return
+     */
+    public static Data createProjection(final DataMatrix data,
+                                        final String[] header,
+                                        final int[] columns,
+                                        final Dictionary dictionary) {
+        
+        // Empty object
+        if (columns.length == 0) {
+            return new Data(null, new String[0], new int[0], new Dictionary(0));
+        }
+
+        // Clone matrix
+        DataMatrix matrix = new DataMatrix(data.getNumRows(), columns.length);
+        for (int row = 0; row < data.getNumRows(); row++) {
+            
+            // Prepare row
+            matrix.setRow(row);
+            data.setRow(row);
+            
+            // Copy each column
+            for (int index = 0; index < columns.length; index++) {
+                matrix.setValueAtColumn(index, data.getValueAtColumn(columns[index]));
+            }
+        }
+        
+        // Prepare header
+        String[] newHeader = new String[columns.length];
+        int index = 0;
+        for (int column : columns) {
+            newHeader[index++] = header[column];
+        }
+
+        // Return
+        return new Data(matrix, newHeader, columns, new Dictionary(dictionary, columns));
+    }
+
+    /**
+     * Creates an object which simply encapsulates the provided objects
+     * @param data
+     * @param header
+     * @param columns
+     * @param dictionary
+     * @return
+     */
+    public static Data createWrapper(final DataMatrix data,
+                                     final String[] header,
+                                     final int[] columns,
+                                     final Dictionary dictionary) {
+        
+        // Return
+        return new Data(data, header, columns, dictionary);
+    }
 
     /** Row, Dimension. */
-    private final DataMatrix  data;
+    private final DataMatrix           data;
 
     /** The header. */
-    private final String[]    header;
+    private final String[]             header;
 
     /** The associated dictionary. */
-    private final Dictionary  dictionary;
+    private final Dictionary           dictionary;
 
     /** The associated map. */
-    private final int[]       map;
+    private final int[]                columns;
+
+    /** Maps attributes to their index */
+    private final Map<String, Integer> map;
 
     /**
      * Creates a new data object.
      * 
      * @param data The int array
      * @param header The header
-     * @param map The map
+     * @param columns The map
      * @param dictionary The dictionary
      */
-    public Data(final DataMatrix data,
-                final String[] header,
-                final int[] map,
-                final Dictionary dictionary) {
+    private Data(final DataMatrix data,
+                 final String[] header,
+                 final int[] columns,
+                 final Dictionary dictionary) {
+        
         this.data = data;
         this.header = header;
         this.dictionary = dictionary;
-        this.map = map;
+        this.columns = columns;
+        this.map = new HashMap<>();
+        for (int index = 0; index < header.length; index++) {
+            map.put(header[index], index);
+        }
     }
 
     @Override
     public Data clone(){
-        return new Data(data.clone(), header, map, dictionary);
+        return new Data(data.clone(), header, columns, dictionary);
     }
 
     /**
@@ -82,6 +153,15 @@ public class Data implements Cloneable, Serializable {
      */
     public DataMatrix getArray() {
         return data;
+    }
+
+    /**
+     * Returns the set of columns from the input data set stored in this object.
+     *
+     * @return
+     */
+    public int[] getColumns() {
+        return columns;
     }
 
     /**
@@ -101,7 +181,7 @@ public class Data implements Cloneable, Serializable {
     public Dictionary getDictionary() {
         return dictionary;
     }
-
+    
     /**
      * Returns the header.
      *
@@ -112,12 +192,12 @@ public class Data implements Cloneable, Serializable {
     }
     
     /**
-     * Returns the map.
-     *
+     * Returns the index of the given attribute. Returns -1 if the attribute is not contained.
+     * @param attribute
      * @return
      */
-    public int[] getMap() {
-        return map;
+    public int getIndexOf(String attribute) {
+        return !map.containsKey(attribute) ? -1 : map.get(attribute);
     }
 
     /**
@@ -133,7 +213,7 @@ public class Data implements Cloneable, Serializable {
                 rows[index++] = row;
             }
         }
-        return new Data(new DataMatrixSubset(data, rows), header, map, dictionary);
+        return new Data(new DataMatrixSubset(data, rows), header, columns, dictionary);
     }
 
     /**

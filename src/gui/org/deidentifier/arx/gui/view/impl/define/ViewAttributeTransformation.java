@@ -160,7 +160,8 @@ public class ViewAttributeTransformation implements IView {
         cmbMode = new Combo(innerGroup, SWT.READ_ONLY);
         cmbMode.setLayoutData(SWTUtil.createFillGridData());
         cmbMode.setItems(new String[]{Resources.getMessage("ViewMicoaggregation.5"),
-                                      Resources.getMessage("ViewMicoaggregation.6")});
+                                      Resources.getMessage("ViewMicoaggregation.6"),
+                                      Resources.getMessage("ViewMicoaggregation.8")});
         cmbMode.select(0);
         cmbMode.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -520,8 +521,11 @@ public class ViewAttributeTransformation implements IView {
         if (cmbMode.getSelectionIndex() == 0) {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
             stack.setLayer(0);
-        } else {
+        } else if (cmbMode.getSelectionIndex() == 1) {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.MICRO_AGGREGATION);
+            stack.setLayer(1);
+        } else if (cmbMode.getSelectionIndex() == 2) {
+            model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION);
             stack.setLayer(1);
         }
     }
@@ -662,9 +666,12 @@ public class ViewAttributeTransformation implements IView {
             if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
                 stack.setLayer(0);
                 cmbMode.select(0);
-            } else {
+            } else if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.MICRO_AGGREGATION) {
                 stack.setLayer(1);
                 cmbMode.select(1);
+            } else if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION) {
+                stack.setLayer(1);
+                cmbMode.select(2);
             }
         } else {
             cmbMode.select(0);

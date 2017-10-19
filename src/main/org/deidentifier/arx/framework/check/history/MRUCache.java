@@ -33,24 +33,23 @@ public class MRUCache<T> {
      * The Class MRULinkedListIterator.
      * 
      * @author Fabian Prasser
- * @author Florian Kohlmayer
+     * @author Florian Kohlmayer
      */
     public class MRULinkedListIterator implements Iterator<T> {
 
-        /** The currposition. */
+        /** The current position. */
         private MRUCacheEntry<T>  currposition;
 
         /** The list. */
         private final MRUCache<T> list;
 
-        /** The prevposition. */
+        /** The previous position. */
         private MRUCacheEntry<T>  prevposition;
 
         /**
-         * Instantiates a new mRU linked list iterator.
+         * Instantiates a new iterator.
          * 
-         * @param l
-         *            the l
+         * @param l 
          */
         public MRULinkedListIterator(final MRUCache<T> l) {
             this.currposition = l.first;
@@ -58,21 +57,11 @@ public class MRUCache<T> {
             this.list = l;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Iterator#hasNext()
-         */
         @Override
         public boolean hasNext() {
             return this.currposition != null;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Iterator#next()
-         */
         @Override
         public T next() {
             final T obj = this.currposition.data;
@@ -81,11 +70,6 @@ public class MRUCache<T> {
             return obj;
         }
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.util.Iterator#remove()
-         */
         @Override
         public void remove() {
             this.list.remove(this.prevposition);
@@ -103,10 +87,9 @@ public class MRUCache<T> {
     private MRUCacheEntry<T>             last           = null;
 
     /**
-     * Instantiates a new mRU cache.
+     * Creates a new instance
      * 
-     * @param size
-     *            the size
+     * @param size the size
      */
     public MRUCache(final int size) {
         this.elementToEntry = new HashMap<T, MRUCacheEntry<T>>(size);
@@ -115,8 +98,7 @@ public class MRUCache<T> {
     /**
      * Append.
      * 
-     * @param node
-     *            the node
+     * @param node the node
      */
     public void append(final T node) {
         if (this.elementToEntry.containsKey(node)) {
@@ -179,8 +161,7 @@ public class MRUCache<T> {
     /**
      * Touch.
      * 
-     * @param node
-     *            the node
+     * @param node the node
      */
     public void touch(final T node) {
         final MRUCacheEntry<T> entry = this.elementToEntry.get(node);
@@ -192,8 +173,7 @@ public class MRUCache<T> {
     /**
      * Append.
      * 
-     * @param entry
-     *            the entry
+     * @param entry the entry
      */
     private void append(final MRUCacheEntry<T> entry) {
         if (this.first == null) {
@@ -212,8 +192,7 @@ public class MRUCache<T> {
     /**
      * Removes the.
      * 
-     * @param entry
-     *            the entry
+     * @param entry the entry
      */
     private void remove(final MRUCacheEntry<T> entry) {
         if (entry == this.first) {

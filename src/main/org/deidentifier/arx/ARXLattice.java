@@ -106,15 +106,6 @@ public class ARXLattice implements Serializable {
         /**
          * Accessor method
          *
-         * @param model
-         */
-        public void setQualityModel(final Metric<?> model) {
-            lattice.metric = model;
-        }
-
-        /**
-         * Accessor method
-         *
          * @param config
          */
         public void setMonotonicity(ARXConfiguration config) {
@@ -128,6 +119,15 @@ public class ARXLattice implements Serializable {
          */
         public void setOptimum(final ARXNode node) {
             lattice.optimum = node;
+        }
+
+        /**
+         * Accessor method
+         *
+         * @param model
+         */
+        public void setQualityModel(final Metric<?> model) {
+            lattice.metric = model;
         }
 
         /**
@@ -259,21 +259,21 @@ public class ARXLattice implements Serializable {
             }
 
             /**
-             * Sets the lower bound.
-             *
-             * @param a
-             */
-            public void setLowerBound(final InformationLoss<?> a) {
-                node.lowerBound = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
-            }
-
-            /**
              * Sets the maximal information loss.
              *
              * @param a
              */
             public void setHighestScore(final InformationLoss<?> a) {
                 node.maxInformationLoss = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
+            }
+
+            /**
+             * Sets the lower bound.
+             *
+             * @param a
+             */
+            public void setLowerBound(final InformationLoss<?> a) {
+                node.lowerBound = InformationLoss.createInformationLoss(a, metric, getDeserializationContext().minLevel, getDeserializationContext().maxLevel);
             }
 
             /**
@@ -582,19 +582,6 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * Renders this object
-         * @return
-         */
-        private ElementData renderGeneralizationScheme() {
-            ElementData result = new ElementData("Generalization scheme");
-            for (String qi : this.getQuasiIdentifyingAttributes()) {
-                result.addProperty(qi, this.getGeneralization(qi) + "/" +
-                                       this.lattice.getTop().getGeneralization(qi));    
-            }
-            return result;
-        }
-
-        /**
          * De-serialization.
          *
          * @param aInputStream
@@ -621,6 +608,27 @@ public class ARXLattice implements Serializable {
                                                                             metric, 
                                                                             getDeserializationContext().minLevel, 
                                                                             getDeserializationContext().maxLevel);
+        }
+
+        /**
+         * Renders this object
+         * @return
+         */
+        private ElementData renderGeneralizationScheme() {
+            ElementData result = new ElementData("Generalization scheme");
+            for (String qi : this.getQuasiIdentifyingAttributes()) {
+                result.addProperty(qi, this.getGeneralization(qi) + "/" +
+                                       this.lattice.getTop().getGeneralization(qi));    
+            }
+            return result;
+        }
+
+        /**
+         * Returns the headermap
+         * @return
+         */
+        protected Map<String, Integer> getHeaderMap() {
+            return this.headermap;
         }
 
         /**

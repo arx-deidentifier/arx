@@ -280,7 +280,7 @@ public class WorkerSave extends Worker<Model> {
         writer.unindent();
         
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
-        writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
+        writer.write(vocabulary.getRelativeMaxOutliers(), config.getSuppressionLimit());
         writer.write(vocabulary.getMetric(), config.getMetric().toString());
 
         // Write weights
@@ -340,6 +340,11 @@ public class WorkerSave extends Worker<Model> {
                 if (locale != null){
                     writer.write(vocabulary.getLocale(), locale.getLanguage().toUpperCase());
                 }
+            }
+            
+            // Response variables
+            if (definition.isResponseVariable(attr)) {
+                writer.write(vocabulary.getResponseVariable(), "true"); //$NON-NLS-1$
             }
             
             // Do we have a hierarchy

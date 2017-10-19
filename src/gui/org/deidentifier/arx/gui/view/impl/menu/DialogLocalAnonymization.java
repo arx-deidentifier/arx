@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.apache.commons.math3.util.Pair;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -28,8 +29,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
@@ -57,8 +56,6 @@ public class DialogLocalAnonymization extends TitleAreaDialog {
     /** View */
     private Text   txtMaxTimePerIteration;
     /** View */
-    private Button btnMaxTimeInfinity;
-    /** View */
     private Text   txtMinRecordsPerIteration;
 
     /** Result */
@@ -69,12 +66,15 @@ public class DialogLocalAnonymization extends TitleAreaDialog {
     /**
      * Creates a new instance
      * 
-     * @param parentShell
+     * @param shell
+     * @param model
      */
-    public DialogLocalAnonymization(Shell parentShell) {
-        super(parentShell);
+    public DialogLocalAnonymization(Shell shell, Model model) {
+        super(shell);
         this.title = Resources.getMessage("DialogLocalAnonymization.0"); //$NON-NLS-1$
         this.message = Resources.getMessage("DialogLocalAnonymization.1"); //$NON-NLS-1$
+        this.maxTimePerIteration = (double)model.getInputConfig().getHeuristicSearchTimeLimit() / 1000d;
+        this.minRecordsPerIteration = model.getLocalRecodingModel().getMinRecordsPerIteration();
     }
 
     /**
@@ -124,7 +124,7 @@ public class DialogLocalAnonymization extends TitleAreaDialog {
         } catch (Exception e) {
             return null;
         }
-        if (((int)value) >= 0d) {
+        if (((int)value) > 0d) {
             return value;
         } else {
             return null;
@@ -187,17 +187,15 @@ public class DialogLocalAnonymization extends TitleAreaDialog {
         Composite composite = (Composite) super.createDialogArea(parent);        
         Composite base = new Composite(composite, SWT.NONE);
         base.setLayoutData(SWTUtil.createFillGridData());
-        base.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
+        base.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
 
         // Time
         Label label1 = new Label(base, SWT.NONE);
         label1.setText(Resources.getMessage("DialogLocalAnonymization.2")); //$NON-NLS-1$
-        label1.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).span(1, 1).create());
 
         this.txtMaxTimePerIteration = new Text(base, SWT.BORDER);
-        this.txtMaxTimePerIteration.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(1, 1).create());
+        this.txtMaxTimePerIteration.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         this.txtMaxTimePerIteration.setText(String.valueOf(maxTimePerIteration));
-        this.txtMaxTimePerIteration.setEnabled(false);
         this.txtMaxTimePerIteration.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
@@ -205,30 +203,12 @@ public class DialogLocalAnonymization extends TitleAreaDialog {
             }
         });
         
-        this.btnMaxTimeInfinity = new Button(base, SWT.CHECK);
-        this.btnMaxTimeInfinity.setSelection(true);
-        this.btnMaxTimeInfinity.setText(Resources.getMessage("DialogLocalAnonymization.6")); //$NON-NLS-1$
-        this.btnMaxTimeInfinity.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).span(1, 1).create());
-        this.btnMaxTimeInfinity.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                if (btnMaxTimeInfinity.getSelection()) {
-                    txtMaxTimePerIteration.setText("0.0");
-                    txtMaxTimePerIteration.setEnabled(false);
-                } else {
-                    txtMaxTimePerIteration.setEnabled(true);
-                }
-                checkValidity();
-            }
-        });
-
         // Records
         Label label2 = new Label(base, SWT.NONE);
         label2.setText(Resources.getMessage("DialogLocalAnonymization.3")); //$NON-NLS-1$
-        label2.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).span(1, 1).create());
 
         this.txtMinRecordsPerIteration = new Text(base, SWT.BORDER);
-        this.txtMinRecordsPerIteration.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).span(2, 1).create());
+        this.txtMinRecordsPerIteration.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         this.txtMinRecordsPerIteration.setText(String.valueOf(minRecordsPerIteration));
         this.txtMinRecordsPerIteration.addModifyListener(new ModifyListener() {
             @Override

@@ -31,6 +31,7 @@ import org.eclipse.swt.widgets.Composite;
  * A view on a <code>Data</code> object.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class ViewDataOutput extends ViewData {
 
@@ -92,7 +93,7 @@ public class ViewDataOutput extends ViewData {
             // Update the attribute types
             table.getHeaderImages().clear();
             for (int i = 0; i < handle.getNumColumns(); i++) {
-                updateHeaderImage(i, definition.getAttributeType(handle.getAttributeName(i)));
+                updateHeaderImage(i, handle.getAttributeName(i), definition);
             }
             
             // Redraw

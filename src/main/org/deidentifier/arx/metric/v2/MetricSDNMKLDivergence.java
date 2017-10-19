@@ -155,7 +155,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("KL divergence");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
 

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
@@ -294,26 +294,21 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.14")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.15"), 1000, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getMaxRecords(); }
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.15"), 1000, Integer.MAX_VALUE, ARXClassificationConfiguration.DEFAULT_MAX_RECORDS) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getMaxRecords(); }
             protected void setValue(Object t) { model.getClassificationModel().setMaxRecords((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getClassificationModel().isDeterministic(); }
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17"), ARXClassificationConfiguration.DEFAULT_DETERMINISTIC) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getClassificationModel().getCurrentConfiguration().isDeterministic(); }
             protected void setValue(Object t) { model.getClassificationModel().setDeterministic((Boolean)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, 10) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getNumberOfFolds(); }
-            protected void setValue(Object t) { model.getClassificationModel().setNumberOfFolds((Integer)t); }});
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, ARXClassificationConfiguration.DEFAULT_NUMBER_OF_FOLDS) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getNumFolds(); }
+            protected void setValue(Object t) { model.getClassificationModel().setNumFolds((Integer)t); }});
 
-        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getVectorLength(); }
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, ARXClassificationConfiguration.DEFAULT_VECTOR_LENGTH) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getCurrentConfiguration().getVectorLength(); }
             protected void setValue(Object t) { model.getClassificationModel().setVectorLength((Integer)t); }});
-
-        window.addPreference(new PreferenceSelection(Resources.getMessage("DialogProperties.20"), getPriorFunctions()) { //$NON-NLS-1$
-            protected String getValue() { return model.getClassificationModel().getPriorFunction().name(); }
-            protected void setValue(Object arg0) { model.getClassificationModel().setPriorFunction(PriorFunction.valueOf((String)arg0)); }
-        });
     }
     
     /**
@@ -327,18 +322,6 @@ public class DialogProperties implements IDialog {
             languages.add(lang.toUpperCase());
         }
         return languages.toArray(new String[]{});
-    }
-
-    /**
-     * Creates a list of prior functions
-     * @return
-     */
-    private String[] getPriorFunctions() {
-        List<String> result = new ArrayList<String>();
-        for (PriorFunction function : PriorFunction.values()) {
-            result.add(function.name());
-        }
-        return result.toArray(new String[result.size()]);
     }
 
     /**

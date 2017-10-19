@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.AbstractEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.DPresence;
@@ -351,12 +352,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
     private Boolean                            suppressionAlwaysEnabled                         = true;
 
-    /** Should microaggregation be based on data utility measurements */
-    private boolean                            utilityBasedMicroaggregation                     = false;
-
-    /** Should the mean-squared error be used to measure the impact of microaggregation */
-    private boolean                            utilityBasedMicroaggregationUseMeanSquaredError  = false;
-
     /** Internal variant of the class providing a broader interface. */
     private transient ARXConfigurationInternal accessibleInstance                               = null;
 
@@ -439,7 +434,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if ((c instanceof KAnonymity) && this.isPrivacyModelSpecified(KAnonymity.class)) { 
                throw new IllegalArgumentException("You must not add more than one instance of the k-anonymity model"); 
         }
-        if ((c instanceof EDDifferentialPrivacy) && this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) { 
+        if ((c instanceof AbstractEDDifferentialPrivacy) && this.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) { 
             throw new IllegalArgumentException("You must not add more than one instance of the differential privacy model"); 
         }
         
@@ -504,7 +499,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchEnabled = this.heuristicSearchEnabled;
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
-        result.utilityBasedMicroaggregation = this.utilityBasedMicroaggregation;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
@@ -594,9 +588,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /**
      * Returns the maximum number of allowed outliers.
+     * Deprecated. Use <code>getSuppressionLimit()</code> instead.
      *
      * @return
      */
+    @Deprecated
     public double getMaxOutliers() {
         return relMaxOutliers;
     }
@@ -752,6 +748,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns the suppression limit
+     * @return
+     */
+    public double getSuppressionLimit() {
+        return this.getMaxOutliers();
+    }
+    
+    /**
      * Returns whether values of the given attribute type will be replaced by the suppression 
      * string in suppressed tuples.
      * @param type
@@ -796,7 +800,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return false;
     }
-    
+
     /**
      * Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -819,24 +823,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns whether the impact of microaggregation on data utility should be considered
-     * @return
-     */
-    public boolean isUtilityBasedMicroaggregation() {
-        return this.utilityBasedMicroaggregation;
-    }
-    
-    /**
-     * If set to true, mean squared error will be used to measure the impact of microaggregation
-     * on data quality. If set to false, a more simple measure of information loss will be used.
-     * Default is <code>false</code>.
-     * @return
-     */
-    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
-        return this.utilityBasedMicroaggregationUseMeanSquaredError;
-    }
-
-    /**
      * Removes the given criterion.
      *
      * @param <T>
@@ -847,7 +833,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         checkArgument(arg);
         return criteria.remove(arg);
     }
-
+    
     /**
      * Renders this object 
      * @return
@@ -861,7 +847,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.add(renderReidentificationThresholds());
         return result;
     }
-    
+
     /**
      * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.
      * With default settings, only quasi-identifiers will be suppressed.
@@ -949,7 +935,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchThreshold = numberOfTransformations;
     }
-
     /**
      * The heuristic search algorithm will terminate after the given number of milliseconds.
      * The default is 30 seconds.
@@ -959,16 +944,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchTimeLimit = timeInMillis;
     }
+    
     /**
      * Allows for a certain percentage of outliers and thus
      * triggers tuple suppression.
+     * Deprecated. Use <code>setSuppressionLimit()</code> instead.
      *
      * @param max
      */
+    @Deprecated
     public void setMaxOutliers(double max) {
         this.relMaxOutliers = max;
     }
-    
+
     /**
      * Set, if practical monotonicity assumed.
      *
@@ -977,7 +965,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
     }
-
+    
     /**
      * Sets the quality model to be used for optimizing output data.
      *
@@ -987,7 +975,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (model == null) { throw new NullPointerException("Quality model must not be null"); }
         this.metric = model;
     }
-    
+
     /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -1012,25 +1000,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setUseHeuristicSearchForSampleBasedCriteria(boolean value) {
         this.heuristicSearchForSampleBasedCriteria = value;
     }
-
-    /**
-     * Sets whether the impact of microaggregation on data utility should be considered 
-     * @return
-     */
-    public void setUtilityBasedMicroaggregation(boolean value) {
-        this.utilityBasedMicroaggregation = value;
-    }
-
-    /**
-     * If set to true, mean squared error will be used to measure the impact of microaggregation
-     * on data quality. If set to false, a more simple measure of information loss will be used.
-     * Default is <code>false</code>.
-     * @return
-     */
-    public void setUtilityBasedMicroaggregationUseMeanSquaredError(boolean useMSE) {
-        this.utilityBasedMicroaggregationUseMeanSquaredError = useMSE;
-    }
-
+    
     /**
      * Checks an argument.
      *
@@ -1041,7 +1011,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             throw new IllegalArgumentException("Argument must not be null"); 
         }
     }
-    
+
     /**
      * Renders stuff
      * @return
@@ -1053,7 +1023,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.addProperty("Marketer risk", this.getRiskThresholdMarketer());
         return result;
     }
-
+    
     /**
      * Renders the weights
      * @return
@@ -1062,7 +1032,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         ElementData result = new ElementData("Settings");
         result.addProperty("Assume monotonicity", this.practicalMonotonicity);
         result.addProperty("Suppression limit", this.relMaxOutliers);
-        result.addProperty("Consider mean squared error", this.utilityBasedMicroaggregation);
         return result;
     }
     
@@ -1090,7 +1059,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected final int getAbsoluteMaxOutliers() {
         return this.absMaxOutliers;
     }
-    
+
     /**
      * Clones this config and projects everything onto the given subset.<br>
      * - All privacy models will be cloned<br>
@@ -1202,7 +1171,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected PrivacyCriterion[] getPrivacyModelsAsArray() {
         return this.aCriteria;
     }
-
+    
     /**
      * Returns the criteria's requirements.
      *
@@ -1219,7 +1188,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected SampleBasedCriterion[] getSampleBasedPrivacyModelsAsArray() {
         return this.bCriteria;
     }
-    
+
     /**
      * Returns the specific length of each entry in a snapshot.
      *
@@ -1228,7 +1197,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected int getSnapshotLength() {
         return this.snapshotLength;
     }
-
+    
     /**
      * Returns the data subset, if any subset is defined.
      * You may only call this, after the configuration has be initialized.
@@ -1245,7 +1214,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return null;
     }
-    
+
     /**
      * Returns an integer representing all attribute types that must be suppressed.
      *
@@ -1293,7 +1262,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         // Compute max outliers
-        if (this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+        if (this.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) {
             absMaxOutliers = (int) dataLength;
         } else {
             absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);
@@ -1346,7 +1315,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Compute snapshot length
         this.snapshotLength = 2;
         if (this.requires(REQUIREMENT_DISTRIBUTION)) {
-            this.snapshotLength += 2 * manager.getDataAnalyzed().getHeader().length;
+            this.snapshotLength += 2 * manager.getAggregationInformation().getHotThreshold();
         }
         if (this.requires(REQUIREMENT_SECONDARY_COUNTER)) {
             this.snapshotLength += 1;

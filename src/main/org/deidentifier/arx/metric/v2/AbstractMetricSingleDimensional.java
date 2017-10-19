@@ -21,6 +21,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -35,19 +36,13 @@ import org.deidentifier.arx.metric.Metric;
 public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDimensional> {
 
     /** SVUID. */
-    private static final long               serialVersionUID = -1082954137578580790L;
+    private static final long    serialVersionUID = -1082954137578580790L;
 
     /** Row count. */
-    private Double                          tuples           = null;
+    private Double               tuples           = null;
 
     /** The microaggregation functions. */
-    private DistributionAggregateFunction[] microaggregationFunctions;
-
-    /** The start index of the attributes with microaggregation in the data array (dataAnalyzed) */
-    private int                             microaggregationStartIndex;
-
-    /** Domain size for each microaggregated attribute */
-    private int[]                           microaggregationDomainSizes;
+    private DataAggregationInformation aggregation      = null;
 
     /**
      * Creates a new instance.
@@ -75,6 +70,15 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     /**
      * Create a loss object
      * @param loss
+     * @return
+     */
+    public ILSingleDimensionalWithBound createInformationLoss(double loss) {
+        return new ILSingleDimensionalWithBound(loss);
+    }
+
+    /**
+     * Create a loss object
+     * @param loss
      * @param bound
      * @return
      */
@@ -93,29 +97,61 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
     }
 
     /**
-     * Needed for microaggregation
+     * Returns relevant aggregation functions
      * @return
      */
-    protected int[] getMicroaggregationDomainSizes() {
-        return microaggregationDomainSizes;
-    }
-    
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    protected DistributionAggregateFunction[] getMicroaggregationFunctions() {
-        return microaggregationFunctions;
-    }
-    
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    protected int getMicroaggregationStartIndex() {
-        return microaggregationStartIndex;
+    protected DistributionAggregateFunction[] getAggregationFunctionsGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsGeneralizedFunctions();
+        } else {
+            return null;
+        }
     }
 
+    /**
+     * Returns relevant aggregation functions
+     * @return
+     */
+    protected DistributionAggregateFunction[] getAggregationFunctionsNonGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsNotGeneralizedFunctions();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the indicies of aggregated variables
+     * @return
+     */
+    protected int[] getAggregationIndicesGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsGeneralized();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the indicies of aggregated variables
+     * @return
+     */
+    protected int[] getAggregationIndicesNonGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsNotGeneralized();
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    protected DataAggregationInformation getAggregationInformation() {
+        return aggregation;
+    }
+    
     /**
      * Returns the number of rows in the dataset or subset.
      *
@@ -132,16 +168,9 @@ public abstract class AbstractMetricSingleDimensional extends Metric<ILSingleDim
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
         
+        // Init
         this.tuples = (double) getNumRecords(config, input);
-
-        // Handle microaggregation
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
-        if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
-            this.microaggregationFunctions = new DistributionAggregateFunction[0];
-            this.microaggregationDomainSizes = new int[0];
-        }
+        this.aggregation = manager.getAggregationInformation();
     }
 
     /**

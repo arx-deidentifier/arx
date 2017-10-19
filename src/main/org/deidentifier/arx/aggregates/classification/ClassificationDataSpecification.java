@@ -22,12 +22,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.ARXDate;
-import org.deidentifier.arx.DataType.ARXDecimal;
-import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -44,9 +42,7 @@ public class ClassificationDataSpecification {
     /** Indexes */
     public final int[]                           featureIndices;
     /** Feature meta data */
-    public final ClassificationFeatureMetadata[] inputFeatureMetadata;
-    /** Feature meta data */
-    public final ClassificationFeatureMetadata[] outputFeatureMetadata;
+    public final ClassificationFeatureMetadata[] featureMetadata;
     /** Interrupt */
     private final WrappedBoolean                 interrupt;
 
@@ -54,6 +50,7 @@ public class ClassificationDataSpecification {
      * Creates a new instance
      * @param inputFeatureHandle
      * @param outputFeatureHandle
+     * @param scaling
      * @param classHandle
      * @param features
      * @param clazz
@@ -61,6 +58,7 @@ public class ClassificationDataSpecification {
      */
     public ClassificationDataSpecification(DataHandleInternal inputFeatureHandle, 
                                            DataHandleInternal outputFeatureHandle,
+                                           ARXFeatureScaling scaling,
                                            String[] features,
                                            String clazz,
                                            WrappedBoolean interrupt) {
@@ -84,15 +82,7 @@ public class ClassificationDataSpecification {
         }
         this.interrupt = interrupt;
         this.featureIndices = getFeatureIndices(inputFeatureHandle, features, clazz);
-        // TODO: Include this and use it for normalizing and scaling continuous variables
-        // this.inputFeatureMetadata = getFeatureMetadata(inputFeatureHandle, featureIndices);
-        // if (outputFeatureHandle != inputFeatureHandle) {
-        //     this.outputFeatureMetadata = getFeatureMetadata(outputFeatureHandle, featureIndices);
-        // } else {
-        //     this.outputFeatureMetadata = this.inputFeatureMetadata;
-        // }
-        this.inputFeatureMetadata = null;
-        this.outputFeatureMetadata = null;
+        this.featureMetadata = getFeatureMetadata(inputFeatureHandle, featureIndices, scaling);
         this.classIndex = getClassIndex(outputFeatureHandle, clazz);
         this.classMap = getClassMap(outputFeatureHandle, classIndex);
 
@@ -187,9 +177,12 @@ public class ClassificationDataSpecification {
      * Returns feature metadata
      * @param handle
      * @param features
+     * @param scaling
      * @return
      */
-    protected ClassificationFeatureMetadata[] getFeatureMetadata(DataHandleInternal handle, int[] features) {
+    protected ClassificationFeatureMetadata[] getFeatureMetadata(DataHandleInternal handle,
+                                                                 int[] features,
+                                                                 ARXFeatureScaling scaling) {
 
         // Prepare
         ClassificationFeatureMetadata[] result = new ClassificationFeatureMetadata[features.length];
@@ -197,19 +190,7 @@ public class ClassificationDataSpecification {
             int column = features[i];
             String attribute = handle.getAttributeName(column);
             DataType<?> type = handle.getDataType(attribute);
-            result[i] = new ClassificationFeatureMetadata(attribute, type);
-            
-            // Compute min & max for numeric attributes
-            if (type instanceof ARXDecimal ||
-                type instanceof ARXInteger ||
-                type instanceof ARXDate) {
-                
-                // Parse each value
-                for (String value : handle.getStatisticsBuilder().getDistinctValues(column)) {
-                    checkInterrupt();
-                    result[i].updateMinMax(value);
-                }
-            }
+            result[i] = new ClassificationFeatureMetadata(attribute, type, scaling);
         }
         
         // Return

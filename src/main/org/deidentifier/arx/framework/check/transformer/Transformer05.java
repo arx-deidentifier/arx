@@ -35,49 +35,39 @@ public class Transformer05 extends AbstractTransformer {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param otherValues
+     * @param dataAnalyzed
+     * @param dataAnalyzedNumberOfColumns
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
     public Transformer05(final DataMatrix data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final DataMatrix otherValues,
+                         final DataMatrix dataAnalyzed,
+                         final int dataAnalyzedNumberOfColumns,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfigurationInternal config) {
-        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, hierarchies, dataAnalyzed, dataAnalyzedNumberOfColumns, dictionarySensValue, dictionarySensFreq, config);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkAll()
-     */
     @Override
     protected void processAll() {
         for (int i = startIndex; i < stopIndex; i++) {
             // Transform
             buffer.setRow(i);
             data.setRow(i);
-            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
-            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
+            buffer.setValueAtColumn(column4, hierarchy4[data.getValueAtColumn(column4)][level4]);
 
             // Call
             delegate.callAll(i, i);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkGroupify ()
-     */
     @Override
     protected void processGroupify() {
 
@@ -86,11 +76,11 @@ public class Transformer05 extends AbstractTransformer {
             // Transform
             buffer.setRow(element.representative);
             data.setRow(element.representative);
-            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
-            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
+            buffer.setValueAtColumn(column4, hierarchy4[data.getValueAtColumn(column4)][level4]);
 
             // Call
             delegate.callGroupify(element.representative, element);
@@ -100,12 +90,6 @@ public class Transformer05 extends AbstractTransformer {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkSnapshot ()
-     */
     @Override
     protected void processSnapshot() {
         startIndex *= ssStepWidth;
@@ -115,11 +99,11 @@ public class Transformer05 extends AbstractTransformer {
             // Transform
             buffer.setRow(snapshot[i]);
             data.setRow(snapshot[i]);
-            buffer.setValueAtColumn(outindex0, idindex0[data.getValueAtColumn(index0)][generalizationindex0]);
-            buffer.setValueAtColumn(outindex1, idindex1[data.getValueAtColumn(index1)][generalizationindex1]);
-            buffer.setValueAtColumn(outindex2, idindex2[data.getValueAtColumn(index2)][generalizationindex2]);
-            buffer.setValueAtColumn(outindex3, idindex3[data.getValueAtColumn(index3)][generalizationindex3]);
-            buffer.setValueAtColumn(outindex4, idindex4[data.getValueAtColumn(index4)][generalizationindex4]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
+            buffer.setValueAtColumn(column4, hierarchy4[data.getValueAtColumn(column4)][level4]);
 
             // Call
             delegate.callSnapshot(snapshot[i], snapshot, i);

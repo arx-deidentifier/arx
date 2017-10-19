@@ -102,7 +102,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
             builder.append("TestCase{\n");
             builder.append(" - Dataset: ").append(dataset).append("\n");
             builder.append(" - Sensitive: ").append(sensitiveAttribute).append("\n");
-            builder.append(" - Suppression: ").append(config.getMaxOutliers()).append("\n");
+            builder.append(" - Suppression: ").append(config.getSuppressionLimit()).append("\n");
             builder.append(" - Metric1: ").append(m1.toString()).append("\n");
             builder.append(" - Metric2: ").append(m2.toString()).append("\n");
             builder.append(" - Criteria:\n");
@@ -115,7 +115,7 @@ public abstract class AbstractTestUtilityMetricsPrecomputation extends AbstractT
         
         @Override
         public String toString() {
-            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getSuppressionLimit() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }

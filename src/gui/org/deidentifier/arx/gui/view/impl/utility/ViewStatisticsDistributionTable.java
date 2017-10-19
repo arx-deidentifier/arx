@@ -24,6 +24,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTable;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
@@ -67,6 +68,19 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
     @Override
     public LayoutUtility.ViewUtilityType getType() {
         return LayoutUtility.ViewUtilityType.HISTOGRAM_TABLE;
+    }
+
+    @Override
+    protected ComponentStatusLabelProgressProvider getProgressProvider() {
+        return new ComponentStatusLabelProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
     }
 
     @Override
@@ -116,7 +130,7 @@ public class ViewStatisticsDistributionTable extends ViewStatistics<AnalysisCont
 
             @Override
             public int getProgress() {
-                return 0;
+                return builder.getProgress();
             }
             
             @Override
