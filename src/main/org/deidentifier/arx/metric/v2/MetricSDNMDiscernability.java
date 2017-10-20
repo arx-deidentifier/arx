@@ -158,7 +158,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify) {
+    public ILSingleDimensional getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
         double penaltySuppressed = 0;
@@ -178,8 +178,8 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         penaltySuppressed *= numRows;
         
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        return -1d * (penaltySuppressed + penaltyNotSuppressed) /
-               (numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d));
+        return new ILSingleDimensional(-1d * (penaltySuppressed + penaltyNotSuppressed) /
+               (numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
     }
     
     @Override

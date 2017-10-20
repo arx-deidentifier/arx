@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx.algorithm;
+package org.deidentifier.arx.dp;
 
 import java.math.BigDecimal;
 import java.math.MathContext;

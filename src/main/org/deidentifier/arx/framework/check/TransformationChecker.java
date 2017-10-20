@@ -148,16 +148,17 @@ public class TransformationChecker {
      * @return
      */
     public TransformationResult check(final Transformation node) {
-        return check(node, false);
+        return check(node, false, false);
     }
     
     /**
      * Checks the given transformation
      * @param node
      * @param forceMeasureInfoLoss
+     * @param score
      * @return
      */
-    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss) {
+    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss, final boolean score) {
         
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof TransformationResult) {
@@ -197,16 +198,27 @@ public class TransformationChecker {
         }
         
         // Compute information loss and lower bound
-        InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                metric.getInformationLoss(node, currentGroupify) : null;
-        InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
-        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+        InformationLoss<?> loss = null;
+        InformationLoss<?> bound = null;
+        
+        if (score) {
+            
+            // Calculate score
+            loss = metric.getScore(node, currentGroupify);
+            
+        } else {
+            
+            // Calculate information loss and bound
+            InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
+                                                  metric.getInformationLoss(node, currentGroupify) : null;
+            loss = result != null ? result.getInformationLoss() : null;
+            bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+        }
         
         // Return result;
         return new TransformationResult(currentGroupify.isPrivacyModelFulfilled(),
-                                      minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
-                                      loss,
-                                      bound);
+                                        minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
+                                        loss, bound);
     }
     
     /**
@@ -266,47 +278,6 @@ public class TransformationChecker {
         return this.transformer.getBuffer();
     }
 
-    /**
-     * Calculates a score.
-     * TODO: This code is basically an exact copy of code from check(...)
-     * @param transformation
-     * @return
-     */
-    public double getScore(Transformation transformation) {
-        
-        // Store snapshot from last check
-        if (stateMachine.getLastTransformation() != null) {
-            history.store(solutionSpace.getTransformation(stateMachine.getLastTransformation()), currentGroupify, stateMachine.getLastTransition().snapshot);
-        }
-        
-        // Transition
-        final Transition transition = stateMachine.transition(transformation.getGeneralization());
-        
-        // Switch groupifies
-        final HashGroupify temp = lastGroupify;
-        lastGroupify = currentGroupify;
-        currentGroupify = temp;
-        
-        // Apply transition
-        switch (transition.type) {
-        case UNOPTIMIZED:
-            currentGroupify = transformer.apply(transition.projection, transformation.getGeneralization(), currentGroupify);
-            break;
-        case ROLLUP:
-            currentGroupify = transformer.applyRollup(transition.projection, transformation.getGeneralization(), lastGroupify, currentGroupify);
-            break;
-        case SNAPSHOT:
-            currentGroupify = transformer.applySnapshot(transition.projection, transformation.getGeneralization(), currentGroupify, transition.snapshot);
-            break;
-        }
-        
-        // We are done with transforming and adding
-        currentGroupify.stateAnalyze(transformation, true);
-      
-        // Return
-        return metric.getScore(transformation, currentGroupify);
-    }
-    
     /**
      * Frees memory
      */

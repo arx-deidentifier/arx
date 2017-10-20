@@ -262,7 +262,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify) {
+    public ILSingleDimensional getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
         int[] transformation = node.getGeneralization();
@@ -294,7 +294,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         if (k > 1) score /= k - 1d;
         
         // Return
-        return score;
+        return new ILSingleDimensional(score);
     }
     
     @Override

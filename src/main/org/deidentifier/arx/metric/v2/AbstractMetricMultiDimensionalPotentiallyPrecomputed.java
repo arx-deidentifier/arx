@@ -230,7 +230,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify) {
+    public ILSingleDimensional getScore(final Transformation node, final HashGroupify groupify) {
         return precomputed ?
                precomputedMetric.getScore(node, groupify) :
                defaultMetric.getScore(node, groupify);

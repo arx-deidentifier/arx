@@ -372,7 +372,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
-    public double getScore(final Transformation node, final HashGroupify groupify) {
+    public ILSingleDimensional getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
         int dimensionsGeneralized = getDimensionsGeneralized();
@@ -385,21 +385,19 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         double score = 0d;
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
-            if (m.count>0) {
-                m.read();
-                for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
-                    int value = m.next();
-                    // Process values of records which have not been suppressed by sampling
-                    if (m.isNotOutlier && (rootValues[dimension] == -1 || value != rootValues[dimension])) {
-                        // The attribute value has neither been suppressed because of record suppression nor because of generalization
-                        nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
-                    } else {
-                        // The attribute value has been suppressed because of record suppression or because of generalization
-                        score += m.count * rows;
-                    }
-                    // Add values for records which have been suppressed by sampling
-                    score += (m.pcount - m.count) * rows;
+            m.read();
+            for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+                int value = m.next();
+                // Process values of records which have not been suppressed by sampling
+                if (m.isNotOutlier && (rootValues[dimension] == -1 || value != rootValues[dimension])) {
+                    // The attribute value has neither been suppressed because of record suppression nor because of generalization
+                    nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
+                } else {
+                    // The attribute value has been suppressed because of record suppression or because of generalization
+                    score += m.count * rows;
                 }
+                // Add values for records which have been suppressed by sampling
+                score += (m.pcount - m.count) * rows;
             }
             m = m.nextOrdered;
         }
@@ -416,6 +414,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
         score *= -1d / (rows * getDimensionsGeneralized());
-        return (k==1) ? score / 5d : score / (k * k / (k - 1d) + 1d);
+        return new ILSingleDimensional((k==1) ? score / 5d : score / (k * k / (k - 1d) + 1d));
     }
 }

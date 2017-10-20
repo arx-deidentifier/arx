@@ -20,6 +20,7 @@ package org.deidentifier.arx.algorithm;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -86,7 +87,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
-        double score = checker.getScore(pivot);
+        assureChecked(pivot);
+        double score = (Double)pivot.getInformationLoss().getValue();
         
         // Initialize variables tracking the best of all pivot elements
         Transformation bestTransformation = pivot;
@@ -107,7 +109,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 long id = list.getQuick(i);
                 if (transformationIDToScore.containsKey(id)) continue;
                 Transformation predecessor = solutionSpace.getTransformation(id);
-                transformationIDToScore.put(id, checker.getScore(predecessor));
+                assureChecked(predecessor);
+                transformationIDToScore.put(id, (Double)predecessor.getInformationLoss().getValue());
             }
             
             // Remove the current pivot element from the set of candidates
@@ -131,7 +134,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
             progress((double)step / (double)steps);
         }
         
-        assureChecked(bestTransformation);
+        // Track optimum
+        trackOptimum(bestTransformation);
         return false;
     }
 
@@ -141,8 +145,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     */
     private void assureChecked(final Transformation transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true));
-            trackOptimum(transformation);
+            transformation.setChecked(checker.check(transformation, true, true));
         }
     }
 }
