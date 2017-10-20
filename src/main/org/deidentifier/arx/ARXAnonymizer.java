@@ -595,8 +595,8 @@ public class ARXAnonymizer { // NO_UCD
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
                 double epsilonSearch = edpModel.getEpsilon() * config.getEpsilonSearchFraction();
-                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, config.getQualityModel(),
-                                                         edpModel.isDeterministic(), config.getDPSearchStepNumber(), epsilonSearch);
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
+                                                         config.getDPSearchStepNumber(), epsilonSearch);
             }
         }
 
