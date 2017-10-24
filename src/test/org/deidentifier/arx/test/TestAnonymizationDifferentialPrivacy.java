@@ -80,12 +80,13 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
                                               { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createLossMetric(), 2d, 0.5d, 1E-5d, 10), "./data/cup.csv", -680.8635818263579, new int[] { 4, 3, 1, 1, 0, 3, 2, 2 }, false) },
                                               { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createPrecisionMetric(), 2d, 0.5d, 1E-5d, 10), "./data/cup.csv", -786.8602459016394, new int[] { 4, 4, 0, 0, 0, 3, 3, 3 }, false) },
                                               { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createDiscernabilityMetric(), 2d, 0.5d, 1E-5d, 10), "./data/cup.csv", -381.4054645911842, new int[] { 5, 4, 1, 1, 0, 4, 4, 3 }, false) },
-                                              { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createEntropyMetric(), 2d, 0.5d, 1E-5d, 10), "./data/cup.csv", 66.53268881542795, new int[] { 5, 4, 1, 2, 1, 4, 4, 4 }, false) },
+                                              { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createEntropyMetric(), 2d, 0.5d, 1E-5d, 10), "./data/cup.csv", -641.4992301617474, new int[] { 4, 3, 0, 1, 0, 3, 3, 3 }, false) },
                                               { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createAECSMetric(), 2d, 0.5d, 1E-5d, 10), "./data/fars.csv", 31.0, new int[] { 4, 2, 3, 3, 1, 2, 2, 1 }, false) },
                                               { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createLossMetric(), 2d, 0.5d, 1E-5d, 10), "./data/fars.csv", -1029.9681772660053, new int[] { 3, 1, 2, 2, 0, 1, 2, 1 }, false) },
                                               /* 30 */ { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createPrecisionMetric(), 2d, 0.5d, 1E-5d, 10), "./data/fars.csv", -1124.9918032786886, new int[] { 5, 1, 3, 1, 0, 0, 3, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createDiscernabilityMetric(), 2d, 0.5d, 1E-5d, 10), "./data/fars.csv", 370.172169473696, new int[] { 5, 1, 2, 3, 1, 2, 3, 2 }, false) },
-                                              { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createEntropyMetric(), 2d, 0.5d, 1E-5d, 10), "./data/fars.csv", 338.1258173101141, new int[] { 4, 2, 3, 3, 1, 2, 3, 2 }, false) },
+                                              { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createDiscernabilityMetric(), 2d, 0.5d, 1E-5d, 10), "./data/fars.csv", -599.839997474623, new int[] { 3, 2, 3, 3, 0, 2, 2, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createEntropyMetric(), 2d, 0.5d, 1E-5d, 10), "./data/fars.csv", -950.5205072288279, new int[] { 4, 0, 2, 2, 0, 1, 2, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(createDataDependentConfiguration(Metric.createAECSMetric(), 2d, 0.5d, 1E-5d, 100), "./data/adult.csv", 107.0, new int[] { 1, 0, 1, 0, 3, 2, 2, 1, 1 }, false) },
         });
     }
     
