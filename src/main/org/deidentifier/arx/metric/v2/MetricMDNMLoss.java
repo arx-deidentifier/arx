@@ -378,8 +378,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     score += m.isNotOutlier ? share : m.count;
                 }
+                score += m.pcount - m.count;
             }
-            score += m.pcount - m.count;
             m = m.nextOrdered;
         }
 

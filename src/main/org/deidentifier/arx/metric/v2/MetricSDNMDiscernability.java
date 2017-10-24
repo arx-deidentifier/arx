@@ -168,7 +168,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
             if (m.isNotOutlier) {
-                penaltyNotSuppressed += m.count * m.count;
+                penaltyNotSuppressed += (double)m.count * (double)m.count;
             } else {
                 penaltySuppressed += m.count;
             }
@@ -179,7 +179,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         
         // Adjust sensitivity and multiply with -1 so that higher values are better
         return new ILSingleDimensional(-1d * (penaltySuppressed + penaltyNotSuppressed) /
-               (numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
+               ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
     }
     
     @Override

@@ -394,10 +394,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                     nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
                 } else {
                     // The attribute value has been suppressed because of record suppression or because of generalization
-                    score += m.count * rows;
+                    score += (double)m.count * (double)rows;
                 }
                 // Add values for records which have been suppressed by sampling
-                score += (m.pcount - m.count) * rows;
+                score += (double)(m.pcount - m.count) * (double)rows;
             }
             m = m.nextOrdered;
         }
@@ -407,13 +407,13 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             final int [] counts = nonSuppressedValueToCount[dimension].values;
             for (int i=0; i<states.length; i++) {
                 if (states[i]) {
-                    score += counts[i] * counts[i];
+                    score += (double)counts[i] * (double)counts[i];
                 }
             }
         }
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / (rows * getDimensionsGeneralized());
-        return new ILSingleDimensional((k==1) ? score / 5d : score / (k * k / (k - 1d) + 1d));
+        score *= -1d / ((double)rows * (double)dimensionsGeneralized);
+        return new ILSingleDimensional((k==1) ? score / 5d : score / (double)(k * k / (k - 1d) + 1d));
     }
 }
