@@ -372,7 +372,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
-    public ILSingleDimensional getScore(final Transformation node, final HashGroupify groupify) {
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
         int dimensionsGeneralized = getDimensionsGeneralized();
@@ -414,6 +414,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
         score *= -1d / ((double)rows * (double)dimensionsGeneralized);
-        return new ILSingleDimensional((k==1) ? score / 5d : score / (double)(k * k / (k - 1d) + 1d));
+        return new ILScore((k==1) ? score / 5d : score / (double)(k * k / (k - 1d) + 1d));
     }
 }
