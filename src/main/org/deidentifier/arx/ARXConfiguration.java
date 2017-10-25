@@ -372,8 +372,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Cost/benefit configuration */
     private ARXCostBenefitConfiguration        costBenefitConfiguration                         = ARXCostBenefitConfiguration.create();
     
-    /** Fraction of the privacy budget to use for the data-dependent differential privacy search algorithm */
-    private Double                             epsilonSearchFraction                            = 0.1d;
+    /** The privacy budget to use for the data-dependent differential privacy search algorithm */
+    private Double                             dpSearchBudget                                   = 0.1d;
     
     /** Number of steps to use for the data-dependent differential privacy search algorithm */
     private Integer                            dpSearchStepNumber                               = 100;
@@ -505,7 +505,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
-        result.epsilonSearchFraction = this.epsilonSearchFraction;
+        result.dpSearchBudget = this.dpSearchBudget;
         result.dpSearchStepNumber = this.dpSearchStepNumber;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
@@ -558,15 +558,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns the fraction of the privacy budget to use for the data-dependent
+     * Returns the privacy budget to use for the data-dependent
      * differential privacy search algorithm. The default is 0.1.
      * @return
      */
-    public double getEpsilonSearchFraction() {
-        if (this.epsilonSearchFraction == null) {
-            this.epsilonSearchFraction = 0.1d;
+    public double getDPSearchBudget() {
+        if (this.dpSearchBudget == null) {
+            this.dpSearchBudget = 0.1d;
         }
-        return this.epsilonSearchFraction;
+        return this.dpSearchBudget;
     }
     
     /**
@@ -957,13 +957,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Sets the fraction of the privacy budget to use for the data-dependent
+     * Sets the privacy budget to use for the data-dependent
      * differential privacy search algorithm. The default is 0.1.
-     * @param fraction
+     * @param budget
      */
-    public void setEpsilonSearchFraction(double fraction) {
-        if (fraction <= 0d || fraction >= 1d) { throw new IllegalArgumentException("Parameter must be between 0 and 1"); }
-        this.epsilonSearchFraction = fraction;
+    public void setDPSearchBudget(double budget) {
+        if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.dpSearchBudget = budget;
     }
     
     /**

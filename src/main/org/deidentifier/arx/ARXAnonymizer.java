@@ -546,8 +546,13 @@ public class ARXAnonymizer { // NO_UCD
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            if (edpModel.isDataDependent() && !config.getQualityModel().isScoreFunctionSupported()) {
-                throw new RuntimeException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+            if (edpModel.isDataDependent()) {
+                if (!config.getQualityModel().isScoreFunctionSupported()) {
+                    throw new IllegalArgumentException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+                }
+                if (config.getDPSearchBudget() >= edpModel.getEpsilon()) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
+                }
             }
         }
         
@@ -594,9 +599,8 @@ public class ARXAnonymizer { // NO_UCD
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
-                double epsilonSearch = edpModel.getEpsilon() * config.getEpsilonSearchFraction();
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getDPSearchStepNumber(), epsilonSearch);
+                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget());
             }
         }
 

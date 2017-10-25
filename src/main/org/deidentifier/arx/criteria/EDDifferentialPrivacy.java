@@ -101,8 +101,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         this.epsilon = epsilon;
         this.delta = delta;
         this.generalization = generalization;
-        this.beta = generalization == null ? -Double.MAX_VALUE : calculateBeta(epsilon);
-        this.k = generalization == null ? -Integer.MAX_VALUE : calculateK(delta, epsilon, this.beta);
+        this.beta = -1d;
+        this.k = -1;
         this.deterministic = deterministic;
     }
     
@@ -219,8 +219,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         }
         
         // Set beta and k if required
-        if (isDataDependent()) {
-            double epsilonAnon = epsilon - (epsilon * config.getEpsilonSearchFraction());
+        if (beta < 0) {
+            double epsilonAnon = epsilon - (isDataDependent() ? config.getDPSearchBudget() : 0d);
             beta = calculateBeta(epsilonAnon);
             k = calculateK(delta, epsilonAnon, beta);
         }
@@ -262,8 +262,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         ElementData result = new ElementData("Differential privacy");
         result.addProperty("Epsilon", epsilon);
         result.addProperty("Delta", delta);
-        result.addProperty("Uniqueness threshold (k)", k);
-        result.addProperty("Sampling probability (beta)", beta);
+        result.addProperty("Uniqueness threshold (k)", getK());
+        result.addProperty("Sampling probability (beta)", getBeta());
         return result;
     }
 
