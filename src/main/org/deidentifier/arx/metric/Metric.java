@@ -1563,6 +1563,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Calculates the score.
+     * Note: All score functions are expected to have a sensitivity of one.
+     * 
+     * @param node
+     * @param groupify
+     * @return
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        throw new RuntimeException("Data-dependent differential privacy for the quality model "
+            + getName() + " is not yet implemented");
+    }
+    
+    /**
      * Returns the factor used to weight suppressed values.
      *
      * @return
@@ -1676,20 +1689,20 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Returns whether the metric provides a score function
+     * @return
+     */
+    public boolean isScoreFunctionSupported() {
+        return false;
+    }
+    
+    /**
      * Returns true if the metric is weighted.
      *
      * @return
      */
     public final boolean isWeighted() {
         return (this instanceof MetricWeighted) || this.isMultiDimensional();
-    }
-    
-    /**
-     * Returns whether the metric provides a score function
-     * @return
-     */
-    public boolean isScoreFunctionSupported() {
-        return false;
     }
     
     /**
@@ -1705,19 +1718,6 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public String toString() {
         return this.getClass().getSimpleName();
-    }
-
-    /**
-     * Calculates the score.
-     * Note: All score functions are expected to have a sensitivity of one.
-     * 
-     * @param node
-     * @param groupify
-     * @return
-     */
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        throw new RuntimeException("Data-dependent differential privacy for the quality model "
-            + getName() + " is not yet implemented");
     }
     
     /**

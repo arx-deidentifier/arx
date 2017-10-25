@@ -162,20 +162,20 @@ public class ExponentialMechanism<T> {
     }
 
     /**
+     * Returns the probability mass function
+     * @return
+     */
+    public List<Pair<T, Double>> getPmf() {
+        return distribution.getPmf();
+    }
+    
+    /**
      * Returns a random value sampled from this distribution
      * @return
      */
     public T sample() {
         T solution = distribution.sample();
         return solution;
-    }
-
-    /**
-     * Returns the probability mass function
-     * @return
-     */
-    public List<Pair<T, Double>> getPmf() {
-        return distribution.getPmf();
     }
 
     /**

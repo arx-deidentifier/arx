@@ -936,6 +936,26 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.costBenefitConfiguration = config;
         return this;
     }
+    
+    /**
+     * Sets the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @param budget
+     */
+    public void setDPSearchBudget(double budget) {
+        if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.dpSearchBudget = budget;
+    }
+    
+    /**
+     * Sets the number of steps to use for the data-dependent
+     * differential privacy search algorithm. The default is 100.
+     * @param numberOfSteps
+     */
+    public void setDPSearchStepNumber(int numberOfSteps) {
+        if (numberOfSteps < 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.dpSearchStepNumber = numberOfSteps;
+    }
 
     /**
      * Sets whether ARX will use a heuristic search strategy. The default is false.
@@ -954,26 +974,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setHeuristicSearchStepLimit(int numberOfTransformations) {
         if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchStepLimit = numberOfTransformations;
-    }
-    
-    /**
-     * Sets the privacy budget to use for the data-dependent
-     * differential privacy search algorithm. The default is 0.1.
-     * @param budget
-     */
-    public void setDPSearchBudget(double budget) {
-        if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
-        this.dpSearchBudget = budget;
-    }
-    
-    /**
-     * Sets the number of steps to use for the data-dependent
-     * differential privacy search algorithm. The default is 100.
-     * @param numberOfSteps
-     */
-    public void setDPSearchStepNumber(int numberOfSteps) {
-        if (numberOfSteps < 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
-        this.dpSearchStepNumber = numberOfSteps;
     }
 
     /**

@@ -100,6 +100,31 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Prepare
+        double penaltySuppressed = 0;
+        double penaltyNotSuppressed = 0;
+        
+        // Sum up penalties
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            if (m.isNotOutlier) {
+                penaltyNotSuppressed += (double)m.count * (double)m.count;
+            } else {
+                penaltySuppressed += m.count;
+            }
+            penaltySuppressed += m.pcount - m.count;
+            m = m.nextOrdered;
+        }
+        penaltySuppressed *= numRows;
+        
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        return new ILScore(-1d * (penaltySuppressed + penaltyNotSuppressed) /
+               ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
+    }
+    
+    @Override
     public boolean isScoreFunctionSupported() {
         return true;
     }
@@ -155,31 +180,6 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
-    }
-
-    @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        
-        // Prepare
-        double penaltySuppressed = 0;
-        double penaltyNotSuppressed = 0;
-        
-        // Sum up penalties
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            if (m.isNotOutlier) {
-                penaltyNotSuppressed += (double)m.count * (double)m.count;
-            } else {
-                penaltySuppressed += m.count;
-            }
-            penaltySuppressed += m.pcount - m.count;
-            m = m.nextOrdered;
-        }
-        penaltySuppressed *= numRows;
-        
-        // Adjust sensitivity and multiply with -1 so that higher values are better
-        return new ILScore(-1d * (penaltySuppressed + penaltyNotSuppressed) /
-               ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
     }
     
     @Override

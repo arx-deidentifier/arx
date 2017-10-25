@@ -77,9 +77,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         this.epsilonSearch = epsilonSearch;
         this.deterministic = deterministic;
         this.steps = steps;
-        if (steps < 0) { 
-            throw new IllegalArgumentException("Invalid step number. Must not be negative."); 
-        }
     }
     
     @Override

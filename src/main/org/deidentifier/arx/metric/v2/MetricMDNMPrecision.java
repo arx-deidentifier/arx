@@ -122,6 +122,42 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                        this.getAggregateFunction()                  // aggregate function
                                        );
     }
+    
+    @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        
+        int suppressedTuples = 0;
+        int unsuppressedTuples = 0;
+        
+        // For each group
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            
+            // Calculate number of affected records
+            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
+            suppressedTuples += m.isNotOutlier ? 0 : m.count;
+            suppressedTuples += m.pcount - m.count;
+
+            // Next group
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        double score = 0d;
+        for (int i = 0; i<dimensionsGeneralized; i++) {
+            double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
+            score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
+        }
+        score *= -1d / getDimensionsGeneralized();
+        if (k > 1) score /= k - 1d;
+        
+        // Return
+        return new ILScore(score);
+    }
 
     @Override
     public boolean isAbleToHandleMicroaggregation() {
@@ -259,42 +295,6 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         Arrays.fill(max, 1d * Math.max(gFactor, sFactor));
         setMin(min);
         setMax(max);
-    }
-
-    @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        
-        // Prepare
-        int[] transformation = node.getGeneralization();
-        int dimensionsGeneralized = getDimensionsGeneralized();
-        
-        int suppressedTuples = 0;
-        int unsuppressedTuples = 0;
-        
-        // For each group
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            
-            // Calculate number of affected records
-            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
-            suppressedTuples += m.isNotOutlier ? 0 : m.count;
-            suppressedTuples += m.pcount - m.count;
-
-            // Next group
-            m = m.nextOrdered;
-        }
-        
-        // Calculate score
-        double score = 0d;
-        for (int i = 0; i<dimensionsGeneralized; i++) {
-            double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
-            score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
-        }
-        score *= -1d / getDimensionsGeneralized();
-        if (k > 1) score /= k - 1d;
-        
-        // Return
-        return new ILScore(score);
     }
     
     @Override

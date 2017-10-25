@@ -138,6 +138,52 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Prepare
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+            nonSuppressedValueToCount[dimension] = new IntIntOpenHashMap();
+        }
+
+        // Compute score
+        double score = 0d;
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            m.read();
+            for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+                int value = m.next();
+                // Process values of records which have not been suppressed by sampling
+                if (m.isNotOutlier && (rootValues[dimension] == -1 || value != rootValues[dimension])) {
+                    // The attribute value has neither been suppressed because of record suppression nor because of generalization
+                    nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
+                } else {
+                    // The attribute value has been suppressed because of record suppression or because of generalization
+                    score += (double)m.count * (double)rows;
+                }
+                // Add values for records which have been suppressed by sampling
+                score += (double)(m.pcount - m.count) * (double)rows;
+            }
+            m = m.nextOrdered;
+        }
+        // Add values for all attribute values which were not suppressed
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+            final boolean [] states = nonSuppressedValueToCount[dimension].allocated;
+            final int [] counts = nonSuppressedValueToCount[dimension].values;
+            for (int i=0; i<states.length; i++) {
+                if (states[i]) {
+                    score += (double)counts[i] * (double)counts[i];
+                }
+            }
+        }
+
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        score *= -1d / ((double)rows * (double)dimensionsGeneralized);
+        return new ILScore((k==1) ? score / 5d : score / (double)(k * k / (k - 1d) + 1d));
+    }
+    
+    @Override
     public boolean isGSFactorSupported() {
         return true;
     }
@@ -369,51 +415,5 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         super.setMax(max);
         super.setMin(min);
-    }
-    
-    @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        
-        // Prepare
-        int dimensionsGeneralized = getDimensionsGeneralized();
-        IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
-        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
-            nonSuppressedValueToCount[dimension] = new IntIntOpenHashMap();
-        }
-
-        // Compute score
-        double score = 0d;
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            m.read();
-            for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
-                int value = m.next();
-                // Process values of records which have not been suppressed by sampling
-                if (m.isNotOutlier && (rootValues[dimension] == -1 || value != rootValues[dimension])) {
-                    // The attribute value has neither been suppressed because of record suppression nor because of generalization
-                    nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
-                } else {
-                    // The attribute value has been suppressed because of record suppression or because of generalization
-                    score += (double)m.count * (double)rows;
-                }
-                // Add values for records which have been suppressed by sampling
-                score += (double)(m.pcount - m.count) * (double)rows;
-            }
-            m = m.nextOrdered;
-        }
-        // Add values for all attribute values which were not suppressed
-        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
-            final boolean [] states = nonSuppressedValueToCount[dimension].allocated;
-            final int [] counts = nonSuppressedValueToCount[dimension].values;
-            for (int i=0; i<states.length; i++) {
-                if (states[i]) {
-                    score += (double)counts[i] * (double)counts[i];
-                }
-            }
-        }
-
-        // Adjust sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / ((double)rows * (double)dimensionsGeneralized);
-        return new ILScore((k==1) ? score / 5d : score / (double)(k * k / (k - 1d) + 1d));
     }
 }

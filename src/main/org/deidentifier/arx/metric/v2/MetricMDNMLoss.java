@@ -128,6 +128,37 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+
+        // Compute score
+        double score = 0d;
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            m.read();
+            for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+                if (m.count>0) {
+                    int value = m.next();
+                    int level = transformation[dimension];
+                    double share = (double)m.count * shares[dimension].getShare(value, level);
+                    score += m.isNotOutlier ? share : m.count;
+                }
+                score += m.pcount - m.count;
+            }
+            m = m.nextOrdered;
+        }
+
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        score *= -1d / dimensionsGeneralized;
+        if (k > 1) score /= k - 1d;
+
+        // Return score
+        return new ILScore(score);
+    }
+    
+    @Override
     public double getSuppressionFactor() {
         return sFactor;
     }
@@ -358,36 +389,5 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         double result = (aggregate - min) / (max - min);
         result = result >= 0d ? result : 0d;
         return round(result);
-    }
-    
-    @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        // Prepare
-        int[] transformation = node.getGeneralization();
-        int dimensionsGeneralized = getDimensionsGeneralized();
-
-        // Compute score
-        double score = 0d;
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            m.read();
-            for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                if (m.count>0) {
-                    int value = m.next();
-                    int level = transformation[dimension];
-                    double share = (double)m.count * shares[dimension].getShare(value, level);
-                    score += m.isNotOutlier ? share : m.count;
-                }
-                score += m.pcount - m.count;
-            }
-            m = m.nextOrdered;
-        }
-
-        // Adjust sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / dimensionsGeneralized;
-        if (k > 1) score /= k - 1d;
-
-        // Return score
-        return new ILScore(score);
     }
 }

@@ -128,6 +128,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     public double getGeneralizationSuppressionFactor() {
         return defaultMetric.getGeneralizationSuppressionFactor();
     }
+    
+    @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        return precomputed ?
+               precomputedMetric.getScore(node, groupify) :
+               defaultMetric.getScore(node, groupify);
+    }
 
     @Override
     public double getSuppressionFactor() {
@@ -227,12 +234,5 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         } else {
             defaultMetric.initializeInternal(manager, definition, input, ahierarchies, config);
         }
-    }
-    
-    @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        return precomputed ?
-               precomputedMetric.getScore(node, groupify) :
-               defaultMetric.getScore(node, groupify);
     }
 }
