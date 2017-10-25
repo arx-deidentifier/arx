@@ -30,14 +30,12 @@ import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
-import org.deidentifier.arx.criteria.AbstractEDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
-import org.deidentifier.arx.criteria.DataDependentEDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
@@ -543,12 +541,18 @@ public class ARXAnonymizer { // NO_UCD
         }
         
         // Check constraints for (e,d)-DP
-        if (config.isPrivacyModelSpecified(AbstractEDDifferentialPrivacy.class)) {
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
-            if (config.isPrivacyModelSpecified(DataDependentEDDifferentialPrivacy.class) && !config.getQualityModel().isScoreFunctionSupported()) {
-                throw new RuntimeException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent()) {
+                if (!config.getQualityModel().isScoreFunctionSupported()) {
+                    throw new IllegalArgumentException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+                }
+                if (config.getDPSearchBudget() >= edpModel.getEpsilon()) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
+                }
             }
         }
         
@@ -592,11 +596,11 @@ public class ARXAnonymizer { // NO_UCD
                                           final SolutionSpace solutionSpace,
                                           final TransformationChecker checker) {
 
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
-            if (c instanceof DataDependentEDDifferentialPrivacy) {
-                DataDependentEDDifferentialPrivacy dpCriterion = (DataDependentEDDifferentialPrivacy)c;
-                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, config.getQualityModel(),
-                                                         dpCriterion.isDeterministic(), dpCriterion.getSteps(), dpCriterion.getEpsilonSearch());
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent()) {
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
+                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget());
             }
         }
 
@@ -628,9 +632,8 @@ public class ARXAnonymizer { // NO_UCD
                                                     dataArray,
                                                     dictionary,
                                                     definition,
-                                                    config.getPrivacyModels(),
-                                                    getAggregateFunctions(definition),
-                                                    config.getQualityModel());
+                                                    config,
+                                                    getAggregateFunctions(definition));
         return manager;
     }
 
