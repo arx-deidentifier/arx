@@ -94,15 +94,15 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
      * Creates a new test case for data-dependent differential privacy.
      * @param metric
      * @param epsilon
-     * @param searchFraction
+     * @param searchBudget
      * @param delta
      * @param steps
      * @return
      */
-    private static ARXConfiguration createDataDependentConfiguration(Metric<?> metric, double epsilon, double searchFraction, double delta, int steps) {
+    private static ARXConfiguration createDataDependentConfiguration(Metric<?> metric, double epsilon, double searchBudget, double delta, int steps) {
         ARXConfiguration result = ARXConfiguration.create(1d, metric);
         result.addPrivacyModel(new EDDifferentialPrivacy(epsilon, delta, null, true));
-        result.setDPSearchBudget(searchFraction);
+        result.setDPSearchBudget(searchBudget);
         result.setDPSearchStepNumber(steps);
         return result;
     }
