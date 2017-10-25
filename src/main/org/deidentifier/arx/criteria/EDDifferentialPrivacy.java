@@ -177,7 +177,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     @Override
     public int getMinimalClassSize() {
-        return k;
+        return getK();
     }
     
     @Override
