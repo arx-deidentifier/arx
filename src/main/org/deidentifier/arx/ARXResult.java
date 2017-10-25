@@ -165,8 +165,6 @@ public class ARXResult {
         this.duration = this.statistics.getDuration();
     }
 
-
-
     /**
      * Creates a new instance.
      *
@@ -260,7 +258,7 @@ public class ARXResult {
         if (optimalTransformation == null) { return null; }
         return getOutput(optimalTransformation, true);
     }
-
+    
     /**
      * Returns a handle to data obtained by applying the given transformation.  This method will fork the buffer, 
      * allowing to obtain multiple handles to different representations of the data set. Note that only one instance can
@@ -273,7 +271,7 @@ public class ARXResult {
     public DataHandle getOutput(ARXNode node) {
         return getOutput(node, true);
     }
-
+    
     /**
      * Returns a handle to data obtained by applying the given transformation. This method allows controlling whether
      * the underlying buffer is copied or not. Setting the flag to true will fork the buffer for every handle, allowing to
