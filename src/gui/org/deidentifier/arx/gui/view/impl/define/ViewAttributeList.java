@@ -289,13 +289,13 @@ public class ViewAttributeList implements IView {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
                             // Data type or Format and right click
-                            if ((i == 2 || i == 3) && e.button == 3) {
+                            if ((i == 2 || i == 3) && e.button == SWT.BUTTON3) {
                                 menu.setLocation(table.toDisplay(e.x, e.y));
                                 menu.setVisible(true);
                                 return;
                             }
                             // Response variable and left click
-                            else if (i == 4 && e.button == 1) {
+                            else if (i == 4 && e.button == SWT.BUTTON1) {
                                 String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
                                 boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
                                 model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
