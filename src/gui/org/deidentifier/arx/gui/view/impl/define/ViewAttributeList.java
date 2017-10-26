@@ -281,11 +281,6 @@ public class ViewAttributeList implements IView {
         // Trigger menu
         this.table.addMouseListener(new MouseAdapter(){
             @Override public void mouseDown(MouseEvent e) {
-                if (e.button == 3) {
-                    menu.setLocation(table.toDisplay(e.x, e.y));
-                    menu.setVisible(true);
-                }
-                
                 Point pt = new Point(e.x, e.y);
                 int index = table.getTopIndex();
                 while (index < table.getItemCount()) {
@@ -293,7 +288,14 @@ public class ViewAttributeList implements IView {
                     for (int i = 0; i < 5; i++) {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
-                            if (i == 4) {
+                            // Data type or Format and right click
+                            if ((i == 2 || i == 3) && e.button == SWT.BUTTON3) {
+                                menu.setLocation(table.toDisplay(e.x, e.y));
+                                menu.setVisible(true);
+                                return;
+                            }
+                            // Response variable and left click
+                            else if (i == 4 && e.button == SWT.BUTTON1) {
                                 String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
                                 boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
                                 model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
