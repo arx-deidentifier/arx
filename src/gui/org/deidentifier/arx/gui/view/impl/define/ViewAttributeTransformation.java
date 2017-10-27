@@ -151,7 +151,7 @@ public class ViewAttributeTransformation implements IView {
         cmbType.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                actionAttributeTypeChanged();
+                actionAttributeTypeChanged(attribute, COMBO1_TYPES[cmbType.getSelectionIndex()]);
             }
         });
         
@@ -351,45 +351,11 @@ public class ViewAttributeTransformation implements IView {
     }
     
     /**
-     * Update attribute type of all attributes.
-     * @param typeNew
-     */
-    public void actionUpdateAttributeTypes(AttributeType typeNew) {
-        
-        // Store current attribute
-        String currentAttribute = attribute;
-        
-        if (model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
-            DataHandle handle = model.getInputConfig().getInput().getHandle();
-            if (handle != null) {
-                // For each attribute, check
-                for (int i = 0; i < handle.getNumColumns(); i++) {
-                    String attribute = handle.getAttributeName(i);
-                    AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-                    // Type changed
-                    if (type != typeNew) {
-                        // Get correct combo index
-                        for (int k = 0; k < COMBO1_TYPES.length; k++) {
-                            if (typeNew == COMBO1_TYPES[k]) {
-                                cmbType.select(k);
-                                this.attribute = attribute;
-                                actionAttributeTypeChanged();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        this.attribute = currentAttribute;
-    }
-
-    /**
      * Attribute type changed
      */
-    private void actionAttributeTypeChanged() {
+    private void actionAttributeTypeChanged(String attribute, AttributeType type) {
         if ((cmbType.getSelectionIndex() != -1) && (attribute != null)) {
             if ((model != null) && (model.getInputConfig().getInput() != null)) {
-                final AttributeType type = COMBO1_TYPES[cmbType.getSelectionIndex()];
                 final DataDefinition definition = model.getInputDefinition();
                 
                 // Handle QIs
@@ -561,6 +527,28 @@ public class ViewAttributeTransformation implements IView {
         } else if (cmbMode.getSelectionIndex() == 2) {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION);
             stack.setLayer(1);
+        }
+    }
+    
+    /**
+     * Update attribute type of all attributes.
+     * @param typeNew
+     */
+    public void actionUpdateAttributeTypes(AttributeType typeNew) {
+
+        if (model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            if (handle != null) {
+                // For each attribute, check
+                for (int i = 0; i < handle.getNumColumns(); i++) {
+                    String attribute = handle.getAttributeName(i);
+                    AttributeType type = model.getInputDefinition().getAttributeType(attribute);
+                    // Type changed
+                    if (type != typeNew) {
+                        actionAttributeTypeChanged(attribute, typeNew);
+                    }
+                }
+            }
         }
     }
     
