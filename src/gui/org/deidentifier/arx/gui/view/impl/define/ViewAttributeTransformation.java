@@ -151,7 +151,9 @@ public class ViewAttributeTransformation implements IView {
         cmbType.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                actionAttributeTypeChanged(attribute, COMBO1_TYPES[cmbType.getSelectionIndex()]);
+                if ((cmbType.getSelectionIndex() != -1) && (attribute != null)) {
+                    actionAttributeTypeChanged(attribute, COMBO1_TYPES[cmbType.getSelectionIndex()]);
+                }
             }
         });
         
@@ -354,72 +356,70 @@ public class ViewAttributeTransformation implements IView {
      * Attribute type changed
      */
     private void actionAttributeTypeChanged(String attribute, AttributeType type) {
-        if ((cmbType.getSelectionIndex() != -1) && (attribute != null)) {
-            if ((model != null) && (model.getInputConfig().getInput() != null)) {
-                final DataDefinition definition = model.getInputDefinition();
-                
-                // Handle QIs
-                if (type == null) {
-                    definition.setAttributeType(attribute, Hierarchy.create());
-                } else {
-                    definition.setAttributeType(attribute, type);
-                }
-                
-                // Do we need to disable criteria?
-                boolean criteriaDisabled = false;
-                
-                // Enable/disable criteria for sensitive attributes
-                if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
-                    
-                    if (model.getLDiversityModel().get(attribute).isEnabled() ||
-                        model.getTClosenessModel().get(attribute).isEnabled() ||
-                        model.getBLikenessModel().get(attribute).isEnabled() ||
-                        model.getDDisclosurePrivacyModel().get(attribute).isEnabled()) {
-                        criteriaDisabled = true;
-                    }
-                    
-                    model.getBLikenessModel().get(attribute).setEnabled(false);
-                    model.getTClosenessModel().get(attribute).setEnabled(false);
-                    model.getLDiversityModel().get(attribute).setEnabled(false);
-                    model.getDDisclosurePrivacyModel().get(attribute).setEnabled(false);
-                }
-                
-                // Enable/disable criteria for quasi-identifiers
-                if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
-                    
-                    if (model.getKAnonymityModel().isEnabled() ||
-                        model.getDPresenceModel().isEnabled() ||
-                        model.getStackelbergModel().isEnabled()) {
-                        criteriaDisabled = true;
-                    }
-                    
-                    model.getKAnonymityModel().setEnabled(false);
-                    model.getDPresenceModel().setEnabled(false);
-                    model.getStackelbergModel().setEnabled(false);
-                    for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
-                        if (c.isEnabled()) {
-                            criteriaDisabled = true;
-                        }
-                        c.setEnabled(false);
-                    }
-                    
-                }
-                
-                // Update mode
-                updateMode();
-                
-                // Update criteria
-                if (criteriaDisabled) {
-                    controller.update(new ModelEvent(this,
-                                                     ModelPart.CRITERION_DEFINITION,
-                                                     null));
-                }
-                
-                // Update the views
-                controller.update(new ModelEvent(this,
-                                                 ModelPart.ATTRIBUTE_TYPE,
-                                                 attribute));
+        if ((model != null) && (model.getInputConfig().getInput() != null)) {
+            final DataDefinition definition = model.getInputDefinition();
+
+            // Handle QIs
+            if (type == null) {
+                definition.setAttributeType(attribute, Hierarchy.create());
+            } else {
+                definition.setAttributeType(attribute, type);
             }
+
+            // Do we need to disable criteria?
+            boolean criteriaDisabled = false;
+
+            // Enable/disable criteria for sensitive attributes
+            if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
+
+                if (model.getLDiversityModel().get(attribute).isEnabled() ||
+                    model.getTClosenessModel().get(attribute).isEnabled() ||
+                    model.getBLikenessModel().get(attribute).isEnabled() ||
+                    model.getDDisclosurePrivacyModel().get(attribute).isEnabled()) {
+                    criteriaDisabled = true;
+                }
+
+                model.getBLikenessModel().get(attribute).setEnabled(false);
+                model.getTClosenessModel().get(attribute).setEnabled(false);
+                model.getLDiversityModel().get(attribute).setEnabled(false);
+                model.getDDisclosurePrivacyModel().get(attribute).setEnabled(false);
+            }
+
+            // Enable/disable criteria for quasi-identifiers
+            if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
+
+                if (model.getKAnonymityModel().isEnabled() ||
+                    model.getDPresenceModel().isEnabled() ||
+                    model.getStackelbergModel().isEnabled()) {
+                    criteriaDisabled = true;
+                }
+
+                model.getKAnonymityModel().setEnabled(false);
+                model.getDPresenceModel().setEnabled(false);
+                model.getStackelbergModel().setEnabled(false);
+                for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
+                    if (c.isEnabled()) {
+                        criteriaDisabled = true;
+                    }
+                    c.setEnabled(false);
+                }
+
+            }
+
+            // Update mode
+            updateMode();
+
+            // Update criteria
+            if (criteriaDisabled) {
+                controller.update(new ModelEvent(this,
+                                                 ModelPart.CRITERION_DEFINITION,
+                                                 null));
+            }
+
+            // Update the views
+            controller.update(new ModelEvent(this,
+                                             ModelPart.ATTRIBUTE_TYPE,
+                                             attribute));
         }
     }
     
