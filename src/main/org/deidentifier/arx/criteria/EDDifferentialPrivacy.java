@@ -53,9 +53,9 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /** Parameter */
     private final double             delta;
     /** Parameter */
-    private final int                k;
+    private int                      k;
     /** Parameter */
-    private final double             beta;
+    private double                   beta;
     /** Parameter */
     private DataSubset               subset;
     /** Parameter */
@@ -66,20 +66,23 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private DataGeneralizationScheme generalization;
 
     /**
-     * Creates a new instance
+     * Creates a new data-independent instance
      * @param epsilon
      * @param delta
      * @param generalization
      */
     public EDDifferentialPrivacy(double epsilon, double delta, 
                                  DataGeneralizationScheme generalization) {
-        super(false, false);
-        this.epsilon = epsilon;
-        this.delta = delta;
-        this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(delta, epsilon, this.beta);
-        this.deterministic = false;
+        this(epsilon, delta, generalization, false);
+    }
+    
+    /**
+     * Creates a new data-dependent instance
+     * @param epsilon
+     * @param delta
+     */
+    public EDDifferentialPrivacy(double epsilon, double delta) {
+        this(epsilon, delta, null, false);
     }
     
     /**
@@ -98,9 +101,9 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         this.epsilon = epsilon;
         this.delta = delta;
         this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(delta, epsilon, this.beta);
-        this.deterministic = true;
+        this.beta = -1d;
+        this.k = -1;
+        this.deterministic = deterministic;
     }
     
 
@@ -114,6 +117,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      * @return
      */
     public double getBeta() {
+        if (beta < 0d) { throw new RuntimeException("This instance has not been initialized yet"); }
         return beta;
     }
     
@@ -151,12 +155,29 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      * @return
      */
     public int getK() {
+        if (k < 0) { throw new RuntimeException("This instance has not been initialized yet"); }
         return k;
+    }
+    
+    /**
+     * Returns whether this instance is data-dependent
+     * @return
+     */
+    public boolean isDataDependent() {
+        return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
     }
 
     @Override
     public int getMinimalClassSize() {
-        return k;
+        return getK();
     }
     
     @Override
@@ -196,6 +217,13 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         } else {
             random = new SecureRandom();
         }
+        
+        // Set beta and k if required
+        if (beta < 0) {
+            double epsilonAnon = epsilon - (isDataDependent() ? config.getDPSearchBudget() : 0d);
+            beta = calculateBeta(epsilonAnon);
+            k = calculateK(delta, epsilonAnon, beta);
+        }
 
         // Create a data subset via sampling based on beta
         Set<Integer> subsetIndices = new HashSet<Integer>();
@@ -211,7 +239,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
-        return entry.count >= k;
+        return entry.count >= getK();
     }
 
     @Override
@@ -234,8 +262,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         ElementData result = new ElementData("Differential privacy");
         result.addProperty("Epsilon", epsilon);
         result.addProperty("Delta", delta);
-        result.addProperty("Uniqueness threshold (k)", k);
-        result.addProperty("Sampling probability (beta)", beta);
+        result.addProperty("Uniqueness threshold (k)", getK());
+        result.addProperty("Sampling probability (beta)", getBeta());
         return result;
     }
 

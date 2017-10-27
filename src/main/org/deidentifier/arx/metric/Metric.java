@@ -36,6 +36,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
+import org.deidentifier.arx.metric.v2.ILScore;
 import org.deidentifier.arx.metric.v2.ILSingleDimensional;
 import org.deidentifier.arx.metric.v2.MetricMDHeight;
 import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
@@ -1562,6 +1563,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Calculates the score.
+     * Note: All score functions are expected to have a sensitivity of one.
+     * 
+     * @param node
+     * @param groupify
+     * @return
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        throw new RuntimeException("Data-dependent differential privacy for the quality model "
+            + getName() + " is not yet implemented");
+    }
+    
+    /**
      * Returns the factor used to weight suppressed values.
      *
      * @return
@@ -1675,6 +1689,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Returns whether the metric provides a score function
+     * @return
+     */
+    public boolean isScoreFunctionSupported() {
+        return false;
+    }
+    
+    /**
      * Returns true if the metric is weighted.
      *
      * @return
@@ -1697,7 +1719,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public String toString() {
         return this.getClass().getSimpleName();
     }
-
+    
     /**
      * Evaluates the metric for the given node.
      *
