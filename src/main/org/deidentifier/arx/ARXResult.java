@@ -133,9 +133,8 @@ public class ARXResult {
                                               dataArray,
                                               dictionary,
                                               handle.getDefinition(),
-                                              config.getPrivacyModels(),
-                                              getAggregateFunctions(handle.getDefinition()),
-                                              config.getQualityModel());
+                                              config,
+                                              getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
@@ -165,7 +164,7 @@ public class ARXResult {
         this.optimumFound = this.statistics.isSolutationAvailable() ? this.statistics.getStep(0).isOptimal() : false;
         this.duration = this.statistics.getDuration();
     }
-    
+
     /**
      * Creates a new instance.
      *
