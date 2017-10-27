@@ -351,7 +351,7 @@ public class ViewAttributeTransformation implements IView {
             }
         }
     }
-    
+
     /**
      * Attribute type changed
      */
