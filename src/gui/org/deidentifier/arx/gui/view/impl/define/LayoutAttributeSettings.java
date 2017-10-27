@@ -17,11 +17,13 @@
 
 package org.deidentifier.arx.gui.view.impl.define;
 
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -30,6 +32,9 @@ import org.eclipse.swt.widgets.Composite;
  * @author Fabian Prasser
  */
 public class LayoutAttributeSettings implements ILayout {
+    
+    /** View */
+    private final ViewAttributeTransformation      attributeTransformationView;
 
     /**
      * Creates a new instance.
@@ -39,15 +44,41 @@ public class LayoutAttributeSettings implements ILayout {
      */
     public LayoutAttributeSettings(final Composite parent,
                                    final Controller controller) {
+        
+        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-1"); //$NON-NLS-1$
+        bar.add(Resources.getMessage("AttributeDefinitionView.10"), //$NON-NLS-1$
+                controller.getResources().getImage(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE), // $NON-NLS-1$
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        attributeTransformationView.actionUpdateAttributeTypes(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+                    }
+                });
+        bar.add(Resources.getMessage("AttributeDefinitionView.11"), //$NON-NLS-1$
+                controller.getResources().getImage(AttributeType.IDENTIFYING_ATTRIBUTE), // $NON-NLS-1$
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        attributeTransformationView.actionUpdateAttributeTypes(AttributeType.IDENTIFYING_ATTRIBUTE);
+                    }
+                });
+        bar.add(Resources.getMessage("AttributeDefinitionView.12"), //$NON-NLS-1$
+                controller.getResources().getImage(AttributeType.INSENSITIVE_ATTRIBUTE), // $NON-NLS-1$
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        attributeTransformationView.actionUpdateAttributeTypes(AttributeType.INSENSITIVE_ATTRIBUTE);
+                    }
+                });
 
         // Create the tab folder
-        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, "id-1");
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, "id-1");
         folder.setLayoutData(SWTUtil.createFillGridData());
 
         // First view
         Composite composite1 = folder.createItem(Resources.getMessage("LayoutAttributeMetadata.0"), null); //$NON-NLS-1$
         composite1.setLayout(SWTUtil.createGridLayout(1));
-        new ViewAttributeTransformation(composite1, controller);
+        this.attributeTransformationView = new ViewAttributeTransformation(composite1, controller);
 
         // Second view
         composite1 = folder.createItem(Resources.getMessage("LayoutAttributeMetadata.1"), null); //$NON-NLS-1$

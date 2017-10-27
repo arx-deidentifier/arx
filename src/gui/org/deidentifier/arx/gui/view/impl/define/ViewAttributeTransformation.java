@@ -24,6 +24,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -347,6 +348,39 @@ public class ViewAttributeTransformation implements IView {
                 hierarchy.setHierarchy(getHierarchy());
             }
         }
+    }
+    
+    /**
+     * Update attribute type of all attributes.
+     * @param typeNew
+     */
+    public void actionUpdateAttributeTypes(AttributeType typeNew) {
+        
+        // Store current attribute
+        String currentAttribute = attribute;
+        
+        if (model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            if (handle != null) {
+                // For each attribute, check
+                for (int i = 0; i < handle.getNumColumns(); i++) {
+                    String attribute = handle.getAttributeName(i);
+                    AttributeType type = model.getInputDefinition().getAttributeType(attribute);
+                    // Type changed
+                    if (type != typeNew) {
+                        // Get correct combo index
+                        for (int k = 0; k < COMBO1_TYPES.length; k++) {
+                            if (typeNew == COMBO1_TYPES[k]) {
+                                cmbType.select(k);
+                                this.attribute = attribute;
+                                actionAttributeTypeChanged();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        this.attribute = currentAttribute;
     }
 
     /**
