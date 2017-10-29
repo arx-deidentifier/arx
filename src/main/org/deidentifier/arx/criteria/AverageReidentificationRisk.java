@@ -55,7 +55,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
 
     @Override
     public boolean isLocalRecodingSupported() {
-        return false;
+        return true;
     }
 
     @Override
