@@ -62,6 +62,11 @@ import de.linearbits.swt.table.DynamicTableColumn;
  */
 public class ViewAttributeList implements IView {
 
+    /** Resource */
+    private final Image      IMAGE_ENABLED;
+    /** Resource */
+    private final Image      IMAGE_DISABLED;
+    
     /** Controller */
     private final Controller controller;
 
@@ -73,10 +78,6 @@ public class ViewAttributeList implements IView {
     /** View */
     private DynamicTable     table;
     
-    /** Resource */
-    private final Image      IMAGE_ENABLED;
-    /** Resource */
-    private final Image      IMAGE_DISABLED;
 
     /**
      * Creates a new instance.
@@ -105,8 +106,6 @@ public class ViewAttributeList implements IView {
         this.create(parent);
         this.reset();
     }
-    
-    
 
     @Override
     public void dispose() {
@@ -288,14 +287,15 @@ public class ViewAttributeList implements IView {
                     for (int i = 0; i < 5; i++) {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
+                            
                             // Data type or Format and right click
-                            if ((i == 2 || i == 3) && e.button == SWT.BUTTON3) {
+                            if ((i == 2 || i == 3) && e.button == 3) {
                                 menu.setLocation(table.toDisplay(e.x, e.y));
                                 menu.setVisible(true);
                                 return;
                             }
                             // Response variable and left click
-                            else if (i == 4 && e.button == SWT.BUTTON1) {
+                            else if (i == 4 && e.button == 1) {
                                 String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
                                 boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
                                 model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
