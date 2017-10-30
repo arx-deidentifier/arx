@@ -33,8 +33,8 @@ import java.util.Set;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -677,7 +677,7 @@ public class Model implements Serializable {
     public ModelConfiguration getInputConfig() {
         return inputConfig;
     }
-
+    
     /**
      * Returns the input definition.
      *
@@ -688,7 +688,7 @@ public class Model implements Serializable {
         else if (inputConfig.getInput()==null) return null;
         else return inputConfig.getInput().getDefinition();
     }
-    
+
     /**
      * Returns the input population model
      * @return
@@ -696,7 +696,7 @@ public class Model implements Serializable {
     public ARXPopulationModel getInputPopulationModel() {
         return getRiskModel().getPopulationModel();
     }
-
+    
     /**
      * Returns the k-anonymity model.
      *
@@ -763,7 +763,7 @@ public class Model implements Serializable {
     public int getMaximalSizeForComplexOperations(){
         return this.maximalSizeForComplexOperations;
     }
-    
+
     /**
      * Returns the maximal size of a sub-lattice that will be displayed
      * by the viewer.
@@ -790,7 +790,7 @@ public class Model implements Serializable {
         }
         return this.metricConfig;
     }
-
+    
     /**
      * Returns a description of the metric.
      *
@@ -867,15 +867,6 @@ public class Model implements Serializable {
     }
 
     /**
-     * Returns the currently applied transformation.
-     *
-     * @return
-     */
-    public ARXNode getOutputTransformation() {
-        return outputNode;
-    }
-
-    /**
      * Returns a string representation of the currently applied transformation.
      *
      * @return
@@ -898,6 +889,15 @@ public class Model implements Serializable {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the currently applied transformation.
+     *
+     * @return
+     */
+    public ARXNode getOutputTransformation() {
+        return outputNode;
     }
 
     /**
@@ -937,7 +937,7 @@ public class Model implements Serializable {
     public String getQuery() {
         return query;
     }
-    
+
     /**
      * Returns the current result.
      *
@@ -961,7 +961,7 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-
+    
     /**
      * Returns the risk model
      * @return the risk model
@@ -992,7 +992,7 @@ public class Model implements Serializable {
         }
         return this.selectedClasses;
     }
-    
+
     /**
      * Returns the currently selected class value.
      * 
@@ -1001,8 +1001,7 @@ public class Model implements Serializable {
     public String getSelectedClassValue() {
         return selectedClassValue;
     }
-
-
+    
     /**
      * Returns the selected features
      * @return
@@ -1013,7 +1012,8 @@ public class Model implements Serializable {
         }
         return this.selectedFeatures;
     }
-    
+
+
     /**
      * Returns the selected transformation.
      *
@@ -1022,7 +1022,6 @@ public class Model implements Serializable {
     public ARXNode getSelectedNode() {
         return selectedNode;
     }
-
     
     /**
      * Returns a set of quasi identifiers selected for risk analysis
@@ -1066,6 +1065,7 @@ public class Model implements Serializable {
         return this.selectedQuasiIdentifiers;
     }
 
+    
     /**
      * Returns the separator.
      *
@@ -1091,6 +1091,35 @@ public class Model implements Serializable {
      */
     public double getSnapshotSizeSnapshot() {
         return snapshotSizeSnapshot;
+    }
+
+    /**
+     * Returns the size of the solution space for the current
+     * input parameters
+     * 
+     * @return
+     */
+    public double getSolutionSpaceSize() {
+        
+       // Obtain definition
+       DataDefinition definition = getInputDefinition();
+       if (definition == null) {
+           return 0;
+       }
+       
+       // Generalized and clustered QIs
+       Set<String> qis = new HashSet<>(definition.getQuasiIdentifiersWithGeneralization());
+       qis.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
+       double size = 1;
+       for (String qi : qis) {
+           Hierarchy hierarchy = getInputConfig().getHierarchy(qi);
+            if (!(hierarchy == null || hierarchy.getHierarchy() == null || hierarchy.getHierarchy().length == 0 || hierarchy.getHierarchy()[0] == null)) {
+                size *= hierarchy.getHierarchy()[0].length;
+            }
+       }
+       
+       // Return
+       return size;
     }
 
     /**

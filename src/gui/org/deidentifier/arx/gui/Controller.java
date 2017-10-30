@@ -602,6 +602,8 @@ public class Controller implements IView {
             }
         }
         
+        // TODO: Handle
+        // model.getSolutionSpaceSize();
 
         // Query for parameters
         int maxTimePerIteration = 0;
