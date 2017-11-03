@@ -546,7 +546,7 @@ public class ViewAttributeTransformation implements IView {
                     // Type changed
                     if (type != typeNew) {
                         // Change selection in combo
-                        if (attribute.equals(model.getSelectedAttribute())) {
+                        if (attribute.equals(this.attribute)) {
                             for (int k = 0; k < COMBO1_TYPES.length; k++) {
                                 if (typeNew == COMBO1_TYPES[k]) {
                                     cmbType.select(k);
