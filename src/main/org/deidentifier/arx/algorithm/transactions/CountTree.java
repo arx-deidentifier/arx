@@ -3,7 +3,10 @@ package org.deidentifier.arx.algorithm.transactions;
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class CountTree {
 
@@ -102,7 +105,7 @@ public class CountTree {
                 throw new RuntimeException("Path does not exist for generalized transaction");
         }
 
-        return n.count > k; // if the count of the old endnode of the path plus the endnode
+        return n.count >= k;
     }
 
     /**
@@ -186,10 +189,10 @@ public class CountTree {
 
         /**
          * @param k the k in k^m-anonymity
-         * @return true if all nodes below this node have count > k, else false
+         * @return true if all nodes below this node have count >= k, else false
          */
         private boolean kmanonymous(int k) {
-            boolean nodeKanonymous = this.count > k;
+            boolean nodeKanonymous = this.count >= k;
 
             if (!nodeKanonymous)
                 return false;
