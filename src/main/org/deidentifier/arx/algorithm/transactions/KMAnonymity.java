@@ -98,7 +98,7 @@ public class KMAnonymity {
         if (cout.isGeneralized(node.getValue()))
             return;
 
-        if (node.getChildren().size() == 0 && node.getCount() <= k) { // node is a leaf node and has count less or equal to k
+        if (node.getChildren().size() == 0 && node.getCount() < k) { // node is a leaf node and has count less than k
             int[] J = node.getPath();
             Cut c = getKAnonymousCut(J, k, ct);
             cout.merge(c);
