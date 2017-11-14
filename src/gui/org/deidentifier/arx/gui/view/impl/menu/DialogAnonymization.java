@@ -387,6 +387,8 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.txtHeuristicSearchStepLimit.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
+                radio12.setSelection(true);
+                result.searchType = SearchType.STEP_LIMIT;
                 checkValidity();
             }
         });
@@ -409,6 +411,8 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.txtHeuristicSearchTimeLimit.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
+                radio13.setSelection(true);
+                result.searchType = SearchType.TIME_LIMIT;
                 checkValidity();
             }
         });
@@ -463,6 +467,8 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.textNumIterations.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
+                radio22.setSelection(true);
+                result.transformationType = TransformationType.LOCAL;
                 checkValidity();
             }
         });
@@ -476,6 +482,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             radio22.setEnabled(true);
         } else {
             radio22.setEnabled(false);
+            textNumIterations.setEnabled(false);
             createMessage(group2, Resources.getMessage("DialogAnonymization.12")); //$NON-NLS-1$
         }
 
