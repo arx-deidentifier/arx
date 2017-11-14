@@ -54,6 +54,8 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
+import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization;
+import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization.AnonymizationConfiguration;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
 import org.deidentifier.arx.gui.view.impl.menu.DialogClassificationConfiguration;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboDoubleSelection;
@@ -64,7 +66,6 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
 import org.deidentifier.arx.gui.view.impl.menu.DialogFindReplace;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
-import org.deidentifier.arx.gui.view.impl.menu.DialogLocalAnonymization;
 import org.deidentifier.arx.gui.view.impl.menu.DialogMultiSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
@@ -570,13 +571,13 @@ public class MainWindow implements IView {
         }
     }
     /**
-     * Shows a dialog for local anonymization
+     * Shows a dialog for anonymization parameters
      * @param model
      * @return Returns the parameters selected by the user. Returns a pair. 
      *         First: max. time per iteration. Second: min. records per iteration.
      */
-    public Pair<Double, Double> showLocalAnonymizationDialog(Model model) {
-        DialogLocalAnonymization dialog = new DialogLocalAnonymization(shell, model);
+    public AnonymizationConfiguration showLocalAnonymizationDialog(Model model) {
+        DialogAnonymization dialog = new DialogAnonymization(shell, model);
         dialog.create();
         dialog.open();
         return dialog.getResult();
@@ -795,26 +796,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.21"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_anonymize.png"), //$NON-NLS-1$
                                    true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(false, false); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
-            }
-        });
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.40"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("edit_anonymize_heuristic.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(true, false); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
-            }
-        });
-        
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.44"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("edit_anonymize_local.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(true, true); }
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getPerspective() == Perspective.CONFIGURATION;
             }

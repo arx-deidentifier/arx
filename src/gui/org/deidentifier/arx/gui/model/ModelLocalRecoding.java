@@ -46,16 +46,13 @@ public class ModelLocalRecoding implements Serializable {
     private double            gsFactor               = 0.05d;
 
     /** The number of iterations to perform */
-    private int               numIterations          = 10;
+    private int               numIterations          = 100;
 
     /** Is the GS-Factor adaptive */
     private double            adaptionFactor         = 0.05d;
 
     /** The type of recoding to perform */
     private LocalRecodingMode mode                   = LocalRecodingMode.ITERATIVE;
-
-    /** Minimal number of records to transform in each iteration */
-    private Double            minRecordsPerIteration = 0.01d;
 
     /**
      * Getter
@@ -71,17 +68,6 @@ public class ModelLocalRecoding implements Serializable {
      */
     public double getGsFactor() {
         return gsFactor;
-    }
-
-    /**
-     * Getter
-     * @return
-     */
-    public double getMinRecordsPerIteration() {
-        if (this.minRecordsPerIteration == null) {
-            this.minRecordsPerIteration = 0.01d;
-        }
-        return this.minRecordsPerIteration;
     }
 
     /**
@@ -116,14 +102,6 @@ public class ModelLocalRecoding implements Serializable {
         this.gsFactor = gsFactor;
     }
 
-    /**
-     * Setter
-     * @param minRecordsPerIteration
-     */
-    public void setMinRecordsPerIteration(double minRecordsPerIteration) {
-        this.minRecordsPerIteration = minRecordsPerIteration;
-    }
-    
     /**
      * Setter
      * @param mode

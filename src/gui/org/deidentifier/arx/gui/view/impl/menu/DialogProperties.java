@@ -229,16 +229,16 @@ public class DialogProperties implements IDialog {
         window.addGroup(Resources.getMessage("DialogProperties.9")); //$NON-NLS-1$
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.131"), 0, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getInputConfig().getHeuristicSearchThreshold(); }
-            protected void setValue(Object t) { model.getInputConfig().setHeuristicSearchThreshold((Integer)t); }});
+            protected Integer getValue() { return model.getHeuristicSearchThreshold(); }
+            protected void setValue(Object t) { model.setHeuristicSearchThreshold((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.132"), false) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getInputConfig().isHeuristicSearchEnabled(); }
-            protected void setValue(Object t) { model.getInputConfig().setHeuristicSearchEnabled((Boolean)t); }});
-        
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.133"), 0, Integer.MAX_VALUE, 30000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getInputConfig().getHeuristicSearchTimeLimit(); }
-            protected void setValue(Object t) { model.getInputConfig().setHeuristicSearchTimeLimit((Integer)t); }});
+            protected Integer getValue() { return model.getHeuristicSearchTimeLimit(); }
+            protected void setValue(Object t) { model.setHeuristicSearchTimeLimit((Integer)t); }});
+
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.134"), 0, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getHeuristicSearchStepLimit(); }
+            protected void setValue(Object t) { model.setHeuristicSearchStepLimit((Integer)t); }});
 
         window.addGroup(Resources.getMessage("DialogProperties.10")); //$NON-NLS-1$
 
