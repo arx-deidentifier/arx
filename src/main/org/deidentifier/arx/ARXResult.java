@@ -640,7 +640,7 @@ public class ARXResult {
         // - Utility measures will be cloned
         ARXConfiguration config = this.config.getInstanceForLocalRecoding(rowset, gsFactor);
         if (!Double.isNaN(records)) {
-            double absoluteRecords = records * handle.getNumRows();
+            double absoluteRecords = records * output.getNumRows();
             double relativeRecords = absoluteRecords / (double)rowset.size();
             relativeRecords = relativeRecords < 0d ? 0d : relativeRecords;
             relativeRecords = relativeRecords > 1d ? 1d : relativeRecords;

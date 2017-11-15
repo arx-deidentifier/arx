@@ -148,7 +148,7 @@ public class TransformationApplicator {
         }
         
         // Perform suppression
-        if (config.getAbsoluteMaxOutliers() != 0 || !currentGroupify.isPrivacyModelFulfilled()) {
+        if (config.getAbsoluteSuppressionLimit() != 0 || !currentGroupify.isPrivacyModelFulfilled()) {
             currentGroupify.performSuppression();
         }
         

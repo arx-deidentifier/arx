@@ -109,7 +109,7 @@ public class ARXLattice implements Serializable {
          * @param config
          */
         public void setMonotonicity(ARXConfiguration config) {
-            lattice.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
+            lattice.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteSuppressionLimit());
         }
 
         /**
@@ -751,7 +751,7 @@ public class ARXLattice implements Serializable {
         // Init
         this.solutions = solutions;
         this.metric = config.getQualityModel();
-        this.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteMaxOutliers());
+        this.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteSuppressionLimit());
         this.complete = complete;
         this.virtualSize = solutions.getSize();
  

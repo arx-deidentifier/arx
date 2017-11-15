@@ -79,8 +79,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
          *
          * @return
          */
-        public final int getAbsoluteMaxOutliers() {
-            return config.getAbsoluteMaxOutliers();
+        public final int getAbsoluteSuppressionLimit() {
+            return config.getAbsoluteSuppressionLimit();
         }
 
         /**
@@ -315,62 +315,65 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return new ARXConfiguration(metric);
     }
 
-    /** Absolute tuple outliers. */
-    private int                                absMaxOutliers                                   = 0;
+    /** Absolute suppression limit. */
+    private int                                absMaxOutliers                        = 0;
 
     /** Criteria. */
-    private PrivacyCriterion[]                 aCriteria                                        = new PrivacyCriterion[0];
+    private PrivacyCriterion[]                 aCriteria                             = new PrivacyCriterion[0];
 
     /** Criteria. */
-    private SampleBasedCriterion[]             bCriteria                                        = new SampleBasedCriterion[0];
+    private SampleBasedCriterion[]             bCriteria                             = new SampleBasedCriterion[0];
 
     /** A map of weights per attribute. */
-    private Map<String, Double>                attributeWeights                                 = null;
+    private Map<String, Double>                attributeWeights                      = null;
 
     /** The criteria. */
-    private Set<PrivacyCriterion>              criteria                                         = new HashSet<PrivacyCriterion>();
+    private Set<PrivacyCriterion>              criteria                              = new HashSet<PrivacyCriterion>();
 
     /** The metric. */
-    private Metric<?>                          metric                                           = Metric.createLossMetric();
+    private Metric<?>                          metric                                = Metric.createLossMetric();
 
     /** Do we assume practical monotonicity. */
-    private boolean                            practicalMonotonicity                            = false;
+    private boolean                            practicalMonotonicity                 = false;
 
     /** Relative tuple outliers. */
-    private double                             relMaxOutliers                                   = -1;
+    private double                             relMaxOutliers                        = -1;
 
     /** The requirements per equivalence class. */
-    private int                                requirements                                     = 0x0;
+    private int                                requirements                          = 0x0;
 
     /** The snapshot length. */
     private int                                snapshotLength;
 
     /** Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
-    private Integer                            suppressedAttributeTypes                         = 1 << AttributeType.ATTR_TYPE_QI;
+    private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
 
     /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
-    private Boolean                            suppressionAlwaysEnabled                         = true;
+    private Boolean                            suppressionAlwaysEnabled              = true;
 
     /** Internal variant of the class providing a broader interface. */
-    private transient ARXConfigurationInternal accessibleInstance                               = null;
+    private transient ARXConfigurationInternal accessibleInstance                    = null;
 
     /** Are we performing optimal anonymization for sample-based criteria? */
-    private boolean                            heuristicSearchForSampleBasedCriteria            = false;
+    private boolean                            heuristicSearchForSampleBasedCriteria = false;
 
     /** Should we use the heuristic search algorithm? */
-    private boolean                            heuristicSearchEnabled                           = false;
+    private boolean                            heuristicSearchEnabled                = false;
 
     /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
-    private Integer                            heuristicSearchThreshold                         = 100000;
+    private Integer                            heuristicSearchThreshold              = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchTimeLimit                         = 30000;
+    private Integer                            heuristicSearchTimeLimit              = 30000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchStepLimit                         = Integer.MAX_VALUE;
+    private Integer                            heuristicSearchStepLimit              = Integer.MAX_VALUE;
 
     /** Cost/benefit configuration */
-    private ARXCostBenefitConfiguration        costBenefitConfiguration                         = ARXCostBenefitConfiguration.create();
+    private ARXCostBenefitConfiguration        costBenefitConfiguration              = ARXCostBenefitConfiguration.create();
+
+    /** Number of output records */
+    private int                                numOutputRecords                      = 0;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -1051,14 +1054,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns the maximum number of allowed outliers.
+     * Returns the absolute record suppression limit
      *
      * @return
      */
-    protected final int getAbsoluteMaxOutliers() {
+    protected int getAbsoluteSuppressionLimit() {
         return this.absMaxOutliers;
     }
 
+    /**
+     * Returns the number of output records that will be produced,
+     * zero if this information is not available
+     * @return
+     */
+    protected int getNumOutputRecords() {
+        return this.numOutputRecords;
+    }
+    
     /**
      * Clones this config and projects everything onto the given subset.<br>
      * - All privacy models will be cloned<br>
@@ -1252,23 +1264,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
         for (PrivacyCriterion c : criteria) {
             c.initialize(manager, this);
         }
-
-        int dataLength = 0;
+        
+        // Calculate number of records in output data
         if (this.getSubset() != null) {
-            dataLength = getSubset().getArray().length;
+            numOutputRecords = getSubset().getArray().length;
         } else {
-            dataLength = manager.getDataGeneralized().getDataLength();
+            numOutputRecords = manager.getDataGeneralized().getDataLength();
         }
 
-        // Compute max outliers
+        // Compute absolute suppression limit
         if (this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-            absMaxOutliers = (int) dataLength;
+            absMaxOutliers = (int) numOutputRecords;
         } else {
-            absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);
+            absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) numOutputRecords);
         }
 
-        // Compute optimized array with criteria, assuming complexities
-        // dPresence <= dDisclosurePrivacy <= lDiversity <= tCloseness and ignoring kAnonymity
+        // Compute optimized array with privacy models,
+        // in ascending order of computational complexity to evaluate
         List<PrivacyCriterion> list = new ArrayList<PrivacyCriterion>();
         if (this.isPrivacyModelSpecified(DPresence.class)) {
             list.add(this.getPrivacyModel(DPresence.class));
