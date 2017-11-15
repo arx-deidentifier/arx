@@ -448,11 +448,14 @@ public class ARXResult {
                 return false;
             }
         }
+
+        // Baseline records
+        RowSet baselineRowSet = config.getSubset() == null ? null : config.getSubset().getSet();
         
         // Check, if there are enough outliers
         int outliers = 0;
         for (int row = 0; row < output.getNumRows(); row++) {
-            if (output.isOutlier(row)) {
+            if (output.isOutlier(row) && (baselineRowSet == null || baselineRowSet.contains(row))) {
                 outliers++;
             }
         }
@@ -618,17 +621,21 @@ public class ARXResult {
             throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
+        // Baseline records
+        RowSet baselineRowSet = config.getSubset() == null ? null : config.getSubset().getSet();
+        int baselineRecords = baselineRowSet == null ? output.getNumRows() : baselineRowSet.size();
+        
         // We are now ready to go
         // Collect input and row indices
         int initialRecords = 0;
         RowSet rowset = RowSet.create(output.getNumRows());
         for (int row = 0; row < output.getNumRows(); row++) {
-            if (output.isOutlier(row)) {
+            if (output.isOutlier(row) && (baselineRowSet == null || baselineRowSet.contains(row))) {
                 rowset.add(row);
                 initialRecords++;
             }
         }
-        initialRecords = output.getNumRows() - initialRecords;
+        initialRecords = baselineRecords - initialRecords;
         
         // Everything that is used from here on, needs to be either
         // (a) state-less, or
@@ -640,7 +647,7 @@ public class ARXResult {
         // - Utility measures will be cloned
         ARXConfiguration config = this.config.getInstanceForLocalRecoding(rowset, gsFactor);
         if (!Double.isNaN(records)) {
-            double absoluteRecords = records * output.getNumRows();
+            double absoluteRecords = records * baselineRecords;
             double relativeRecords = absoluteRecords / (double)rowset.size();
             relativeRecords = relativeRecords < 0d ? 0d : relativeRecords;
             relativeRecords = relativeRecords > 1d ? 1d : relativeRecords;
