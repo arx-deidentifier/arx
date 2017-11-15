@@ -87,6 +87,9 @@ public class ComponentHierarchyMenu implements IView {
 
     /** Item. */
     private MenuItem           itemTopBottomCoding;
+
+    /** Item. */
+    private MenuItem           itemAttributeSuppression;
     
     /**
      * Creates a new instance
@@ -302,6 +305,22 @@ public class ComponentHierarchyMenu implements IView {
                         model.getSelectedAttribute() == null) { return; }
     
                     controller.actionMenuEditCreateTopBottomCodingHierarchy();
+                }
+            }
+        });
+
+        // Action attribute suppression
+        itemAttributeSuppression = new MenuItem(menu, SWT.NONE);
+        itemAttributeSuppression.setText(Resources.getMessage("HierarchyView.23")); //$NON-NLS-1$
+        itemAttributeSuppression.addSelectionListener(new SelectionAdapter() {
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() ||
+                        hierarchy.isCellSelected() || model == null || model.getInputConfig() == null ||
+                        model.getInputConfig().getInput() == null ||
+                        model.getSelectedAttribute() == null) { return; }
+    
+                    controller.actionMenuEditCreateAttributeSuppressionHierarchy();
                 }
             }
         });

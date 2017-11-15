@@ -837,6 +837,45 @@ public class Controller implements IView {
     }
 
     /**
+     * Initializes the hierarchy for the currently selected attribute with a scheme
+     * for attribute suppression.
+     */
+    public void actionMenuEditCreateAttributeSuppressionHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] array;
+        try {
+            array = new String[values.length][2];
+            for (int i = 0; i < values.length; i++) {
+
+                String value = values[i];
+                String coded = "*"; //$NON-NLS-1$
+                array[i] = new String[] {value, coded};
+            }
+        } catch (Exception e) {
+            this.actionShowInfoDialog(main.getShell(), Resources.getMessage("Controller.159"), Resources.getMessage("Controller.153")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+    }
+    /**
      * Find and replace action
      */
     public void actionMenuEditFindReplace() {
