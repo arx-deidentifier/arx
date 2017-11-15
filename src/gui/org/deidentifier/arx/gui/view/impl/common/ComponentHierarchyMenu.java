@@ -365,6 +365,7 @@ public class ComponentHierarchyMenu implements IView {
         itemClear.setEnabled(cell || row || column);
         itemInitialize.setEnabled(hierarchy.isEmpty());
         itemTopBottomCoding.setEnabled(hierarchy.isEmpty());
+        itemAttributeSuppression.setEnabled(hierarchy.isEmpty());
         
         // Show
         this.menu.setLocation(point);
