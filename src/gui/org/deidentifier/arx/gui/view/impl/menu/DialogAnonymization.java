@@ -267,7 +267,7 @@ public class DialogAnonymization extends TitleAreaDialog {
        } catch (Exception e) {
            return null;
        }
-       if (((int)value) > 0d) {
+       if (value > 0d) {
            return value;
        } else {
            return null;
@@ -285,7 +285,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         } catch (Exception e) {
             return null;
         }
-        if (((int)value) > 0d) {
+        if (value > 0d) {
             return value;
         } else {
             return null;
@@ -384,15 +384,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.txtHeuristicSearchStepLimit = new Text(group1, SWT.BORDER);
         this.txtHeuristicSearchStepLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         this.txtHeuristicSearchStepLimit.setText(String.valueOf(result.heuristicSearchStepLimit));
-        this.txtHeuristicSearchStepLimit.addModifyListener(new ModifyListener() {
-            @Override
-            public void modifyText(ModifyEvent arg0) {
-                radio12.setSelection(true);
-                result.searchType = SearchType.STEP_LIMIT;
-                checkValidity();
-            }
-        });
-        
+
         // Time
         final Button radio13 = new Button(group1, SWT.RADIO);
         radio13.setText(Resources.getMessage("DialogAnonymization.2")); //$NON-NLS-1$
@@ -404,6 +396,19 @@ public class DialogAnonymization extends TitleAreaDialog {
                 }
             }
         });
+        
+        // Needs to be deferred because of scope
+        this.txtHeuristicSearchStepLimit.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                radio12.setSelection(true);
+                radio11.setSelection(false);
+                radio13.setSelection(false);
+                result.searchType = SearchType.STEP_LIMIT;
+                checkValidity();
+            }
+        });
+        
 
         this.txtHeuristicSearchTimeLimit = new Text(group1, SWT.BORDER);
         this.txtHeuristicSearchTimeLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
@@ -412,6 +417,8 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radio13.setSelection(true);
+                radio11.setSelection(false);
+                radio12.setSelection(false);
                 result.searchType = SearchType.TIME_LIMIT;
                 checkValidity();
             }
@@ -468,6 +475,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radio22.setSelection(true);
+                radio21.setSelection(false);
                 result.transformationType = TransformationType.LOCAL;
                 checkValidity();
             }
