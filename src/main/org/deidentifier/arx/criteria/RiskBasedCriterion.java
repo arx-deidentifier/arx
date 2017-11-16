@@ -26,12 +26,12 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.Pr
  * 
  * @author Fabian Prasser
  */
-public abstract class RiskBasedCriterion extends SampleBasedCriterion{
+public abstract class RiskBasedCriterion extends SampleBasedCriterion {
 
     /** SVUID */
     private static final long serialVersionUID = -2711630526630937284L;
     /** The threshold */
-    private final double    threshold;
+    private final double      threshold;
 
     /**
      * Creates a new instance of this criterion.
@@ -91,6 +91,15 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
         return threshold;
     }
 
+    /**
+     * Overwrite this to implement reliable anonymization
+     * @param distribution
+     * @return
+     */
+    public boolean isReliablyFulfilled(HashGroupifyDistribution distribution) {
+        return this.isFulfilled(distribution);
+    }
+    
     /**
      * To be implemented by risk-based criteria
      * @param distribution

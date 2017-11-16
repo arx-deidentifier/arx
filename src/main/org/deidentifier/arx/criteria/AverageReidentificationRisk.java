@@ -26,7 +26,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
  * 
  * @author Fabian Prasser
  */
-public class AverageReidentificationRisk extends RiskBasedCriterion{
+public class AverageReidentificationRisk extends RiskBasedCriterion {
 
     /** SVUID*/
     private static final long serialVersionUID = -2953252206954936045L;
