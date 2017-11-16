@@ -52,7 +52,8 @@ import org.eclipse.swt.widgets.TableColumn;
  * to select the desired one by clicking on it. The tables itself are retrieved
  * from {@link ImportData#getJdbcTables()()}. The selected one will be assigned
  * via {@link ImportWizardModel#setSelectedJdbcTable(String)} along with the
- * detected columns for this table using {@link ImportWizardModel#setWizardColumns(List)} and its preview data {@link ImportWizardModel#setPreviewData(List)}.
+ * detected columns for this table using {@link ImportWizardModel#setWizardColumns(List)} 
+ * and its preview data {@link ImportWizardModel#setPreviewData(List)}.
  * 
  * @author Karol Babioch
  * @author Fabian Prasser
