@@ -91,14 +91,13 @@ public class RecursiveCLDiversity extends LDiversity{
         Arrays.sort(frequencyCopy);
         
         // Compute threshold
-        double threshold = 0;
+        long threshold = 0;
         for (int i = frequencyCopy.length - minSize; i >= 0; i--) { // minSize=(int)l;
             threshold += frequencyCopy[i];
         }
-        threshold *= c;
 
         // Check
-        return frequencyCopy[frequencyCopy.length - 1] < threshold;
+        return frequencyCopy[frequencyCopy.length - 1] < (threshold * c);
     }
     
 	@Override
