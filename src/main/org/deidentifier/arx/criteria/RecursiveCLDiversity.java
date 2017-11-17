@@ -128,7 +128,7 @@ public class RecursiveCLDiversity extends LDiversity{
             // Compute threshold
             int threshold = 0;
             for (int i = frequencyCopy.length - minSize; i >= 0; i--) { // minSize=(int)l;
-                Math.addExact(threshold, frequencyCopy[i]);
+                threshold = Math.addExact(threshold, frequencyCopy[i]);
             }
             
             // Multiply using reliable arithmetic

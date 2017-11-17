@@ -194,7 +194,8 @@ public abstract class PrivacyCriterion implements Serializable{
 
     /**
      * Returns whether the model supports reliable data anonymization.
-     * The default is true.
+     * Must be called after the model has been initialized.
+     * The default is <code>false</code>.
      * @return
      */
     public boolean isReliableAnonymizationSupported() {

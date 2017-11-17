@@ -35,12 +35,16 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
 import org.deidentifier.arx.metric.v2.DomainShareRedaction;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
+import org.deidentifier.arx.reliability.IntervalDouble;
 
 import cern.colt.Sorting;
 import cern.colt.function.IntComparator;
@@ -333,6 +337,14 @@ public class DataManager {
     }
 
     /**
+     * Returns data configuring microaggregation
+     * @return
+     */
+    public DataAggregationInformation getAggregationInformation() {
+        return this.aggregationInformation;
+    }
+
+    /**
      * Returns centroid distances
      * @param normalized 
      * @return
@@ -364,7 +376,7 @@ public class DataManager {
     public Data getDataAnalyzed() {
         return dataAnalyzed;
     }
-
+    
     /**
      * Returns the input data that will be generalized.
      * 
@@ -373,7 +385,7 @@ public class DataManager {
     public Data getDataGeneralized() {
         return dataGeneralized;
     }
-    
+
     /**
      * Returns the input data.
      * 
@@ -411,7 +423,7 @@ public class DataManager {
 
     /**
      * Returns the distribution of the given sensitive attribute in the original dataset. 
-     * Required for t-closeness.
+     * Required for multiple privacy models.
      * 
      * @param attribute
      * @return distribution
@@ -516,14 +528,6 @@ public class DataManager {
     }
 
     /**
-     * Returns data configuring microaggregation
-     * @return
-     */
-    public DataAggregationInformation getAggregationInformation() {
-        return this.aggregationInformation;
-    }
-
-    /**
      * Returns the order of the given sensitive attribute in the original dataset. 
      * Required for t-closeness.
      * 
@@ -558,6 +562,55 @@ public class DataManager {
         
         // Return
         return order;
+    }
+
+    /**
+     * Returns the distribution of the attribute in the data array at the given index.
+     * @param dataMatrix
+     * @param index
+     * @param distinctValues
+     * @return
+     */
+    public IntervalDouble[] getReliableDistribution(DataMatrix dataMatrix, int index, int distinctValues) throws ReliabilityException {
+
+        try {
+            // Initialize counts: iterate over all rows or the subset
+            final int[] cardinalities = new int[distinctValues];
+            for (int i = 0; i < dataMatrix.getNumRows(); i++) {
+                if (subset == null || subset.contains(i)) {
+                    int val = dataMatrix.get(i, index);
+                    cardinalities[val] = Math.addExact(cardinalities[val], 1);
+                }
+            }
+
+            // compute distribution
+            IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+            IntervalDouble total = subset == null ? ia.createInterval(dataMatrix.getNumRows()) : ia.createInterval(subsetSize);
+            IntervalDouble[] distribution = new IntervalDouble[cardinalities.length];
+            for (int i = 0; i < distribution.length; i++) {
+                distribution[i] = ia.div(ia.createInterval(cardinalities[i]), total);
+            }
+            return distribution;
+            
+        // Handle arithmetic issues
+        } catch (ArithmeticException | IntervalArithmeticException | IndexOutOfBoundsException e) {
+            throw new ReliabilityException("Cannot calculate reliable distribution");
+        }
+    }
+
+    /**
+     * Returns the distribution of the given sensitive attribute in the original dataset. 
+     * Required for multiple privacy models.
+     * 
+     * @param attribute
+     * @return distribution
+     * @throws ReliabilityException 
+     */
+    public IntervalDouble[] getReliableDistribution(String attribute) throws ReliabilityException {
+        // Calculate and return
+        int index = dataAnalyzed.getIndexOf(attribute);
+        int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
+        return getReliableDistribution(dataAnalyzed.getArray(), index, distinctValues);
     }
 
     /**

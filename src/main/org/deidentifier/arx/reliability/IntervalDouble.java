@@ -17,17 +17,22 @@
 
 package org.deidentifier.arx.reliability;
 
+import java.io.Serializable;
+
 /**
  * A basic double interval
  * 
  * @author Fabian Prasser
  */
-public class IntervalDouble {
-    
+public class IntervalDouble implements Serializable {
+
+    /** SVUID */
+    private static final long serialVersionUID = 6012504736748464073L;
+
     /** Lower */
-    final double lower;
+    final double              lower;
     /** Upper */
-    final double upper;
+    final double              upper;
 
     /**
      * Creates a new instance
