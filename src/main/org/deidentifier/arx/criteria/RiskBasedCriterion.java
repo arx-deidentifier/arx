@@ -92,18 +92,18 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion {
     }
 
     /**
-     * Overwrite this to implement reliable anonymization
-     * @param distribution
-     * @return
-     */
-    public boolean isReliablyFulfilled(HashGroupifyDistribution distribution) {
-        return this.isFulfilled(distribution);
-    }
-    
-    /**
      * To be implemented by risk-based criteria
      * @param distribution
      * @return
      */
     protected abstract boolean isFulfilled(HashGroupifyDistribution distribution);
+    
+    /**
+     * Overwrite this to implement reliable anonymization
+     * @param distribution
+     * @return
+     */
+    protected boolean isReliablyFulfilled(HashGroupifyDistribution distribution) {
+        return this.isFulfilled(distribution);
+    }
 }

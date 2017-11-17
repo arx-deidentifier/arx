@@ -306,6 +306,17 @@ public class IntervalArithmeticDouble {
     }
 
     /**
+     * Less than
+     * @param operand1
+     * @param operand2
+     * @return
+     * @throws IntervalArithmeticException
+     */
+    public boolean lessThanOrEqual(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
+        return (operand1.upper < operand2.lower) || ((operand1.lower == operand2.lower) && (operand1.upper == operand2.upper));
+    }
+
+    /**
      * Log
      * @param operand
      * @return

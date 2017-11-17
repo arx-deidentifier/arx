@@ -18,7 +18,10 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
  * This criterion ensures that an estimate for the average re-identification risk falls
@@ -59,6 +62,11 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
     }
 
     @Override
+    public boolean isReliableAnonymizationSupported() {
+        return true;
+    }
+
+    @Override
     public ElementData render() {
         ElementData result = new ElementData("Average re-identification risk");
         result.addProperty("Threshold", this.getRiskThreshold());
@@ -73,5 +81,15 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
+    }
+
+    @Override
+    protected boolean isReliablyFulfilled(HashGroupifyDistribution distribution) {
+        try {
+            IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+            return ia.lessThanOrEqual(ia.div(ia.ONE, distribution.getReliableAverageClassSize()), ia.createInterval(getRiskThreshold()));
+        } catch (IntervalArithmeticException | ReliabilityException e) {
+            return false;
+        }
     }
 }
