@@ -132,7 +132,7 @@ public class TransformationApplicator {
         
         // Determine information loss
         InformationLoss<?> loss = transformation.getInformationLoss();
-        if (loss == null) {
+        if (config.isReliableAnonymizationEnabled() || loss == null) {
             loss = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss();
         }
         
