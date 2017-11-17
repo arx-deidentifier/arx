@@ -75,6 +75,32 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion {
             }
         });
     }
+
+    @Override
+    public void enforceReliably(final HashGroupifyDistribution distribution,
+                                final int numMaxSuppressedOutliers) {
+        
+        // Early abort
+        if (RiskBasedCriterion.this.isFulfilled(distribution)) {
+            return;
+        }
+       
+        // Binary search
+        distribution.suppressWhileNotFulfilledBinary(new PrivacyCondition(){
+            public State isFulfilled(HashGroupifyDistribution distribution) {
+                boolean fulfilled = RiskBasedCriterion.this.isReliablyFulfilled(distribution);
+                
+                // Early abort
+                if (!fulfilled && distribution.getNumSuppressedRecords() > numMaxSuppressedOutliers) {
+                    return State.ABORT;
+                    
+                // Go on
+                } else {
+                    return fulfilled ? State.FULFILLED : State.NOT_FULFILLED;
+                }
+            }
+        });
+    }
     
     @Override
     public int getRequirements(){

@@ -125,7 +125,7 @@ public class TransformationApplicator {
         
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
-        currentGroupify.stateAnalyze(transformation, true);
+        currentGroupify.stateAnalyze(transformation, true, config.isReliableAnonymizationEnabled());
         if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }

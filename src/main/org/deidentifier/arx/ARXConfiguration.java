@@ -218,6 +218,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
+         * Returns whether reliable anonymization is enabled.
+         * @return
+         */
+        public boolean isReliableAnonymizationEnabled() {
+            return config.isReliableAnonymizationEnabled();
+        }
+
+        /**
          * Returns whether suppression is applied to the output of anonymous as 
          * well as non-anonymous transformations. If this flag is set to true, 
          * suppression will be applied to the output of non-anonymous transformations 
@@ -316,61 +324,64 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /** Absolute tuple outliers. */
-    private int                                absMaxOutliers                                   = 0;
+    private int                                absMaxOutliers                        = 0;
 
     /** Criteria. */
-    private PrivacyCriterion[]                 aCriteria                                        = new PrivacyCriterion[0];
+    private PrivacyCriterion[]                 aCriteria                             = new PrivacyCriterion[0];
 
     /** Criteria. */
-    private SampleBasedCriterion[]             bCriteria                                        = new SampleBasedCriterion[0];
+    private SampleBasedCriterion[]             bCriteria                             = new SampleBasedCriterion[0];
 
     /** A map of weights per attribute. */
-    private Map<String, Double>                attributeWeights                                 = null;
+    private Map<String, Double>                attributeWeights                      = null;
 
     /** The criteria. */
-    private Set<PrivacyCriterion>              criteria                                         = new HashSet<PrivacyCriterion>();
+    private Set<PrivacyCriterion>              criteria                              = new HashSet<PrivacyCriterion>();
 
     /** The metric. */
-    private Metric<?>                          metric                                           = Metric.createLossMetric();
+    private Metric<?>                          metric                                = Metric.createLossMetric();
 
     /** Do we assume practical monotonicity. */
-    private boolean                            practicalMonotonicity                            = false;
+    private boolean                            practicalMonotonicity                 = false;
 
     /** Relative tuple outliers. */
-    private double                             relMaxOutliers                                   = -1;
+    private double                             relMaxOutliers                        = -1;
 
     /** The requirements per equivalence class. */
-    private int                                requirements                                     = 0x0;
+    private int                                requirements                          = 0x0;
 
     /** The snapshot length. */
     private int                                snapshotLength;
 
     /** Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
-    private Integer                            suppressedAttributeTypes                         = 1 << AttributeType.ATTR_TYPE_QI;
+    private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
 
     /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
-    private Boolean                            suppressionAlwaysEnabled                         = true;
+    private Boolean                            suppressionAlwaysEnabled              = true;
 
     /** Internal variant of the class providing a broader interface. */
-    private transient ARXConfigurationInternal accessibleInstance                               = null;
+    private transient ARXConfigurationInternal accessibleInstance                    = null;
 
     /** Are we performing optimal anonymization for sample-based criteria? */
-    private boolean                            heuristicSearchForSampleBasedCriteria            = false;
+    private boolean                            heuristicSearchForSampleBasedCriteria = false;
 
     /** Should we use the heuristic search algorithm? */
-    private boolean                            heuristicSearchEnabled                           = false;
+    private boolean                            heuristicSearchEnabled                = false;
 
     /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
-    private Integer                            heuristicSearchThreshold                         = 100000;
+    private Integer                            heuristicSearchThreshold              = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchTimeLimit                         = 30000;
+    private Integer                            heuristicSearchTimeLimit              = 30000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchStepLimit                         = Integer.MAX_VALUE;
+    private Integer                            heuristicSearchStepLimit              = Integer.MAX_VALUE;
 
     /** Cost/benefit configuration */
-    private ARXCostBenefitConfiguration        costBenefitConfiguration                         = ARXCostBenefitConfiguration.create();
+    private ARXCostBenefitConfiguration        costBenefitConfiguration              = ARXCostBenefitConfiguration.create();
+
+    /** Reliable anonymization */
+    private Boolean                            reliable                              = false;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -389,7 +400,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (supp < 0d || supp >= 1d) { throw new NullPointerException("Suppression must be >=0 and <1"); }
         this.relMaxOutliers = supp;
     }
-
+    
     /**
      * Creates a new config that allows the given percentage of outliers and
      * thus implements tuple suppression. Defines the metric for measuring information loss.
@@ -475,7 +486,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Everything is fine
         return this;
     }
-    
+
     /**
      * Clones this config.
      *
@@ -506,7 +517,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return result;
     }
-
+    
     /**
      * Returns the weight for the given attribute.
      *
@@ -523,7 +534,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (value == null) return 0.5d;
         else return value;
     }
-    
+
     /**
      * Returns all configured attribute weights. For attributes which are not a key in this
      * set the default attribute weight will be assumed by ARX. This default value is 
@@ -572,7 +583,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchThreshold;
     }
-  
+    
     /**
      * The heuristic search algorithm will terminate after the returned number of milliseconds.
      * The default is 30 seconds.
@@ -584,7 +595,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchTimeLimit;
     }
-
+  
     /**
      * Returns the maximum number of allowed outliers.
      * Deprecated. Use <code>getSuppressionLimit()</code> instead.
@@ -595,7 +606,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public double getMaxOutliers() {
         return relMaxOutliers;
     }
-    
+
     /**
      * Returns whether the privacy model is monotonic
      * @return
@@ -648,7 +659,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return Monotonicity.NONE;
         }
     }
-
+    
     /**
      * Returns an instance of the class, if any. Throws an exception if more than one such model exists.
      *
@@ -700,7 +711,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return result;
     }
-    
+
     /**
      * Returns the quality model to be used for optimizing output data.
      *
@@ -721,7 +732,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-
+    
     /**
      * Return marketer risk threshold, 1 if there is none
      * @return
@@ -733,7 +744,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-    
+
     /**
      * Return prosecutor risk threshold, 1 if there is none
      * @return
@@ -798,6 +809,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
             if (clazz.isInstance(c)) { return true; }
         }
         return false;
+    }
+    
+    /**
+     * Returns whether reliable anonymization is enabled
+     * @return
+     */
+    public boolean isReliableAnonymizationEnabled() {
+        if (this.reliable == null) {
+            this.reliable = false;
+        }
+        return reliable;
     }
 
     /**
@@ -976,6 +998,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Enables/disables reliable anonymization
+     * @param value
+     */
+    public void setReliableAnonymizationEnabled(boolean value) {
+        this.reliable = value;
+    }
+
+    /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
      * transformations to make them anonymous (if possible). Default is <code>true</code>. 
@@ -992,7 +1022,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setSuppressionLimit(double limit) {
         this.relMaxOutliers = limit;
     }
-
+    
     /**
      * Do we guarantee optimality for sample-based criteria?
      */
