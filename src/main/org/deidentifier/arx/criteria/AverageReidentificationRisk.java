@@ -69,13 +69,14 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
     @Override
     public ElementData render() {
         ElementData result = new ElementData("Average re-identification risk");
+        result.addProperty("Reliable", isReliableAnonymizationSupported());
         result.addProperty("Threshold", this.getRiskThreshold());
         return result;
     }
 
     @Override
     public String toString() {
-        return "("+getRiskThreshold()+")-avg-reidentification-risk";
+        return "(" + getRiskThreshold() + ")-avg-reidentification-risk";
     }
 
     @Override

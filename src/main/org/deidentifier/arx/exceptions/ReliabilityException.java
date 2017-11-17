@@ -35,12 +35,20 @@ public class ReliabilityException extends Exception {
 
     /** 
      * Constructor
-     * @param e
+     * @param exception
      */
-    public ReliabilityException(Exception e) {
-        super(e);
+    public ReliabilityException(Exception exception) {
+        super(exception);
     }
     
+    /**
+     * Constructor
+     * @param string
+     */
+    public ReliabilityException(String message) {
+        super(message);
+    }
+
     /** 
      * Constructor
      * @param message
