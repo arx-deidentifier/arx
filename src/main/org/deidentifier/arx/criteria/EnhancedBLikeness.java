@@ -34,14 +34,14 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
 
-    /** SVUID*/
+    /** SVUID */
     private static final long serialVersionUID = 5319052409590347904L;
 
     /** Parameter */
-    private final double        b;
+    private final double      b;
 
     /** The original distribution. */
-    private double[]            distribution;
+    private double[]          distribution;
     
     /**
      * Creates a new instance
