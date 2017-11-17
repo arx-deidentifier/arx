@@ -414,10 +414,7 @@ public class HashGroupify {
         if (force) {
             analyzeAll(transformation, reliable);
         } else {
-            if (reliable) {
-                throw new IllegalArgumentException("Reliable anonymization with early abort is not supported");
-            }
-            analyzeWithEarlyAbort(transformation);
+            analyzeWithEarlyAbort(transformation, reliable);
         }
     }
     
@@ -613,8 +610,9 @@ public class HashGroupify {
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
+     * @param reliable 
      */
-    private void analyzeWithEarlyAbort(Transformation transformation) {
+    private void analyzeWithEarlyAbort(Transformation transformation, boolean reliable) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -639,7 +637,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry, false);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry, reliable);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -673,7 +671,7 @@ public class HashGroupify {
             entry = entry.nextOrdered;
         }
         
-        this.analyzeSampleBasedCriteria(transformation, true, false);
+        this.analyzeSampleBasedCriteria(transformation, true, reliable);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
         

@@ -191,7 +191,7 @@ public class TransformationChecker {
         }
         
         // We are done with transforming and adding
-        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss);
+        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss, config.isReliableSearchProcessEnabled());
         if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }

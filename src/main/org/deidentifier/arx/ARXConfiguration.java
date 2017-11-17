@@ -226,6 +226,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
+         * Returns whether reliable search process is enabled.
+         * @return
+         */
+        public boolean isReliableSearchProcessEnabled() {
+            return config.isReliableSearchProcessEnabled();
+        }
+
+        /**
          * Returns whether suppression is applied to the output of anonymous as 
          * well as non-anonymous transformations. If this flag is set to true, 
          * suppression will be applied to the output of non-anonymous transformations 
@@ -382,6 +390,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Reliable anonymization */
     private Boolean                            reliable                              = false;
+
+    /** Reliable search process */
+    private Boolean                            reliableSearchProcess                 = false;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -823,6 +834,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * Returns whether reliable a reliable search process is enabled
+     * @return
+     */
+    public boolean isReliableSearchProcessEnabled() {
+        if (this.reliableSearchProcess == null) {
+            this.reliableSearchProcess = false;
+        }
+        return reliableSearchProcess;
+    }
+    
+    /**
      * Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
      * transformations to make them anonymous (if possible). Default is <code>true</code>.
@@ -1005,6 +1027,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.reliable = value;
     }
 
+    /**
+     * Enables/disables reliable search process. There should typically be no need to
+     * use this functionality, as it basically just increases execution times.
+     * @param value
+     */
+    public void setReliableSearchProcessEnabled(boolean value) {
+        this.reliableSearchProcess = value;
+    }
     /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 

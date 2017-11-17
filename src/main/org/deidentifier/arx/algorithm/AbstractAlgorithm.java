@@ -86,9 +86,8 @@ public abstract class AbstractAlgorithm {
     public abstract boolean traverse();
 
     /**
-     * Determine information loss of the given node if it can be
-     * used for estimating minimum and maximum information
-     * loss for tagged nodes.
+     * Determine information loss implied by the given transformation if it can be
+     * used for estimating minimum and maximum information loss for tagged nodes.
      *
      * @param transformation
      */
