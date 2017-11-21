@@ -66,7 +66,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private DataGeneralizationScheme generalization;
 
     /**
-     * Creates a new data-independent instance
+     * Creates a new instance which is data-independent iff generalization is not null
      * @param epsilon
      * @param delta
      * @param generalization
@@ -334,7 +334,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         double gamma = calculateGamma(epsilon, beta);
         int n_m = (int) Math.ceil((double) k / gamma - 1.0d);
 
-        double delta = Double.MIN_VALUE;
+        double delta = -Double.MAX_VALUE;
         double bound = Double.MAX_VALUE;
 
         for (int n = n_m; delta < bound; ++n) {

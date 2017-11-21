@@ -39,6 +39,12 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /** Delta */
     private double                   delta            = 0.000001d;
+    
+    /** Search budget */
+    private Double                   searchBudget     = 0.1d;
+
+    /** Search steps */
+    private Integer                  searchSteps      = 100;
 
     /** Generalization scheme */
     private DataGeneralizationScheme generalization   = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
@@ -65,7 +71,9 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         ModelDifferentialPrivacyCriterion result = new ModelDifferentialPrivacyCriterion();
         result.epsilon = this.epsilon;
         result.delta = this.delta;
-        result.generalization = this.generalization.clone();
+        result.searchBudget = this.searchBudget;
+        result.searchSteps = this.searchSteps;
+        result.generalization = (this.generalization == null) ? null : this.generalization.clone();
         result.setEnabled(this.isEnabled());
         return result;
     }
@@ -104,6 +112,28 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         return "(" + '\u03B5' + ", " + '\u03B4' + ")" + Resources.getMessage("ModelCriterion.3"); //$NON-NLS-1$
     }
 
+    /**
+     * Getter
+     * @return
+     */
+    public double getSearchBudget() {
+        if (searchBudget == null) {
+            searchBudget = 0.1d;
+        }
+        return searchBudget;
+    }
+
+    /**
+     * Getter
+     * @return
+     */
+    public int getSearchSteps() {
+        if (searchSteps == null) {
+            searchSteps = 100;
+        }
+        return searchSteps;
+    }
+
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelDifferentialPrivacyCriterion)) {
@@ -112,8 +142,10 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         ModelDifferentialPrivacyCriterion other = (ModelDifferentialPrivacyCriterion)criterion;
         this.epsilon = other.epsilon;
         this.delta = other.delta;
+        this.searchBudget = other.searchBudget;
+        this.searchSteps = other.searchSteps;
         if (!_default) {
-            this.generalization = other.generalization.clone();
+            this.generalization = (other.generalization == null) ? null : other.generalization.clone();
         }
         if (!_default) {
             this.setEnabled(other.isEnabled());
@@ -142,6 +174,22 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      */
     public void setGeneralization(DataGeneralizationScheme generalization) {
         this.generalization = generalization;
+    }
+    
+    /**
+     * Setter
+     * @param searchSteps
+     */
+    public void setSearchSteps(int searchSteps) {
+        this.searchSteps = searchSteps;
+    }
+
+    /**
+     * Setter
+     * @param searchBudget
+     */
+    public void setSearchBudget(double searchBudget) {
+        this.searchBudget = searchBudget;
     }
 
     @Override
