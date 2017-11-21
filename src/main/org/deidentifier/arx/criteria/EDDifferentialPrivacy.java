@@ -66,7 +66,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private DataGeneralizationScheme generalization;
 
     /**
-     * Creates a new data-independent instance
+     * Creates a new instance which is data-independent iff generalization is not null
      * @param epsilon
      * @param delta
      * @param generalization
