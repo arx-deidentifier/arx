@@ -156,7 +156,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         }
         Transformation next = expand(queue, transformation);
         if (next != null) {
-            queue.remove(next);
+            queue.remove(next.getIdentifier());
             dfs(queue, next);
         }
     }
