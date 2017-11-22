@@ -47,9 +47,9 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
     }
     
     /** Default value */
-    public static final double        DEFAULT_ALPHA          = 1 - 1.0e-3;
+    public static final double        DEFAULT_ALPHA          = 1d;
     /** Default value */
-    public static final double        DEFAULT_DECAY_EXPONENT = -0.5d;
+    public static final double        DEFAULT_DECAY_EXPONENT = 0.2d;
     /** Default value */
     public static final double        DEFAULT_LAMBDA         = 1.0e-5;
     /** Default value */
