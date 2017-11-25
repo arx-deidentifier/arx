@@ -118,14 +118,12 @@ public class Dictionary implements Serializable {
     }
 
     /**
-     * Returns the number of unique values contained before finalizing the
-     * dictionary.
-     *
+     * Returns the map with unfinalized values for the given dimension
      * @param dimension
      * @return
      */
-    public int getNumUniqueUnfinalizedValues(final int dimension) {
-        return maps[dimension].size();
+    public ObjectIntOpenHashMap<String> getUnfinalizedValues(final int dimension) {
+        return maps[dimension];
     }
 
     /**
