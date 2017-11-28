@@ -102,20 +102,20 @@ public class MultiClassRandomForest implements ClassificationMethod {
     }
 
     /** Config */
-    private final ClassificationConfigurationRandomForest    config;
+    private final ClassificationConfigurationRandomForest config;
     /** Encoder */
-    private final ConstantValueEncoder            interceptEncoder;
+    private final ConstantValueEncoder                    interceptEncoder;
     /** Instance */
-    private RandomForest                          rm;
+    private RandomForest                                  rm;
     /** Specification */
-    private final ClassificationDataSpecification specification;
+    private final ClassificationDataSpecification         specification;
     /** Encoder */
-    private final StaticWordValueEncoder          wordEncoder;
+    private final StaticWordValueEncoder                  wordEncoder;
 
     /** Data */
-    private List<double[]>                        features = new ArrayList<double[]>();
+    private List<double[]>                                features = new ArrayList<double[]>();
     /** Data */
-    private IntArrayList                          classes  = new IntArrayList();
+    private IntArrayList                                  classes  = new IntArrayList();
 
     /**
      * Creates a new instance
