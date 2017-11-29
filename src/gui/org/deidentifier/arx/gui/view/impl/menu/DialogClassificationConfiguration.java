@@ -26,6 +26,7 @@ import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegres
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes.Type;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
+import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest.SplitRule;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM.Kernel;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM.MulticlassType;
@@ -98,12 +99,12 @@ public class DialogClassificationConfiguration implements IDialog {
             protected void setValue(Object t) { config.setAlpha((Double)t); }});
         
         // Decay exponent
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12"), -1d, 0d, ClassificationConfigurationLogisticRegression.DEFAULT_DECAY_EXPONENT) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.12"), Double.MIN_VALUE, Double.MAX_VALUE, ClassificationConfigurationLogisticRegression.DEFAULT_DECAY_EXPONENT) { //$NON-NLS-1$
             protected Double getValue() { return config.getDecayExponent(); }
             protected void setValue(Object t) { config.setDecayExponent((Double)t); }});
         
         // Lambda
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14"), Double.MAX_VALUE, ClassificationConfigurationLogisticRegression.DEFAULT_LAMBDA) { //$NON-NLS-1$
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.14"), 0d, Double.MAX_VALUE, ClassificationConfigurationLogisticRegression.DEFAULT_LAMBDA) { //$NON-NLS-1$
             protected Double getValue() { return config.getLambda(); }
             protected void setValue(Object t) { config.setLambda((Double)t); }});
         
@@ -154,6 +155,32 @@ public class DialogClassificationConfiguration implements IDialog {
         this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.24"), 1, Integer.MAX_VALUE, ClassificationConfigurationRandomForest.DEFAULT_NUMBER_OF_TREES) { //$NON-NLS-1$
             protected Integer getValue() { return config.getNumberOfTrees(); }
             protected void setValue(Object t) { config.setNumberOfTrees((Integer)t); }});
+        
+        // Number of variables to split
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.33"), 0, Integer.MAX_VALUE, ClassificationConfigurationRandomForest.DEFAULT_NUMBER_OF_VARIABLES_TO_SPLIT) { //$NON-NLS-1$
+            protected Integer getValue() { return config.getNumberOfVariablesToSplit(); }
+            protected void setValue(Object t) { config.setNumberOfVariablesToSplit((Integer)t); }});
+
+        // Minimum size of leaf nodes
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.34"), 1, Integer.MAX_VALUE, ClassificationConfigurationRandomForest.DEFAULT_MINIMUM_SIZE_OF_LEAF_NODES) { //$NON-NLS-1$
+            protected Integer getValue() { return config.getMinimumSizeOfLeafNodes(); }
+            protected void setValue(Object t) { config.setMinimumSizeOfLeafNodes((Integer)t); }});
+
+        // Maximum number of leaf nodes
+        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.35"), 2, Integer.MAX_VALUE, ClassificationConfigurationRandomForest.DEFAULT_MAXMIMUM_NUMBER_OF_LEAF_NODES) { //$NON-NLS-1$
+            protected Integer getValue() { return config.getMaximumNumberOfLeafNodes(); }
+            protected void setValue(Object t) { config.setMaximumNumberOfLeafNodes((Integer)t); }});
+
+        // Subsample
+        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.36"), 0d, 1d, ClassificationConfigurationRandomForest.DEFAULT_SUBSAMPLE) { //$NON-NLS-1$
+            protected Double getValue() { return config.getSubsample(); }
+            protected void setValue(Object t) { config.setSubsample((Double)t); }});
+        
+        // Split rule
+        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.37"), getSplitRules(), ClassificationConfigurationRandomForest.DEFAULT_SPLIT_RULE.toString()) { //$NON-NLS-1$
+            protected String getValue() { return config.getSplitRule().name(); }
+            protected void setValue(Object arg0) { config.setSplitRule(SplitRule.valueOf((String)arg0));  }
+        });
     }
     
     /**
@@ -238,7 +265,19 @@ public class DialogClassificationConfiguration implements IDialog {
             return null;
         }
     }
-
+    
+    /**
+     * Creates a list split rules
+     * @return
+     */
+    private String[] getSplitRules() {
+        List<String> result = new ArrayList<String>();
+        for (SplitRule rule : SplitRule.values()) {
+            result.add(rule.name());
+        }
+        return result.toArray(new String[result.size()]);
+    }
+    
     /**
      * Creates a list of types
      * @return
