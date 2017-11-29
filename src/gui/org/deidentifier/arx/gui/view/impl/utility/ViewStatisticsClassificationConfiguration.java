@@ -243,6 +243,26 @@ public class ViewStatisticsClassificationConfiguration implements IView, ViewSta
         TableItem item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.24")); //$NON-NLS-1$
         item.setText(1, SWTUtil.getPrettyString(config.getNumberOfTrees()));
+
+        item = new TableItem(this.table, SWT.NONE);
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.33")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getNumberOfVariablesToSplit()));
+
+        item = new TableItem(this.table, SWT.NONE);
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.34")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getMinimumSizeOfLeafNodes()));
+
+        item = new TableItem(this.table, SWT.NONE);
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.35")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getMaximumNumberOfLeafNodes()));
+
+        item = new TableItem(this.table, SWT.NONE);
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.36")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getSubsample()));
+
+        item = new TableItem(this.table, SWT.NONE);
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.37")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getSplitRule()));
     }
 
     /**

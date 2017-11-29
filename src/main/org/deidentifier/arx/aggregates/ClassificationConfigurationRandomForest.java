@@ -41,16 +41,16 @@ public class ClassificationConfigurationRandomForest extends ARXClassificationCo
     private static final long serialVersionUID = 7928077920858462047L;
 
     /** Default value */
-    public static final int       DEFAULT_NUMBER_OF_TREES               = 10;
+    public static final int       DEFAULT_NUMBER_OF_TREES               = 500;
 
-    /** Default value = minimum: sqrt(#features) seems to provide good results */
-    public static final int       DEFAULT_NUMBER_OF_VARIABLES_TO_SPLIT  = 1;
+    /** Default value = 0: sqrt(#features) seems to provide good results */
+    public static final int       DEFAULT_NUMBER_OF_VARIABLES_TO_SPLIT  = 0;
 
-    /** Default value = minimum */
-    public static final int       DEFAULT_MINIMUM_SIZE_OF_LEAF_NODES    = 1;
+    /** Default value */
+    public static final int       DEFAULT_MINIMUM_SIZE_OF_LEAF_NODES    = 5;
 
-    /** Default value = minimum */
-    public static final int       DEFAULT_MAXMIMUM_NUMBER_OF_LEAF_NODES = 2;
+    /** Default value */
+    public static final int       DEFAULT_MAXMIMUM_NUMBER_OF_LEAF_NODES = 100;
 
     /** 1.0 = sampling with replacement; <1.0 = sampling without replacement */
     public static final double    DEFAULT_SUBSAMPLE                     = 1d;
