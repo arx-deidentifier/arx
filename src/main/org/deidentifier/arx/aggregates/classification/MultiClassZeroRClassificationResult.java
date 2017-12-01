@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.aggregates.classification;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -27,6 +28,8 @@ public class MultiClassZeroRClassificationResult implements ClassificationResult
 
     /** Field*/
     private final Map<String, Integer> map;
+    /** Counts */
+    private final Map<Integer, Integer>           counts;
     /** Field*/
     private final Integer              result;
 
@@ -35,19 +38,26 @@ public class MultiClassZeroRClassificationResult implements ClassificationResult
      * @param result
      * @param map
      */
-    MultiClassZeroRClassificationResult(Integer result, Map<String, Integer> map) {
+    MultiClassZeroRClassificationResult(Integer result, Map<Integer, Integer> counts, Map<String, Integer> map) {
         this.map = map;
         this.result = result;
+        this.counts = counts;
     }
 
     @Override
     public double confidence() {
-        return 1d;
+        return counts.get(result);
     }
 
     @Override
     public double[] confidences() {
-        throw new UnsupportedOperationException();
+        double[] result = new double[counts.size()];
+        int index=0;
+        for(Integer count : counts.values()) {
+            result[index] = count;
+            index++;
+        }
+        return result;
     }
 
     @Override

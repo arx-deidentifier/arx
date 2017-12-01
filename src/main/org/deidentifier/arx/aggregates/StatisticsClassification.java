@@ -319,6 +319,9 @@ public class StatisticsClassification {
     /** ZeroR accuracy */
     private double                zeroRAverageError;
     
+    /** ZeroR ROC curve */
+    private Map<String, ROCCurve> zerorROC = new HashMap<>();
+    
     /** Measurements */
     private int                   numMeasurements;
 
@@ -379,6 +382,7 @@ public class StatisticsClassification {
         // ROC
         Map<Integer, double[]> originalConfidences = new HashMap<Integer, double[]>();
         Map<Integer, double[]> confidences = new HashMap<Integer, double[]>();
+        Map<Integer, double[]> zerorConfidences = new HashMap<Integer, double[]>();
                 
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
@@ -439,6 +443,7 @@ public class StatisticsClassification {
                         // Maintain data about inputZR
                         this.zeroRAverageError += resultInputZR.error(actualValue);
                         this.zeroRAccuracy += resultInputZR.correct(actualValue) ? 1d : 0d;
+                        zerorConfidences.put(index, resultInputZR.confidences());
 
                         // Maintain data about inputLR
                         boolean correct = resultInputLR.correct(actualValue);
@@ -475,6 +480,13 @@ public class StatisticsClassification {
         this.originalAverageError /= (double)classifications;
         this.originalAccuracy /= (double)classifications;
         this.originalMatrix.pack();
+        
+        // Initialize ROC curves on zeroR
+        if (!zerorConfidences.isEmpty()) {
+            for(String attr : specification.classMap.keySet()) {
+                zerorROC.put(attr, new ROCCurve(attr, zerorConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
+            }
+        }
         
         // Initialize ROC curves on original data
         for (String attr : specification.classMap.keySet()) {
@@ -581,6 +593,15 @@ public class StatisticsClassification {
      */
     public ROCCurve getOriginalROCCurve(String clazz) {
         return this.originalROC.get(clazz);
+    }
+
+    /**
+     * Returns the ROC curve for this class value calculated using the one-vs-all approach.
+     * @param clazz
+     * @return
+     */
+    public ROCCurve getZeroRROCCurve(String clazz) {
+        return this.zerorROC.get(clazz);
     }
 
     /**
