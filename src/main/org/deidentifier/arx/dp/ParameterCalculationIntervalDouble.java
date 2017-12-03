@@ -26,7 +26,7 @@ import org.deidentifier.arx.reliability.IntervalDouble;
  * @author Raffael Bild
  * @author Fabian Prasser
  */
-public class ParameterCalculationIntervalDouble {
+public class ParameterCalculationIntervalDouble implements ParameterCalculation {
 
     /** Interval arithmetic system*/
     private final IntervalArithmeticDouble                    arithmetic;
@@ -45,34 +45,31 @@ public class ParameterCalculationIntervalDouble {
 
     /**
      * Constructor
-     * @param system
      * @param epsilon
      * @param delta
      * @throws IntervalArithmeticException 
      */
-    public ParameterCalculationIntervalDouble(IntervalArithmeticDouble system, IntervalDouble epsilon, IntervalDouble delta) throws IntervalArithmeticException {
-        this.arithmetic = system;
+    public ParameterCalculationIntervalDouble(double epsilon, double delta) throws IntervalArithmeticException {
+        
+        this.arithmetic = new IntervalArithmeticDouble();
         
         this.aCache = new ParameterCalculationSequenceCache<IntervalDouble>();
         this.cCache = new ParameterCalculationSequenceCache<IntervalDouble>();
         
-        IntervalDouble beta = calculateBeta(epsilon);
+        IntervalDouble epsilonInterval = this.arithmetic.createInterval(epsilon);
+        IntervalDouble deltaInterval = this.arithmetic.createInterval(delta);
+        
+        IntervalDouble beta = calculateBeta(epsilonInterval);
         this.beta = beta.getLowerBound();
-        this.k = calculateK(delta, epsilon, beta);
+        this.k = calculateK(deltaInterval, epsilonInterval, beta);
     }
     
-    /**
-     * Returns beta
-     * @return
-     */
+    @Override
     public double getBeta() {
         return beta;
     }
 
-    /**
-     * Returns k
-     * @return
-     */
+    @Override
     public int getK() {
         return k;
     }
