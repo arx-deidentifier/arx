@@ -230,12 +230,10 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         // Columns
         String[] columns = getColumnHeaders();
         String width = String.valueOf(Math.round(100d / ((double) columns.length + 2) * 100d) / 100d) + "%"; //$NON-NLS-1$
+        // Column for class
         DynamicTableColumn c = new DynamicTableColumn(precisionRecallTable, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
-        c = new DynamicTableColumn(precisionRecallTable, SWT.LEFT);
-        c.setWidth(width, "100px"); //$NON-NLS-1$ 
-        c.setText(Resources.getMessage("ViewStatisticsClassificationInput.2")); //$NON-NLS-1$
         for (String column : columns) {
             c = new DynamicTableColumn(precisionRecallTable, SWT.LEFT);
             SWTUtil.createColumnWithBarCharts(precisionRecallTable, c);
@@ -988,7 +986,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
 
             private boolean                     stopped    = false;
             private List<List<Double>>          values     = new ArrayList<>();
-            private List<Integer>               numClasses = new ArrayList<>();
             private List<PrecisionRecallMatrix> matrixes   = new ArrayList<>();
             private int                         progress   = 0;
 
@@ -1028,9 +1025,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 for (int i = 0; i < classes.length; i++) {
                     TableItem item = new TableItem(precisionRecallTable, SWT.NONE);
                     item.setText(0, classes[i]);
-                    item.setText(1, String.valueOf(numClasses.get(i)));
                     for (int j = 0; j < values.get(i).size(); j++) {
-                        item.setData(String.valueOf(2 + j), values.get(i).get(j));
+                        item.setData(String.valueOf(1 + j), values.get(i).get(j));
                     }
                     item.setData(matrixes.get(i));
                 }
@@ -1104,7 +1100,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     }
                     
                     // Collect pecision/recall data
-                    numClasses.add(result.getNumClasses());
                     values.add(getColumnValues(result));
                     matrixes.add(result.getPrecisionRecall());
                     

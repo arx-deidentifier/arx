@@ -49,8 +49,6 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
                 Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
                 Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
                 Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.7"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.12") //$NON-NLS-1$
         };
     }
     
@@ -65,8 +63,6 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
         } else {
             list.add((result.getAccuracy() - result.getZeroRAccuracy()) / (result.getOriginalAccuracy() - result.getZeroRAccuracy()));
         }
-        list.add(result.getAverageError());
-        list.add(result.getAverageError()-result.getOriginalAverageError());
         return list;
     }
 

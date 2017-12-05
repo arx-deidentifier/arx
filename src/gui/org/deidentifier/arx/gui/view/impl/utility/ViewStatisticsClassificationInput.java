@@ -48,8 +48,6 @@ public class ViewStatisticsClassificationInput extends ViewStatisticsClassificat
         return new String[] {
                 Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
                 Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.11"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.7") //$NON-NLS-1$
         };
     }
     
@@ -58,8 +56,6 @@ public class ViewStatisticsClassificationInput extends ViewStatisticsClassificat
         List<Double> list = new ArrayList<Double>();
         list.add(result.getZeroRAccuracy());
         list.add(result.getOriginalAccuracy());
-        list.add(result.getOriginalAccuracy()-result.getZeroRAccuracy());
-        list.add(result.getOriginalAverageError());
         return list;
     }
 }
