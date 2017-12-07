@@ -59,8 +59,6 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /** Parameter */
     private DataSubset               subset;
     /** Parameter */
-    private transient DataManager    manager;
-    /** Parameter */
     private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
@@ -173,19 +171,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      */
     public void initialize(DataManager manager, ARXConfiguration config){
         
-        // Needed for consistent de-serialization. We need to call this
-        // method in the constructor of the class DataManager. The following
-        // condition should hold, when this constructor is called during 
-        // de-serialization, when we must not change the subset.
-        if (subset != null && this.manager == null) {
-            this.manager = manager;
-            return;
-        }
-        
-        // Needed to prevent inconsistencies. We need to call this
-        // method in the constructor of the class DataManager. It will be called again, when
-        // ARXConfiguration is initialized(). During the second call we must not change the subset.
-        if (subset != null && this.manager == manager) {
+        // If the subset has already been created
+        if (subset != null) {
             return;
         }
 
@@ -206,7 +193,6 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
             }
         }
         this.subset = DataSubset.create(records, subsetIndices);
-        this.manager = manager;
     }
 
     @Override
@@ -241,7 +227,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     @Override
     public String toString() {
-        return "("+epsilon+","+delta+")-DP";
+        return "(" + epsilon + "," + delta + ")-DP";
     }
 
     /**

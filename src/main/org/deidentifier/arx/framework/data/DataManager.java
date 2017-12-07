@@ -271,23 +271,8 @@ public class DataManager {
         // finalize dictionary
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
-
-        // Store research subset
-        for (PrivacyCriterion c : privacyModels) {
-            if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this, null);
-            }
-            if (c.isSubsetAvailable()) {
-                DataSubset _subset = c.getDataSubset();
-                if (_subset != null) {
-                    subset = _subset.getSet();
-                    subsetSize = _subset.getArray().length;
-                    break;
-                }
-            }
-        }
     }
-
+    
     /**
      * For creating a projected instance
      * @param dataAnalyzed
@@ -376,7 +361,7 @@ public class DataManager {
     public Data getDataAnalyzed() {
         return dataAnalyzed;
     }
-    
+
     /**
      * Returns the input data that will be generalized.
      * 
@@ -385,7 +370,7 @@ public class DataManager {
     public Data getDataGeneralized() {
         return dataGeneralized;
     }
-
+    
     /**
      * Returns the input data.
      * 
@@ -759,6 +744,17 @@ public class DataManager {
         final int index = dataAnalyzed.getIndexOf(attribute);
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
+    }
+
+    /**
+     * Set a subset created by the differential privacy model
+     * @param _subset
+     */
+    public void setSubset(DataSubset _subset) {
+        if (_subset != null) {
+            subset = _subset.getSet();
+            subsetSize = _subset.getArray().length;
+        }
     }
     
     /**
