@@ -18,14 +18,12 @@
 package org.deidentifier.arx.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,30 +155,45 @@ public class TestClassification {
         assertEquals(0.6625555334526888, classResult.getAccuracy(), 0d);
 
         // Average error
-        assertEquals(0.4301404399320268, classResult.getOriginalAverageError(), 0d);
+        assertEquals(0.43014671841651053, classResult.getOriginalAverageError(), 0d);
         assertEquals(0.5336847689145282, classResult.getZeroRAverageError(), 0d);
-        assertEquals(0.458083337747312, classResult.getAverageError(), 0d);
-
-        // Precision
-        double[] precision = { 0.6625555334526888, 0.6625555334526888, 0.6625555334526888, 0.6631795689282987, 0.6692636000270984, 0.7165816003711983, 0.7897122823984526, 0.862657419237087, 0.9030765671987045, 0.9154850484346483, 1.0 };
-        assertTrue(Arrays.equals(precision, classResult.getPrecisionRecall().getPrecision()));
-
-        // Recall
-        double[] recall = { 1.0, 1.0, 1.0, 0.9983091306942511, 0.9787812479278563, 0.7859889927723626, 0.5485047410649161, 0.3633048206352364, 0.28665207877461707, 0.23615807970293748, 0.0 };
-        assertTrue(Arrays.equals(recall, classResult.getPrecisionRecall().getRecall()));
-
-        // F-score
-        double[] fscore = { 0.7970326646193115, 0.7970326646193115, 0.7970326646193115, 0.7969457981885784, 0.7949573246627055, 0.7496822483882504, 0.6473702297579599, 0.5112842610849505, 0.4351728037419361, 0.3754621301560845, 0.0 };
-        assertTrue(Arrays.equals(fscore, classResult.getPrecisionRecall().getFscore()));
+        assertEquals(0.458087061525274, classResult.getAverageError(), 0d);
+        
+        // Sensitivity
+        assertEquals(0.28713811105837683, classResult.getROCCurve("Divorced").getSensitivity(), 0d);
+        assertEquals(0d, classResult.getROCCurve("Married-spouse-absent").getSensitivity(), 0d);
+        assertEquals(0.3349455864570738, classResult.getROCCurve("Widowed").getSensitivity(), 0d);
+        assertEquals(0d, classResult.getROCCurve("Separated").getSensitivity(), 0d);
+        assertEquals(0d, classResult.getROCCurve("Married-AF-spouse").getSensitivity(), 0d);
+        assertEquals(0.8457163170991824, classResult.getROCCurve("Married-civ-spouse").getSensitivity(), 0d);
+        assertEquals(0.678799095208719, classResult.getROCCurve("Never-married").getSensitivity(), 0d);
+        
+        // Specificity
+        assertEquals(0.9507091105287498, classResult.getROCCurve("Divorced").getSpecificity(), 0d);
+        assertEquals(0.9999328678839957, classResult.getROCCurve("Married-spouse-absent").getSpecificity(), 0d);
+        assertEquals(0.991545934890063, classResult.getROCCurve("Widowed").getSpecificity(), 0d);
+        assertEquals(0.9998973411354071, classResult.getROCCurve("Separated").getSpecificity(), 0d);
+        assertEquals(1d, classResult.getROCCurve("Married-AF-spouse").getSpecificity(), 0d);
+        assertEquals(0.6962166863390694, classResult.getROCCurve("Married-civ-spouse").getSpecificity(), 0d);
+        assertEquals(0.8162066940692895, classResult.getROCCurve("Never-married").getSpecificity(), 0d);
+        
+        // Brier score
+        assertEquals(0.10443452758431582, classResult.getROCCurve("Divorced").getBrierScore(), 0d);
+        assertEquals(0.012016040652422334, classResult.getROCCurve("Married-spouse-absent").getBrierScore(), 0d);
+        assertEquals(0.02128820838095096, classResult.getROCCurve("Widowed").getBrierScore(), 0d);
+        assertEquals(0.02923421938927131, classResult.getROCCurve("Separated").getBrierScore(), 0d);
+        assertEquals(6.961954804848866E-4, classResult.getROCCurve("Married-AF-spouse").getBrierScore(), 0d);
+        assertEquals(0.15298256377665484, classResult.getROCCurve("Married-civ-spouse").getBrierScore(), 0d);
+        assertEquals(0.14548728696298704, classResult.getROCCurve("Never-married").getBrierScore(), 0d);
 
         // AUC
-        assertEquals(0.7610027381987883, classResult.getROCCurve("Divorced").getAUC(), 0d);
-        assertEquals(0.7158081618137377, classResult.getROCCurve("Married-spouse-absent").getAUC(), 0d);
-        assertEquals(0.9062474533744251, classResult.getROCCurve("Widowed").getAUC(), 0d);
-        assertEquals(0.738607754107831, classResult.getROCCurve("Separated").getAUC(), 0d);
-        assertEquals(0.5363016046801997, classResult.getROCCurve("Married-AF-spouse").getAUC(), 0d);
-        assertEquals(0.8556280235042284, classResult.getROCCurve("Married-civ-spouse").getAUC(), 0d);
-        assertEquals(0.8405828559448054, classResult.getROCCurve("Never-married").getAUC(), 0d);
+        assertEquals(0.7610041191506066, classResult.getROCCurve("Divorced").getAUC(), 0d);
+        assertEquals(0.715811155543235, classResult.getROCCurve("Married-spouse-absent").getAUC(), 0d);
+        assertEquals(0.9062469587339574, classResult.getROCCurve("Widowed").getAUC(), 0d);
+        assertEquals(0.7386119450092962, classResult.getROCCurve("Separated").getAUC(), 0d);
+        assertEquals(0.5358418607149329, classResult.getROCCurve("Married-AF-spouse").getAUC(), 0d);
+        assertEquals(0.8556279925860856, classResult.getROCCurve("Married-civ-spouse").getAUC(), 0d);
+        assertEquals(0.8405831125349796, classResult.getROCCurve("Never-married").getAUC(), 0d);
 
         // Other properties
         assertEquals(7, classResult.getNumClasses(), 0d);
@@ -205,18 +218,6 @@ public class TestClassification {
         assertEquals(0.38050937350272185, classResult.getOriginalAverageError(), 0d);
         assertEquals(0.5336847689145282, classResult.getZeroRAverageError(), 0d);
         assertEquals(0.39543922724482766, classResult.getAverageError(), 0d);
-
-        // Precision
-        double[] precision = { 0.6271798952324117, 0.6271798952324117, 0.6271798952324117, 0.6271675342329498, 0.628262676641729, 0.6325347889079821, 0.6487757242576585, 0.6896084656084656, 0.7305730876041404, 0.766170980968117, 1.0 };
-        assertTrue(Arrays.equals(precision, classResult.getPrecisionRecall().getPrecision()));
-
-        // Recall
-        double[] recall = { 1.0, 1.0, 1.0, 0.9999668456998873, 0.997115575890193, 0.983986473045554, 0.9166832438167231, 0.7832703401631191, 0.6566209137325111, 0.541774418142033, 0.0 };
-        assertTrue(Arrays.equals(recall, classResult.getPrecisionRecall().getRecall()));
-
-        // F-score
-        double[] fscore = { 0.770879602273885, 0.770879602273885, 0.770879602273885, 0.7708604140712526, 0.770836572538217, 0.7700556629413132, 0.7598050764033778, 0.7334613755319069, 0.6916257825059526, 0.634723494870224, 0.0 };
-        assertTrue(Arrays.equals(fscore, classResult.getPrecisionRecall().getFscore()));
 
         // AUC
         assertEquals(0.743874984827819, classResult.getROCCurve("Divorced").getAUC(), 0d);

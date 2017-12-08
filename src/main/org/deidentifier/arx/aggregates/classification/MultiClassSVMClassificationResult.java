@@ -45,11 +45,6 @@ public class MultiClassSVMClassificationResult implements ClassificationResult {
     }
 
     @Override
-    public double confidence() {
-        return probabilities[result];
-    }
-
-    @Override
     public double[] confidences() {
         return this.probabilities;
     }

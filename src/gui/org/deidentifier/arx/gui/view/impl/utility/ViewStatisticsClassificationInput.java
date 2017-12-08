@@ -44,22 +44,30 @@ public class ViewStatisticsClassificationInput extends ViewStatisticsClassificat
     }
 
     @Override
-    protected String[] getColumnHeaders() {
+    protected String[] getColumnHeadersForPerformanceForOverallPerformanceTable() {
         return new String[] {
+                // Baseline accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
+                // Accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.11"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.7") //$NON-NLS-1$
         };
     }
     
     @Override
-    protected List<Double> getColumnValues(StatisticsClassification result) {
+    protected String[] getColumnHeadersForAUCTable() {
+        return new String[] {
+                // Baseline AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.14"), //$NON-NLS-1$
+                // AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.24"), //$NON-NLS-1$
+        };
+    }
+    
+    @Override
+    protected List<Double> getColumnValuesForOverallPerformanceTable(StatisticsClassification result) {
         List<Double> list = new ArrayList<Double>();
         list.add(result.getZeroRAccuracy());
         list.add(result.getOriginalAccuracy());
-        list.add(result.getOriginalAccuracy()-result.getZeroRAccuracy());
-        list.add(result.getOriginalAverageError());
         return list;
     }
 }

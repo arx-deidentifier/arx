@@ -25,29 +25,33 @@ import java.util.Map;
  */
 public class MultiClassZeroRClassificationResult implements ClassificationResult {
 
-    /** Field*/
-    private final Map<String, Integer> map;
-    /** Field*/
-    private final Integer              result;
+    /** Field */
+    private final Map<String, Integer>  map;
+    /** Counts */
+    private final Map<Integer, Integer> counts;
+    /** Field */
+    private final Integer               result;
 
     /**
      * Creates a new instance
      * @param result
      * @param map
      */
-    MultiClassZeroRClassificationResult(Integer result, Map<String, Integer> map) {
+    MultiClassZeroRClassificationResult(Integer result, Map<Integer, Integer> counts, Map<String, Integer> map) {
         this.map = map;
         this.result = result;
-    }
-
-    @Override
-    public double confidence() {
-        return 1d;
+        this.counts = counts;
     }
 
     @Override
     public double[] confidences() {
-        throw new UnsupportedOperationException();
+        double[] result = new double[counts.size()];
+        int index=0;
+        for(Integer count : counts.values()) {
+            result[index] = count;
+            index++;
+        }
+        return result;
     }
 
     @Override

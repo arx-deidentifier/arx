@@ -48,7 +48,7 @@ public class MultiClassZeroR implements ClassificationMethod {
         if (result == null) {
             result = getIndexWithMostCounts();
         }
-        return new MultiClassZeroRClassificationResult(result, specification.classMap);
+        return new MultiClassZeroRClassificationResult(result, counts, specification.classMap);
     }
 
     @Override

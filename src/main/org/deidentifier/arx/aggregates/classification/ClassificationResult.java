@@ -23,12 +23,6 @@ package org.deidentifier.arx.aggregates.classification;
 public interface ClassificationResult {
 
     /**
-     * Returns the confidence of the result
-     * @return
-     */
-    public double confidence();
-
-    /**
      * Returns the confidences for all class values
      * @return
      */
