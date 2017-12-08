@@ -43,21 +43,39 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
     }
 
     @Override
-    protected String[] getColumnHeaders() {
+    protected String[] getColumnHeadersForPerformanceForOverallPerformanceTable() {
         return new String[] {
+                // Baseline accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
+                // Accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
+                // Original accuracy
+                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
+                // Relative accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
         };
     }
     
     @Override
-    protected List<Double> getColumnValues(StatisticsClassification result) {
+    protected String[] getColumnHeadersForAUCTable() {
+        return new String[] {
+                // Baseline AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.14"), //$NON-NLS-1$
+                // AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.24"), //$NON-NLS-1$
+                // Original AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.23"), //$NON-NLS-1$
+                // Relative AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.2"), //$NON-NLS-1$
+        };
+    }
+    
+    @Override
+    protected List<Double> getColumnValuesForOverallPerformanceTable(StatisticsClassification result) {
         List<Double> list = new ArrayList<Double>();
         list.add(result.getZeroRAccuracy());
-        list.add(result.getOriginalAccuracy());
         list.add(result.getAccuracy());
+        list.add(result.getOriginalAccuracy());
         if (result.getOriginalAccuracy() - result.getZeroRAccuracy() == 0d) {
             list.add(result.getAccuracy() / result.getZeroRAccuracy());
         } else {

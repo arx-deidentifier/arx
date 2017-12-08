@@ -54,90 +54,6 @@ import cern.colt.function.IntComparator;
 public class StatisticsClassification {
 
     /**
-     * A matrix mapping confidence thresholds to precision, recall and f-score
-     * 
-     * @author Fabian Prasser
-     *
-     */
-    public static class PrecisionRecallMatrix {
-        
-        /** Measurements */
-        private double                measurements          = 0d;
-        /** Precision */
-        private final double[]        precision             = new double[CONFIDENCE_THRESHOLDS.length];
-        /** Recall */
-        private final double[]        recall                = new double[CONFIDENCE_THRESHOLDS.length];
-        /** F-Score */
-        private final double[]        fscore                = new double[CONFIDENCE_THRESHOLDS.length];
-
-        /**
-         * Cut-off points
-         * @return the confidence thresholds
-         */
-        public double[] getConfidenceThresholds() {
-            return CONFIDENCE_THRESHOLDS;
-        }
-        
-        /**
-         * F-scores
-         * @return the f-score
-         */
-        public double[] getFscore(){
-            return fscore;
-        }
-        
-        /**
-         * Precision
-         * @return the precision
-         */
-        public double[] getPrecision() {
-            return precision;
-        }
-
-        /**
-         * Recall
-         * @return the recall
-         */
-        public double[] getRecall() {
-            return recall;
-        }
-
-        /**
-         * Adds a new value
-         * @param confidence
-         * @param correct
-         */
-        void add(double confidence, boolean correct) {
-            
-            int index = (int)(confidence * (CONFIDENCE_THRESHOLDS.length - 1d));
-            recall[index]++;
-            precision[index] += correct ? 1d : 0d;
-            measurements++;
-        }
-
-        /**
-         * Packs the results
-         */
-        void pack() {
-            
-            // Pack
-            packConfidence(precision);
-            packConfidence(recall);
-            
-            // Calculate
-            for (int i = 0; i < CONFIDENCE_THRESHOLDS.length; i++) {
-                if (recall[i] == 0d) {
-                    precision[i] = 1d;
-                } else {
-                    precision[i] /= recall[i];
-                    recall[i] /= measurements;
-                }
-                fscore[i] = 2 * (precision[i] * recall[i]) / (precision[i] + recall[i]);
-            }
-        }
-    }
-
-    /**
      * A ROC curve
      * 
      * @author Fabian Prasser
@@ -145,41 +61,90 @@ public class StatisticsClassification {
      */
     public static class ROCCurve {
 
-        /** Precision */
+        /** True positives */
         private final double[] truePositive;
-        /** Recall */
+        /** False positives */
         private final double[] falsePositive;
         /** AUC */
         private final double   AUC;
+        /** Sensitivity */
+        private double         sensitivity;
+        /** Specificity */
+        private double         specificity;
+        /** Brier score */
+        private final double   brierScore;
         
         /**
          * Creates a new ROC curve
          * @param value
          * @param confidences
-         * @param confidenceIndex
+         * @param valueIndex
          * @param handle
          * @param handleIndex
          */
         private ROCCurve(String value,
                          Map<Integer, double[]> confidences,
-                         int confidenceIndex,
+                         int valueIndex,
                          DataHandleInternal handle,
                          int handleIndex) {
             
             int positives = 0;
+            
+            // Identifier of value in value-vs-all
             int valueID = handle.getValueIdentifier(handleIndex, value);
-            final boolean[] correct = new boolean[confidences.size()];
+            
+            final boolean[] isPositive = new boolean[confidences.size()];
             final double[] confidence = new double[confidences.size()];
+            
+            int tp = 0;
+            int tn = 0;
+            int fp = 0;
+            int fn = 0;
+            double brier = 0;
+            
             int j = 0;
+            
+            // For each record
             for (int index : confidences.keySet()) {
-                correct[j] = (handle.getEncodedValue(index, handleIndex, true) == valueID);
-                positives += correct[j] ? 1 : 0;
-                confidence[j] = confidences.get(index)[confidenceIndex];
+                
+                // Prepare
+                isPositive[j] = (handle.getEncodedValue(index, handleIndex, true) == valueID);
+                double[] probabilities = confidences.get(index);
+                confidence[j] = probabilities[valueIndex];
+                positives += isPositive[j] ? 1 : 0;
+                
+                // Determine predicted value
+                double max = Double.MIN_VALUE;
+                int maxIndex = -1;
+                for (int i = 0; i < probabilities.length; i++) {
+                    if (probabilities[i] == max) {
+                        maxIndex = -1; // Reset, if ambiguous
+                    } else if (probabilities[i] > max) {
+                        max = probabilities[i];
+                        maxIndex = i;
+                    }
+                }
+                boolean isPredictedPositive = maxIndex == valueIndex;
+                
+                // If the prediction was unambiguous 
+                if (maxIndex != -1) {
+                    tp += isPredictedPositive && isPositive[j] ? 1 : 0;
+                    tn += !isPredictedPositive && !isPositive[j] ? 1 : 0;
+                    fp += isPredictedPositive && !isPositive[j] ? 1 : 0;
+                    fn += !isPredictedPositive && isPositive[j] ? 1 : 0;
+
+                    brier += Math.pow(confidence[j] - (isPositive[j] ? 1 : 0), 2);
+                }
                 j++;
             }
             
+            // Compute performance measures
+            sensitivity = (double) tp / (tp + fn);
+            specificity = (double) tn / (fp + tn);
+            brierScore = (double) brier / confidences.keySet().size();
+            
             // Sort by confidence
-            GenericSorting.mergeSort(0, correct.length, new IntComparator() {
+            GenericSorting.mergeSort(0, isPositive.length, new IntComparator() {
                 @Override public int compare(int arg0, int arg1) {
                     return Double.compare(confidence[arg0], confidence[arg1]);
                 }
@@ -188,9 +153,9 @@ public class StatisticsClassification {
                     double temp = confidence[arg0];
                     confidence[arg0] = confidence[arg1];
                     confidence[arg1] = temp;
-                    boolean temp2 = correct[arg0];
-                    correct[arg0] = correct[arg1];
-                    correct[arg1] = temp2;
+                    boolean temp2 = isPositive[arg0];
+                    isPositive[arg0] = isPositive[arg1];
+                    isPositive[arg1] = temp2;
                 }
             });
             
@@ -203,9 +168,9 @@ public class StatisticsClassification {
             int x = 0;
             int y = 0;
             int offset=0;
-            for (int i = correct.length - 1; i >= 0; i--) {
-                x += correct[i] ? 0 : 1;
-                y += correct[i] ? 1 : 0;
+            for (int i = isPositive.length - 1; i >= 0; i--) {
+                x += isPositive[i] ? 0 : 1;
+                y += isPositive[i] ? 1 : 0;
                 falsePositive[offset] = (double)x/(double)(negatives);
                 truePositive[offset] = (double)y/(double)positives;
                 offset++;
@@ -230,6 +195,14 @@ public class StatisticsClassification {
         public double getAUC() {
             return AUC;
         }
+        
+        /**
+         * Returns the Brier score.
+         * @return
+         */
+        public double getBrierScore() {
+            return brierScore;
+        }
 
         /**
          * Returns false-positive rates for all cut-off points
@@ -240,20 +213,30 @@ public class StatisticsClassification {
         }
         
         /**
+         * Return the sensitivity = tp / (tp + fn).
+         * @return the sensitivity
+         */
+        public double getSensitivity() {
+            return sensitivity;
+        }
+        
+        /**
+         * Returns the specificity = tn / (fp + tn).
+         * @return the specificity
+         */
+        public double getSpecificity() {
+            return specificity;
+        }
+
+        /**
          * Returns true-positive rates for all cut-off points
          * @return the truePositive
          */
         public double[] getTruePositiveRate() {
             return truePositive;
         }
-
     }
     
-    /** Confidence thresholds: only change together with thresholds, steps and num*/
-    private static final double[] CONFIDENCE_THRESHOLDS   = new double[]{
-        0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1d
-    };
-
     /**
      * Returns the classification method for the given config
      * @param specification
@@ -278,52 +261,37 @@ public class StatisticsClassification {
         }
     }
     
-    /**
-     * Packs an array that is based on confidence intervals
-     * @param array
-     */
-    private static void packConfidence(double[] array) {
-        for (int i = array.length - 1; i > 0; i--) {
-            array[i - 1] += array[i];
-        }
-    }
-    
-    /** Accuracy */
-    private double                accuracy;
-    /** Average error */
-    private double                averageError;
     /** Interrupt flag */
     private final WrappedBoolean  interrupt;
     /** Interrupt flag */
     private final WrappedInteger  progress;
-    /** Precision/recall matrix */
-    private PrecisionRecallMatrix matrix                = new PrecisionRecallMatrix();
-    /** ROC curve */
-    private Map<String, ROCCurve> ROC                   = new HashMap<>();
     /** Num classes */
     private int                   numClasses;
+    /** Random */
+    private final Random          random;
+    /** Measurements */
+    private int                   numMeasurements;
+
+    /** ZeroR accuracy */
+    private double                zeroRAccuracy;
+    /** ZeroR average error */
+    private double                zeroRAverageError;
+    /** ZeroR ROC curve */
+    private Map<String, ROCCurve> zerorROC    = new HashMap<>();
+
+    /** Original/Output accuracy */
+    private double                accuracy;
+    /** Original/Output average error */
+    private double                averageError;
+    /** Original/Output ROC curve */
+    private Map<String, ROCCurve> ROC   = new HashMap<>();
+
     /** Original accuracy */
     private double                originalAccuracy;
     /** Original accuracy */
     private double                originalAverageError;
-    /** Precision/recall matrix */
-    private PrecisionRecallMatrix originalMatrix        = new PrecisionRecallMatrix();
-    /** ROC curve */
-    private Map<String, ROCCurve> originalROC           = new HashMap<>();
-    /** Random */
-    private final Random          random;
-
-    /** ZeroR accuracy */
-    private double                zeroRAccuracy;
-
-    /** ZeroR accuracy */
-    private double                zeroRAverageError;
-    
-    /** ZeroR ROC curve */
-    private Map<String, ROCCurve> zerorROC = new HashMap<>();
-    
-    /** Measurements */
-    private int                   numMeasurements;
+    /** Original ROC curve */
+    private Map<String, ROCCurve> originalROC = new HashMap<>();
 
     /**
      * Creates a new set of statistics for the given classification task
@@ -449,7 +417,6 @@ public class StatisticsClassification {
                         boolean correct = resultInputLR.correct(actualValue);
                         this.originalAverageError += resultInputLR.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
-                        this.originalMatrix.add(resultInputLR.confidence(), correct);
                         originalConfidences.put(index, resultInputLR.confidences());
                         
                         // Maintain data about outputLR                        
@@ -457,7 +424,6 @@ public class StatisticsClassification {
                             correct = resultOutputLR.correct(actualValue);
                             this.averageError += resultOutputLR.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
-                            this.matrix.add(resultOutputLR.confidence(), correct);
                             confidences.put(index, resultOutputLR.confidences());
                         }
                     }
@@ -479,7 +445,6 @@ public class StatisticsClassification {
         // Maintain data about inputLR
         this.originalAverageError /= (double)classifications;
         this.originalAccuracy /= (double)classifications;
-        this.originalMatrix.pack();
         
         // Initialize ROC curves on zeroR
         if (!zerorConfidences.isEmpty()) {
@@ -503,11 +468,9 @@ public class StatisticsClassification {
         if (inputHandle != outputHandle) {
             this.averageError /= (double)classifications;
             this.accuracy /= (double)classifications;
-            this.matrix.pack();
         } else {
             this.averageError = this.originalAverageError;
             this.accuracy = this.originalAccuracy;
-            this.matrix = this.originalMatrix;
         }
         
         this.numClasses = specification.classMap.size();
@@ -515,8 +478,8 @@ public class StatisticsClassification {
     }
 
     /**
-     * Returns the resulting accuracy. Obtained by training a
-     * Logistic Regression classifier on the output (or input) dataset.
+     * Returns the resulting accuracy. Obtained by generating a
+     * classification model from the output (or input) dataset.
      * 
      * @return
      */
@@ -559,8 +522,8 @@ public class StatisticsClassification {
     }
 
     /**
-     * Returns the maximal accuracy. Obtained by training a
-     * Logistic Regression classifier on the input dataset.
+     * Returns the maximal accuracy. Obtained by generating a
+     * classification model from the input dataset.
      * 
      * @return
      */
@@ -576,14 +539,6 @@ public class StatisticsClassification {
      */
     public double getOriginalAverageError() {
         return this.originalAverageError;
-    }
-    
-    /**
-     * Returns a precision/recall matrix for LogisticRegression on input
-     * @return
-     */
-    public PrecisionRecallMatrix getOriginalPrecisionRecall() {
-        return this.originalMatrix;
     }
     
     /**
@@ -604,14 +559,6 @@ public class StatisticsClassification {
         return this.zerorROC.get(clazz);
     }
 
-    /**
-     * Returns a precision/recall matrix
-     * @return
-     */
-    public PrecisionRecallMatrix getPrecisionRecall() {
-        return this.matrix;
-    }
-    
     /**
      * Returns the ROC curve for this class value calculated using the one-vs-all approach.
      * @param clazz
