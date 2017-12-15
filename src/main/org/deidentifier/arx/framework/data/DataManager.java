@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
@@ -38,6 +37,7 @@ import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
@@ -106,15 +106,17 @@ public class DataManager {
      * @param data
      * @param dictionary
      * @param definition
-     * @param config
+     * @param privacyModels
      * @param functions
+     * @param qualityModel
      */
     public DataManager(final String[] header,
                        final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
-                       final ARXConfiguration config,
-                       final Map<String, DistributionAggregateFunction> functions) {
+                       final Set<PrivacyCriterion> privacyModels,
+                       final Map<String, DistributionAggregateFunction> functions,
+                       final Metric<?> qualityModel) {
 
         // Store basic info
         this.header = header;
@@ -149,7 +151,7 @@ public class DataManager {
          * Collect non-generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsNotGeneralized = new HashSet<String>();
-        if (config.getQualityModel().isAbleToHandleMicroaggregation()) {
+        if (qualityModel.isAbleToHandleMicroaggregation()) {
             hotQIsNotGeneralized.addAll(qisNotGeneralized);
         } 
 
@@ -157,7 +159,7 @@ public class DataManager {
          * Collect generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsGeneralized = new HashSet<String>();
-        if (config.getQualityModel().isAbleToHandleClusteredMicroaggregation()) {
+        if (qualityModel.isAbleToHandleClusteredMicroaggregation()) {
             hotQIsGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
             throw new RuntimeException("Not implemented"); // TODO: SSE
         }
@@ -230,8 +232,8 @@ public class DataManager {
         
         // Change to fixed generalization scheme when using differential privacy
         index = 0;
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
-
+        for (PrivacyCriterion c : privacyModels) {
+            
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
@@ -256,7 +258,7 @@ public class DataManager {
 
         // Build map with hierarchies for sensitive attributes
         this.hierarchiesAnalyzed = new GeneralizationHierarchy[this.dataAnalyzed.getColumns().length];
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
+        for (PrivacyCriterion c : privacyModels) {
             if (c instanceof HierarchicalDistanceTCloseness) {
                 HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness) c;
                 String attribute = t.getAttribute();
@@ -269,23 +271,8 @@ public class DataManager {
         // finalize dictionary
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
-
-        // Store research subset
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
-            if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this, config);
-            }
-            if (c.isSubsetAvailable()) {
-                DataSubset _subset = c.getDataSubset();
-                if (_subset != null) {
-                    subset = _subset.getSet();
-                    subsetSize = _subset.getArray().length;
-                    break;
-                }
-            }
-        }
     }
-
+    
     /**
      * For creating a projected instance
      * @param dataAnalyzed
@@ -374,7 +361,7 @@ public class DataManager {
     public Data getDataAnalyzed() {
         return dataAnalyzed;
     }
-    
+
     /**
      * Returns the input data that will be generalized.
      * 
@@ -383,7 +370,7 @@ public class DataManager {
     public Data getDataGeneralized() {
         return dataGeneralized;
     }
-
+    
     /**
      * Returns the input data.
      * 
@@ -757,6 +744,17 @@ public class DataManager {
         final int index = dataAnalyzed.getIndexOf(attribute);
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
+    }
+
+    /**
+     * Set a subset created by the differential privacy model
+     * @param _subset
+     */
+    public void setSubset(DataSubset _subset) {
+        if (_subset != null) {
+            subset = _subset.getSet();
+            subsetSize = _subset.getArray().length;
+        }
     }
     
     /**
