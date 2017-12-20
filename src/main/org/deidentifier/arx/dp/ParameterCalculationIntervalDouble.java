@@ -191,7 +191,7 @@ public class ParameterCalculationIntervalDouble implements ParameterCalculation 
         IntervalDouble bound = arithmetic.createInterval(Double.MAX_VALUE);
 
         // Assure that delta is greater than bound to guarantee the desired degree of privacy protection
-        for (int n = n_m; !arithmetic.greaterThan(delta, bound); ++n) {
+        for (int n = n_m; delta.getLowerBound() <= bound.getUpperBound(); ++n) {
             if (!aCache.containsKey(n)) {
                 aCache.put(n, calculateA(n, epsilon, beta, gamma));
                 cCache.put(n, calculateC(n, epsilon, beta, gamma));
