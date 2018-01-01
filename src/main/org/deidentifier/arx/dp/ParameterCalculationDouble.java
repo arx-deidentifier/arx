@@ -26,7 +26,7 @@ import org.apache.commons.math3.distribution.BinomialDistribution;
  * @author Raffael Bild
  * @author Fabian Prasser
  */
-public class ParameterCalculationDouble {
+public class ParameterCalculationDouble implements ParameterCalculation {
 
     /** Cache for a */
     private ParameterCalculationSequenceCache<Double> aCache = null;
@@ -54,18 +54,12 @@ public class ParameterCalculationDouble {
         this.k = calculateK(delta, epsilon, this.beta);
     }
     
-    /**
-     * Returns beta
-     * @return
-     */
+    @Override
     public double getBeta() {
         return beta;
     }
 
-    /**
-     * Returns k
-     * @return
-     */
+    @Override
     public int getK() {
         return k;
     }
