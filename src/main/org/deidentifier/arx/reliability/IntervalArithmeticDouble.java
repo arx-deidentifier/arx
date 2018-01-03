@@ -337,7 +337,7 @@ public class IntervalArithmeticDouble {
      * @return
      */
     public boolean lessThanOrOverlap(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
-        return operand1.lower < operand2.upper;
+        return operand1.lower <= operand2.upper;
     }
 
     /**
