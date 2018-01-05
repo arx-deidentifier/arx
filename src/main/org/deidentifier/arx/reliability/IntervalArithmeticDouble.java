@@ -28,12 +28,14 @@ public class IntervalArithmeticDouble {
     public IntervalDouble ZERO;
     public IntervalDouble ONE;
     public IntervalDouble MINUS_ONE;
+    public IntervalDouble PI;
 
     public IntervalArithmeticDouble() {
         try {
             ZERO      = createInterval(0d);
             ONE       = createInterval(1d);
             MINUS_ONE = createInterval(-1d);
+            PI        = createInterval(3.1415926535897932384d, 3.1415926535897932385d);
         } catch (IntervalArithmeticException e) {
             // May never happen
         }
@@ -86,7 +88,9 @@ public class IntervalArithmeticDouble {
     }
 
     /**
-     * Probability mass function of the binomial distribution. Derived from class BinomialDistribution in SMILE
+     * Probability mass function of the binomial distribution
+     * based on the saddle point expansion described in the manuscript
+     * Catherine Loader. Fast and Accurate Computation of Binomial Probabilities. July 9, 2000.
      * 
      * @param n
      * @param p
@@ -107,18 +111,27 @@ public class IntervalArithmeticDouble {
         if (k < 0 || k > n) {
             return createInterval(0d);
         }
+        
+        if (k == 0) {
+            return pow(sub(ONE, p), n);
+        } else if (k == n) {
+            return pow(p, n);
+        }
+        
+        IntervalDouble intN = createInterval(n);
+        IntervalDouble intK = createInterval(k);
+        IntervalDouble subNK = sub(intN, intK);
     
-        // term1 = Math.floor(0.5 + Math.exp(Math.logFactorial(n) - Math.logFactorial(k) - Math.logFactorial(n - k)))
-        IntervalDouble term1 = floor(add(createInterval(0.5d), exp(sub(sub(logFactorial(n), logFactorial(k)), logFactorial(n - k)))));
+        // dev = k * Math.log (k / (n*p)) + (n-k) * Math.log((n-k) / (n*(1-p)))
+        IntervalDouble dev = add(mult(intK, log(div(intK, mult(intN, p)))), mult(subNK, log(div(subNK, mult(intN, sub(ONE, p))))));
         
-        // term2 = Math.pow(p, k)
-        IntervalDouble term2 = pow(p, k);
+        // term1 = stirlingError(n) - stirlingError(k) - stirlingError(n-k)
+        IntervalDouble term1 = sub(sub(stirlingError(intN), stirlingError(intK)), stirlingError(subNK));
         
-        // term3 = Math.pow(1.0 - p, n - k);
-        IntervalDouble term3 = pow(sub(createInterval(1.0d), p), n - k);
+        // term2 = Math.sqrt(n / (2d * Math.PI * k * (n-k)))
+        IntervalDouble term2 = sqrt(div(intN, mult(mult(mult(createInterval(2), PI), intK), subNK)));
         
-        // term1 * term2 * term3
-        return mult(term1, mult(term2,  term3));
+        return exp(sub(add(log(term2), term1), dev));
     }
 
     /**
@@ -178,6 +191,18 @@ public class IntervalArithmeticDouble {
     public IntervalDouble createInterval(double value) throws IntervalArithmeticException {
         checkInterval(value, value);
         return new IntervalDouble(value, value);       
+    }
+    
+    /**
+     * Creates a new interval
+     * @param lower
+     * @param upper
+     * @return
+     * @throws IntervalArithmeticException
+     */
+    public IntervalDouble createInterval(double lower, double upper) throws IntervalArithmeticException {
+        checkInterval(lower, upper);
+        return new IntervalDouble(lower, upper);
     }
     
     /**
@@ -306,6 +331,16 @@ public class IntervalArithmeticDouble {
     }
 
     /**
+     * Less than or overlap
+     * @param operand1
+     * @param operand2
+     * @return
+     */
+    public boolean lessThanOrOverlap(IntervalDouble operand1, IntervalDouble operand2) {
+        return operand1.lower <= operand2.upper;
+    }
+
+    /**
      * Less than
      * @param operand1
      * @param operand2
@@ -410,6 +445,20 @@ public class IntervalArithmeticDouble {
         return apply(operand, new UnaryOperationDouble() {
             public double apply(double operand) {
                 return Math.pow(operand, exponent);
+            }
+        }, true);
+    }
+    
+    /**
+     * Square root
+     * @param operand
+     * @return
+     * @throws IntervalArithmeticException
+     */
+    public IntervalDouble sqrt(IntervalDouble operand) throws IntervalArithmeticException {
+        return apply(operand, new UnaryOperationDouble() {
+            public double apply(double operand) {
+                return Math.sqrt(operand);
             }
         }, true);
     }
@@ -584,5 +633,22 @@ public class IntervalArithmeticDouble {
         // and thus provide the same error bound guarantee.
         // Hence, we can calculate a reliable lower bound by returning the next adjacent floating-point number in direction -infinity.
         return Math.nextAfter(value, Double.NEGATIVE_INFINITY);
+    }
+    
+    /**
+     * Calculate the error of Stirling's series at the given value.
+     * For details see
+     * https://en.wikipedia.org/wiki/Stirling%27s_approximation#Speed_of_convergence_and_error_estimates
+     * @param value
+     * @return
+     * @throws IntervalArithmeticException
+     */
+    private IntervalDouble stirlingError(IntervalDouble value) throws IntervalArithmeticException {
+        
+        IntervalDouble base = sub(inv(mult(createInterval(12d), value)), inv(mult(createInterval(360d), pow(value,3))));
+        IntervalDouble bound = inv(mult(createInterval(1260d), pow(value,5)));
+        double offset = Math.max(Math.abs(bound.lower), Math.abs(bound.upper));
+        
+        return createInterval(floor(base.lower - offset), ceil(base.upper + offset));
     }
 }
