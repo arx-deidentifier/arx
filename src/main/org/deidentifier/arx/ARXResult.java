@@ -532,7 +532,7 @@ public class ARXResult {
      * @return The number of optimized records
      */
     public ARXProcessStatistics optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
-        return optimizeFast(handle, gsFactor, Double.NaN, listener);
+        return optimizeFast(handle, Double.NaN, gsFactor, listener);
     }
 
     /**
