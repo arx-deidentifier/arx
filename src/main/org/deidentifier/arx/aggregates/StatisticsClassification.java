@@ -57,7 +57,6 @@ public class StatisticsClassification {
      * A ROC curve
      * 
      * @author Fabian Prasser
-     *
      */
     public static class ROCCurve {
 
@@ -77,25 +76,25 @@ public class StatisticsClassification {
         /**
          * Creates a new ROC curve
          * @param value
-         * @param confidences
+         * @param confidences - (index, conf-1, ..., conf-numClasses), (index, conf-1, ..., numClasses), etc.
+         * @param numClasses
          * @param valueIndex
          * @param handle
          * @param handleIndex
          */
         private ROCCurve(String value,
-                         Map<Integer, double[]> confidences,
+                         double[] confidences,
+                         int numClasses,
                          int valueIndex,
                          DataHandleInternal handle,
                          int handleIndex) {
             
+            int numSamples = confidences.length / (numClasses + 1);
+            int valueID = handle.getValueIdentifier(handleIndex, value); // Value in 1-vs-all
+            final boolean[] isPositive = new boolean[numSamples]; // isPositive[n]
+            final double[] confidence = new double[numSamples]; // confidence[n]
+
             int positives = 0;
-            
-            // Identifier of value in value-vs-all
-            int valueID = handle.getValueIdentifier(handleIndex, value);
-            
-            final boolean[] isPositive = new boolean[confidences.size()];
-            final double[] confidence = new double[confidences.size()];
-            
             int tp = 0;
             int tn = 0;
             int fp = 0;
@@ -105,23 +104,24 @@ public class StatisticsClassification {
             int j = 0;
             
             // For each record
-            for (int index : confidences.keySet()) {
+            for (int i = 0; i < confidences.length; i += (numClasses + 1)) {
                 
                 // Prepare
+                int index = (int)confidences[i];
                 isPositive[j] = (handle.getEncodedValue(index, handleIndex, true) == valueID);
-                double[] probabilities = confidences.get(index);
-                confidence[j] = probabilities[valueIndex];
+                confidence[j] = confidences[i + 1 + valueIndex];
                 positives += isPositive[j] ? 1 : 0;
                 
                 // Determine predicted value
                 double max = Double.MIN_VALUE;
                 int maxIndex = -1;
-                for (int i = 0; i < probabilities.length; i++) {
-                    if (probabilities[i] == max) {
+                for (int k = 0; k < numClasses; k++) {
+                    double probability = confidences[i + 1 + k];
+                    if (probability == max) {
                         maxIndex = -1; // Reset, if ambiguous
-                    } else if (probabilities[i] > max) {
-                        max = probabilities[i];
-                        maxIndex = i;
+                    } else if (probability > max) {
+                        max = probability;
+                        maxIndex = k;
                     }
                 }
                 boolean isPredictedPositive = maxIndex == valueIndex;
@@ -132,7 +132,6 @@ public class StatisticsClassification {
                     tn += !isPredictedPositive && !isPositive[j] ? 1 : 0;
                     fp += isPredictedPositive && !isPositive[j] ? 1 : 0;
                     fn += !isPredictedPositive && isPositive[j] ? 1 : 0;
-
                     brier += Math.pow(confidence[j] - (isPositive[j] ? 1 : 0), 2);
                 }
                 j++;
@@ -141,7 +140,7 @@ public class StatisticsClassification {
             // Compute performance measures
             sensitivity = (double) tp / (tp + fn);
             specificity = (double) tn / (fp + tn);
-            brierScore = (double) brier / confidences.keySet().size();
+            brierScore = (double) brier / (double)numSamples;
             
             // Sort by confidence
             GenericSorting.mergeSort(0, isPositive.length, new IntComparator() {
@@ -160,11 +159,11 @@ public class StatisticsClassification {
             });
             
             // Initialize curve
-            truePositive = new double[confidences.size()];
-            falsePositive = new double[confidences.size()];
+            truePositive = new double[numSamples];
+            falsePositive = new double[numSamples];
             
             // Draw curve
-            int negatives = confidences.size() - positives;
+            int negatives = numSamples - positives;
             int x = 0;
             int y = 0;
             int offset=0;
@@ -206,7 +205,7 @@ public class StatisticsClassification {
 
         /**
          * Returns false-positive rates for all cut-off points
-         * @return the falsePositive
+         * @return the false positive rate
          */
         public double[] getFalsePositiveRate() {
             return falsePositive;
@@ -230,7 +229,7 @@ public class StatisticsClassification {
 
         /**
          * Returns true-positive rates for all cut-off points
-         * @return the truePositive
+         * @return the true positive rate
          */
         public double[] getTruePositiveRate() {
             return truePositive;
@@ -265,8 +264,10 @@ public class StatisticsClassification {
     private final WrappedBoolean  interrupt;
     /** Interrupt flag */
     private final WrappedInteger  progress;
-    /** Num classes */
+    /** Number of classes */
     private int                   numClasses;
+    /** Number of samples*/
+    private int                   numSamples;
     /** Random */
     private final Random          random;
     /** Measurements */
@@ -318,11 +319,9 @@ public class StatisticsClassification {
         this.interrupt = interrupt;
         this.progress = progress;
         
-        // Number of rows
-        int numRecords = inputHandle.getNumRows();
-        // Sampling size
-        int numSamples = getNumSamples(numRecords, config);
-       
+        // Number of records to consider
+        this.numSamples = getNumSamples(inputHandle.getNumRows(), config);
+        
         // Initialize random
         if (!config.isDeterministic()) {
             this.random = new Random();
@@ -337,10 +336,13 @@ public class StatisticsClassification {
                                                                                             features,
                                                                                             clazz,
                                                                                             interrupt);
+
+        // Number of class values
+        this.numClasses = specification.classMap.size();
         
         // Train and evaluate
         int k = numSamples > config.getNumFolds() ? config.getNumFolds() : numSamples;
-        List<List<Integer>> folds = getFolds(numRecords, numSamples, k);
+        List<List<Integer>> folds = getFolds(inputHandle.getNumRows(), numSamples, k);
 
         // Track
         int classifications = 0;
@@ -348,19 +350,20 @@ public class StatisticsClassification {
         double done = 0d;
         
         // ROC
-        Map<Integer, double[]> originalConfidences = new HashMap<Integer, double[]>();
-        Map<Integer, double[]> confidences = new HashMap<Integer, double[]>();
-        Map<Integer, double[]> zerorConfidences = new HashMap<Integer, double[]>();
+        double[] inputConfidences = new double[numSamples * ( 1 + numClasses)];
+        double[] outputConfidences = (inputHandle == outputHandle) ? null : new double[numSamples * ( 1 + numClasses)];
+        double[] zerorConfidences = new double[numSamples * ( 1 + numClasses)];
+        int confidencesIndex = 0;
                 
         // For each fold as a validation set
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
             // Create classifiers
-            ClassificationMethod inputLR = getClassifier(specification, config);
-            ClassificationMethod inputZR = new MultiClassZeroR(specification);
-            ClassificationMethod outputLR = null;
+            ClassificationMethod inputZeroR = getClassifier(specification, config);
+            ClassificationMethod inputClassifier = new MultiClassZeroR(specification);
+            ClassificationMethod outputClassifier = null;
             if (inputHandle != outputHandle) {
-                outputLR = getClassifier(specification, config);
+                outputClassifier = getClassifier(specification, config);
             }
             
             // Try
@@ -372,10 +375,10 @@ public class StatisticsClassification {
                     if (trainingFold != evaluationFold) {                        
                         for (int index : folds.get(trainingFold)) {
                             checkInterrupt();
-                            inputLR.train(inputHandle, outputHandle, index);
-                            inputZR.train(inputHandle, outputHandle, index);
-                            if (outputLR != null && !outputHandle.isOutlier(index)) {
-                                outputLR.train(outputHandle, outputHandle, index);
+                            inputZeroR.train(inputHandle, outputHandle, index);
+                            inputClassifier.train(inputHandle, outputHandle, index);
+                            if (outputClassifier != null && !outputHandle.isOutlier(index)) {
+                                outputClassifier.train(outputHandle, outputHandle, index);
                             }
                             trained = true;
                             this.progress.value = (int)((++done) * total);
@@ -384,10 +387,10 @@ public class StatisticsClassification {
                 }
                 
                 // Close
-                inputLR.close();
-                inputZR.close();
-                if (outputLR != null) {
-                    outputLR.close();
+                inputZeroR.close();
+                inputClassifier.close();
+                if (outputClassifier != null) {
+                    outputClassifier.close();
                 }
                 
                 // Now validate
@@ -400,32 +403,41 @@ public class StatisticsClassification {
                     if (trained) {
                         
                         // Classify
-                        ClassificationResult resultInputLR = inputLR.classify(inputHandle, index);
-                        ClassificationResult resultInputZR = inputZR.classify(inputHandle, index);
-                        ClassificationResult resultOutputLR = outputLR == null ? null : outputLR.classify(outputHandle, index);
+                        ClassificationResult resultInput = inputZeroR.classify(inputHandle, index);
+                        ClassificationResult resultInputZR = inputClassifier.classify(inputHandle, index);
+                        ClassificationResult resultOutput = outputClassifier == null ? null : outputClassifier.classify(outputHandle, index);
                         classifications++;
                         
                         // Correct result
                         String actualValue = outputHandle.getValue(index, specification.classIndex, true);
                         
-                        // Maintain data about inputZR
+                        // Maintain data about ZeroR
                         this.zeroRAverageError += resultInputZR.error(actualValue);
                         this.zeroRAccuracy += resultInputZR.correct(actualValue) ? 1d : 0d;
-                        zerorConfidences.put(index, resultInputZR.confidences());
+                        double[] confidences = resultInputZR.confidences();
+                        zerorConfidences[confidencesIndex] = index;
+                        System.arraycopy(confidences, 0, zerorConfidences, confidencesIndex + 1, confidences.length);
 
-                        // Maintain data about inputLR
-                        boolean correct = resultInputLR.correct(actualValue);
-                        this.originalAverageError += resultInputLR.error(actualValue);
+                        // Maintain data about input-based classifier
+                        boolean correct = resultInput.correct(actualValue);
+                        this.originalAverageError += resultInput.error(actualValue);
                         this.originalAccuracy += correct ? 1d : 0d;
-                        originalConfidences.put(index, resultInputLR.confidences());
-                        
-                        // Maintain data about outputLR                        
-                        if (resultOutputLR != null) {
-                            correct = resultOutputLR.correct(actualValue);
-                            this.averageError += resultOutputLR.error(actualValue);
+                        confidences = resultInput.confidences();
+                        inputConfidences[confidencesIndex] = index;
+                        System.arraycopy(confidences, 0, inputConfidences, confidencesIndex + 1, confidences.length);
+
+                        // Maintain data about output-based                     
+                        if (resultOutput != null) {
+                            correct = resultOutput.correct(actualValue);
+                            this.averageError += resultOutput.error(actualValue);
                             this.accuracy += correct ? 1d : 0d;
-                            confidences.put(index, resultOutputLR.confidences());
+                            confidences = resultOutput.confidences();
+                            outputConfidences[confidencesIndex] = index;
+                            System.arraycopy(confidences, 0, outputConfidences, confidencesIndex + 1, confidences.length);
                         }
+                        
+                        // Next
+                        confidencesIndex += numClasses + 1;
                     }
                     this.progress.value = (int)((++done) * total);
                 }
@@ -446,22 +458,35 @@ public class StatisticsClassification {
         this.originalAverageError /= (double)classifications;
         this.originalAccuracy /= (double)classifications;
         
-        // Initialize ROC curves on zeroR
-        if (!zerorConfidences.isEmpty()) {
-            for(String attr : specification.classMap.keySet()) {
-                zerorROC.put(attr, new ROCCurve(attr, zerorConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
-            }
+        // Initialize ROC curves for zeroR
+        for (String attr : specification.classMap.keySet()) {
+            zerorROC.put(attr, new ROCCurve(attr,
+                                            zerorConfidences,
+                                            numClasses,
+                                            specification.classMap.get(attr),
+                                            outputHandle,
+                                            specification.classIndex));
         }
-        
+
         // Initialize ROC curves on original data
         for (String attr : specification.classMap.keySet()) {
-            originalROC.put(attr, new ROCCurve(attr, originalConfidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
+            originalROC.put(attr, new ROCCurve(attr,
+                                               inputConfidences,
+                                               numClasses,
+                                               specification.classMap.get(attr),
+                                               outputHandle,
+                                               specification.classIndex));
         }
         // Initialize ROC curves on anonymized data
-        if (!confidences.isEmpty()) {
+        if (inputHandle != outputHandle) {
             for (String attr : specification.classMap.keySet()) {
-                ROC.put(attr, new ROCCurve(attr, confidences, specification.classMap.get(attr), outputHandle, specification.classIndex));
-            }    
+                ROC.put(attr, new ROCCurve(attr,
+                                           outputConfidences,
+                                           numClasses,
+                                           specification.classMap.get(attr),
+                                           outputHandle,
+                                           specification.classIndex));
+            }
         }
 
         // Maintain data about outputLR                        
@@ -473,7 +498,6 @@ public class StatisticsClassification {
             this.accuracy = this.originalAccuracy;
         }
         
-        this.numClasses = specification.classMap.size();
         this.numMeasurements = classifications;
     }
 
