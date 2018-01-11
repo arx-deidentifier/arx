@@ -948,6 +948,10 @@ public class ARXLattice implements Serializable {
      * @return
      */
     public InformationLoss<?> getHighestScore(){
+        // For backwards compatibility
+        if (this.maximumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
         return this.maximumInformationLoss;
     }
     
@@ -965,6 +969,10 @@ public class ARXLattice implements Serializable {
      * @return
      */
     public InformationLoss<?> getLowestScore(){
+        // For backwards compatibility
+        if (this.minimumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
         return this.minimumInformationLoss;
     }
 
