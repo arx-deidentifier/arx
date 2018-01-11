@@ -813,7 +813,7 @@ public class WorkerLoad extends Worker<Model> {
         inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
-            private int                   id;
+            private int                 id;
             private final List<ARXNode> predecessors = new ArrayList<ARXNode>();
             private final List<ARXNode> successors   = new ArrayList<ARXNode>();
 

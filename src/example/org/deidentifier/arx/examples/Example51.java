@@ -171,7 +171,7 @@ public class Example51 extends Example {
         System.out.println(" - Configuration: " + config.toString());
         System.out.println(" - Policies available: " + result.getLattice().getSize());
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
-        System.out.println("   * Optimal: " + result.getLattice().isComplete());
+        System.out.println("   * Optimal: " + result.getProcessStatistics().getStep(0).isOptimal());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
         for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
             System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());

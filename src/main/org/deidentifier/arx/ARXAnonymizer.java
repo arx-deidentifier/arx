@@ -26,7 +26,6 @@ import java.util.Set;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
-import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.criteria.BasicBLikeness;
@@ -120,7 +119,6 @@ public class ARXAnonymizer { // NO_UCD
 
             // Create lattice
             final ARXLattice lattice = new ARXLattice(solutionSpace,
-                                                      (algorithm instanceof FLASHAlgorithmImpl),
                                                       optimum,
                                                       manager.getDataGeneralized().getHeader(),
                                                       config.getInternalConfiguration());

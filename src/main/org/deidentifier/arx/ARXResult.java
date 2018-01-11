@@ -161,7 +161,7 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalTransformation = lattice.getOptimum();
         this.solutionSpace = solutionSpace;
-        this.statistics = statistics != null ? statistics : new ARXProcessStatistics(lattice, optimalTransformation, lattice.isComplete(), time);
+        this.statistics = statistics != null ? statistics : new ARXProcessStatistics(lattice, optimalTransformation, lattice._legacySearchedWithFlash(), time);
         this.optimumFound = this.statistics.isSolutationAvailable() ? this.statistics.getStep(0).isOptimal() : false;
         this.duration = this.statistics.getDuration();
     }

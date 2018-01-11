@@ -96,12 +96,10 @@ class UtilityEstimator {
         this.monotonicNonAnonymous = monotonicNonAnonymous;
         
         // Make sure that all nodes have an identifier
-        if (this.lattice.getBottom().getId() == null) {
-            int id = 0;
-            for (ARXNode[] level : this.lattice.getLevels()) {
-                for (ARXNode node : level) {
-                    node.setId(id++);
-                }
+        int id = 0;
+        for (ARXNode[] level : this.lattice.getLevels()) {
+            for (ARXNode node : level) {
+                node.setId(id++);
             }
         }
     }

@@ -427,7 +427,7 @@ public class MainToolBar extends AbstractMenu {
             if (stats.getNumberOfSteps() == 1) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
                 .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
-                .append(SWTUtil.getPrettyString(stats.getStep(0).isOptimal()))
+                .append(stats.getStep(0).isOptimal() ? SWTUtil.getPrettyString(true) : Resources.getMessage("MainToolBar.72"))
                 .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
                 .append(Arrays.toString(stats.getStep(0).getTransformation()));
               sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$
