@@ -65,7 +65,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private DataGeneralizationScheme generalization;
 
     /**
-     * Creates a new instance
+     * Creates a new instance which is data-independent iff generalization is not null
      * @param epsilon
      * @param delta
      * @param generalization
@@ -73,6 +73,15 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public EDDifferentialPrivacy(double epsilon, double delta, 
                                  DataGeneralizationScheme generalization) {
         this(epsilon, delta, generalization, false);
+    }
+    
+    /**
+     * Creates a new data-dependent instance
+     * @param epsilon
+     * @param delta
+     */
+    public EDDifferentialPrivacy(double epsilon, double delta) {
+        this(epsilon, delta, null, false);
     }
     
     /**
@@ -148,6 +157,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         if (k < 0) { throw new RuntimeException("This instance has not been initialized yet"); }
         return k;
     }
+    
+    /**
+     * Returns whether this instance is data-dependent
+     * @return
+     */
+    public boolean isDataDependent() {
+        return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
+    }
 
     @Override
     public int getMinimalClassSize() {
@@ -171,18 +196,17 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         
         // Set beta and k if required
         if (beta < 0) {
-            
+            double epsilonAnon = epsilon - (isDataDependent() ? config.getDPSearchBudget() : 0d);
             ParameterCalculation pCalc = null;
             if (config.isReliableAnonymizationEnabled()) {
                 try {
-                    pCalc = new ParameterCalculationIntervalDouble(epsilon, delta);
+                    pCalc = new ParameterCalculationIntervalDouble(epsilonAnon, delta);
                 } catch (IntervalArithmeticException e) {
                     throw new RuntimeException(e);
                 }
             } else {
-                pCalc = new ParameterCalculationDouble(epsilon, delta);
+                pCalc = new ParameterCalculationDouble(epsilonAnon, delta);
             }
-                    
             beta = pCalc.getBeta();
             k = pCalc.getK();
         }
@@ -199,7 +223,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         } else {
             random = new SecureRandom();
         }
-
+        
         // Create a data subset via sampling based on beta
         Set<Integer> subsetIndices = new HashSet<Integer>();
         int records = manager.getDataGeneralized().getDataLength();

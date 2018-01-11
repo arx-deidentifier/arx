@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
@@ -37,7 +38,6 @@ import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
-import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
@@ -106,17 +106,15 @@ public class DataManager {
      * @param data
      * @param dictionary
      * @param definition
-     * @param privacyModels
+     * @param config
      * @param functions
-     * @param qualityModel
      */
     public DataManager(final String[] header,
                        final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
-                       final Set<PrivacyCriterion> privacyModels,
-                       final Map<String, DistributionAggregateFunction> functions,
-                       final Metric<?> qualityModel) {
+                       final ARXConfiguration config,
+                       final Map<String, DistributionAggregateFunction> functions) {
 
         // Store basic info
         this.header = header;
@@ -151,7 +149,7 @@ public class DataManager {
          * Collect non-generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsNotGeneralized = new HashSet<String>();
-        if (qualityModel.isAbleToHandleMicroaggregation()) {
+        if (config.getQualityModel().isAbleToHandleMicroaggregation()) {
             hotQIsNotGeneralized.addAll(qisNotGeneralized);
         } 
 
@@ -159,7 +157,7 @@ public class DataManager {
          * Collect generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsGeneralized = new HashSet<String>();
-        if (qualityModel.isAbleToHandleClusteredMicroaggregation()) {
+        if (config.getQualityModel().isAbleToHandleClusteredMicroaggregation()) {
             hotQIsGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
             throw new RuntimeException("Not implemented"); // TODO: SSE
         }
@@ -232,25 +230,28 @@ public class DataManager {
         
         // Change to fixed generalization scheme when using differential privacy
         index = 0;
-        for (PrivacyCriterion c : privacyModels) {
-            
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
+
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
-                // Extract scheme
-                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
-                
-                // For each attribute
-                for (final String attribute : header) {
-                    
-                    // This is a generalized quasi-identifier
-                    if (qisGeneralized.contains(attribute)) {
-                        this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
-                        this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
-                    }
+                EDDifferentialPrivacy edpModel = (EDDifferentialPrivacy)c;
+                if (!edpModel.isDataDependent()) {
+                    // Extract scheme
+                    DataGeneralizationScheme scheme = edpModel.getGeneralizationScheme();
 
-                    // Next quasi-identifier
-                    index++;
+                    // For each attribute
+                    for (final String attribute : header) {
+
+                        // This is a generalized quasi-identifier
+                        if (qisGeneralized.contains(attribute)) {
+                            this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                            this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                        }
+
+                        // Next quasi-identifier
+                        index++;
+                    }
                 }
                 break;
             }
@@ -258,7 +259,7 @@ public class DataManager {
 
         // Build map with hierarchies for sensitive attributes
         this.hierarchiesAnalyzed = new GeneralizationHierarchy[this.dataAnalyzed.getColumns().length];
-        for (PrivacyCriterion c : privacyModels) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c instanceof HierarchicalDistanceTCloseness) {
                 HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness) c;
                 String attribute = t.getAttribute();
