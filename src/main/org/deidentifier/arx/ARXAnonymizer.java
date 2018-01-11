@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
@@ -544,6 +545,27 @@ public class ARXAnonymizer { // NO_UCD
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.getEpsilon() <= 0d) {
+                throw new IllegalArgumentException("The privacy budget must be > 0");
+            }
+            if (edpModel.getDelta() <= 0d) {
+                throw new IllegalArgumentException("The privacy parameter delta must be > 0");
+            }
+            if (edpModel.isDataDependent()) {
+                if (!config.getQualityModel().isScoreFunctionSupported()) {
+                    throw new IllegalArgumentException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+                }
+                if (config.getDPSearchBudget() <= 0) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be > 0");
+                }
+                if (config.getDPSearchBudget() >= edpModel.getEpsilon()) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
+                }
+                if (config.getDPSearchStepNumber() < 0) {
+                    throw new IllegalArgumentException("The the number of steps to use for the differentially private search algorithm must be >= 0");
+                }
+            }
         }
         
         // Perform sanity checks
@@ -585,7 +607,15 @@ public class ARXAnonymizer { // NO_UCD
                                           final DataManager manager,
                                           final SolutionSpace solutionSpace,
                                           final TransformationChecker checker) {
-        
+
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent()) {
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
+                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget());
+            }
+        }
+
         if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
             
