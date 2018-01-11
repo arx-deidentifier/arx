@@ -22,6 +22,7 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -41,6 +42,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
@@ -52,6 +54,9 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     /** Hierarchy heights. */
     private int[]             heights;
+    
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double            k;
 
     /**
      * Creates a new instance.
@@ -117,6 +122,42 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                        this.getAggregateFunction()                  // aggregate function
                                        );
     }
+    
+    @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        
+        int suppressedTuples = 0;
+        int unsuppressedTuples = 0;
+        
+        // For each group
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            
+            // Calculate number of affected records
+            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
+            suppressedTuples += m.isNotOutlier ? 0 : m.count;
+            suppressedTuples += m.pcount - m.count;
+
+            // Next group
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        double score = 0d;
+        for (int i = 0; i<dimensionsGeneralized; i++) {
+            double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
+            score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
+        }
+        score *= -1d / getDimensionsGeneralized();
+        if (k > 1) score /= k - 1d;
+        
+        // Return
+        return new ILScore(score);
+    }
 
     @Override
     public boolean isAbleToHandleMicroaggregation() {
@@ -125,6 +166,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
@@ -277,6 +323,12 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         this.heights = new int[hierarchies.length];
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
+        }
+        
+        // Store minimal size of equivalence classes
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            k = (double)dpCriterion.getMinimalClassSize();
         }
     }
 }
