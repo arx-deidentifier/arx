@@ -237,20 +237,23 @@ public class DataManager {
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
-                // Extract scheme
-                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
-                
-                // For each attribute
-                for (final String attribute : header) {
-                    
-                    // This is a generalized quasi-identifier
-                    if (qisGeneralized.contains(attribute)) {
-                        this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
-                        this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
-                    }
+                EDDifferentialPrivacy edpModel = (EDDifferentialPrivacy)c;
+                if (!edpModel.isDataDependent()) {
+                    // Extract scheme
+                    DataGeneralizationScheme scheme = edpModel.getGeneralizationScheme();
 
-                    // Next quasi-identifier
-                    index++;
+                    // For each attribute
+                    for (final String attribute : header) {
+
+                        // This is a generalized quasi-identifier
+                        if (qisGeneralized.contains(attribute)) {
+                            this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                            this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                        }
+
+                        // Next quasi-identifier
+                        index++;
+                    }
                 }
                 break;
             }

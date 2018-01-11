@@ -332,67 +332,73 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /** Absolute tuple outliers. */
-    private int                                absMaxOutliers                        = 0;
+    private int                                absMaxOutliers                                   = 0;
 
     /** Criteria. */
-    private PrivacyCriterion[]                 aCriteria                             = new PrivacyCriterion[0];
+    private PrivacyCriterion[]                 aCriteria                                        = new PrivacyCriterion[0];
 
     /** Criteria. */
-    private SampleBasedCriterion[]             bCriteria                             = new SampleBasedCriterion[0];
+    private SampleBasedCriterion[]             bCriteria                                        = new SampleBasedCriterion[0];
 
     /** A map of weights per attribute. */
-    private Map<String, Double>                attributeWeights                      = null;
+    private Map<String, Double>                attributeWeights                                 = null;
 
     /** The criteria. */
-    private Set<PrivacyCriterion>              criteria                              = new HashSet<PrivacyCriterion>();
+    private Set<PrivacyCriterion>              criteria                                         = new HashSet<PrivacyCriterion>();
 
     /** The metric. */
-    private Metric<?>                          metric                                = Metric.createLossMetric();
+    private Metric<?>                          metric                                           = Metric.createLossMetric();
 
     /** Do we assume practical monotonicity. */
-    private boolean                            practicalMonotonicity                 = false;
+    private boolean                            practicalMonotonicity                            = false;
 
     /** Relative tuple outliers. */
-    private double                             relMaxOutliers                        = -1;
+    private double                             relMaxOutliers                                   = -1;
 
     /** The requirements per equivalence class. */
-    private int                                requirements                          = 0x0;
+    private int                                requirements                                     = 0x0;
 
     /** The snapshot length. */
     private int                                snapshotLength;
 
     /** Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples. */
-    private Integer                            suppressedAttributeTypes              = 1 << AttributeType.ATTR_TYPE_QI;
+    private Integer                            suppressedAttributeTypes                         = 1 << AttributeType.ATTR_TYPE_QI;
 
     /** Determines whether suppression is applied to the output of anonymous as well as non-anonymous transformations. */
-    private Boolean                            suppressionAlwaysEnabled              = true;
+    private Boolean                            suppressionAlwaysEnabled                         = true;
 
     /** Internal variant of the class providing a broader interface. */
-    private transient ARXConfigurationInternal accessibleInstance                    = null;
+    private transient ARXConfigurationInternal accessibleInstance                               = null;
 
     /** Are we performing optimal anonymization for sample-based criteria? */
-    private boolean                            heuristicSearchForSampleBasedCriteria = false;
+    private boolean                            heuristicSearchForSampleBasedCriteria            = false;
 
     /** Should we use the heuristic search algorithm? */
-    private boolean                            heuristicSearchEnabled                = false;
+    private boolean                            heuristicSearchEnabled                           = false;
 
     /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
-    private Integer                            heuristicSearchThreshold              = 100000;
+    private Integer                            heuristicSearchThreshold                         = 100000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchTimeLimit              = 30000;
+    private Integer                            heuristicSearchTimeLimit                         = 30000;
 
     /** The heuristic algorithm will terminate after the given time limit */
-    private Integer                            heuristicSearchStepLimit              = Integer.MAX_VALUE;
+    private Integer                            heuristicSearchStepLimit                         = Integer.MAX_VALUE;
 
     /** Cost/benefit configuration */
-    private ARXCostBenefitConfiguration        costBenefitConfiguration              = ARXCostBenefitConfiguration.create();
+    private ARXCostBenefitConfiguration        costBenefitConfiguration                         = ARXCostBenefitConfiguration.create();
 
     /** Reliable anonymization */
-    private Boolean                            reliable                              = false;
+    private Boolean                            reliable                                         = false;
 
     /** Reliable search process */
-    private Boolean                            reliableSearchProcess                 = false;
+    private Boolean                            reliableSearchProcess                            = false;
+    
+    /** The privacy budget to use for the data-dependent differential privacy search algorithm */
+    private Double                             dpSearchBudget                                   = 0.1d;
+    
+    /** Number of steps to use for the data-dependent differential privacy search algorithm */
+    private Integer                            dpSearchStepNumber                               = 100;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -521,6 +527,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
+        result.dpSearchBudget = this.dpSearchBudget;
+        result.dpSearchStepNumber = this.dpSearchStepNumber;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -569,6 +577,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.costBenefitConfiguration = ARXCostBenefitConfiguration.create();
         }
         return this.costBenefitConfiguration;
+    }
+    
+    /**
+     * Returns the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @return
+     */
+    public double getDPSearchBudget() {
+        if (this.dpSearchBudget == null) {
+            this.dpSearchBudget = 0.1d;
+        }
+        return this.dpSearchBudget;
+    }
+    
+    /**
+     * Returns the number of steps to use for the data-dependent
+     * differential privacy search algorithm. The default is 100.
+     * @return
+     */
+    public int getDPSearchStepNumber() {
+        if (this.dpSearchStepNumber == null) {
+            this.dpSearchStepNumber = 100;
+        }
+        return this.dpSearchStepNumber;
     }
     
     /**
@@ -947,6 +979,26 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         this.costBenefitConfiguration = config;
         return this;
+    }
+    
+    /**
+     * Sets the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @param budget
+     */
+    public void setDPSearchBudget(double budget) {
+        if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.dpSearchBudget = budget;
+    }
+    
+    /**
+     * Sets the number of steps to use for the data-dependent
+     * differential privacy search algorithm. The default is 100.
+     * @param numberOfSteps
+     */
+    public void setDPSearchStepNumber(int numberOfSteps) {
+        if (numberOfSteps < 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.dpSearchStepNumber = numberOfSteps;
     }
 
     /**
