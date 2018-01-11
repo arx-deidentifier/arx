@@ -1273,6 +1273,6 @@ public class ARXLattice implements Serializable {
      * @return
      */
     boolean _legacySearchedWithFlash() {
-        return complete;
+        return complete == null ? true : complete;
     }
 }
