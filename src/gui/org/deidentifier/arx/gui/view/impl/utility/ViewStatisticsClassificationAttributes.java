@@ -23,9 +23,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -37,11 +40,18 @@ import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import de.linearbits.swt.table.DynamicTable;
@@ -51,6 +61,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * This view allows to select a set of attributes for classification analysis
  * 
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class ViewStatisticsClassificationAttributes implements IView, ViewStatisticsBasic {
     
@@ -66,23 +77,29 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         /** Data */
         private final List<AttributeType> types      = new ArrayList<AttributeType>();
         /** Data */
+        private final List<DataType<?>>   dtypes     = new ArrayList<DataType<?>>();
+        /** Data */
         private final Set<String>         features   = new HashSet<String>();
         /** Data */
         private final Set<String>         classes    = new HashSet<String>();
+        /** Data */
+        private final List<String>        scaling = new ArrayList<String>();
 
         /**
          * Creates a new instance
          * 
-         * @param model
          * @param handle
          * @param definition
+         * @param featureScaling 
          */
-        private State(Model model, DataHandle handle, DataDefinition definition) {
+        private State(DataHandle handle, DataDefinition definition, ARXFeatureScaling featureScaling) {
 
             for (int col = 0; col < handle.getNumColumns(); col++) {
                 String attribute = handle.getAttributeName(col);
                 attributes.add(attribute);
                 types.add(definition.getAttributeType(attribute));
+                dtypes.add(definition.getDataType(attribute));
+                scaling.add(featureScaling.getScalingFunction(attribute));
             }
             features.addAll(model.getSelectedFeatures());
             classes.addAll(model.getSelectedClasses());
@@ -106,6 +123,12 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             if (types == null) {
                 if (other.types != null) return false;
             } else if (!types.equals(other.types)) return false;
+            if (dtypes == null) {
+                if (other.dtypes != null) return false;
+            } else if (!dtypes.equals(other.dtypes)) return false;
+            if (scaling == null) {
+                if (other.scaling != null) return false;
+            } else if (!scaling.equals(other.scaling)) return false;
             return true;
         }
 
@@ -117,24 +140,35 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             result = prime * result + ((classes == null) ? 0 : classes.hashCode());
             result = prime * result + ((features == null) ? 0 : features.hashCode());
             result = prime * result + ((types == null) ? 0 : types.hashCode());
+            result = prime * result + ((dtypes == null) ? 0 : dtypes.hashCode());
+            result = prime * result + ((scaling == null) ? 0 : scaling.hashCode());
             return result;
         }
     }
 
+    /** Label */
+    private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.4"); //$NON-NLS-1$
+    /** Label */
+    private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
+
+    /** Delay */
+    private static final int    DELAY             = 1000;
+
     /** Controller */
-    private final Controller   controller;
+    private final Controller    controller;
 
     /** View */
-    private final Composite    root;
+    private final Composite     root;
     /** View */
-    private final DynamicTable features;
+    private final DynamicTable  features;
     /** View */
-    private final Table        classes;
-
+    private final DynamicTable  classes;
+    /** View */
+    private List<TableEditor>   editors           = new ArrayList<TableEditor>();
     /** Model */
-    private Model              model;
+    private Model               model;
     /** State */
-    private State              state;
+    private State               state;
 
     /**
      * Creates a new instance.
@@ -143,12 +177,12 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
      * @param controller
      */
     public ViewStatisticsClassificationAttributes(final Composite parent,
-                                        final Controller controller) {
+                                    final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
-        controller.addListener(ModelPart.SELECTED_FEATURES_OR_CLASSES, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.OUTPUT, this);
         
         this.controller = controller;
@@ -167,26 +201,45 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         // Create table
         features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        features.addSelectionListener(new DelayedChangeListener(1000) {
+        features.addSelectionListener(new SelectionAdapter() {
+
             @Override
-            public void delayedEvent() {
-                fireEvent();
+            public void widgetSelected(SelectionEvent arg0) {
+                Set<String> newSelection = new HashSet<String>();
+                boolean update = fireEvent(arg0, features, model.getSelectedFeatures(), newSelection);
+                if (update) {
+                    model.setSelectedFeatures(newSelection);
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+                }
             }
         });
         DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
-        column0.setWidth("10%", "40px");
+        column0.setWidth("10%", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
-        column1.setWidth("90%", "40px");
+        column1.setWidth("45%"); //$NON-NLS-1$
+        DynamicTableColumn column2 = new DynamicTableColumn(features, SWT.NONE);
+        column2.setWidth("45%"); //$NON-NLS-1$
         
         
         // Create button
-        classes = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        classes = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        classes.addSelectionListener(new DelayedChangeListener(1000) {
-            public void delayedEvent() {
-                fireEvent();
-            }   
+        classes.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                Set<String> newSelection = new HashSet<String>();
+                boolean update = fireEvent(arg0, classes, model.getSelectedClasses(), newSelection);
+                if (update) {
+                   model.setSelectedClasses(newSelection);
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+                }
+            }
         });
+        
+        DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
+        column3.setWidth("10%", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
+        DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
+        column4.setWidth("90%"); //$NON-NLS-1$
         
         // Reset view
         reset();
@@ -212,14 +265,21 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
 
     @Override
     public void reset() {
+        for (TableEditor editor : editors) {
+            editor.getEditor().dispose();
+            editor.dispose();
+        }
+        editors.clear();
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
-        state = null;
+        features.removeAll();
+        classes.removeAll();
         SWTUtil.disable(root);
+        state = null;
     }
 
     @Override
@@ -228,43 +288,56 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
            this.model = (Model) event.data;
            update();
         } else if (event.part == ModelPart.INPUT ||
-                   event.part == ModelPart.SELECTED_FEATURES_OR_CLASSES ||
-                   event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.OUTPUT) {
+                   event.part == ModelPart.ATTRIBUTE_TYPE || 
+                   event.part == ModelPart.OUTPUT ||
+                   event.part == ModelPart.DATA_TYPE) {
            update();
         }
     }
-
+    
     /**
      * Checks the selected items and fires an event on changes
+     * @param event
+     * @param table
+     * @param currentSelection
+     * @param newSelection
+     * @return
      */
-    private void fireEvent() {
-        Set<String> selectedFeatures = new HashSet<String>();
-        for (TableItem item : features.getItems()) {
+    private boolean fireEvent(SelectionEvent event, DynamicTable table, Set<String> currentSelection, Set<String> newSelection){
+        
+        // Item
+        TableItem item = (TableItem) event.item;
+
+        // Detect check all
+        Boolean checkAll = null;
+        if (item.getText(1).equals(LABEL_ALL)) {
             if (item.getChecked()) {
-                selectedFeatures.add(item.getText(1));
+                checkAll = true;
+            } else {
+                checkAll = false;
             }
         }
-        Set<String> selectedClasses = new HashSet<String>();
-        for (TableItem item : classes.getItems()) {
-            if (item.getChecked()) {
-                selectedClasses.add(item.getText());
-            }
-        }
-        if (model != null) {
+
+        // Ignore first item
+        for (int i = 1; i < table.getItemCount(); i++) {
+            item = table.getItem(i);
             
-            boolean modified = false;
-            if (!selectedFeatures.equals(model.getSelectedFeatures())) {
-                model.setSelectedFeatures(selectedFeatures);
-                modified = true;
-            }
-            if (!selectedClasses.equals(model.getSelectedClasses())) {
-                model.setSelectedClasses(selectedClasses);
-                modified = true;
-            }
-            if (modified) {
-                controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.SELECTED_FEATURES_OR_CLASSES, null));
+            // All checkbox checked or one item checked
+            if ((checkAll != null && checkAll) || (item.getChecked() && checkAll == null)) {
+                newSelection.add(item.getText(1));
+                item.setChecked(true);
+            } 
+            // All checkbox unchecked
+            else if (checkAll != null && !checkAll) {
+                item.setChecked(false);
             }
         }
+
+        // Update
+        if (model != null && !newSelection.equals(currentSelection)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -280,9 +353,9 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         }
         
         // Create state
-        State state = new State(model, 
-                                model.getInputConfig().getInput().getHandle(), 
-                                model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition());
+        DataDefinition definition = model.getOutputDefinition() == null ? model.getInputDefinition() : model.getOutputDefinition();
+        DataHandle handle = model.getOutput() != null ? model.getOutput() : model.getInputConfig().getInput().getHandle();
+        State state = new State(handle, definition, model.getClassificationModel().getFeatureScaling());
         
         // Check again
         if (this.state == null || !this.state.equals(state)) {
@@ -293,32 +366,128 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
 
         // Clear
         root.setRedraw(false);        
+        for (TableEditor editor : editors) {
+            editor.getEditor().dispose();
+            editor.dispose();
+        }
+        editors.clear();
         for (TableItem item : features.getItems()) {
             item.dispose();
         }
         for (TableItem item : classes.getItems()) {
             item.dispose();
         }
+        features.removeAll();
+        classes.removeAll();
         
-        // Add
+        TableItem itemAllFeatures = new TableItem(features, SWT.NONE);
+        itemAllFeatures.setText(new String[] { "", LABEL_ALL, "" }); //$NON-NLS-1$ //$NON-NLS-2$
+
+        TableItem itemAllclasses = new TableItem(classes, SWT.NONE);
+        itemAllclasses.setText(new String[] { "", LABEL_ALL }); //$NON-NLS-1$
+        
         for (int i = 0; i < state.attributes.size(); i++) {
-            
+
             // Features
-            String attribute = state.attributes.get(i);
+            final String attribute = state.attributes.get(i);
             AttributeType type = state.types.get(i);
             Image image = controller.getResources().getImage(type);
             TableItem itemF = new TableItem(features, SWT.NONE);
-            itemF.setText(new String[] { "", attribute } );
+            itemF.setText(new String[] { "", attribute, ""} ); //$NON-NLS-1$ //$NON-NLS-2$
             itemF.setImage(0, image);
             itemF.setChecked(model.getSelectedFeatures().contains(attribute));
 
             // Classes
             TableItem itemC = new TableItem(classes, SWT.NONE);
-            itemC.setText(attribute);
+            itemC.setText(new String[] { "", attribute }); //$NON-NLS-1$
+            itemC.setImage(0, image);
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
+            
+            // Add combo, if functions supported
+            if (definition.getDataType(attribute) instanceof DataTypeWithRatioScale) {
+                TableEditor editor = new TableEditor(features);
+                editors.add(editor);
+                final CCombo combo = new CCombo(features, SWT.NONE);
+                final Color defaultColor = combo.getForeground();
+                
+                combo.add("x"); //$NON-NLS-1$
+                combo.add("x^2"); //$NON-NLS-1$
+                combo.add("sqrt(x)"); //$NON-NLS-1$
+                combo.add("log(x)"); //$NON-NLS-1$
+                combo.add("2^x"); //$NON-NLS-1$
+                combo.add("1/x"); //$NON-NLS-1$
+                
+                combo.add(LABEL_CATEGORICAL);
+                combo.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent arg0) {
+                        updateCombo(attribute, combo, defaultColor);
+                    }
+                });
+                combo.addSelectionListener(new DelayedChangeListener(DELAY) {
+                    public void delayedEvent() {
+                        updateFunction(attribute, combo);
+                    }   
+                });
+                combo.addKeyListener(new KeyAdapter() {
+                    @Override
+                    public void keyReleased(KeyEvent arg0) {
+                        updateCombo(attribute, combo, defaultColor);
+                    }
+                });
+                combo.addKeyListener(new DelayedChangeListener(DELAY) {
+                    public void delayedEvent() {
+                        updateFunction(attribute, combo);
+                    }   
+                });
+                editor.grabHorizontal = true;
+                editor.setEditor(combo, itemF, 2);
+                String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(attribute);
+                if (function == null || function.equals("")) { //$NON-NLS-1$
+                    function = LABEL_CATEGORICAL;
+                }
+                combo.setText(function);
+            } else {
+                itemF.setText(2, LABEL_CATEGORICAL);
+            }
         }
         
+        // Finish
+        features.layout();
         root.setRedraw(true);
         SWTUtil.enable(root);
-    }    
+    }
+    
+    /**
+     * Updates the combo
+     * @param attribute
+     * @param combo
+     * @param defaultColor 
+     */
+    private void updateCombo(String attribute, CCombo combo, Color defaultColor) {
+        String function = combo.getText();
+        if (function.equals(LABEL_CATEGORICAL)) {
+            combo.setForeground(defaultColor);
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
+            combo.setForeground(GUIHelper.COLOR_RED);
+        } else {
+            combo.setForeground(defaultColor);
+        }
+    }
+
+    /**
+     * Updates the function
+     * @param attribute
+     * @param combo
+     */
+    private void updateFunction(String attribute, CCombo combo) {
+        String function = combo.getText();
+        if (function.equals(LABEL_CATEGORICAL)) {
+            model.getClassificationModel().setScalingFunction(attribute, null);
+        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
+            model.getClassificationModel().setScalingFunction(attribute, null);
+        } else {
+            model.getClassificationModel().setScalingFunction(attribute, function);
+        }
+    }
 }

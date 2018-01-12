@@ -146,7 +146,7 @@ public class TestRiskMetrics {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         ARXResult result = null;
         try {
@@ -249,7 +249,7 @@ public class TestRiskMetrics {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         config.setQualityModel(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = null;

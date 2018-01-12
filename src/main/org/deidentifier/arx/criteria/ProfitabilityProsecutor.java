@@ -21,8 +21,8 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.DomainShare;
@@ -41,28 +41,22 @@ import org.deidentifier.arx.risk.RiskModelCostBenefit;
 public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
 
     /** SVUID */
-    private static final long               serialVersionUID = -1698534839214708559L;
+    private static final long           serialVersionUID = -1698534839214708559L;
 
     /** Configuration */
-    private ARXCostBenefitConfiguration     config;
+    private ARXCostBenefitConfiguration config;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]                   shares;
+    private DomainShare[]               shares;
 
     /** The microaggregation functions. */
-    private DistributionAggregateFunction[] microaggregationFunctions;
-
-    /** The start index of the attributes with microaggregation in the data array (dataAnalyzed) */
-    private int                             microaggregationStartIndex;
-
-    /** Domain size for each microaggregated attribute */
-    private int[]                           microaggregationDomainSizes;
+    private DataAggregationInformation        aggregation;
 
     /** MaxIL */
-    private double                          maxIL;
+    private double                      maxIL;
 
     /** Risk model */
-    private RiskModelCostBenefit            riskModel;
+    private RiskModelCostBenefit        riskModel;
 
     /**
      * Creates a new instance of game theoretic approach proposed in:
@@ -109,12 +103,10 @@ public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
         this.riskModel = new RiskModelCostBenefit(this.config);
 
         // Prepare consideration of microaggregation
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationDomainSizes = manager.getMicroaggregationDomainSizes();
+        this.aggregation = manager.getAggregationInformation();
                 
         // Calculate MaxIL
-        this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, this.microaggregationDomainSizes);
+        this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, this.aggregation);
     }
 
     @Override
@@ -129,8 +121,7 @@ public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
         double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation,
                                                                                                       entry,
                                                                                                       shares,
-                                                                                                      this.microaggregationFunctions,
-                                                                                                      this.microaggregationStartIndex,
+                                                                                                      this.aggregation,
                                                                                                       maxIL);
         double successProbability = getSuccessProbability(entry);
         double publisherPayoff = riskModel.getExpectedPublisherPayout(informationLoss, successProbability);

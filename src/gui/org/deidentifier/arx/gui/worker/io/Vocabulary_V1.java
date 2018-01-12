@@ -305,11 +305,16 @@ public class Vocabulary_V1 extends Vocabulary {
     }
 
 	@Override
+    public String getResponseVariable() {
+        return "response"; //$NON-NLS-1$
+    }
+
+	@Override
 	public String getTransformation() {
 		return "transformation"; //$NON-NLS-1$
 	}
 
-	@Override
+    @Override
 	public String getType() {
 		return "type"; //$NON-NLS-1$
 	}

@@ -85,9 +85,8 @@ public class Example36 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(1d);
+        config.setSuppressionLimit(1d);
         config.setAttributeWeight("age", 100d);
-        config.setUtilityBasedMicroaggregation(true);
         config.setQualityModel(Metric.createLossMetric());
 
         // Obtain result

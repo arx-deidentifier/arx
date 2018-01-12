@@ -42,6 +42,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -55,20 +58,26 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * 
  * @author Fabian Prasser
  * @author Martin Waltl
+ * @author Johanna Eicher
  */
 public class ViewAttributeList implements IView {
 
+    /** Resource */
+    private final Image      IMAGE_ENABLED;
+    /** Resource */
+    private final Image      IMAGE_DISABLED;
+    
     /** Controller */
     private final Controller controller;
 
     /** Model */
     private Model            model;
-
     /** Model */
     private String[]         dataTypes;
 
     /** View */
     private DynamicTable     table;
+    
 
     /**
      * Creates a new instance.
@@ -79,6 +88,10 @@ public class ViewAttributeList implements IView {
      */
     public ViewAttributeList(final Composite parent,
                              final Controller controller) {
+        
+        // Load images
+        IMAGE_ENABLED           = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        IMAGE_DISABLED          = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
 
         // Controller
         this.controller = controller;
@@ -93,8 +106,6 @@ public class ViewAttributeList implements IView {
         this.create(parent);
         this.reset();
     }
-    
-    
 
     @Override
     public void dispose() {
@@ -222,19 +233,23 @@ public class ViewAttributeList implements IView {
         SWTUtil.createGenericTooltip(table);
         DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.NONE);
         column0.setText(""); //$NON-NLS-1$
-        column0.setWidth("5%", "25px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column0.setWidth("4%", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
         column1.setText(Resources.getMessage("ViewAttributeList.0")); //$NON-NLS-1$
-        column1.setWidth("45%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column1.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.NONE);
         column2.setText(Resources.getMessage("ViewAttributeList.1")); //$NON-NLS-1$
-        column2.setWidth("25%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column2.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.NONE);
         column3.setText(Resources.getMessage("ViewAttributeList.2")); //$NON-NLS-1$
-        column3.setWidth("25%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        column3.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
+        DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.NONE);
+        column4.setText(Resources.getMessage("ViewAttributeList.3")); //$NON-NLS-1$
+        column4.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
         column1.pack();
         column2.pack();
         column3.pack();
+        column4.pack();
         
         this.table.addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
@@ -265,9 +280,33 @@ public class ViewAttributeList implements IView {
         // Trigger menu
         this.table.addMouseListener(new MouseAdapter(){
             @Override public void mouseDown(MouseEvent e) {
-                if (e.button == 3) {
-                    menu.setLocation(table.toDisplay(e.x, e.y));
-                    menu.setVisible(true);
+                Point pt = new Point(e.x, e.y);
+                int index = table.getTopIndex();
+                while (index < table.getItemCount()) {
+                    TableItem item = table.getItem(index);
+                    for (int i = 0; i < 5; i++) {
+                        Rectangle rect = item.getBounds(i);
+                        if (rect.contains(pt)) {
+                            
+                            // Data type or Format and right click
+                            if ((i == 2 || i == 3) && e.button == 3) {
+                                menu.setLocation(table.toDisplay(e.x, e.y));
+                                menu.setVisible(true);
+                                return;
+                            }
+                            // Response variable and left click
+                            else if (i == 4 && e.button == 1) {
+                                String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
+                                boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
+                                model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
+                                item.setImage(0, controller.getResources().getImage(model.getInputDefinition().getAttributeType(attribute), isResponseVariable));
+                                item.setImage(4, isResponseVariable ? IMAGE_ENABLED : IMAGE_DISABLED);
+                                controller.update(new ModelEvent(this, ModelPart.RESPONSE_VARIABLES, attribute));
+                                return;
+                            }
+                        }
+                    }
+                    index++;
                 }
             }
         });
@@ -414,7 +453,7 @@ public class ViewAttributeList implements IView {
             for (int i = 0; i < data.getNumColumns(); i++) {
                 String attribute = data.getAttributeName(i);
                 AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-                table.getItem(i).setImage(0, controller.getResources().getImage(type));
+                table.getItem(i).setImage(0, controller.getResources().getImage(type, model.getInputDefinition().isResponseVariable(attribute)));
             }
             table.setRedraw(true);
             SWTUtil.enable(table);
@@ -458,7 +497,9 @@ public class ViewAttributeList implements IView {
             TableItem item = new TableItem(table, SWT.NONE);
             item.setText(new String[] { "", attribute, getDataType(attribute), getDataTypeFormat(attribute) }); //$NON-NLS-1$
             AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-            item.setImage(0, controller.getResources().getImage(type));  
+            boolean isResponseVariable = model.getInputDefinition().isResponseVariable(attribute);
+            item.setImage(0, controller.getResources().getImage(type, isResponseVariable));
+            item.setImage(4, isResponseVariable ? IMAGE_ENABLED : IMAGE_DISABLED);
             if (model.getSelectedAttribute() != null && model.getSelectedAttribute().equals(attribute)) {
                 table.select(i);
             }

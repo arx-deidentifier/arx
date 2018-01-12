@@ -18,9 +18,14 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -30,11 +35,18 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     
     /** SVUID. */
     private static final long serialVersionUID = -8573084860566655278L;
+    
+    /** Total number of rows. */
+    private double            numRows;
+    
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double            k;
 
     /**
      * Creates a new instance.
@@ -86,11 +98,41 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
                                        AggregateFunction.SUM       // aggregate function
                                        );
     }
+    
+    @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Prepare
+        double penaltySuppressed = 0;
+        double penaltyNotSuppressed = 0;
+        
+        // Sum up penalties
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            if (m.isNotOutlier) {
+                penaltyNotSuppressed += (double)m.count * (double)m.count;
+            } else {
+                penaltySuppressed += m.count;
+            }
+            penaltySuppressed += m.pcount - m.count;
+            m = m.nextOrdered;
+        }
+        penaltySuppressed *= numRows;
+        
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        return new ILScore(-1d * (penaltySuppressed + penaltyNotSuppressed) /
+               ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return true;
+    }
 
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Discernibility");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
 
@@ -138,6 +180,25 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
+    }
+    
+    @Override
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        
+        super.initializeInternal(manager, definition, input, hierarchies, config);
+        
+        // Store the total number of rows
+        numRows = input.getDataLength();
+
+        // Store minimal size of equivalence classes
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            k = (double)dpCriterion.getMinimalClassSize();
+        }
     }
 }
 

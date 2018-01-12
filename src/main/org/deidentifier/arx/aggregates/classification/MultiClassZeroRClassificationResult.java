@@ -46,6 +46,11 @@ public class MultiClassZeroRClassificationResult implements ClassificationResult
     }
 
     @Override
+    public double[] confidences() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public boolean correct(String clazz) {
         if (result == null) {
             return false;

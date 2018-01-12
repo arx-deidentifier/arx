@@ -66,7 +66,7 @@ public class Example13 extends Example {
         config.addPrivacyModel(new KAnonymity(3));
         config.addPrivacyModel(new HierarchicalDistanceTCloseness("disease1", 0.6d, getHierarchyDisease()));
         config.addPrivacyModel(new RecursiveCLDiversity("disease2", 3d, 2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         config.setQualityModel(Metric.createEntropyMetric());
 
         // Now anonymize

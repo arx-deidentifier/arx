@@ -19,9 +19,13 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
+import org.deidentifier.arx.reliability.IntervalDouble;
 
 /**
  * Enhanced-beta-Likeness:<br>
@@ -34,14 +38,17 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
 
-    /** SVUID*/
+    /** SVUID */
     private static final long serialVersionUID = 5319052409590347904L;
 
     /** Parameter */
-    private final double        b;
+    private final double      b;
 
     /** The original distribution. */
-    private double[]            distribution;
+    private double[]          distribution;
+    
+    /** Reliable properties of the original distribution*/
+    private IntervalDouble[]  reliableDistribution;
     
     /**
      * Creates a new instance
@@ -81,6 +88,11 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
     public void initialize(DataManager manager, ARXConfiguration config) {
         super.initialize(manager, config);
         this.distribution = manager.getDistribution(attribute);
+        try {
+            this.reliableDistribution = manager.getReliableDistribution(attribute);
+        } catch (ReliabilityException e) {
+            this.reliableDistribution = null;
+        }
     }
 
     @Override
@@ -112,6 +124,52 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
     }
     
     @Override
+    public boolean isReliablyAnonymous(Transformation node, HashGroupifyEntry entry) {
+
+        // For table t
+        // For each class c
+        //     For each sensitive value s
+        //         (freq(s, c) - freq(s, t)) / freq(s, t) <= min(beta, - ln(freq(s, t)))
+        
+        try {
+            // Check
+            if (reliableDistribution == null) {
+                return isAnonymous(node, entry);
+            }
+            
+            // Init
+            IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+            int[] buckets = entry.distributions[index].getBuckets();
+            IntervalDouble count = ia.createInterval(entry.count);
+            IntervalDouble b = ia.createInterval(this.b);
+            
+            // For each value in c
+            for (int i = 0; i < buckets.length; i += 2) {
+                if (buckets[i] != -1) { // bucket not empty
+                    IntervalDouble frequencyInT = reliableDistribution[buckets[i]];
+                    IntervalDouble frequencyInC = ia.div(ia.createInterval(buckets[i + 1]), count);
+                    IntervalDouble value = ia.div(ia.sub(frequencyInC, frequencyInT), frequencyInT);
+                    if (ia.greaterThan(value, ia.min(b, ia.mult(ia.MINUS_ONE, ia.log(frequencyInT))))) {
+                        return false;
+                    }
+                }
+            }
+
+            // check
+            return true;
+            
+        // Check for arithmetic issues
+        } catch (IntervalArithmeticException | ArithmeticException | IndexOutOfBoundsException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isReliableAnonymizationSupported() {
+        return reliableDistribution != null;
+    }
+
+    @Override
     public boolean isLocalRecodingSupported() {
         return true;
     }
@@ -120,6 +178,7 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
     public ElementData render() {
         ElementData result = new ElementData("Enhanced likeness");
         result.addProperty("Attribute", attribute);
+        result.addProperty("Reliable", isReliableAnonymizationSupported());
         result.addProperty("Threshold (beta)", b);
         return result;
     }

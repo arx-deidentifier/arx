@@ -40,8 +40,10 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -55,6 +57,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
@@ -586,6 +589,21 @@ public class Controller implements IView {
             main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
             return;
         }
+        
+        // Check if optimizable
+        if (localRecoding) {
+            model.createConfig();
+            for (PrivacyCriterion c : model.getInputConfig().getCriteria()) {
+                if (!c.isLocalRecodingSupported()) {
+                    final String message = Resources.getMessage("Controller.158"); //$NON-NLS-1$
+                    main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
+                    return;
+                }
+            }
+        }
+        
+        // TODO: Handle
+        // model.getSolutionSpaceSize();
 
         // Query for parameters
         int maxTimePerIteration = 0;
@@ -598,13 +616,14 @@ public class Controller implements IView {
             }
             maxTimePerIteration = Double.valueOf(output.getFirst() * 1000d).intValue();
             minRecordsPerIteration = output.getSecond();
+            model.getLocalRecodingModel().setMinRecordsPerIteration(minRecordsPerIteration);
 
         // Query for execution time
         } else if (heuristicSearch) {
             String output = this.actionShowInputDialog(main.getShell(), 
                                                        Resources.getMessage("Controller.38"),  //$NON-NLS-1$
                                                        Resources.getMessage("Controller.79") + //$NON-NLS-1$
-                                                       Resources.getMessage("Controller.80"), "0.5", //$NON-NLS-1$ //$NON-NLS-2$
+                                                       Resources.getMessage("Controller.80"), String.valueOf(model.getInputConfig().getHeuristicSearchTimeLimit() / 1000d), //$NON-NLS-1$ //$NON-NLS-2$
                                                        new IInputValidator(){
                                                         public String isValid(String arg0) {
                                                             try { 
@@ -619,6 +638,7 @@ public class Controller implements IView {
                 return;
             }
             maxTimePerIteration = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
+            model.getInputConfig().setHeuristicSearchTimeLimit(maxTimePerIteration);
         }
 
         // Reset
@@ -627,7 +647,7 @@ public class Controller implements IView {
         // Run the worker
         final WorkerAnonymize worker = new WorkerAnonymize(model, maxTimePerIteration, minRecordsPerIteration);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
-
+        
         // Show errors
         if (worker.getError() != null) {
             
@@ -666,12 +686,13 @@ public class Controller implements IView {
         if (worker.getResult() != null) {
 
             // Retrieve optimal result
-            Pair<ARXResult, DataHandle> workerResult = worker.getResult();
+            Pair<Pair<ARXResult, DataHandle>, ARXProcessStatistics> allResults = worker.getResult();
+            Pair<ARXResult, DataHandle> workerResult = allResults.getFirst();
             final ARXResult result = workerResult.getFirst();
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
-            
+            model.setProcessStatistics(allResults.getSecond());
 
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
@@ -964,6 +985,7 @@ public class Controller implements IView {
         model.setOutput(null, null);
         model.setSelectedNode(null);
         model.getClipboard().clearClipboard();
+        model.setProcessStatistics(null);
 
         update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
         update(new ModelEvent(this, ModelPart.RESULT, null));
@@ -1016,7 +1038,7 @@ public class Controller implements IView {
         }
 
         // Check node
-        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+        if (model.getOutputTransformation().getAnonymity() != Anonymity.ANONYMOUS) {
             if (!main.showQuestionDialog(main.getShell(),
                                          Resources.getMessage("Controller.34"), //$NON-NLS-1$
                                          Resources.getMessage("Controller.156"))) //$NON-NLS-1$
@@ -1041,7 +1063,7 @@ public class Controller implements IView {
                                                                            model.getOutputDefinition(),
                                                                            model.getOutputConfig().getConfig(),
                                                                            model.getResult(),
-                                                                           model.getOutputNode(),
+                                                                           model.getOutputTransformation(),
                                                                            model.getOutput(),
                                                                            model);
 
@@ -1130,7 +1152,7 @@ public class Controller implements IView {
         }
 
         // Check node
-        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+        if (model.getOutputTransformation().getAnonymity() != Anonymity.ANONYMOUS) {
             if (!main.showQuestionDialog(main.getShell(),
                                          Resources.getMessage("Controller.34"), //$NON-NLS-1$
                                          Resources.getMessage("Controller.35"))) //$NON-NLS-1$
@@ -1577,6 +1599,15 @@ public class Controller implements IView {
     }
     
     /**
+     * Shows a dialog for configuring classifiers
+     * @param config 
+     * @return 
+     */
+    public ARXClassificationConfiguration<?> actionShowClassificationConfigurationDialog(ARXClassificationConfiguration<?> config) {
+        return main.showClassificationConfigurationDialog(config);
+    }
+
+    /**
      * Shows an error dialog.
      *
      * @param shell
@@ -1628,7 +1659,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-
+    
     /**
      * Shows a help dialog.
      *
@@ -1637,7 +1668,7 @@ public class Controller implements IView {
     public void actionShowHelpDialog(String id) {
         main.showHelpDialog(id);
     }
-    
+
     /**
      * Shows an info dialog.
      *
@@ -1648,7 +1679,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1664,6 +1694,7 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1687,7 +1718,7 @@ public class Controller implements IView {
      *         First: max. time per iteration. Second: min. records per iteration.
      */
     public Pair<Double, Double> actionShowLocalAnonymizationDialog() {
-        return main.showLocalAnonymizationDialog();
+        return main.showLocalAnonymizationDialog(model);
     }
 
     /**
@@ -1745,7 +1776,6 @@ public class Controller implements IView {
                                          final Worker<?> worker) {
         main.showProgressDialog(text, worker);
     }
-
     /**
      * Shows a question dialog.
      *
@@ -1759,6 +1789,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
+    
     /**
      * Shows a question dialog.
      *
@@ -1770,7 +1801,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(this.main.getShell(), header, text);
     }
-    
+
     /**
      * Internal method for showing a "save file" dialog.
      *
@@ -1872,7 +1903,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Creates a subset via random sampling
      */
@@ -1920,7 +1951,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-    
+
     /**
      * Registers a listener at the controller.
      *

@@ -17,7 +17,7 @@
 package org.deidentifier.arx.exceptions;
 
 /**
- * Local class for interrupts.
+ * Internal class for interrupts.
  *
  * @author Fabian Prasser
  */

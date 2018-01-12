@@ -81,7 +81,7 @@ public class Example5 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new RecursiveCLDiversity("age", 3, 2));
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
 
         // Now anonymize
         ARXResult result = anonymizer.anonymize(data, config);

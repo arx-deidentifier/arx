@@ -96,7 +96,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Ambiguity");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
 

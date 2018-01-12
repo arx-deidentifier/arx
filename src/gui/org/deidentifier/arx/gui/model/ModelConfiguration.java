@@ -152,8 +152,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @return
      */
-    public double getAllowedOutliers() {
-        return config.getMaxOutliers();
+    public double getSuppressionLimit() {
+        return config.getSuppressionLimit();
     }
     
     /**
@@ -442,22 +442,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns whether microaggregation will be considered by utility measures
-     * @return
-     */
-    public boolean isUtilityBasedMicroaggregation() {
-        return config.isUtilityBasedMicroaggregation();
-    }
-
-    /**
-     * Returns whether microaggregation will be considered using the mean squared error
-     * @return
-     */
-    public boolean isUtilityBasedMicroaggregationUseMeanSquaredError() {
-        return config.isUtilityBasedMicroaggregationUseMeanSquaredError();
-    }
-    
-    /**
      * Removes all criteria.
      */
     public void removeAllCriteria() {
@@ -510,9 +494,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @param supp
      */
-    public void setAllowedOutliers(double supp) {
+    public void setSuppressionLimit(double supp) {
         setModified();
-        config.setMaxOutliers(supp);
+        config.setSuppressionLimit(supp);
     }
     
     /**
@@ -749,23 +733,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.modified = false;
     }
 
-    /**
-     * Sets whether microaggregation will be considered by utility measures
-     * @return
-     */
-    public void setUseUtilityBasedMicroaggregation(boolean value) {
-        setModified();
-        config.setUtilityBasedMicroaggregation(value);
-    }
-
-    /**
-     * Sets whether microaggregation will be considered using the mean squared error
-     * @return
-     */
-    public void setUseUtilityBasedMicroaggregationMeanSquaredError(boolean value) {
-        setModified();
-        config.setUtilityBasedMicroaggregationUseMeanSquaredError(value);
-    }
     /**
      * Mark as modified.
      */

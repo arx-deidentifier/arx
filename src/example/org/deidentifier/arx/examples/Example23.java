@@ -140,7 +140,7 @@ public class Example23 extends Example {
         config.addPrivacyModel(new KAnonymity(3));
         config.addPrivacyModel(new DistinctLDiversity("disease", 2));
         config.addPrivacyModel(new DistinctLDiversity("age", 2));
-        config.setMaxOutliers(0.1d);
+        config.setSuppressionLimit(0.1d);
         config.setQualityModel(Metric.createEntropyMetric());
 
         // Now anonymize

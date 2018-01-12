@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionInterval;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMedian;
@@ -669,25 +668,6 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
         }
         
         /**
-         * Creates a microaggregation function using generalization. Ignores missing data.
-         * @return
-         */
-        public static MicroAggregationFunction createGeneralization() {
-            return createGeneralization(true);
-        }
-        
-        /**
-         * Creates a microaggregation function using generalization.
-         * 
-         * @param ignoreMissingData Should the function ignore missing data. Default is true.
-         * @return
-         */
-        public static MicroAggregationFunction createGeneralization(boolean ignoreMissingData) {
-            return new MicroAggregationFunction(new DistributionAggregateFunctionGeneralization(ignoreMissingData),
-                                                DataScale.NOMINAL, "Generalization");
-        }
-
-        /**
          * Creates a microaggregation function returning the geometric mean. Ignores missing data.
          * @return
          */
@@ -939,12 +919,6 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
                     /** SVUID*/ private static final long serialVersionUID = 1803670665142101922L;
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMode(ignoreMissingData);
-                    }
-                },
-                new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Generalization") {
-                    /** SVUID*/ private static final long serialVersionUID = 8001475078517380349L;
-                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
-                        return MicroAggregationFunction.createGeneralization(ignoreMissingData);
                     }
                 }
         });

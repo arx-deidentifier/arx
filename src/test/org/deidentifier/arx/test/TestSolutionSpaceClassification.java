@@ -66,7 +66,7 @@ public class TestSolutionSpaceClassification extends AbstractTest {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
         config.addPrivacyModel(new Inclusion(subset));
-        config.setMaxOutliers(0.02d);
+        config.setSuppressionLimit(0.02d);
         config.setQualityModel(Metric.createEntropyMetric(false));
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();

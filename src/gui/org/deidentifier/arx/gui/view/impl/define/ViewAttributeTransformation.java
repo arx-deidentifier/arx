@@ -24,6 +24,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -150,7 +151,9 @@ public class ViewAttributeTransformation implements IView {
         cmbType.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                actionAttributeTypeChanged();
+                if ((cmbType.getSelectionIndex() != -1) && (attribute != null)) {
+                    actionAttributeTypeChanged(attribute, COMBO1_TYPES[cmbType.getSelectionIndex()]);
+                }
             }
         });
         
@@ -160,7 +163,8 @@ public class ViewAttributeTransformation implements IView {
         cmbMode = new Combo(innerGroup, SWT.READ_ONLY);
         cmbMode.setLayoutData(SWTUtil.createFillGridData());
         cmbMode.setItems(new String[]{Resources.getMessage("ViewMicoaggregation.5"),
-                                      Resources.getMessage("ViewMicoaggregation.6")});
+                                      Resources.getMessage("ViewMicoaggregation.6"),
+                                      Resources.getMessage("ViewMicoaggregation.8")});
         cmbMode.select(0);
         cmbMode.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -351,74 +355,71 @@ public class ViewAttributeTransformation implements IView {
     /**
      * Attribute type changed
      */
-    private void actionAttributeTypeChanged() {
-        if ((cmbType.getSelectionIndex() != -1) && (attribute != null)) {
-            if ((model != null) && (model.getInputConfig().getInput() != null)) {
-                final AttributeType type = COMBO1_TYPES[cmbType.getSelectionIndex()];
-                final DataDefinition definition = model.getInputDefinition();
-                
-                // Handle QIs
-                if (type == null) {
-                    definition.setAttributeType(attribute, Hierarchy.create());
-                } else {
-                    definition.setAttributeType(attribute, type);
-                }
-                
-                // Do we need to disable criteria?
-                boolean criteriaDisabled = false;
-                
-                // Enable/disable criteria for sensitive attributes
-                if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
-                    
-                    if (model.getLDiversityModel().get(attribute).isEnabled() ||
-                        model.getTClosenessModel().get(attribute).isEnabled() ||
-                        model.getBLikenessModel().get(attribute).isEnabled() ||
-                        model.getDDisclosurePrivacyModel().get(attribute).isEnabled()) {
-                        criteriaDisabled = true;
-                    }
-                    
-                    model.getBLikenessModel().get(attribute).setEnabled(false);
-                    model.getTClosenessModel().get(attribute).setEnabled(false);
-                    model.getLDiversityModel().get(attribute).setEnabled(false);
-                    model.getDDisclosurePrivacyModel().get(attribute).setEnabled(false);
-                }
-                
-                // Enable/disable criteria for quasi-identifiers
-                if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
-                    
-                    if (model.getKAnonymityModel().isEnabled() ||
-                        model.getDPresenceModel().isEnabled() ||
-                        model.getStackelbergModel().isEnabled()) {
-                        criteriaDisabled = true;
-                    }
-                    
-                    model.getKAnonymityModel().setEnabled(false);
-                    model.getDPresenceModel().setEnabled(false);
-                    model.getStackelbergModel().setEnabled(false);
-                    for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
-                        if (c.isEnabled()) {
-                            criteriaDisabled = true;
-                        }
-                        c.setEnabled(false);
-                    }
-                    
-                }
-                
-                // Update mode
-                updateMode();
-                
-                // Update criteria
-                if (criteriaDisabled) {
-                    controller.update(new ModelEvent(this,
-                                                     ModelPart.CRITERION_DEFINITION,
-                                                     null));
-                }
-                
-                // Update the views
-                controller.update(new ModelEvent(this,
-                                                 ModelPart.ATTRIBUTE_TYPE,
-                                                 attribute));
+    private void actionAttributeTypeChanged(String attribute, AttributeType type) {
+        if ((model != null) && (model.getInputConfig().getInput() != null)) {
+            final DataDefinition definition = model.getInputDefinition();
+
+            // Handle QIs
+            if (type == null) {
+                definition.setAttributeType(attribute, Hierarchy.create());
+            } else {
+                definition.setAttributeType(attribute, type);
             }
+
+            // Do we need to disable criteria?
+            boolean criteriaDisabled = false;
+
+            // Enable/disable criteria for sensitive attributes
+            if (type != AttributeType.SENSITIVE_ATTRIBUTE) {
+
+                if (model.getLDiversityModel().get(attribute).isEnabled() ||
+                    model.getTClosenessModel().get(attribute).isEnabled() ||
+                    model.getBLikenessModel().get(attribute).isEnabled() ||
+                    model.getDDisclosurePrivacyModel().get(attribute).isEnabled()) {
+                    criteriaDisabled = true;
+                }
+
+                model.getBLikenessModel().get(attribute).setEnabled(false);
+                model.getTClosenessModel().get(attribute).setEnabled(false);
+                model.getLDiversityModel().get(attribute).setEnabled(false);
+                model.getDDisclosurePrivacyModel().get(attribute).setEnabled(false);
+            }
+
+            // Enable/disable criteria for quasi-identifiers
+            if (definition.getQuasiIdentifyingAttributes().isEmpty()) {
+
+                if (model.getKAnonymityModel().isEnabled() ||
+                    model.getDPresenceModel().isEnabled() ||
+                    model.getStackelbergModel().isEnabled()) {
+                    criteriaDisabled = true;
+                }
+
+                model.getKAnonymityModel().setEnabled(false);
+                model.getDPresenceModel().setEnabled(false);
+                model.getStackelbergModel().setEnabled(false);
+                for (ModelRiskBasedCriterion c : model.getRiskBasedModel()) {
+                    if (c.isEnabled()) {
+                        criteriaDisabled = true;
+                    }
+                    c.setEnabled(false);
+                }
+
+            }
+
+            // Update mode
+            updateMode();
+
+            // Update criteria
+            if (criteriaDisabled) {
+                controller.update(new ModelEvent(this,
+                                                 ModelPart.CRITERION_DEFINITION,
+                                                 null));
+            }
+
+            // Update the views
+            controller.update(new ModelEvent(this,
+                                             ModelPart.ATTRIBUTE_TYPE,
+                                             attribute));
         }
     }
     
@@ -520,9 +521,43 @@ public class ViewAttributeTransformation implements IView {
         if (cmbMode.getSelectionIndex() == 0) {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.GENERALIZATION);
             stack.setLayer(0);
-        } else {
+        } else if (cmbMode.getSelectionIndex() == 1) {
             model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.MICRO_AGGREGATION);
             stack.setLayer(1);
+        } else if (cmbMode.getSelectionIndex() == 2) {
+            model.getInputConfig().setTransformationMode(attribute, ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION);
+            stack.setLayer(1);
+        }
+    }
+    
+    /**
+     * Update attribute type of all attributes.
+     * @param typeNew
+     */
+    public void actionUpdateAttributeTypes(AttributeType typeNew) {
+
+        if (model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
+            DataHandle handle = model.getInputConfig().getInput().getHandle();
+            if (handle != null) {
+                // For each attribute, check
+                for (int i = 0; i < handle.getNumColumns(); i++) {
+                    String attribute = handle.getAttributeName(i);
+                    AttributeType type = model.getInputDefinition().getAttributeType(attribute);
+                    // Type changed
+                    if (type != typeNew) {
+                        // Change selection in combo
+                        if (attribute.equals(this.attribute)) {
+                            for (int k = 0; k < COMBO1_TYPES.length; k++) {
+                                if (typeNew == COMBO1_TYPES[k]) {
+                                    cmbType.select(k);
+                                    break;
+                                }
+                            }
+                        }
+                        actionAttributeTypeChanged(attribute, typeNew);
+                    }
+                }
+            }
         }
     }
     
@@ -662,9 +697,12 @@ public class ViewAttributeTransformation implements IView {
             if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.GENERALIZATION) {
                 stack.setLayer(0);
                 cmbMode.select(0);
-            } else {
+            } else if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.MICRO_AGGREGATION) {
                 stack.setLayer(1);
                 cmbMode.select(1);
+            } else if (model.getInputConfig().getTransformationMode(attribute) == ModelTransformationMode.CLUSTERING_AND_MICRO_AGGREGATION) {
+                stack.setLayer(1);
+                cmbMode.select(2);
             }
         } else {
             cmbMode.select(0);

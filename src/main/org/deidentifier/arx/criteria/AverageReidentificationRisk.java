@@ -18,7 +18,10 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
  * This criterion ensures that an estimate for the average re-identification risk falls
@@ -26,7 +29,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
  * 
  * @author Fabian Prasser
  */
-public class AverageReidentificationRisk extends RiskBasedCriterion{
+public class AverageReidentificationRisk extends RiskBasedCriterion {
 
     /** SVUID*/
     private static final long serialVersionUID = -2953252206954936045L;
@@ -55,23 +58,39 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
 
     @Override
     public boolean isLocalRecodingSupported() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean isReliableAnonymizationSupported() {
+        return true;
     }
 
     @Override
     public ElementData render() {
         ElementData result = new ElementData("Average re-identification risk");
+        result.addProperty("Reliable", isReliableAnonymizationSupported());
         result.addProperty("Threshold", this.getRiskThreshold());
         return result;
     }
 
     @Override
     public String toString() {
-        return "("+getRiskThreshold()+")-avg-reidentification-risk";
+        return "(" + getRiskThreshold() + ")-avg-reidentification-risk";
     }
 
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
+    }
+
+    @Override
+    protected boolean isReliablyFulfilled(HashGroupifyDistribution distribution) {
+        try {
+            IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+            return ia.lessThanOrEqual(ia.div(ia.ONE, distribution.getReliableAverageClassSize()), ia.createInterval(getRiskThreshold()));
+        } catch (IntervalArithmeticException | ReliabilityException e) {
+            return false;
+        }
     }
 }

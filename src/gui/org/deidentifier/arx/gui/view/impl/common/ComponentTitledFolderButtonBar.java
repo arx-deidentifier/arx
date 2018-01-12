@@ -32,24 +32,32 @@ import org.eclipse.swt.widgets.Composite;
  * @author Fabian Prasser
  */
 public class ComponentTitledFolderButtonBar implements IComponent{
-    
-    /**  View */
-    private List<String> titles = new ArrayList<String>();
-    
-    /**  View */
-    private Map<String, Image> images = new HashMap<String, Image>();
-    
-    /**  View */
-    private Map<String, Boolean> toggle = new HashMap<String, Boolean>();
-    
-    /**  View */
-    private Map<String, Runnable> runnables = new HashMap<String, Runnable>();
-    
-    /**  View */
-    private String id;
-    
-    /**  View */
+
+    /** View */
+    private String                       id;
+
+    /** View */
+    private List<String>                 titles    = new ArrayList<String>();
+
+    /** View */
+    private Map<String, Image>           images    = new HashMap<String, Image>();
+
+    /** View */
+    private Map<String, Boolean>         toggle    = new HashMap<String, Boolean>();
+
+    /** View */
+    private Map<String, Runnable>        runnables = new HashMap<String, Runnable>();
+
+    /** View */
     private final Map<Composite, String> helpids;
+    
+
+    /**
+     * Creates a new instance without help button
+     */
+    public ComponentTitledFolderButtonBar() {    
+        this(null);
+    }
     
     /**
      * Creates a new instance.

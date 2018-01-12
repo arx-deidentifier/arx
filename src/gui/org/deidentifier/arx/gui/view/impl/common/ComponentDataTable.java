@@ -285,6 +285,7 @@ public class ComponentDataTable implements IComponent {
         // Check
         if (index == -1 || index == 0) {
             this.getViewportLayer().setOriginX(0);
+            this.redraw();
             return;
         }
         

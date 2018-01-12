@@ -23,6 +23,9 @@ import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
+import org.deidentifier.arx.reliability.IntervalDouble;
 
 /**
  * The recursive-(c,l)-diversity criterion.
@@ -87,21 +90,67 @@ public class RecursiveCLDiversity extends LDiversity{
             }
         }
 
-        // Sort
+        // Sort - TODO: Top 2/3/4 could be calculated more efficiently
         Arrays.sort(frequencyCopy);
         
         // Compute threshold
-        double threshold = 0;
+        long threshold = 0;
         for (int i = frequencyCopy.length - minSize; i >= 0; i--) { // minSize=(int)l;
             threshold += frequencyCopy[i];
         }
-        threshold *= c;
 
         // Check
-        return frequencyCopy[frequencyCopy.length - 1] < threshold;
+        return frequencyCopy[frequencyCopy.length - 1] < (threshold * c);
+    }
+
+    @Override
+    public boolean isReliablyAnonymous(Transformation node, HashGroupifyEntry entry) {
+
+        try {
+            Distribution d = entry.distributions[index];
+            
+            // if less than l values are present skip
+            if (d.size() < minSize) { return false; }
+    
+            // Copy and pack
+            int[] buckets = d.getBuckets();
+            final int[] frequencyCopy = new int[d.size()];
+            int count = 0;
+            for (int i = 0; i < buckets.length; i += 2) {
+                if (buckets[i] != -1) { // bucket not empty
+                    frequencyCopy[count++] = buckets[i + 1];
+                }
+            }
+    
+            // Sort - TODO: Top 2/3/4 could be calculated more efficiently
+            Arrays.sort(frequencyCopy);
+            
+            // Compute threshold
+            int threshold = 0;
+            for (int i = frequencyCopy.length - minSize; i >= 0; i--) { // minSize=(int)l;
+                threshold = Math.addExact(threshold, frequencyCopy[i]);
+            }
+            
+            // Multiply using reliable arithmetic
+            IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+            IntervalDouble val0 = ia.createInterval(frequencyCopy[frequencyCopy.length - 1]);
+            IntervalDouble val1 = ia.mult(ia.createInterval(threshold), ia.createInterval(c));
+    
+            // Check
+            return ia.lessThan(val0, val1);
+            
+        // Catch relevant exceptions
+        } catch (ArithmeticException | IndexOutOfBoundsException | IntervalArithmeticException e) {
+             return false;
+        }
     }
     
-	@Override
+    @Override
+    public boolean isReliableAnonymizationSupported() {
+        return true;
+    }
+
+    @Override
     public boolean isLocalRecodingSupported() {
         return true;
     }
@@ -110,6 +159,7 @@ public class RecursiveCLDiversity extends LDiversity{
     public ElementData render() {
         ElementData result = new ElementData("Recursive-(c,l)-diversity");
         result.addProperty("Attribute", attribute);
+        result.addProperty("Reliable", true);
         result.addProperty("Threshold (l)", this.l);
         result.addProperty("Multiplier (c)", this.c);
         return result;
