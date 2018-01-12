@@ -162,14 +162,6 @@ public class ExponentialMechanism<T> {
         
         distribution = new EnumeratedDistribution<T>(random, pmf);
     }
-
-    /**
-     * Returns the probability mass function
-     * @return
-     */
-    public List<Pair<T, Double>> getPmf() {
-        return distribution.getPmf();
-    }
     
     /**
      * Returns a random value sampled from this distribution
