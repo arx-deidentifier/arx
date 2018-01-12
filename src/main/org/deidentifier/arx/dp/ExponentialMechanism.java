@@ -39,6 +39,8 @@ import org.apache.commons.math3.util.Pair;
  * Mechanism design via differential privacy.
  * Foundations of Computer Science 2007. pp. 94-103
  * 
+ * This implementation assumes a sensitivity of one (which can always be achieved by scaling score functions appropriately)
+ * 
  * @author Raffael Bild
  */
 public class ExponentialMechanism<T> {
