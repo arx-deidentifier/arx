@@ -258,6 +258,8 @@ public class Model implements Serializable {
     /** Utility estimation during anonymization */
     private Boolean                               useFunctionalHierarchies        = true;
     
+    private ModelR								  modelR						  = new ModelR();
+    
     /* *****************************************
      * RISK ANALYSIS
      ******************************************/
@@ -899,6 +901,18 @@ public class Model implements Serializable {
 	public ARXResult getResult() {
 		return result;
 	}
+	
+	/**
+	 * Returns the R model.
+	 * 
+	 * @return the R model
+	 */
+	public ModelR getRModel() {
+		if (modelR == null) {
+			modelR = new ModelR();
+		}
+		return modelR;
+	}
 
     /**
      * Returns the risk-based model.
@@ -1214,6 +1228,8 @@ public class Model implements Serializable {
         this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         this.groups = null;
         this.classificationModel = new ModelClassification();
+        //*******
+        this.modelR = new ModelR();
 	}
     
     /**

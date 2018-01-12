@@ -312,8 +312,18 @@ public class DialogProperties implements IDialog {
 
         window.addPreference(new PreferenceSelection(Resources.getMessage("DialogProperties.20"), getPriorFunctions()) { //$NON-NLS-1$
             protected String getValue() { return model.getClassificationModel().getPriorFunction().name(); }
-            protected void setValue(Object arg0) { model.getClassificationModel().setPriorFunction(PriorFunction.valueOf((String)arg0)); }
-        });
+            protected void setValue(Object arg0) { model.getClassificationModel().setPriorFunction(PriorFunction.valueOf((String)arg0)); }});
+        
+        window.addGroup("R Terminal");//$NON-NLS-1$
+        
+        window.addPreference(new PreferenceInteger("Buffer size", 1000, Integer.MAX_VALUE, 10000) { 
+        	protected Integer getValue() { return model.getRModel().getBufferSize(); }
+        	protected void setValue(Object t) { model.getRModel().setBufferSize((Integer)t); }});
+        
+        window.addPreference(new PreferenceString("Path to R") { 
+            protected String getValue() { return model.getRModel().getPath(); }
+            protected void setValue(Object t) { model.getRModel().setPath((String)t); }});
+
     }
     
     /**

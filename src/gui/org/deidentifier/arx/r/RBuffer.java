@@ -71,4 +71,9 @@ public class RBuffer {
         }
         return builder.toString();
     }
+    
+    public void clearBuffer() {
+    	length = 0;
+    }
+    
 }

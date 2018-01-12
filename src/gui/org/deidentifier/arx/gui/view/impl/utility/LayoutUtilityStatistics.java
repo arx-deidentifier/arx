@@ -33,6 +33,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
+import org.deidentifier.arx.r.terminal.RTerminal;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -73,6 +74,8 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /** Constant */
     private static final String                         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9");             //$NON-NLS-1$
 
+    private static final String 						TAB_RTERMINAL				= "R Terminal";
+    
     /** View */
     private final ComponentTitledFolder                 folder;
 
@@ -135,6 +138,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
         this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
         this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.classes"); //$NON-NLS-1$
+        // TODO
+        this.registerView(new ViewStatisticsRTerminal(folder.createItem(TAB_RTERMINAL, null, true), controller, target, reset), "help.utility.summary");
+
         if (target == ModelPart.INPUT) {
             this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.inputproperties"); //$NON-NLS-1$
         } else {
@@ -156,7 +162,8 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                                             TAB_DISTRIBUTION,
                                                             TAB_CONTINGENCY,
                                                             TAB_CLASSES_TABLE,
-                                                            TAB_PROPERTIES }));
+                                                            TAB_PROPERTIES,
+                                                            TAB_RTERMINAL}));
     }
 
     /**
