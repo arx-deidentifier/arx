@@ -611,8 +611,9 @@ public class ARXAnonymizer { // NO_UCD
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
+            	// TODO check that reliable anonymization is performed only using a metric that actually supports it
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget());
+                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget(), config.isReliableAnonymizationEnabled());
             }
         }
 

@@ -102,25 +102,27 @@ public class ExponentialMechanism<T> {
     
     /**
      * Constructs a new instance
-     * @param valueToScore
+     * @param values
+     * @param scores
      * @param epsilon
      */
-    public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon) {
-        this(valueToScore, epsilon, defaultPrecision, false);
+    public ExponentialMechanism(T[] values, Double[] scores, double epsilon) {
+        this(values, scores, epsilon, defaultPrecision, false);
     }
 
     /**
      * Constructs a new instance
      * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
      * 
-     * @param valueToScore
+     * @param values
+     * @param scores
      * @param epsilon
      * @param precision
      * @param deterministic
      */
-    public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon, int precision, boolean deterministic) {
-        
-        // The following code calculates the probability distribution which assigns every value
+    public ExponentialMechanism(T[] values, Double[] scores, double epsilon, int precision, boolean deterministic) {
+    	
+    	// The following code calculates the probability distribution which assigns every value
         // a probability proportional to exp(0,5 * epsilon * score)
 
         mc = new MathContext(precision, RoundingMode.HALF_UP);
@@ -130,7 +132,7 @@ public class ExponentialMechanism<T> {
         // (which can get very large due to the application of the exponential function) while it does not change the result;
         // it is a trick to make the following computations feasible.
         double shift = Double.MAX_VALUE;
-        for (double score : valueToScore.values()) {
+        for (double score : scores) {
             shift = Math.min(shift, 0.5d * epsilon * score);
         }
 
@@ -138,9 +140,9 @@ public class ExponentialMechanism<T> {
         // Note that all numbers are effectively being multiplied with exp(-shift).
         BigDecimal divisor = new BigDecimal(0d, mc);
         Map<T, BigDecimal> valueToEnumerator = new HashMap<T, BigDecimal>();
-        for (Entry<T, Double> entry : valueToScore.entrySet()) {
-            T value = entry.getKey();
-            Double score = entry.getValue();
+        for (int i = 0; i < values.length; ++i) {
+            T value = values[i];
+            Double score = scores[i];
 
             BigDecimal enumerator = exp(0.5d * epsilon * score - shift);
             valueToEnumerator.put(value, enumerator);
