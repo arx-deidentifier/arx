@@ -109,16 +109,16 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
         assureChecked(pivot);
-        ILScore score = (ILScore)pivot.getInformationLoss();
+        ILScore<?> score = (ILScore<?>)pivot.getInformationLoss();
         
         // Initialize variables tracking the best of all pivot elements
         Transformation bestTransformation = pivot;
-        ILScore bestScore = score;
+        ILScore<?> bestScore = score;
         
         progress(0d);
 
         // Initialize the set of candidates, each mapped to its respective score
-        Map<Long, ILScore> transformationIDToScore = new HashMap<Long, ILScore>();
+        Map<Long, ILScore<?>> transformationIDToScore = new HashMap<Long, ILScore<?>>();
         transformationIDToScore.put(pivot.getIdentifier(), score);
         
         // For each step
@@ -131,7 +131,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 if (transformationIDToScore.containsKey(id)) continue;
                 Transformation predecessor = solutionSpace.getTransformation(id);
                 assureChecked(predecessor);
-                transformationIDToScore.put(id, (ILScore)predecessor.getInformationLoss());
+                transformationIDToScore.put(id, (ILScore<?>)predecessor.getInformationLoss());
             }
             
             // Remove the current pivot element from the set of candidates
@@ -156,15 +156,16 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         return false;
     }
 
-	private long executeExponentialMechanism(Map<Long, ILScore> transformationIDToScore) {
+	@SuppressWarnings("unchecked")
+	private long executeExponentialMechanism(Map<Long, ILScore<?>> transformationIDToScore) {
 		
 		Long[] values = new Long[transformationIDToScore.size()];
 		Double[] scores = new Double[transformationIDToScore.size()];
 		
 		int index = 0;
-		for (Entry<Long, ILScore> element : transformationIDToScore.entrySet()) {
+		for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
 			values[index] = element.getKey();
-			scores[index] = element.getValue().getValue();
+			scores[index] = ((ILScore<Double>)element.getValue()).getValue();
 			index++;
 		}
 		

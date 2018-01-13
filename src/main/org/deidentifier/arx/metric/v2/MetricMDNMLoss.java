@@ -128,7 +128,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
         // Prepare
         int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
@@ -155,7 +155,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         if (k > 1) score /= k - 1d;
 
         // Return score
-        return new ILScore(score);
+        return new ILScoreDouble(score);
     }
     
     @Override
