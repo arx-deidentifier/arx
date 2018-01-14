@@ -96,9 +96,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     /** View */
     private ComponentTitledFolder              folder;
     /** View */
-    private DynamicTable                       performancePerTargetTable;
+    private DynamicTable                       performanceTableOverview;
     /** View */
-    private DynamicTable                       performancePerClassTable;
+    private DynamicTable                       performanceTableSensitivitySpecificity;
     /** View */
     private Composite                          performanceRoot;
     /** View */
@@ -199,39 +199,39 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         this.performanceSash = new SashForm(this.performanceRoot, SWT.VERTICAL);
         
         // Table: performance per target
-        this.performancePerTargetTable = SWTUtil.createTableDynamic(this.performanceSash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-        this.performancePerTargetTable.setHeaderVisible(true);
-        this.performancePerTargetTable.setLinesVisible(true);
-        this.performancePerTargetTable.setMenu(new ClipboardHandlerTable(performancePerTargetTable).getMenu());
+        this.performanceTableOverview = SWTUtil.createTableDynamic(this.performanceSash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+        this.performanceTableOverview.setHeaderVisible(true);
+        this.performanceTableOverview.setLinesVisible(true);
+        this.performanceTableOverview.setMenu(new ClipboardHandlerTable(performanceTableOverview).getMenu());
 
         // Columns
         String[] columns = getColumnHeadersForPerformanceForOverallPerformanceTable();
         String width = String.valueOf(Math.round(100d / ((double) columns.length + 2) * 100d) / 100d) + "%"; //$NON-NLS-1$
         // Column for target
-        DynamicTableColumn c = new DynamicTableColumn(performancePerTargetTable, SWT.LEFT);
+        DynamicTableColumn c = new DynamicTableColumn(performanceTableOverview, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
         for (String column : columns) {
-            c = new DynamicTableColumn(performancePerTargetTable, SWT.LEFT);
-            SWTUtil.createColumnWithBarCharts(performancePerTargetTable, c);
+            c = new DynamicTableColumn(performanceTableOverview, SWT.LEFT);
+            SWTUtil.createColumnWithBarCharts(performanceTableOverview, c);
             c.setWidth(width, "100px"); //$NON-NLS-1$ 
             c.setText(column);
         }
-        for (final TableColumn col : performancePerTargetTable.getColumns()) {
+        for (final TableColumn col : performanceTableOverview.getColumns()) {
             col.pack();
         }
-        SWTUtil.createGenericTooltip(performancePerTargetTable);
+        SWTUtil.createGenericTooltip(performanceTableOverview);
         
         // Update table
-        performancePerTargetTable.addListener(SWT.MouseDown, new Listener() {
+        performanceTableOverview.addListener(SWT.MouseDown, new Listener() {
             public void handleEvent(Event event) {
-                Rectangle clientArea = performancePerTargetTable.getClientArea();
+                Rectangle clientArea = performanceTableOverview.getClientArea();
                 Point pt = new Point(event.x, event.y);
-                int index = performancePerTargetTable.getTopIndex();
-                while (index < performancePerTargetTable.getItemCount()) {
+                int index = performanceTableOverview.getTopIndex();
+                while (index < performanceTableOverview.getItemCount()) {
                     boolean visible = false;
-                    TableItem item = performancePerTargetTable.getItem(index);
-                    for (int i = 0; i < performancePerTargetTable.getColumnCount(); i++) {
+                    TableItem item = performanceTableOverview.getItem(index);
+                    for (int i = 0; i < performanceTableOverview.getColumnCount(); i++) {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
                             getModel().setSelectedAttribute(item.getText(0));
@@ -259,35 +259,35 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         });
         
         // Table: performance for each class of a target
-        this.performancePerClassTable = SWTUtil.createTableDynamic(this.performanceSash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-        this.performancePerClassTable.setHeaderVisible(true);
-        this.performancePerClassTable.setLinesVisible(true);
-        this.performancePerClassTable.setMenu(new ClipboardHandlerTable(performancePerClassTable).getMenu());
+        this.performanceTableSensitivitySpecificity = SWTUtil.createTableDynamic(this.performanceSash, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+        this.performanceTableSensitivitySpecificity.setHeaderVisible(true);
+        this.performanceTableSensitivitySpecificity.setLinesVisible(true);
+        this.performanceTableSensitivitySpecificity.setMenu(new ClipboardHandlerTable(performanceTableSensitivitySpecificity).getMenu());
         
         width = String.valueOf(Math.round(100d / ((double) 4) * 100d) / 100d) + "%"; //$NON-NLS-1$
         // Column for class
-        c = new DynamicTableColumn(performancePerClassTable, SWT.LEFT);
+        c = new DynamicTableColumn(performanceTableSensitivitySpecificity, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.22")); //$NON-NLS-1$
         // Column for sensitivity
-        c = new DynamicTableColumn(performancePerClassTable, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(performancePerClassTable, c);
+        c = new DynamicTableColumn(performanceTableSensitivitySpecificity, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(performanceTableSensitivitySpecificity, c);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.11")); //$NON-NLS-1$
         // Column for specificity
-        c = new DynamicTableColumn(performancePerClassTable, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(performancePerClassTable, c);
+        c = new DynamicTableColumn(performanceTableSensitivitySpecificity, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(performanceTableSensitivitySpecificity, c);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.10")); //$NON-NLS-1$
         // Column for brier score
-        c = new DynamicTableColumn(performancePerClassTable, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(performancePerClassTable, c);
+        c = new DynamicTableColumn(performanceTableSensitivitySpecificity, SWT.LEFT);
+        SWTUtil.createColumnWithBarCharts(performanceTableSensitivitySpecificity, c);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.8")); //$NON-NLS-1$
-        for (final TableColumn col : performancePerClassTable.getColumns()) {
+        for (final TableColumn col : performanceTableSensitivitySpecificity.getColumns()) {
             col.pack();
         }
-        SWTUtil.createGenericTooltip(performancePerClassTable);
+        SWTUtil.createGenericTooltip(performanceTableSensitivitySpecificity);
 
         this.performanceSash.setWeights(new int[] {2, 2});
         return this.performanceRoot;
@@ -361,10 +361,10 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             c.setWidth(width, "100px"); //$NON-NLS-1$ 
             c.setText(column);
         }
-        for (final TableColumn col : performancePerTargetTable.getColumns()) {
+        for (final TableColumn col : performanceTableOverview.getColumns()) {
             col.pack();
         }
-        SWTUtil.createGenericTooltip(performancePerTargetTable);
+        SWTUtil.createGenericTooltip(performanceTableOverview);
         
         // Chart and sash
         resetChart();
@@ -662,11 +662,11 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     private void updateOverview(String target) {
         
         
-        performancePerClassTable.setRedraw(false);
-        for (final TableItem i : performancePerClassTable.getItems()) {
+        performanceTableSensitivitySpecificity.setRedraw(false);
+        for (final TableItem i : performanceTableSensitivitySpecificity.getItems()) {
             i.dispose();
         }
-        performancePerClassTable.setRedraw(true);
+        performanceTableSensitivitySpecificity.setRedraw(true);
 
         if(!originalRocCurves.containsKey(target)) {
             return;
@@ -692,7 +692,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             }
 
             // Create entry
-            TableItem item = new TableItem(performancePerClassTable, SWT.NONE);
+            TableItem item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
             item.setText(0, clazz);
             item.setData("1", c.getSensitivity());
             item.setData("2", c.getSpecificity());
@@ -728,21 +728,21 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         }
         
         // Minimum
-        TableItem item = new TableItem(performancePerClassTable, SWT.NONE);
+        TableItem item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.7"));
         item.setData("1", min[0]);
         item.setData("2", min[1]);
         item.setData("3", min[2]);
 
         // Average
-        item = new TableItem(performancePerClassTable, SWT.NONE);
+        item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.6"));
         item.setData("1", avg[0] / values.size());
         item.setData("2", avg[1] / values.size());
         item.setData("3", avg[2] / values.size());
 
         // Maximum
-        item = new TableItem(performancePerClassTable, SWT.NONE);
+        item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.4"));
         item.setData("1", max[0]);
         item.setData("2", max[1]);
@@ -757,9 +757,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         
         // Update table
         int index = 0;
-        for (TableItem item : performancePerTargetTable.getItems()) {
+        for (TableItem item : performanceTableOverview.getItems()) {
             if (item.getText(0).equals(attribute)) {
-                performancePerTargetTable.select(index);
+                performanceTableOverview.select(index);
                 updateOverview(attribute);
                 break;
             }
@@ -845,16 +845,19 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
      */
     private void updateROCSelection(String classValue) {
         
-        // Update combo
-        String selectedTarget = getModel().getSelectedAttribute();
-        for (int i = 0; i < rocCombo.getItemCount(); i++) {
-            if (rocCombo.getItem(i).equals(selectedTarget)) {
-                rocCombo.select(i);
-                updateROC(selectedTarget, classValue);
-                break;
-            }
+        if (rocCombo.getItemCount() == 0) {
+            return;
         }
-
+        
+        // Determine indices
+        final String[] targetVariables = getModel().getSelectedClasses().toArray(new String[0]);
+        String targetVariable = getModel().getSelectedAttribute();
+        int targetIndex = getIndexOf(targetVariables, targetVariable);
+        
+        // Update combo
+        rocCombo.select(targetIndex);
+        updateROC(rocCombo.getItem(targetIndex), classValue);
+        
         // Update table
         int index = 0;
         for (TableItem item : rocTable.getItems()) {
@@ -886,7 +889,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         
         this.folder = new ComponentTitledFolder(root, null, bar, null, true, false);
         
-        
         // Performance overview
         Composite item1 = folder.createItem(Resources.getMessage("ViewStatisticsClassificationInput.27"), //$NON-NLS-1$
                                             getController().getResources().getManagedImage("precision_recall.png")); //$NON-NLS-1$
@@ -909,6 +911,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             }
         });
         
+        // Init
+        this.folder.setSelection(0);
+        
         // Return
         return root;
     }
@@ -927,16 +932,16 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         }
         
         // Performance overview
-        performancePerTargetTable.setRedraw(false);
-        for (final TableItem i : performancePerTargetTable.getItems()) {
+        performanceTableOverview.setRedraw(false);
+        for (final TableItem i : performanceTableOverview.getItems()) {
             i.dispose();
         }
-        performancePerTargetTable.setRedraw(true);
-        performancePerClassTable.setRedraw(false);
-        for (final TableItem i : performancePerClassTable.getItems()) {
+        performanceTableOverview.setRedraw(true);
+        performanceTableSensitivitySpecificity.setRedraw(false);
+        for (final TableItem i : performanceTableSensitivitySpecificity.getItems()) {
             i.dispose();
         }
-        performancePerClassTable.setRedraw(true);
+        performanceTableSensitivitySpecificity.setRedraw(true);
         
         // ROC
         rocTable.setRedraw(false);
@@ -1014,13 +1019,13 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 }
 
                 // Update chart
-                for (final TableItem i : performancePerTargetTable.getItems()) {
+                for (final TableItem i : performanceTableOverview.getItems()) {
                     i.dispose();
                 }
 
                 // Create entries
                 for (int i = 0; i < targetVariables.length; i++) {
-                    TableItem item = new TableItem(performancePerTargetTable, SWT.NONE);
+                    TableItem item = new TableItem(performanceTableOverview, SWT.NONE);
                     item.setText(0, targetVariables[i]);
                     for (int j = 0; j < values.get(i).size(); j++) {
                         item.setData(String.valueOf(1 + j), values.get(i).get(j));
@@ -1030,9 +1035,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 // Update overview
                 String targetVariable = getModel().getSelectedAttribute();
                 int targetIndex = getIndexOf(targetVariables, targetVariable);
-                performancePerTargetTable.setFocus();
-                performancePerTargetTable.select(targetIndex);
-                updateOverview(performancePerTargetTable.getItem(targetIndex).getText());
+                performanceTableOverview.setFocus();
+                performanceTableOverview.select(targetIndex);
+                updateOverview(performanceTableOverview.getItem(targetIndex).getText());
                 performanceRoot.layout();
                 performanceSash.setWeights(new int[] {2, 2});
                 
@@ -1045,15 +1050,19 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 rocSash.setWeights(new int[] {2, 2});
                 setStatusDone();
                 
-                // Select first element in folder
-                folder.setSelection(0);
-                
                 // Update overview
-                if (performancePerTargetTable.getItemCount() != 0) {
-                    updateOverviewSelection(performancePerTargetTable.getItem(targetIndex).getText());
+                if (performanceTableOverview.getItemCount() != 0) {
+                    updateOverviewSelection(performanceTableOverview.getItem(targetIndex).getText());
                 }
-                if (performancePerClassTable.getItemCount() != 0) {
-                    updateROCSelection(performancePerClassTable.getItem(0).getText(0));
+                
+                // Update roc
+                String[] classValues = new String[performanceTableSensitivitySpecificity.getItems().length];
+                for (int i = 0; i < classValues.length; i++) {
+                    classValues[i] = performanceTableSensitivitySpecificity.getItem(i).getText(0);
+                }
+                int classIndex = getIndexOf(classValues, getModel().getSelectedClassValue());
+                if (performanceTableSensitivitySpecificity.getItemCount() != 0) {
+                    updateROCSelection(performanceTableSensitivitySpecificity.getItem(classIndex).getText(0));
                 }
             }
 
