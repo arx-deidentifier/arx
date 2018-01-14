@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.dp.ExponentialMechanism;
+import org.deidentifier.arx.dp.ExponentialMechanismReliable;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -159,20 +161,41 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
 	@SuppressWarnings("unchecked")
 	private long executeExponentialMechanism(Map<Long, ILScore<?>> transformationIDToScore) {
 		
-		Long[] values = new Long[transformationIDToScore.size()];
-		Double[] scores = new Double[transformationIDToScore.size()];
-		
-		int index = 0;
-		for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
-			values[index] = element.getKey();
-			scores[index] = ((ILScore<Double>)element.getValue()).getValue();
-			index++;
+		if(reliable) {
+			Long[] values = new Long[transformationIDToScore.size()];
+			BigFraction[] scores = new BigFraction[transformationIDToScore.size()];
+
+			int index = 0;
+			for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
+				values[index] = element.getKey();
+				scores[index] = ((ILScore<BigFraction>)element.getValue()).getValue();
+				index++;
+			}
+
+			ExponentialMechanismReliable<Long> expMechanism;
+			try {
+				expMechanism = new ExponentialMechanismReliable<Long>(values, scores, epsilonStep, deterministic);
+			} catch (IntervalArithmeticException e) {
+				throw new RuntimeException(e);
+			}
+
+			return expMechanism.sample();
+		} else {
+			Long[] values = new Long[transformationIDToScore.size()];
+			Double[] scores = new Double[transformationIDToScore.size()];
+
+			int index = 0;
+			for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
+				values[index] = element.getKey();
+				scores[index] = ((ILScore<Double>)element.getValue()).getValue();
+				index++;
+			}
+
+			ExponentialMechanism<Long> expMechanism = new ExponentialMechanism<Long>(values, scores,
+					epsilonStep, ExponentialMechanism.defaultPrecision, deterministic);
+
+			return expMechanism.sample();
 		}
-		
-		ExponentialMechanism<Long> expMechanism = new ExponentialMechanism<Long>(values, scores,
-		        epsilonStep, ExponentialMechanism.defaultPrecision, deterministic);
-		
-		return expMechanism.sample();
 	}
 
     /**

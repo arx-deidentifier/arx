@@ -18,10 +18,6 @@ package org.deidentifier.arx.dp;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import org.apache.commons.math3.fraction.BigFraction;
@@ -43,33 +39,33 @@ public class ExponentialMechanismReliable<T> {
     private Random random;
     
     /** The values to sample from */
-    private List<T> values;
+    private T[] values;
     
     /**
      * Creates a new instance
-     * @param valueToScore
+     * @param values
+     * @param scores
      * @param epsilon
      * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanismReliable(Map<T, BigFraction> valueToScore, double epsilon) throws IntervalArithmeticException {
-        this(valueToScore, epsilon, false);
+    public ExponentialMechanismReliable(T[] values, BigFraction[] scores, double epsilon) throws IntervalArithmeticException {
+        this(values, scores, epsilon, false);
     }
 
     /**
-     * Crestes a new instance which may be configured to produce deterministic output.
+     * Creates a new instance which may be configured to produce deterministic output.
      * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
      * 
-     * @param valueToScore
+     * @param values
+     * @param scores
      * @param epsilon
      * @param deterministic
      * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanismReliable(Map<T, BigFraction> valueToScore, double epsilon, boolean deterministic) throws IntervalArithmeticException {
+    @SuppressWarnings("unchecked")
+	public ExponentialMechanismReliable(T[] values, BigFraction[] scores, double epsilon, boolean deterministic) throws IntervalArithmeticException {
     	
     	// Check arguments
-    	if (valueToScore.isEmpty()) {
-    		throw new IllegalArgumentException("No values supplied to sample from");
-    	}
     	if (epsilon < 0d) {
     		throw new IllegalArgumentException("Epsilon has to be greater than or equal to zero");
     	}
@@ -85,17 +81,17 @@ public class ExponentialMechanismReliable<T> {
     	}
         
     	// Initialize
-    	BigFraction[] cumulativeDistributionFractions = new BigFraction[valueToScore.size()];
-    	this.cumulativeDistribution = new BigInteger[valueToScore.size()];
-        values = new ArrayList<T>(valueToScore.size());
+    	BigFraction[] cumulativeDistributionFractions = new BigFraction[scores.length];
+    	this.cumulativeDistribution = new BigInteger[scores.length];
+        this.values = (T[])new Object[scores.length];
         
         int index = 0;
         BigFraction denominatorProduct = BigFraction.ONE;
-        for (Entry<T, BigFraction> entry : valueToScore.entrySet()) {
+        for (index = 0; index < values.length; index++) {
         	
         	// Extract
-        	T value = entry.getKey();
-        	BigFraction score = entry.getValue();
+        	T value = values[index];
+        	BigFraction score = scores[index];
         	
         	// Calculate the next element of the cumulative distribution
         	BigFraction nextAccumulated = index == 0 ? new BigFraction(0) : cumulativeDistributionFractions[index-1];
@@ -106,7 +102,7 @@ public class ExponentialMechanismReliable<T> {
         	
         	// Store
         	cumulativeDistributionFractions[index] = nextAccumulated;
-        	values.add(value);
+        	values[index] = value;
         	
         	index++;
         }
@@ -138,7 +134,7 @@ public class ExponentialMechanismReliable<T> {
     	}
     	
     	// Return the according value
-        return values.get(index);
+        return values[index];
     }
 
     /**

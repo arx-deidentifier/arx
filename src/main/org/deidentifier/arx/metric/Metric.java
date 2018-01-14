@@ -36,6 +36,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
+import org.deidentifier.arx.metric.v2.ILScoreBigFraction;
 import org.deidentifier.arx.metric.v2.ILScoreDouble;
 import org.deidentifier.arx.metric.v2.ILSingleDimensional;
 import org.deidentifier.arx.metric.v2.MetricMDHeight;
@@ -1563,6 +1564,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Calculates the score reliably.
+     * Note: All score functions are expected to have a sensitivity of one.
+     * 
+     * @param node
+     * @param groupify
+     * @return
+     */
+    public ILScoreBigFraction getScoreReliable(final Transformation node, final HashGroupify groupify) {
+        throw new RuntimeException("Reliable data-dependent differential privacy for the quality model "
+            + getName() + " is not yet implemented");
+    }
+    
+    /**
      * Calculates the score.
      * Note: All score functions are expected to have a sensitivity of one.
      * 
@@ -1685,6 +1699,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public boolean isPrecomputed() {
+        return false;
+    }
+    
+    /**
+     * Returns whether the metric provides a reliable score function
+     * @return
+     */
+    public boolean isReliableScoreFunctionSupported() {
         return false;
     }
     
