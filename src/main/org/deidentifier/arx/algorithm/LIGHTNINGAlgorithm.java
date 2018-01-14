@@ -217,7 +217,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
             
             // We can compare lower bounds on quality
             InformationLoss<?> bound = transformation.getLowerBound();
-            if (bound.compareTo(optimum.getInformationLoss()) >= 0) {
+            if (bound != null && bound.compareTo(optimum.getInformationLoss()) >= 0) {
                 transformation.setProperty(propertyInsufficientUtility);
                 return true;
             }
