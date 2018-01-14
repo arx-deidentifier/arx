@@ -91,13 +91,43 @@ public class Distribution {
     }
 
     /**
+     * Adds an element with the given frequency.
+     *
+     * @param element
+     * @param value
+     */
+    public void add(final int element, final int value) {
+
+        final int mask = (elements.length - 1);
+        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at home bucket
+        while (true) {
+            if (elements[index] == -1) { // empty bucket, not found
+
+                elements[index] = element;
+                elements[index + 1] = value;
+                size++;
+
+                if (size > threshold) {
+                    rehash();
+                }
+                break;
+            } else if (elements[index] == element) { // element found
+                elements[index + 1] += value;
+                break;
+            }
+            index = (index + 2) & mask; // next bucket
+        }
+
+    }
+
+    /**
      * Clears the table.
      */
     public void clear() {
         Arrays.fill(elements, -1);
         size = 0;
     }
-
+    
     /**
      * Gets all buckets of the hash table.
      *
@@ -106,7 +136,7 @@ public class Distribution {
     public int[] getBuckets() {
         return elements;
     }
-    
+
     /**
      * Merges two frequency sets.
      * 
@@ -180,36 +210,6 @@ public class Distribution {
         }
         builder.append("]");
         return builder.toString();
-    }
-
-    /**
-     * Adds an element with the given frequency.
-     *
-     * @param element
-     * @param value
-     */
-    private void add(final int element, final int value) {
-
-        final int mask = (elements.length - 1);
-        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at home bucket
-        while (true) {
-            if (elements[index] == -1) { // empty bucket, not found
-
-                elements[index] = element;
-                elements[index + 1] = value;
-                size++;
-
-                if (size > threshold) {
-                    rehash();
-                }
-                break;
-            } else if (elements[index] == element) { // element found
-                elements[index + 1] += value;
-                break;
-            }
-            index = (index + 2) & mask; // next bucket
-        }
-
     }
 
     /**

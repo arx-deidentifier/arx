@@ -115,6 +115,113 @@ public class DataMatrix implements Serializable {
     }
 
     /**
+     * Internal equals
+     * @param row1
+     * @param row2
+     * @param ignore
+     * @return
+     */
+    public boolean equalsIgnore(int row1, int row2, int ignore) {
+
+        int offset1 = row1 * columns;
+        int offset2 = row2 * columns;
+
+        switch (columns) {
+        case 20:
+            if ((ignore != 19) && this.array[offset1 + 19] != this.array[offset2 + 19]) {
+                return false;
+            }
+        case 19:
+            if ((ignore != 18) && this.array[offset1 + 18] != this.array[offset2 + 18]) {
+                return false;
+            }
+        case 18:
+            if ((ignore != 17) && this.array[offset1 + 17] != this.array[offset2 + 17]) {
+                return false;
+            }
+        case 17:
+            if ((ignore != 16) && this.array[offset1 + 16] != this.array[offset2 + 16]) {
+                return false;
+            }
+        case 16:
+            if ((ignore != 15) && this.array[offset1 + 15] != this.array[offset2 + 15]) {
+                return false;
+            }
+        case 15:
+            if ((ignore != 14) && this.array[offset1 + 14] != this.array[offset2 + 14]) {
+                return false;
+            }
+        case 14:
+            if ((ignore != 13) && this.array[offset1 + 13] != this.array[offset2 + 13]) {
+                return false;
+            }
+        case 13:
+            if ((ignore != 12) && this.array[offset1 + 12] != this.array[offset2 + 12]) {
+                return false;
+            }
+        case 12:
+            if ((ignore != 11) && this.array[offset1 + 11] != this.array[offset2 + 11]) {
+                return false;
+            }
+        case 11:
+            if ((ignore != 10) && this.array[offset1 + 10] != this.array[offset2 + 10]) {
+                return false;
+            }
+        case 10:
+            if ((ignore != 9) && this.array[offset1 + 9] != this.array[offset2 + 9]) {
+                return false;
+            }
+        case 9:
+            if ((ignore != 8) && this.array[offset1 + 8] != this.array[offset2 + 8]) {
+                return false;
+            }
+        case 8:
+            if ((ignore != 7) && this.array[offset1 + 7] != this.array[offset2 + 7]) {
+                return false;
+            }
+        case 7:
+            if ((ignore != 6) && this.array[offset1 + 6] != this.array[offset2 + 6]) {
+                return false;
+            }
+        case 6:
+            if ((ignore != 5) && this.array[offset1 + 5] != this.array[offset2 + 5]) {
+                return false;
+            }
+        case 5:
+            if ((ignore != 4) && this.array[offset1 + 4] != this.array[offset2 + 4]) {
+                return false;
+            }
+        case 4:
+            if ((ignore != 3) && this.array[offset1 + 3] != this.array[offset2 + 3]) {
+                return false;
+            }
+        case 3:
+            if ((ignore != 2) && this.array[offset1 + 2] != this.array[offset2 + 2]) {
+                return false;
+            }
+        case 2:
+            if ((ignore != 1) && this.array[offset1 + 1] != this.array[offset2 + 1]) {
+                return false;
+            }
+        case 1:
+            if ((ignore != 0) && (this.array[offset1 + 0]) != (this.array[offset2 + 0])) {
+                return false;
+            }
+            break;
+        default:
+            if ((ignore != 0) && (this.array[offset1]) != (this.array[offset2] )) {
+                return false;
+            }
+            for (int i = 1; i < columns; i++) {
+                if ((ignore != i) && this.array[offset1 + i] != this.array[offset2 + i]) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    /**
      * Equals ignoring outliers
      * @param row1
      * @param row2
@@ -123,7 +230,7 @@ public class DataMatrix implements Serializable {
     public boolean equalsIgnoringOutliers(int row1, int row2) {
         return this.equals(row1, row2, Data.REMOVE_OUTLIER_MASK);
     }
-    
+
     /**
      * Returns the specified value
      * @param row
@@ -133,7 +240,7 @@ public class DataMatrix implements Serializable {
     public int get(final int row, final int col) {
         return this.array[row * columns + col];
     }
-
+    
     /**
      * Returns the number of columns
      * @return
@@ -141,7 +248,7 @@ public class DataMatrix implements Serializable {
     public int getNumColumns() {
         return columns;
     }
-    
+
     /**
      * Returns the number of rows
      * @return
@@ -173,7 +280,7 @@ public class DataMatrix implements Serializable {
         }
         return result;        
     }
-    
+
     /**
      * Computes a hashcode for an integer array, partially unrolled.
      * 
@@ -197,6 +304,22 @@ public class DataMatrix implements Serializable {
             result = (37 * result) + array[i];
         }
         return result;
+    }
+    
+    /**
+     * Returns an hashcode for the given row
+     * @param row
+     * @param ignore
+     * @return
+     */
+    public int hashCodeIgnore(final int row, final int ignore) {
+        int offset = row * columns;
+        int result = 23;
+        for (int i = 0; i < columns; i++) {
+            result = (i == ignore) ? result : ((37 * result) + this.array[offset]);
+            offset++;
+        }
+        return result;        
     }
     
     /**

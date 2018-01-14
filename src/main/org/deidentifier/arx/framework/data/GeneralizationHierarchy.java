@@ -193,6 +193,17 @@ public class GeneralizationHierarchy {
     }
 
     /**
+     * Returns the number of levels
+     */
+    public int getLevels() {
+        if (map == null || map[0] == null) {
+            return 0;
+        } else {
+            return map[0].length;
+        }
+    }
+
+    /**
      * Returns the name.
      *
      * @return
