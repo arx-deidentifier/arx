@@ -843,14 +843,14 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
      * Updates the combo box to the selected target variable, the roc table with
      * according auc values and the chart according to the selected class.
      */
-    private void updateROCSelection(String value) {
+    private void updateROCSelection(String classValue) {
         
         // Update combo
         String selectedTarget = getModel().getSelectedAttribute();
         for (int i = 0; i < rocCombo.getItemCount(); i++) {
             if (rocCombo.getItem(i).equals(selectedTarget)) {
                 rocCombo.select(i);
-                updateROC(selectedTarget, value);
+                updateROC(selectedTarget, classValue);
                 break;
             }
         }
@@ -858,7 +858,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         // Update table
         int index = 0;
         for (TableItem item : rocTable.getItems()) {
-            if (item.getText(0).equals(value)) {
+            if (item.getText(0).equals(classValue)) {
                 rocTable.select(index);
                 if (item.getData() != null) {
                     rocSetChartSeries((ROCCurve[]) item.getData());
@@ -867,7 +867,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             }
             index++;
         }
-        
     }
 
     @Override
@@ -1028,18 +1027,18 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     }
                 }
 
-                // Update precision/recall view
+                // Update overview
                 String targetVariable = getModel().getSelectedAttribute();
-                int index = getIndexOf(targetVariables, targetVariable);
+                int targetIndex = getIndexOf(targetVariables, targetVariable);
                 performancePerTargetTable.setFocus();
-                performancePerTargetTable.select(index);
-                updateOverview(targetVariable);
+                performancePerTargetTable.select(targetIndex);
+                updateOverview(performancePerTargetTable.getItem(targetIndex).getText());
                 performanceRoot.layout();
                 performanceSash.setWeights(new int[] {2, 2});
                 
                 // Update combo box
                 rocCombo.setItems(targetVariables);
-                rocCombo.select(index);
+                rocCombo.select(targetIndex);
                 
                 // Layout
                 rocRoot.layout();
@@ -1047,13 +1046,11 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 setStatusDone();
                 
                 // Select first element in folder
-                if (folder.getSelectionIndex() == -1) {
-                    folder.setSelection(0);
-                }
+                folder.setSelection(0);
                 
-                // Update
+                // Update overview
                 if (performancePerTargetTable.getItemCount() != 0) {
-                    updateOverviewSelection(performancePerTargetTable.getItem(0).getText(0));
+                    updateOverviewSelection(performancePerTargetTable.getItem(targetIndex).getText());
                 }
                 if (performancePerClassTable.getItemCount() != 0) {
                     updateROCSelection(performancePerClassTable.getItem(0).getText(0));
