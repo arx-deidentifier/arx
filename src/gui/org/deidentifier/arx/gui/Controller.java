@@ -59,6 +59,7 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelCriterion;
@@ -75,7 +76,6 @@ import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
-import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
@@ -597,21 +597,16 @@ public class Controller implements IView {
         }
         
         // Open configuration dialog
-        DialogAnonymization.AnonymizationConfiguration configuration = this.actionShowLocalAnonymizationDialog();
+        ModelAnonymizationConfiguration configuration = this.actionShowLocalAnonymizationDialog();
         if (configuration == null) {
             return;
         }
-        
-        // Store data
-        model.setHeuristicSearchStepLimit(configuration.getHeuristicSearchStepLimit());
-        model.setHeuristicSearchTimeLimit((int)(configuration.getHeuristicSearchTimeLimit() * 1000d));
-        model.getLocalRecodingModel().setNumIterations(configuration.getNumIterations());
         
         // Reset
         actionMenuEditReset();
         
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(model, configuration.getSearchType(), configuration.getTransformationType());
+        final WorkerAnonymize worker = new WorkerAnonymize(model);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
         
         // Show errors
@@ -1722,7 +1717,7 @@ public class Controller implements IView {
      * @return Returns the parameters selected by the user. Returns a pair. 
      *         First: max. time per iteration. Second: min. records per iteration.
      */
-    public DialogAnonymization.AnonymizationConfiguration actionShowLocalAnonymizationDialog() {
+    public ModelAnonymizationConfiguration actionShowLocalAnonymizationDialog() {
         return main.showLocalAnonymizationDialog(model);
     }
 

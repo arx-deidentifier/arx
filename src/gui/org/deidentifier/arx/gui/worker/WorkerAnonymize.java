@@ -25,9 +25,9 @@ import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.SearchType;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.TransformationType;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization.AnonymizationConfiguration.SearchType;
-import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization.AnonymizationConfiguration.TransformationType;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -54,10 +54,10 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
      * @param searchType 
      * @param transformationType
      */
-    public WorkerAnonymize(final Model model, SearchType searchType, TransformationType transformationType) {
+    public WorkerAnonymize(final Model model) {
         this.model = model;
-        this.searchType = searchType;
-        this.transformationType = transformationType;
+        this.searchType = model.getAnonymizationConfiguration().getSearchType();
+        this.transformationType = model.getAnonymizationConfiguration().getTransformationType();
     }
 
     @Override

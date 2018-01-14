@@ -19,10 +19,11 @@ package org.deidentifier.arx.gui.view.impl.menu;
 
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.SearchType;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.TransformationType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization.AnonymizationConfiguration.SearchType;
-import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization.AnonymizationConfiguration.TransformationType;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -52,109 +53,28 @@ import org.eclipse.swt.widgets.Text;
  */
 public class DialogAnonymization extends TitleAreaDialog {
 
-    /**
-     * Result of this dialog
-     * @author Fabian Prasser
-     */
-    public static class AnonymizationConfiguration {
-
-        /**
-         * Search type
-         * @author Fabian Prasser
-         */
-        public static enum SearchType {
-            OPTIMAL,
-            STEP_LIMIT,
-            TIME_LIMIT
-        }
-
-        /**
-         * Transformation type
-         * @author Fabian Prasser
-         */
-        public static enum TransformationType {
-            GLOBAL,
-            LOCAL
-        }
-
-        /** Result */
-        private double             heuristicSearchTimeLimit = 0d;
-        /** Result */
-        private int                heuristicSearchStepLimit = 0;
-        /** Result */
-        private int                numIterations            = 100;
-        /** Result */
-        private boolean            valid                    = true;
-        /** Result */
-        private SearchType         searchType               = SearchType.STEP_LIMIT;
-        /** Result */
-        private TransformationType transformationType       = TransformationType.GLOBAL;
-        
-        /**
-         * Search step limit for SearchType.STEP_LIMIT
-         * 
-         * @return the heuristicSearchStepLimit
-         */
-        public int getHeuristicSearchStepLimit() {
-            return heuristicSearchStepLimit;
-        }
-        /**
-         * Search time limit for SearchType.TIME_LIMIT
-         * 
-         * @return the heuristicSearchTimeLimit
-         */
-        public double getHeuristicSearchTimeLimit() {
-            return heuristicSearchTimeLimit;
-        }
-        
-        /**
-         * Number of iterations for TransformationType.LOCAL
-         * 
-         * @return the numIterations
-         */
-        public int getNumIterations() {
-            return numIterations;
-        }
-        
-        /**
-         * Returns the search type
-         * 
-         * @return the searchType
-         */
-        public SearchType getSearchType() {
-            return searchType;
-        }
-        
-        /**
-         * Returns the transformation type
-         * 
-         * @return the transformationType
-         */
-        public TransformationType getTransformationType() {
-            return transformationType;
-        }
-    }
-
     /** Model */
-    private String  title;
+    private String                          title;
     /** Model */
-    private String  message;
+    private String                          message;
     /** Model */
-    private boolean optimalSearchAvailable;
+    private boolean                         optimalSearchAvailable;
     /** Model */
-    private boolean localRecodingAvailable;
+    private boolean                         localRecodingAvailable;
 
     /** View */
-    private Button  okButton;
+    private Button                          okButton;
     /** View */
-    private Text    txtHeuristicSearchTimeLimit;
+    private Text                            txtHeuristicSearchTimeLimit;
     /** View */
-    private Text    txtHeuristicSearchStepLimit;
+    private Text                            txtHeuristicSearchStepLimit;
     /** View */
-    private Text    textNumIterations;
+    private Text                            textNumIterations;
 
     /** Result */
-    private AnonymizationConfiguration  result = new AnonymizationConfiguration();
+    private ModelAnonymizationConfiguration configuration;
+    /** Result */
+    private boolean                         configurationValid;
 
     /**
      * Creates a new instance
@@ -166,9 +86,8 @@ public class DialogAnonymization extends TitleAreaDialog {
         super(shell);
         this.title = Resources.getMessage("DialogAnonymization.0"); //$NON-NLS-1$
         this.message = Resources.getMessage("DialogAnonymization.1"); //$NON-NLS-1$
-        this.result.heuristicSearchTimeLimit = (double)model.getHeuristicSearchTimeLimit() / 1000d;
-        this.result.heuristicSearchStepLimit = model.getHeuristicSearchStepLimit();
-        this.result.numIterations = model.getLocalRecodingModel().getNumIterations();
+        this.configuration = model.getAnonymizationConfiguration();
+        this.configurationValid = true;
         
         // Determine if optimal search is available
         this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
@@ -188,9 +107,9 @@ public class DialogAnonymization extends TitleAreaDialog {
      * 
      * @return the value
      */
-    public AnonymizationConfiguration getResult() {
-        if (result.valid) {
-            return result;
+    public ModelAnonymizationConfiguration getResult() {
+        if (configurationValid) {
+            return configuration;
         } else {
             return null;
         }
@@ -205,42 +124,42 @@ public class DialogAnonymization extends TitleAreaDialog {
         if (getHeuristicSearchTimeLimit() == null) {
             setErrorMessage(Resources.getMessage("DialogAnonymization.5")); //$NON-NLS-1$
             if (okButton != null) {
-                result.valid = false;
+                configurationValid = false;
                 okButton.setEnabled(false);
                 return;
             }
         } else {
-            result.heuristicSearchTimeLimit = getHeuristicSearchTimeLimit();
+            configuration.setHeuristicSearchTimeLimit(getHeuristicSearchTimeLimit());
         }
         
         // Handle parameter
         if (getNumIterations() == null) {
             setErrorMessage(Resources.getMessage("DialogAnonymization.4")); //$NON-NLS-1$
             if (okButton != null) {
-                result.valid = false;
+                configurationValid = false;
                 okButton.setEnabled(false);
                 return;
             }
         } else {
-            result.numIterations = getNumIterations();
+            configuration.setNumIterations(getNumIterations());
         }
         
         // Handle parameter
         if (getHeuristicSearchStepLimit() == null) {
             setErrorMessage(Resources.getMessage("DialogAnonymization.8")); //$NON-NLS-1$
             if (okButton != null) {
-                result.valid = false;
+                configurationValid = false;
                 okButton.setEnabled(false);
                 return;
             }
         } else {
-            result.heuristicSearchStepLimit = getHeuristicSearchStepLimit();
+            configuration.setHeuristicSearchStepLimit(getHeuristicSearchStepLimit());
         }
 
         // Everything is fine
         setErrorMessage(null);
         if (okButton != null) {
-            result.valid = true;
+            configurationValid = true;
             okButton.setEnabled(true);
         }
     }
@@ -313,9 +232,9 @@ public class DialogAnonymization extends TitleAreaDialog {
     @Override
     protected void buttonPressed(int buttonId) {
         if (buttonId == IDialogConstants.OK_ID) {
-            result.valid = true;
+            configurationValid = true;
         } else if (buttonId == IDialogConstants.CANCEL_ID) {
-            result.valid = false;
+            configurationValid = false;
         }
         super.buttonPressed(buttonId);
     }
@@ -364,7 +283,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 if (radio11.getSelection()) {
-                    result.searchType = SearchType.OPTIMAL;
+                    configuration.setSearchType(SearchType.OPTIMAL);
                 }
             }
         });
@@ -376,14 +295,14 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 if (radio12.getSelection()) {
-                    result.searchType = SearchType.STEP_LIMIT;
+                    configuration.setSearchType(SearchType.STEP_LIMIT);
                 }
             }
         });
 
         this.txtHeuristicSearchStepLimit = new Text(group1, SWT.BORDER);
         this.txtHeuristicSearchStepLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        this.txtHeuristicSearchStepLimit.setText(String.valueOf(result.heuristicSearchStepLimit));
+        this.txtHeuristicSearchStepLimit.setText(String.valueOf(configuration.getHeuristicSearchStepLimit()));
 
         // Time
         final Button radio13 = new Button(group1, SWT.RADIO);
@@ -392,7 +311,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 if (radio13.getSelection()) {
-                    result.searchType = SearchType.TIME_LIMIT;
+                    configuration.setSearchType(SearchType.TIME_LIMIT);
                 }
             }
         });
@@ -404,7 +323,7 @@ public class DialogAnonymization extends TitleAreaDialog {
                 radio12.setSelection(true);
                 radio11.setSelection(false);
                 radio13.setSelection(false);
-                result.searchType = SearchType.STEP_LIMIT;
+                configuration.setSearchType(SearchType.STEP_LIMIT);
                 checkValidity();
             }
         });
@@ -412,26 +331,33 @@ public class DialogAnonymization extends TitleAreaDialog {
 
         this.txtHeuristicSearchTimeLimit = new Text(group1, SWT.BORDER);
         this.txtHeuristicSearchTimeLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        this.txtHeuristicSearchTimeLimit.setText(String.valueOf(result.heuristicSearchTimeLimit));
+        this.txtHeuristicSearchTimeLimit.setText(String.valueOf(configuration.getHeuristicSearchTimeLimit()));
         this.txtHeuristicSearchTimeLimit.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radio13.setSelection(true);
                 radio11.setSelection(false);
                 radio12.setSelection(false);
-                result.searchType = SearchType.TIME_LIMIT;
+                configuration.setSearchType(SearchType.TIME_LIMIT);
                 checkValidity();
             }
         });
         
+        switch(configuration.getSearchType()) {
+        case OPTIMAL: radio11.setSelection(true); break;
+        case STEP_LIMIT: radio12.setSelection(true); break;
+        case TIME_LIMIT: radio13.setSelection(true); break;
+    }
+        
         // Prepare radio buttons
         if (this.optimalSearchAvailable) {
-            radio11.setSelection(true);
-            result.searchType = SearchType.OPTIMAL;
+            radio11.setEnabled(true);
         } else {
             radio11.setEnabled(false);
-            radio12.setSelection(true);
-            result.searchType = SearchType.STEP_LIMIT;
+            if (configuration.getSearchType() == SearchType.OPTIMAL) {
+                radio12.setSelection(true);
+                configuration.setSearchType(SearchType.STEP_LIMIT);
+            }
             createMessage(group1, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
         }
 
@@ -451,7 +377,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 if (radio21.getSelection()) {
-                    result.transformationType = TransformationType.GLOBAL;
+                    configuration.setTransformationType(TransformationType.GLOBAL);
                 }
             }
         });
@@ -463,33 +389,37 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 if (radio22.getSelection()) {
-                    result.transformationType = TransformationType.LOCAL;
+                    configuration.setTransformationType(TransformationType.LOCAL);
                 }
             }
         });
 
         this.textNumIterations = new Text(group2, SWT.BORDER);
         this.textNumIterations.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        this.textNumIterations.setText(String.valueOf(result.numIterations));
+        this.textNumIterations.setText(String.valueOf(configuration.getNumIterations()));
         this.textNumIterations.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radio22.setSelection(true);
                 radio21.setSelection(false);
-                result.transformationType = TransformationType.LOCAL;
+                configuration.setTransformationType(TransformationType.LOCAL);
                 checkValidity();
             }
         });
 
         // Prepare radio buttons
-        radio21.setSelection(true);
-        result.transformationType = TransformationType.GLOBAL;
+        switch(configuration.getTransformationType()) {
+            case GLOBAL: radio21.setSelection(true); break;
+            case LOCAL: radio22.setSelection(true); break;
+        }
         
         // Show message
         if (this.localRecodingAvailable) {
             radio22.setEnabled(true);
         } else {
             radio22.setEnabled(false);
+            radio21.setSelection(true);
+            configuration.setTransformationType(TransformationType.GLOBAL);
             textNumIterations.setEnabled(false);
             createMessage(group2, Resources.getMessage("DialogAnonymization.12")); //$NON-NLS-1$
         }
@@ -504,7 +434,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         return new ShellAdapter() {
             @Override
             public void shellClosed(final ShellEvent event) {
-                result.valid = false;
+                configurationValid = false;
                 setReturnCode(Window.CANCEL);
             }
         };

@@ -40,6 +40,7 @@ import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -55,7 +56,6 @@ import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization;
-import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization.AnonymizationConfiguration;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
 import org.deidentifier.arx.gui.view.impl.menu.DialogClassificationConfiguration;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboDoubleSelection;
@@ -576,7 +576,7 @@ public class MainWindow implements IView {
      * @return Returns the parameters selected by the user. Returns a pair. 
      *         First: max. time per iteration. Second: min. records per iteration.
      */
-    public AnonymizationConfiguration showLocalAnonymizationDialog(Model model) {
+    public ModelAnonymizationConfiguration showLocalAnonymizationDialog(Model model) {
         DialogAnonymization dialog = new DialogAnonymization(shell, model);
         dialog.create();
         dialog.open();

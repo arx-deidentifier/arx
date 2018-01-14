@@ -285,6 +285,9 @@ public class Model implements Serializable {
     /** Heuristic search threshold */
     private Integer                                       heuristicSearchStepLimit;
 
+    /** General anonymization configuration. Proxy for some fields for backwards compatibility */
+    private ModelAnonymizationConfiguration               anonymizationConfiguration;
+
     /* *****************************************
      * Data Mining
      * *****************************************
@@ -515,6 +518,17 @@ public class Model implements Serializable {
         }
     }
     /**
+     * Returns the current anonymization configuration
+     * @return
+     */
+    public ModelAnonymizationConfiguration getAnonymizationConfiguration() {
+        if (anonymizationConfiguration == null) {
+            anonymizationConfiguration = new ModelAnonymizationConfiguration(this);
+        }
+        return anonymizationConfiguration;
+    }
+    
+    /**
      * Returns the current anonymizer.
      *
      * @return
@@ -522,7 +536,7 @@ public class Model implements Serializable {
     public ARXAnonymizer getAnonymizer() {
         return anonymizer;
     }
-    
+
     /**
      * Returns the last two selected attributes.
      *
@@ -612,7 +626,7 @@ public class Model implements Serializable {
         }
         return dDisclosurePrivacyModel;
     }
-
+    
     /**
      * Returns the project description.
      *
@@ -621,7 +635,7 @@ public class Model implements Serializable {
     public String getDescription() {
         return description;
     }
-    
+
     /**
      * Returns the (e,d)-DP model.
      *
@@ -642,7 +656,7 @@ public class Model implements Serializable {
     public ModelDPresenceCriterion getDPresenceModel() {
         return dPresenceModel;
     }
-
+    
     /**
      * Returns a list of indices of all equivalence classes.
      *
@@ -652,7 +666,7 @@ public class Model implements Serializable {
         // TODO: Refactor to colors[groups[row]]
         return this.groups;
     }
-    
+
     /**
      * @return the heuristicSearchStepLimit
      */
@@ -691,7 +705,7 @@ public class Model implements Serializable {
     public int getHistorySize() {
         return historySize;
     }
-
+    
     /**
      * Returns an upper bound on the number of nodes that will initially
      * be displayed in the lattice viewer.
@@ -701,7 +715,7 @@ public class Model implements Serializable {
     public int getInitialNodesInViewer() {
         return initialNodesInViewer;
     }
-    
+
     /**
      * Returns the size in bytes of the input file.
      *
@@ -747,7 +761,7 @@ public class Model implements Serializable {
     public ModelKAnonymityCriterion getKAnonymityModel() {
         return kAnonymityModel;
     }
-
+    
     /**
      * Returns the k-map model.
      *
@@ -759,7 +773,7 @@ public class Model implements Serializable {
         }
         return kMapModel;
     }
-    
+
     /**
      * Returns the l-diversity model.
      *
@@ -771,7 +785,7 @@ public class Model implements Serializable {
             }
         return lDiversityModel;
     }
-
+    
     /**
      * Returns the project locale.
      *
@@ -784,7 +798,7 @@ public class Model implements Serializable {
             return locale;
         }
     }
-    
+
     /**
      * Returns the model for local recoding
      * @return
@@ -857,7 +871,7 @@ public class Model implements Serializable {
     public String getName() {
         return name;
     }
-
+    
     /**
      * Returns the current filter.
      *
@@ -875,7 +889,7 @@ public class Model implements Serializable {
     public String getOptimalNodeAsString() {
         return optimalNodeAsString;
     }
-    
+
     /**
      * @return the output
      */
@@ -1023,7 +1037,7 @@ public class Model implements Serializable {
     public String getSelectedAttribute() {
         return selectedAttribute;
     }
-
+    
     /**
      * Returns the selected features
      * @return
@@ -1043,7 +1057,7 @@ public class Model implements Serializable {
     public String getSelectedClassValue() {
         return selectedClassValue;
     }
-    
+
     /**
      * Returns the selected features
      * @return
@@ -1105,7 +1119,7 @@ public class Model implements Serializable {
         }
         return this.selectedQuasiIdentifiers;
     }
-
+    
     /**
      * Returns the separator.
      *
@@ -1114,7 +1128,7 @@ public class Model implements Serializable {
     public char getSeparator() {
         return separator;
     }
-    
+
     /**
      * Returns the according parameter.
      *
@@ -1123,7 +1137,7 @@ public class Model implements Serializable {
     public double getSnapshotSizeDataset() {
         return snapshotSizeDataset;
     }
-
+    
     /**
      * Returns the according parameter.
      *
@@ -1132,6 +1146,7 @@ public class Model implements Serializable {
     public double getSnapshotSizeSnapshot() {
         return snapshotSizeSnapshot;
     }
+
     
     /**
      * Returns the size of the solution space for the current
@@ -1162,7 +1177,6 @@ public class Model implements Serializable {
        return size;
     }
 
-    
     /**
      * Returns the configuration object for the stackelberg privacy model
      * @return
@@ -1361,7 +1375,7 @@ public class Model implements Serializable {
         setModified();
         this.anonymizer = anonymizer;
     }
-
+    
     /**
      * Enables debugging.
      *
@@ -1371,7 +1385,7 @@ public class Model implements Serializable {
         this.debugEnabled = value;
         this.setModified();
     }
-    
+
     /**
      * Sets the project description.
      *
@@ -1381,7 +1395,7 @@ public class Model implements Serializable {
         this.description = description;
         setModified();
     }
-
+    
     /**
      * Sets the indices of equivalence classes.
      *
@@ -1404,7 +1418,7 @@ public class Model implements Serializable {
     public void setHeuristicSearchThreshold(Integer heuristicSearchThreshold) {
         this.heuristicSearchThreshold = heuristicSearchThreshold;
     }
-    
+
     /**
      * @param heuristicSearchTimeLimit the heuristicSearchTimeLimit to set
      */
@@ -1470,7 +1484,7 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-
+    
     /**
      * Sets the according parameter.
      *
@@ -1496,7 +1510,7 @@ public class Model implements Serializable {
     public void setModified() {
         modified = true;
     }
-    
+
     /**
      * Sets the project name.
      *
@@ -1575,7 +1589,7 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-
+    
     /**
      * @param perspective the perspective to set
      */
@@ -1600,7 +1614,7 @@ public class Model implements Serializable {
         this.query = query;
         setModified();
     }
-    
+
     /**
      * Sets the result.
      *
@@ -1615,7 +1629,7 @@ public class Model implements Serializable {
         }
         setModified();
     }
-
+    
     /**
      * Sets the selected attribute.
      *
@@ -1639,7 +1653,7 @@ public class Model implements Serializable {
 
         setModified();
     }
-    
+
     /**
      * Sets a set of selected attributes
      * @param set
@@ -1713,7 +1727,7 @@ public class Model implements Serializable {
             this.subsetOrigin += Resources.getMessage("Model.2"); //$NON-NLS-1$
         }
     }
-
+    
     /**
      * Sets how the subset was defined.
      *
@@ -1731,7 +1745,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
         this.time = time;
     }
-    
+
     /**
      * Marks this model as unmodified.
      */
@@ -1749,13 +1763,13 @@ public class Model implements Serializable {
     }
 
     /**
-     * Sets whether funtional hierarchies should be used during anonymization to esimtate utility
+     * Sets whether functional hierarchies should be used during anonymization to estimate utility
      * @param useFunctionalHierarchies
      */
     public void setUseFunctionalHierarchies(boolean useFunctionalHierarchies) {
         this.useFunctionalHierarchies = useFunctionalHierarchies;
     }
-
+    
     /**
      * Sets whether list-wise deletion should be used for summary statistics
      * @param useListwiseDeletion
@@ -1772,7 +1786,7 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-    
+
     /**
      * Sets visualization as enabled/disabled.
      *
