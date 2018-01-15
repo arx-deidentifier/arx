@@ -29,6 +29,8 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Philip Offtermatt
+ * @author Raffael Bild
  */
 public class OrderedDistanceTCloseness extends TCloseness {
 
