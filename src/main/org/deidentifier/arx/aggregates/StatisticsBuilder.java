@@ -30,7 +30,9 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataScale;
@@ -475,7 +477,7 @@ public class StatisticsBuilder {
             }
             
             // Handle optimized handles
-            int lower = handle.isOptimized() ? 1 : level;
+            int lower = handle.isOptimized() ? 0 : level;
             int upper = handle.isOptimized() ? hierarchy[0].length: level + 1;
             
             // Build higher level order from base order
@@ -681,6 +683,44 @@ public class StatisticsBuilder {
     }
 
     /**
+     * Returns data quality according to various models.
+     * 
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics() {
+        
+        // Build and return
+        return getQualityStatistics(this.handle.getHandle());
+    }
+
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output) {
+
+        // Reset stop flag
+        interrupt.value = false;
+        progress.value = 0;
+
+        // Prepare
+        DataHandleInternal input = this.handle.getAssociatedInput();
+        ARXConfiguration config = this.handle.getConfiguration();
+        
+        // Very basic check        
+        if (output.getNumRows() != input.getNumRows() ||
+            output.getNumColumns() != input.getNumColumns()) {
+            throw new IllegalArgumentException("Input and output do not match");
+        }
+
+        // Build and return
+        return new StatisticsQuality(input.getHandle(), output, config, interrupt, progress);
+    }
+    
+    /**
      * Returns summary statistics for all attributes.
      * 
      * @param listwiseDeletion A flag enabling list-wise deletion
@@ -782,12 +822,14 @@ public class StatisticsBuilder {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.NOMINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode())));
             } else if (scale == DataScale.ORDINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.ORDINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -809,6 +851,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.INTERVAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -848,6 +891,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.RATIO,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -1049,7 +1093,10 @@ public class StatisticsBuilder {
                 Integer order1 = order.get(array[arg0]);
                 Integer order2 = order.get(array[arg1]);
                 if (order1 == null || order2 == null) {
-                    throw new RuntimeException("The hierarchy seems to not cover all data values");
+                    String message = "The hierarchy seems to not cover all data values";
+                    message += order1 == null ? " (unknown = "+array[arg0]+")" : "";
+                    message += order2 == null ? " (unknown = "+array[arg1]+")" : "";
+                    throw new RuntimeException(message);
                 } else {
                     return order1.compareTo(order2);
                 }
@@ -1169,18 +1216,18 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Stops all computations. May lead to exceptions being thrown. Use with care.
-     */
-    void interrupt() {
-        this.interrupt.value = true;
-    }
-
-    /**
      * Returns progress data, if available
      *
      * @return
      */
     int getProgress() {
         return this.progress.value;
+    }
+
+    /**
+     * Stops all computations. May lead to exceptions being thrown. Use with care.
+     */
+    void interrupt() {
+        this.interrupt.value = true;
     }
 }

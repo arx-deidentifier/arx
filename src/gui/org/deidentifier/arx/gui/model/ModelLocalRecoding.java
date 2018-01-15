@@ -33,6 +33,7 @@ public class ModelLocalRecoding implements Serializable {
      */
     public static enum LocalRecodingMode {
         SINGLE_PASS,
+        ITERATIVE,
         MULTI_PASS,
         FIXPOINT,
         FIXPOINT_ADAPTIVE
@@ -51,7 +52,7 @@ public class ModelLocalRecoding implements Serializable {
     private double            adaptionFactor   = 0.05d;
 
     /** The type of recoding to perform */
-    private LocalRecodingMode mode             = LocalRecodingMode.FIXPOINT_ADAPTIVE;
+    private LocalRecodingMode mode             = LocalRecodingMode.ITERATIVE;
 
     /**
      * Getter

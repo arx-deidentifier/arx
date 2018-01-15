@@ -69,10 +69,10 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         this.editorSize = new EditorString(composite) {
             @Override
             public boolean accepts(final String s) {
-                if (group==null) return false;
+                if (group == null) return false;
                 try {
                     int i = Integer.parseInt(s);
-                    return i>0;
+                    return i > 0;
                 } catch (NumberFormatException e) {
                     return false;
                 }
@@ -92,6 +92,14 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
                         model.update(HierarchyWizardEditorGroup.this);
                     }
                 }
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return Integer.compare(Integer.parseInt(value1), Integer.parseInt(value2)) != 0;
             }
         };
     }

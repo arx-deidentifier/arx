@@ -76,8 +76,6 @@ public class ModelRisk implements Serializable {
     /** Model */
     private Map<ViewRiskType, Boolean> viewEnabledForOutput      = new HashMap<ViewRiskType, Boolean>();
     /** Model */
-    private boolean                    useOutputModelIfAvailable = true;
-    /** Model */
     private RiskModelForAttributes     riskModelForAttributes    = RiskModelForAttributes.POPULATION_UNIQUENESS_DANKAR;
     /** Model */
     private Double                     riskThresholdRecordsAtRisk;
@@ -179,13 +177,6 @@ public class ModelRisk implements Serializable {
      */
     public boolean isModified() {
         return modified || config.isModified();
-    }
-    
-    /**
-     * Use the output or the input model?
-     */
-    public boolean isUseOutputPopulationModelIfAvailable() {
-        return useOutputModelIfAvailable;
     }
 
     /***
@@ -296,13 +287,6 @@ public class ModelRisk implements Serializable {
     public void setUnmodified() {
         this.modified = false;
         this.config.setUnmodified();
-    }
-
-    /**
-     * Use the output or the input model?
-     */
-    public void setUseOutputPopulationModelIfAvailable(boolean value) {
-        this.useOutputModelIfAvailable = value;
     }
 
     /**

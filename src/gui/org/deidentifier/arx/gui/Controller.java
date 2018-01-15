@@ -58,6 +58,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -72,10 +73,10 @@ import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
-import org.deidentifier.arx.gui.view.impl.menu.DialogSeparator;
 import org.deidentifier.arx.gui.view.impl.wizard.ARXWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardResult;
@@ -271,6 +272,11 @@ public class Controller implements IView {
                 explicit.add(other);
             }
         }
+        for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
+            if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
         Collections.sort(explicit, new Comparator<ModelExplicitCriterion>(){
             public int compare(ModelExplicitCriterion o1, ModelExplicitCriterion o2) {
                 return o1.getAttribute().compareTo(o2.getAttribute());
@@ -341,6 +347,11 @@ public class Controller implements IView {
             }
         }
         for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+            if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
+        for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
             if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
                 explicit.add(other);
             }
@@ -416,6 +427,12 @@ public class Controller implements IView {
                     others.add((ModelExplicitCriterion) other);
                 }
             }
+        } else if (criterion instanceof ModelBLikenessCriterion) {
+            for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
+                if (!other.equals(criterion) && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion) other);
+                }
+            }
         } else {
             throw new RuntimeException(Resources.getMessage("Controller.1")); //$NON-NLS-1$
         }
@@ -463,6 +480,12 @@ public class Controller implements IView {
                 }
             } else if (criterion instanceof ModelDDisclosurePrivacyCriterion) {
                 for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+                    if (!other.equals(criterion) && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion) criterion);
+                    }
+                }
+            } else if (criterion instanceof ModelBLikenessCriterion) {
+                for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
                     if (!other.equals(criterion) && other.isEnabled()) {
                         other.pull((ModelExplicitCriterion) criterion);
                     }
@@ -539,8 +562,10 @@ public class Controller implements IView {
     /**
      * Starts the anonymization.
      * @param heuristicSearch 
+     * @param localRecoding
      */
-    public void actionMenuEditAnonymize(boolean heuristicSearch) {
+    public void actionMenuEditAnonymize(boolean heuristicSearch,
+                                        boolean localRecoding) {
 
         if (model == null) {
             main.showInfoDialog(main.getShell(),
@@ -562,19 +587,29 @@ public class Controller implements IView {
             return;
         }
 
+        // Query for parameters
+        int maxTimePerIteration = 0;
+        double minRecordsPerIteration = 0d;
+        if (localRecoding) {
+            
+            Pair<Double, Double> output = this.actionShowLocalAnonymizationDialog();
+            if (output == null) {
+                return;
+            }
+            maxTimePerIteration = Double.valueOf(output.getFirst() * 1000d).intValue();
+            minRecordsPerIteration = output.getSecond();
+
         // Query for execution time
-        int timeLimit = 0;
-        if (heuristicSearch) {
+        } else if (heuristicSearch) {
             String output = this.actionShowInputDialog(main.getShell(), 
                                                        Resources.getMessage("Controller.38"),  //$NON-NLS-1$
                                                        Resources.getMessage("Controller.79") + //$NON-NLS-1$
                                                        Resources.getMessage("Controller.80"), "0.5", //$NON-NLS-1$ //$NON-NLS-2$
                                                        new IInputValidator(){
                                                         public String isValid(String arg0) {
-                                                            // TODO: Ugly hack
                                                             try { 
                                                                 double val = Double.parseDouble(arg0); 
-                                                                return val>0d ? null : Resources.getMessage("Controller.98");  //$NON-NLS-1$
+                                                                return val > 0d ? null : Resources.getMessage("Controller.98"); //$NON-NLS-1$
                                                             } catch (Exception e) {
                                                                 return Resources.getMessage("Controller.99"); //$NON-NLS-1$
                                                             }
@@ -583,14 +618,14 @@ public class Controller implements IView {
             if (output == null) {
                 return;
             }
-            timeLimit = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
+            maxTimePerIteration = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
         }
 
         // Reset
         actionMenuEditReset();
         
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(model, timeLimit);
+        final WorkerAnonymize worker = new WorkerAnonymize(model, maxTimePerIteration, minRecordsPerIteration);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
 
         // Show errors
@@ -631,7 +666,8 @@ public class Controller implements IView {
         if (worker.getResult() != null) {
 
             // Retrieve optimal result
-            final ARXResult result = worker.getResult();
+            Pair<ARXResult, DataHandle> workerResult = worker.getResult();
+            final ARXResult result = workerResult.getFirst();
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
@@ -649,19 +685,18 @@ public class Controller implements IView {
             model.getClipboard().addInterestingTransformations(model);
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
             if (result.isResultAvailable()) {
-                model.setOutput(result.getOutput(false), result.getGlobalOptimum());
+                model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
-                                      result.getOutput(false)));
+                                      workerResult.getSecond()));
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
 
                 // Do not sort if dataset is too large
                 if (model.getMaximalSizeForComplexOperations() == 0 ||
-                    model.getInputConfig().getInput().getHandle().getNumRows() <=
-                    model.getMaximalSizeForComplexOperations()) {
+                    model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
                     this.model.getViewConfig().setSubset(true);
                     this.model.getViewConfig().setMode(Mode.GROUPED);
                     this.updateViewConfig(true);
@@ -714,6 +749,13 @@ public class Controller implements IView {
                              .getHandle()
                              .getStatistics()
                              .getDistinctValues(index);
+        
+        if (data.length == 1) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.18"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.157")); //$NON-NLS-1$
+            return;
+        }
 
         HierarchyBuilder<?> builder = model.getInputConfig().getHierarchyBuilder(attr);
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -1213,10 +1255,10 @@ public class Controller implements IView {
         if (path != null) {
 
             // Determine separator
-            DialogSeparator dialog = null;
+            DialogOpenHierarchy dialog = null;
 
             try {
-                dialog = new DialogSeparator(main.getShell(), this, path, false);
+                dialog = new DialogOpenHierarchy(main.getShell(), this, path, false);
                 dialog.create();
                 if (dialog.open() == Window.CANCEL) {
                     return;
@@ -1230,15 +1272,14 @@ public class Controller implements IView {
                 if ((error instanceof IllegalArgumentException) || (error instanceof IOException)) {
                     main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.37"), error.getMessage()); //$NON-NLS-1$
                 } else {
-                    main.showErrorDialog(main.getShell(),
-                                         Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
+                    main.showErrorDialog(main.getShell(), Resources.getMessage("Controller.78"), error); //$NON-NLS-1$
                 }
                 return;
             }
 
             // Load hierarchy
             final char separator = dialog.getSeparator();
-            final Charset charset = Charset.defaultCharset();
+            final Charset charset = dialog.getCharset();
             final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
             if (hierarchy != null) {
                 String attr = model.getSelectedAttribute();
@@ -1501,7 +1542,7 @@ public class Controller implements IView {
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
                               model.getInputConfig().getResearchSubset()));
-
+        
         // Update view config
         if (model.getOutput() != null) {
             update(new ModelEvent(this,
@@ -1513,7 +1554,13 @@ public class Controller implements IView {
         if (tempSelectedNode != null) {
             this.model.setSelectedNode(tempSelectedNode);
             this.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            this.actionApplySelectedTransformation();
+            
+            // Backwards compatibility
+            if (model.getOutput() == null) {
+                this.actionApplySelectedTransformation();
+            } else {
+                this.update(new ModelEvent(this, ModelPart.OUTPUT, model.getOutput()));
+            }
         }
 
         // We just loaded the model, so there are no changes
@@ -1535,7 +1582,7 @@ public class Controller implements IView {
     public Charset actionShowCharsetInputDialog(final Shell shell) {
         return main.showCharsetInputDialog(shell);
     }
-
+    
     /**
      * Shows an error dialog.
      *
@@ -1558,7 +1605,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1579,7 +1626,7 @@ public class Controller implements IView {
      * @param values The values to check the format string against
      * @return The format string, or <code>null</code> if no format was (or could be) selected
      */
-    public String actionShowFormatInputDialog(final Shell shell,
+    public String[] actionShowFormatInputDialog(final Shell shell,
                                               final String title,
                                               final String text,
                                               final Locale locale,
@@ -1587,29 +1634,6 @@ public class Controller implements IView {
                                               final String[] values) {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
-    }
-    
-    /**
-     * Shows a dialog for selecting a format string for a data type.
-     *
-     * @param shell The parent shell
-     * @param title The dialog's title
-     * @param text The dialog's text
-     * @param preselected A preselected format string
-     * @param locale The locale
-     * @param type The description of the data type for which to choose a format string
-     * @param values The values to check the format string against
-     * @return The format string, or <code>null</code> if no format was (or could be) selected
-     */
-    public String actionShowFormatInputDialog(final Shell shell,
-                                              final String title,
-                                              final String text,
-                                              final String preselected,
-                                              final Locale locale,
-                                              final DataTypeDescription<?> type,
-                                              final Collection<String> values) {
-
-        return main.showFormatInputDialog(shell, title, text, preselected, locale, type, values);
     }
 
     /**
@@ -1620,7 +1644,7 @@ public class Controller implements IView {
     public void actionShowHelpDialog(String id) {
         main.showHelpDialog(id);
     }
-
+    
     /**
      * Shows an info dialog.
      *
@@ -1631,6 +1655,7 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1646,7 +1671,6 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1662,6 +1686,15 @@ public class Controller implements IView {
                                         final String initial,
                                         final IInputValidator validator) {
         return main.showInputDialog(shell, header, text, initial, validator);
+    }
+
+    /**
+     * Shows a dialog for configuration of local anonymization.
+     * @return Returns the parameters selected by the user. Returns a pair. 
+     *         First: max. time per iteration. Second: min. records per iteration.
+     */
+    public Pair<Double, Double> actionShowLocalAnonymizationDialog() {
+        return main.showLocalAnonymizationDialog();
     }
 
     /**

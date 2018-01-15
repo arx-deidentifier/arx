@@ -34,9 +34,7 @@ public class AnalysisContextClassification implements AnalysisContextVisualizati
     
     /** Context information. */
     public Model         model          = null;
-    
-    /** Context information. */
-    public AnalysisContext context       = null;
+
     
     /**
      * Creates a new context from the given context.
@@ -46,7 +44,6 @@ public class AnalysisContextClassification implements AnalysisContextVisualizati
     public AnalysisContextClassification(AnalysisContext context){
         if (context.getData()==null) return;
         this.handle = context.getData().handle;
-        this.context = context;
         if (handle == null) return;
         this.model = context.getModel();
         if (model==null) return; 

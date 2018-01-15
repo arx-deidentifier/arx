@@ -35,7 +35,7 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply l-diversity criteria
+ * This class implements an example on how to use the l-diversity privacy model
  * without protecting sensitive assocations.
  *
  * @author Fabian Prasser

@@ -34,7 +34,6 @@ import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
-import org.deidentifier.arx.metric.MetricConfiguration.MetricConfigurationAttackerModel;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
 import org.deidentifier.arx.metric.v2.ILSingleDimensional;
@@ -1045,26 +1044,48 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                          return (metric instanceof MetricSDNMKLDivergence);
                                      } 
                },
-               new MetricDescription("Publisher payout",
+               new MetricDescription("Publisher payout (prosecutor)",
                                      false,  // monotonic variant supported
                                      false,  // attribute weights supported
                                      true,   // configurable coding model supported
                                      false,  // pre-computation supported
                                      false,  // aggregate function supported
-                                     true){  // attacker model supported
+                                     false){  // attacker model supported
 
                                      /** SVUID */
                                      private static final long serialVersionUID = 5297850895808449665L;
 
                                      @Override
                                      public Metric<?> createInstance(MetricConfiguration config) {
-                                         boolean journalist = config.getAttackerModel() == MetricConfigurationAttackerModel.JOURNALIST;
-                                         return createPublisherPayoutMetric(journalist, config.getGsFactor());
+                                         return createPublisherPayoutMetric(false, config.getGsFactor());
                                      } 
 
                                      @Override
                                      public boolean isInstance(Metric<?> metric) {
-                                         return (metric instanceof MetricSDNMPublisherPayout);
+                                         return (metric instanceof MetricSDNMPublisherPayout) &&
+                                                ((MetricSDNMPublisherPayout)metric).isProsecutorAttackerModel();
+                                     } 
+               },
+               new MetricDescription("Publisher payout (journalist)",
+                                     false,  // monotonic variant supported
+                                     false,  // attribute weights supported
+                                     true,   // configurable coding model supported
+                                     false,  // pre-computation supported
+                                     false,  // aggregate function supported
+                                     false){  // attacker model supported
+
+                                     /** SVUID */
+                                     private static final long serialVersionUID = -6985377052003037099L;
+
+                                    @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createPublisherPayoutMetric(true, config.getGsFactor());
+                                     } 
+
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDNMPublisherPayout) &&
+                                                ((MetricSDNMPublisherPayout)metric).isJournalistAttackerModel();
                                      } 
                },
                new MetricDescription("Entropy-based information loss",

@@ -34,13 +34,6 @@ public class RollbackRequiredException extends Exception {
     public RollbackRequiredException() {
         // Empty by design
     }
-    /**
-     * Constructor
-     * @param message
-     */
-    public RollbackRequiredException(String message) {
-        super(message);
-    }
     
     /** 
      * Constructor
@@ -49,13 +42,5 @@ public class RollbackRequiredException extends Exception {
      */
     public RollbackRequiredException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /** 
-     * Constructor
-     * @param cause
-     */
-    public RollbackRequiredException(Throwable cause) {
-        super(cause);
     }
 }

@@ -103,6 +103,7 @@ public class ARXCostBenefitConfiguration implements Serializable {
      * @param adversaryCost the adversaryCost to set
      */
     public ARXCostBenefitConfiguration setAdversaryCost(double adversaryCost) {
+        checkParameter("adversary cost", adversaryCost);
         this.adversaryCost = adversaryCost;
         return this;
     }
@@ -112,6 +113,7 @@ public class ARXCostBenefitConfiguration implements Serializable {
      * @param adversaryGain the adversaryGain to set
      */
     public ARXCostBenefitConfiguration setAdversaryGain(double adversaryGain) {
+        checkParameter("adversary gain", adversaryGain);
         this.adversaryGain = adversaryGain;
         return this;
     }
@@ -121,6 +123,7 @@ public class ARXCostBenefitConfiguration implements Serializable {
      * @param publisherBenefit the publisherBenefit to set
      */
     public ARXCostBenefitConfiguration setPublisherBenefit(double publisherBenefit) {
+        checkParameter("publisher benefit", publisherBenefit);
         this.publisherBenefit = publisherBenefit;
         return this;
     }
@@ -130,6 +133,7 @@ public class ARXCostBenefitConfiguration implements Serializable {
      * @param publisherLoss the publisherLoss to set
      */
     public ARXCostBenefitConfiguration setPublisherLoss(double publisherLoss) {
+        checkParameter("publisher loss", publisherLoss);
         this.publisherLoss = publisherLoss;
         return this;
     }
@@ -140,5 +144,16 @@ public class ARXCostBenefitConfiguration implements Serializable {
         builder.append("[benefit=").append(publisherBenefit).append(", loss=");
         builder.append(publisherLoss).append(", gain=").append(adversaryGain).append(", cost=").append(adversaryCost).append("]");
         return builder.toString();
+    }
+    
+    /**
+     * Checks a given parameter
+     * @param parameter
+     * @param value
+     */
+    private void checkParameter(String parameter, double value) {
+        if (value < 0d || Double.isNaN(value) || Double.isInfinite(value)) {
+            throw new IllegalArgumentException("Parameter '" + parameter + "' out of range!");
+        }
     }
 }

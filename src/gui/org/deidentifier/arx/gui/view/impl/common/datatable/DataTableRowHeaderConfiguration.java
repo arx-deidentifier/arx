@@ -35,12 +35,12 @@ import org.eclipse.swt.graphics.Image;
  */
 public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfiguration {
 
-    /**  TODO */
-    private final Image IMAGE_ROW_BACK; //$NON-NLS-1$
+    /**  Image */
+    private final Image backgroundDefault; 
     
-    /**  TODO */
-    private final Image IMAGE_ROW_SELECT; //$NON-NLS-1$
-
+    /**  Image */
+    private final Image backgroundSelected;
+    
     /**
      * Creates a new instance.
      *
@@ -48,11 +48,11 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
      */
     public DataTableRowHeaderConfiguration(DataTableContext context) {
         this.font = context.getFont();
-        IMAGE_ROW_BACK   = context.getController().getResources().getManagedImage("row_header_bg.png");         //$NON-NLS-1$
-        IMAGE_ROW_SELECT = context.getController().getResources().getManagedImage("selected_row_header_bg.png"); //$NON-NLS-1$
+        this.backgroundDefault   = context.getController().getResources().getManagedImage("row_header_bg.png"); //$NON-NLS-1$
+        this.backgroundSelected = context.getController().getResources().getManagedImage("selected_row_header_bg.png"); //$NON-NLS-1$
         final TextPainter txtPainter = new TextPainter(false, false);
-        final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter, IMAGE_ROW_BACK, null);
-        cellPainter = bgImagePainter;
+        final ICellPainter bgImagePainter = new BackgroundImagePainter(txtPainter, backgroundDefault, null);
+        this.cellPainter = bgImagePainter;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class DataTableRowHeaderConfiguration extends DefaultRowHeaderStyleConfig
 
         final TextPainter txtPainter = new TextPainter(false, false);
         final ICellPainter selectedCellPainter = new BackgroundImagePainter(txtPainter,
-                                                                            IMAGE_ROW_SELECT,
+                                                                            backgroundSelected,
                                                                             GUIHelper.getColor(192, 192, 192));
 
         configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_PAINTER,

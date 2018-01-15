@@ -51,7 +51,7 @@ import rst.pdfbox.layout.elements.Document;
  * @author Annika Saken
  * @author Fabian Prasser
  */
-public class ARXCertificate {
+public class ARXCertificate { // NO_UCD
 
     /**
      * Creates a new instance
@@ -219,14 +219,19 @@ public class ARXCertificate {
             element.render(document, 0, this.style);
         }
         
-        PDDocument pdDocument = document.getPDDocument();
+        // Save to temp file
+        File tmp = File.createTempFile("arx", "certificate");
+        document.save(tmp);
+        
+        // Load and watermark
+        PDDocument pdDocument = PDDocument.load(tmp);
         Watermark watermark = new Watermark(pdDocument);
-        for (int page = 0; page < pdDocument.getNumberOfPages(); page++) {
-            watermark.mark(pdDocument, page);
-        }
+        watermark.mark(pdDocument);
         
         // Save
-        document.save(stream);
+        pdDocument.save(stream);
+        pdDocument.close();
+        tmp.delete();
     }
     
 	/**
@@ -260,20 +265,4 @@ public class ARXCertificate {
 	void add(Element element) {
 	    this.elements.add(element);
 	}
-
-    /**
-	 * Adds a new data element
-	 * @param data
-	 */
-	void add(ElementData data) {
-	    this.elements.add(data);
-	}
-
-    /**
-     * Adds a new list of data elements
-     * @param data
-     */
-    void add(List<ElementData> data) {
-        this.elements.addAll(data);
-    }
 }

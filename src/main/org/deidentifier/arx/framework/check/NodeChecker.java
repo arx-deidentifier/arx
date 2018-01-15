@@ -26,6 +26,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -165,7 +166,7 @@ public class NodeChecker {
             dictionarySensFreq = new IntArrayDictionary(0);
         }
         
-        this.history = new History(manager.getDataGeneralized().getArray().length,
+        this.history = new History(manager.getDataGeneralized().getArray().getNumRows(),
                                    historyMaxSize,
                                    snapshotSizeDataset,
                                    snapshotSizeSnapshot,
@@ -175,14 +176,20 @@ public class NodeChecker {
                                    solutionSpace);
         
         this.stateMachine = new StateMachine(history);
-        this.currentGroupify = new HashGroupify(initialSize, config);
-        this.lastGroupify = new HashGroupify(initialSize, config);
         this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
                                            manager.getDataAnalyzed().getArray(),
                                            manager.getHierarchies(),
                                            config,
                                            dictionarySensValue,
                                            dictionarySensFreq);
+        this.currentGroupify = new HashGroupify(initialSize, config,
+                                                manager.getDataGeneralized().getArray(),
+                                                transformer.getBuffer(),
+                                                manager.getDataAnalyzed().getArray());
+        this.lastGroupify = new HashGroupify(initialSize, config,
+                                             manager.getDataGeneralized().getArray(),
+                                             transformer.getBuffer(),
+                                             manager.getDataAnalyzed().getArray());
     }
 
     
@@ -222,13 +229,12 @@ public class NodeChecker {
         }
         
         // Prepare buffers
-        Data microaggregatedOutput = new Data(new int[0][0], new String[0], new int[0], new Dictionary(0));
+        Data microaggregatedOutput = new Data(new DataMatrix(0,0), new String[0], new int[0], new Dictionary(0));
         Data generalizedOutput = new Data(transformer.getBuffer(), dataGeneralized.getHeader(), dataGeneralized.getMap(), dataGeneralized.getDictionary());
         
         // Perform microaggregation. This has to be done before suppression.
         if (microaggregationFunctions.length > 0) {
-            microaggregatedOutput = currentGroupify.performMicroaggregation(transformer.getBuffer(), 
-                                                                            microaggregationStartIndex,
+            microaggregatedOutput = currentGroupify.performMicroaggregation(microaggregationStartIndex,
                                                                             microaggregationNumAttributes,
                                                                             microaggregationFunctions,
                                                                             microaggregationMap,
@@ -238,7 +244,7 @@ public class NodeChecker {
         
         // Perform suppression
         if (config.getAbsoluteMaxOutliers() != 0 || !currentGroupify.isPrivacyModelFulfilled()) {
-            currentGroupify.performSuppression(transformer.getBuffer());
+            currentGroupify.performSuppression();
         }
         
         // Return the buffer
@@ -336,7 +342,7 @@ public class NodeChecker {
      * Returns the input buffer
      * @return
      */
-    public int[][] getInputBuffer() {
+    public DataMatrix getInputBuffer() {
         return this.dataGeneralized.getArray();
     }
     
@@ -346,5 +352,16 @@ public class NodeChecker {
      */
     public Metric<?> getMetric() {
         return metric;
+    }
+    
+    /**
+     * Frees memory
+     */
+    public void reset() {
+        stateMachine.reset();
+        history.reset();
+        history.setSize(0);
+        currentGroupify.stateClear();
+        lastGroupify.stateClear();
     }
 }

@@ -167,7 +167,7 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * ReflectS different anonymity properties 
+     * Reflects different anonymity properties.
      */
     public static enum Anonymity {
         
@@ -507,26 +507,6 @@ public class ARXLattice implements Serializable {
         }
 
         /**
-         * Returns the maximal information loss.
-         * This method is deprecated. Please use getHighestScore() instead.
-         * @return
-         */
-        @Deprecated
-        public InformationLoss<?> getMaximumInformationLoss() {
-            return maxInformationLoss;
-        }
-        
-        /**
-         * Returns the minimal information loss.
-         * This method is deprecated. Please use getLowestScore() instead.
-         * @return
-         */
-        @Deprecated
-        public InformationLoss<?> getMinimumInformationLoss() {
-            return minInformationLoss;
-        }
-
-        /**
          * The predecessors.
          *
          * @return
@@ -577,16 +557,6 @@ public class ARXLattice implements Serializable {
          */
         public int[] getTransformation() {
             return transformation;
-        }
-
-        /**
-         * Returns the anonymity property.
-         *
-         * @return
-         */
-        @Deprecated
-        public Anonymity isAnonymous() {
-            return anonymity;
         }
 
         /**
@@ -836,11 +806,6 @@ public class ARXLattice implements Serializable {
      */
     public void expand(ARXNode center) {
         
-        // Break
-        if (this.isComplete()) {
-            return;
-        }
- 
         // Initialize
         int[] indices = center.getTransformation();
         Transformation transformation = solutions.getTransformation(indices);
@@ -922,7 +887,9 @@ public class ARXLattice implements Serializable {
         }
         
         // Update information loss
-        this.estimateInformationLoss();
+        if (!missing.isEmpty()) {
+            this.estimateInformationLoss();
+        }
     }
     
     /**
@@ -939,7 +906,10 @@ public class ARXLattice implements Serializable {
      * @return
      */
     public InformationLoss<?> getHighestScore(){
-        return this.getMaximumInformationLoss();
+        if (this.maximumInformationLoss == null) {
+            this.estimateInformationLoss();
+        }
+        return this.maximumInformationLoss;
     }
     
     /**
@@ -956,29 +926,6 @@ public class ARXLattice implements Serializable {
      * @return
      */
     public InformationLoss<?> getLowestScore(){
-        return this.getMinimumInformationLoss();
-    }
-
-    /**
-     * Returns the maximal information loss.
-     * This method is deprecated. Please use getHighestScore() instead.
-     * @return
-     */
-    @Deprecated
-    public InformationLoss<?> getMaximumInformationLoss(){
-        if (this.maximumInformationLoss == null) {
-            this.estimateInformationLoss();
-        }
-        return this.maximumInformationLoss;
-    }
-    
-    /**
-     * Returns the minimal information loss.
-     * This method is deprecated. Please use getLowestScore() instead.
-     * @return
-     */
-    @Deprecated
-    public InformationLoss<?> getMinimumInformationLoss(){
         if (this.minimumInformationLoss == null) {
             this.estimateInformationLoss();
         }
@@ -1013,6 +960,8 @@ public class ARXLattice implements Serializable {
 
     /**
      * Returns whether the search space has been characterized completely
+     * (i.e. whether an optimal solution has been determined, *not* whether
+     * all transformations have been materialized).
      * @return
      */
     public boolean isComplete() {

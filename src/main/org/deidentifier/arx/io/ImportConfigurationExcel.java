@@ -33,8 +33,7 @@ import org.apache.poi.ss.usermodel.Row;
  * @author Karol Babioch
  * @author Fabian Prasser
  */
-public class ImportConfigurationExcel extends ImportConfigurationFile implements
-        IImportConfigurationWithHeader {
+public class ImportConfigurationExcel extends ImportConfigurationFile implements IImportConfigurationWithHeader { // NO_UCD
 
     /**
      * Valid file types for Excel files

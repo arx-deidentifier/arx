@@ -73,5 +73,4 @@ public class TestAnonymizationKAnonymity extends AbstractAnonymizationTest {
     public TestAnonymizationKAnonymity(final ARXAnonymizationTestCase testCase) {
         super(testCase);
     }
-    
 }

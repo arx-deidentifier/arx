@@ -39,8 +39,6 @@ import org.deidentifier.arx.io.ImportColumnJDBC;
  * and/or retrieve data. It is mainly used to exchange data between multiple
  * wizard pages.
  * 
- * TODO Change to more elegant implementation (i.e. general key value storage)
- * 
  * @author Karol Babioch
  * @author Fabian Prasser
  */
@@ -53,21 +51,21 @@ public class ImportWizardModel {
      */
     public enum SourceType {
         
-        /**  TODO */
+        /**  Constant */
         CSV,
         
-        /**  TODO */
+        /**  Constant */
         JDBC,
         
-        /**  TODO */
+        /**  Constant */
         EXCEL
     }
 
     /** Maximum number of lines to be loaded for preview purposes. */
-    public static final int PREVIEW_MAX_LINES = 25;
-    
+    public static final int               PREVIEW_MAX_LINES      = 25;
+
     /** Maximum number of chars to be loaded for detecting separators. */
-    public static final int DETECT_MAX_CHARS  = 100000;;
+    public static final int               DETECT_MAX_CHARS       = 100000;
 
     /** Actual source data should be imported from. */
     private SourceType                    sourceType;
@@ -169,19 +167,19 @@ public class ImportWizardModel {
     }
 
     /**
-         * @return {@link #csvEscape}
-         */
-        public char getCsvEscape() {
-            return csvEscape;
-        }
+     * @return {@link #csvEscape}
+     */
+    public char getCsvEscape() {
+        return csvEscape;
+    }
 
-   /**
- * Getter
- * @return
- */
-public char[] getCsvLinebreak() {
-    return csvLinebreak;
-}
+    /**
+     * Getter
+     * @return
+     */
+    public char[] getCsvLinebreak() {
+        return csvLinebreak;
+    }
 
     /**
      * Getter
@@ -280,39 +278,6 @@ public char[] getCsvLinebreak() {
     public List<String[]> getPreviewData() {
 
         return previewData;
-    }
-
-    /**
-     * Returns a list of strings containing the data for the given column
-     * 
-     * This will only return the {@link #previewData} for the given column
-     * rather than all of the preview data.
-     * 
-     * @param column
-     *            Column the preview data should be returned for
-     * 
-     * @return Data for the given column
-     * 
-     * @see {@link #getPreviewData()}
-     */
-    public List<String> getPreviewData(ImportWizardModelColumn column) {
-
-        List<String> result = new ArrayList<String>();
-        int index = wizardColumns.indexOf(column);
-
-        if (index != -1) {
-            for (String[] s : getPreviewData()) {
-                if (column.getColumn() instanceof ImportColumnIndexed) {
-                    result.add(s[((ImportColumnIndexed) column.getColumn()).getIndex()]);
-                } else if (column.getColumn() instanceof ImportColumnJDBC){
-                    result.add(s[((ImportColumnJDBC) column.getColumn()).getIndex()]);
-                }
-            }
-        } else {
-            throw new IllegalArgumentException(Resources.getMessage("ImportWizardModel.1")); //$NON-NLS-1$
-        }
-
-        return result;
     }
 
     /**

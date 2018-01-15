@@ -115,7 +115,7 @@ public class AnalysisContext {
             return hierarchy;
         }
         
-        // TODO: Superfluous?
+        // This is probably not needed anymore, but we leave it just in case...
         // Second, check for hierarchies associated with t-closeness
         for (HierarchicalDistanceTCloseness t : context.config.getCriteria(HierarchicalDistanceTCloseness.class)){
             if (t.getAttribute().equals(attribute)) {
@@ -144,8 +144,7 @@ public class AnalysisContext {
     public ARXPopulationModel getPopulationModel() {
 
         // First, try to return a model associated with an output criterion
-        if (model.getRiskModel().isUseOutputPopulationModelIfAvailable() &&
-            model.getOutputConfig() != null) {
+        if (model.getOutputConfig() != null) {
             for (PrivacyCriterion c : model.getOutputConfig().getCriteria()) {
                 if (c.getPopulationModel() != null) {
                     return c.getPopulationModel();

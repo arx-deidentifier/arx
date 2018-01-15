@@ -29,8 +29,10 @@ import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
+import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
@@ -38,11 +40,11 @@ import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
-import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class offers several methods to define parameters and execute the ARX
@@ -51,7 +53,7 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class ARXAnonymizer {
+public class ARXAnonymizer { // NO_UCD
 
     /**
      * Temporary result of the ARX algorithm.
@@ -73,9 +75,6 @@ public class ARXAnonymizer {
         /** The data manager. */
         final DataManager       manager;
 
-        /** The metric. */
-        final Metric<?>         metric;
-
         /** The time. */
         final long              time;
 
@@ -92,13 +91,11 @@ public class ARXAnonymizer {
          * @param algorithm
          * @param time
          */
-        Result(final Metric<?> metric,
-               final NodeChecker checker,
+        Result(final NodeChecker checker,
                final SolutionSpace solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
                final long time) {
-            this.metric = metric;
             this.checker = checker;
             this.solutionSpace = solutionSpace;
             this.manager = manager;
@@ -114,18 +111,19 @@ public class ARXAnonymizer {
          * @param handle
          * @return
          */
-		public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
+        public ARXResult asResult(ARXConfiguration config, DataHandle handle) {
 
-		    // Create lattice
-	        final ARXLattice lattice = new ARXLattice(solutionSpace,
-	                                                  (algorithm instanceof FLASHAlgorithmImpl),
-	                                                  optimum,
-	                                                  manager.getDataGeneralized().getHeader(),
-	                                                  config.getInternalConfiguration());
+            // Create lattice
+            final ARXLattice lattice = new ARXLattice(solutionSpace,
+                                                      (algorithm instanceof FLASHAlgorithmImpl),
+                                                      optimum,
+                                                      manager.getDataGeneralized().getHeader(),
+                                                      config.getInternalConfiguration());
 
 			// Create output handle
 	        ((DataHandleInput)handle).setLocked(true);
-            return new ARXResult(handle.getRegistry(),
+            return new ARXResult(ARXAnonymizer.this,
+                                 handle.getRegistry(),
                                  this.manager,
                                  this.checker,
                                  handle.getDefinition(),
@@ -133,7 +131,7 @@ public class ARXAnonymizer {
                                  lattice,
                                  System.currentTimeMillis() - time,
                                  solutionSpace);      
-		}
+        }
     }
 
     /** History size. */
@@ -320,15 +318,29 @@ public class ARXAnonymizer {
         if (config.isPrivacyModelSpecified(LDiversity.class)){
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)){
                 // TODO: getDataGeneralized().getDataLength() does not consider data subsets
-	            if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
-	                throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
-	            }
+                if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
+                    throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
+                }
             }
         }
         if (config.isPrivacyModelSpecified(DDisclosurePrivacy.class)){
             for (DDisclosurePrivacy c : config.getPrivacyModels(DDisclosurePrivacy.class)){
                 if (c.getD() <= 0) { 
                     throw new IllegalArgumentException("Parameter d (" + c.getD() + ") must be positive and larger than 0"); 
+                }
+            }
+        }
+        if (config.isPrivacyModelSpecified(BasicBLikeness.class)){
+            for (BasicBLikeness c : config.getPrivacyModels(BasicBLikeness.class)){
+                if (c.getB() <= 0) { 
+                    throw new IllegalArgumentException("Parameter b (" + c.getB() + ") must be positive and larger than 0"); 
+                }
+            }
+        }
+        if (config.isPrivacyModelSpecified(EnhancedBLikeness.class)){
+            for (EnhancedBLikeness c : config.getPrivacyModels(EnhancedBLikeness.class)){
+                if (c.getB() <= 0) { 
+                    throw new IllegalArgumentException("Parameter b (" + c.getB() + ") must be positive and larger than 0"); 
                 }
             }
         }
@@ -396,17 +408,48 @@ public class ARXAnonymizer {
                 }
             }
             if (!found) {
-                throw new IllegalArgumentException("No criterion defined for sensitive attribute: '"+attr+"'!");
+                for (BasicBLikeness c : config.getPrivacyModels(BasicBLikeness.class)) {
+                    if (c.getAttribute().equals(attr)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                for (EnhancedBLikeness c : config.getPrivacyModels(EnhancedBLikeness.class)) {
+                    if (c.getAttribute().equals(attr)) {
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                throw new IllegalArgumentException("No privacy model specified for sensitive attribute: '"+attr+"'!");
             }
         }
         for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("L-Diversity criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("L-Diversity model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
             }
         }
         for (TCloseness c : config.getPrivacyModels(TCloseness.class)) {
             if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
-                throw new RuntimeException("T-Closeness criterion defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+                throw new RuntimeException("T-Closeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (DDisclosurePrivacy c : config.getPrivacyModels(DDisclosurePrivacy.class)) {
+            if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("D-Disclosure privacy model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (BasicBLikeness c : config.getPrivacyModels(BasicBLikeness.class)) {
+            if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("Basic-b-likeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
+            }
+        }
+        for (EnhancedBLikeness c : config.getPrivacyModels(EnhancedBLikeness.class)) {
+            if (handle.getDefinition().getAttributeType(c.getAttribute()) != AttributeType.SENSITIVE_ATTRIBUTE) {
+                throw new RuntimeException("Enhanced-b-likeness model defined for non-sensitive attribute '"+c.getAttribute()+"'!");
             }
         }
 
@@ -495,9 +538,8 @@ public class ARXAnonymizer {
                                           final SolutionSpace solutionSpace,
                                           final NodeChecker checker) {
         
-        if (config.isHeuristicSearchEnabled() ||
-            solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit());
+        if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
@@ -518,14 +560,14 @@ public class ARXAnonymizer {
 
         // Extract data
         final String[] header = ((DataHandleInput) handle).header;
-        final int[][] dataArray = ((DataHandleInput) handle).data;
+        final DataMatrix dataArray = ((DataHandleInput) handle).data;
         final Dictionary dictionary = ((DataHandleInput) handle).dictionary;
         final DataManager manager = new DataManager(header, dataArray, dictionary, definition, config.getPrivacyModels(), getAggregateFunctions(definition));
         return manager;
     }
 
     /**
-     * Reset a previous lattice and run the algorithm .
+     * Reset a previous lattice and run the algorithm.
      *
      * @param manager
      * @param definition
@@ -571,11 +613,21 @@ public class ARXAnonymizer {
         final long time = System.currentTimeMillis();
         algorithm.traverse();
         
-        // Deactivate history to prevent bugs when sorting data
-        checker.getHistory().reset();
-        checker.getHistory().setSize(0);
+        // Free resources
+        checker.reset();
         
         // Return the result
-        return new Result(config.getQualityModel(), checker, solutionSpace, manager, algorithm, time);
+        return new Result(checker, solutionSpace, manager, algorithm, time);
+    }
+
+    /**
+     * Parses the settings provided by the given instance
+     * @param anonymizer
+     */
+    protected void parse(ARXAnonymizer anonymizer) {
+        this.historySize = anonymizer.historySize;
+        this.snapshotSizeDataset = anonymizer.snapshotSizeDataset;
+        this.snapshotSizeSnapshot = anonymizer.snapshotSizeSnapshot;
+        this.maxQuasiIdentifiers = anonymizer.maxQuasiIdentifiers;
     }
 }

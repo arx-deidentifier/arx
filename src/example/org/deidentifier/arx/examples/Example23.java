@@ -34,7 +34,8 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply multiple l-diversity criteria without protecting sensitive assocations.
+ * This class implements an example on how to use multiple instances of l-diversity
+ * without protecting sensitive associations.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer

@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -41,6 +42,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -90,7 +92,7 @@ public class WorkerSave extends Worker<Model> {
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
 
-        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 10); //$NON-NLS-1$
+        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 8); //$NON-NLS-1$
 
         try {
             final FileOutputStream f = new FileOutputStream(path);
@@ -103,11 +105,7 @@ public class WorkerSave extends Worker<Model> {
             arg0.worked(1);
             writeInput(model, zip);
             arg0.worked(1);
-            writeInputSubset(model, zip);
-            arg0.worked(1);
             writeOutput(model, zip);
-            arg0.worked(1);
-            writeOutputSubset(model, zip);
             arg0.worked(1);
             writeConfiguration(model, zip);
             arg0.worked(1);
@@ -124,7 +122,6 @@ public class WorkerSave extends Worker<Model> {
             return;
         }
 
-        arg0.worked(100);
         arg0.done();
     }
 
@@ -163,7 +160,7 @@ public class WorkerSave extends Worker<Model> {
 
         // Write directly because of size
         final FileBuilder b = new FileBuilder(new OutputStreamWriter(zip));
-        final XMLWriter writer = new XMLWriter(b);
+        final XMLWriter writer = new XMLWriter(b, true);
         
         writer.write(vocabulary.getHeader());
 
@@ -339,6 +336,10 @@ public class WorkerSave extends Worker<Model> {
                 if (format != null){
                     writer.write(vocabulary.getFormat(), format);
                 }
+                Locale locale = ((DataTypeWithFormat)dt).getLocale();
+                if (locale != null){
+                    writer.write(vocabulary.getLocale(), locale.getLanguage().toUpperCase());
+                }
             }
             
             // Do we have a hierarchy
@@ -502,22 +503,24 @@ public class WorkerSave extends Worker<Model> {
         DataDefinition definition = null;
         if (config == model.getInputConfig()) definition = model.getInputDefinition();
         else definition = model.getOutputDefinition();
-        
-        // Store all from definition that have not yet been stored
-        DataHandle handle = config.getInput().getHandle();
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            final String attr = handle.getAttributeName(i);
-            
-            // Do we have a hierarchy
-            if (!saved.contains(attr) && definition.getHierarchy(attr) != null && 
-                definition.getHierarchy(attr).length != 0 &&
-                definition.getHierarchy(attr)[0].length != 0) {
                 
-                // Store this hierarchy
-                zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(attr) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
-                CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-                out.write(definition.getHierarchy(attr));
-                saved.add(attr);
+        // Store all from definition that have not yet been stored
+        if (config.getInput() != null) {
+            DataHandle handle = config.getInput().getHandle();
+            for (int i = 0; i < handle.getNumColumns(); i++) {
+                final String attr = handle.getAttributeName(i);
+
+                // Do we have a hierarchy
+                if (!saved.contains(attr) && definition.getHierarchy(attr) != null && 
+                    definition.getHierarchy(attr).length != 0 &&
+                    definition.getHierarchy(attr)[0].length != 0) {
+
+                    // Store this hierarchy
+                    zip.putNextEntry(new ZipEntry(prefix + "hierarchies/" + toFileName(attr) + ".csv")); //$NON-NLS-1$ //$NON-NLS-2$
+                    CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
+                    out.write(definition.getHierarchy(attr));
+                    saved.add(attr);
+                }
             }
         }
     }
@@ -541,24 +544,6 @@ public class WorkerSave extends Worker<Model> {
             }
         }
     }
-
-    /**
-     * Writes the input subset to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
-        if (model.getInputConfig().getInput() != null) {
-            if (model.getInputConfig().getInput().getHandle() != null) {
-                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-                out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
-            }
-        }
-    }
-    
 
     /**
      * Writes the lattice to the file.
@@ -624,7 +609,7 @@ public class WorkerSave extends Worker<Model> {
         // Return mapping
         return map;
     }
-    
+
     /**
      * Writes the meta data to the file.
      *
@@ -645,7 +630,7 @@ public class WorkerSave extends Worker<Model> {
         w.flush();
 
     }
-
+    
     /**
      * Writes the project to the file.
      *
@@ -665,21 +650,6 @@ public class WorkerSave extends Worker<Model> {
         w.flush();
     }
 
-	/**
-     * Writes the output to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
-		if (model.getOutput() != null) {
-			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
-			final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-			out.write(model.getOutput().iterator());
-		}
-	}
-
     /**
      * Writes the output to the file.
      *
@@ -687,11 +657,10 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void writeOutputSubset(final Model model, final ZipOutputStream zip) throws IOException {
+    private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
         if (model.getOutput() != null) {
-            zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-            out.write(model.getOutput().getView().iterator());
+            zip.putNextEntry(new ZipEntry("data/output.dat")); //$NON-NLS-1$
+            ((DataHandleOutput) model.getOutput()).write(zip);
         }
     }
 }

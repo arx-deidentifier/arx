@@ -36,7 +36,7 @@ import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class implements an simple example for using multiple sensitive attributes and
- * enforcing different privacy criteria.
+ * different privacy models.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer

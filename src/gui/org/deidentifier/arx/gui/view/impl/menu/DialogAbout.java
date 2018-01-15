@@ -63,13 +63,14 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Ljubomir Dshevlekov (hierarchy editor)\n" +  //$NON-NLS-1$
                                                "Michael Schneider (risk analysis)\n" + //$NON-NLS-1$
                                                "Raffael Bild (heuristic search, differential privacy)\n" + //$NON-NLS-1$
-                                               "Johanna Eicher (heuristic search)\n" + //$NON-NLS-1$
+                                               "Johanna Eicher (heuristic search, classification)\n" + //$NON-NLS-1$
                                                "Helmut Spengler (heuristic search)\n" + //$NON-NLS-1$
                                                "David Gassmann (HIPAA identifiers)\n" + //$NON-NLS-1$
                                                "Sebastian Stammler (performance improvements, l-diversity)\n" + //$NON-NLS-1$
                                                "Maximilian Zitzmann (distinction and separation)\n" + //$NON-NLS-1$
                                                "James Gaupp (game-theoretic privacy)\n" + //$NON-NLS-1$
-                                               "Annika Saken (certificates)"; //$NON-NLS-1$
+                                               "Annika Saken (certificates)\n" + //$NON-NLS-1$
+                                               "Martin Waltl (summary statistics)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;
