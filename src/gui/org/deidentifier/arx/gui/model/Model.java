@@ -49,7 +49,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
-import org.deidentifier.arx.risk.RiskConstants;
+import org.deidentifier.arx.risk.HIPAAConstants;
 import org.deidentifier.arx.risk.RiskQuestionnaire;
 import org.deidentifier.arx.risk.RiskQuestionnaireWeights;
 
@@ -1047,7 +1047,7 @@ public class Model implements Serializable {
      */
     public RiskQuestionnaire getRiskQuestionnaire() throws IOException {
         if (this.riskQuestionnaire == null) {
-            this.riskQuestionnaire = new RiskQuestionnaire(RiskConstants.getUSData());
+            this.riskQuestionnaire = new RiskQuestionnaire(HIPAAConstants.getUSData());
         }
         return this.riskQuestionnaire;
     }

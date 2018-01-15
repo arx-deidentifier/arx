@@ -45,7 +45,7 @@ public class RiskQuestionnaire implements Serializable {
      * @param data
      * @throws IOException 
      */
-    public RiskQuestionnaire(RiskConstants data) throws IOException {
+    public RiskQuestionnaire(HIPAAConstants data) throws IOException {
         load(new BufferedReader(new InputStreamReader(data.getInputStream("risk-questionnaire.data"))));
     }
 

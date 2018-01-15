@@ -47,7 +47,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherAge(RiskConstants constants) {
+        HIPAAMatcherAge(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -76,7 +76,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherCity(RiskConstants constants) {
+        HIPAAMatcherCity(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -97,7 +97,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherDate(RiskConstants constants) {
+        HIPAAMatcherDate(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -160,7 +160,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherEMail(RiskConstants constants) {
+        HIPAAMatcherEMail(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -181,7 +181,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherFirstName(RiskConstants constants) {
+        HIPAAMatcherFirstName(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -223,7 +223,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherIP(RiskConstants constants) {
+        HIPAAMatcherIP(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -244,7 +244,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherLastName(RiskConstants constants) {
+        HIPAAMatcherLastName(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -274,7 +274,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherState(RiskConstants constants) {
+        HIPAAMatcherState(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -314,7 +314,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherURL(RiskConstants constants) {
+        HIPAAMatcherURL(HIPAAConstants constants) {
             super(constants);
         }
         
@@ -352,7 +352,7 @@ abstract class HIPAAMatcherAttributeValue {
          * Creates a new instance
          * @param constants
          */
-        HIPAAMatcherZIP(RiskConstants constants) {
+        HIPAAMatcherZIP(HIPAAConstants constants) {
             super(constants);
         
             zipCodes = new HashSet<>();
@@ -392,13 +392,13 @@ abstract class HIPAAMatcherAttributeValue {
     }
 
     /** Constants*/
-    protected final RiskConstants constants;
+    protected final HIPAAConstants constants;
 
     /**
      * Creates a new instance
      * @param constants
      */
-    public HIPAAMatcherAttributeValue(RiskConstants constants) {
+    public HIPAAMatcherAttributeValue(HIPAAConstants constants) {
         this.constants = constants;
     }
     
