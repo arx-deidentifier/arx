@@ -88,18 +88,15 @@ public class ExponentialMechanismReliable<T> {
         this.values = values.clone();
         
         int index = 0;
-        BigFraction denominatorProduct = BigFraction.ONE;
+        BigInteger denominatorProduct = new BigInteger("1");
         BigFraction lastAccumulated = new BigFraction(0);
         for (index = 0; index < values.length; index++) {
         	
-        	// Extract
-        	BigFraction score = scores[index];
-        	
         	// Calculate the next element of the cumulative distribution
-        	BigFraction nextAccumulated = lastAccumulated.add(base.pow(floorToInt(score)));
+        	BigFraction nextAccumulated = lastAccumulated.add(base.pow(floorToInt(scores[index])));
         	
         	// Update the product of denominators
-        	denominatorProduct = denominatorProduct.multiply(score.getDenominator());
+        	denominatorProduct = denominatorProduct.multiply(nextAccumulated.getDenominator());
         	
         	// Store
         	cumulativeDistributionFractions[index] = nextAccumulated;
