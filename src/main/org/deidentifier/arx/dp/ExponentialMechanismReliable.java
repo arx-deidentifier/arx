@@ -62,8 +62,7 @@ public class ExponentialMechanismReliable<T> {
      * @param deterministic
      * @throws IntervalArithmeticException 
      */
-    @SuppressWarnings("unchecked")
-	public ExponentialMechanismReliable(T[] values, BigFraction[] scores, double epsilon, boolean deterministic) throws IntervalArithmeticException {
+    public ExponentialMechanismReliable(T[] values, BigFraction[] scores, double epsilon, boolean deterministic) throws IntervalArithmeticException {
     	
     	// Check arguments
     	if (values.length == 0) {
@@ -86,7 +85,7 @@ public class ExponentialMechanismReliable<T> {
     	// Initialize
     	BigFraction[] cumulativeDistributionFractions = new BigFraction[scores.length];
     	this.cumulativeDistribution = new BigInteger[scores.length];
-        this.values = (T[])new Object[scores.length];
+        this.values = values.clone();
         
         int index = 0;
         BigFraction denominatorProduct = BigFraction.ONE;
@@ -94,7 +93,6 @@ public class ExponentialMechanismReliable<T> {
         for (index = 0; index < values.length; index++) {
         	
         	// Extract
-        	T value = values[index];
         	BigFraction score = scores[index];
         	
         	// Calculate the next element of the cumulative distribution
@@ -105,7 +103,6 @@ public class ExponentialMechanismReliable<T> {
         	
         	// Store
         	cumulativeDistributionFractions[index] = nextAccumulated;
-        	this.values[index] = value;
         	lastAccumulated = nextAccumulated;
         }
         
