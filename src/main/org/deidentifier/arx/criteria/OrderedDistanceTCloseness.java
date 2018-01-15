@@ -108,19 +108,6 @@ public class OrderedDistanceTCloseness extends TCloseness {
         }
     }
     
-    /**
-     * Maps values to order nums
-     * @param order
-     * @return
-     */
-    private int[] getOrderNumbers(int[] order) {
-        int[] result = new int[order.length];
-        for (int orderNum = 0; orderNum < order.length; orderNum++) {
-            result[order[orderNum]] = orderNum;
-        }
-        return result;
-    }
-    
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
@@ -167,7 +154,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
         // Yes
         return true;
     }
-
+    
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
@@ -185,5 +172,18 @@ public class OrderedDistanceTCloseness extends TCloseness {
     @Override
     public String toString() {
         return t+"-closeness with ordered distance for attribute '"+attribute+"'";
+    }
+
+    /**
+     * Maps values to order nums
+     * @param order
+     * @return
+     */
+    private int[] getOrderNumbers(int[] order) {
+        int[] result = new int[order.length];
+        for (int orderNum = 0; orderNum < order.length; orderNum++) {
+            result[order[orderNum]] = orderNum;
+        }
+        return result;
     }
 }
