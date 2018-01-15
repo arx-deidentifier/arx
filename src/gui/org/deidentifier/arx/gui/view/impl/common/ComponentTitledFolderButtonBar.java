@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,24 +32,32 @@ import org.eclipse.swt.widgets.Composite;
  * @author Fabian Prasser
  */
 public class ComponentTitledFolderButtonBar implements IComponent{
-    
-    /**  View */
-    private List<String> titles = new ArrayList<String>();
-    
-    /**  View */
-    private Map<String, Image> images = new HashMap<String, Image>();
-    
-    /**  View */
-    private Map<String, Boolean> toggle = new HashMap<String, Boolean>();
-    
-    /**  View */
-    private Map<String, Runnable> runnables = new HashMap<String, Runnable>();
-    
-    /**  View */
-    private String id;
-    
-    /**  View */
+
+    /** View */
+    private String                       id;
+
+    /** View */
+    private List<String>                 titles    = new ArrayList<String>();
+
+    /** View */
+    private Map<String, Image>           images    = new HashMap<String, Image>();
+
+    /** View */
+    private Map<String, Boolean>         toggle    = new HashMap<String, Boolean>();
+
+    /** View */
+    private Map<String, Runnable>        runnables = new HashMap<String, Runnable>();
+
+    /** View */
     private final Map<Composite, String> helpids;
+    
+
+    /**
+     * Creates a new instance without help button
+     */
+    public ComponentTitledFolderButtonBar() {    
+        this(null);
+    }
     
     /**
      * Creates a new instance.

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ package org.deidentifier.arx.framework.lattice;
 
 import java.util.Arrays;
 
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationResult;
 import org.deidentifier.arx.metric.InformationLoss;
 
 import cern.colt.list.LongArrayList;
@@ -193,7 +193,7 @@ public class Transformation {
      * @param node the node
      * @param result the result
      */
-    public void setChecked(NodeChecker.Result result) {
+    public void setChecked(TransformationResult result) {
         
         // Set checked
         this.setProperty(solutionSpace.getPropertyChecked());

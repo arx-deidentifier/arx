@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.PriorityQueue;
 
 import org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty;
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationResult;
+import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.DependentAction;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
@@ -74,7 +75,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param config
      */
     public FLASHAlgorithmImpl(SolutionSpace solutionSpace,
-                              NodeChecker checker,
+                              TransformationChecker checker,
                               FLASHStrategy strategy,
                               FLASHConfiguration config) {
 
@@ -92,7 +93,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
     }
 
     @Override
-    public void traverse() {
+    public boolean traverse() {
         
         // Determine configuration for the outer loop
         FLASHPhaseConfiguration outerLoopConfiguration;
@@ -111,7 +112,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         Transformation top = solutionSpace.getTop();
 
         // Check bottom for speed and remember the result to prevent repeated checks
-        NodeChecker.Result result = checker.check(bottom);
+        TransformationResult result = checker.check(bottom);
         bottom.setProperty(solutionSpace.getPropertyForceSnapshot());
         bottom.setData(result);
 
@@ -140,6 +141,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         if (potentiallyInsufficientUtility != null) {
         	potentiallyInsufficientUtility.clear();
         }
+        
+        // Return whether the optimum has been found
+        return this.getGlobalOptimum() != null;
     }
 
     /**

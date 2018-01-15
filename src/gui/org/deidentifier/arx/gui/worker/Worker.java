@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  */
 public abstract class Worker<T> implements IRunnableWithProgress {
 
-	/** Error, if any. */
+    /** Error, if any. */
     protected Exception error  = null;
-    
+
     /** Result, if any. */
     protected T         result = null;
 
@@ -50,7 +50,7 @@ public abstract class Worker<T> implements IRunnableWithProgress {
     public T getResult() {
         return result;
     }
-
+    
     /**
      * Sets the error.
      *

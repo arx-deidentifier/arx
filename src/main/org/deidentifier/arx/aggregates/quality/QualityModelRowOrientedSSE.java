@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -263,6 +263,9 @@ public class QualityModelRowOrientedSSE extends QualityModel<QualityMeasureRowOr
      * @return
      */
     private double getMaximumEuclideanDistance(double[][] input, double[][] output, Double[] inputStdDev) {
+        
+        // TODO: Normalization should probably be performed using distances from the dataset centroid,
+        // TODO: analogously to the implementation of the metric
         
         // Calculate minimum and maximum
         double[] minimum = new double[input.length];

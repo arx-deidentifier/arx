@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class Example14 extends Example {
         config.addPrivacyModel(new KAnonymity(3));
         
         // NDS-specific settings
-        config.setMaxOutliers(1d); // Recommended default: 1d
+        config.setSuppressionLimit(1d); // Recommended default: 1d
         config.setAttributeWeight("age", 0.5d); // attribute weight
         config.setAttributeWeight("gender", 0.3d); // attribute weight
         config.setAttributeWeight("zipcode", 0.5d); // attribute weight

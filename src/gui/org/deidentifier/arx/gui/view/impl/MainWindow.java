@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
@@ -39,6 +40,7 @@ import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -53,7 +55,9 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
+import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
+import org.deidentifier.arx.gui.view.impl.menu.DialogClassificationConfiguration;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboDoubleSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogComboSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogCriterionSelection;
@@ -62,7 +66,6 @@ import org.deidentifier.arx.gui.view.impl.menu.DialogDebug;
 import org.deidentifier.arx.gui.view.impl.menu.DialogError;
 import org.deidentifier.arx.gui.view.impl.menu.DialogFindReplace;
 import org.deidentifier.arx.gui.view.impl.menu.DialogHelp;
-import org.deidentifier.arx.gui.view.impl.menu.DialogLocalAnonymization;
 import org.deidentifier.arx.gui.view.impl.menu.DialogMultiSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogOrderSelection;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQuery;
@@ -340,6 +343,19 @@ public class MainWindow implements IView {
     }
     
     /**
+     * Shows a preference dialog for editing parameter values of classification
+     * configurations.
+     * @param config 
+     * 
+     * @param model
+     */
+    public ARXClassificationConfiguration<?> showClassificationConfigurationDialog(ARXClassificationConfiguration<?> config) {
+        DialogClassificationConfiguration dialog = new DialogClassificationConfiguration(shell, config);
+        dialog.open();
+        return dialog.getResult();
+    }
+
+    /**
      * Shows a dialog for configuring privacy criteria.
      *
      * @param criteria
@@ -351,7 +367,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-
+    
     /**
      * Shows a debug dialog.
      */
@@ -360,7 +376,7 @@ public class MainWindow implements IView {
         dialog.create();
         dialog.open();
     }
-    
+
     /**
      * Shows an error dialog.
      *
@@ -398,7 +414,7 @@ public class MainWindow implements IView {
     public void showErrorDialog(final String message, final Throwable throwable) {
         showErrorDialog(this.shell, message, throwable);
     }
-
+    
     /**
      * Shows a find & replace dialog
      * @param handle
@@ -412,7 +428,7 @@ public class MainWindow implements IView {
         dialog.open();
         return dialog.getValue();
     }
-    
+
     /**
      * Shows an input dialog for selecting formats string for data types.
      *
@@ -499,7 +515,7 @@ public class MainWindow implements IView {
             return null;
         }
     }
-
+    
     /**
      * Shows a help dialog.
      *
@@ -568,18 +584,19 @@ public class MainWindow implements IView {
             return null;
         }
     }
-
     /**
-     * Shows a dialog for local anonymization
+     * Shows a dialog for anonymization parameters
+     * @param model
      * @return Returns the parameters selected by the user. Returns a pair. 
      *         First: max. time per iteration. Second: min. records per iteration.
      */
-    public Pair<Double, Double> showLocalAnonymizationDialog() {
-        DialogLocalAnonymization dialog = new DialogLocalAnonymization(shell);
+    public ModelAnonymizationConfiguration showLocalAnonymizationDialog(Model model) {
+        DialogAnonymization dialog = new DialogAnonymization(shell, model);
         dialog.create();
         dialog.open();
         return dialog.getResult();
     }
+
     /**
      * Shows a dialog that allows selecting multiple elements
      * @param shell
@@ -706,6 +723,7 @@ public class MainWindow implements IView {
         dialog.setFilterIndex(0);
         return dialog.open();
     }
+    
 
     /**
      * Shows a dialog for selecting privacy criteria.
@@ -724,7 +742,6 @@ public class MainWindow implements IView {
             return dialog.getCriterion();
         }
     }
-    
 
     /**
      * Shows a top/bottom coding dialog
@@ -739,7 +756,7 @@ public class MainWindow implements IView {
         dialog.open();
         return dialog.getValue();
     }
-
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -765,7 +782,7 @@ public class MainWindow implements IView {
         }
         throw new IllegalStateException("Unknown locale");
     }
-    
+
     /**
      * Creates the global menu
      * @return
@@ -782,7 +799,6 @@ public class MainWindow implements IView {
         return menu;
     }
 
-
     /**
      * Creates the edit menu
      * @return
@@ -794,26 +810,7 @@ public class MainWindow implements IView {
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.21"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_anonymize.png"), //$NON-NLS-1$
                                    true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(false, false); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
-            }
-        });
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.40"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("edit_anonymize_heuristic.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(true, false); }
-            public boolean isEnabled(Model model) { 
-                return model != null && model.getPerspective() == Perspective.CONFIGURATION;
-            }
-        });
-        
-
-        items.add(new MainMenuItem(Resources.getMessage("MainMenu.44"), //$NON-NLS-1$
-                                   controller.getResources().getManagedImage("edit_anonymize_local.png"), //$NON-NLS-1$
-                                   true) {
-            public void action(Controller controller) { controller.actionMenuEditAnonymize(true, true); }
+            public void action(Controller controller) { controller.actionMenuEditAnonymize(); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getPerspective() == Perspective.CONFIGURATION;
             }
@@ -1216,4 +1213,5 @@ public class MainWindow implements IView {
             }  
         };
     }
+
 }

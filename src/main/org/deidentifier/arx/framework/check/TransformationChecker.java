@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,13 @@ package org.deidentifier.arx.framework.check;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
-import org.deidentifier.arx.framework.check.StateMachine.Transition;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.check.TransformationCheckerStateMachine.Transition;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.history.History;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataMatrix;
-import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -40,91 +38,43 @@ import org.deidentifier.arx.metric.Metric;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class NodeChecker {
-
-    /**
-     * The result of a check.
-     */
-    public static class Result {
-        
-        /** Overall anonymity. */
-        public final Boolean privacyModelFulfilled;
-        
-        /** k-Anonymity sub-criterion. */
-        public final Boolean minimalClassSizeFulfilled;
-        
-        /** Information loss. */
-        public final InformationLoss<?> informationLoss;
-        
-        /** Lower bound. */
-        public final InformationLoss<?> lowerBound;
-
-        /**
-         * Creates a new instance.
-         * 
-         * @param privacyModelFulfilled
-         * @param minimalClassSizeFulfilled
-         * @param infoLoss
-         * @param lowerBound
-         */
-        Result(Boolean privacyModelFulfilled,
-               Boolean minimalClassSizeFulfilled,
-               InformationLoss<?> infoLoss,
-               InformationLoss<?> lowerBound) {
-            this.privacyModelFulfilled = privacyModelFulfilled;
-            this.minimalClassSizeFulfilled = minimalClassSizeFulfilled;
-            this.informationLoss = infoLoss;
-            this.lowerBound = lowerBound;
-        }
-    }
+public class TransformationChecker {
 
     /** The config. */
-    private final ARXConfigurationInternal        config;
+    private final ARXConfigurationInternal          config;
 
+    /** The data manager. */
+    private final DataManager                       manager;
+    
     /** The data. */
-    private final Data                            dataGeneralized;
-
-    /** The microaggregation functions. */
-    private final DistributionAggregateFunction[] microaggregationFunctions;
-
-    /** The start index of the attributes with microaggregation in the data array */
-    private final int                             microaggregationStartIndex;
-
-    /** The number of attributes with microaggregation in the data array */
-    private final int                             microaggregationNumAttributes;
-
-    /** Map for the microaggregated data subset */
-    private final int[]                           microaggregationMap;
-
-    /** Header of the microaggregated data subset */
-    private final String[]                        microaggregationHeader;
+    private final Data                              dataGeneralized;
 
     /** The current hash groupify. */
-    private HashGroupify                          currentGroupify;
+    private HashGroupify                            currentGroupify;
 
     /** The last hash groupify. */
-    private HashGroupify                          lastGroupify;
+    private HashGroupify                            lastGroupify;
 
     /** The history. */
-    private final History                         history;
+    private final History                           history;
 
     /** The metric. */
-    private final Metric<?>                       metric;
+    private final Metric<?>                         metric;
 
     /** The state machine. */
-    private final StateMachine                    stateMachine;
+    private final TransformationCheckerStateMachine stateMachine;
 
     /** The data transformer. */
-    private final Transformer                     transformer;
+    private final Transformer                       transformer;
 
     /** The solution space */
-    private final SolutionSpace                   solutionSpace;
+    private final SolutionSpace                     solutionSpace;
 
     /** Is a minimal class size required */
-    private final boolean                         minimalClassSizeRequired;
+    private final boolean                           minimalClassSizeRequired;
 
     /**
-     * Creates a new NodeChecker instance.
+     * Creates a new transformation checker.
      * 
      * @param manager The manager
      * @param metric The metric
@@ -134,26 +84,23 @@ public class NodeChecker {
      * @param snapshotSizeSnapshot A history threshold
      * @param solutionSpace
      */
-    public NodeChecker(final DataManager manager,
-                       final Metric<?> metric,
-                       final ARXConfigurationInternal config,
-                       final int historyMaxSize,
-                       final double snapshotSizeDataset,
-                       final double snapshotSizeSnapshot,
-                       final SolutionSpace solutionSpace) {
+    public TransformationChecker(final DataManager manager,
+                                 final Metric<?> metric,
+                                 final ARXConfigurationInternal config,
+                                 final int historyMaxSize,
+                                 final double snapshotSizeDataset,
+                                 final double snapshotSizeSnapshot,
+                                 final SolutionSpace solutionSpace) {
         
-        // Initialize all operators
+        // Store data
         this.metric = metric;
+        this.manager = manager;
         this.config = config;
         this.dataGeneralized = manager.getDataGeneralized();
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationNumAttributes = manager.getMicroaggregationNumAttributes();
-        this.microaggregationMap = manager.getMicroaggregationMap();
-        this.microaggregationHeader = manager.getMicroaggregationHeader();
         this.solutionSpace = solutionSpace;
         this.minimalClassSizeRequired = config.getMinimalGroupSize() != Integer.MAX_VALUE;
         
+        // Initialize all operators
         int initialSize = (int) (manager.getDataGeneralized().getDataLength() * 0.01d);
         IntArrayDictionary dictionarySensValue;
         IntArrayDictionary dictionarySensFreq;
@@ -175,91 +122,32 @@ public class NodeChecker {
                                    dictionarySensFreq,
                                    solutionSpace);
         
-        this.stateMachine = new StateMachine(history);
+        this.stateMachine = new TransformationCheckerStateMachine(history);
         this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
                                            manager.getDataAnalyzed().getArray(),
+                                           manager.getAggregationInformation().getHotThreshold(),
                                            manager.getHierarchies(),
                                            config,
                                            dictionarySensValue,
                                            dictionarySensFreq);
-        this.currentGroupify = new HashGroupify(initialSize, config,
+        
+        this.currentGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                                 manager.getDataGeneralized().getArray(),
                                                 transformer.getBuffer(),
                                                 manager.getDataAnalyzed().getArray());
-        this.lastGroupify = new HashGroupify(initialSize, config,
+        
+        this.lastGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                              manager.getDataGeneralized().getArray(),
                                              transformer.getBuffer(),
                                              manager.getDataAnalyzed().getArray());
     }
 
-    
-    /**
-     * Applies the given transformation and returns the dataset
-     * @param transformation
-     * @return
-     */
-    public TransformedData applyTransformation(final Transformation transformation) {
-        return applyTransformation(transformation,
-                                   new Dictionary(microaggregationNumAttributes));
-    }
-        
-    /**
-     * Applies the given transformation and returns the dataset
-     * @param transformation
-     * @param microaggregationDictionary A dictionary for microaggregated values
-     * @return
-     */
-    public TransformedData applyTransformation(final Transformation transformation,
-                                               final Dictionary microaggregationDictionary) {
-        
-        // Prepare
-        microaggregationDictionary.definalizeAll();
-        
-        // Apply transition and groupify
-        currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
-        currentGroupify.stateAnalyze(transformation, true);
-        if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
-            currentGroupify.stateResetSuppression();
-        }
-        
-        // Determine information loss
-        InformationLoss<?> loss = transformation.getInformationLoss();
-        if (loss == null) {
-            loss = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss();
-        }
-        
-        // Prepare buffers
-        Data microaggregatedOutput = new Data(new DataMatrix(0,0), new String[0], new int[0], new Dictionary(0));
-        Data generalizedOutput = new Data(transformer.getBuffer(), dataGeneralized.getHeader(), dataGeneralized.getMap(), dataGeneralized.getDictionary());
-        
-        // Perform microaggregation. This has to be done before suppression.
-        if (microaggregationFunctions.length > 0) {
-            microaggregatedOutput = currentGroupify.performMicroaggregation(microaggregationStartIndex,
-                                                                            microaggregationNumAttributes,
-                                                                            microaggregationFunctions,
-                                                                            microaggregationMap,
-                                                                            microaggregationHeader,
-                                                                            microaggregationDictionary);
-        }
-        
-        // Perform suppression
-        if (config.getAbsoluteMaxOutliers() != 0 || !currentGroupify.isPrivacyModelFulfilled()) {
-            currentGroupify.performSuppression();
-        }
-        
-        // Return the buffer
-        return new TransformedData(generalizedOutput, microaggregatedOutput, 
-                                   new Result(currentGroupify.isPrivacyModelFulfilled(), 
-                                              minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null, 
-                                              loss, null));
-    }
-    
     /**
      * Checks the given transformation, computes the utility if it fulfills the privacy model
      * @param node
      * @return
      */
-    public NodeChecker.Result check(final Transformation node) {
+    public TransformationResult check(final Transformation node) {
         return check(node, false);
     }
     
@@ -269,16 +157,16 @@ public class NodeChecker {
      * @param forceMeasureInfoLoss
      * @return
      */
-    public NodeChecker.Result check(final Transformation node, final boolean forceMeasureInfoLoss) {
+    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss) {
         
         // If the result is already know, simply return it
-        if (node.getData() != null && node.getData() instanceof NodeChecker.Result) {
-            return (NodeChecker.Result) node.getData();
+        if (node.getData() != null && node.getData() instanceof TransformationResult) {
+            return (TransformationResult) node.getData();
         }
         
         // Store snapshot from last check
-        if (stateMachine.getLastNode() != null) {
-            history.store(solutionSpace.getTransformation(stateMachine.getLastNode()), currentGroupify, stateMachine.getLastTransition().snapshot);
+        if (stateMachine.getLastTransformation() != null) {
+            history.store(solutionSpace.getTransformation(stateMachine.getLastTransformation()), currentGroupify, stateMachine.getLastTransition().snapshot);
         }
         
         // Transition
@@ -315,12 +203,20 @@ public class NodeChecker {
         InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
         
         // Return result;
-        return new NodeChecker.Result(currentGroupify.isPrivacyModelFulfilled(),
+        return new TransformationResult(currentGroupify.isPrivacyModelFulfilled(),
                                       minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
                                       loss,
                                       bound);
     }
     
+    /**
+     * Returns an associated transformation applicator
+     * @return
+     */
+    public TransformationApplicator getApplicator() {
+        return new TransformationApplicator(this.manager, this.getOutputBuffer(), this.metric, this.config);
+    }
+
     /**
      * Returns the configuration
      * @return
@@ -328,7 +224,15 @@ public class NodeChecker {
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
-
+    
+    /**
+     * Returns the header of generalized data
+     * @return
+     */
+    public String[] getHeader() {
+        return dataGeneralized.getHeader();
+    }
+    
     /**
      * Returns the checkers history, if any.
      *
@@ -354,6 +258,14 @@ public class NodeChecker {
         return metric;
     }
     
+    /**
+     * Returns the output buffer
+     * @return
+     */
+    public DataMatrix getOutputBuffer() {
+        return this.transformer.getBuffer();
+    }
+
     /**
      * Frees memory
      */

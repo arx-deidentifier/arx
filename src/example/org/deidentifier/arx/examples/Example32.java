@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,17 +74,16 @@ public class Example32 extends Example {
         zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
         zipcode.add("NULL", "NULL", "NULL", "NULL", "NULL", "*****");
         
-        data.getDefinition().setHierarchy("zipcode", zipcode);
         data.getDefinition().setAttributeType("age", MicroAggregationFunction.createGeometricMean());
         data.getDefinition().setAttributeType("gender", gender);
-        data.getDefinition().setAttributeType("zipcode", MicroAggregationFunction.createGeneralization());
+        data.getDefinition().setAttributeType("zipcode", zipcode);
         data.getDefinition().setAttributeType("date", MicroAggregationFunction.createArithmeticMean());
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0.5d);
+        config.setSuppressionLimit(0.5d);
 
         // Obtain result
         ARXResult result = anonymizer.anonymize(data, config);

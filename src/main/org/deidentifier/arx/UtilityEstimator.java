@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -96,12 +96,10 @@ class UtilityEstimator {
         this.monotonicNonAnonymous = monotonicNonAnonymous;
         
         // Make sure that all nodes have an identifier
-        if (this.lattice.getBottom().getId() == null) {
-            int id = 0;
-            for (ARXNode[] level : this.lattice.getLevels()) {
-                for (ARXNode node : level) {
-                    node.setId(id++);
-                }
+        int id = 0;
+        for (ARXNode[] level : this.lattice.getLevels()) {
+            for (ARXNode node : level) {
+                node.setId(id++);
             }
         }
     }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -305,11 +305,16 @@ public class Vocabulary_V1 extends Vocabulary {
     }
 
 	@Override
+    public String getResponseVariable() {
+        return "response"; //$NON-NLS-1$
+    }
+
+	@Override
 	public String getTransformation() {
 		return "transformation"; //$NON-NLS-1$
 	}
 
-	@Override
+    @Override
 	public String getType() {
 		return "type"; //$NON-NLS-1$
 	}

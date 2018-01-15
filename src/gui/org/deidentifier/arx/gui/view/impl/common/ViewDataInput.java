@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,6 +41,7 @@ import org.eclipse.swt.widgets.MenuItem;
  * A view on a <code>Data</code> object.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class ViewDataInput extends ViewData {
  
@@ -77,6 +78,7 @@ public class ViewDataInput extends ViewData {
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
+        controller.addListener(ModelPart.RESPONSE_VARIABLES, this);
         
         // Make editable
         if (editable) {
@@ -151,7 +153,7 @@ public class ViewDataInput extends ViewData {
             // Update the attribute types
             table.getHeaderImages().clear();
             for (int i = 0; i < handle.getNumColumns(); i++) {
-                updateHeaderImage(i, definition.getAttributeType(handle.getAttributeName(i)));
+                updateHeaderImage(i, handle.getAttributeName(i), definition);
             }
             
             // Redraw
@@ -184,7 +186,7 @@ public class ViewDataInput extends ViewData {
             table.setResearchSubset(model.getInputConfig().getResearchSubset());
             table.redraw();
             
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.RESPONSE_VARIABLES) {
             
             if (model != null){
                 
@@ -199,7 +201,7 @@ public class ViewDataInput extends ViewData {
     
                     // Update the attribute types
                     final int index = handle.getColumnIndexOf(attr);
-                    updateHeaderImage(index, definition.getAttributeType(attr));
+                    updateHeaderImage(index, attr, definition);
     
                     // Redraw
                     table.setEnabled(true);

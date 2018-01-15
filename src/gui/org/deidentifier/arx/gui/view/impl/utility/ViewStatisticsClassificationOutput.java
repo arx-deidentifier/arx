@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsLogisticRegressionOutput  extends ViewStatisticsLogisticRegression {
+public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassification {
 
     /**
      * Creates a new instance.
@@ -38,36 +38,49 @@ public class ViewStatisticsLogisticRegressionOutput  extends ViewStatisticsLogis
      * @param parent
      * @param controller
      */
-    public ViewStatisticsLogisticRegressionOutput(final Composite parent,
-                                         final Controller controller) {
+    public ViewStatisticsClassificationOutput(final Composite parent, final Controller controller) {
         super(parent, controller, ModelPart.OUTPUT);
     }
 
     @Override
-    protected String[] getColumnHeaders() {
+    protected String[] getColumnHeadersForPerformanceForOverallPerformanceTable() {
         return new String[] {
+                // Baseline accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
+                // Accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
+                // Original accuracy
+                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
+                // Relative accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.7"), //$NON-NLS-1$
-                Resources.getMessage("ViewStatisticsClassificationInput.12") //$NON-NLS-1$
         };
     }
     
     @Override
-    protected List<Double> getColumnValues(StatisticsClassification result) {
+    protected String[] getColumnHeadersForAUCTable() {
+        return new String[] {
+                // Baseline AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.14"), //$NON-NLS-1$
+                // AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.24"), //$NON-NLS-1$
+                // Original AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.23"), //$NON-NLS-1$
+                // Relative AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.2"), //$NON-NLS-1$
+        };
+    }
+    
+    @Override
+    protected List<Double> getColumnValuesForOverallPerformanceTable(StatisticsClassification result) {
         List<Double> list = new ArrayList<Double>();
         list.add(result.getZeroRAccuracy());
-        list.add(result.getOriginalAccuracy());
         list.add(result.getAccuracy());
+        list.add(result.getOriginalAccuracy());
         if (result.getOriginalAccuracy() - result.getZeroRAccuracy() == 0d) {
             list.add(result.getAccuracy() / result.getZeroRAccuracy());
         } else {
             list.add((result.getAccuracy() - result.getZeroRAccuracy()) / (result.getOriginalAccuracy() - result.getZeroRAccuracy()));
         }
-        list.add(result.getAverageError());
-        list.add(result.getAverageError()-result.getOriginalAverageError());
         return list;
     }
 

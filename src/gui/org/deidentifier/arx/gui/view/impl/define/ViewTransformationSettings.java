@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -156,11 +156,11 @@ public class ViewTransformationSettings implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 model.getInputConfig()
-                     .setAllowedOutliers(SWTUtil.sliderToDouble(0d,
+                     .setSuppressionLimit(SWTUtil.sliderToDouble(0d,
                                                             1d,
                                                             sliderOutliers.getSelection()));
-                labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getAllowedOutliers()*100d)+"%");
-                if (model.getInputConfig().getAllowedOutliers() != 0) {
+                labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getSuppressionLimit()*100d)+"%");
+                if (model.getInputConfig().getSuppressionLimit() != 0) {
                     buttonPracticalMonotonicity.setEnabled(true);
                 } else {
                     buttonPracticalMonotonicity.setSelection(false);
@@ -262,8 +262,8 @@ public class ViewTransformationSettings implements IView {
         this.labelThreshold.setText(SWTUtil.getPrettyString(threshold*100d)+"%");
         
         // Other stuff
-        sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getAllowedOutliers()));
-        labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getAllowedOutliers()*100d)+"%");
+        sliderOutliers.setSelection(SWTUtil.doubleToSlider(0d, 0.999d, model.getInputConfig().getSuppressionLimit()));
+        labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getSuppressionLimit()*100d)+"%");
         buttonPracticalMonotonicity.setSelection(model.getInputConfig().isPracticalMonotonicity());
         
         // Enable
