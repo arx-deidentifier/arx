@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
@@ -159,6 +160,37 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    public ILScoreBigFraction getScoreReliable(final Transformation node, final HashGroupify groupify) {
+    	// Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+
+        // Compute score
+        BigFraction score = new BigFraction(0);
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            m.read();
+            for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+                if (m.count>0) {
+                    int value = m.next();
+                    int level = transformation[dimension];
+                    BigFraction share = (new BigFraction(m.count)).multiply(shares[dimension].getShareReliable(value, level));
+                    score = score.add(m.isNotOutlier ? share : new BigFraction(m.count));
+                }
+                score = score.add(new BigFraction(m.pcount - m.count));
+            }
+            m = m.nextOrdered;
+        }
+
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        score = score.multiply(new BigFraction(-1, dimensionsGeneralized));
+        if (k > 1) score = score.divide(new BigFraction(k - 1d));
+
+        // Return score
+        return new ILScoreBigFraction(score);
+    }
+    
+    @Override
     public double getSuppressionFactor() {
         return sFactor;
     }
@@ -170,6 +202,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isReliableScoreFunctionSupported() {
         return true;
     }
     
@@ -345,7 +382,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this.tuples = (double)super.getNumRecords(config, input);
         
         // Save domain shares
-        this.shares = manager.getDomainShares();
+        this.shares = manager.getDomainShares(config.isReliableAnonymizationEnabled());
         
         // Store minimal size of equivalence classes
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {

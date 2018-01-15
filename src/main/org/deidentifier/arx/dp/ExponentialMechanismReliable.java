@@ -90,6 +90,7 @@ public class ExponentialMechanismReliable<T> {
         
         int index = 0;
         BigFraction denominatorProduct = BigFraction.ONE;
+        BigFraction lastAccumulated = new BigFraction(0);
         for (index = 0; index < values.length; index++) {
         	
         	// Extract
@@ -97,17 +98,15 @@ public class ExponentialMechanismReliable<T> {
         	BigFraction score = scores[index];
         	
         	// Calculate the next element of the cumulative distribution
-        	BigFraction nextAccumulated = index == 0 ? new BigFraction(0) : cumulativeDistributionFractions[index-1];
-        	nextAccumulated = nextAccumulated.add(base.pow(floorToInt(score)));
+        	BigFraction nextAccumulated = lastAccumulated.add(base.pow(floorToInt(score)));
         	
         	// Update the product of denominators
         	denominatorProduct = denominatorProduct.multiply(score.getDenominator());
         	
         	// Store
         	cumulativeDistributionFractions[index] = nextAccumulated;
-        	values[index] = value;
-        	
-        	index++;
+        	this.values[index] = value;
+        	lastAccumulated = nextAccumulated;
         }
         
         // Scale the cumulative distribution so that it contains only natural numbers

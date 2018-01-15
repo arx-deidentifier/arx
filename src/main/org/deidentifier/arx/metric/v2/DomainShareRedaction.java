@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 
 /**
@@ -130,5 +131,17 @@ public class DomainShareRedaction implements DomainShare {
         // Compute and interpolate
         double input = Math.pow(alphabetSize, (double)level - maxValueLength);
         return (input - minInput) / (maxInput - minInput) * (maxOutput - minOutput) + minOutput;
+    }
+    
+    /**
+     * Returns the reliable share of the given value.
+     *
+     * @param value
+     * @param level
+     * @return
+     */
+    @Override
+    public BigFraction getShareReliable(int value, int level) {
+    	throw new RuntimeException("Calculation of reliable shares is not yet implemented");
     }
 }

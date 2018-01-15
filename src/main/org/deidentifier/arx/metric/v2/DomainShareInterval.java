@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
@@ -217,6 +218,18 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
             long key = (((long) value) << 32) | (level & 0xffffffffL);
             return duplicates.getOrDefault(key, -share);
         }
+    }
+    
+    /**
+     * Returns the reliable share of the given value.
+     *
+     * @param value
+     * @param level
+     * @return
+     */
+    @Override
+    public BigFraction getShareReliable(int value, int level) {
+    	throw new RuntimeException("Calculation of reliable shares is not yet implemented");
     }
 
     /**

@@ -19,6 +19,8 @@ package org.deidentifier.arx.metric.v2;
 
 import java.io.Serializable;
 
+import org.apache.commons.math3.fraction.BigFraction;
+
 /**
  * Base interface for domain shares.
  *
@@ -47,4 +49,13 @@ public interface DomainShare extends Serializable{
      * @return
      */
     public abstract double getShare(int value, int level);
+    
+    /**
+     * Returns the reliable share of the given value.
+     *
+     * @param value
+     * @param level
+     * @return
+     */
+    public abstract BigFraction getShareReliable(int value, int level);
 }

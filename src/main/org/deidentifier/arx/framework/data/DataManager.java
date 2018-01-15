@@ -420,12 +420,21 @@ public class DataManager {
         int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
         return getDistribution(dataAnalyzed.getArray(), index, distinctValues);
     }
-
+    
     /**
      * Returns the domain shares for all generalized quasi-identifiers
      * @return
      */
     public DomainShare[] getDomainShares() {
+    	return getDomainShares(false);
+    }
+
+    /**
+     * Returns the domain shares for all generalized quasi-identifiers
+     * @param reliable
+     * @return
+     */
+    public DomainShare[] getDomainShares(boolean reliable) {
 
         // Build on-demand
         if (this.shares == null) {
@@ -454,7 +463,8 @@ public class DataManager {
                 } else {
                     this.shares[i] = new DomainShareMaterialized(hierarchy, 
                                                             dataGeneralized.getDictionary().getMapping()[i],
-                                                            hierarchiesGeneralized[i].getArray());
+                                                            hierarchiesGeneralized[i].getArray(),
+                                                            reliable);
                 }
             }
         }
