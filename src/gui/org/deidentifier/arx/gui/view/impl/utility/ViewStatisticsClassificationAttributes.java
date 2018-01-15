@@ -105,7 +105,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             }
             features.addAll(model.getSelectedFeatures());
             classes.addAll(model.getSelectedClasses());
-            responseVariables.addAll(model.getInputDefinition().getResponseVariables());
+            responseVariables.addAll(definition.getResponseVariables());
         }
 
         @Override
@@ -409,7 +409,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             // Classes
             TableItem itemC = new TableItem(classes, SWT.NONE);
             itemC.setText(new String[] { "", attribute }); //$NON-NLS-1$
-            image = controller.getResources().getImage(type, model.getInputDefinition().getResponseVariables().contains(attribute));
+            image = controller.getResources().getImage(type, state.responseVariables.contains(attribute));
             itemC.setImage(0, image);
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
             

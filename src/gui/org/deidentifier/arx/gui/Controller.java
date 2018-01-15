@@ -669,18 +669,14 @@ public class Controller implements IView {
             if (result.isResultAvailable()) {
                 model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
+                
                 // Classification parameter
                 model.getSelectedFeatures().clear();
+                model.getSelectedFeatures().addAll(model.getOutputDefinition().getQuasiIdentifyingAttributes());
                 model.getSelectedClasses().clear();
-                for (int col = 0; col < model.getOutput().getNumColumns(); col++) {
-                    String attribute = model.getOutput().getAttributeName(col);
-                    if (model.getOutputDefinition().getAttributeType(attribute) == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
-                        model.getSelectedFeatures().add(attribute);
-                    }
-                    if (model.getOutputDefinition().getResponseVariables().contains(attribute)) {
-                        model.getSelectedClasses().add(attribute);
-                    }
-                }
+                model.getSelectedClasses().addAll(model.getOutputDefinition().getResponseVariables());
+                
+                // Events
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
                                       workerResult.getSecond()));
