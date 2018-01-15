@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
@@ -26,10 +25,19 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
  * 
  * @author Fabian Prasser
  */
-public class AverageReidentificationRisk extends RiskBasedCriterion{
+public class AverageReidentificationRisk extends RiskBasedCriterion {
 
-    /** SVUID*/
+    /** SVUID */
     private static final long serialVersionUID = -2953252206954936045L;
+
+    /** Smallest size, derived from highest risk */
+    private final Integer     smallestSize;
+
+    /** Highest risk */
+    private final Double      highestRisk;
+
+    /** Records with a risk higher than the highest risk */
+    private final Double      recordsAtRisk;
 
     /**
      * Creates a new instance of this criterion.
@@ -38,11 +46,60 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
      */
     public AverageReidentificationRisk(double riskThreshold){
         super(true, true, riskThreshold);
+        this.highestRisk = null;
+        this.recordsAtRisk = null;
+        this.smallestSize = null;
+    }
+    
+    /**
+     * Creates a new instance of a relaxed variant of this criterion with average risk, 
+     * highest risk and the fraction of records with a risk exceeding the highest risk
+     *  
+     * @param averageRisk
+     * @param highestRisk Please note: due to rounding issues, this risk may be exceeded by up to 1%
+     * @param recordsAtRisk
+     */
+    public AverageReidentificationRisk(double averageRisk, double highestRisk, double recordsAtRisk){
+        super(true, true, averageRisk);
+        if (highestRisk <= 0d || highestRisk > 1d) {
+            throw new IllegalArgumentException("Invalid risk threshold: " + highestRisk);
+        }
+        if (recordsAtRisk < 0d || highestRisk > 1d) {
+            throw new IllegalArgumentException("Invalid fraction: " + recordsAtRisk);
+        }
+        this.highestRisk = highestRisk;
+        this.recordsAtRisk = recordsAtRisk;
+        this.smallestSize = getSizeThreshold(highestRisk);
     }
 
     @Override
     public AverageReidentificationRisk clone() {
-        return new AverageReidentificationRisk(this.getRiskThreshold());
+        if (this.highestRisk == null) {
+            return new AverageReidentificationRisk(this.getRiskThreshold());
+        } else {
+            return new AverageReidentificationRisk(this.getRiskThreshold(), highestRisk, recordsAtRisk);
+        }
+    }
+
+    /**
+     * @return the average risk
+     */
+    public double getAverageRisk() {
+        return getRiskThreshold();
+    }
+    
+    /**
+     * @return the highest risk
+     */
+    public double getHighestRisk() {
+        return highestRisk;
+    }
+    
+    /**
+     * @return the records at risk
+     */
+    public double getRecordsAtRisk() {
+        return recordsAtRisk;
     }
     
     /**
@@ -52,7 +109,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     public double getRiskThresholdMarketer() {
         return getRiskThreshold();
     }
-
+    
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
@@ -62,16 +119,54 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     public ElementData render() {
         ElementData result = new ElementData("Average re-identification risk");
         result.addProperty("Threshold", this.getRiskThreshold());
+        if (highestRisk != null) {
+            result.addProperty("Highest risk", highestRisk);    
+        }
+        if (recordsAtRisk != null) {
+            result.addProperty("Records at risk", recordsAtRisk);    
+        }
         return result;
     }
 
     @Override
     public String toString() {
-        return "("+getRiskThreshold()+")-avg-reidentification-risk";
+        if (highestRisk == null) {
+            return "("+getRiskThreshold()+")-avg-reidentification-risk";
+        } else {
+            return "("+getRiskThreshold()+", " + highestRisk + ", " + recordsAtRisk + ")-avg-reidentification-risk";
+        }
+    }
+
+    /**
+     * Returns a minimal class size for the given risk threshold
+     * TODO: There are similar issues in multiple privacy models, e.g. in the game-theoretic model
+     * TODO: This should be fixed once and for all
+     * @param threshold
+     * @return
+     */
+    private Integer getSizeThreshold(double riskThreshold) {
+        double size = 1d / highestRisk;
+        double floor = Math.floor(size);
+        if ((1d / floor) - (1d / size) >= 0.01d * highestRisk) {
+            floor += 1d;
+        }
+        return (int)floor;
     }
 
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
-        return 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
+        
+        // Check average class size
+        boolean result = 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
+        if (highestRisk == null) {
+            return result;
+        }
+        
+        // Check records at risk
+        double fraction = 0d;
+        for (int size = 1; size <= smallestSize; size++) {
+            fraction += distribution.getFractionOfRecordsInClassesOfSize(size);
+        }
+        return result && (fraction <= recordsAtRisk);
     }
 }
