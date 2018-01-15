@@ -1039,7 +1039,7 @@ public class Model implements Serializable {
     }
     
     /**
-     * Returns the selected features
+     * Returns the selected classes
      * @return
      */
     public Set<String> getSelectedClasses() {
