@@ -21,7 +21,8 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 
 /**
  * This criterion ensures that an estimate for the average re-identification risk falls
- * below a given threshold.
+ * below a given threshold. Furthermore a relaxed variant of this model is also implemented,
+ * supporting average risk, highest risk and a fraction of records allowed to exceed the highest risk
  * 
  * @author Fabian Prasser
  */
