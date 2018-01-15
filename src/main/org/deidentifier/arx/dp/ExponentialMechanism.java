@@ -122,6 +122,14 @@ public class ExponentialMechanism<T> {
      */
     public ExponentialMechanism(T[] values, Double[] scores, double epsilon, int precision, boolean deterministic) {
     	
+    	// Check arguments
+    	if (values.length == 0) {
+    		throw new RuntimeException("No values supplied");
+    	}
+    	if (values.length != scores.length) {
+    		throw new RuntimeException("Number of scores and values must be identical");
+    	}
+    	
     	// The following code calculates the probability distribution which assigns every value
         // a probability proportional to exp(0,5 * epsilon * score)
 

@@ -20,6 +20,7 @@ package org.deidentifier.arx.algorithm;
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.InformationLossSource;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -101,7 +102,7 @@ public abstract class AbstractAlgorithm {
                 transformation.setInformationLoss(loss.getInformationLoss());
                 transformation.setLowerBound(loss.getLowerBound());
             } else {
-                transformation.setChecked(checker.check(transformation, true, false));
+                transformation.setChecked(checker.check(transformation, true, InformationLossSource.CONVENTIONAL));
             }
         }
     }

@@ -25,6 +25,7 @@ import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.dp.ExponentialMechanismReliable;
 import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.InformationLossSource;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -94,7 +95,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         this.reliable = reliable;
         
         if (reliable) {
-        	IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
+            IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
         	try {
 				epsilonStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).getLowerBound();
 			} catch (IntervalArithmeticException e) {
@@ -203,8 +204,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     * @param transformation
     */
     private void assureChecked(final Transformation transformation) {
+    	InformationLossSource ilSource = reliable ? InformationLossSource.SCORE_RELIABLE : InformationLossSource.SCORE;
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true, true));
+            transformation.setChecked(checker.check(transformation, true, ilSource));
         }
     }
 }

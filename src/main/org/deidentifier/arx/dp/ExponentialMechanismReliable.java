@@ -66,8 +66,11 @@ public class ExponentialMechanismReliable<T> {
 	public ExponentialMechanismReliable(T[] values, BigFraction[] scores, double epsilon, boolean deterministic) throws IntervalArithmeticException {
     	
     	// Check arguments
-    	if (epsilon < 0d) {
-    		throw new IllegalArgumentException("Epsilon has to be greater than or equal to zero");
+    	if (values.length == 0) {
+    		throw new RuntimeException("No values supplied");
+    	}
+    	if (values.length != scores.length) {
+    		throw new RuntimeException("Number of scores and values must be identical");
     	}
     	
     	// Calculate the base to use, depending on epsilon
