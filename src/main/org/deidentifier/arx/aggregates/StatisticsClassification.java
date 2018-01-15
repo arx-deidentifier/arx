@@ -359,8 +359,8 @@ public class StatisticsClassification {
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
             // Create classifiers
-            ClassificationMethod inputZeroR = getClassifier(specification, config);
-            ClassificationMethod inputClassifier = new MultiClassZeroR(specification);
+            ClassificationMethod inputClassifier = getClassifier(specification, config);
+            ClassificationMethod inputZeroR = new MultiClassZeroR(specification);
             ClassificationMethod outputClassifier = null;
             if (inputHandle != outputHandle) {
                 outputClassifier = getClassifier(specification, config);
@@ -375,8 +375,8 @@ public class StatisticsClassification {
                     if (trainingFold != evaluationFold) {                        
                         for (int index : folds.get(trainingFold)) {
                             checkInterrupt();
-                            inputZeroR.train(inputHandle, outputHandle, index);
                             inputClassifier.train(inputHandle, outputHandle, index);
+                            inputZeroR.train(inputHandle, outputHandle, index);
                             if (outputClassifier != null && !outputHandle.isOutlier(index)) {
                                 outputClassifier.train(outputHandle, outputHandle, index);
                             }
@@ -387,8 +387,8 @@ public class StatisticsClassification {
                 }
                 
                 // Close
-                inputZeroR.close();
                 inputClassifier.close();
+                inputZeroR.close();
                 if (outputClassifier != null) {
                     outputClassifier.close();
                 }
@@ -403,8 +403,8 @@ public class StatisticsClassification {
                     if (trained) {
                         
                         // Classify
-                        ClassificationResult resultInput = inputZeroR.classify(inputHandle, index);
-                        ClassificationResult resultInputZR = inputClassifier.classify(inputHandle, index);
+                        ClassificationResult resultInput = inputClassifier.classify(inputHandle, index);
+                        ClassificationResult resultInputZR = inputZeroR.classify(inputHandle, index);
                         ClassificationResult resultOutput = outputClassifier == null ? null : outputClassifier.classify(outputHandle, index);
                         classifications++;
                         

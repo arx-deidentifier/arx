@@ -669,6 +669,14 @@ public class Controller implements IView {
             if (result.isResultAvailable()) {
                 model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
+                
+                // Classification parameter
+                model.getSelectedFeatures().clear();
+                model.getSelectedFeatures().addAll(model.getOutputDefinition().getQuasiIdentifyingAttributes());
+                model.getSelectedClasses().clear();
+                model.getSelectedClasses().addAll(model.getOutputDefinition().getResponseVariables());
+                
+                // Events
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
                                       workerResult.getSecond()));
