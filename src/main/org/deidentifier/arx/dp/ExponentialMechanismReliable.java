@@ -133,7 +133,7 @@ public class ExponentialMechanismReliable<T> {
         for (index = 0; index < values.length; index++) {
 
             // Calculate the next element of the cumulative distribution
-            int exponent = exponents[index] - shift;
+            int exponent = exponents[index];
             if (cache.containsKey(exponent)) {
                 this.cumulativeDistribution[index] = cache.get(exponent);
                 this.cacheHits++;
