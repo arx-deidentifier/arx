@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.math3.fraction.BigFraction;
-import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
@@ -48,17 +47,15 @@ public class ExponentialMechanismReliable<T> {
     
     public static Map<Integer,BigInteger> denominatorCache = new HashMap<Integer,BigInteger>();
     
-    public static long cacheHits = 0;
-    
-    public static long cacheMisses = 0;
-    
     public static long initTime = 0;
     
-    public static long powTime = 0;
-    
-    public static long transformTime = 0;
+    public static long drawTime = 0;
     
     public static long usedMemory = 0;
+    
+    public static long largestDistLength = 0;
+    
+    public static BigInteger largestCumulated = BigInteger.ZERO;
 
     /**
      * Creates a new instance
@@ -141,22 +138,12 @@ public class ExponentialMechanismReliable<T> {
             int exponent = exponents[index];
             
             if (!numeratorCache.containsKey(exponent)) {
-                long powTime = System.nanoTime();
                 numeratorCache.put(exponent, base.getNumerator().pow(exponent));
-                this.powTime += System.nanoTime() - powTime;
-                this.cacheMisses++;
-            } else {
-                this.cacheHits++;
             }
             
             int denominatorExponent = maxExponent - exponent;
             if (!denominatorCache.containsKey(denominatorExponent)) {
-                long powTime = System.nanoTime();
                 denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
-                this.powTime += System.nanoTime() - powTime;
-                this.cacheMisses++;
-            } else {
-                this.cacheHits++;
             }
             
             BigInteger next = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
@@ -168,6 +155,9 @@ public class ExponentialMechanismReliable<T> {
         
         this.initTime += System.nanoTime() - initTime;
         
+        this.largestDistLength = Math.max(this.largestDistLength, distribution.length);
+        this.largestCumulated = this.largestCumulated.max(distribution[distribution.length-1]);
+        
         long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         this.usedMemory = Math.max(this.usedMemory, usedMemory);
     }
@@ -177,6 +167,8 @@ public class ExponentialMechanismReliable<T> {
      * @return the random value
      */
     public T sample() {
+        
+        long drawTime = System.nanoTime();
 
         // Draw a number within the range of the cumulative distribution
         BigInteger drawn = getRandomBigInteger(distribution[distribution.length-1]);
@@ -188,6 +180,8 @@ public class ExponentialMechanismReliable<T> {
                 break;
             }
         }
+        
+        this.drawTime += System.nanoTime() - drawTime;
         
         long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         this.usedMemory = Math.max(this.usedMemory, usedMemory);
@@ -224,7 +218,6 @@ public class ExponentialMechanismReliable<T> {
     /**
      * Returns a random BigInteger in the interval [0, limit).
      * The parameter limit has to be >= 1, otherwise an illegal argument exception is thrown.
-     * @param rand
      * @param limit
      * @return
      */
