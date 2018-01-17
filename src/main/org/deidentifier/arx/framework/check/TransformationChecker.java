@@ -39,8 +39,8 @@ import org.deidentifier.arx.metric.Metric;
  * @author Florian Kohlmayer
  */
 public class TransformationChecker {
-	
-	/**
+
+    /**
      * The source of information loss.
      * 
      * @author Raffael Bild
@@ -62,7 +62,7 @@ public class TransformationChecker {
 
     /** The data manager. */
     private final DataManager                       manager;
-    
+
     /** The data. */
     private final Data                              dataGeneralized;
 
@@ -108,7 +108,7 @@ public class TransformationChecker {
                                  final double snapshotSizeDataset,
                                  final double snapshotSizeSnapshot,
                                  final SolutionSpace solutionSpace) {
-        
+
         // Store data
         this.metric = metric;
         this.manager = manager;
@@ -116,7 +116,7 @@ public class TransformationChecker {
         this.dataGeneralized = manager.getDataGeneralized();
         this.solutionSpace = solutionSpace;
         this.minimalClassSizeRequired = config.getMinimalGroupSize() != Integer.MAX_VALUE;
-        
+
         // Initialize all operators
         int initialSize = (int) (manager.getDataGeneralized().getDataLength() * 0.01d);
         IntArrayDictionary dictionarySensValue;
@@ -129,7 +129,7 @@ public class TransformationChecker {
             dictionarySensValue = new IntArrayDictionary(0);
             dictionarySensFreq = new IntArrayDictionary(0);
         }
-        
+
         this.history = new History(manager.getDataGeneralized().getArray().getNumRows(),
                                    historyMaxSize,
                                    snapshotSizeDataset,
@@ -138,7 +138,7 @@ public class TransformationChecker {
                                    dictionarySensValue,
                                    dictionarySensFreq,
                                    solutionSpace);
-        
+
         this.stateMachine = new TransformationCheckerStateMachine(history);
         this.transformer = new Transformer(manager.getDataGeneralized().getArray(),
                                            manager.getDataAnalyzed().getArray(),
@@ -147,12 +147,12 @@ public class TransformationChecker {
                                            config,
                                            dictionarySensValue,
                                            dictionarySensFreq);
-        
+
         this.currentGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                                 manager.getDataGeneralized().getArray(),
                                                 transformer.getBuffer(),
                                                 manager.getDataAnalyzed().getArray());
-        
+
         this.lastGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                              manager.getDataGeneralized().getArray(),
                                              transformer.getBuffer(),
@@ -167,7 +167,7 @@ public class TransformationChecker {
     public TransformationResult check(final Transformation node) {
         return check(node, false, InformationLossSource.CONVENTIONAL);
     }
-    
+
     /**
      * Checks the given transformation
      * @param node
@@ -176,25 +176,25 @@ public class TransformationChecker {
      * @return
      */
     public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss, final InformationLossSource ilSource) {
-        
+
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof TransformationResult) {
             return (TransformationResult) node.getData();
         }
-        
+
         // Store snapshot from last check
         if (stateMachine.getLastTransformation() != null) {
             history.store(solutionSpace.getTransformation(stateMachine.getLastTransformation()), currentGroupify, stateMachine.getLastTransition().snapshot);
         }
-        
+
         // Transition
         final Transition transition = stateMachine.transition(node.getGeneralization());
-        
+
         // Switch groupifies
         final HashGroupify temp = lastGroupify;
         lastGroupify = currentGroupify;
         currentGroupify = temp;
-        
+
         // Apply transition
         switch (transition.type) {
         case UNOPTIMIZED:
@@ -207,40 +207,40 @@ public class TransformationChecker {
             currentGroupify = transformer.applySnapshot(transition.projection, node.getGeneralization(), currentGroupify, transition.snapshot);
             break;
         }
-        
+
         // We are done with transforming and adding
         currentGroupify.stateAnalyze(node, forceMeasureInfoLoss, config.isReliableSearchProcessEnabled());
         if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
-        
+
         // Compute information loss and lower bound
         InformationLoss<?> loss = null;
         InformationLoss<?> bound = null;
-        
+
         switch (ilSource) {
         case SCORE:
-        	// Calculate score
-        	loss = metric.getScore(node, currentGroupify);
-        	break;
+            // Calculate score
+            loss = metric.getScore(node, currentGroupify);
+            break;
         case SCORE_RELIABLE:
-        	// Calculate reliable score
-        	loss = metric.getScoreReliable(node, currentGroupify);
-        	break;
+            // Calculate reliable score
+            loss = metric.getScoreReliable(node, currentGroupify);
+            break;
         case CONVENTIONAL:
-        	// Calculate information loss and bound
+            // Calculate information loss and bound
             InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                                                  metric.getInformationLoss(node, currentGroupify) : null;
-            loss = result != null ? result.getInformationLoss() : null;
-            bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+                    metric.getInformationLoss(node, currentGroupify) : null;
+                    loss = result != null ? result.getInformationLoss() : null;
+                    bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
         }
-        
+
         // Return result;
         return new TransformationResult(currentGroupify.isPrivacyModelFulfilled(),
                                         minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
-                                        loss, bound);
+                                                loss, bound);
     }
-    
+
     /**
      * Returns an associated transformation applicator
      * @return
@@ -256,7 +256,7 @@ public class TransformationChecker {
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
-    
+
     /**
      * Returns the header of generalized data
      * @return
@@ -264,7 +264,7 @@ public class TransformationChecker {
     public String[] getHeader() {
         return dataGeneralized.getHeader();
     }
-    
+
     /**
      * Returns the checkers history, if any.
      *
@@ -273,7 +273,7 @@ public class TransformationChecker {
     public History getHistory() {
         return history;
     }
-    
+
     /**
      * Returns the input buffer
      * @return
@@ -281,7 +281,7 @@ public class TransformationChecker {
     public DataMatrix getInputBuffer() {
         return this.dataGeneralized.getArray();
     }
-    
+
     /**
      * Returns the utility measure
      * @return
@@ -289,7 +289,7 @@ public class TransformationChecker {
     public Metric<?> getMetric() {
         return metric;
     }
-    
+
     /**
      * Returns the output buffer
      * @return

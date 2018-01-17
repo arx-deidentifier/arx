@@ -68,14 +68,14 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     private int                      checkCount;
     /** The number of checks */
     private final int                checkLimit;
-    
+
     /**
-    * Constructor
-    * @param space
-    * @param checker
-    * @param timeLimit
-    * @param checkLimit
-    */
+     * Constructor
+     * @param space
+     * @param checker
+     * @param timeLimit
+     * @param checkLimit
+     */
     private LIGHTNINGAlgorithm(SolutionSpace space, TransformationChecker checker, int timeLimit, int checkLimit) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
@@ -125,16 +125,16 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                 }
             }
         }
-        
+
 
         // Return whether the optimum has been found
         return !this.mustStop() && (this.getGlobalOptimum() != null);
     }
-    
+
     /**
-    * Makes sure that the given Transformation has been checked
-    * @param transformation
-    */
+     * Makes sure that the given Transformation has been checked
+     * @param transformation
+     */
     private void assureChecked(final Transformation transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true, InformationLossSource.CONVENTIONAL));
@@ -147,10 +147,10 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
 
     /**
-    * Performs a depth first search (without backtracking) starting from the the given transformation
-    * @param queue
-    * @param transformation
-    */
+     * Performs a depth first search (without backtracking) starting from the the given transformation
+     * @param queue
+     * @param transformation
+     */
     private void dfs(PriorityQueue<Long> queue, Transformation transformation) {
         if (mustStop()) {
             return;
@@ -161,15 +161,15 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
             dfs(queue, next);
         }
     }
-    
+
     /**
-    * Returns the successor with minimal information loss, if any, null otherwise.
-    * @param queue
-    * @param transformation
-    * @return
-    */
+     * Returns the successor with minimal information loss, if any, null otherwise.
+     * @param queue
+     * @param transformation
+     * @return
+     */
     private Transformation expand(PriorityQueue<Long> queue, Transformation transformation) {
-        
+
         Transformation result = null;
         LongArrayList list = transformation.getSuccessors();
         for (int i = 0; i < list.size(); i++) {
@@ -189,33 +189,33 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         transformation.setProperty(propertyExpanded);
         return result;
     }
-    
+
     /**
      * Returns whether we have exceeded the allowed number of steps or time.
      * @return
      */
     private boolean mustStop() {
         return ((int)(System.currentTimeMillis() - timeStart) > timeLimit) ||
-               (checkCount >= checkLimit);
+                (checkCount >= checkLimit);
     }
 
     /**
-    * Returns whether we can prune this Transformation
-    * @param transformation
-    * @return
-    */
+     * Returns whether we can prune this Transformation
+     * @param transformation
+     * @return
+     */
     private boolean prune(Transformation transformation) {
-        
+
         // Already expanded
         if (transformation.hasProperty(propertyExpanded) ||
-            transformation.hasProperty(propertyInsufficientUtility)){
+                transformation.hasProperty(propertyInsufficientUtility)){
             return true;
         }
-        
+
         // If a current optimum has been discovered
         Transformation optimum = getGlobalOptimum();
         if (optimum != null) {
-            
+
             // We can compare lower bounds on quality
             InformationLoss<?> bound = transformation.getLowerBound();
             if (bound.compareTo(optimum.getInformationLoss()) >= 0) {
@@ -223,7 +223,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                 return true;
             }
         }
-        
+
         // We have to process this transformation
         return false;
     }

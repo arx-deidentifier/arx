@@ -53,7 +53,7 @@ public class ExponentialMechanism<T> {
 
     /** A cryptographically strong random generator */
     private static class SecureRandomGenerator extends AbstractRandomGenerator {
-        
+
         /** The random generator */
         private SecureRandom random;
 
@@ -73,10 +73,10 @@ public class ExponentialMechanism<T> {
             random.setSeed(seed);
         }
     }
-    
+
     /** A deterministic random generator */
     private static class DeterministicRandomGenerator extends AbstractRandomGenerator {
-        
+
         /** The random generator */
         private Random random;
 
@@ -99,7 +99,7 @@ public class ExponentialMechanism<T> {
 
     /** The probability distribution */
     private EnumeratedDistribution<T> distribution;
-    
+
     /**
      * Constructs a new instance
      * @param values
@@ -121,16 +121,16 @@ public class ExponentialMechanism<T> {
      * @param deterministic
      */
     public ExponentialMechanism(T[] values, Double[] scores, double epsilon, int precision, boolean deterministic) {
-    	
-    	// Check arguments
-    	if (values.length == 0) {
-    		throw new RuntimeException("No values supplied");
-    	}
-    	if (values.length != scores.length) {
-    		throw new RuntimeException("Number of scores and values must be identical");
-    	}
-    	
-    	// The following code calculates the probability distribution which assigns every value
+
+        // Check arguments
+        if (values.length == 0) {
+            throw new RuntimeException("No values supplied");
+        }
+        if (values.length != scores.length) {
+            throw new RuntimeException("Number of scores and values must be identical");
+        }
+
+        // The following code calculates the probability distribution which assigns every value
         // a probability proportional to exp(0,5 * epsilon * score)
 
         mc = new MathContext(precision, RoundingMode.HALF_UP);
@@ -169,10 +169,10 @@ public class ExponentialMechanism<T> {
         }
 
         AbstractRandomGenerator random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
-        
+
         distribution = new EnumeratedDistribution<T>(random, pmf);
     }
-    
+
     /**
      * Returns a random value sampled from this distribution
      * @return

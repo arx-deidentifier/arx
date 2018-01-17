@@ -125,13 +125,13 @@ public class DataManager {
          ***************************************************/
         Set<String> qisGeneralized = new HashSet<>(definition.getQuasiIdentifiersWithGeneralization());
         qisGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
-        
+
         /* *************************************************
          * Collect quasi-identifiers which need not be generalized
          ***************************************************/
         Set<String> qisNotGeneralized =  new HashSet<>(definition.getQuasiIdentifiersWithMicroaggregation());
         qisNotGeneralized.removeAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
-        
+
         /* ************************************************************************
          * Collect all attributes which need to be analyzed (whether hot or cold)
          **************************************************************************/
@@ -169,14 +169,14 @@ public class DataManager {
         coldQIs.addAll(definition.getQuasiIdentifiersWithMicroaggregation());
         coldQIs.removeAll(hotQIsNotGeneralized);
         coldQIs.removeAll(hotQIsGeneralized);
-        
+
         /* *************************************************
          * Collect hot attributes which are not QIs
          ***************************************************/
         Set<String> hotOtherAttributes = new HashSet<String>();
         hotOtherAttributes.addAll(attributesAnalyzed);
         hotOtherAttributes.removeAll(definition.getQuasiIdentifiersWithMicroaggregation());
-        
+
         // Create data objects
         this.dataGeneralized = Data.createProjection(data, header, getColumns(header, qisGeneralized), dictionary);
         this.dataAnalyzed = Data.createProjection(data, header, getColumns(header, 
@@ -184,57 +184,57 @@ public class DataManager {
                                                                            hotQIsNotGeneralized,
                                                                            hotQIsGeneralized,
                                                                            coldQIs), 
-                                                                           dictionary);
+                                                  dictionary);
         this.dataInput = Data.createWrapper(data, header, getColumns(header), dictionary);
-        
+
         // Store information about aggregated attributes
         this.aggregationInformation = new DataAggregationInformation(dataAnalyzed, 
-                                                                   functions,
-                                                                   definition,
-                                                                   hotQIsNotGeneralized,
-                                                                   hotQIsGeneralized,
-                                                                   coldQIs);
+                                                                     functions,
+                                                                     definition,
+                                                                     hotQIsNotGeneralized,
+                                                                     hotQIsGeneralized,
+                                                                     coldQIs);
 
         // Make the dictionaries ready for additions
         this.dataGeneralized.getDictionary().definalizeAll();
         this.dataAnalyzed.getDictionary().definalizeAll();
-        
+
         // Register hierarchies used for generalization
         this.generalizationLevelsMaximum = new int[qisGeneralized.size()];
         this.generalizationLevelsMinimum = new int[qisGeneralized.size()];
         this.hierarchiesGeneralized = new GeneralizationHierarchy[qisGeneralized.size()];
         int index = 0;
-        
+
         // For each attribute
         for (final String attribute : header) {
-            
+
             // This is a generalized quasi-identifier
             if (qisGeneralized.contains(attribute)) {
-                
+
                 // Register at the dictionary and encode
                 this.hierarchiesGeneralized[index] = new GeneralizationHierarchy(attribute,
-                                                                            definition.getHierarchy(attribute),
-                                                                            index,
-                                                                            this.dataGeneralized.getDictionary());
-                
+                                                                                 definition.getHierarchy(attribute),
+                                                                                 index,
+                                                                                 this.dataGeneralized.getDictionary());
+
                 // Initialize hierarchy height and minimum / maximum generalization
                 Integer min = definition.getMinimumGeneralization(attribute);
                 Integer max = definition.getMaximumGeneralization(attribute);
                 this.generalizationLevelsMaximum[index] = min == null ? 0 : min;
                 this.generalizationLevelsMinimum[index] = max == null ? this.hierarchiesGeneralized[index].getArray()[0].length - 1 : max;
-                
+
                 // Next quasi-identifier
                 index++;
             }
         }
-        
+
         // Change to fixed generalization scheme when using differential privacy
         index = 0;
         for (PrivacyCriterion c : config.getPrivacyModels()) {
 
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
-                
+
                 EDDifferentialPrivacy edpModel = (EDDifferentialPrivacy)c;
                 if (!edpModel.isDataDependent()) {
                     // Extract scheme
@@ -273,7 +273,7 @@ public class DataManager {
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
     }
-    
+
     /**
      * For creating a projected instance
      * @param dataAnalyzed
@@ -302,7 +302,7 @@ public class DataManager {
                           int[] generalizationLevelsMinimum,
                           int[] generalizationLevelsMaximum,
                           DataAggregationInformation microaggregationData) {
-        
+
         // Just store
         this.dataAnalyzed = dataAnalyzed;
         this.dataGeneralized = dataGeneralized;
@@ -315,7 +315,7 @@ public class DataManager {
         this.generalizationLevelsMinimum = generalizationLevelsMinimum;
         this.generalizationLevelsMaximum = generalizationLevelsMaximum;
         this.aggregationInformation = microaggregationData;
-        
+
         // Both variables are only used for getDistribution() and getTree()
         // The projected instance delegates these methods to the original data manager
         this.subset = null;
@@ -371,7 +371,7 @@ public class DataManager {
     public Data getDataGeneralized() {
         return dataGeneralized;
     }
-    
+
     /**
      * Returns the input data.
      * 
@@ -420,13 +420,13 @@ public class DataManager {
         int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
         return getDistribution(dataAnalyzed.getArray(), index, distinctValues);
     }
-    
+
     /**
      * Returns the domain shares for all generalized quasi-identifiers
      * @return
      */
     public DomainShare[] getDomainShares() {
-    	return getDomainShares(false);
+        return getDomainShares(false);
     }
 
     /**
@@ -438,37 +438,37 @@ public class DataManager {
 
         // Build on-demand
         if (this.shares == null) {
-            
+
             // Compute domain shares
             this.shares = new DomainShare[dataGeneralized.getHeader().length];
             for (int i=0; i<shares.length; i++) {
-                
+
                 // Extract info
                 String attribute = dataGeneralized.getHeader()[i];
                 String[][] hierarchy = definition.getHierarchy(attribute);
                 HierarchyBuilder<?> builder = definition.getHierarchyBuilder(attribute);
-                
+
                 // Create shares for redaction-based hierarchies
                 if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
-                    ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
+                        ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
                     this.shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
-                    
-                 // Create shares for interval-based hierarchies
+
+                    // Create shares for interval-based hierarchies
                 } else if (builder != null && (builder instanceof HierarchyBuilderIntervalBased)) {
                     this.shares[i] = new DomainShareInterval<>((HierarchyBuilderIntervalBased<?>)builder,
-                                                           hierarchiesGeneralized[i].getArray(),
-                                                           dataGeneralized.getDictionary().getMapping()[i]);
-                    
-                // Create fall back option for materialized hierarchies
+                            hierarchiesGeneralized[i].getArray(),
+                            dataGeneralized.getDictionary().getMapping()[i]);
+
+                    // Create fall back option for materialized hierarchies
                 } else {
                     this.shares[i] = new DomainShareMaterialized(hierarchy, 
-                                                            dataGeneralized.getDictionary().getMapping()[i],
-                                                            hierarchiesGeneralized[i].getArray(),
-                                                            reliable);
+                                                                 dataGeneralized.getDictionary().getMapping()[i],
+                                                                 hierarchiesGeneralized[i].getArray(),
+                                                                 reliable);
                 }
             }
         }
-        
+
         // Return
         return this.shares;
     }
@@ -536,13 +536,13 @@ public class DataManager {
         final int index = dataAnalyzed.getIndexOf(attribute);
         final String[] dictionary = dataAnalyzed.getDictionary().getMapping()[index];
         final DataType<?> type = this.definition.getDataType(attribute);
-        
+
         // Init
         int[] order = new int[dictionary.length];
         for (int i = 0; i < order.length; i++) {
             order[i] = i;
         }
-        
+
         // Sort
         Sorting.mergeSort(order, 0, order.length, new IntComparator() {
             @Override public int compare(int arg0, int arg1) {
@@ -555,7 +555,7 @@ public class DataManager {
                 }
             }
         });
-        
+
         // Return
         return order;
     }
@@ -587,8 +587,8 @@ public class DataManager {
                 distribution[i] = ia.div(ia.createInterval(cardinalities[i]), total);
             }
             return distribution;
-            
-        // Handle arithmetic issues
+
+            // Handle arithmetic issues
         } catch (ArithmeticException | IntervalArithmeticException | IndexOutOfBoundsException e) {
             throw new ReliabilityException("Cannot calculate reliable distribution");
         }
@@ -615,7 +615,7 @@ public class DataManager {
      * @return
      */
     public DataManager getSubsetInstance(RowSet rowset) {
-        
+
         return new DataManagerSubset(this,
                                      dataAnalyzed.getSubsetInstance(rowset),
                                      dataGeneralized.getSubsetInstance(rowset),
@@ -767,7 +767,7 @@ public class DataManager {
             subsetSize = _subset.getArray().length;
         }
     }
-    
+
     /**
      * Simple returns the set of all columns
      * @param header
@@ -789,13 +789,13 @@ public class DataManager {
      */
     @SafeVarargs
     private final int[] getColumns(String[] header, Set<String>... sets) {
-        
+
         // Prepare
         List<Integer> result = new ArrayList<>();
-        
+
         // For each set
         for (Set<String> set : sets) {
-            
+
             // Add elements
             for (int i = 0; i < header.length; i++) {
                 String attribute = header[i];
@@ -804,24 +804,24 @@ public class DataManager {
                 }
             }    
         }
-        
+
         // Sanity check
         Set<Integer> temp = new HashSet<Integer>(result);
         if (temp.size() != result.size()) {
             throw new IllegalStateException("Internal error: handling of attribute is not clearly defined");
         }
-        
+
         // Convert
         int[] array = new int[result.size()];
         for (int i=0; i < result.size(); i++) {
             array[i] = result.get(i);
         }
-        
+
         // Done
         return array;
     }
-    
-    
+
+
     /**
      * Returns the data definitions
      * @return

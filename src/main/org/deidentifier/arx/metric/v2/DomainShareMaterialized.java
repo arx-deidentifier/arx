@@ -48,16 +48,16 @@ public class DomainShareMaterialized implements DomainShare {
 
     /** One share per attribute. */
     private final double[]                               shares;
-    
+
     /** Reliable share per attribute. */
     private BigFraction[]                                sharesReliable     = null;
 
     /** If an attribute exists with different shares on different generalization levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>. */
     private transient LongDoubleOpenHashMap              duplicates;
-    
+
     /** Reliable version of duplicates. */
     private transient LongObjectOpenHashMap<BigFraction> duplicatesReliable = null;
-    
+
     /**
      * Creates a new set of domain shares derived from the given attribute.
      *
@@ -68,7 +68,7 @@ public class DomainShareMaterialized implements DomainShare {
     public DomainShareMaterialized(String[][] rawHierarchy, 
                                    String[] encodedValues, 
                                    int[][] encodedHierarchy) {
-    	this(rawHierarchy, encodedValues, encodedHierarchy, false);
+        this(rawHierarchy, encodedValues, encodedHierarchy, false);
     }
 
     /**
@@ -89,14 +89,14 @@ public class DomainShareMaterialized implements DomainShare {
         this.shares = new double[encodedValues.length];
         Arrays.fill(shares, NOT_AVAILABLE);
         if (reliable) {
-        	this.sharesReliable = new BigFraction[encodedValues.length];
-        	Arrays.fill(sharesReliable, new BigFraction(NOT_AVAILABLE));
-        	this.duplicatesReliable = new LongObjectOpenHashMap<BigFraction>();
+            this.sharesReliable = new BigFraction[encodedValues.length];
+            Arrays.fill(sharesReliable, new BigFraction(NOT_AVAILABLE));
+            this.duplicatesReliable = new LongObjectOpenHashMap<BigFraction>();
         } else {
-        	this.sharesReliable = null;
-        	this.duplicatesReliable = null;
+            this.sharesReliable = null;
+            this.duplicatesReliable = null;
         }
-        
+
         @SuppressWarnings("unchecked")
         ObjectIntOpenHashMap<String>[] maps = new ObjectIntOpenHashMap[rawHierarchy[0].length];
         for (int level = 0; level < maps.length; level++) {
@@ -118,11 +118,11 @@ public class DomainShareMaterialized implements DomainShare {
 
         // Now transform into an array representation and handle duplicates
         for (int row = 0; row < encodedHierarchy.length; row++) {
-            
+
             int[] strategy = encodedHierarchy[row];
-            
+
             for (int level = 0; level < strategy.length; level++){
-                
+
                 ObjectIntOpenHashMap<String> map = maps[level];
                 int value = strategy[level];
                 String keyString = encodedValues[value];
@@ -141,7 +141,7 @@ public class DomainShareMaterialized implements DomainShare {
                     if (stored >= 0d) {
                         shares[value] = -shares[value];
                         if (reliable) {
-                        	sharesReliable[value] = sharesReliable[value].multiply(new BigFraction(-1));
+                            sharesReliable[value] = sharesReliable[value].multiply(new BigFraction(-1));
                         }
                     }
 
@@ -149,14 +149,14 @@ public class DomainShareMaterialized implements DomainShare {
                     long dkey = (((long) value) << 32) | (level & 0xffffffffL);
                     duplicates.put(dkey, share);
                     if (reliable) {
-                    	duplicatesReliable.put(dkey, new BigFraction(map.get(keyString), rawHierarchy.length));
+                        duplicatesReliable.put(dkey, new BigFraction(map.get(keyString), rawHierarchy.length));
                     }
 
                     // If its not a duplicate, simply store
                 } else {
                     shares[value] = share;
                     if (reliable) {
-                    	sharesReliable[value] = new BigFraction(map.get(keyString), rawHierarchy.length);
+                        sharesReliable[value] = new BigFraction(map.get(keyString), rawHierarchy.length);
                     }
                 }
             }
@@ -172,7 +172,7 @@ public class DomainShareMaterialized implements DomainShare {
      * @param duplicatesReliable
      */
     private DomainShareMaterialized(double size, double[] shares, LongDoubleOpenHashMap duplicates,
-    		BigFraction[] sharesReliable, LongObjectOpenHashMap<BigFraction> duplicatesReliable) {
+                                    BigFraction[] sharesReliable, LongObjectOpenHashMap<BigFraction> duplicatesReliable) {
         this.size = size;
         this.shares = shares;
         this.duplicates = duplicates;
@@ -183,7 +183,7 @@ public class DomainShareMaterialized implements DomainShare {
     @Override
     public DomainShareMaterialized clone() {
         return new DomainShareMaterialized(this.size, this.shares.clone(), this.duplicates.clone(),
-        		sharesReliable == null ? null : sharesReliable, duplicatesReliable == null ? null : duplicatesReliable);
+                                           sharesReliable == null ? null : sharesReliable, duplicatesReliable == null ? null : duplicatesReliable);
     }
 
     /**
@@ -213,7 +213,7 @@ public class DomainShareMaterialized implements DomainShare {
             return duplicates.getOrDefault(key, -share);
         }
     }
-    
+
     /**
      * Returns the reliable share of the given value.
      *
@@ -223,7 +223,7 @@ public class DomainShareMaterialized implements DomainShare {
      */
     @Override
     public BigFraction getShareReliable(int value, int level) {
-    	BigFraction share = sharesReliable[value];
+        BigFraction share = sharesReliable[value];
         if (share.compareTo(new BigFraction(0)) >= 0) {
             return share;
         } else {
@@ -258,7 +258,7 @@ public class DomainShareMaterialized implements DomainShare {
 
         // Default serialization
         aOutputStream.defaultWriteObject();
-        
+
         // Write map
         IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
     }

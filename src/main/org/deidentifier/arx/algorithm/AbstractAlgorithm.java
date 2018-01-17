@@ -78,7 +78,7 @@ public abstract class AbstractAlgorithm {
     public void setListener(ARXListener listener) {
         this.listener = listener;
     }
-    
+
     /**
      * Implement this method in order to provide a new algorithm.
      * 
@@ -94,7 +94,7 @@ public abstract class AbstractAlgorithm {
      */
     protected void computeUtilityForMonotonicMetrics(Transformation transformation) {
         if (checker.getConfiguration().getMonotonicityOfUtility() == Monotonicity.FULL &&
-            transformation.getInformationLoss() == null) {
+                transformation.getInformationLoss() == null) {
 
             // Independent evaluation or check
             if (checker.getMetric().isIndependent()) {
@@ -124,9 +124,9 @@ public abstract class AbstractAlgorithm {
      */
     protected void trackOptimum(Transformation transformation) {
         if (transformation.hasProperty(solutionSpace.getPropertyAnonymous()) &&
-            ((globalOptimum == null) ||
-             (transformation.getInformationLoss().compareTo(optimalInformationLoss) < 0) ||
-            ((transformation.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (transformation.getLevel() < globalOptimum.getLevel())))) {
+                ((globalOptimum == null) ||
+                        (transformation.getInformationLoss().compareTo(optimalInformationLoss) < 0) ||
+                        ((transformation.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (transformation.getLevel() < globalOptimum.getLevel())))) {
             globalOptimum = transformation;
             optimalInformationLoss = transformation.getInformationLoss();
         }

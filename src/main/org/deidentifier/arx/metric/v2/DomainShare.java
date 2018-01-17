@@ -49,7 +49,7 @@ public interface DomainShare extends Serializable{
      * @return
      */
     public abstract double getShare(int value, int level);
-    
+
     /**
      * Returns the reliable share of the given value.
      *

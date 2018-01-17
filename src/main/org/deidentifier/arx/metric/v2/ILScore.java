@@ -13,46 +13,46 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
 
     /** SVUID. */
     private static final long serialVersionUID = -2638719458508437194L;
-    
+
     /** Value */
     private T                 value;
-    
+
     /**
      * Creates a new instance.
      *
      * @param value
      */
     ILScore(final T value) {
-    	this.value = value;
+        this.value = value;
     }
 
     @SuppressWarnings("unchecked")
-	@Override
+    @Override
     public int compareTo(InformationLoss<?> other) {
-    	if (!other.getClass().equals(this.getClass())) {
+        if (!other.getClass().equals(this.getClass())) {
             throw new IllegalArgumentException("Incompatible class (" +
-                                               other.getClass().getSimpleName() +
-                                               ")");
+                    other.getClass().getSimpleName() +
+                    ")");
         }
-    	T otherValue = ((InformationLoss<T>)other).getValue();
-    	return value.compareTo(otherValue) * -1;
+        T otherValue = ((InformationLoss<T>)other).getValue();
+        return value.compareTo(otherValue) * -1;
     }
 
     @Override
     public boolean equals(Object obj) {
         return equals(obj);
     }
-    
+
     @Override
     public T getValue() {
         return value;
     }
-    
+
     @Override
     public int hashCode() {
         return value.hashCode();
     }
-    
+
     @Override
     public void max(final InformationLoss<?> other) {
         if (this.compareTo(other) < 0) {
@@ -66,7 +66,7 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
             this.value = convert(other).value;
         }
     }
-    
+
     @Override
     public String toString() {
         return String.valueOf(this.value);
@@ -79,17 +79,17 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
      * @return
      */
     @SuppressWarnings("unchecked")
-	protected ILScore<T> convert(InformationLoss<?> other) {
+    protected ILScore<T> convert(InformationLoss<?> other) {
         if (other == null) return null;
         if (!other.getClass().equals(this.getClass())) {
             throw new IllegalArgumentException("Incompatible class (" +
-                                               other.getClass().getSimpleName() +
-                                               ")");
+                    other.getClass().getSimpleName() +
+                    ")");
         } else {
             return (ILScore<T>) other;
         }
     }
-    
+
     @Override
     protected void addMetadata(QualityMetadata<?> metadata) {
         super.addMetadata(metadata);

@@ -22,7 +22,6 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import org.apache.commons.math3.analysis.function.Log;
-import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
