@@ -58,32 +58,32 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                                            boolean deterministic, int steps, double epsilonSearch, boolean reliable) {
         return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, steps, epsilonSearch, reliable);
     }
-    
+
     /** True iff this instance is deterministic */
     private final boolean            deterministic;
-    
+
     /** The privacy budget to use for each step */
     private final double             epsilonStep;
-    
+
     /** Property */
     private final PredictiveProperty propertyChecked;
-    
+
     /** True iff this instance is reliable */
     private final boolean            reliable;
-    
+
     /** Number of steps to be performed */
     private final int                steps;
-    
+
     /**
-    * Constructor
-    * @param space
-    * @param checker
-    * @param metric
-    * @param deterministic 
-    * @param steps
-    * @param epsilonSearch
+     * Constructor
+     * @param space
+     * @param checker
+     * @param metric
+     * @param deterministic 
+     * @param steps
+     * @param epsilonSearch
      * @param reliable 
-    */
+     */
     private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
                                        boolean deterministic, int steps, double epsilonSearch, boolean reliable) {
         super(space, checker);
@@ -93,40 +93,40 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         this.deterministic = deterministic;
         this.steps = steps;
         this.reliable = reliable;
-        
+
         if (reliable) {
             IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
-        	try {
-				epsilonStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).getLowerBound();
-			} catch (IntervalArithmeticException e) {
-				throw new RuntimeException(e);
-			}
+            try {
+                epsilonStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).getLowerBound();
+            } catch (IntervalArithmeticException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-        	epsilonStep = epsilonSearch / ((double)steps); 
+            epsilonStep = epsilonSearch / ((double)steps); 
         }
     }
-    
+
     @Override
     public boolean traverse() {
-        
+
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
         assureChecked(pivot);
         ILScore<?> score = (ILScore<?>)pivot.getInformationLoss();
-        
+
         // Initialize variables tracking the best of all pivot elements
         Transformation bestTransformation = pivot;
         ILScore<?> bestScore = score;
-        
+
         progress(0d);
 
         // Initialize the set of candidates, each mapped to its respective score
         Map<Long, ILScore<?>> transformationIDToScore = new HashMap<Long, ILScore<?>>();
         transformationIDToScore.put(pivot.getIdentifier(), score);
-        
+
         // For each step
         for (int step = 1; step <= steps; ++step) {
-            
+
             // Add predecessors of the current pivot element to the set of candidates
             LongArrayList list = pivot.getPredecessors();
             for (int i = 0; i < list.size(); i++) {
@@ -136,75 +136,75 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 assureChecked(predecessor);
                 transformationIDToScore.put(id, (ILScore<?>)predecessor.getInformationLoss());
             }
-            
+
             // Remove the current pivot element from the set of candidates
             transformationIDToScore.remove(pivot.getIdentifier());
-            
+
             // Select the next pivot element from the set of candidates using the exponential mechanism
             long id = executeExponentialMechanism(transformationIDToScore);
             pivot = solutionSpace.getTransformation(id);
             score = transformationIDToScore.get(id);
-            
+
             // Keep track of the best pivot element
             if (score.compareTo(bestScore) < 0) {
                 bestTransformation = pivot;
                 bestScore = score;
             }
-            
+
             progress((double)step / (double)steps);
         }
-        
+
         // Track optimum
         trackOptimum(bestTransformation);
         return false;
     }
 
-	@SuppressWarnings("unchecked")
-	private long executeExponentialMechanism(Map<Long, ILScore<?>> transformationIDToScore) {
-		
-		if(reliable) {
-			Long[] values = new Long[transformationIDToScore.size()];
-			BigFraction[] scores = new BigFraction[transformationIDToScore.size()];
+    @SuppressWarnings("unchecked")
+    private long executeExponentialMechanism(Map<Long, ILScore<?>> transformationIDToScore) {
 
-			int index = 0;
-			for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
-				values[index] = element.getKey();
-				scores[index] = ((ILScore<BigFraction>)element.getValue()).getValue();
-				index++;
-			}
+        if(reliable) {
+            Long[] values = new Long[transformationIDToScore.size()];
+            BigFraction[] scores = new BigFraction[transformationIDToScore.size()];
 
-			ExponentialMechanismReliable<Long> expMechanism;
-			try {
-				expMechanism = new ExponentialMechanismReliable<Long>(values, scores, epsilonStep, deterministic);
-			} catch (IntervalArithmeticException e) {
-				throw new RuntimeException(e);
-			}
+            int index = 0;
+            for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
+                values[index] = element.getKey();
+                scores[index] = ((ILScore<BigFraction>)element.getValue()).getValue();
+                index++;
+            }
 
-			return expMechanism.sample();
-		} else {
-			Long[] values = new Long[transformationIDToScore.size()];
-			Double[] scores = new Double[transformationIDToScore.size()];
+            ExponentialMechanismReliable<Long> expMechanism;
+            try {
+                expMechanism = new ExponentialMechanismReliable<Long>(values, scores, epsilonStep, deterministic);
+            } catch (IntervalArithmeticException e) {
+                throw new RuntimeException(e);
+            }
 
-			int index = 0;
-			for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
-				values[index] = element.getKey();
-				scores[index] = ((ILScore<Double>)element.getValue()).getValue();
-				index++;
-			}
+            return expMechanism.sample();
+        } else {
+            Long[] values = new Long[transformationIDToScore.size()];
+            Double[] scores = new Double[transformationIDToScore.size()];
 
-			ExponentialMechanism<Long> expMechanism = new ExponentialMechanism<Long>(values, scores,
-					epsilonStep, ExponentialMechanism.defaultPrecision, deterministic);
+            int index = 0;
+            for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
+                values[index] = element.getKey();
+                scores[index] = ((ILScore<Double>)element.getValue()).getValue();
+                index++;
+            }
 
-			return expMechanism.sample();
-		}
-	}
+            ExponentialMechanism<Long> expMechanism = new ExponentialMechanism<Long>(values, scores,
+                    epsilonStep, ExponentialMechanism.defaultPrecision, deterministic);
+
+            return expMechanism.sample();
+        }
+    }
 
     /**
-    * Makes sure that the given Transformation has been checked
-    * @param transformation
-    */
+     * Makes sure that the given Transformation has been checked
+     * @param transformation
+     */
     private void assureChecked(final Transformation transformation) {
-    	InformationLossSource ilSource = reliable ? InformationLossSource.SCORE_RELIABLE : InformationLossSource.SCORE;
+        InformationLossSource ilSource = reliable ? InformationLossSource.SCORE_RELIABLE : InformationLossSource.SCORE;
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true, ilSource));
         }
