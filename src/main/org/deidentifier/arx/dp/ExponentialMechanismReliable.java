@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
@@ -34,8 +35,8 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
  */
 public class ExponentialMechanismReliable<T> {
 
-    /** The cumulative distribution scaled so that it consists of natural numbers */
-    private BigFraction[] cumulativeDistribution;
+    /** The distribution scaled so that it consists of natural numbers */
+    private BigInteger[] distribution;
 
     /** The random generator */
     private Random random;
@@ -130,12 +131,10 @@ public class ExponentialMechanismReliable<T> {
         }
 
         // Initialize
-        this.cumulativeDistribution = new BigFraction[scores.length];
-        BigInteger[] cumulativeDistributionInteger = new BigInteger[scores.length];
+        this.distribution = new BigInteger[scores.length];
         this.values = values.clone();
 
         int index = 0;
-        BigInteger sum = BigInteger.ONE;
         for (index = 0; index < values.length; index++) {
 
             // Calculate the next element of the cumulative distribution
@@ -161,16 +160,8 @@ public class ExponentialMechanismReliable<T> {
             }
             
             BigInteger next = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
-            cumulativeDistributionInteger[index] = index == 0 ? next : next.add(cumulativeDistributionInteger[index-1]);
-            sum = sum.add(next);
+            distribution[index] = index == 0 ? next : next.add(distribution[index-1]);
         }
-        
-        long transformTime = System.nanoTime();
-        // Transform to probabilities and accumulate
-        for (index = 0; index < this.cumulativeDistribution.length; index++) {
-            this.cumulativeDistribution[index] = new BigFraction(cumulativeDistributionInteger[index], sum);
-        }
-        this.transformTime += System.nanoTime() - transformTime;
 
         // Initialize the random generator
         random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
@@ -180,7 +171,7 @@ public class ExponentialMechanismReliable<T> {
         long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         this.usedMemory = Math.max(this.usedMemory, usedMemory);
     }
-
+    
     /**
      * Returns a random value sampled from this distribution
      * @return the random value
@@ -188,17 +179,18 @@ public class ExponentialMechanismReliable<T> {
     public T sample() {
 
         // Draw a number within the range of the cumulative distribution
-        //      BigInteger drawn = getRandomBigInteger(cumulativeDistribution[cumulativeDistribution.length-1]);
-        BigFraction drawn = new BigFraction(random.nextDouble());
+        BigInteger drawn = getRandomBigInteger(distribution[distribution.length-1]);
 
         // Determine the according index
         int index;
-        for (index = 0; index < cumulativeDistribution.length; index++) {
-            if (drawn.compareTo(cumulativeDistribution[index]) == -1) {
-                //          if (drawn.compareTo(cumulativeDistribution[index]) < 0) {
+        for (index = 0; index < distribution.length; index++) {
+            if (drawn.compareTo(distribution[index]) == -1) {
                 break;
             }
         }
+        
+        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        this.usedMemory = Math.max(this.usedMemory, usedMemory);
 
         // Return the according value
         return values[index];
@@ -229,27 +221,27 @@ public class ExponentialMechanismReliable<T> {
         return result;
     }
 
-//    /**
-//     * Returns a random BigInteger in the interval [0, limit).
-//     * The parameter limit has to be >= 1, otherwise an illegal argument exception is thrown.
-//     * @param rand
-//     * @param limit
-//     * @return
-//     */
-//    private BigInteger getRandomBigInteger(BigInteger limit) {
-//
-//        // Check the argument
-//        if (limit.compareTo(BigInteger.ONE) == -1) {
-//            throw new IllegalArgumentException("limit has to be greater than or equal to one");
-//        }
-//
-//        // Compute a random value
-//        BigInteger result;
-//        do {
-//            result = new BigInteger(limit.bitLength(), random);
-//        } while(result.compareTo(limit) >= 0);
-//
-//        // Return
-//        return result;
-//    }
+    /**
+     * Returns a random BigInteger in the interval [0, limit).
+     * The parameter limit has to be >= 1, otherwise an illegal argument exception is thrown.
+     * @param rand
+     * @param limit
+     * @return
+     */
+    private BigInteger getRandomBigInteger(BigInteger limit) {
+
+        // Check the argument
+        if (limit.compareTo(BigInteger.ONE) == -1) {
+            throw new IllegalArgumentException("limit has to be greater than or equal to one");
+        }
+
+        // Compute a random value
+        BigInteger result;
+        do {
+            result = new BigInteger(limit.bitLength(), random);
+        } while(result.compareTo(limit) >= 0);
+
+        // Return
+        return result;
+    }
 }
