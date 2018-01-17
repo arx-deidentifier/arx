@@ -19,10 +19,8 @@ package org.deidentifier.arx.dp;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
 
 import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
@@ -45,7 +43,9 @@ public class ExponentialMechanismReliable<T> {
     /** The values to sample from */
     private T[] values;
     
-    public static Map<Integer,BigFraction> cache = new HashMap<Integer,BigFraction>();
+    public static Map<Integer,BigInteger> numeratorCache = new HashMap<Integer,BigInteger>();
+    
+    public static Map<Integer,BigInteger> denominatorCache = new HashMap<Integer,BigInteger>();
     
     public static long cacheHits = 0;
     
@@ -119,39 +119,56 @@ public class ExponentialMechanismReliable<T> {
             }
             exponents[i] = nextShift;
         }
+        int maxExponent = Integer.MIN_VALUE;
         for (int i=0; i<values.length; ++i) {
             exponents[i] -= shift;
+            maxExponent = Math.max(exponents[i], maxExponent);
         }
-//        BigFraction correction = base.pow(shift);
+        BigInteger maxDenominator = base.getDenominator().pow(maxExponent);
+        if (!denominatorCache.containsKey(maxExponent)) {
+            denominatorCache.put(maxExponent, maxDenominator);
+        }
 
         // Initialize
         this.cumulativeDistribution = new BigFraction[scores.length];
+        BigInteger[] cumulativeDistributionInteger = new BigInteger[scores.length];
         this.values = values.clone();
 
         int index = 0;
-        BigFraction sum = new BigFraction(0);
+        BigInteger sum = BigInteger.ONE;
         for (index = 0; index < values.length; index++) {
 
             // Calculate the next element of the cumulative distribution
             int exponent = exponents[index];
-            if (cache.containsKey(exponent)) {
-                this.cumulativeDistribution[index] = cache.get(exponent);
-                this.cacheHits++;
-            } else {
+            
+            if (!numeratorCache.containsKey(exponent)) {
                 long powTime = System.nanoTime();
-                this.cumulativeDistribution[index] = base.pow(exponent);
+                numeratorCache.put(exponent, base.getNumerator().pow(exponent));
                 this.powTime += System.nanoTime() - powTime;
-                cache.put(exponent, this.cumulativeDistribution[index]);
                 this.cacheMisses++;
+            } else {
+                this.cacheHits++;
             }
-            sum = sum.add(this.cumulativeDistribution[index]);
+            
+            int denominatorExponent = maxExponent - exponent;
+            if (!denominatorCache.containsKey(denominatorExponent)) {
+                long powTime = System.nanoTime();
+                denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
+                this.powTime += System.nanoTime() - powTime;
+                this.cacheMisses++;
+            } else {
+                this.cacheHits++;
+            }
+            
+            BigInteger next = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
+            cumulativeDistributionInteger[index] = next;
+            sum = sum.add(next);
         }
-
+        
         long transformTime = System.nanoTime();
         // Transform to probabilities and accumulate
         for (index = 0; index < this.cumulativeDistribution.length; index++) {
-            this.cumulativeDistribution[index] = this.cumulativeDistribution[index].divide(sum);
-//            this.cumulativeDistribution[index] = this.cumulativeDistribution[index].multiply(correction);
+            this.cumulativeDistribution[index] = new BigFraction(cumulativeDistributionInteger[index], sum);
             if (index > 0) {
                 this.cumulativeDistribution[index] = this.cumulativeDistribution[index].add(this.cumulativeDistribution[index-1]);
             }
@@ -188,29 +205,6 @@ public class ExponentialMechanismReliable<T> {
 
         // Return the according value
         return values[index];
-    }
-    
-    public static void main(String[] args) {
-        
-        BigInteger enumerator = new BigInteger("1164062411989977");
-        BigInteger denominator = new BigInteger("1125899906842624");
-        
-        BigFraction base = new BigFraction(enumerator, denominator);
-        int exponent = 300;
-        
-        long time = System.nanoTime();
-        BigFraction resultOne = base.pow(exponent);
-        System.out.println((double)(System.nanoTime() - time) / 1e9);
-        
-        time = System.nanoTime();
-        for (int i=0; i<exponent; ++i) {
-            enumerator = enumerator.multiply(enumerator);
-            denominator = denominator.multiply(denominator);
-        }
-        BigFraction resultTwo = new BigFraction(enumerator, denominator);
-        System.out.println((double)(System.nanoTime() - time) / 1e9);
-        
-        System.out.println(resultOne + " " + resultTwo);
     }
 
     /**
