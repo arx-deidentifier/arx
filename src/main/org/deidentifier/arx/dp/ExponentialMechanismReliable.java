@@ -161,7 +161,7 @@ public class ExponentialMechanismReliable<T> {
             }
             
             BigInteger next = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
-            cumulativeDistributionInteger[index] = next;
+            cumulativeDistributionInteger[index] = index == 0 ? next : next.add(cumulativeDistributionInteger[index-1]);
             sum = sum.add(next);
         }
         
@@ -169,9 +169,6 @@ public class ExponentialMechanismReliable<T> {
         // Transform to probabilities and accumulate
         for (index = 0; index < this.cumulativeDistribution.length; index++) {
             this.cumulativeDistribution[index] = new BigFraction(cumulativeDistributionInteger[index], sum);
-            if (index > 0) {
-                this.cumulativeDistribution[index] = this.cumulativeDistribution[index].add(this.cumulativeDistribution[index-1]);
-            }
         }
         this.transformTime += System.nanoTime() - transformTime;
 
