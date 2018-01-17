@@ -379,8 +379,8 @@ public class StatisticsClassification {
                             inputZeroR.train(inputHandle, outputHandle, index);
                             if (outputClassifier != null && !outputHandle.isOutlier(index)) {
                                 outputClassifier.train(outputHandle, outputHandle, index);
+                                trained = true;
                             }
-                            trained = true;
                             this.progress.value = (int)((++done) * total);
                         }
                     }
@@ -389,7 +389,7 @@ public class StatisticsClassification {
                 // Close
                 inputClassifier.close();
                 inputZeroR.close();
-                if (outputClassifier != null) {
+                if (outputClassifier != null && trained) {
                     outputClassifier.close();
                 }
                 
@@ -399,46 +399,43 @@ public class StatisticsClassification {
                     // Check
                     checkInterrupt();
                     
-                    // If trained
-                    if (trained) {
+                    // Classify
+                    ClassificationResult resultInput = inputClassifier.classify(inputHandle, index);
+                    ClassificationResult resultInputZR = inputZeroR.classify(inputHandle, index);
+                    ClassificationResult resultOutput = outputClassifier == null || !trained ? null : outputClassifier.classify(outputHandle, index);
+                    classifications++;
                         
-                        // Classify
-                        ClassificationResult resultInput = inputClassifier.classify(inputHandle, index);
-                        ClassificationResult resultInputZR = inputZeroR.classify(inputHandle, index);
-                        ClassificationResult resultOutput = outputClassifier == null ? null : outputClassifier.classify(outputHandle, index);
-                        classifications++;
+                    // Correct result
+                    String actualValue = outputHandle.getValue(index, specification.classIndex, true);
                         
-                        // Correct result
-                        String actualValue = outputHandle.getValue(index, specification.classIndex, true);
-                        
-                        // Maintain data about ZeroR
-                        this.zeroRAverageError += resultInputZR.error(actualValue);
-                        this.zeroRAccuracy += resultInputZR.correct(actualValue) ? 1d : 0d;
-                        double[] confidences = resultInputZR.confidences();
-                        zerorConfidences[confidencesIndex] = index;
-                        System.arraycopy(confidences, 0, zerorConfidences, confidencesIndex + 1, confidences.length);
+                    // Maintain data about ZeroR
+                    this.zeroRAverageError += resultInputZR.error(actualValue);
+                    this.zeroRAccuracy += resultInputZR.correct(actualValue) ? 1d : 0d;
+                    double[] confidences = resultInputZR.confidences();
+                    zerorConfidences[confidencesIndex] = index;
+                    System.arraycopy(confidences, 0, zerorConfidences, confidencesIndex + 1, confidences.length);
 
-                        // Maintain data about input-based classifier
-                        boolean correct = resultInput.correct(actualValue);
-                        this.originalAverageError += resultInput.error(actualValue);
-                        this.originalAccuracy += correct ? 1d : 0d;
-                        confidences = resultInput.confidences();
-                        inputConfidences[confidencesIndex] = index;
-                        System.arraycopy(confidences, 0, inputConfidences, confidencesIndex + 1, confidences.length);
+                    // Maintain data about input-based classifier
+                    boolean correct = resultInput.correct(actualValue);
+                    this.originalAverageError += resultInput.error(actualValue);
+                    this.originalAccuracy += correct ? 1d : 0d;
+                    confidences = resultInput.confidences();
+                    inputConfidences[confidencesIndex] = index;
+                    System.arraycopy(confidences, 0, inputConfidences, confidencesIndex + 1, confidences.length);
 
-                        // Maintain data about output-based                     
-                        if (resultOutput != null) {
-                            correct = resultOutput.correct(actualValue);
-                            this.averageError += resultOutput.error(actualValue);
-                            this.accuracy += correct ? 1d : 0d;
-                            confidences = resultOutput.confidences();
-                            outputConfidences[confidencesIndex] = index;
-                            System.arraycopy(confidences, 0, outputConfidences, confidencesIndex + 1, confidences.length);
-                        }
-                        
-                        // Next
-                        confidencesIndex += numClasses + 1;
+                    // Maintain data about output-based                     
+                    if (resultOutput != null) {
+                        correct = resultOutput.correct(actualValue);
+                        this.averageError += resultOutput.error(actualValue);
+                        this.accuracy += correct ? 1d : 0d;
+                        confidences = resultOutput.confidences();
+                        outputConfidences[confidencesIndex] = index;
+                        System.arraycopy(confidences, 0, outputConfidences, confidencesIndex + 1, confidences.length);
                     }
+                        
+                    // Next
+                    confidencesIndex += numClasses + 1;
+                    
                     this.progress.value = (int)((++done) * total);
                 }
             } catch (Exception e) {
