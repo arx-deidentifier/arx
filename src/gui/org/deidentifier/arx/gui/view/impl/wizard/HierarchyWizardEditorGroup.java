@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,10 +69,10 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
         this.editorSize = new EditorString(composite) {
             @Override
             public boolean accepts(final String s) {
-                if (group==null) return false;
+                if (group == null) return false;
                 try {
                     int i = Integer.parseInt(s);
-                    return i>0;
+                    return i > 0;
                 } catch (NumberFormatException e) {
                     return false;
                 }
@@ -92,6 +92,14 @@ public class HierarchyWizardEditorGroup<T> implements HierarchyWizardView, IHier
                         model.update(HierarchyWizardEditorGroup.this);
                     }
                 }
+            }
+
+            @Override
+            public boolean isDifferent(String value1, String value2) {
+                if (!accepts(value1) || !accepts(value2)) {
+                    return true;
+                }
+                return Integer.compare(Integer.parseInt(value1), Integer.parseInt(value2)) != 0;
             }
         };
     }

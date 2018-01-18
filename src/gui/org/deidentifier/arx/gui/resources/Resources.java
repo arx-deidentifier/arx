@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
+import org.deidentifier.arx.AttributeType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -46,24 +47,25 @@ import org.eclipse.swt.widgets.Shell;
  * This class provides access to basic resources.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public class Resources {
-    
+
     /** Messages */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-                                                                                                                                   
+
     /** The splash. */
     private static Image                splash          = null;
-    
+
     /** The iconset. */
     private static Image[]              iconset         = null;
-    
+
     /** The image cache */
     private final Map<String, Image>    imageCache;
-    
+
     /** The charset used to read the license text */
-    private final static Charset CHARSET = StandardCharsets.UTF_8;
-    
+    private final static Charset        CHARSET         = StandardCharsets.UTF_8;
+
     /**
      * Returns the logo.
      *
@@ -282,6 +284,53 @@ public class Resources {
      */
     public InputStream getStream(final String name) {
         return this.getClass().getResourceAsStream(name);
+    }
+    
+    /**
+     * Returns an image.
+     * 
+     * @param type
+     * @return
+     */
+    public Image getImage(AttributeType type) {
+        return getImage(type, false);
+    }
+    
+    /**
+     * Returns an image.
+     * 
+     * @param type
+     * @param isResponseVariable
+     * @return
+     */
+    public Image getImage(AttributeType type, boolean isResponseVariable) {
+        if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
+            if (isResponseVariable) {
+                return getManagedImage("bullet_red_frame.png");
+            } else {
+                return getManagedImage("bullet_red.png");
+            }
+        } else if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
+            if (isResponseVariable) {
+                return getManagedImage("bullet_green_frame.png");
+            } else {
+                return getManagedImage("bullet_green.png");
+            }
+        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
+            if (isResponseVariable) {
+                return getManagedImage("bullet_purple_frame.png");
+            } else {
+                return getManagedImage("bullet_purple.png");
+            }
+        } else if (type == AttributeType.QUASI_IDENTIFYING_ATTRIBUTE) {
+            if (isResponseVariable) {
+                return getManagedImage("bullet_yellow_frame.png");
+            } else {
+                return getManagedImage("bullet_yellow.png");
+            }
+        } else {
+            throw new IllegalArgumentException("Unknown attribute type '" + type + "'");
+        }
     }
     
     /**

@@ -10,7 +10,8 @@ public class ModelR implements Serializable {
 	
 	private static final long serialVersionUID = -4456951642963734727L;
 	private String path;
-	private int bufferSize;
+	private int bufferSize = 10000;
+	private int eventDelay = 10;
 	
 	public ModelR() {
 		String p = OS.getR();
@@ -20,7 +21,6 @@ public class ModelR implements Serializable {
 			this.path = p;
 		}
 		//this.path = "";//Does not work?! OS.getR();
-		this.bufferSize = 10000;
 	}
 
 	public int getBufferSize() {
@@ -30,8 +30,24 @@ public class ModelR implements Serializable {
 	public void setBufferSize(int bufferSize) {
 		this.bufferSize = bufferSize;
 	}
+	
+	
 
-	public String getPath() {
+	/**
+     * @return the eventDelay
+     */
+    public int getTicksPerSecond() {
+        return eventDelay;
+    }
+
+    /**
+     * @param eventDelay the eventDelay to set
+     */
+    public void setTicksPerSecond(int eventDelay) {
+        this.eventDelay = eventDelay;
+    }
+
+    public String getPath() {
 		return this.path;
 	}
 

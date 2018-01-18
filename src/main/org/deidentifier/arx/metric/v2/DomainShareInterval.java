@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
         // Store ranges and type
         this.dataType = (DataTypeWithRatioScale<T>)this.getDataType();
         Range<T>[] ranges = this.getAdjustedRanges();
-        this.domainSize = toDouble(dataType.subtract(ranges[1].getLabelBound(), ranges[0].getLabelBound()));
+        this.domainSize = toDouble(dataType.subtract(ranges[1].getMinMaxValue(), ranges[0].getMinMaxValue()));
         
         // Prepare the array
         String[] input = new String[hierarchy.length];
@@ -124,11 +124,11 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                         
                         if (interval.isOutOfBound()) {
                             if (interval.isOutOfLowerBound()) {
-                                share = toDouble(dataType.subtract(builder.getLowerRange().getSnapBound(),
-                                                                   builder.getLowerRange().getLabelBound())) / domainSize;
+                                share = toDouble(dataType.subtract(builder.getLowerRange().getBottomTopCodingFrom(),
+                                                                   builder.getLowerRange().getMinMaxValue())) / domainSize;
                             } else {
-                                share = toDouble(dataType.subtract(builder.getUpperRange().getLabelBound(),
-                                                                   builder.getUpperRange().getSnapBound())) / domainSize;
+                                share = toDouble(dataType.subtract(builder.getUpperRange().getMinMaxValue(),
+                                                                   builder.getUpperRange().getBottomTopCodingFrom())) / domainSize;
                             }
                         } else if (interval.isNullInterval()) {
                             share = 1d / domainSize;
@@ -136,7 +136,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                             share = toDouble(dataType.subtract(interval.getMax(), interval.getMin())) / domainSize;
                         }
                     } else { 
-                     // Special case, '*' at the end
+                        // Special case, '*' at the end
                         share = 1d;
                     }
                 }

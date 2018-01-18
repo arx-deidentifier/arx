@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public abstract class AbstractTestUtilityEstimation extends AbstractTestUtilityM
     private void checkLattice(ARXLattice lattice) {
         for (ARXNode[] level : lattice.getLevels()) {
             for (ARXNode node : level) {
-                assertTrue("Min > max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss()) <= 0);
+                assertTrue("Min > max", compareWithTolerance(node.getLowestScore(), node.getHighestScore()) <= 0);
             }
         }
     }
@@ -94,7 +94,7 @@ public abstract class AbstractTestUtilityEstimation extends AbstractTestUtilityM
                 
                 String label = Arrays.toString(node.getTransformation());
                 if (testcase.informationLoss.containsKey(label)) {
-                    if (compareWithTolerance(node.getMaximumInformationLoss(), node.getMinimumInformationLoss()) != 0) {
+                    if (compareWithTolerance(node.getHighestScore(), node.getLowestScore()) != 0) {
                         
                         // Check transformation and test bounds
                         checkTransformation(testcase, result, node);
@@ -115,12 +115,12 @@ public abstract class AbstractTestUtilityEstimation extends AbstractTestUtilityM
      * @param node
      */
     private void checkTransformation(ARXUtilityMetricsTestCase testcase, ARXResult result, ARXNode node) {
-        InformationLoss<?> min = node.getMinimumInformationLoss();
-        InformationLoss<?> max = node.getMaximumInformationLoss();
+        InformationLoss<?> min = node.getLowestScore();
+        InformationLoss<?> max = node.getHighestScore();
         result.getOutput(node, false);
-        assertTrue("Min != max", compareWithTolerance(node.getMinimumInformationLoss(), node.getMaximumInformationLoss()) == 0);
-        assertTrue("Actual < min", compareWithTolerance(min, node.getMaximumInformationLoss()) <= 0);
-        assertTrue("Actual > max", compareWithTolerance(max, node.getMaximumInformationLoss()) >= 0);
+        assertTrue("Min != max", compareWithTolerance(node.getLowestScore(), node.getHighestScore()) == 0);
+        assertTrue("Actual < min", compareWithTolerance(min, node.getHighestScore()) <= 0);
+        assertTrue("Actual > max", compareWithTolerance(max, node.getHighestScore()) >= 0);
     }
     
     /**

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,7 +68,7 @@ public class StyleConfigurationHeader extends CTStyleConfiguration {
     private final BorderStyle             borderStyle     = null;
     
     /**  TODO */
-    private final ICellPainter            cellPainter     = new BeveledBorderDecorator(new TextPainter());
+    private final ICellPainter            cellPainter     = new BeveledBorderDecorator(new TextPainter(false, false, true, true));
     
     /**  TODO */
     private final Boolean                 renderGridLines = Boolean.FALSE;

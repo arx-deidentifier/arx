@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,39 +40,39 @@ import org.eclipse.swt.widgets.ToolItem;
  */
 public class ViewSubsetDefinition implements IView{
 
-    /**  Controller */
+    /** Controller */
     private Controller controller;
-    
-    /**  View */
-    private Composite root;
-    
-    /**  Model */
-    private Model model;
-    
-    /**  View */
-    private Text size;
-    
-    /**  View */
-    private Text origin;
-    
-    /**  View */
-    private Text total;
-    
-    /**  View */
-    private Text percent;
 
-    /**  View */
-    private ToolItem all;
-    
-    /**  View */
-    private ToolItem none;
-    
-    /**  View */
-    private ToolItem file;
-    
-    /**  View */
-    private ToolItem filter;
-    
+    /** View */
+    private Composite  root;
+
+    /** Model */
+    private Model      model;
+
+    /** View */
+    private Text       size;
+
+    /** View */
+    private Text       origin;
+
+    /** View */
+    private Text       total;
+
+    /** View */
+    private Text       percent;
+
+    /** View */
+    private ToolItem   all;
+
+    /** View */
+    private ToolItem   none;
+
+    /** View */
+    private ToolItem   file;
+
+    /** View */
+    private ToolItem   filter;
+
     /**
      * Creates a new instance.
      *

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,12 +49,12 @@ public class TestAnonymizationRiskBased extends AbstractAnonymizationTest {
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() {
         return Arrays.asList(new Object[][] {
-                                              /* 0 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addCriterion(new AverageReidentificationRisk(0.01d)), "./data/adult.csv", 314637.8461904862, new int[] { 1, 0, 1, 1, 3, 2, 2, 1, 1 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(new SampleUniqueness(0.01d)), "./data/adult.csv", 0.1606952725863784, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.DANKAR)), "./data/adult.csv", 144298.1603344462, new int[] { 0, 0, 1, 1, 1, 2, 1, 0, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.ZAYATZ)), "./data/adult.csv", 0.16078200456326086, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.PITMAN)), "./data/adult.csv", 144298.1603344462, new int[] { 0, 0, 1, 1, 1, 2, 1, 0, 0 }, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addCriterion(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.SNB)), "./data/adult.csv", 0.17599055898432758, new int[] { 0, 3, 0, 0, 2, 1, 1, 1, 0 }, false) }
+                                              /* 0 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addPrivacyModel(new AverageReidentificationRisk(0.01d)), "./data/adult.csv", 314637.8461904862, new int[] { 1, 0, 1, 1, 3, 2, 2, 1, 1 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addPrivacyModel(new SampleUniqueness(0.01d)), "./data/adult.csv", 0.1606952725863784, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addPrivacyModel(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.DANKAR)), "./data/adult.csv", 144298.1603344462, new int[] { 0, 0, 1, 1, 1, 2, 1, 0, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addPrivacyModel(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.ZAYATZ)), "./data/adult.csv", 0.16078200456326086, new int[] { 0, 3, 0, 0, 1, 1, 1, 1, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedEntropyMetric(0.1d)).addPrivacyModel(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.PITMAN)), "./data/adult.csv", 144298.1603344462, new int[] { 0, 0, 1, 1, 1, 2, 1, 0, 0 }, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createPrecomputedLossMetric(0.1d)).addPrivacyModel(getPopulationUniqueness(0.0001d, PopulationUniquenessModel.SNB)), "./data/adult.csv", 0.17599055898432758, new int[] { 0, 3, 0, 0, 2, 1, 1, 1, 0 }, false) }
         });
     }
     
@@ -74,16 +74,10 @@ public class TestAnonymizationRiskBased extends AbstractAnonymizationTest {
      */
     private static PopulationUniqueness getPopulationUniqueness(double threshold, PopulationUniquenessModel model) {
         
-        double[][] startValues = new double[16][];
-        int index = 0;
-        for (double d1 = 0d; d1 < 1d; d1 += 0.33d) {
-            for (double d2 = 0d; d2 < 1d; d2 += 0.33d) {
-                startValues[index++] = new double[] { d1, d2 };
-            }
-        }
-        
         return new PopulationUniqueness(threshold, model,
                                                      ARXPopulationModel.create(Region.USA),
-                                                     ARXSolverConfiguration.create().preparedStartValues(startValues).iterationsPerTry(15));
+                                                     ARXSolverConfiguration.create()
+                                                                           .setDeterministic(true)
+                                                                           .iterationsPerTry(15));
     }
 }

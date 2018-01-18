@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,9 +62,9 @@ public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTes
         // Warm up
         System.out.println("Experiment:");
         System.out.println(" - Dataset: " + testCase.dataset);
-        System.out.println(" - Utility measure: " + testCase.config.getMetric().toString());
+        System.out.println(" - Utility measure: " + testCase.config.getQualityModel().toString());
         System.out.println(" - Practical monotonicity: " + testCase.practical);
-        System.out.println(" - Suppression limit: " + testCase.config.getMaxOutliers());
+        System.out.println(" - Suppression limit: " + testCase.config.getSuppressionLimit());
         System.out.println(" - Privacy model: " + getPrivacyModel(testCase.config));
         System.out.println(" - Performing experiment:");
         System.out.println("   * Warmup");
@@ -92,7 +92,7 @@ public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTes
                 if (arxNode.getAnonymity() == Anonymity.PROBABLY_NOT_ANONYMOUS) {
                     statistics[5]++;
                 }
-                if (arxNode.getMaximumInformationLoss() == arxNode.getMinimumInformationLoss()) {
+                if (arxNode.getHighestScore() == arxNode.getLowestScore()) {
                     statistics[6]++;
                 }
             }
@@ -118,9 +118,9 @@ public abstract class AbstractTestExecutionTime extends AbstractAnonymizationTes
     private String getPrivacyModel(ARXConfiguration config) {
         StringBuilder result = new StringBuilder();
         result.append("{");
-        int num = config.getCriteria().size();
+        int num = config.getPrivacyModels().size();
         int count = 0;
-        for (PrivacyCriterion c : config.getCriteria()) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             result.append(c.toString());
             if (++count < num) {
                 result.append(", ");

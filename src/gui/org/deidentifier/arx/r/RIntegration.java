@@ -44,10 +44,11 @@ public class RIntegration {
 	 * Creates a new instance
 	 * @param path
 	 * @param buffer
+	 * @throws IOException 
 	 */
 	public RIntegration(final String path, 
 	                         final RBuffer buffer,
-	                         final RListener listener) {
+	                         final RListener listener) throws IOException {
 	    
 	    // Check args
 	    if (path == null || buffer == null || listener == null) {
@@ -90,8 +91,8 @@ public class RIntegration {
             t.start();
             
         } catch (IOException e) {
-            debug(e);
             shutdown();
+            throw(e);
         }
 	}
 

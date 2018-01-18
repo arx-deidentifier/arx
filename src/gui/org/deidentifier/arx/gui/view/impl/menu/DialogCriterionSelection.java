@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
@@ -156,6 +157,7 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
         Image symbolL = controller.getResources().getManagedImage("symbol_l.png"); //$NON-NLS-1$
         Image symbolT = controller.getResources().getManagedImage("symbol_t.png"); //$NON-NLS-1$
         Image symbolD = controller.getResources().getManagedImage("symbol_d.png"); //$NON-NLS-1$
+        Image symbolB = controller.getResources().getManagedImage("symbol_b.png"); //$NON-NLS-1$
         
         for (ModelExplicitCriterion c : elements) {
 
@@ -167,7 +169,10 @@ public class DialogCriterionSelection extends TitleAreaDialog implements IDialog
                 item.setImage(0, symbolT);
             } else if (c instanceof ModelDDisclosurePrivacyCriterion) {
                 item.setImage(0, symbolD);
+            } else if (c instanceof ModelBLikenessCriterion) {
+                item.setImage(0, symbolB);
             }
+            
         }
 
         table.addSelectionListener(new SelectionAdapter() {

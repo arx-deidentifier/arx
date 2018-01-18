@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,11 +40,10 @@ class Gamma {
     /** The Constant B8. */
     private final static double B8             = -1.0 / 30.0;
 
-    /** The Constant DIGAMMA_1. */
-    private final static double DIGAMMA_1      = -0.57721566490153286060651209008240243104215933593992d;  // -digamma(1)
-                                                                                                           // =
-                                                                                                           // Euler�Mascheroni
-                                                                                                           // constant
+    /** The Constant DIGAMMA_1. <br>
+     * -digamma(1) = Euler Mascheroni constant
+     */
+    private final static double DIGAMMA_1      = -0.57721566490153286060651209008240243104215933593992d;
 
     /** The Constant LARGE_DIGAMMA. */
     private final static double LARGE_DIGAMMA  = 12.0;
@@ -73,22 +72,15 @@ class Gamma {
     /** The Constant SMALL_TRIGAMMA. */
     private final static double SMALL_TRIGAMMA = 1e-4;
 
-    /** The Constant TETRAGAMMA_1. */
-    private final static double TETRAGAMMA_1   = -2.0d * 1.202056903159594285399738161511449990764986292d; // -2
-                                                                                                           // *
-                                                                                                           // Zeta(3)
-                                                                                                           // =
-                                                                                                           // -2
-                                                                                                           // *
-                                                                                                           // Ap�ry's
-                                                                                                           // constant
+    /** The Constant TETRAGAMMA_1. <br>
+     * -2 * Zeta(3) = -2 * Apry constant  
+     */
+    private final static double TETRAGAMMA_1   = -2.0d * 1.202056903159594285399738161511449990764986292d;
 
-    /** The Constant TRIGAMMA_1. */
-    private final static double TRIGAMMA_1     = (StrictMath.PI * StrictMath.PI) / 6.0;                   // trigamma(1)
-                                                                                                           // =
-                                                                                                           // pi^2/6
-                                                                                                           // =
-                                                                                                           // Zeta(2)
+    /** The Constant TRIGAMMA_1. <br>
+     * trigamma(1) = pi^2/6 = Zeta(2)
+     */
+    private final static double TRIGAMMA_1     = (StrictMath.PI * StrictMath.PI) / 6.0;                  
 
     /**
      * Approximates the digamma function. Java port of the
@@ -147,7 +139,7 @@ class Gamma {
     }
 
     /**
-     * TODO: Implement
+     * TODO: Implement efficiently
      * 
      * @param x
      * @return
@@ -157,7 +149,7 @@ class Gamma {
     }
 
     /**
-     * TODO: Implement
+     * TODO: Implement efficiently
      * 
      * @param x
      * @return

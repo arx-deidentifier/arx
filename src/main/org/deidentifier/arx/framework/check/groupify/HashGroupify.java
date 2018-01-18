@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,8 @@ import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
@@ -40,65 +42,92 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * @author Florian Kohlmayer
  */
 public class HashGroupify {
-        
+
     /** Criteria. */
     private final PrivacyCriterion[]     classBasedCriteria;
-    
+
     /** The current number of outliers. */
     private int                          currentNumOutliers;
-    
+
     /** The entry array. */
     private HashGroupifyEntry[]          hashTableBuckets;
-    
+
     /** Current number of elements. */
     private int                          hashTableElementCount;
-    
+
     /** The first entry. */
     private HashGroupifyEntry            hashTableFirstEntry;
-    
+
     /** The last entry. */
     private HashGroupifyEntry            hashTableLastEntry;
-    
+
     /** Load factor. */
     private final float                  hashTableLoadFactor = 0.75f;
-    
+
     /** Maximum number of elements that can be put in this map before having to rehash. */
     private int                          hashTableThreshold;
-    
+
     /** Do we ensure optimality for sample-based criteria */
     private final boolean                heuristicForSampleBasedCriteria;
-    
+
     /** The parameter k, if k-anonymity is contained in the set of criteria. */
     private final int                    minimalClassSize;
-    
+
     /** Is the result k-anonymous?. */
     private boolean                      minimalClassSizeFulfilled;
-    
+
     /** True, if the contained d-presence criterion is not inclusion. */
     private final boolean                privacyModelContainsDPresence;
-    
+
     /** The research subset, if d-presence is contained in the set of criteria. */
     private final RowSet                 privacyModelDefinesSubset;
-    
+
     /** Is the result anonymous. */
     private boolean                      privacyModelFulfilled;
-    
+
     /** Criteria. */
     private final SampleBasedCriterion[] sampleBasedCriteria;
-    
+
     /** Allowed tuple outliers. */
     private final int                    suppressionLimit;
-    
+
     /** Utility measure */
     private final Metric<?>              utilityMeasure;
+
+    /** Input */
+    private final DataMatrix             dataInput;
+
+    /** Output */
+    private final DataMatrix             dataOutput;
+
+    /** Output */
+    private final DataMatrix             dataAnalyzed;
+
+    /** Number of columns (from index 0) that need to be analyzed in hot-mode*/ 
+    private final int                    dataAnalyzedNumberOfColumns;
     
     /**
      * Constructs a new hash groupify operator.
      *
      * @param capacity The capacity
+     * @param aggregation The aggregation information
      * @param config The config
+     * @param input
+     * @param output
+     * @param analyzed
      */
-    public HashGroupify(int capacity, final ARXConfigurationInternal config) {
+    public HashGroupify(int capacity, 
+                        final ARXConfigurationInternal config,
+                        final int dataAnalyzedNumberOfColumns,
+                        final DataMatrix input,
+                        final DataMatrix output,
+                        final DataMatrix analyzed) {
+        
+        // Store
+        this.dataInput = input;
+        this.dataOutput = output;
+        this.dataAnalyzed = analyzed;
+        this.dataAnalyzedNumberOfColumns = dataAnalyzedNumberOfColumns;
         
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
@@ -108,8 +137,8 @@ public class HashGroupify {
         
         // Set params
         this.currentNumOutliers = 0;
-        this.suppressionLimit = config.getAbsoluteMaxOutliers();
-        this.utilityMeasure = config.getMetric();
+        this.suppressionLimit = config.getAbsoluteSuppressionLimit();
+        this.utilityMeasure = config.getQualityModel();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
         // Extract research subset
@@ -120,8 +149,8 @@ public class HashGroupify {
         }
         
         // Extract criteria
-        this.classBasedCriteria = config.getClassBasedCriteriaAsArray();
-        this.sampleBasedCriteria = config.getSampleBasedCriteriaAsArray();
+        this.classBasedCriteria = config.getClassBasedPrivacyModelsAsArray();
+        this.sampleBasedCriteria = config.getSampleBasedPrivacyModelsAsArray();
         this.minimalClassSize = config.getMinimalGroupSize();
         
         // Sanity check: by convention, d-presence must be the first criterion
@@ -144,16 +173,16 @@ public class HashGroupify {
      * @param count
      * @param pcount
      */
-    public void addFromBuffer(int[] generalized, int[] other, int representative, int count, int pcount) {
+    public void addFromBuffer(int generalized, int other, int representative, int count, int pcount) {
         
         // Add
-        final int hash = HashTableUtil.hashcode(generalized);
+        final int hash = dataOutput.hashCode(generalized);
         final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
         // Is a other attribute provided
-        if (other != null) {
+        if (other != -1) {
             if (entry.distributions == null) {
-                entry.distributions = new Distribution[other.length];
+                entry.distributions = new Distribution[dataAnalyzedNumberOfColumns];
                 
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
@@ -165,8 +194,9 @@ public class HashGroupify {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(representative)) {
                 
                 // TODO: Improve!
+                dataAnalyzed.iterator(other);
                 for (int i = 0; i < entry.distributions.length; i++) {
-                    entry.distributions[i].add(other[i]);
+                    entry.distributions[i].add(dataAnalyzed.iterator_next());
                 }
             }
         }
@@ -180,10 +210,10 @@ public class HashGroupify {
      * @param count
      * @param pcount
      */
-    public void addFromGroupify(int[] generalized, Distribution[] distributions, int representative, int count, int pcount) {
-        
+    public void addFromGroupify(int generalized, Distribution[] distributions, int representative, int count, int pcount) {
+
         // Add
-        final int hash = HashTableUtil.hashcode(generalized);
+        final int hash = dataOutput.hashCode(generalized);
         final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
         // Is a distribution provided
@@ -209,10 +239,10 @@ public class HashGroupify {
      * @param count
      * @param pcount
      */
-    public void addFromSnapshot(int[] generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
-        
+    public void addFromSnapshot(int generalized, int[][] elements, int[][] frequencies, int representative, int count, int pcount) {
+
         // Add
-        final int hash = HashTableUtil.hashcode(generalized);
+        final int hash = dataOutput.hashCode(generalized);
         final HashGroupifyEntry entry = addInternal(generalized, hash, representative, count, pcount);
         
         // Is a distribution provided
@@ -241,9 +271,13 @@ public class HashGroupify {
      * @return
      */
     public HashGroupifyEntry getEntry(int[] tuple) {
-        final int hash = HashTableUtil.hashcode(tuple);
+        final int hash = dataOutput.hashCode(tuple);
         int index = hash & (hashTableBuckets.length - 1);
-        return findEntry(tuple, index, hash);
+        HashGroupifyEntry m = hashTableBuckets[index];
+        while ((m != null) && ((m.hashcode != hash) || !dataOutput.equals(m.row, tuple))) {
+            m = m.next;
+        }
+        return m;
     }
     
     /**
@@ -255,11 +289,27 @@ public class HashGroupify {
     }
     
     /**
+     * Returns the input data matrix
+     * @return
+     */
+    public DataMatrix getInputData() {
+        return this.dataInput;
+    }
+    
+    /**
      * Returns the current size in terms of classes
      * @return
      */
     public int getNumberOfEquivalenceClasses() {
         return hashTableElementCount;
+    }
+    
+    /**
+     * Returns the output data
+     * @return
+     */
+    public DataMatrix getOutputData() {
+        return this.dataOutput;
     }
     
     /**
@@ -277,51 +327,47 @@ public class HashGroupify {
     public boolean isPrivacyModelFulfilled() {
         return privacyModelFulfilled;
     }
-    
+
     /**
-     * Microaggregates all according attributes
-     * @param data
-     * @param start
-     * @param num
-     * @param functions
-     * @param map
-     * @param header
+     * Returns a data object with microaggregation performed
+     * @param microaggregationData
      * @param dictionary
      * @return
      */
-    public Data performMicroaggregation(int[][] data,
-                                        int start,
-                                        int num,
-                                        DistributionAggregateFunction[] functions,
-                                        int[] map,
-                                        String[] header,
+    public Data performMicroaggregation(DataAggregationInformation microaggregationData,
                                         Dictionary dictionary) {
         
+        // Initialize
+        int[] indices = microaggregationData.getMicroaggregationIndices();
+        DistributionAggregateFunction[] functions = microaggregationData.getMicroaggregationFunctions();
+        String[] header = microaggregationData.getMicroaggregationHeader();
+        int[] columns = microaggregationData.getMicroaggregationColumns();
+        
         // Prepare result
-        Data result = new Data(new int[data.length][num], header, map, dictionary);
+        Data result = Data.createWrapper(new DataMatrix(dataOutput.getNumRows(), indices.length), header, columns, dictionary);
 
         // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
         ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
-        for (int row = 0; row < data.length; row++) {
+        for (int row = 0; row < dataOutput.getNumRows(); row++) {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
-                final int[] key = data[row];
-                final int hash = HashTableUtil.hashcode(key);
+                final int hash = dataOutput.hashCode(row);
                 final int index = hash & (hashTableBuckets.length - 1);
                 HashGroupifyEntry m = hashTableBuckets[index];
-                while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
+                while ((m != null) && ((m.hashcode != hash) || !dataOutput.equalsIgnoringOutliers(row, m.row))) {
                     m = m.next;
                 }
-                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before microaggregation!"); }
-                int dimension = 0;
-                result.getArray()[row] = new int[num];
-                for (int i = start; i < start + num; i++) {
-                    if (!cache.containsKey(m.distributions[i])) {
-                        String value = functions[dimension].aggregate(m.distributions[i]);
-                        int code = result.getDictionary().register(dimension, value);
-                        cache.put(m.distributions[i], code);
+                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before performing microaggregation!"); }
+                result.getArray().iterator(row);
+                for (int i = 0; i < indices.length; i++) {
+                    int columnIndex = indices[i];
+                    Distribution distribution = m.distributions[columnIndex];
+                    int code = cache.getOrDefault(distribution, -1);
+                    if (code == -1) {
+                        String value = functions[i].aggregate(distribution);
+                        code = result.getDictionary().register(i, value);
+                        cache.put(distribution, code);
                     }
-                    result.getArray()[row][dimension] = cache.get(m.distributions[i]);
-                    dimension++;
+                    result.getArray().iterator_write(code);
                 }
             }
         }
@@ -334,32 +380,32 @@ public class HashGroupify {
     }
     
     /**
-     * Marks all outliers in the given (generalized subset of the) input datasets
-     * @param data
+     * Suppresses all records in the output dataset which <br>
+     * (a) do not satisfy privacy requirements, or <br>
+     * (b) are not included in the research subset
      */
-    public void performSuppression(final int[][] data) {
+    public void performSuppression() {
         
-        for (int row = 0; row < data.length; row++) {
-            final int[] key = data[row];
+        for (int row = 0; row < dataOutput.getNumRows(); row++) {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
-                final int hash = HashTableUtil.hashcode(key);
+                final int hash = dataOutput.hashCode(row);
                 final int index = hash & (hashTableBuckets.length - 1);
                 HashGroupifyEntry m = hashTableBuckets[index];
-                while ((m != null) && ((m.hashcode != hash) || !equalsIgnoringOutliers(key, m.key))) {
+                while ((m != null) && ((m.hashcode != hash) || !dataOutput.equalsIgnoringOutliers(row, m.row))) {
                     m = m.next;
                 }
                 if (m == null) {
-                    throw new RuntimeException("Invalid state! Groupify the data before marking outliers!");
+                    throw new RuntimeException("Invalid state! Group the data before suppressing records!");
                 }
                 if (!m.isNotOutlier) {
-                    key[0] |= Data.OUTLIER_MASK;
+                    dataOutput.or(row, Data.OUTLIER_MASK);
                 }
             } else {
-                key[0] |= Data.OUTLIER_MASK;
+                dataOutput.or(row, Data.OUTLIER_MASK);
             }
         }
     }
-
+    
     /**
      * Analyzes the current state
      * @param transformation
@@ -405,7 +451,7 @@ public class HashGroupify {
      * @param pcount
      * @return the hash groupify entry
      */
-    private HashGroupifyEntry addInternal(final int[] generalized, final int hash, final int representative, int count, final int pcount) {
+    private HashGroupifyEntry addInternal(final int generalized, final int hash, final int representative, int count, final int pcount) {
         
         // Find or create entry
         int index = hash & (hashTableBuckets.length - 1);
@@ -610,12 +656,12 @@ public class HashGroupify {
         this.analyzeSampleBasedCriteria(transformation, true);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
-    
+        
     /**
      * Creates a new entry.
      * 
-     * @param key
-     *            the key
+     * @param row
+     *            the row
      * @param index
      *            the index
      * @param hash
@@ -624,8 +670,8 @@ public class HashGroupify {
      *            the line
      * @return the hash groupify entry
      */
-    private HashGroupifyEntry createEntry(final int[] key, final int index, final int hash, final int line) {
-        final HashGroupifyEntry entry = new HashGroupifyEntry(key, hash);
+    private HashGroupifyEntry createEntry(final int row, final int index, final int hash, final int line) {
+        final HashGroupifyEntry entry = new HashGroupifyEntry(this.dataOutput, row, hash);
         entry.next = hashTableBuckets[index];
         entry.representative = line;
         hashTableBuckets[index] = entry;
@@ -638,42 +684,26 @@ public class HashGroupify {
         }
         return entry;
     }
-    
-    /**
-     * TODO: Ugly!.
-     *
-     * @param a
-     * @param a2
-     * @return
-     */
-    private boolean equalsIgnoringOutliers(final int[] a, final int[] a2) {
-        for (int i = 0; i < a.length; i++) {
-            if (a[i] != (a2[i] & Data.REMOVE_OUTLIER_MASK)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
+
     /**
      * Returns the according entry.
      * 
-     * @param key
-     *            the key
+     * @param row
+     *            the row
      * @param index
      *            the index
      * @param keyHash
      *            the key hash
      * @return the hash groupify entry
      */
-    private HashGroupifyEntry findEntry(final int[] key, final int index, final int keyHash) {
+    private HashGroupifyEntry findEntry(final int row, final int index, final int keyHash) {
         HashGroupifyEntry m = hashTableBuckets[index];
-        while ((m != null) && ((m.hashcode != keyHash) || !HashTableUtil.equals(key, m.key))) {
+        while ((m != null) && ((m.hashcode != keyHash) || !dataOutput.equals(row, m.row))) {
             m = m.next;
         }
         return m;
     }
-        
+
     /**
      * Checks whether the given entry is anonymous.
      * @param transformation

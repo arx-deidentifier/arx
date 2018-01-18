@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -86,10 +88,17 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Discernibility");
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Non-monotonic discernability";
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -108,17 +117,17 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
         return new ILSingleDimensionalWithBound(dm, dmStar);
     }
-    
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count);
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node,
                                                         HashGroupify groupify) {

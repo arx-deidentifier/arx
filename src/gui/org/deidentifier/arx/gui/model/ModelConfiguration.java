@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,7 +87,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public ARXConfiguration addCriterion(PrivacyCriterion c) {
         setModified();
-        return config.addCriterion(c);
+        return config.addPrivacyModel(c);
     }
     
     @Override
@@ -130,21 +130,21 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public boolean containsCriterion(Class<? extends PrivacyCriterion> clazz) {
-        return config.containsCriterion(clazz);
+        return config.isPrivacyModelSpecified(clazz);
     }
     
     /**
      * @return the adversaryCost
      */
     public double getAdversaryCost() {
-        return this.config.getFinancialConfiguration().getAdversaryCost();
+        return this.config.getCostBenefitConfiguration().getAdversaryCost();
     }
     
     /**
      * @return the adversaryGain
      */
     public double getAdversaryGain() {
-        return this.config.getFinancialConfiguration().getAdversaryGain();
+        return this.config.getCostBenefitConfiguration().getAdversaryGain();
     }
     
     /**
@@ -152,8 +152,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @return
      */
-    public double getAllowedOutliers() {
-        return config.getMaxOutliers();
+    public double getSuppressionLimit() {
+        return config.getSuppressionLimit();
     }
     
     /**
@@ -190,7 +190,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public Set<PrivacyCriterion> getCriteria() {
-        return config.getCriteria();
+        return config.getPrivacyModels();
     }
     
     /**
@@ -201,7 +201,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public <T extends PrivacyCriterion> Set<T> getCriteria(Class<T> clazz) {
-        return config.getCriteria(clazz);
+        return config.getPrivacyModels(clazz);
     }
     
     /**
@@ -212,7 +212,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public <T extends PrivacyCriterion> T getCriterion(Class<T> clazz) {
-        return config.getCriterion(clazz);
+        return config.getPrivacyModel(clazz);
     }
     
     /**
@@ -288,7 +288,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return
      */
     public Metric<?> getMetric() {
-        return config.getMetric();
+        return config.getQualityModel();
     }
 
     /**
@@ -338,14 +338,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @return the publisherBenefit
      */
     public double getPublisherBenefit() {
-        return this.config.getFinancialConfiguration().getPublisherBenefit();
+        return this.config.getCostBenefitConfiguration().getPublisherBenefit();
     }
     
     /**
      * @return the publisherLoss
      */
     public double getPublisherLoss() {
-        return this.config.getFinancialConfiguration().getPublisherLoss();
+        return this.config.getCostBenefitConfiguration().getPublisherLoss();
     }
     
     /**
@@ -442,32 +442,12 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns whether microaggregation will be considered by utility measures
-     * @return
-     */
-    public boolean isUtilityBasedMicroaggregation() {
-        return config.isUtilityBasedMicroaggregation();
-    }
-    
-    /**
      * Removes all criteria.
      */
     public void removeAllCriteria() {
         this.getCriteria().clear();
     }
 
-    /**
-     * Delegates to an instance of ARXConfiguration.
-     *
-     * @param <T>
-     * @param c
-     * @return
-     */
-    public <T extends PrivacyCriterion> boolean removeCriterion(PrivacyCriterion c) {
-        setModified();
-        return config.removeCriterion(c);
-    }
-    
     /**
      * Removes a hierarchy.
      *
@@ -496,7 +476,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getAdversaryCost() != adversaryCost) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setAdversaryCost(adversaryCost);
+        this.config.getCostBenefitConfiguration().setAdversaryCost(adversaryCost);
     }
     
     /**
@@ -506,7 +486,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getAdversaryGain() != adversaryGain) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setAdversaryGain(adversaryGain);
+        this.config.getCostBenefitConfiguration().setAdversaryGain(adversaryGain);
     }
     
     /**
@@ -514,9 +494,9 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *
      * @param supp
      */
-    public void setAllowedOutliers(double supp) {
+    public void setSuppressionLimit(double supp) {
         setModified();
-        config.setMaxOutliers(supp);
+        config.setSuppressionLimit(supp);
     }
     
     /**
@@ -627,7 +607,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public void setMetric(Metric<?> metric) {
         setModified();
-        config.setMetric(metric);
+        config.setQualityModel(metric);
     }
     
     /**
@@ -689,7 +669,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getPublisherBenefit() != publisherBenefit) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setPublisherBenefit(publisherBenefit);
+        this.config.getCostBenefitConfiguration().setPublisherBenefit(publisherBenefit);
     }
 
 
@@ -700,7 +680,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (this.getPublisherLoss() != publisherLoss) {
             this.setModified();
         }
-        this.config.getFinancialConfiguration().setPublisherLoss(publisherLoss);
+        this.config.getCostBenefitConfiguration().setPublisherLoss(publisherLoss);
     }
 
     /**
@@ -753,15 +733,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.modified = false;
     }
 
-    /**
-     * Returns whether microaggregation will be considered by utility measures
-     * @return
-     */
-    public void setUseUtilityBasedMicroaggregation(boolean value) {
-        setModified();
-        config.setUtilityBasedMicroaggregation(value);
-    }
-    
     /**
      * Mark as modified.
      */

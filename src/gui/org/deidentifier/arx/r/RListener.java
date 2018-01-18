@@ -26,13 +26,16 @@ import org.eclipse.swt.widgets.Display;
 public abstract class RListener {
 
     /** Delay in milliseconds */
-    private final int delay;
+    private final int     delay;
+
+    /** SWT Display, if any */
+    private final Display display;
 
     /** Should an event be fired */
-    private boolean   fire = false;
+    private boolean       fire = false;
 
     /** Timestamp of the last event */
-    private long      time = 0;
+    private long          time = 0;
 
     /**
      * Creates a new instance
@@ -40,20 +43,48 @@ public abstract class RListener {
      * @param ticksPerSecond Maximal number of events per second
      */
     public RListener(int ticksPerSecond) {
+        this(ticksPerSecond, null);
+    }
+        
+    /**
+     * Creates a new instance
+     * 
+     * @param ticksPerSecond Maximal number of events per second
+     * @param display Display
+     */
+    public RListener(int ticksPerSecond, Display display) {
         
         // Calculate delay
+        this.display = display;
         this.delay = (int)Math.round(1000d / (double)ticksPerSecond);
         
         // Create repeating task
-        repeat(delay, new Runnable() {
-            @Override
-            public void run() {
-                if (fire && System.currentTimeMillis() > time) {
-                    bufferUpdated();
-                    fire = false;
+        if (display != null) {
+            display.asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    repeat(delay, new Runnable() {
+                        @Override
+                        public void run() {
+                            if (fire && System.currentTimeMillis() > time) {
+                                bufferUpdated();
+                                fire = false;
+                            }
+                        }
+                    });
                 }
-            }
-        });
+            });
+        } else {
+            repeat(delay, new Runnable() {
+                @Override
+                public void run() {
+                    if (fire && System.currentTimeMillis() > time) {
+                        bufferUpdated();
+                        fire = false;
+                    }
+                }
+            });
+        }
     }
 
     /**
@@ -63,7 +94,6 @@ public abstract class RListener {
      */
     private void repeat(final int delay, final Runnable runnable) {
 
-        final Display display = Display.getCurrent();
         if (display != null) {
             display.timerExec(delay, new Runnable() {
                 @Override

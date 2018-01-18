@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -46,13 +47,13 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     /** Domain shares for each dimension. */
     private DomainShare[]     shares;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      gFactor;
     
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      gsFactor;
     
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double      sFactor;
     
     /**
@@ -107,13 +108,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationFactor() {
         return gFactor;
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
@@ -124,7 +123,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getSuppressionFactor() {
         return sFactor;
     }
@@ -140,10 +138,20 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Loss");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+    
+    @Override
     public String toString() {
         return "Loss ("+gsFactor+"/"+gFactor+"/"+sFactor+")";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
         
@@ -151,8 +159,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
+        DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
         
         int[] transformation = node.getGeneralization();
         double[] result = new double[dimensions];
@@ -162,8 +170,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
+                m.read();
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     result[dimension] += m.isNotOutlier ? share * gFactor :
@@ -172,7 +181,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 }
                 for (int dimension=0; dimension<dimensionsAggregated; dimension++){
                     
-                    double share = (double)m.count * microaggregationFunctions[dimension].getMeanError(m.distributions[microaggregationStart + dimension]);
+                    double share = (double) m.count *
+                                   microaggregationFunctions[dimension].getInformationLoss(m.distributions[microaggregationIndices[dimension]]);
                     result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
                                          (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
                     // Note: we ignore a bound for microaggregation, as we cannot compute it
@@ -197,9 +207,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Return information loss and lower bound
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
                                                super.createInformationLoss(bound));
-        
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
 
@@ -207,28 +216,30 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
+        DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
         
         double[] result = new double[dimensions];
         int[] transformation = node.getGeneralization();
 
         // Compute
+        entry.read();
         for (int dimension = 0; dimension < dimensionsGeneralized; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.next();
             int level = transformation[dimension];
             result[dimension] = (double) entry.count * shares[dimension].getShare(value, level);
         }
 
         // Compute
         for (int dimension=0; dimension<dimensionsAggregated; dimension++){
-            result[dimensionsGeneralized + dimension] = (double)entry.count * microaggregationFunctions[dimension].getMeanError(entry.distributions[microaggregationStart + dimension]);
+            result[dimensionsGeneralized + dimension] = (double) entry.count *
+                    microaggregationFunctions[dimension].getInformationLoss(entry.distributions[microaggregationIndices[dimension]]);
         }
         
         // Return
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return null;
@@ -247,8 +258,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
+                m.read();
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     bound[dimension] += share * gFactor;
@@ -268,7 +280,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Return
         return super.createInformationLoss(bound);
     }
-    
+
     /**
      * For subclasses.
      *

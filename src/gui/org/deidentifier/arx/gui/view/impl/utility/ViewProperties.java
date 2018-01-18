@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.deidentifier.arx.ARXResult;
@@ -60,7 +61,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         public String[]       values;
 
         /**
-         * 
+         * Creates a new property
          *
          * @param father
          * @param property
@@ -75,7 +76,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         }
 
         /**
-         * 
+         * Creates a new property
          *
          * @param property
          * @param values
@@ -87,13 +88,49 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         }
 
         /**
-         * 
+         * Adds a child
          *
          * @param p
          */
         public void add(final Property p) {
             children.add(p);
             p.parent = this;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getOuterType().hashCode();
+            result = prime * result + ((children == null) ? 0 : children.hashCode());
+            result = prime * result + ((property == null) ? 0 : property.hashCode());
+            result = prime * result + Arrays.hashCode(values);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (obj == null) return false;
+            if (getClass() != obj.getClass()) return false;
+            Property other = (Property) obj;
+            if (!getOuterType().equals(other.getOuterType())) return false;
+            if (children == null) {
+                if (other.children != null) return false;
+            } else if (!children.equals(other.children)) return false;
+            if (property == null) {
+                if (other.property != null) return false;
+            } else if (!property.equals(other.property)) return false;
+            if (!Arrays.equals(values, other.values)) return false;
+            return true;
+        }
+
+        /**
+         * Helper
+         * @return
+         */
+        private ViewProperties getOuterType() {
+            return ViewProperties.this;
         }
     }
 
@@ -140,7 +177,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         controller.addListener(ModelPart.GS_FACTOR, this);
         controller.addListener(ModelPart.MAX_OUTLIERS, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
-        controller.addListener(ModelPart.FINANCIAL_MODEL, this);
+        controller.addListener(ModelPart.COST_BENEFIT_MODEL, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(target, this);
         if (reset != null) {
@@ -196,8 +233,8 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
      * @return
      */
     protected double asRelativeValue(final InformationLoss<?> infoLoss, final ARXResult result) {
-        return infoLoss.relativeTo(model.getResult().getLattice().getMinimumInformationLoss(), 
-                                   model.getResult().getLattice().getMaximumInformationLoss()) * 100d;
+        return infoLoss.relativeTo(model.getResult().getLattice().getLowestScore(), 
+                                   model.getResult().getLattice().getHighestScore()) * 100d;
     }
     
     /**

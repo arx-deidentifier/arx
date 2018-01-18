@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,19 +74,10 @@ public class HashTableUtil {
      * @return true, if equal
      */
     public static final boolean equals(final int[] a, final int[] a2) {
+        
+        // Make sure that this method can be inlined by keeping
+        // its size under 325 bytes
         switch (a.length) {
-        case 20:
-            if (a[19] != a2[19]) {
-                return false;
-            }
-        case 19:
-            if (a[18] != a2[18]) {
-                return false;
-            }
-        case 18:
-            if (a[17] != a2[17]) {
-                return false;
-            }
         case 17:
             if (a[16] != a2[16]) {
                 return false;

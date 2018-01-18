@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -33,7 +34,10 @@ import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class provides an implementation of the non-uniform entropy
- * metric. TODO: Add reference
+ * metric. See:<br>
+ * A. De Waal and L. Willenborg: 
+ * "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -85,6 +89,16 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Non-uniform entropy");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Non-monotonic non-uniform entropy";
     }
@@ -113,8 +127,9 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         while (m != null) {
             if (!m.isNotOutlier && m.count > 0) {
                 suppressed += m.count;
+                m.read();
                 for (int i = 0; i < original.length; i++) {
-                    original[i].putOrAdd(m.key[i], m.count, m.count);
+                    original[i].putOrAdd(m.next(), m.count, m.count);
                 }
             }
             m = m.nextOrdered;

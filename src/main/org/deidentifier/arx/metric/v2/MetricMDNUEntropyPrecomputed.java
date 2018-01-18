@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,12 @@ import java.util.Arrays;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
@@ -36,7 +38,10 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * array that maps identifiers to their frequency for all quasi-identifiers and
  * generalization levels. It further reduces the overhead induced by subsequent
  * calls by caching the results for previous columns and generalization levels.
- * TODO: Add reference
+ * See:<br>
+ * A. De Waal and L. Willenborg: 
+ * "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -133,10 +138,20 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Non-uniform entropy");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
+    }
+    
+    @Override
     public String toString() {
         return "Non-uniform entropy";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         
@@ -203,7 +218,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
                                                                HashGroupify groupify) {
@@ -244,7 +259,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
         return result;
     }
-    
+
     /**
      * For backwards compatibility.
      *
@@ -300,8 +315,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
         
         // Create reference to the hierarchies
-        final int[][] data = input.getArray();
-        this.hierarchies = new int[data[0].length][][];
+        final DataMatrix data = input.getArray();
+        this.hierarchies = new int[data.getNumColumns()][][];
         for (int i = 0; i < hierarchies.length; i++) {
             this.hierarchies[i] = hierarchies[i].getArray();
         }

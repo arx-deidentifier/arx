@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.DataType;
@@ -38,7 +40,7 @@ public class StatisticsSummary<T> {
      * @author Fabian Prasser
      *
      */
-    static final class StatisticsSummaryOrdinal {
+    static final class StatisticsSummaryOrdinal<T> {
 
         /** Var */
         private final Comparator<String> comparator;
@@ -46,6 +48,8 @@ public class StatisticsSummary<T> {
         private final List<String>       values = new ArrayList<String>();
         /** Var */
         private String                   mode;
+        /** Var */
+        private int                      distinctNumberOfValues;
         /** Var */
         private String                   median;
         /** Var */
@@ -55,7 +59,7 @@ public class StatisticsSummary<T> {
         /** Var */
         private int                      numberOfMeasures;
         /** Var */
-        private DataType<?>              type;
+        private DataType<T>              type;
 
         /**
          * Constructor
@@ -70,7 +74,7 @@ public class StatisticsSummary<T> {
          * Constructor
          * @param type
          */
-        StatisticsSummaryOrdinal(final DataType<?> type) {
+        StatisticsSummaryOrdinal(final DataType<T> type) {
             this.type = type;
             this.comparator = new Comparator<String>() {
                 @Override
@@ -92,13 +96,6 @@ public class StatisticsSummary<T> {
             this.values.add(value);
         }
         
-        /**
-         * Clears the data
-         */
-        public void clear() {
-            this.values.clear();
-        }
-
         /**
          * Returns a summary
          * @return
@@ -130,6 +127,14 @@ public class StatisticsSummary<T> {
         public String getMode() {
             return mode;
         }
+        
+        /**
+         * Returns the number of distinct values
+         * @return
+         */
+        public int getDistinctNumberOfValues() {
+        	return distinctNumberOfValues;
+        }
 
         /**
          * Returns the number of measurements
@@ -157,7 +162,7 @@ public class StatisticsSummary<T> {
         /**
          * Analyzes the data
          */
-        <T> void analyze() {
+        void analyze() {
             Collections.sort(values, comparator);
             
             if (values.size() == 0) {
@@ -165,6 +170,7 @@ public class StatisticsSummary<T> {
                 max = DataType.NULL_VALUE;
                 mode = DataType.NULL_VALUE;
                 median = DataType.NULL_VALUE;
+                distinctNumberOfValues = 0;
                 numberOfMeasures = 0;
             } else {
                 
@@ -174,7 +180,6 @@ public class StatisticsSummary<T> {
                 if (values.size() % 2 == 1) {
                     median = values.get(values.size() / 2);
                 } else if (type != null && type instanceof DataTypeWithRatioScale<?>) {
-                    @SuppressWarnings("unchecked")
                     DataType<T> dType = (DataType<T>)type;
                     @SuppressWarnings("unchecked")
                     DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>)dType;
@@ -192,6 +197,12 @@ public class StatisticsSummary<T> {
                 }
                 numberOfMeasures = values.size();
                 
+                // Determine distinct number of measures
+                Set<String> distinct = new HashSet<String>();
+                distinct.addAll(values);
+                distinctNumberOfValues = distinct.size();
+                distinct.clear();
+                
                 // Determine mode
                 int count = 0;
                 int index = 0;
@@ -205,6 +216,14 @@ public class StatisticsSummary<T> {
                     }
                     index = nIndex;
                 }
+                
+                // Convert to correct output format
+                if (type != null) {
+                    min = type.format(type.parse(min));
+                    max = type.format(type.parse(max));
+                    mode = type.format(type.parse(mode));
+                    median = type.format(type.parse(median));
+                }
             }
             
             // Clear
@@ -217,6 +236,9 @@ public class StatisticsSummary<T> {
 
     /** The number of measures */
     private final int            numberOfMeasures;
+    
+    /** The distinct number of measures */
+    private final int			 distinctNumberOfValues;
 
     /* ******************************************************************** 
      * ARXString, ARXOrderedString, ARXDate, ARXInteger, ARXDecimal 
@@ -305,10 +327,12 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT) {
 
         this(scale, numberOfMeasures, 
+             distinctNumberOfValues,
              mode, modeT,
              null, null, 
              null, null, 
@@ -337,6 +361,7 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT,
                       String median,
@@ -347,6 +372,7 @@ public class StatisticsSummary<T> {
                       T maxT) {
 
         this(scale, numberOfMeasures, 
+             distinctNumberOfValues,
              mode, modeT,
              median, medianT, 
              min, minT,
@@ -393,6 +419,7 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT,
                       String median,
@@ -422,6 +449,7 @@ public class StatisticsSummary<T> {
         
         
         this(scale, numberOfMeasures, 
+             distinctNumberOfValues,
              mode, modeT,
              median, medianT, 
              min, minT,
@@ -471,6 +499,7 @@ public class StatisticsSummary<T> {
      */
     StatisticsSummary(DataScale scale,
                       int numberOfMeasures,
+                      int distinctNumberOfValues,
                       String mode,
                       T modeT,
                       String median,
@@ -504,6 +533,7 @@ public class StatisticsSummary<T> {
         this.scale = scale;
         this.mode = mode;
         this.modeT = modeT;
+        this.distinctNumberOfValues = distinctNumberOfValues;
         this.median = median;
         this.medianT = medianT;
         this.min = min;
@@ -532,7 +562,6 @@ public class StatisticsSummary<T> {
         this.stdDevT = stdDevT;
         this.stdDevD = stdDevD;
     }
-
 
     /**
      * Returns the mean
@@ -606,8 +635,6 @@ public class StatisticsSummary<T> {
         return kurtosisT;
     }
 
-    
-
     /**
      * Returns the max
      * @return
@@ -670,6 +697,22 @@ public class StatisticsSummary<T> {
      */
     public T getModeAsValue() {
         return modeT;
+    }
+
+    /**
+     * Returns the number of distinct values
+     * @return
+     */
+    public int getNumberOfDistinctValuesAsInt() {
+        return distinctNumberOfValues;
+    }
+    
+    /**
+     * Returns the number of distinct values
+     * @return
+     */
+    public String getNumberOfDistinctValuesAsString() {
+        return String.valueOf(distinctNumberOfValues);
     }
 
     /**
@@ -877,6 +920,7 @@ public class StatisticsSummary<T> {
         return "StatisticsSummary [\n" + 
                                    " - scale=" + scale + "\n" + 
                                    " - numberOfMeasures=" + numberOfMeasures + "\n" + 
+                                   " - distinctNumberOfValues=" + distinctNumberOfValues + "\n" + 
                                    (isModeAvailable() ? " - mode=" + mode + "\n" : "") + 
                                    (isMedianAvailable() ?  " - median=" + median + "\n" : "") + 
                                    (isMinAvailable() ?  " - min=" + min + "\n" : "") + 

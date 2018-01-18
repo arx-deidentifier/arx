@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,9 +45,9 @@ public class DataHandleSubset extends DataHandle {
      */
     public DataHandleSubset(DataHandle source, DataSubset subset) {
         this.source = source;
-        this.dataTypes = source.dataTypes;
+        this.columnToDataType = source.columnToDataType;
         this.definition = source.definition;
-        this.header = source.header;
+        this.setHeader(source.header);
         this.subset = subset;
     }
 
@@ -106,6 +106,11 @@ public class DataHandleSubset extends DataHandle {
     public DataHandle getView(){
         checkRegistry();
         return this;
+    }
+
+    @Override
+    protected int getValueIdentifier(int column, String value) {
+        return source.getValueIdentifier(column, value);
     }
 
     @Override
@@ -170,8 +175,8 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected DataType<?>[][] getDataTypeArray() {
-        return source.dataTypes;
+    protected DataType<?>[] getColumnToDataType() {
+        return source.columnToDataType;
     }    
 
     @Override
@@ -204,6 +209,11 @@ public class DataHandleSubset extends DataHandle {
         return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
     }
     
+    @Override
+    protected int internalGetEncodedValue(int row, int col, boolean ignoreSuppression) {
+        return source.internalGetEncodedValue(this.subset.getArray()[row], col, ignoreSuppression);
+    }
+
     @Override
     protected String internalGetValue(int row, int col, boolean ignoreSuppression) {
         return source.internalGetValue(this.subset.getArray()[row], col, ignoreSuppression);

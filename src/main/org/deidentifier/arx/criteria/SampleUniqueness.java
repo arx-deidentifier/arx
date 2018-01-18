@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 
 /**
@@ -59,8 +60,15 @@ public class SampleUniqueness extends RiskBasedCriterion{
     }
 
     @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Sample uniqueness");
+        result.addProperty("Threshold", super.getRiskThreshold());
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "("+getRiskThreshold()+")-sample-uniques";
+        return "("+getRiskThreshold()+")-sample-uniqueness";
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply the d-presence criterion
+ * This class implements an example on how to apply the d-presence privacy model
  * and create a research subset by providing a data subset.
  *
  * @author Fabian Prasser
@@ -115,10 +115,10 @@ public class Example10 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
-        config.setMaxOutliers(0d);
-        config.setMetric(Metric.createEntropyMetric());
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new DPresence(1d / 2d, 2d / 3d, subset));
+        config.setSuppressionLimit(0d);
+        config.setQualityModel(Metric.createEntropyMetric());
 
         // Now anonymize
         ARXResult result = anonymizer.anonymize(data, config);

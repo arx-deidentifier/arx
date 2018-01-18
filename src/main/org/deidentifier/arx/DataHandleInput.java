@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
@@ -35,22 +36,19 @@ import org.deidentifier.arx.framework.data.Dictionary;
 public class DataHandleInput extends DataHandle {
 
     /** The data. */
-    protected int[][]    data       = null;
+    protected DataMatrix data            = null;
 
     /** The dictionary. */
-    protected Dictionary dictionary = null;
+    protected Dictionary dictionary      = null;
 
     /** The data. */
-    private int[][]      dataGH     = null;
+    private DataMatrix   dataGeneralized = null;
 
     /** The data. */
-    private int[][]      dataDI     = null;
+    private DataMatrix   dataAnalyzed    = null;
 
-    /** The data. */
-    private int[][]      dataIS     = null;
-    
     /** Is this handle locked?. */
-    private boolean      locked     = false;
+    private boolean      locked          = false;
 
     /**
      * Creates a new data handle.
@@ -60,7 +58,7 @@ public class DataHandleInput extends DataHandle {
     protected DataHandleInput(final Data data) {
         
         // Obtain and check iterator
-        final Iterator<String[]> iterator = data.iterator();
+        Iterator<String[]> iterator = data.iterator();
         if (!iterator.hasNext()) { 
             throw new IllegalArgumentException("Data object is empty!"); 
         }
@@ -71,8 +69,8 @@ public class DataHandleInput extends DataHandle {
         this.definition = data.getDefinition().clone();
 
         // Obtain header
-        final String[] columns = iterator.next();
-        super.header = Arrays.copyOf(columns, columns.length);
+        String[] columns = iterator.next();
+        super.setHeader(Arrays.copyOf(columns, columns.length));
 
         // Init dictionary
         this.dictionary = new Dictionary(header.length);
@@ -82,22 +80,27 @@ public class DataHandleInput extends DataHandle {
         while (iterator.hasNext()) {
 
             // Process a tuple
-            final String[] strings = iterator.next();
-            final int[] tuple = new int[header.length];
-            for (int i = 0; i < strings.length; i++) {
-                tuple[i] = dictionary.register(i, strings[i]);
+            String[] strings = iterator.next();
+            int[] tuple = new int[header.length];
+            for (int i = 0; i < header.length; i++) {
+                String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
+                value = (value != null) ? value : DataType.NULL_VALUE;
+                tuple[i] = dictionary.register(i, value);
             }
             vals.add(tuple);
         }
 
         // Build array
-        this.data = vals.toArray(new int[vals.size()][]);
+        this.data = new DataMatrix(vals.size(), header.length);
+        for (int row = 0; row < vals.size(); row++) {
+            this.data.setRow(row, vals.get(row));
+        }
 
         // finalize dictionary
         this.dictionary.finalizeAll();
 
         // Create datatype array
-        this.dataTypes = getDataTypeArray();
+        this.columnToDataType = getColumnToDataType();
     }
 
     @Override
@@ -122,7 +125,7 @@ public class DataHandleInput extends DataHandle {
     @Override
     public int getNumRows() {
         checkRegistry();
-        return data.length;
+        return data.getNumRows();
     }
 
     @Override
@@ -134,7 +137,7 @@ public class DataHandleInput extends DataHandle {
     public String getValue(final int row, final int column) {
         checkRegistry();
         checkColumn(column);
-        checkRow(row, data.length);
+        checkRow(row, data.getNumRows());
         return internalGetValue(row, column, false);
     }
 
@@ -152,7 +155,7 @@ public class DataHandleInput extends DataHandle {
 
             @Override
             public boolean hasNext() {
-                return (index < data.length);
+                return (index < data.getNumRows());
             }
 
             @Override
@@ -178,26 +181,12 @@ public class DataHandleInput extends DataHandle {
     }
     
     /**
-     * Swaps two rows.
-     *
-     * @param row1
-     * @param row2
-     * @param data
-     */
-    private void swap(int row1, int row2, int[][] data){
-        final int[] temp = data[row1];
-        data[row1] = data[row2];
-        data[row2] = temp;
-    }
-
-    /**
      * Releases all resources.
      */
     protected void doRelease() {
         this.setLocked(false);
-        dataGH = null;
-        dataDI = null;
-        dataIS = null;
+        dataGeneralized = null;
+        dataAnalyzed = null;
     }
     
     @Override
@@ -211,15 +200,15 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected DataType<?>[][] getDataTypeArray() {
+    protected DataType<?>[] getColumnToDataType() {
         checkRegistry();
-        DataType<?>[][] dataTypes = new DataType[1][header.length];
+        DataType<?>[] dataTypes = new DataType[header.length];
         for (int i = 0; i < header.length; i++) {
             final DataType<?> type = definition.getDataType(header[i]);
             if (type != null) {
-                dataTypes[0][i] = type;
+                dataTypes[i] = type;
             } else {
-                dataTypes[0][i] = DataType.STRING;
+                dataTypes[i] = DataType.STRING;
             }
         }
         return dataTypes;
@@ -243,16 +232,32 @@ public class DataHandleInput extends DataHandle {
      * Returns the input buffer
      * @return
      */
-    protected int[][] getInputBuffer() {
+    protected DataMatrix getInputBuffer() {
         checkRegistry();
-        return this.dataGH;
+        return this.dataGeneralized;
+    }
+    
+    @Override
+    protected int getValueIdentifier(int column, String value) {
+        String[] values = dictionary.getMapping()[column];
+        for (int index = 0; index < values.length; index++) {
+            if (values[index].equals(value)) {
+                return index;
+            }
+        }
+        return -1;
+    }
+
+    @Override
+    protected int internalGetEncodedValue(final int row, final int column, final boolean ignoreSuppression) {
+        return data.get(row, column);
     }
     
     @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
-        return dictionary.getMapping()[column][data[row][column]];
+        return dictionary.getMapping()[column][data.get(row, column)];
     }
-    
+
     @Override
     protected boolean internalReplace(int column,
                                       String original,
@@ -278,14 +283,13 @@ public class DataHandleInput extends DataHandle {
     protected void internalSwap(final int row1, final int row2) {
 
         // Check
-        checkRow(row1, data.length);
-        checkRow(row2, data.length);
+        checkRow(row1, data.getNumRows());
+        checkRow(row2, data.getNumRows());
 
         // Swap
-        swap(row1, row2, data);
-        if (dataGH != null) swap(row1, row2, dataGH);
-        if (dataDI != null) swap(row1, row2, dataDI);
-        if (dataIS != null) swap(row1, row2, dataIS);
+        data.swap(row1, row2);
+        if (dataGeneralized != null) dataGeneralized.swap(row1, row2);
+        if (dataAnalyzed != null) dataAnalyzed.swap(row1, row2);
     }
 
     /**
@@ -324,7 +328,7 @@ public class DataHandleInput extends DataHandle {
 
         if (!this.isLocked()) {
             this.definition = data.getDefinition().clone();
-            this.dataTypes = getDataTypeArray();
+            this.columnToDataType = getColumnToDataType();
             this.definition.setLocked(true);
         }
     }
@@ -332,13 +336,12 @@ public class DataHandleInput extends DataHandle {
     /**
      * Updates the definition with further data to swap.
      *
-     * @param dataGH
-     * @param dataDI
-     * @param dataIS
+     * @param dataGeneralized
+     * @param dataAnalyzed
+     * @param matrixIS
      */
-    protected void update(int[][] dataGH, int[][] dataDI, int[][] dataIS) {
-        this.dataGH = dataGH;
-        this.dataDI = dataDI;
-        this.dataIS = dataIS;
+    protected void update(DataMatrix dataGeneralized, DataMatrix dataAnalyzed) {
+        this.dataGeneralized = dataGeneralized;
+        this.dataAnalyzed = dataAnalyzed;
     }
 }

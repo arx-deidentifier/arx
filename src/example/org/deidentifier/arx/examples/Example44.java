@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.KMap;
 
 /**
- * This class implements an example of how to use the derived k-anonymity criterion.
+ * This class implements an example of how to use the k-map privacy model with a statistical estimator.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -82,8 +82,8 @@ public class Example44 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KMap(50, 0.1d, populationmodel));
-        config.setMaxOutliers(1d);
+        config.addPrivacyModel(new KMap(50, 0.1d, populationmodel));
+        config.setSuppressionLimit(1d);
         
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);

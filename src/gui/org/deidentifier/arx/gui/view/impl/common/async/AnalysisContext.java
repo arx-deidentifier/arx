@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,7 +115,7 @@ public class AnalysisContext {
             return hierarchy;
         }
         
-        // TODO: Superfluous?
+        // This is probably not needed anymore, but we leave it just in case...
         // Second, check for hierarchies associated with t-closeness
         for (HierarchicalDistanceTCloseness t : context.config.getCriteria(HierarchicalDistanceTCloseness.class)){
             if (t.getAttribute().equals(attribute)) {
@@ -144,8 +144,7 @@ public class AnalysisContext {
     public ARXPopulationModel getPopulationModel() {
 
         // First, try to return a model associated with an output criterion
-        if (model.getRiskModel().isUseOutputPopulationModelIfAvailable() &&
-            model.getOutputConfig() != null) {
+        if (model.getOutputConfig() != null) {
             for (PrivacyCriterion c : model.getOutputConfig().getCriteria()) {
                 if (c.getPopulationModel() != null) {
                     return c.getPopulationModel();

@@ -1,3 +1,19 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.Date;
@@ -5,9 +21,9 @@ import java.util.List;
 
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -16,7 +32,6 @@ import org.deidentifier.arx.r.OS;
 import org.deidentifier.arx.r.RBuffer;
 import org.deidentifier.arx.r.RIntegration;
 import org.deidentifier.arx.r.RListener;
-import org.deidentifier.arx.r.terminal.RCommandListener;
 import org.deidentifier.arx.r.terminal.RLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
@@ -31,22 +46,20 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
     private Composite                      root;
     /** Internal stuff. */
     private AnalysisManager                manager;
-    
-	/** Buffer size*/
-    private static final int BUFFER_SIZE = 100000;
-    /** Event delay*/
-    private static final int EVENT_DELAY = 10;
     /** Widget */
     private Text       input;
     /** Widget */
     private StyledText output;
-    /** Listener */
-    private RCommandListener listener;
-    
-    private RBuffer buffer;
+    /** R process*/
 	private RIntegration rIntegration;
     
-
+	/**
+	 * Creates a new instance
+	 * @param parent
+	 * @param controller
+	 * @param target
+	 * @param reset
+	 */
 	public ViewStatisticsRTerminal(Composite parent, 
 			Controller controller, ModelPart target, 
 			ModelPart reset) {
@@ -57,69 +70,42 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 
 	@Override
 	public ViewUtilityType getType() {
-		return LayoutUtility.ViewUtilityType.SUMMARY;
+		return LayoutUtility.ViewUtilityType.R;
 	}
 
-	@Override
-	protected Control createControl(Composite parent) {
-		root = new Composite(parent, SWT.NONE);
-        root.setLayout(RLayout.createGridLayout(1));
-        
-        // User input
-        input = new Text(root, SWT.BORDER);
-        input.setLayoutData(RLayout.createFillHorizontallyGridData(true));
-        
-        // Listen for enter key
-        input.addTraverseListener(new TraverseListener() {
-            @Override
-            public void keyTraversed(TraverseEvent event) {
-                if (event.detail == SWT.TRAVERSE_RETURN) {
-                    if (input.getText() != null && !input.getText().isEmpty()) {
-                        String command = input.getText();
-                        input.setText("");
-                        if (listener != null) {
-                            listener.command(command);
-                        }
-                    }
-                }
-            }
-        });
-
-        // User output
-        output = new StyledText(root, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
-        output.setLayoutData(RLayout.createFillGridData());
-	           
-        initializeRIntegration();
-        
-		return this.root;
-	}
+	/**
+     * Sets the content of the buffer
+     * @param text
+     */
+    public void setOutput(String text) {
+        this.root.setRedraw(false);
+        this.output.setText(text);
+        this.output.setSelection(text.length());
+        this.root.setRedraw(true);
+    }
 	
-	private void initializeRIntegration() {
-		// R integration
-	    this.buffer = new RBuffer(BUFFER_SIZE);
-	    final RListener listener = new RListener(EVENT_DELAY) {
-
-	        @Override
-	        public void bufferUpdated() {
-	            setOutput(buffer.toString());
-	        }
-
-	        @Override
-	        public void closed() {
-	            // TODO: Handle
-	        }
-	    };
-	    
-	    // Start integration
-	    this.rIntegration = new RIntegration(OS.getR(), buffer, listener);
-	    
-	    // Redirect user input
-	    this.listener = new RCommandListener() {
-	        @Override
-	        public void command(String command) {
-	            rIntegration.execute(command);
-	        }
-	    };	    
+	private void appendRow(DataHandle handle, int row, StringBuilder b) {
+		int numCols = handle.getNumColumns();
+		
+		b.append("list(");
+		
+		for (int column = 0; column < numCols; column++) {
+			String columnName = handle.getAttributeName(column);
+			
+			//Get DataType of attribute -> then we know how to deliver it to R that it has the correct data type & getData
+			String value = handle.getValue(row, column);
+			if (value.equals("*")) {
+				value = "NA";
+			}
+			DataType<?> dataType = handle.getDataType(columnName);
+			b.append(convertARXToRValue(dataType, value)); 
+			
+			if (column < numCols-1) {
+				b.append(',');
+			}
+		}
+				
+		b.append(")");
 	}
 	
 	private String convertARXToRType(DataType<?> t, int numRows) {
@@ -184,7 +170,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 		}
 	}
 	
-	private String createDataFrame(DataHandle handle, int numRows) {		
+	private String createDataFrame(DataHandle handle) {		
 		StringBuilder b = new StringBuilder();
 		b.append("data.frame(");
 		for (int i = 0; i < handle.getNumColumns(); i++) {
@@ -192,7 +178,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 			b.append('"'); //There have to be quotation marks because there could be hyphens which otherwise provoke an error.
 			b.append(attributeName);
 			b.append("\"=");
-			b.append(convertARXToRType(handle.getDataType(attributeName), numRows)); //speed things up through allocating memory beforehand with numRows
+			b.append(convertARXToRType(handle.getDataType(attributeName), handle.getNumColumns())); //speed things up through allocating memory beforehand with numRows
 			b.append(',');
 		}
 		b.append("stringsAsFactors=FALSE)");
@@ -200,28 +186,98 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 		return b.toString();
 	}
 	
-	private void appendRow(DataHandle handle, int row, StringBuilder b) {
-		int numCols = handle.getNumColumns();
-		
-		b.append("list(");
-		
-		for (int column = 0; column < numCols; column++) {
-			String columnName = handle.getAttributeName(column);
-			
-			//Get DataType of attribute -> then we know how to deliver it to R that it has the correct data type & getData
-			String value = handle.getValue(row, column);
-			if (value.equals("*")) {
-				value = "NA";
-			}
-			DataType<?> dataType = handle.getDataType(columnName);
-			b.append(convertARXToRValue(dataType, value)); 
-			
-			if (column < numCols-1) {
-				b.append(',');
-			}
-		}
-				
-		b.append(")");
+	/**
+	 * Execute command
+	 * @param command
+	 */
+	private void executeR(String command) {
+	    if (this.rIntegration != null && this.rIntegration.isAlive()) {
+	        this.rIntegration.execute(command);
+	    }
+	}
+
+    @Override
+    protected ComponentStatusLabelProgressProvider getProgressProvider() {
+        return new ComponentStatusLabelProgressProvider(){
+            public int getProgress() {
+                if (manager == null) {
+                    return 0;
+                } else {
+                    return manager.getProgress();
+                }
+            }
+        };
+    }
+
+	/**
+	 * Starts R
+	 */
+	private void startR() {
+	    
+	    // Stop R
+	    this.stopR();
+
+	    // R integration
+	    final RBuffer buffer = new RBuffer(getModel().getRModel().getBufferSize());
+	    final RListener listener = new RListener(getModel().getRModel().getTicksPerSecond(), this.root.getDisplay()) {
+
+	        @Override
+	        public void bufferUpdated() {
+	            setOutput(buffer.toString());
+	        }
+
+	        @Override
+	        public void closed() {
+	            stopR();
+	        }
+	    };
+	    
+	    // Start R
+	    try {
+	        this.rIntegration = new RIntegration(OS.getR(), buffer, listener);
+	    } catch (Exception e) {
+	        this.rIntegration = null;
+	    }
+	}
+	
+	/**
+	 * Stops R
+	 */
+	private void stopR() {
+	    if (this.rIntegration != null) {
+	        this.rIntegration.shutdown();
+	        this.rIntegration = null;
+	    }
+	}
+
+	@Override
+	protected Control createControl(Composite parent) {
+		root = new Composite(parent, SWT.NONE);
+        root.setLayout(RLayout.createGridLayout(1));
+        
+        // User input
+        input = new Text(root, SWT.BORDER);
+        input.setLayoutData(RLayout.createFillHorizontallyGridData(true));
+        
+        // Listen for enter key
+        input.addTraverseListener(new TraverseListener() {
+            @Override
+            public void keyTraversed(TraverseEvent event) {
+                if (event.detail == SWT.TRAVERSE_RETURN) {
+                    if (input.getText() != null && !input.getText().isEmpty()) {
+                        String command = input.getText();
+                        input.setText("");
+                        executeR(command);
+                    }
+                }
+            }
+        });
+
+        // User output
+        output = new StyledText(root, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
+        output.setLayoutData(RLayout.createFillGridData());
+	    
+		return this.root;
 	}
 
 	@Override
@@ -236,30 +292,30 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
         if (this.manager != null) {
             this.manager.stop();
         }
-
-        // TODO reset the table?
-        buffer.clearBuffer();
+        this.stopR();
         root.setRedraw(true);
         setStatusEmpty();
 	}
 
 	@Override
 	protected void doUpdate(AnalysisContextR context) {
-		System.out.println("doUpdate");
-		
-		final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
+	    
+		final DataHandle handle = context.handle;
 		
 		Analysis analysis = new Analysis() {
-			
-			private boolean                    stopped = false;
+
+            private boolean stopped  = false;
+            private int     progress = 0;
+            private int     total    = handle.getNumRows();
 
 			@Override
 			public int getProgress() {
-				return 0;
+				return (int)Math.round(100d * (double)progress / (double)total);
 			}
 
 			@Override
 			public void onError() {
+                // --> TODO: Show according message here 
 				setStatusEmpty();
 			}
 
@@ -283,44 +339,42 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 
 			@Override
 			public void run() throws InterruptedException {
-				// TODO: create new Table only at the beginning and not everytime a new column gets selected.
 				
                 long time = System.currentTimeMillis();
                 
-                DataHandle handle = null;
-        		if (ViewStatisticsRTerminal.this.getTarget().name() == "INPUT") {
-        			handle = context.model.getInputConfig().getInput().getHandle();
-        		} else if (ViewStatisticsRTerminal.this.getTarget().name() == "OUTPUT") {
-        			handle = context.model.getOutput();
-        		} else {
-        			throw new IllegalArgumentException("Unknown target.");
-        		}
-        		
-        		int numRows = builder.getFrequencyDistribution(0).count;//handle.getNumRows() delivers all entries, not only the GUI selection
-        		
-        		String createcommand = createDataFrame(handle, numRows);
-        		rIntegration.execute("f <- " + createcommand);
-        		rIntegration.execute("str(f)");
+                startR();
+                
+        		String createcommand = createDataFrame(handle);
+        		executeR("f <- " + createcommand);
+        		executeR("str(f)");
         		
         		StringBuilder b = new StringBuilder();
         		
-        		for (int j = 0; j < numRows; j++) {
+        		for (int j = 0; j < handle.getNumRows(); j++) {
+        		    
+        		    this.progress = j;
+        		    
+        		    if (stopped) {
+        		        stopR();
+        		        break;
+        		    }
+        		    
         			b.append("f[");
         			b.append(j+1);
         			b.append(",] <-");
         			appendRow(handle, j, b);
-        			System.out.println(b.toString());
+        			// System.out.println(b.toString());
         		
         			if (j % 100 == 0) {
-        				rIntegration.execute(b.toString());				
+        				executeR(b.toString());				
         				b.setLength(0); //reset the String builder so the Java Garbage Collector does not have too much work.
         			} else {
         				b.append('\n');
         			}
-        		}	
-        		rIntegration.execute(b.toString());
+        		}
         		
-        		rIntegration.execute("str(f)");
+        		executeR(b.toString());
+        		executeR("str(f)");
         		
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
                     Thread.sleep(10);
@@ -330,27 +384,14 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 			@Override
 			public void stop() {
 				System.out.println("we got stopped :(");
-				builder.interrupt();
                 this.stopped = true;
 			}
 		};
 		this.manager.start(analysis);
 	}
-
-	@Override
+	
+    @Override
 	protected boolean isRunning() {
 		return manager != null && manager.isRunning();
 	}
-	
-    /**
-     * Sets the content of the buffer
-     * @param text
-     */
-    public void setOutput(String text) {
-        this.root.setRedraw(false);
-        this.output.setText(text);
-        this.output.setSelection(text.length());
-        this.root.setRedraw(true);
-    }
-
 }

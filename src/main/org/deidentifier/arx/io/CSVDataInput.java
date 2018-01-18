@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,7 +53,6 @@ public class CSVDataInput {
         private InputStreamReader reader = null;
         /** File */
         private final File file;
-        
         /** Charset */
         private final Charset charset;
 
@@ -75,6 +74,7 @@ public class CSVDataInput {
         }
 
         @Override
+        @SuppressWarnings("resource")
         public int read(char[] cbuf, int off, int len) throws IOException {
             reader = reader != null ? reader : new InputStreamReader(new FileInputStream(file), charset);
             return reader.read(cbuf, off, len);
@@ -372,9 +372,10 @@ public class CSVDataInput {
         reader.close();
     }
 
+
     /**
-     * Returns an iterator.
-     *
+     * Returns an iterator. <b>You must iterate trough all elements to prevent resource leaks!</b>
+     * 
      * @return the iterator
      */
     public Iterator<String[]> iterator() {
@@ -382,27 +383,37 @@ public class CSVDataInput {
         return new Iterator<String[]>() {
 
             // Next tuple
-            CsvParser parser = null;
-            String[] next = null;
-            
+            boolean   initialized = false;
+            CsvParser parser      = null;
+            String[]  next        = null;
+
             @Override
             public boolean hasNext() {
+
                 initParser();
-                return next != null;
+                boolean result = next != null;
+                if (!result && parser != null) {
+                    parser.stopParsing();
+                    parser = null;
+                }
+                return result;
             }
 
             @Override
             public String[] next() {
-                
+
+                // Init
                 initParser();
                 String[] result = next;
                 next = parser.parseNext();
-
+                
                 // Replace each non matching value with the special NULL string
                 if (cleansing) {
+
                     if (result.length != datatypes.length) {
-                        throw new IllegalArgumentException("More columns available in CSV file than data types specified!");
+                        throw new IllegalArgumentException("More columns available in CSV file than data types specified");
                     }
+
                     for (int i = 0; i < result.length; i++) {
                         if (!datatypes[i].isValid(result[i])) {
                             result[i] = DataType.NULL_VALUE;
@@ -417,12 +428,14 @@ public class CSVDataInput {
                 throw new UnsupportedOperationException("Not implemented");
             }
 
-            /** Initializes the parser*/
+            /** Initializes the parser */
+
             private void initParser() {
-                if (parser == null) {
+                if (!initialized) {
                     parser = new CsvParser(settings);
                     parser.beginParsing(reader);
                     next = parser.parseNext();
+                    initialized = true;
                 }
             }
         };

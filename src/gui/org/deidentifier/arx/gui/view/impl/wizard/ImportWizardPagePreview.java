@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014-2015 Karol Babioch, Fabian Prasser
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,10 +116,10 @@ public class ImportWizardPagePreview extends WizardPage {
     /** Reference to the wizard containing this page. */
     private ImportWizard wizardImport;
     
-    /**  TODO */
+    /**  View */
     private Table        table;
 
-    /**  TODO */
+    /**  View */
     private TableViewer  tableViewer;
 
     /**
@@ -152,7 +152,7 @@ public class ImportWizardPagePreview extends WizardPage {
         setControl(container);
         container.setLayout(new GridLayout(1, false));
 
-        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
         tableViewer.setContentProvider(new ArrayContentProvider());
 
         table = tableViewer.getTable();
@@ -197,9 +197,9 @@ public class ImportWizardPagePreview extends WizardPage {
                                              column.getDataType());
                 tblclmnColumn.setWidth(100);
                 tblclmnColumn.setText(column.getAliasName());
-
-                ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
             }
+
+            ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
 
             /* Apply input to tableViewer */
             tableViewer.setInput(wizardImport.getData().getPreviewData());

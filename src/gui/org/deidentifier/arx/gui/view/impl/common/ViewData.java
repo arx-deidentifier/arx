@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * A view on a <code>Data</code> object.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public abstract class ViewData implements IView {
 
@@ -54,18 +55,6 @@ public abstract class ViewData implements IView {
 
     /** Image */
     private final Image                  IMAGE_DESCENDING;
-
-    /** Image */
-    private final Image                  IMAGE_INSENSITIVE;
-
-    /** Image */
-    private final Image                  IMAGE_SENSITIVE;
-
-    /** Image */
-    private final Image                  IMAGE_QUASI_IDENTIFYING;
-
-    /** Image */
-    private final Image                  IMAGE_IDENTIFYING;
 
     /** Widget */
     private final ToolItem               groupsButton;
@@ -120,10 +109,6 @@ public abstract class ViewData implements IView {
         this.controller = controller;
         
         // Load images
-        IMAGE_INSENSITIVE       = controller.getResources().getManagedImage("bullet_green.png");   //$NON-NLS-1$
-        IMAGE_SENSITIVE         = controller.getResources().getManagedImage("bullet_purple.png");  //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png");  //$NON-NLS-1$
-        IMAGE_IDENTIFYING       = controller.getResources().getManagedImage("bullet_red.png");     //$NON-NLS-1$
         IMAGE_ASCENDING         = controller.getResources().getManagedImage("sort_ascending.png"); //$NON-NLS-1$
         IMAGE_DESCENDING        = controller.getResources().getManagedImage("sort_descending.png");//$NON-NLS-1$
 
@@ -380,18 +365,11 @@ public abstract class ViewData implements IView {
      * @param index
      * @param type
      */
-    protected void updateHeaderImage(final int index, final AttributeType type) {
+    protected void updateHeaderImage(final int index, final String attribute, DataDefinition def) {
+        AttributeType type = def.getAttributeType(attribute);
         while (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }
-        if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(index, IMAGE_INSENSITIVE);
-        } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-            table.getHeaderImages().set(index, IMAGE_IDENTIFYING);
-        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(index, IMAGE_SENSITIVE);
-        } else {
-            table.getHeaderImages().set(index, IMAGE_QUASI_IDENTIFYING);
-        }
+        table.getHeaderImages().set(index, controller.getResources().getImage(type, def.isResponseVariable(attribute)));
     }
 }

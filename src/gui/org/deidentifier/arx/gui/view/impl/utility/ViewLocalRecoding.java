@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -168,6 +168,14 @@ public class ViewLocalRecoding implements IView, ViewStatisticsBasic {
                                     return;
                                 }
                             }
+                        } else if (mode == LocalRecodingMode.ITERATIVE) {
+                            for (double parameter : MULTIPASS_PARAMETERS) {
+                                if (item.equals(getLabelForMode(mode, parameter))) {
+                                    model.getLocalRecodingModel().setMode(LocalRecodingMode.ITERATIVE);
+                                    model.getLocalRecodingModel().setNumIterations((int)parameter);
+                                    return;
+                                }
+                            }
                         } else if (mode == LocalRecodingMode.SINGLE_PASS) {
                             if (item.equals(getLabelForMode(mode, 0d))) {
                                 model.getLocalRecodingModel().setMode(LocalRecodingMode.SINGLE_PASS);
@@ -233,6 +241,8 @@ public class ViewLocalRecoding implements IView, ViewStatisticsBasic {
             return label + " (" + parameter + ")";
         } else if (mode == LocalRecodingMode.MULTI_PASS) {
             return label + " (" + (int)parameter + ")";
+        } else if (mode == LocalRecodingMode.ITERATIVE) {
+            return label + " (" + (int)parameter + ")";
         } else if (mode == LocalRecodingMode.SINGLE_PASS) {
             return label;
         } else if (mode == LocalRecodingMode.FIXPOINT) {
@@ -241,7 +251,6 @@ public class ViewLocalRecoding implements IView, ViewStatisticsBasic {
             throw new RuntimeException("Unknown mode");
         }
     }
-
 
     /**
      * Returns a list of entries for the combo box
@@ -255,6 +264,10 @@ public class ViewLocalRecoding implements IView, ViewStatisticsBasic {
                     result.add(getLabelForMode(mode, parameter));
                 }
             } else if (mode == LocalRecodingMode.MULTI_PASS) {
+                for (double parameter : MULTIPASS_PARAMETERS) {
+                    result.add(getLabelForMode(mode, parameter));
+                }
+            } else if (mode == LocalRecodingMode.ITERATIVE) {
                 for (double parameter : MULTIPASS_PARAMETERS) {
                     result.add(getLabelForMode(mode, parameter));
                 }
@@ -293,6 +306,8 @@ public class ViewLocalRecoding implements IView, ViewStatisticsBasic {
         if (mode == LocalRecodingMode.FIXPOINT_ADAPTIVE) {
             label = getLabelForMode(mode, this.model.getLocalRecodingModel().getAdaptionFactor());
         } else if (mode == LocalRecodingMode.MULTI_PASS) {
+            label = getLabelForMode(mode, this.model.getLocalRecodingModel().getNumIterations());
+        } else if (mode == LocalRecodingMode.ITERATIVE) {
             label = getLabelForMode(mode, this.model.getLocalRecodingModel().getNumIterations());
         } else {
             label = getLabelForMode(mode, 0d);

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,8 +145,8 @@ public class TestRiskMetrics {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.addPrivacyModel(new KAnonymity(2));
+        config.setSuppressionLimit(0d);
         
         ARXResult result = null;
         try {
@@ -248,9 +248,9 @@ public class TestRiskMetrics {
     private DataHandle getAnonymizedData(Data data) {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.setMaxOutliers(0d);
-        config.setMetric(Metric.createLossMetric(AggregateFunction.RANK));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.setSuppressionLimit(0d);
+        config.setQualityModel(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = null;
         try {

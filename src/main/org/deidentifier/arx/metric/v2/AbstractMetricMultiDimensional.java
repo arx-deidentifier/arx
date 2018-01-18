@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -61,13 +62,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     private AggregateFunction               function;
 
     /** The microaggregation functions. */
-    private DistributionAggregateFunction[] microaggregationFunctions;
-
-    /** The start index of the attributes with microaggregation in the data array */
-    private int                             microaggregationStartIndex;
-
-    /** Header of the microaggregated data subset */
-    private String[]                        microaggregationHeader;
+    private DataAggregationInformation            aggregation;
 
     /**
      * Creates a new instance.
@@ -84,6 +79,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, 0.5d);
         this.function = function;
     }
+    
     /**
      * Creates a new instance.
      *
@@ -101,7 +97,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor);
         this.function = function;
     }
-    
+
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (max == null) {
@@ -110,7 +106,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             return createInformationLoss(max);
         }
     }
-    
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (min == null) {
@@ -148,36 +143,61 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             throw new IllegalStateException("Unknown aggregate function: "+function);
         }
     }
+    
+    /**
+     * Returns relevant aggregation functions
+     * @return
+     */
+    protected DistributionAggregateFunction[] getAggregationFunctionsGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsGeneralizedFunctions();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns relevant aggregation functions
+     * @return
+     */
+    protected DistributionAggregateFunction[] getAggregationFunctionsNonGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsNotGeneralizedFunctions();
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Returns the indicies of aggregated variables
+     * @return
+     */
+    protected int[] getAggregationIndicesGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsGeneralized();
+        } else {
+            return null;
+        }
+    }
+    
+    /**
+     * Returns the indicies of aggregated variables
+     * @return
+     */
+    protected int[] getAggregationIndicesNonGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsNotGeneralized();
+        } else {
+            return null;
+        }
+    }
   
     /**
-     * Helper method for creating information loss.
-     *
-     * @param values
-     * @param bound
+     * Needed for microaggregation
      * @return
      */
-    protected ILMultiDimensionalWithBound createInformationLossWithBound(double[] values,
-                                                                         double[] bound){
-        return new ILMultiDimensionalWithBound(createInformationLoss(values),
-                                               createInformationLoss(bound));
-    }
-
-    /**
-     * Helper method for creating information loss.
-     *
-     * @param values
-     * @return
-     */
-    protected ILMultiDimensionalWithBound createInformationLossWithoutBound(double[] values){
-        return new ILMultiDimensionalWithBound(createInformationLoss(values));
-    }
-
-    /**
-     * Returns the aggregate functions used for microaggregation
-     * @return
-     */
-    protected DistributionAggregateFunction[] getAggregateFunctions() {
-        return this.microaggregationFunctions;
+    protected DataAggregationInformation getAggregationInformation() {
+        return this.aggregation;
     }
 
     /**
@@ -206,22 +226,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     protected int getDimensionsGeneralized() {
         return dimensionsGeneralized;
     }
-    
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    protected DistributionAggregateFunction[] getMicroaggregationFunctions() {
-        return microaggregationFunctions;
-    }
-    
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    protected int getMicroaggregationStartIndex() {
-        return microaggregationStartIndex;
-    }
 
     /**
      * For backwards compatibility only.
@@ -241,49 +245,42 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
 
-        // Handle microaggregation
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationHeader = manager.getMicroaggregationHeader();
-        if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
-            this.microaggregationFunctions = new DistributionAggregateFunction[0];
-        }
-        
-        // Initialize dimensions
-        dimensionsGeneralized = hierarchies.length;
-        dimensionsAggregated = microaggregationFunctions.length;
-        dimensions = dimensionsGeneralized + dimensionsAggregated;
+        // Initialize
+        this.aggregation = manager.getAggregationInformation();
+        this.dimensionsGeneralized = hierarchies.length;
+        this.dimensionsAggregated = this.aggregation.getHotQIsNotGeneralized().length;
+        this.dimensions = this.dimensionsGeneralized + this.dimensionsAggregated;
         
         // Initialize weights
-        weights = new double[dimensions];
+        this.weights = new double[this.dimensions];
         double maximum = 0d;
-        for (int i = 0; i < dimensionsGeneralized; i++) {
+        for (int i = 0; i < this.dimensionsGeneralized; i++) {
             String attribute = hierarchies[i].getName();
             double weight = config.getAttributeWeight(attribute);
-            weights[i] = weight;
+            this.weights[i] = weight;
             maximum = Math.max(maximum, weight);
         }
-        for (int i = 0; i < dimensionsAggregated; i++) {
-            String attribute = microaggregationHeader[i];
+        for (int i = 0; i < this.dimensionsAggregated; i++) {
+            String attribute = this.aggregation.getHeader()[this.aggregation.getHotQIsNotGeneralized()[i]];
             double weight = config.getAttributeWeight(attribute);
-            weights[dimensionsGeneralized + i] = weight;
+            this.weights[this.dimensionsGeneralized + i] = weight;
             maximum = Math.max(maximum, weight);
         }
 
         // Normalize: default case
         if (maximum == 0d) {
-            Arrays.fill(weights, 1d);
+            Arrays.fill(this.weights, 1d);
         // Weighted case
         } else {
-            for (int i=0; i<weights.length; i++){
-                weights[i] /= maximum;
+            for (int i=0; i<this.weights.length; i++){
+                this.weights[i] /= maximum;
             }
         }
         
         // Min and max
-        this.min = new double[dimensions];
+        this.min = new double[this.dimensions];
         Arrays.fill(min, 0d);
-        this.max = new double[dimensions];
+        this.max = new double[this.dimensions];
         Arrays.fill(max, Double.MAX_VALUE);
     }
 

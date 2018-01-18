@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -93,6 +95,15 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     @Override
     public boolean isGSFactorSupported() {
         return true;
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Average equivalence class size");
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        return result;
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,9 +86,6 @@ public class ViewUtilityMeasures implements IView {
     /** View. */
     private Button                monotonicVariant;
 
-    /** View. */
-    private Button                utilityBasedMicroaggregation;
-    
     /** View. */
     private Combo                 comboAggregate;
 
@@ -210,30 +207,7 @@ public class ViewUtilityMeasures implements IView {
             }
         });
 
-        // Create microaggreation button
-        final Label mLabel4 = new Label(mBase, SWT.PUSH);
-        mLabel4.setText(Resources.getMessage("CriterionDefinitionView.90")); //$NON-NLS-1$
-        GridData d24 = new GridData();
-        d24.heightHint = LABEL_HEIGHT;
-        d24.minimumHeight = LABEL_HEIGHT;
-        d24.grabExcessVerticalSpace = true;
-        d24.verticalAlignment = GridData.CENTER;
-        mLabel4.setLayoutData(d24);
-
-        utilityBasedMicroaggregation = new Button(mBase, SWT.CHECK);
-        utilityBasedMicroaggregation.setText(Resources.getMessage("CriterionDefinitionView.91")); //$NON-NLS-1$
-        utilityBasedMicroaggregation.setSelection(false);
-        utilityBasedMicroaggregation.setEnabled(false);
-        utilityBasedMicroaggregation.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).grab(false, true).align(GridData.BEGINNING, GridData.CENTER).create());
-        utilityBasedMicroaggregation.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.getInputConfig().setUseUtilityBasedMicroaggregation(utilityBasedMicroaggregation.getSelection());
-                controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
-            }
-        });
-
-        // Create monotonicity button
+        // Create section about aggregate functions
         final Label mLabel3 = new Label(mBase, SWT.PUSH);
         mLabel3.setText(Resources.getMessage("CriterionDefinitionView.72")); //$NON-NLS-1$
         GridData d23 = new GridData();
@@ -295,11 +269,6 @@ public class ViewUtilityMeasures implements IView {
         } else {
             this.monotonicVariant.setSelection(config.isMonotonic());
         }
-        
-        // Set - TODO: Creating a temporary instance is such an ugly hack
-        boolean isAbleToHandleMicroaggregation = description.createInstance(config).isAbleToHandleMicroaggregation();
-        this.utilityBasedMicroaggregation.setSelection(isAbleToHandleMicroaggregation &&
-                                                       this.model.getInputConfig().isUtilityBasedMicroaggregation());
 
         // Aggregate function
         this.comboAggregate.removeAll();
@@ -326,7 +295,6 @@ public class ViewUtilityMeasures implements IView {
             this.comboAggregate.setEnabled(false);
         }
         this.monotonicVariant.setEnabled(description.isMonotonicVariantSupported());
-        this.utilityBasedMicroaggregation.setEnabled(isAbleToHandleMicroaggregation);
         
         // Redraw
         this.root.setRedraw(true);

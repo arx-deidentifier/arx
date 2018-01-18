@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -91,9 +91,9 @@ public class Example38 extends Example {
 
         // Create a config which favors suppression over generalization
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.setMaxOutliers(1d);
-        config.setMetric(Metric.createLossMetric(0.25d));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.setSuppressionLimit(1d);
+        config.setQualityModel(Metric.createLossMetric(0.25d));
 
         // Print input
         System.out.println(" - Input data:");

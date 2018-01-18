@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply l-diversity criteria
+ * This class implements an example on how to use the l-diversity privacy model
  * without protecting sensitive assocations.
  *
  * @author Fabian Prasser
@@ -94,9 +94,9 @@ public class Example22 extends Example {
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new EntropyLDiversity("occupation", 5));
-        config.setMaxOutliers(0.04d);
-        config.setMetric(Metric.createEntropyMetric());
+        config.addPrivacyModel(new EntropyLDiversity("occupation", 5));
+        config.setSuppressionLimit(0.04d);
+        config.setQualityModel(Metric.createEntropyMetric());
         
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,12 +42,15 @@ import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelHistogram;
 
 import cern.colt.Swapper;
+
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * This class provides access to dictionary encoded data. Furthermore, the data
@@ -64,23 +67,26 @@ import cern.colt.Swapper;
 public abstract class DataHandle {
 
     /** The data types. */
-    protected DataType<?>[][]   dataTypes  = null;
+    protected DataType<?>[]                columnToDataType = null;
 
     /** The data definition. */
-    protected DataDefinition    definition = null;
+    protected DataDefinition               definition       = null;
 
     /** The header. */
-    protected String[]          header     = null;
+    protected String[]                     header           = null;
+
+    /** The header. */
+    protected ObjectIntOpenHashMap<String> headerMap        = null;
 
     /** The node. */
-    protected ARXNode           node       = null;
+    protected ARXNode                      node             = null;
 
     /** The current registry. */
-    protected DataRegistry      registry   = null;
+    protected DataRegistry                 registry         = null;
 
     /** The current research subset. */
-    protected DataHandle        subset     = null;
-
+    protected DataHandle                   subset           = null;
+    
     /**
      * Returns the name of the specified column.
      *
@@ -97,12 +103,7 @@ public abstract class DataHandle {
      */
     public int getColumnIndexOf(final String attribute) {
         checkRegistry();
-        for (int i = 0; i < header.length; i++) {
-            if (header[i].equals(attribute)) {
-                return i;
-            }
-        }
-        return -1;
+        return headerMap.getOrDefault(attribute, -1);
     }
 
     /**
@@ -115,7 +116,7 @@ public abstract class DataHandle {
         checkRegistry();
         return definition.getDataType(attribute);
     }
-    
+
     /**
      * Returns a date/time value from the specified cell.
      *
@@ -133,7 +134,7 @@ public abstract class DataHandle {
             throw new ParseException("Invalid datatype: " + type.getClass().getSimpleName(), col);
         }
     }
-
+    
     /**
      * Returns the data definition.
      *
@@ -464,7 +465,7 @@ public abstract class DataHandle {
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model) {
         return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes());
     }
-    
+
     /**
      * Returns a risk estimator
      * @param model
@@ -474,7 +475,7 @@ public abstract class DataHandle {
     public RiskEstimateBuilder getRiskEstimator(ARXPopulationModel model, ARXSolverConfiguration config) {
         return getRiskEstimator(model, getDefinition().getQuasiIdentifyingAttributes(), config);
     }
-
+    
     /**
      * Returns a risk estimator for the given set of equivalence classes. Saves resources by re-using existing classes
      * @param model
@@ -602,6 +603,17 @@ public abstract class DataHandle {
         if (registry != null) {
             registry.release(this);
         }
+    }
+
+    /**
+     * Renders this object
+     * @return
+     */
+    public ElementData render() {
+        ElementData data = new ElementData("Data");
+        data.addProperty("Records", this.getNumRows());
+        data.addProperty("Attributes", this.getNumColumns());
+        return data;
     }
 
     /**
@@ -892,7 +904,7 @@ public abstract class DataHandle {
      *
      * @return the data type array
      */
-    protected abstract DataType<?>[][] getDataTypeArray();
+    protected abstract DataType<?>[] getColumnToDataType();
 
     /**
      * Returns the distinct values.
@@ -912,6 +924,14 @@ public abstract class DataHandle {
     protected DataRegistry getRegistry() {
         return registry;
     }
+
+    /**
+     * Returns the internal value identifier
+     * @param column
+     * @param value
+     * @return
+     */
+    protected abstract int getValueIdentifier(int column, String value);
 
     /**
      * A negative integer, zero, or a positive integer as the first argument is
@@ -935,8 +955,8 @@ public abstract class DataHandle {
             for (int i = 0; i < columns.length; i++) {
 
                 int index = columns[i];
-                int cmp = dataTypes[0][index].compare(internalGetValue(row1, index, false),
-                                                      internalGetValue(row2, index, false));
+                int cmp = columnToDataType[index].compare(internalGetValue(row1, index, false),
+                                                   internalGetValue(row2, index, false));
                 if (cmp != 0) {
                     return ascending ? cmp : -cmp;
                 }
@@ -946,6 +966,15 @@ public abstract class DataHandle {
             throw new RuntimeException(e);
         }
     }
+
+    /**
+     * Internal representation of get encoded value. Returns -1 for suppressed values.
+     *
+     * @param row the row
+     * @param col the col
+     * @return the value
+     */
+    protected abstract int internalGetEncodedValue(int row, int col, boolean ignoreSuppression);
 
     /**
      * Internal representation of get value.
@@ -975,6 +1004,18 @@ public abstract class DataHandle {
     }
 
     /**
+     * Sets the current header
+     * @param header
+     */
+    protected void setHeader(String[] header) {
+        this.header = header;
+        this.headerMap = new ObjectIntOpenHashMap<String>();
+        for (int i = 0; i < header.length; i++) {
+            headerMap.put(header[i], i);
+        }
+    }
+
+    /**
      * Updates the registry.
      *
      * @param registry the new registry
@@ -982,7 +1023,7 @@ public abstract class DataHandle {
     protected void setRegistry(DataRegistry registry) {
         this.registry = registry;
     }
-
+    
     /**
      * Sets the subset.
      *

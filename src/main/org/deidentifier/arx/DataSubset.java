@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -271,6 +271,14 @@ public class DataSubset implements Serializable {
      */
     public RowSet getSet() {
         return set;
+    }
+
+    /**
+     * Returns the size of the data subset
+     * @return
+     */
+    public int getSize() {
+        return array.length;
     }
 
     /**

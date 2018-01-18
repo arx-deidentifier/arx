@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -303,6 +303,17 @@ public class SWTUtil {
     }
 
     /**
+     * Creates grid data with a horizontal span.
+     *
+     * @return
+     */
+    public static GridData createFillVerticallyGridData(int span) {
+        GridData data = createFillVerticallyGridData();
+        data.horizontalSpan = span;
+        return data;
+    }
+    
+    /**
      * Creates a generic tooltip for the table
      * @param table
      */
@@ -339,7 +350,7 @@ public class SWTUtil {
             }
         });
     }
-    
+
     /**
      * Creates grid data.
      *
@@ -371,6 +382,7 @@ public class SWTUtil {
         layout.marginWidth = 0;
         return layout;
     }
+    
 
     /**
      * Creates a grid layout.
@@ -385,7 +397,7 @@ public class SWTUtil {
         layout.numColumns = columns;
         return layout;
     }
-    
+
 
     /**
      * Creates a grid layout with equal-width columns
@@ -397,7 +409,6 @@ public class SWTUtil {
         layout.makeColumnsEqualWidth = true;
         return layout;
     }
-
 
     /**
      * Creates a help button in the given folder.
@@ -454,20 +465,6 @@ public class SWTUtil {
         d.verticalAlignment = SWT.TOP;
         d.grabExcessHorizontalSpace = false;
         d.grabExcessVerticalSpace = false;
-        return d;
-    }
-
-    /**
-     * Creates grid data.
-     *
-     * @param i
-     * @return
-     */
-    public static Object createSpanColumnsGridData(final int i) {
-        final GridData d = new GridData();
-        d.grabExcessHorizontalSpace = false;
-        d.grabExcessVerticalSpace = false;
-        d.horizontalSpan = i;
         return d;
     }
 
@@ -603,6 +600,29 @@ public class SWTUtil {
     }
 
     /**
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
+     */
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            SelectionListener bugFixer = new SelectionListener(){
+                
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
+        }
+    }
+
+    /**
      * Converts a boolean into a pretty string
      * @param value
      * @return
@@ -647,7 +667,7 @@ public class SWTUtil {
     public static String getPrettyString(int value) {
         return String.valueOf(value);
     }
-
+    
     /**
      * Returns a pretty string representing the given value
      * @param value
@@ -656,17 +676,23 @@ public class SWTUtil {
     public static String getPrettyString(long value) {
         return String.valueOf(value);
     }
-
+    
     /**
-     * Converts the integer value to a slider selection.
-     *
-     * @param min
-     * @param max
+     * Fallback for objects of unknown type
      * @param value
      * @return
      */
-    public static int intToSlider(final int min, final int max, final int value) {
-        return doubleToSlider(min, max, value);
+    public static String getPrettyString(Object value) {
+        if (value instanceof Boolean) {
+            return SWTUtil.getPrettyString(((Boolean)value).booleanValue());
+        } else if (value instanceof Double) {
+            return SWTUtil.getPrettyString(((Double)value).doubleValue());
+        } if (value instanceof Integer) {
+            return SWTUtil.getPrettyString(((Integer)value).intValue());
+        } if (value instanceof Long) {
+            return SWTUtil.getPrettyString(((Long)value).longValue());
+        }
+        return String.valueOf(value);
     }
     
     /**
@@ -675,6 +701,23 @@ public class SWTUtil {
      */
     public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * En-/disables the composite and its children.
+     *
+     * @param elem
+     * @param val
+     */
+    private static void setEnabled(final Composite elem, final boolean val) {
+        elem.setEnabled(val);
+        for (final Control c : elem.getChildren()) {
+            if (c instanceof Composite) {
+                setEnabled((Composite) c, val);
+            } else {
+                c.setEnabled(val);
+            }
+        }
     }
     
     /**
@@ -696,57 +739,5 @@ public class SWTUtil {
             val = max;
         }
         return val;
-    }
-    
-    /**
-     * Converts the slider value to an integer.
-     *
-     * @param min
-     * @param max
-     * @param value
-     * @return
-     */
-    public static int sliderToInt(final int min, final int max, final int value) {
-        return (int)Math.round(sliderToDouble(min, max, value));
-    }
-    
-    /**
-     * Fixes bugs on OSX when scrolling in tables
-     * @param table
-     */
-    private static void fixOSXTableBug(final Table table) {
-        if (isMac()) {
-            SelectionListener bugFixer = new SelectionListener(){
-                
-                @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    widgetSelected(arg0);
-                }
-
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    table.redraw();
-                }
-            };
-            table.getVerticalBar().addSelectionListener(bugFixer);
-            table.getHorizontalBar().addSelectionListener(bugFixer);
-        }
-    }
-    
-    /**
-     * En-/disables the composite and its children.
-     *
-     * @param elem
-     * @param val
-     */
-    private static void setEnabled(final Composite elem, final boolean val) {
-        elem.setEnabled(val);
-        for (final Control c : elem.getChildren()) {
-            if (c instanceof Composite) {
-                setEnabled((Composite) c, val);
-            } else {
-                c.setEnabled(val);
-            }
-        }
     }
 }

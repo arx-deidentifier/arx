@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -178,6 +178,10 @@ public class DialogHelpConfig {
         entries.add(new Entry("help.utility.accuracy", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.68"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/utility/accuracy.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.utility.quality", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.70"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/utility/quality.html")); //$NON-NLS-1$
 
         entries.add(new Entry("help.utility.localrecoding", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.69"), //$NON-NLS-1$

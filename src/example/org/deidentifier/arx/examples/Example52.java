@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -35,14 +35,15 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.FinancialJournalistPrivacy;
+import org.deidentifier.arx.criteria.ProfitabilityJournalist;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
+import org.deidentifier.arx.metric.v2.QualityMetadata;
 
 /**
- * Examples of using the Stackelberg game for de-identifying the Adult dataset
- * based on the journalist attacker model with an explicit population table
+ * Examples of using the game-theoretic approach for 
+ * performing a monetary cost/benefit analysis using journalist risk.
  *
  * @author Fabian Prasser
  */
@@ -102,28 +103,28 @@ public class Example52 extends Example {
         DataSubset subset = DataSubset.create(data, DataSelector.create(data).field("sex").equals("Male"));
         
         // Config from PLOS|ONE paper
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d), subset);
 
         // Larger publisher loss
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(600d)
                                                .setPublisherBenefit(1200d), subset);
 
         // Even larger publisher loss
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(4d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(1200d)
                                                .setPublisherBenefit(1200d), subset);
 
         // Larger publisher loss and less adversary costs
-        solve(data, ARXFinancialConfiguration.create()
+        solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(300d)
                                                .setPublisherLoss(600d)
@@ -138,25 +139,25 @@ public class Example52 extends Example {
      * @param subset
      * @throws IOException
      */
-    private static void solve(Data data, ARXFinancialConfiguration config, DataSubset subset) throws IOException {
+    private static void solve(Data data, ARXCostBenefitConfiguration config, DataSubset subset) throws IOException {
         
         // Release
         data.getHandle().release();
         
         // Configure
         ARXConfiguration arxconfig = ARXConfiguration.create();
-        arxconfig.setFinancialConfiguration(config);
+        arxconfig.setCostBenefitConfiguration(config);
         
         // Create model for measuring publisher's benefit
-        MetricSDNMPublisherPayout stackelbergMetric = Metric.createPublisherPayoutMetric(true);
+        MetricSDNMPublisherPayout maximizePublisherPayout = Metric.createPublisherPayoutMetric(true);
         
         // Create privacy model for the game-theoretic approach
-        FinancialJournalistPrivacy stackelbergPrivacyModel = new FinancialJournalistPrivacy(subset);
+        ProfitabilityJournalist profitability = new ProfitabilityJournalist(subset);
         
         // Configure ARX
-        arxconfig.setMaxOutliers(1d);
-        arxconfig.setMetric(stackelbergMetric);
-        arxconfig.addCriterion(stackelbergPrivacyModel);
+        arxconfig.setSuppressionLimit(1d);
+        arxconfig.setQualityModel(maximizePublisherPayout);
+        arxconfig.addPrivacyModel(profitability);
 
         // Anonymize
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -169,14 +170,11 @@ public class Example52 extends Example {
         System.out.println(" - Configuration: " + config.toString());
         System.out.println(" - Policies available: " + result.getLattice().getSize());
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
-        System.out.println("   * Optimal: " + result.getLattice().isComplete());
+        System.out.println("   * Optimal: " + result.getProcessStatistics().getStep(0).isOptimal());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
-        System.out.println("   * Minimal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMinInformationLoss());
-        System.out.println("   * Maximal reduction in publisher benefit: " + result.getConfiguration().getMetric().createMaxInformationLoss());
-        System.out.println("   * Reduction in publisher benefit: " + node.getMinimumInformationLoss() + " (" +
-                           node.getMinimumInformationLoss().relativeTo(result.getConfiguration().getMetric().createMinInformationLoss(),
-                                                                       result.getConfiguration().getMetric().createMaxInformationLoss()) * 100 + "%)");
+        for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+            System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());
+        }
         System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
- 
     }
 }

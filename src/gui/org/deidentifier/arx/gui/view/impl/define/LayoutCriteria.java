@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,7 +126,7 @@ public class LayoutCriteria implements ILayout {
         
         Composite composite3 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.10"), null); //$NON-NLS-1$
         composite3.setLayout(new FillLayout());
-        new ViewFinancialModel(composite3, controller);
+        new ViewCostBenefitModel(composite3, controller);
         
         // Update buttons
         folder.addSelectionListener(new SelectionAdapter(){

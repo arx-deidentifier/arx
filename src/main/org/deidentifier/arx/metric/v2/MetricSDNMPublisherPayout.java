@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,21 +18,22 @@
 package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXFinancialConfiguration;
+import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
 import org.deidentifier.arx.metric.MetricConfiguration;
-import org.deidentifier.arx.metric.MetricConfiguration.MetricConfigurationAttackerModel;
-import org.deidentifier.arx.risk.RiskModelFinancial;
+import org.deidentifier.arx.risk.RiskModelCostBenefit;
 
 /**
- * This class implements a prototype model which maximizes publisher benefit as proposed in:<br>
+ * This class implements a model which maximizes publisher benefit according to the model proposed in:<br>
  * A Game Theoretic Framework for Analyzing Re-Identification Risk.
  * Zhiyu Wan, Yevgeniy Vorobeychik, Weiyi Xia, Ellen Wright Clayton,
  * Murat Kantarcioglu, Ranjit Ganta, Raymond Heatherly, Bradley A. Malin
@@ -43,22 +44,31 @@ import org.deidentifier.arx.risk.RiskModelFinancial;
 public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
     /** SUID. */
-    private static final long         serialVersionUID = 5729454129866471107L;
+    private static final long           serialVersionUID = 5729454129866471107L;
+
+    /** Parameter strings */
+    private static final String         PUBLISHER_PAYOUT = "Publisher payout";
+    
+    /** Parameter strings */
+    private static final String         MAXIMAL_PAYOUT   = "Theoretical maximum";
 
     /** Configuration for the Stackelberg game */
-    private ARXFinancialConfiguration config;
+    private ARXCostBenefitConfiguration config;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]             shares;
+    private DomainShare[]               shares;
 
-    /** MaxIL */
-    private double                    maxIL;
+    /** Maximal information loss */
+    private double                      maxIL;
 
     /** Risk model */
-    private RiskModelFinancial        modelRisk;
+    private RiskModelCostBenefit        modelRisk;
 
     /** Journalist attacker model */
-    private boolean                   journalistAttackerModel;
+    private boolean                     journalistAttackerModel;
+
+    /** Maximal payout */
+    private QualityMetadata<Double>     maximalPayout;
 
     /**
      * Creates a new instance
@@ -71,18 +81,9 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
      *            generalization. The values in between can be used for
      *            balancing both methods.
      */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
+    protected MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
         super(false, false, false, gsFactor);
         this.journalistAttackerModel = journalistAttackerModel;
-    }
-    
-    /**
-     * Creates a new instance. Default constructor which treats all transformation methods equally.
-     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
-     *                                the prosecutor model will be assumed, otherwise
-     */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
-       this(journalistAttackerModel, 0.5d);
     }
     
     @Override
@@ -110,21 +111,24 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
                                        super.getGeneralizationSuppressionFactor(), // gs-factor
                                        false, 
                                        0.0d, 
-                                       this.getAggregateFunction(),
-                                       this.journalistAttackerModel ? MetricConfigurationAttackerModel.JOURNALIST : 
-                                                                      MetricConfigurationAttackerModel.PROSECUTOR);
+                                       this.getAggregateFunction());
     }
     
     /**
-     * Returns the financial configuration
+     * Returns the cost/benefit configuration
      */
-    public ARXFinancialConfiguration getFinancialConfiguration() {
+    public ARXCostBenefitConfiguration getCostBenefitConfiguration() {
         return this.config;
     }
 
     @Override
     public String getName() {
         return "Publisher benefit";
+    }
+
+    @Override
+    public boolean isAbleToHandleMicroaggregation() {
+        return true;
     }
 
     @Override
@@ -149,6 +153,22 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Publisher payout");
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
+        result.addProperty("Generalization factor", this.getGeneralizationFactor());
+        result.addProperty("Suppression factor", this.getSuppressionFactor());
+        result.addProperty("Attacker model", (journalistAttackerModel ? "Journalist" : "Prosecutor"));
+        if (this.config != null) {
+            result.addProperty("Adversary cost", this.config.getAdversaryCost());
+            result.addProperty("Adversary gain", this.config.getAdversaryGain());
+            result.addProperty("Publisher loss", this.config.getPublisherLoss());
+            result.addProperty("Publisher benefit", this.config.getPublisherBenefit());
+        }
+        return result;
+    }
+
+    @Override
     public String toString() {
         String result = "PublisherBenefit (" + (journalistAttackerModel ? "Journalist" : "Prosecutor");
         if (config == null) {
@@ -160,7 +180,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
 
     /**
-     * Returns the success probability. If the game is configured to use the journalist risk, 
+     * Returns the success probability. If the game is configured to use journalist risk, 
      * but no population table is available, we silently default to the prosecutor model.
      * @param entry
      * @return
@@ -169,55 +189,62 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         return !journalistAttackerModel || entry.pcount == 0 ? 1d / entry.count : 1d / entry.pcount;
     }
 
-    /**
-     * Returns the information loss for the according class. This is an exact copy of: 
-     * @see MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(Transformation, HashGroupifyEntry)
-     */
-    protected double getEntropyBasedInformationLoss(Transformation transformation, HashGroupifyEntry entry) {
-        int[] generalization = transformation.getGeneralization();
-        double infoLoss = 1d;
-        for (int dimension = 0; dimension < shares.length; dimension++) {
-            int value = entry.key[dimension];
-            int level = generalization[dimension];
-            infoLoss *= shares[dimension].getShare(value, level);
-        }
-        return Math.log10(infoLoss) / maxIL + 1d;
-    }
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify groupify) {
         
-        // Compute
+        // Prepare
         double real = 0;
         double bound = 0;
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
+        DataAggregationInformation aggregation = super.getAggregationInformation();
+        
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         double maxPayout = this.config.getPublisherBenefit();
+        double payout = 0d;
+        
+        // Compute
         while (entry != null) {
             if (entry.count > 0) {
                 double adversarySuccessProbability = this.getSuccessProbability(entry);
-                double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
+                double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation,
+                                                                                                              entry,
+                                                                                                              shares,
+                                                                                                              aggregation,
+                                                                                                              maxIL);
+                
                 double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
                 double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
                 real += !entry.isNotOutlier ? (sFactor * entry.count * maxPayout) : 
                                               (gFactor * entry.count * (maxPayout - realPayout));
                 bound += gFactor * entry.count * (maxPayout - boundPayout);
+                payout += !entry.isNotOutlier ? 0d : entry.count * realPayout;
             }
             entry = entry.nextOrdered;
         }
         
         // Return
-        return super.createInformationLoss(real, bound);
+        ILSingleDimensionalWithBound result = super.createInformationLoss(real, bound);
+        result.getInformationLoss().addMetadata(new QualityMetadata<Double>(PUBLISHER_PAYOUT, payout));
+        result.getInformationLoss().addMetadata(maximalPayout);
+        return result;
     }
-
+    
     @Override
     protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation, HashGroupifyEntry entry) {
 
-        // Compute
+        // Prepare
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
+        DataAggregationInformation aggregation = super.getAggregationInformation();
+        
+        // Compute
         double adversarySuccessProbability = this.getSuccessProbability(entry);
-        double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
+        double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation,
+                                                                                                      entry,
+                                                                                                      shares,
+                                                                                                      aggregation,
+                                                                                                      maxIL);
         double maxPayout = this.config.getPublisherBenefit();
         double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
         double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
@@ -228,7 +255,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         // Return
         return super.createInformationLoss(real, bound);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation transformation) {
         return null;
@@ -238,7 +265,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     protected ILSingleDimensional getLowerBoundInternal(Transformation transformation,
                                                         HashGroupify groupify) {
 
-
         // Compute
         double bound = 0;
         double gFactor = super.getGeneralizationFactor();
@@ -246,7 +272,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             if (entry.count > 0) {
-                double informationLoss = this.getEntropyBasedInformationLoss(transformation, entry);
+                double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, null, maxIL);
                 double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
                 bound += gFactor * entry.count * (maxPayout - boundPayout);
             }
@@ -268,14 +294,11 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
 
         // Compute domain shares
         this.shares =  manager.getDomainShares();
-        this.config = config.getFinancialConfiguration();
-        this.modelRisk = new RiskModelFinancial(this.config);
+        this.config = config.getCostBenefitConfiguration();
+        this.modelRisk = new RiskModelCostBenefit(this.config);
+        this.maximalPayout = new QualityMetadata<Double>(MAXIMAL_PAYOUT, super.getNumRecords(config, input) * this.config.getPublisherBenefit());
                 
         // Calculate MaxIL
-        this.maxIL = 1d;
-        for (DomainShare share : shares) {
-            this.maxIL *= share.getDomainSize();
-        }
-        this.maxIL = Math.log10(maxIL);
+        this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, super.getAggregationInformation());
     }
 }

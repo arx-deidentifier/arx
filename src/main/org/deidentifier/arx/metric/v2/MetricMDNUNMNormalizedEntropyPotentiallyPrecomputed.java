@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,16 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
 
 /**
- * This class provides an implementation of normalized non-uniform entropy
+ * This class provides an implementation of normalized non-uniform entropy. See:<br>
+ * A. De Waal and L. Willenborg: 
+ * "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -74,6 +79,11 @@ public class MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed extends Abstrac
     @Override
     public String getName() {
         return "Normalized non-uniform entropy";
+    }
+
+    @Override
+    public ElementData render(ARXConfiguration config) {
+        return super.getDefaultMetric().render(config);
     }
 
     @Override
