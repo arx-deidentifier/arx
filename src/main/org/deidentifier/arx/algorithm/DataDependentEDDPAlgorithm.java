@@ -168,7 +168,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         }
 
         // Track optimum
-//        bestTransformation.setChecked(checker.check(bestTransformation, true, InformationLossSource.CONVENTIONAL));
         trackOptimum(bestTransformation);
         return false;
     }

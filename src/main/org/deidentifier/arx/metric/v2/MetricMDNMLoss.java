@@ -17,7 +17,12 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
@@ -164,24 +169,48 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Prepare
         int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
+        List<Map<BigFraction,Integer>> dimensionSharesToCount = new ArrayList<Map<BigFraction,Integer>>(dimensionsGeneralized);
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+            dimensionSharesToCount.add(new HashMap<BigFraction,Integer>());
+        }
 
-        // Compute score
-        BigFraction score = new BigFraction(0);
+        // Calculate counts
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        long numOutliers = 0;
         while (m != null) {
             m.read();
             for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
                 if (m.count>0) {
-                    int value = m.next();
-                    int level = transformation[dimension];
-                    BigFraction shareReliable = ((DomainShareMaterialized)shares[dimension]).getShareReliable(value, level);
-                    BigFraction share = (new BigFraction(m.count)).multiply(shareReliable);
-                    score = score.add(m.isNotOutlier ? share : new BigFraction(m.count));
+                    if (!m.isNotOutlier) {
+                        numOutliers += m.count;
+                    } else {
+                        int value = m.next();
+                        int level = transformation[dimension];
+                        BigFraction shareReliable = ((DomainShareMaterialized)shares[dimension]).getShareReliable(value, level);
+                        Map<BigFraction,Integer> sharesToCount = dimensionSharesToCount.get(dimension);
+                        if (!sharesToCount.containsKey(shareReliable)) {
+                            sharesToCount.put(shareReliable, m.count);
+                        } else {
+                            sharesToCount.put(shareReliable, sharesToCount.get(shareReliable) + m.count);
+                        }
+                    }
                 }
-                score = score.add(new BigFraction(m.pcount - m.count));
+                numOutliers += m.pcount - m.count;
             }
             m = m.nextOrdered;
         }
+        
+        // Calculate score
+        BigFraction score = new BigFraction(0);
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+            Map<BigFraction,Integer> sharesToCount = dimensionSharesToCount.get(dimension);
+            for (Entry<BigFraction, Integer> entry : sharesToCount.entrySet()) {
+                BigFraction shareReliable = entry.getKey();
+                int count = entry.getValue();
+                score = score.add(shareReliable.multiply(count));
+            }
+        }
+        score = score.add(numOutliers);
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
         score = score.multiply(new BigFraction(-1, dimensionsGeneralized));
@@ -388,7 +417,13 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Store minimal size of equivalence classes
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            k = (double)dpCriterion.getMinimalClassSize();
+            this.k = (double)dpCriterion.getMinimalClassSize();
+            if (config.isReliableAnonymizationEnabled()) {
+                // Assure that no overflow may occur during the computation of reliable scores
+                if(this.tuples * (double)getDimensionsGeneralized() > (double)Long.MAX_VALUE) {
+                    throw new RuntimeException("Too many records and attributes to perform reliable computations");
+                }
+            }
         }
 
         // Min and max
