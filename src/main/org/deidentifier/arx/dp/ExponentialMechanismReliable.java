@@ -47,11 +47,11 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     /** The base of the mechanism */
     BigFraction base;
     
-    public Map<Integer,BigInteger> numeratorCache;
+    private Map<Integer,BigInteger> numeratorCache;
     
-    public Map<Integer,BigInteger> denominatorCache;
+    private Map<Integer,BigInteger> denominatorCache;
     
-    public Map<Pair<Integer,Integer>, BigInteger> productCache;
+    private Map<Pair<Integer,Integer>, BigInteger> productCache;
     
     public static long distributionTime = 0;
     
@@ -177,8 +177,6 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         int index = 0;
         for (index = 0; index < values.length; index++) {
 
-            long powTime = System.nanoTime();
-            
             // Calculate the next element of the cumulative distribution
             int exponent = exponents[index];
             
@@ -188,10 +186,7 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
             
             int denominatorExponent = maxExponent - exponent;
             if (!denominatorCache.containsKey(denominatorExponent)) {
-                cacheMisses++;
                 denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
-            } else {
-                cacheHits++;
             }
             
             this.powTime += System.nanoTime() - powTime;
@@ -201,8 +196,11 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
             
             Pair<Integer,Integer> exponentPair = new Pair<Integer,Integer>(exponent, denominatorExponent);
             if (!productCache.containsKey(exponentPair)) {
+                cacheMisses++;
                 BigInteger product = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
                 productCache.put(exponentPair, product);
+            } else {
+                cacheHits++;
             }
             
             this.multTime += System.nanoTime() - multTime;
