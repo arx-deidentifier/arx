@@ -43,13 +43,22 @@ import org.apache.commons.math3.util.Pair;
  * 
  * @author Raffael Bild
  */
-public class ExponentialMechanism<T> {
+public class ExponentialMechanism<T> extends AbstractExponentialMechanism<T, Double> {
 
     /** The precision to use for BigDecimal arithmetic */
-    public static final int defaultPrecision = 100;
+    public static final int           defaultPrecision = 100;
+
+    /** The probability distribution */
+    private EnumeratedDistribution<T> distribution;
+
+    /** The privacy parameter epsilon */
+    private double                    epsilon;
 
     /** The math context to use for BigDecimal arithmetic */
-    private MathContext     mc;
+    private MathContext               mc;
+
+    /** The random generator */
+    private AbstractRandomGenerator   random;
 
     /** A cryptographically strong random generator */
     private static class SecureRandomGenerator extends AbstractRandomGenerator {
@@ -97,44 +106,43 @@ public class ExponentialMechanism<T> {
         }
     }
 
-    /** The probability distribution */
-    private EnumeratedDistribution<T> distribution;
-
     /**
      * Constructs a new instance
-     * @param values
-     * @param scores
      * @param epsilon
      */
-    public ExponentialMechanism(T[] values, Double[] scores, double epsilon) {
-        this(values, scores, epsilon, defaultPrecision, false);
+    public ExponentialMechanism(double epsilon) {
+        this(epsilon, defaultPrecision, false);
     }
 
     /**
      * Constructs a new instance
      * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
      * 
-     * @param values
-     * @param scores
      * @param epsilon
      * @param precision
      * @param deterministic
      */
-    public ExponentialMechanism(T[] values, Double[] scores, double epsilon, int precision, boolean deterministic) {
-
+    public ExponentialMechanism(double epsilon, int precision, boolean deterministic) {
+        this.mc = new MathContext(precision, RoundingMode.HALF_UP);
+        this.epsilon = epsilon;
+        this.random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
+    }
+    
+    @Override
+    public T sample() {
+        T solution = distribution.sample();
+        return solution;
+    }
+    
+    @Override
+    public void setDistribution(T[] values, Double[]scores) {
+        
         // Check arguments
-        if (values.length == 0) {
-            throw new RuntimeException("No values supplied");
-        }
-        if (values.length != scores.length) {
-            throw new RuntimeException("Number of scores and values must be identical");
-        }
-
+        super.setDistribution(values, scores);
+        
         // The following code calculates the probability distribution which assigns every value
         // a probability proportional to exp(0,5 * epsilon * score)
-
-        mc = new MathContext(precision, RoundingMode.HALF_UP);
-
+        
         // Determine the smallest of all exponents having the form 0,5 * epsilon * score.
         // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
         // (which can get very large due to the application of the exponential function) while it does not change the result;
@@ -168,18 +176,8 @@ public class ExponentialMechanism<T> {
             pmf.add(new Pair<T, Double>(value, probability.doubleValue()));
         }
 
-        AbstractRandomGenerator random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
-
-        distribution = new EnumeratedDistribution<T>(random, pmf);
-    }
-
-    /**
-     * Returns a random value sampled from this distribution
-     * @return
-     */
-    public T sample() {
-        T solution = distribution.sample();
-        return solution;
+        // Store the distribution
+        this.distribution = new EnumeratedDistribution<T>(this.random, pmf);
     }
 
     /**

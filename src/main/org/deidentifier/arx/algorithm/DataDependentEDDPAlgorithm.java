@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.fraction.BigFraction;
+import org.deidentifier.arx.dp.AbstractExponentialMechanism;
 import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.dp.ExponentialMechanismReliable;
 import org.deidentifier.arx.framework.check.TransformationChecker;
@@ -73,6 +74,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
 
     /** Number of steps to be performed */
     private final int                steps;
+    
+    /** The expopnential mechanism */
+    private final AbstractExponentialMechanism<Long,?> exponentialMechanism;
 
     /**
      * Constructor
@@ -103,6 +107,15 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
             }
         } else {
             epsilonStep = epsilonSearch / ((double)steps); 
+        }
+        
+
+        try {
+            this.exponentialMechanism = reliable ?
+                    new ExponentialMechanismReliable<Long>(epsilonStep, deterministic) :
+                    new ExponentialMechanism<Long>(epsilonStep, ExponentialMechanism.defaultPrecision, deterministic);
+        } catch(IntervalArithmeticException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -155,6 +168,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         }
 
         // Track optimum
+//        bestTransformation.setChecked(checker.check(bestTransformation, true, InformationLossSource.CONVENTIONAL));
         trackOptimum(bestTransformation);
         return false;
     }
@@ -173,14 +187,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 index++;
             }
 
-            ExponentialMechanismReliable<Long> expMechanism;
-            try {
-                expMechanism = new ExponentialMechanismReliable<Long>(values, scores, epsilonStep, deterministic);
-            } catch (IntervalArithmeticException e) {
-                throw new RuntimeException(e);
-            }
-
-            return expMechanism.sample();
+            ((ExponentialMechanismReliable<Long>)exponentialMechanism).setDistribution(values, scores);
         } else {
             Long[] values = new Long[transformationIDToScore.size()];
             Double[] scores = new Double[transformationIDToScore.size()];
@@ -192,11 +199,10 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 index++;
             }
 
-            ExponentialMechanism<Long> expMechanism = new ExponentialMechanism<Long>(values, scores,
-                    epsilonStep, ExponentialMechanism.defaultPrecision, deterministic);
-
-            return expMechanism.sample();
+            ((ExponentialMechanism<Long>)exponentialMechanism).setDistribution(values, scores);
         }
+        
+        return exponentialMechanism.sample();
     }
 
     /**

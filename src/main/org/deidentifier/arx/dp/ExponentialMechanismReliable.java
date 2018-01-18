@@ -32,7 +32,7 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
  * 
  * @author Raffael Bild
  */
-public class ExponentialMechanismReliable<T> {
+public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanism<T, BigFraction> {
 
     /** The distribution scaled so that it consists of natural numbers */
     private BigInteger[] distribution;
@@ -43,13 +43,20 @@ public class ExponentialMechanismReliable<T> {
     /** The values to sample from */
     private T[] values;
     
+    /** The base of the mechanism */
+    BigFraction base;
+    
     public static Map<Integer,BigInteger> numeratorCache = new HashMap<Integer,BigInteger>();
     
     public static Map<Integer,BigInteger> denominatorCache = new HashMap<Integer,BigInteger>();
     
-    public static long initTime = 0;
+    public static long distributionTime = 0;
     
     public static long drawTime = 0;
+    
+    public static long floorTime = 0;
+    
+    public static long sumTime = 0;
     
     public static long usedMemory = 0;
     
@@ -59,113 +66,33 @@ public class ExponentialMechanismReliable<T> {
 
     /**
      * Creates a new instance
-     * @param values
-     * @param scores
      * @param epsilon
      * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanismReliable(T[] values, BigFraction[] scores, double epsilon) throws IntervalArithmeticException {
-        this(values, scores, epsilon, false);
+    public ExponentialMechanismReliable(double epsilon) throws IntervalArithmeticException {
+        this(epsilon, false);
     }
 
     /**
      * Creates a new instance which may be configured to produce deterministic output.
      * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
      * 
-     * @param values
-     * @param scores
      * @param epsilon
      * @param deterministic
      * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanismReliable(T[] values, BigFraction[] scores, double epsilon, boolean deterministic) throws IntervalArithmeticException {
-
-        long initTime = System.nanoTime();
-        
-        // Check arguments
-        if (values.length == 0) {
-            throw new RuntimeException("No values supplied");
-        }
-        if (values.length != scores.length) {
-            throw new RuntimeException("Number of scores and values must be identical");
-        }
+    public ExponentialMechanismReliable(double epsilon, boolean deterministic) throws IntervalArithmeticException {
 
         // Calculate the base to use, depending on epsilon
         IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
         double bound = arithmetic.exp(arithmetic.div(arithmetic.createInterval(epsilon), arithmetic.createInterval(3d))).getLowerBound();
-        BigFraction base = new BigFraction(bound);
-
-        // Verify that a useful base could be calculated
-        if (base.compareTo(new BigFraction(0)) != 1) {
-            throw new IllegalArgumentException("No appropriate base could be derived for the given value epsilon = " + epsilon);
-        }
-
-        // Determine the smallest of all exponents.
-        // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
-        // (which can get very large due to the application of the exponential function) while it does not change the result;
-        // it is a trick to make the following computations feasible.
-        int shift = 0;
-        int[] exponents = new int[values.length];
-        boolean first = true;
-        for (int i=0; i<values.length; ++i) {
-            int nextShift = floorToInt(scores[i]);
-            if (first) {
-                shift = nextShift;
-                first = false;
-            } else if (nextShift < shift) {
-                shift = nextShift;
-            }
-            exponents[i] = nextShift;
-        }
-        int maxExponent = Integer.MIN_VALUE;
-        for (int i=0; i<values.length; ++i) {
-            exponents[i] -= shift;
-            maxExponent = Math.max(exponents[i], maxExponent);
-        }
-        BigInteger maxDenominator = base.getDenominator().pow(maxExponent);
-        if (!denominatorCache.containsKey(maxExponent)) {
-            denominatorCache.put(maxExponent, maxDenominator);
-        }
-
-        // Initialize
-        this.distribution = new BigInteger[scores.length];
-        this.values = values.clone();
-
-        int index = 0;
-        for (index = 0; index < values.length; index++) {
-
-            // Calculate the next element of the cumulative distribution
-            int exponent = exponents[index];
-            
-            if (!numeratorCache.containsKey(exponent)) {
-                numeratorCache.put(exponent, base.getNumerator().pow(exponent));
-            }
-            
-            int denominatorExponent = maxExponent - exponent;
-            if (!denominatorCache.containsKey(denominatorExponent)) {
-                denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
-            }
-            
-            BigInteger next = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
-            distribution[index] = index == 0 ? next : next.add(distribution[index-1]);
-        }
-
+        this.base = new BigFraction(bound);
+        
         // Initialize the random generator
-        random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
-        
-        this.initTime += System.nanoTime() - initTime;
-        
-        this.largestDistLength = Math.max(this.largestDistLength, distribution.length);
-        this.largestCumulated = this.largestCumulated.max(distribution[distribution.length-1]);
-        
-        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        this.usedMemory = Math.max(this.usedMemory, usedMemory);
+        this.random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
     }
     
-    /**
-     * Returns a random value sampled from this distribution
-     * @return the random value
-     */
+    @Override
     public T sample() {
         
         long drawTime = System.nanoTime();
@@ -188,6 +115,78 @@ public class ExponentialMechanismReliable<T> {
 
         // Return the according value
         return values[index];
+    }
+    
+    @Override
+    public void setDistribution(T[] values, BigFraction[]scores) {
+        
+        long initTime = System.nanoTime();
+        
+        // Check arguments
+        super.setDistribution(values, scores);
+
+        // Determine the smallest of all exponents.
+        // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
+        // (which can get very large due to the application of the exponential function) while it does not change the result;
+        // it is a trick to make the following computations feasible.
+        int shift = 0;
+        int[] exponents = new int[values.length];
+        boolean first = true;
+        for (int i=0; i<values.length; ++i) {
+            long floorTime = System.nanoTime();
+            int nextShift = floorToInt(scores[i]);
+            this.floorTime += System.nanoTime() - floorTime;
+            if (first) {
+                shift = nextShift;
+                first = false;
+            } else if (nextShift < shift) {
+                shift = nextShift;
+            }
+            exponents[i] = nextShift;
+        }
+        int maxExponent = Integer.MIN_VALUE;
+        for (int i=0; i<values.length; ++i) {
+            exponents[i] -= shift;
+            maxExponent = Math.max(exponents[i], maxExponent);
+        }
+        BigInteger maxDenominator = base.getDenominator().pow(maxExponent);
+        if (!denominatorCache.containsKey(maxExponent)) {
+            denominatorCache.put(maxExponent, maxDenominator);
+        }
+
+        // Initialize
+        this.distribution = new BigInteger[scores.length];
+        this.values = values;
+
+        int index = 0;
+        for (index = 0; index < values.length; index++) {
+
+            // Calculate the next element of the cumulative distribution
+            int exponent = exponents[index];
+            
+            if (!numeratorCache.containsKey(exponent)) {
+                numeratorCache.put(exponent, base.getNumerator().pow(exponent));
+            }
+            
+            int denominatorExponent = maxExponent - exponent;
+            if (!denominatorCache.containsKey(denominatorExponent)) {
+                denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
+            }
+            
+            BigInteger next = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
+            
+            long sumTime = System.nanoTime();
+            distribution[index] = index == 0 ? next : next.add(distribution[index-1]);
+            this.sumTime = System.nanoTime() - sumTime;
+        }
+
+        this.distributionTime += System.nanoTime() - initTime;
+        
+        this.largestDistLength = Math.max(this.largestDistLength, distribution.length);
+        this.largestCumulated = this.largestCumulated.max(distribution[distribution.length-1]);
+        
+        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        this.usedMemory = Math.max(this.usedMemory, usedMemory);
     }
 
     /**
