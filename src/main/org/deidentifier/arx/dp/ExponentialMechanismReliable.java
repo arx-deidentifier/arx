@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Random;
 
 import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
@@ -46,9 +47,11 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     /** The base of the mechanism */
     BigFraction base;
     
-    public static Map<Integer,BigInteger> numeratorCache = new HashMap<Integer,BigInteger>();
+    public Map<Integer,BigInteger> numeratorCache;
     
-    public static Map<Integer,BigInteger> denominatorCache = new HashMap<Integer,BigInteger>();
+    public Map<Integer,BigInteger> denominatorCache;
+    
+    public Map<Pair<Integer,Integer>, BigInteger> productCache;
     
     public static long distributionTime = 0;
     
@@ -58,7 +61,15 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     
     public static long sumTime = 0;
     
+    public static long multTime = 0;
+    
+    public static long powTime = 0;
+    
     public static long usedMemory = 0;
+    
+    public static long cacheHits = 0;
+    
+    public static long cacheMisses = 0;
     
     public static long largestDistLength = 0;
     
@@ -90,6 +101,11 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         
         // Initialize the random generator
         this.random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
+        
+        // Initialize caches
+        this.numeratorCache = new HashMap<Integer,BigInteger>();
+        this.denominatorCache = new HashMap<Integer,BigInteger>();
+        this.productCache = new HashMap<Pair<Integer,Integer>, BigInteger>();
     }
     
     @Override
@@ -161,6 +177,8 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         int index = 0;
         for (index = 0; index < values.length; index++) {
 
+            long powTime = System.nanoTime();
+            
             // Calculate the next element of the cumulative distribution
             int exponent = exponents[index];
             
@@ -170,14 +188,32 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
             
             int denominatorExponent = maxExponent - exponent;
             if (!denominatorCache.containsKey(denominatorExponent)) {
+                cacheMisses++;
                 denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
+            } else {
+                cacheHits++;
             }
             
-            BigInteger next = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
+            this.powTime += System.nanoTime() - powTime;
+            
+            
+            long multTime = System.nanoTime();
+            
+            Pair<Integer,Integer> exponentPair = new Pair<Integer,Integer>(exponent, denominatorExponent);
+            if (!productCache.containsKey(exponentPair)) {
+                BigInteger product = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
+                productCache.put(exponentPair, product);
+            }
+            
+            this.multTime += System.nanoTime() - multTime;
+            
+            
+            BigInteger next = productCache.get(exponentPair);
+            
             
             long sumTime = System.nanoTime();
             distribution[index] = index == 0 ? next : next.add(distribution[index-1]);
-            this.sumTime = System.nanoTime() - sumTime;
+            this.sumTime += System.nanoTime() - sumTime;
         }
 
         this.distributionTime += System.nanoTime() - initTime;
