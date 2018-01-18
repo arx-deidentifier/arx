@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 
 /**
@@ -51,7 +50,7 @@ public class DomainShareRedaction implements DomainShare {
 
     /** For interpolating linearly from input to output range. */
     private double            maxOutput;
-
+    
     /**
      * Creates a new set of domain shares derived from the given functional redaction-based hierarchy.
      *
@@ -63,7 +62,7 @@ public class DomainShareRedaction implements DomainShare {
         this.domainSize = builder.getDomainSize();
         this.alphabetSize = builder.getAlphabetSize();
         this.maxValueLength = builder.getMaxValueLength();
-
+        
         // Prepare values for interpolation
         this.minInput = 1d / Math.pow(alphabetSize, maxValueLength);
         this.maxInput = 1d;
@@ -82,12 +81,12 @@ public class DomainShareRedaction implements DomainShare {
      * @param maxOutput
      */
     private DomainShareRedaction(double maxValueLength,
-                                 double domainSize,
-                                 double alphabetSize,
-                                 double minInput,
-                                 double maxInput,
-                                 double minOutput,
-                                 double maxOutput) {
+                                   double domainSize,
+                                   double alphabetSize,
+                                   double minInput,
+                                   double maxInput,
+                                   double minOutput,
+                                   double maxOutput) {
         this.maxValueLength = maxValueLength;
         this.domainSize = domainSize;
         this.alphabetSize = alphabetSize;
@@ -117,7 +116,7 @@ public class DomainShareRedaction implements DomainShare {
     public double getDomainSize() {
         return domainSize;
     }
-
+    
     /**
      * Returns the share of the given value.
      *
@@ -127,21 +126,9 @@ public class DomainShareRedaction implements DomainShare {
      */
     @Override
     public double getShare(int value, int level) {
-
+        
         // Compute and interpolate
         double input = Math.pow(alphabetSize, (double)level - maxValueLength);
         return (input - minInput) / (maxInput - minInput) * (maxOutput - minOutput) + minOutput;
-    }
-
-    /**
-     * Returns the reliable share of the given value.
-     *
-     * @param value
-     * @param level
-     * @return
-     */
-    @Override
-    public BigFraction getShareReliable(int value, int level) {
-        throw new RuntimeException("Calculation of reliable shares is not yet implemented");
     }
 }

@@ -23,7 +23,6 @@ import java.io.ObjectOutputStream;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
@@ -70,20 +69,20 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
     @SuppressWarnings("unchecked")
     public DomainShareInterval(HierarchyBuilderIntervalBased<T> builder,
                                int[][] hierarchy, String[] dictionary) {
-
+        
         // Super
         super(builder.getDataType(), builder.getLowerRange(), builder.getUpperRange());
-
+        
         // Prepare
         this.duplicates = new LongDoubleOpenHashMap();
         this.shares = new double[dictionary.length];
         Arrays.fill(shares, NOT_AVAILABLE);
-
+        
         // Copy intervals
         for (Interval<T> interval : builder.getIntervals()) {
             this.addInterval(interval);
         }
-
+        
         // Copy levels
         this.setLevels(builder.getLevels());
 
@@ -91,38 +90,38 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
         this.dataType = (DataTypeWithRatioScale<T>)this.getDataType();
         Range<T>[] ranges = this.getAdjustedRanges();
         this.domainSize = toDouble(dataType.subtract(ranges[1].getMinMaxValue(), ranges[0].getMinMaxValue()));
-
+        
         // Prepare the array
         String[] input = new String[hierarchy.length];
         for (int i=0; i<hierarchy.length; i++) {
             input[i] = dictionary[hierarchy[i][0]];
         }
-
+        
         // Re-build the intervals
         this.setData(input);
         AbstractGroup[][] groups = this.prepareGroups();
-
+        
         // Sanity check
         if (groups[0].length != hierarchy.length) {
             throw new IllegalStateException("Invalid number of intervals");
         } else if (groups.length != hierarchy[0].length - 1) {
             throw new IllegalStateException("Invalid number of intervals");
         }
-
+        
         for (int i=0; i<hierarchy.length; i++) {
             for (int level = 0; level < hierarchy[i].length; level++) {
-
+                
                 int value = hierarchy[i][level];
                 double stored = shares[value];
                 double share = 0d;
-
+                
                 if (level == 0) {
                     share = 1d / domainSize;
                 } else {
                     AbstractGroup group = groups[level - 1][i];
                     if (group instanceof Interval) {
                         Interval<T> interval = (Interval<T>)group;
-
+                        
                         if (interval.isOutOfBound()) {
                             if (interval.isOutOfLowerBound()) {
                                 share = toDouble(dataType.subtract(builder.getLowerRange().getBottomTopCodingFrom(),
@@ -141,7 +140,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                         share = 1d;
                     }
                 }
-
+                
                 // If duplicate
                 if (stored != NOT_AVAILABLE) {
 
@@ -163,11 +162,11 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                 } else {
                     shares[value] = share;
                 }
-
+                
             }
         }
     }
-
+    
     /**
      * Creates a new instance
      */
@@ -187,9 +186,9 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
     @Override
     public DomainShareInterval<T> clone() {
         return new DomainShareInterval<T>(this.domainSize, this.getDataType(), 
-                this.getLowerRange(), this.getUpperRange(),
-                this.shares.clone(), this.duplicates.clone());
-
+                                          this.getLowerRange(), this.getUpperRange(),
+                                          this.shares.clone(), this.duplicates.clone());
+        
     }
 
     /**
@@ -218,18 +217,6 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
             long key = (((long) value) << 32) | (level & 0xffffffffL);
             return duplicates.getOrDefault(key, -share);
         }
-    }
-
-    /**
-     * Returns the reliable share of the given value.
-     *
-     * @param value
-     * @param level
-     * @return
-     */
-    @Override
-    public BigFraction getShareReliable(int value, int level) {
-        throw new RuntimeException("Calculation of reliable shares is not yet implemented");
     }
 
     /**
@@ -265,7 +252,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
             throw new IllegalStateException("Unknown data type");
         }
     }
-
+    
     /**
      * Serialization.
      *
@@ -276,7 +263,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
 
         // Default serialization
         aOutputStream.defaultWriteObject();
-
+        
         // Write map
         IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
     }

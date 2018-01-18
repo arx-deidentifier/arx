@@ -174,7 +174,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 if (m.count>0) {
                     int value = m.next();
                     int level = transformation[dimension];
-                    BigFraction share = (new BigFraction(m.count)).multiply(shares[dimension].getShareReliable(value, level));
+                    BigFraction shareReliable = ((DomainShareMaterialized)shares[dimension]).getShareReliable(value, level);
+                    BigFraction share = (new BigFraction(m.count)).multiply(shareReliable);
                     score = score.add(m.isNotOutlier ? share : new BigFraction(m.count));
                 }
                 score = score.add(new BigFraction(m.pcount - m.count));

@@ -38,10 +38,10 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 public class DomainShareMaterialized implements DomainShare {
 
     /** SVUID. */
-    private static final long                            serialVersionUID   = -8981924690395236648L;
+    private static final long                            serialVersionUID = -8981924690395236648L;
 
     /** The value representing a non-existent entry. */
-    private static final double                          NOT_AVAILABLE      = -Double.MAX_VALUE;
+    private static final double                          NOT_AVAILABLE    = -Double.MAX_VALUE;
 
     /** The size of the domain. */
     private final double                                 size;
@@ -221,7 +221,6 @@ public class DomainShareMaterialized implements DomainShare {
      * @param level
      * @return
      */
-    @Override
     public BigFraction getShareReliable(int value, int level) {
         BigFraction share = sharesReliable[value];
         if (share.compareTo(new BigFraction(0)) >= 0) {
