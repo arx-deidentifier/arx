@@ -1324,14 +1324,21 @@ public class Model implements Serializable {
         this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         this.groups = null;
         this.classificationModel = new ModelClassification();
+        this.anonymizationConfiguration = null;
+        this.heuristicSearchStepLimit = null;
+        this.heuristicSearchThreshold = null;
+        this.heuristicSearchTimeLimit = null;
+        this.optimizationStatistics = null;
+        this.localRecodingModel = null;
     }
 
     /**
      * Returns the last two selected attributes.
      */
     public void resetAttributePair() {
-        if (pair == null)
+        if (pair == null) {
             pair = new String[] { null, null };
+        }
         pair[0] = null;
         pair[1] = null;
     }
