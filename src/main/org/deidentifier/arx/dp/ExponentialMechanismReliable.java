@@ -177,6 +177,8 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         int index = 0;
         for (index = 0; index < values.length; index++) {
 
+            long powTime = System.nanoTime();
+            
             // Calculate the next element of the cumulative distribution
             int exponent = exponents[index];
             
