@@ -23,6 +23,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 
@@ -132,7 +133,7 @@ public class RiskEstimateBuilder {
                                 ARXConfiguration arxconfig) {
         this.population = population;
         this.handle = handle;
-        this.identifiers = identifiers;
+        this.identifiers = identifiers != null ? identifiers : handle.getDefinition().getQuasiIdentifyingAttributes();
         this.classes = classes;
         this.solverconfig = solverconfig;
         this.arxconfig = arxconfig;
@@ -157,7 +158,7 @@ public class RiskEstimateBuilder {
                         ARXConfiguration arxconfig) {
         this.population = population;
         this.handle = handle;
-        this.identifiers = identifiers;
+        this.identifiers = identifiers != null ? identifiers : handle.getDefinition().getQuasiIdentifyingAttributes();
         this.classes = null;
         this.solverconfig = solverconfig;
         this.arxconfig = arxconfig;
@@ -261,6 +262,29 @@ public class RiskEstimateBuilder {
     public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold) {
         progress.value = 0;
         return new RiskModelSampleSummary(handle, identifiers, threshold, stop, progress);
+    }
+
+    /**
+     * Returns a risk summary, using wildcard matching. "*" will be interpreted as a wildcard
+     *
+     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @return
+     */
+    public RiskModelSampleWildcard getSampleBasedRiskSummaryWildcard(double threshold) {
+        progress.value = 0;
+        return new RiskModelSampleWildcard(handle, identifiers, threshold, DataType.ANY_VALUE, stop, progress);
+    }
+
+    /**
+     * Returns a risk summary, using wildcard matching
+     *
+     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param wildcard String to interpret as a wildcard
+     * @return
+     */
+    public RiskModelSampleWildcard getSampleBasedRiskSummaryWildcard(double threshold, String wildcard) {
+        progress.value = 0;
+        return new RiskModelSampleWildcard(handle, identifiers, threshold, wildcard, stop, progress);
     }
 
     /**

@@ -36,6 +36,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
@@ -456,6 +457,14 @@ public abstract class DataHandle {
      * @return the num rows
      */
     public abstract int getNumRows();
+
+    /**
+     * Returns a risk estimator, using the US population if required
+     * @return
+     */
+    public RiskEstimateBuilder getRiskEstimator() {
+        return getRiskEstimator(ARXPopulationModel.create(Region.USA), getDefinition().getQuasiIdentifyingAttributes());
+    }
 
     /**
      * Returns a risk estimator

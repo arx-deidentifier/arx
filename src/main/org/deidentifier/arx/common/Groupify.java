@@ -84,6 +84,14 @@ public class Groupify<T> {
         }
 
         /**
+         * Increments the count
+         * @param count
+         */
+        public void incCount(int count) {
+            this.count += count;
+        }
+
+        /**
          * Returns the next entry, null if this is the last entry
          * 
          * @return

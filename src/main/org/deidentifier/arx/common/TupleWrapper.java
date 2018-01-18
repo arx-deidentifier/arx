@@ -72,6 +72,27 @@ public class TupleWrapper {
         this.hashcode = hashcode;
         this.suppressed = handle.isOutlier(row);
     }
+    
+    /**
+     * Constructor
+     * 
+     * @param handle
+     * @param row
+     */
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, String wildcard) {
+        this.values = new String[indices.length];
+        int hashcode = 1;
+        int idx = 0;
+        boolean suppressed = true;
+        for (int index : indices) {
+            String value = handle.getValue(row, index, false);
+            hashcode = 31 * hashcode + value.hashCode();
+            values[idx++] = value;
+            suppressed = suppressed && value.equals(wildcard);
+        }
+        this.hashcode = hashcode;
+        this.suppressed = suppressed;
+    }
 
     @Override
     public boolean equals(Object other) {
