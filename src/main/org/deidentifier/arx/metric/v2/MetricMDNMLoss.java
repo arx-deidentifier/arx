@@ -19,10 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
@@ -37,6 +34,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
+
+import com.carrotsearch.hppc.ObjectLongOpenHashMap;
 
 /**
  * This class implements a variant of the Loss metric.
@@ -169,9 +168,10 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Prepare
         int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
-        List<Map<BigFraction,Integer>> dimensionSharesToCount = new ArrayList<Map<BigFraction,Integer>>(dimensionsGeneralized);
+        List<ObjectLongOpenHashMap<BigFraction>> dimensionSharesToCount =
+                new ArrayList<ObjectLongOpenHashMap<BigFraction>>(dimensionsGeneralized);
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-            dimensionSharesToCount.add(new HashMap<BigFraction,Integer>());
+            dimensionSharesToCount.add(new ObjectLongOpenHashMap<BigFraction>());
         }
 
         // Calculate counts
@@ -187,12 +187,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                         int value = m.next();
                         int level = transformation[dimension];
                         BigFraction shareReliable = ((DomainShareMaterialized)shares[dimension]).getShareReliable(value, level);
-                        Map<BigFraction,Integer> sharesToCount = dimensionSharesToCount.get(dimension);
-                        if (!sharesToCount.containsKey(shareReliable)) {
-                            sharesToCount.put(shareReliable, m.count);
-                        } else {
-                            sharesToCount.put(shareReliable, sharesToCount.get(shareReliable) + m.count);
-                        }
+                        ObjectLongOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
+                        sharesToCount.putOrAdd(shareReliable, m.count, m.count);
                     }
                 }
                 numOutliers += m.pcount - m.count;
@@ -203,11 +199,16 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Calculate score
         BigFraction score = new BigFraction(0);
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-            Map<BigFraction,Integer> sharesToCount = dimensionSharesToCount.get(dimension);
-            for (Entry<BigFraction, Integer> entry : sharesToCount.entrySet()) {
-                BigFraction shareReliable = entry.getKey();
-                int count = entry.getValue();
-                score = score.add(shareReliable.multiply(count));
+            
+            ObjectLongOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
+            final boolean[] states = sharesToCount.allocated;
+            final long[] counts = sharesToCount.values;
+            final Object[] sharesReliable = sharesToCount.keys;
+            
+            for (int i=0; i<states.length; i++) {
+                if (states[i]) {
+                    score = score.add(((BigFraction)(sharesReliable[i])).multiply(counts[i]));
+                }
             }
         }
         score = score.add(numOutliers);
@@ -414,8 +415,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Save domain shares
         this.shares = manager.getDomainShares(config.isReliableAnonymizationEnabled());
 
-        // Store minimal size of equivalence classes
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            // Store minimal size of equivalence classes
             EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
             this.k = (double)dpCriterion.getMinimalClassSize();
             if (config.isReliableAnonymizationEnabled()) {
