@@ -165,7 +165,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
         
         // Check records at risk
         double fraction = 0d;
-        for (int size = 1; size <= smallestSize; size++) {
+        for (int size = 1; size < smallestSize; size++) {
             fraction += distribution.getFractionOfRecordsInClassesOfSize(size);
         }
         return result && (fraction <= recordsAtRisk);
