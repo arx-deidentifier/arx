@@ -60,9 +60,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, steps, epsilonSearch, reliable);
     }
 
-    /** True iff this instance is deterministic */
-    private final boolean            deterministic;
-
     /** The privacy budget to use for each step */
     private final double             epsilonStep;
 
@@ -94,7 +91,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
-        this.deterministic = deterministic;
         this.steps = steps;
         this.reliable = reliable;
 
