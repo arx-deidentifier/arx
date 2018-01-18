@@ -159,7 +159,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
         
         // Check average class size
         boolean result = 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
-        if (highestRisk == null) {
+        if (highestRisk == null || !result) {
             return result;
         }
         
