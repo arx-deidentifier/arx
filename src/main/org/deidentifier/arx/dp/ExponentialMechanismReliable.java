@@ -44,36 +44,17 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     /** The values to sample from */
     private T[] values;
     
-    /** The base of the mechanism */
+    /** The base having the form of a fraction n/d */
     BigFraction base;
     
+    /** A cache which maps an exponent e to n^e */
     private Map<Integer,BigInteger> numeratorCache;
     
+    /** A cache which maps an exponent e to d^e */
     private Map<Integer,BigInteger> denominatorCache;
     
+    /** A cache which maps a pair of exponents (e1,e2) to n^e1 / b^e2  */
     private Map<Pair<Integer,Integer>, BigInteger> productCache;
-    
-    public static long distributionTime = 0;
-    
-    public static long drawTime = 0;
-    
-    public static long floorTime = 0;
-    
-    public static long sumTime = 0;
-    
-    public static long multTime = 0;
-    
-    public static long powTime = 0;
-    
-    public static long usedMemory = 0;
-    
-    public static long cacheHits = 0;
-    
-    public static long cacheMisses = 0;
-    
-    public static long largestDistLength = 0;
-    
-    public static BigInteger largestCumulated = BigInteger.ZERO;
 
     /**
      * Creates a new instance
@@ -94,7 +75,7 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
      */
     public ExponentialMechanismReliable(double epsilon, boolean deterministic) throws IntervalArithmeticException {
 
-        // Calculate the base to use, depending on epsilon
+        // Calculate the base, depending on epsilon
         IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
         double bound = arithmetic.exp(arithmetic.div(arithmetic.createInterval(epsilon), arithmetic.createInterval(3d))).getLowerBound();
         this.base = new BigFraction(bound);
@@ -111,32 +92,22 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     @Override
     public T sample() {
         
-        long drawTime = System.nanoTime();
-
         // Draw a number within the range of the cumulative distribution
         BigInteger drawn = getRandomBigInteger(distribution[distribution.length-1]);
 
         // Determine the according index
-        int index;
-        for (index = 0; index < distribution.length; index++) {
+        for (int index = 0; index < distribution.length; index++) {
             if (drawn.compareTo(distribution[index]) == -1) {
-                break;
+                return values[index];
             }
         }
-        
-        this.drawTime += System.nanoTime() - drawTime;
-        
-        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        this.usedMemory = Math.max(this.usedMemory, usedMemory);
 
-        // Return the according value
-        return values[index];
+        // Must not happen
+        throw new IllegalStateException("Must not happen");
     }
     
     @Override
     public void setDistribution(T[] values, BigFraction[]scores) {
-        
-        long initTime = System.nanoTime();
         
         // Check arguments
         super.setDistribution(values, scores);
@@ -149,9 +120,7 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         int[] exponents = new int[values.length];
         boolean first = true;
         for (int i=0; i<values.length; ++i) {
-            long floorTime = System.nanoTime();
             int nextShift = floorToInt(scores[i]);
-            this.floorTime += System.nanoTime() - floorTime;
             if (first) {
                 shift = nextShift;
                 first = false;
@@ -182,40 +151,22 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
             Pair<Integer,Integer> exponentPair = new Pair<Integer,Integer>(exponent, denominatorExponent);
             
             if (!productCache.containsKey(exponentPair)) {
-                cacheMisses++;
                 
-                long powTime = System.nanoTime();
                 if (!numeratorCache.containsKey(exponent)) {
                     numeratorCache.put(exponent, base.getNumerator().pow(exponent));
                 }
                 if (!denominatorCache.containsKey(denominatorExponent)) {
                     denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
                 }
-                this.powTime += System.nanoTime() - powTime;
                 
-                long multTime = System.nanoTime();
                 BigInteger product = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
-                this.multTime += System.nanoTime() - multTime;
                 
                 productCache.put(exponentPair, product);
-            } else {
-                cacheHits++;
             }
             BigInteger next = productCache.get(exponentPair);
-            
-            
-            long sumTime = System.nanoTime();
-            distribution[index] = index == 0 ? next : next.add(distribution[index-1]);
-            this.sumTime += System.nanoTime() - sumTime;
-        }
 
-        this.distributionTime += System.nanoTime() - initTime;
-        
-        this.largestDistLength = Math.max(this.largestDistLength, distribution.length);
-        this.largestCumulated = this.largestCumulated.max(distribution[distribution.length-1]);
-        
-        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-        this.usedMemory = Math.max(this.usedMemory, usedMemory);
+            distribution[index] = index == 0 ? next : next.add(distribution[index-1]);
+        }
     }
 
     /**
