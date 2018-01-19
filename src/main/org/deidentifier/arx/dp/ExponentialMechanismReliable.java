@@ -35,8 +35,8 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
  */
 public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanism<T, BigFraction> {
 
-    /** The distribution scaled so that it consists of natural numbers */
-    private BigInteger[] distribution;
+    /** The cumulative distribution scaled so that it consists of natural numbers */
+    private BigInteger[] cumulativeDistribution;
 
     /** The random generator */
     private Random random;
@@ -47,13 +47,13 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     /** The base having the form of a fraction n/d */
     BigFraction base;
     
-    /** A cache which maps an exponent e to n^e */
+    /** A cache mapping an exponent e to n^e used to increase performance */
     private Map<Integer,BigInteger> numeratorCache;
     
-    /** A cache which maps an exponent e to d^e */
+    /** A cache mapping an exponent e to d^e used to increase performance */
     private Map<Integer,BigInteger> denominatorCache;
     
-    /** A cache which maps a pair of exponents (e1,e2) to n^e1 / b^e2  */
+    /** A cache mapping a pair of exponents (e_1,e_2) to n^{e_1} / d^{e_2} used to increase performance */
     private Map<Pair<Integer,Integer>, BigInteger> productCache;
 
     /**
@@ -93,12 +93,12 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     public T sample() {
         
         // Draw a number within the range of the cumulative distribution
-        BigInteger drawn = getRandomBigInteger(distribution[distribution.length-1]);
+        BigInteger drawn = getRandomBigInteger(cumulativeDistribution[cumulativeDistribution.length-1]);
 
         // Determine the according index
-        for (int index = 0; index < distribution.length; index++) {
-            if (drawn.compareTo(distribution[index]) == -1) {
-                return values[index];
+        for (int i = 0; i < cumulativeDistribution.length; i++) {
+            if (drawn.compareTo(cumulativeDistribution[i]) == -1) {
+                return values[i];
             }
         }
 
@@ -107,65 +107,74 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     }
     
     @Override
-    public void setDistribution(T[] values, BigFraction[]scores) {
+    public void setDistribution(T[] values, BigFraction[] scores) {
         
         // Check arguments
         super.setDistribution(values, scores);
+        
+        // Initialize
+        this.cumulativeDistribution = new BigInteger[scores.length];
+        this.values = values;
+        
+        // The following code calculates a distribution consisting of natural numbers which is directly proportional to
+        // b^{e_1} = n^{e_1} / d^{e_1} ... b^{e_m} = n^{e_m} / d^{e_m} with e_i = floorToInt(scores[i])
 
-        // Determine the smallest of all exponents.
-        // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
-        // (which can get very large due to the application of the exponential function) while it does not change the result;
-        // it is a trick to make the following computations feasible.
-        int shift = 0;
+        // Calculate the exponents e_i and determine the smallest exponent
         int[] exponents = new int[values.length];
-        boolean first = true;
+        int minExponent = Integer.MAX_VALUE;
         for (int i=0; i<values.length; ++i) {
-            int nextShift = floorToInt(scores[i]);
-            if (first) {
-                shift = nextShift;
-                first = false;
-            } else if (nextShift < shift) {
-                shift = nextShift;
-            }
-            exponents[i] = nextShift;
+            int exponent = floorToInt(scores[i]);
+            minExponent = Math.min(minExponent, exponent);
+            exponents[i] = exponent;
         }
+        
+        // Subtract the smallest exponent from all exponents.
+        // This modification reduces the magnitude of powers, increases the chances for cache hits,
+        // and hence, it reduces the execution times of the following computations.
+        // Since b^{e_i - minExponent} = b^e_i * b^{-minExponent} holds, this transformation corresponds to a multiplication
+        // of the distribution with a constant factor and hence it retains proportionality.
+        // Moreover, the maximum of the resulting exponents is determined.
         int maxExponent = Integer.MIN_VALUE;
         for (int i=0; i<values.length; ++i) {
-            exponents[i] -= shift;
+            exponents[i] -= minExponent;
             maxExponent = Math.max(exponents[i], maxExponent);
         }
-        BigInteger maxDenominator = base.getDenominator().pow(maxExponent);
-        if (!denominatorCache.containsKey(maxExponent)) {
-            denominatorCache.put(maxExponent, maxDenominator);
-        }
+        
+        // Calculate the scaled cumulative distribution by computing n^{exponents[i]} * d^{maxExponent - exponents[i]}
+        // and accumulating the results. Since
+        // n^{exponents[i]} * d^{maxExponent - exponents[i]} = (n^{exponents[i]} / d^{exponents[i]}) * d^{maxExponent}
+        // = b^{exponents[i]} * d^{maxExponent} holds, this transformation corresponds to a multiplication
+        // of the distribution with a constant factor and hence it retains proportionality.
+        for (int i = 0; i < values.length; i++) {
 
-        // Initialize
-        this.distribution = new BigInteger[scores.length];
-        this.values = values;
-
-        for (int index = 0; index < values.length; index++) {
-
-            // Calculate the next element of the cumulative distribution
-            int exponent = exponents[index];
-            int denominatorExponent = maxExponent - exponent;
-            Pair<Integer,Integer> exponentPair = new Pair<Integer,Integer>(exponent, denominatorExponent);
+            // Determine exponents
+            int numeratorExponent = exponents[i];
+            int denominatorExponent = maxExponent - numeratorExponent;
             
+            // Assure that productCache contains n^{exponents[i]} * d^{maxExponent - exponents[i]}
+            Pair<Integer,Integer> exponentPair = new Pair<Integer,Integer>(numeratorExponent, denominatorExponent);
             if (!productCache.containsKey(exponentPair)) {
                 
-                if (!numeratorCache.containsKey(exponent)) {
-                    numeratorCache.put(exponent, base.getNumerator().pow(exponent));
+                // Assure that numeratorCache contains n^{exponents[i]}
+                if (!numeratorCache.containsKey(numeratorExponent)) {
+                    numeratorCache.put(numeratorExponent, base.getNumerator().pow(numeratorExponent));
                 }
+                
+                // Assure that denominatorCache contains d^{maxExponent - exponents[i]}
                 if (!denominatorCache.containsKey(denominatorExponent)) {
                     denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
                 }
                 
-                BigInteger product = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
-                
+                // Calculate n^{exponents[i]} * d^{maxExponent - exponents[i]} and insert into productCache
+                BigInteger product = numeratorCache.get(numeratorExponent).multiply(denominatorCache.get(denominatorExponent));
                 productCache.put(exponentPair, product);
             }
-            BigInteger next = productCache.get(exponentPair);
-
-            distribution[index] = index == 0 ? next : next.add(distribution[index-1]);
+            
+            // Retrieve n^{exponents[i]} * d^{maxExponent - exponents[i]}
+            BigInteger nextElement = productCache.get(exponentPair);
+            
+            // Accumulate
+            cumulativeDistribution[i] = i == 0 ? nextElement : nextElement.add(cumulativeDistribution[i-1]);
         }
     }
 
