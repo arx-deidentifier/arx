@@ -174,40 +174,33 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         this.distribution = new BigInteger[scores.length];
         this.values = values;
 
-        int index = 0;
-        for (index = 0; index < values.length; index++) {
+        for (int index = 0; index < values.length; index++) {
 
-            long powTime = System.nanoTime();
-            
             // Calculate the next element of the cumulative distribution
             int exponent = exponents[index];
-            
-            if (!numeratorCache.containsKey(exponent)) {
-                numeratorCache.put(exponent, base.getNumerator().pow(exponent));
-            }
-            
             int denominatorExponent = maxExponent - exponent;
-            if (!denominatorCache.containsKey(denominatorExponent)) {
-                denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
-            }
-            
-            this.powTime += System.nanoTime() - powTime;
-            
-            
-            long multTime = System.nanoTime();
-            
             Pair<Integer,Integer> exponentPair = new Pair<Integer,Integer>(exponent, denominatorExponent);
+            
             if (!productCache.containsKey(exponentPair)) {
                 cacheMisses++;
+                
+                long powTime = System.nanoTime();
+                if (!numeratorCache.containsKey(exponent)) {
+                    numeratorCache.put(exponent, base.getNumerator().pow(exponent));
+                }
+                if (!denominatorCache.containsKey(denominatorExponent)) {
+                    denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
+                }
+                this.powTime += System.nanoTime() - powTime;
+                
+                long multTime = System.nanoTime();
                 BigInteger product = numeratorCache.get(exponent).multiply(denominatorCache.get(denominatorExponent));
+                this.multTime += System.nanoTime() - multTime;
+                
                 productCache.put(exponentPair, product);
             } else {
                 cacheHits++;
             }
-            
-            this.multTime += System.nanoTime() - multTime;
-            
-            
             BigInteger next = productCache.get(exponentPair);
             
             
