@@ -126,8 +126,8 @@ public class ARXAnonymizer { // NO_UCD
                                                       manager.getDataGeneralized().getHeader(),
                                                       config.getInternalConfiguration());
 
-            // Create output handle
-            ((DataHandleInput)handle).setLocked(true);
+			// Create output handle
+	        ((DataHandleInput)handle).setLocked(true);
             return new ARXResult(ARXAnonymizer.this,
                                  handle.getRegistry(),
                                  this.manager,
@@ -192,23 +192,23 @@ public class ARXAnonymizer { // NO_UCD
      * @throws IOException
      */
     public ARXResult anonymize(final Data data, ARXConfiguration config) throws IOException {
-
+        
         if (((DataHandleInput)data.getHandle()).isLocked()){
             throw new RuntimeException("This data handle is locked. Please release it first");
         }
-
+        
         // Update registry
         DataHandle handle = data.getHandle();
         handle.getDefinition().materializeHierarchies(handle);
         checkBeforeEncoding(handle, config);
         handle.getRegistry().reset();
-
+        
         // Create manager
         DataManager manager = getDataManager(handle, handle.getDefinition(), config);
 
         // Attach subset to handle
         handle.getRegistry().createInputSubset(config);
-
+        
         // Attach arrays to data handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
                                          manager.getDataAnalyzed().getArray());
@@ -217,7 +217,7 @@ public class ARXAnonymizer { // NO_UCD
         // Execute
         return anonymize(manager, handle.getDefinition(), config).asResult(config, handle);
     }
-
+    
     /**
      * Returns the maximum number of snapshots allowed to store in the history.
      * 
@@ -226,7 +226,7 @@ public class ARXAnonymizer { // NO_UCD
     public int getHistorySize() {
         return historySize;
     }
-
+    
     /**
      * Gets the snapshot size.
      * 
@@ -350,7 +350,7 @@ public class ARXAnonymizer { // NO_UCD
                 }
             }
         }
-
+        
         // Check whether all hierarchies are monotonic
         for (final GeneralizationHierarchy hierarchy : manager.getHierarchies()) {
             hierarchy.checkMonotonicity(manager);
@@ -364,18 +364,18 @@ public class ARXAnonymizer { // NO_UCD
         for (int i = 0; i < hierarchyHeights.length; i++) {
             if (minLevels[i] > (hierarchyHeights[i] - 1)) { 
                 throw new IllegalArgumentException("Invalid minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
-                        minLevels[i] + " > " + (hierarchyHeights[i] - 1));
+                                                                                                      minLevels[i] + " > " + (hierarchyHeights[i] - 1));
             }
             if (minLevels[i] < 0) { 
                 throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() + "' has to be positive");
             }
             if (maxLevels[i] > (hierarchyHeights[i] - 1)) {
                 throw new IllegalArgumentException("Invalid maximum generalization for attribute '" + manager.getHierarchies()[i].getName() + "': " +
-                        maxLevels[i] + " > " + (hierarchyHeights[i] - 1));
+                                                                                                      maxLevels[i] + " > " + (hierarchyHeights[i] - 1));
             }
             if (maxLevels[i] < minLevels[i]) { 
                 throw new IllegalArgumentException("The minimum generalization for attribute '" + manager.getHierarchies()[i].getName() +
-                        "' has to be lower than or equal to the defined maximum");
+                                                   "' has to be lower than or equal to the defined maximum");
             }
         }
     }
@@ -393,19 +393,19 @@ public class ARXAnonymizer { // NO_UCD
 
         // Check for null
         if (handle == null) { throw new NullPointerException("Data must not be null"); }
-
+        
         // Check sensitive attributes
         if (config.isPrivacyModelSpecified(LDiversity.class) ||
-                config.isPrivacyModelSpecified(TCloseness.class) ||
-                config.isPrivacyModelSpecified(DDisclosurePrivacy.class) ||
-                config.isPrivacyModelSpecified(BasicBLikeness.class) ||
-                config.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
-
+            config.isPrivacyModelSpecified(TCloseness.class) ||
+            config.isPrivacyModelSpecified(DDisclosurePrivacy.class) ||
+            config.isPrivacyModelSpecified(BasicBLikeness.class) ||
+            config.isPrivacyModelSpecified(EnhancedBLikeness.class)) {
+            
             if (handle.getDefinition().getSensitiveAttributes().size() == 0) { 
                 throw new IllegalArgumentException("You need to specify a sensitive attribute");
             }
         }
-
+        
         // Check response variables
         if (config.getQualityModel() instanceof MetricSDClassification) {
             if (handle.getDefinition().getResponseVariables().isEmpty()) {
@@ -417,14 +417,14 @@ public class ARXAnonymizer { // NO_UCD
                 }
             }
         }
-
+        
         // Check if all needed hierarchies have been defined
         for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
             if (handle.getDefinition().getHierarchy(attribute) == null) {
                 throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
             }
         }
-
+        
         for (String attr : handle.getDefinition().getSensitiveAttributes()){
             boolean found = false;
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
@@ -526,20 +526,20 @@ public class ARXAnonymizer { // NO_UCD
                 throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
             }
         }
-
+        
         for (String attribute : handle.getDefinition().getQuasiIdentifiersWithMicroaggregation()) {
-
+            
             if (handle.getDefinition().getMicroAggregationFunction(attribute)==null) {
                 throw new IllegalArgumentException("No aggregation function specified for attribute '" + attribute + "'");
             }
-
+            
             MicroAggregationFunction f = (MicroAggregationFunction) definition.getMicroAggregationFunction(attribute);
             DataType<?> t = definition.getDataType(attribute);
             if (!t.getDescription().getScale().provides(f.getRequiredScale())) {
                 throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a datatype with a scale of measure of at least " + f.getRequiredScale());
             }
         }
-
+        
         // Check constraints for (e,d)-DP
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
@@ -570,7 +570,7 @@ public class ARXAnonymizer { // NO_UCD
                 }
             }
         }
-
+        
         // Perform sanity checks
         Set<String> genQis = definition.getQuasiIdentifiersWithGeneralization();
         Set<String> clusterQis = definition.getQuasiIdentifiersWithClusteringAndMicroaggregation();
@@ -607,9 +607,9 @@ public class ARXAnonymizer { // NO_UCD
      * @return
      */
     private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
-                                           final DataManager manager,
-                                           final SolutionSpace solutionSpace,
-                                           final TransformationChecker checker) {
+                                          final DataManager manager,
+                                          final SolutionSpace solutionSpace,
+                                          final TransformationChecker checker) {
 
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
@@ -621,7 +621,7 @@ public class ARXAnonymizer { // NO_UCD
 
         if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
-
+            
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
             return FLASHAlgorithm.create(solutionSpace, checker, strategy);
@@ -693,15 +693,15 @@ public class ARXAnonymizer { // NO_UCD
                                                    checker);
         algorithm.setListener(listener);
 
-
+        
         // Execute
 
         long time = System.currentTimeMillis();
         boolean optimumFound = algorithm.traverse();
-
+        
         // Free resources
         checker.reset();
-
+        
         // Return the result
         return new Result(checker, solutionSpace, manager, algorithm, time, optimumFound);
     }

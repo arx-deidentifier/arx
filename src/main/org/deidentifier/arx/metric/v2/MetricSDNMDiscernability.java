@@ -38,13 +38,13 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * @author Raffael Bild
  */
 public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
-
+    
     /** SVUID. */
     private static final long serialVersionUID = -8573084860566655278L;
-
+    
     /** Total number of rows. */
     private double            numRows;
-
+    
     /** Minimal size of equivalence classes enforced by the differential privacy model */
     private double            k;
 
@@ -74,7 +74,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             return new ILSingleDimensional(rows * rows);
         }
     }
-
+    
     @Override
     public ILSingleDimensional createMinInformationLoss() {
         Double rows = getNumTuples();
@@ -84,7 +84,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             return new ILSingleDimensional(rows);
         }
     }
-
+    
     /**
      * Returns the configuration of this metric.
      *
@@ -96,16 +96,16 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
                                        false,                      // precomputed
                                        0.0d,                       // precomputation threshold
                                        AggregateFunction.SUM       // aggregate function
-                );
+                                       );
     }
-
+    
     @Override
     public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
 
         // Prepare
         double penaltySuppressed = 0;
         double penaltyNotSuppressed = 0;
-
+        
         // Sum up penalties
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
@@ -118,12 +118,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         penaltySuppressed *= numRows;
-
+        
         // Adjust sensitivity and multiply with -1 so that higher values are better
         return new ILScoreDouble(-1d * (penaltySuppressed + penaltyNotSuppressed) /
                                  ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
     }
-
+    
     @Override
     public boolean isScoreFunctionSupported() {
         return true;
@@ -140,10 +140,10 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     public String toString() {
         return "Non-monotonic discernability";
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
-
+        
         double rows = getNumTuples();
         double dm = 0;
         double dmStar = 0;
@@ -164,7 +164,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count);
     }
-
+    
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
@@ -181,16 +181,16 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         }
         return new ILSingleDimensional(lowerBound);
     }
-
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
                                       final Data input, 
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
-
+        
         super.initializeInternal(manager, definition, input, hierarchies, config);
-
+        
         // Store the total number of rows
         numRows = input.getDataLength();
 

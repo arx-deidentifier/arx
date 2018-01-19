@@ -42,7 +42,7 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
     public boolean equals(Object obj) {
         return equals(obj);
     }
-
+    
     @Override
     public T getValue() {
         return value;
@@ -83,8 +83,8 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
         if (other == null) return null;
         if (!other.getClass().equals(this.getClass())) {
             throw new IllegalArgumentException("Incompatible class (" +
-                    other.getClass().getSimpleName() +
-                    ")");
+                                               other.getClass().getSimpleName() +
+                                               ")");
         } else {
             return (ILScore<T>) other;
         }

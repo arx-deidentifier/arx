@@ -62,7 +62,7 @@ public class ExponentialMechanism<T> extends AbstractExponentialMechanism<T, Dou
 
     /** A cryptographically strong random generator */
     private static class SecureRandomGenerator extends AbstractRandomGenerator {
-
+        
         /** The random generator */
         private SecureRandom random;
 
@@ -82,10 +82,10 @@ public class ExponentialMechanism<T> extends AbstractExponentialMechanism<T, Dou
             random.setSeed(seed);
         }
     }
-
+    
     /** A deterministic random generator */
     private static class DeterministicRandomGenerator extends AbstractRandomGenerator {
-
+        
         /** The random generator */
         private Random random;
 

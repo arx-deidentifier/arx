@@ -17,18 +17,14 @@
 
 package org.deidentifier.arx.test;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 
 import org.apache.commons.math3.analysis.function.Log;
-import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.dp.ExponentialMechanismReliable;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

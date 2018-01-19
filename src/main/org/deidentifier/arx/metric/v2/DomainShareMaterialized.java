@@ -118,11 +118,11 @@ public class DomainShareMaterialized implements DomainShare {
 
         // Now transform into an array representation and handle duplicates
         for (int row = 0; row < encodedHierarchy.length; row++) {
-
+            
             int[] strategy = encodedHierarchy[row];
-
+            
             for (int level = 0; level < strategy.length; level++){
-
+                
                 ObjectIntOpenHashMap<String> map = maps[level];
                 int value = strategy[level];
                 String keyString = encodedValues[value];
@@ -183,7 +183,8 @@ public class DomainShareMaterialized implements DomainShare {
     @Override
     public DomainShareMaterialized clone() {
         return new DomainShareMaterialized(this.size, this.shares.clone(), this.duplicates.clone(),
-                                           sharesReliable == null ? null : sharesReliable, duplicatesReliable == null ? null : duplicatesReliable);
+                                           this.sharesReliable == null ? null : this.sharesReliable.clone(),
+                                           this.duplicatesReliable == null ? null : this.duplicatesReliable.clone());
     }
 
     /**
@@ -257,7 +258,7 @@ public class DomainShareMaterialized implements DomainShare {
 
         // Default serialization
         aOutputStream.defaultWriteObject();
-
+        
         // Write map
         IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
     }

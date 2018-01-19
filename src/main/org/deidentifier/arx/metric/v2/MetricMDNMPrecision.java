@@ -54,7 +54,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     /** Hierarchy heights. */
     private int[]             heights;
-
+    
     /** Minimal size of equivalence classes enforced by the differential privacy model */
     private double            k;
 
@@ -64,7 +64,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     protected MetricMDNMPrecision() {
         super(true, false, false, AggregateFunction.ARITHMETIC_MEAN);
     }
-
+    
     /**
      * Creates a new instance.
      *
@@ -108,7 +108,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     protected MetricMDNMPrecision(double gsFactor, AggregateFunction function){
         super(true, false, false, gsFactor, function);
     }
-
+    
     /**
      * Returns the configuration of this metric.
      *
@@ -120,23 +120,23 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                        false,                                       // precomputed
                                        0.0d,                                        // precomputation threshold
                                        this.getAggregateFunction()                  // aggregate function
-                );
+                                       );
     }
-
+    
     @Override
     public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
 
         // Prepare
         int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
-
+        
         int suppressedTuples = 0;
         int unsuppressedTuples = 0;
-
+        
         // For each group
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
-
+            
             // Calculate number of affected records
             unsuppressedTuples += m.isNotOutlier ? m.count : 0;
             suppressedTuples += m.isNotOutlier ? 0 : m.count;
@@ -145,7 +145,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
             // Next group
             m = m.nextOrdered;
         }
-
+        
         // Calculate score
         double score = 0d;
         for (int i = 0; i<dimensionsGeneralized; i++) {
@@ -154,7 +154,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         }
         score *= -1d / getDimensionsGeneralized();
         if (k > 1) score /= k - 1d;
-
+        
         // Return
         return new ILScoreDouble(score);
     }
@@ -163,12 +163,12 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     public boolean isAbleToHandleMicroaggregation() {
         return true;
     }
-
+    
     @Override
     public boolean isGSFactorSupported() {
         return true;
     }
-
+    
     @Override
     public boolean isScoreFunctionSupported() {
         return true;
@@ -191,14 +191,14 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
-
+        
         // Prepare
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
         int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
         DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
-
+        
         int[] transformation = node.getGeneralization();
         double[] result = new double[dimensions];
 
@@ -206,11 +206,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         double sFactor = super.getSuppressionFactor();
         int suppressedTuples = 0;
         int unsuppressedTuples = 0;
-
+        
         // For each group
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
-
+            
             // Calculate number of affected records
             // if (m.count > 0) is given implicitly
             unsuppressedTuples += m.isNotOutlier ? m.count : 0;
@@ -220,13 +220,13 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
             for (int i = 0; i < dimensionsAggregated; i++) {
                 double share = (double) m.count * microaggregationFunctions[i].getInformationLoss(m.distributions[microaggregationIndices[i]]);
                 result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
-                    (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
+                                                                      (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
             }
 
             // Next group
             m = m.nextOrdered;
         }
-
+        
         // Calculate precision
         for (int i = 0; i<dimensionsGeneralized; i++) {
             double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
@@ -236,12 +236,12 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         for (int i = 0; i<dimensionsAggregated; i++) {
             result[dimensionsGeneralized + i] /= rowCount;
         }
-
+        
         // Return
         return new ILMultiDimensionalWithBound(createInformationLoss(result), 
                                                (AbstractILMultiDimensional)getLowerBoundInternal(node).clone());
     }
-
+    
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
@@ -251,11 +251,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
-
+        
         double gFactor = super.getGeneralizationFactor();
         double[] result = new double[getDimensions()];
         final int[] transformation = node.getGeneralization();
-
+        
         // Note: we ignore microaggregation, as we cannot compute a bound for it
         // this means that the according entries in the resulting array are not changed and remain 0d
         // This is not a problem, as it is OK to underestimate information loss when computing lower bounds
@@ -268,10 +268,10 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
-                                                               HashGroupify groupify) {
-        return getLowerBoundInternal(node);
+                                                           HashGroupify groupify) {
+       return getLowerBoundInternal(node);
     }
-
+    
     /**
      * For backwards compatibility only.
      *
@@ -279,7 +279,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * @param cells
      */
     protected void initialize(int[] heights, double cells){
-
+        
         // TODO: Get rid of this
 
         super.initialize(heights.length);
@@ -296,7 +296,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         setMin(min);
         setMax(max);
     }
-
+    
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 
@@ -315,16 +315,16 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         Arrays.fill(max, 1d * Math.max(gFactor, sFactor));
         setMin(min);
         setMax(max);
-
+        
         // Store row count
         rowCount = (double)super.getNumRecords(config, input);
-
+        
         // Store heights
         this.heights = new int[hierarchies.length];
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
         }
-
+        
         // Store minimal size of equivalence classes
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);

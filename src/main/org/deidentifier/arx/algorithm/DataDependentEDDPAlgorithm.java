@@ -43,6 +43,18 @@ import de.linearbits.jhpl.PredictiveProperty;
  * @author Raffael Bild
  */
 public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
+    
+    /** Property */
+    private final PredictiveProperty                    propertyChecked;
+
+    /** True iff this instance is reliable */
+    private final boolean                               reliable;
+
+    /** Number of steps to be performed */
+    private final int                                   steps;
+
+    /** The expopnential mechanism */
+    private final AbstractExponentialMechanism<Long, ?> exponentialMechanism;
 
     /**
      * Creates a new instance
@@ -59,21 +71,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                                            boolean deterministic, int steps, double epsilonSearch, boolean reliable) {
         return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, steps, epsilonSearch, reliable);
     }
-
-    /** The privacy budget to use for each step */
-    private final double             epsilonStep;
-
-    /** Property */
-    private final PredictiveProperty propertyChecked;
-
-    /** True iff this instance is reliable */
-    private final boolean            reliable;
-
-    /** Number of steps to be performed */
-    private final int                steps;
-    
-    /** The expopnential mechanism */
-    private final AbstractExponentialMechanism<Long,?> exponentialMechanism;
 
     /**
      * Constructor
@@ -94,48 +91,49 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         this.steps = steps;
         this.reliable = reliable;
 
+        double epsilonPerStep;
         if (reliable) {
             IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
             try {
-                epsilonStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).getLowerBound();
+                epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).getLowerBound();
             } catch (IntervalArithmeticException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            epsilonStep = epsilonSearch / ((double)steps); 
+            epsilonPerStep = epsilonSearch / ((double)steps); 
         }
         
 
         try {
             this.exponentialMechanism = reliable ?
-                    new ExponentialMechanismReliable<Long>(epsilonStep, deterministic) :
-                    new ExponentialMechanism<Long>(epsilonStep, ExponentialMechanism.defaultPrecision, deterministic);
+                    new ExponentialMechanismReliable<Long>(epsilonPerStep, deterministic) :
+                    new ExponentialMechanism<Long>(epsilonPerStep, ExponentialMechanism.defaultPrecision, deterministic);
         } catch(IntervalArithmeticException e) {
             throw new RuntimeException(e);
         }
     }
-
+    
     @Override
     public boolean traverse() {
-
+        
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
         assureChecked(pivot);
         ILScore<?> score = (ILScore<?>)pivot.getInformationLoss();
-
+        
         // Initialize variables tracking the best of all pivot elements
         Transformation bestTransformation = pivot;
         ILScore<?> bestScore = score;
-
+        
         progress(0d);
 
         // Initialize the set of candidates, each mapped to its respective score
         Map<Long, ILScore<?>> transformationIDToScore = new HashMap<Long, ILScore<?>>();
         transformationIDToScore.put(pivot.getIdentifier(), score);
-
+        
         // For each step
         for (int step = 1; step <= steps; ++step) {
-
+            
             // Add predecessors of the current pivot element to the set of candidates
             LongArrayList list = pivot.getPredecessors();
             for (int i = 0; i < list.size(); i++) {
@@ -145,24 +143,24 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
                 assureChecked(predecessor);
                 transformationIDToScore.put(id, (ILScore<?>)predecessor.getInformationLoss());
             }
-
+            
             // Remove the current pivot element from the set of candidates
             transformationIDToScore.remove(pivot.getIdentifier());
-
+            
             // Select the next pivot element from the set of candidates using the exponential mechanism
             long id = executeExponentialMechanism(transformationIDToScore);
             pivot = solutionSpace.getTransformation(id);
             score = transformationIDToScore.get(id);
-
+            
             // Keep track of the best pivot element
             if (score.compareTo(bestScore) < 0) {
                 bestTransformation = pivot;
                 bestScore = score;
             }
-
+            
             progress((double)step / (double)steps);
         }
-
+        
         // Track optimum
         trackOptimum(bestTransformation);
         return false;
@@ -201,9 +199,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     }
 
     /**
-     * Makes sure that the given Transformation has been checked
-     * @param transformation
-     */
+    * Makes sure that the given Transformation has been checked
+    * @param transformation
+    */
     private void assureChecked(final Transformation transformation) {
         InformationLossSource ilSource = reliable ? InformationLossSource.SCORE_RELIABLE : InformationLossSource.SCORE;
         if (!transformation.hasProperty(propertyChecked)) {

@@ -63,7 +63,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         super(true, false, false);
         super.setNumTuples((double)rowCount);
     }
-
+    
     @Override
     public ILSingleDimensional createMaxInformationLoss() {
         Double rows = getNumTuples();
@@ -73,12 +73,12 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
             return new ILSingleDimensional(rows);
         }
     }
-
+    
     @Override
     public ILSingleDimensional createMinInformationLoss() {
         return new ILSingleDimensional(1d);
     }
-
+    
     /**
      * Returns the configuration of this metric.
      *
@@ -90,17 +90,17 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
                                        false, // precomputed
                                        0.0d, // precomputation threshold
                                        AggregateFunction.SUM // aggregate function
-                );
+        );
     }
-
+    
     @Override
     public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
 
         // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
-
+        
         boolean hasSuppressed = false;
         int numberOfNonSuppressedClasses = 0;
-
+        
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             if (!entry.isNotOutlier && entry.count > 0 || entry.pcount > entry.count) {
@@ -114,16 +114,16 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
             // Next group
             entry = entry.nextOrdered;
         }
-
+        
         // Return score
         return new ILScoreDouble((double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d));
     }
-
+    
     @Override
     public boolean isGSFactorSupported() {
         return true;
     }
-
+    
     @Override
     public boolean isScoreFunctionSupported() {
         return true;
@@ -151,7 +151,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         double groupsWithoutSuppression = 0;
         double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
         double sFactor = super.getGeneralizationFactor(); // Note: factors are switched on purpose
-
+        
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count > 0) {
@@ -160,12 +160,12 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
             }
             m = m.nextOrdered;
         }
-
+        
         // If there are suppressed tuples, they form one additional group
         boolean someRecordsSuppressed = (groupsWithSuppression != groupsWithoutSuppression);
         groupsWithSuppression *= gFactor;
         groupsWithSuppression = !someRecordsSuppressed ? groupsWithSuppression : groupsWithSuppression + 1 * sFactor;
-
+        
         // Compute AECS
         return new ILSingleDimensionalWithBound(getNumTuples() / groupsWithSuppression,
                                                 getNumTuples() / (groupsWithoutSuppression * gFactor));
@@ -191,7 +191,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
             groups += (m.count > 0) ? 1 : 0;
             m = m.nextOrdered;
         }
-
+        
         // Compute AECS
         double gFactor = super.getSuppressionFactor(); // Note: factors are switched on purpose
         return new ILSingleDimensional(getNumTuples() / ((double)groups * gFactor));
