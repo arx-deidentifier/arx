@@ -26,7 +26,6 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
         this.value = value;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public int compareTo(InformationLoss<?> other) {
         if (!other.getClass().equals(this.getClass())) {
@@ -34,6 +33,7 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
                     other.getClass().getSimpleName() +
                     ")");
         }
+        @SuppressWarnings("unchecked")
         T otherValue = ((InformationLoss<T>)other).getValue();
         return value.compareTo(otherValue) * -1;
     }

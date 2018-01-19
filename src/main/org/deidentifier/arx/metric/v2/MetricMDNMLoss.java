@@ -413,7 +413,10 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this.tuples = (double)super.getNumRecords(config, input);
         
         // Save domain shares
-        this.shares = manager.getDomainShares(config.isReliableAnonymizationEnabled());
+        boolean getReliableShares =
+                config.isPrivacyModelSpecified(EDDifferentialPrivacy.class) &&
+                config.isReliableAnonymizationEnabled();
+        this.shares = manager.getDomainShares(getReliableShares);
 
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             // Store minimal size of equivalence classes
