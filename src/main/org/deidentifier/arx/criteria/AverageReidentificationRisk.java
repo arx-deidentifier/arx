@@ -146,9 +146,9 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
      * @return
      */
     private Integer getSizeThreshold(double riskThreshold) {
-        double size = 1d / highestRisk;
+        double size = 1d / riskThreshold;
         double floor = Math.floor(size);
-        if ((1d / floor) - (1d / size) >= 0.01d * highestRisk) {
+        if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
             floor += 1d;
         }
         return (int)floor;
