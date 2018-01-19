@@ -36,25 +36,25 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
 public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanism<T, BigFraction> {
 
     /** The cumulative distribution scaled so that it consists of natural numbers */
-    private BigInteger[] cumulativeDistribution;
+    private BigInteger[]                            cumulativeDistribution;
 
     /** The random generator */
-    private Random random;
+    private Random                                  random;
 
     /** The values to sample from */
-    private T[] values;
-    
+    private T[]                                     values;
+
     /** The base having the form of a fraction n/d */
-    BigFraction base;
-    
+    BigFraction                                     base;
+
     /** A cache mapping an exponent e to n^e used to increase performance */
-    private Map<Integer,BigInteger> numeratorCache;
-    
+    private Map<Integer, BigInteger>                numeratorCache;
+
     /** A cache mapping an exponent e to d^e used to increase performance */
-    private Map<Integer,BigInteger> denominatorCache;
-    
+    private Map<Integer, BigInteger>                denominatorCache;
+
     /** A cache mapping a pair of exponents (e_1,e_2) to n^{e_1} / d^{e_2} used to increase performance */
-    private Map<Pair<Integer,Integer>, BigInteger> productCache;
+    private Map<Pair<Integer, Integer>, BigInteger> productCache;
 
     /**
      * Creates a new instance
@@ -118,6 +118,7 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         
         // The following code calculates a distribution consisting of natural numbers which is directly proportional to
         // b^{e_1} = n^{e_1} / d^{e_1} ... b^{e_m} = n^{e_m} / d^{e_m} with e_i = floorToInt(scores[i])
+        // and accumulates the resulting distribution
 
         // Calculate the exponents e_i and determine the smallest exponent
         int[] exponents = new int[values.length];
