@@ -1565,7 +1565,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     
     /**
      * Calculates the score reliably.
-     * Note: All score functions are expected to have a sensitivity of one.
+     * Note: All score functions are expected to return a score value divided by the sensitivity of the score function.
      * 
      * @param node
      * @param groupify
@@ -1578,7 +1578,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     
     /**
      * Calculates the score.
-     * Note: All score functions are expected to have a sensitivity of one.
+     * Note: All score functions are expected to return a score value divided by the sensitivity of the score function.
      * 
      * @param node
      * @param groupify

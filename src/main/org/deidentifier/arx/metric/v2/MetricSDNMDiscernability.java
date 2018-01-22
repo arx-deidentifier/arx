@@ -120,8 +120,10 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         penaltySuppressed *= numRows;
         
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        return new ILScoreDouble(-1d * (penaltySuppressed + penaltyNotSuppressed) /
-                                 ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d)));
+        double score = -1d * (penaltySuppressed + penaltyNotSuppressed) /
+                ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d));
+        
+        return new ILScoreDouble(score);
     }
     
     @Override

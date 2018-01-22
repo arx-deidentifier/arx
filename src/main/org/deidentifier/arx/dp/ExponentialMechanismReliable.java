@@ -29,7 +29,7 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
  * An implementation of the reliable exponential mechanism.
- * This implementation assumes a sensitivity of one (which can always be achieved by scaling score functions appropriately).
+ * This implementation assumes that all score values have been divided by the sensitivity of the respective score function.
  * 
  * @author Raffael Bild
  */

@@ -180,7 +180,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
         score *= -1d / ((double)rows * (double)dimensionsGeneralized);
-        return new ILScoreDouble((k==1) ? score / 5d : score / (double)(k * k / (k - 1d) + 1d));
+        score /= (k==1) ? 5d : (double)(k * k / (k - 1d) + 1d);
+        
+        // Return
+        return new ILScoreDouble(score);
     }
     
     @Override

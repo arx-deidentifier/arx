@@ -152,6 +152,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
             double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
             score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
         }
+        
+        // Divide by sensitivity and multiply with -1 so that higher values are better
         score *= -1d / getDimensionsGeneralized();
         if (k > 1) score /= k - 1d;
         

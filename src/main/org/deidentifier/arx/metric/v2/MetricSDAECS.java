@@ -115,8 +115,11 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
             entry = entry.nextOrdered;
         }
         
-        // Return score
-        return new ILScoreDouble((double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d));
+        // Calculate the score. Dividing by the sensitivity is not required because this score function has a sensitivity of one.
+        double score = (double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d);
+        
+        // Return
+        return new ILScoreDouble(score);
     }
     
     @Override

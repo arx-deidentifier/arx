@@ -155,11 +155,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
             m = m.nextOrdered;
         }
 
-        // Adjust sensitivity and multiply with -1 so that higher values are better
+        // Divide by sensitivity and multiply with -1 so that higher values are better
         score *= -1d / dimensionsGeneralized;
         if (k > 1) score /= k - 1d;
 
-        // Return score
+        // Return
         return new ILScoreDouble(score);
     }
 
@@ -213,11 +213,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         }
         score = score.add(numOutliers);
 
-        // Adjust sensitivity and multiply with -1 so that higher values are better
+        // Divide by sensitivity and multiply with -1 so that higher values are better
         score = score.multiply(new BigFraction(-1, dimensionsGeneralized));
         if (k > 1) score = score.divide(new BigFraction(k - 1d));
 
-        // Return score
+        // Return
         return new ILScoreBigFraction(score);
     }
     
