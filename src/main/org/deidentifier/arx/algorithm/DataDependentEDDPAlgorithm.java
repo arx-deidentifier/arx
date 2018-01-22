@@ -26,7 +26,7 @@ import org.deidentifier.arx.dp.AbstractExponentialMechanism;
 import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.dp.ExponentialMechanismReliable;
 import org.deidentifier.arx.framework.check.TransformationChecker;
-import org.deidentifier.arx.framework.check.TransformationChecker.InformationLossSource;
+import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -203,9 +203,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     * @param transformation
     */
     private void assureChecked(final Transformation transformation) {
-        InformationLossSource ilSource = reliable ? InformationLossSource.SCORE_RELIABLE : InformationLossSource.SCORE;
+        ScoreType scoreType = reliable ? ScoreType.DP_RELIABLE : ScoreType.DP;
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true, ilSource));
+            transformation.setChecked(checker.check(transformation, true, scoreType));
         }
     }
 }

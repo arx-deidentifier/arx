@@ -41,20 +41,20 @@ import org.deidentifier.arx.metric.Metric;
 public class TransformationChecker {
 
     /**
-     * The source of information loss.
+     * The type of scores.
      * 
      * @author Raffael Bild
      */
-    public static enum InformationLossSource {
+    public static enum ScoreType {
 
         /** Use conventional information loss. */
         CONVENTIONAL,
 
-        /** Use score function as source of information loss. */
-        SCORE,
+        /** Use score function for differential privacy. */
+        DP,
 
-        /** Use reliable score function as source of information loss. */
-        SCORE_RELIABLE
+        /** Use reliable score function for reliable differential privacy. */
+        DP_RELIABLE
     }
 
     /** The config. */
@@ -165,17 +165,17 @@ public class TransformationChecker {
      * @return
      */
     public TransformationResult check(final Transformation node) {
-        return check(node, false, InformationLossSource.CONVENTIONAL);
+        return check(node, false, ScoreType.CONVENTIONAL);
     }
     
     /**
      * Checks the given transformation
      * @param node
      * @param forceMeasureInfoLoss
-     * @param ilSource
+     * @param scoreType
      * @return
      */
-    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss, final InformationLossSource ilSource) {
+    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss, final ScoreType scoreType) {
         
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof TransformationResult) {
@@ -218,17 +218,17 @@ public class TransformationChecker {
         InformationLoss<?> loss = null;
         InformationLoss<?> bound = null;
         
-        switch (ilSource) {
-        case SCORE:
-            // Calculate score
+        switch (scoreType) {
+        case DP:
+            // Evaluate score function
             loss = metric.getScore(node, currentGroupify);
             break;
-        case SCORE_RELIABLE:
-            // Calculate reliable score
+        case DP_RELIABLE:
+            // Evaluate reliable score function
             loss = metric.getScoreReliable(node, currentGroupify);
             break;
         case CONVENTIONAL:
-            // Calculate information loss and bound
+            // Calculate conventional score and bound
             InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
                                                   metric.getInformationLoss(node, currentGroupify) : null;
             loss = result != null ? result.getInformationLoss() : null;
