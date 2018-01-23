@@ -43,7 +43,9 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        return this.compareTo((InformationLoss<?>)obj) == 0;
+        @SuppressWarnings("unchecked")
+        T otherValue = ((InformationLoss<T>)obj).getValue();
+        return this.value.equals(otherValue);
     }
     
     @Override
