@@ -45,7 +45,7 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
     private T[]                                     values;
 
     /** The base having the form of a fraction n/d */
-    BigFraction                                     base;
+    private BigFraction                             base;
 
     /** A cache mapping an exponent e to n^e used to increase performance */
     private Map<Integer, BigInteger>                numeratorCache;

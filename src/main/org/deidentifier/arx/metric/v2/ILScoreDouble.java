@@ -18,7 +18,7 @@ public class ILScoreDouble extends ILScore<Double> {
      *
      * @param value
      */
-    ILScoreDouble(Double value) {
+    public ILScoreDouble(Double value) {
         super(value);
     }
 

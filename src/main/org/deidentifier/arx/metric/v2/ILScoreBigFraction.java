@@ -19,7 +19,7 @@ public class ILScoreBigFraction extends ILScore<BigFraction> {
      *
      * @param value
      */
-    ILScoreBigFraction(BigFraction value) {
+    public ILScoreBigFraction(BigFraction value) {
         super(value);
     }
 

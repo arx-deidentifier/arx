@@ -74,6 +74,9 @@ public class DataManager {
 
     /** The domain shares */
     private DomainShare[]                    shares;
+    
+    /** The reliable domain shares */
+    private DomainShareMaterialized[]        sharesReliable;
 
     /** The original input header. */
     private final String[]                   header;
@@ -426,16 +429,7 @@ public class DataManager {
      * @return
      */
     public DomainShare[] getDomainShares() {
-        return getDomainShares(false);
-    }
-
-    /**
-     * Returns the domain shares for all generalized quasi-identifiers
-     * @param reliable
-     * @return
-     */
-    public DomainShare[] getDomainShares(boolean reliable) {
-
+        
         // Build on-demand
         if (this.shares == null) {
             
@@ -464,13 +458,43 @@ public class DataManager {
                     this.shares[i] = new DomainShareMaterialized(hierarchy, 
                                                             dataGeneralized.getDictionary().getMapping()[i],
                                                             hierarchiesGeneralized[i].getArray(),
-                                                            reliable);
+                                                            false);
                 }
             }
         }
         
         // Return
         return this.shares;
+    }
+    
+    /**
+     * Returns the reliable domain shares for all generalized quasi-identifiers
+     * @return
+     */
+    
+    public DomainShareMaterialized[] getDomainSharesReliable() {
+
+        // Build on-demand
+        if (this.sharesReliable == null) {
+            
+            // Compute domain shares
+            this.sharesReliable = new DomainShareMaterialized[dataGeneralized.getHeader().length];
+            for (int i=0; i<sharesReliable.length; i++) {
+                
+                // Extract info
+                String attribute = dataGeneralized.getHeader()[i];
+                String[][] hierarchy = definition.getHierarchy(attribute);
+                
+                // Create reliable materialized hierarchies
+                this.sharesReliable[i] = new DomainShareMaterialized(hierarchy, 
+                                                            dataGeneralized.getDictionary().getMapping()[i],
+                                                            hierarchiesGeneralized[i].getArray(),
+                                                            true);
+            }
+        }
+        
+        // Return
+        return this.sharesReliable;
     }
 
     /**

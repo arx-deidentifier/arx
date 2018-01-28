@@ -46,25 +46,28 @@ import com.carrotsearch.hppc.ObjectLongOpenHashMap;
 public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     /** SUID. */
-    private static final long serialVersionUID = -573670902335136600L;
+    private static final long         serialVersionUID = -573670902335136600L;
 
     /** Total number of tuples, depends on existence of research subset. */
-    private double            tuples;
+    private double                    tuples;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]     shares;
+    private DomainShare[]             shares;
+
+    /** Reliable domain shares for each dimension. */
+    private DomainShareMaterialized[] sharesReliable;
 
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      gFactor;
-    
+    private final double              gFactor;
+
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      gsFactor;
-    
+    private final double              gsFactor;
+
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      sFactor;
-    
+    private final double              sFactor;
+
     /** Minimal size of equivalence classes enforced by the differential privacy model */
-    private double            k;
+    private double                    k;
     
     /**
      * Default constructor which treats all transformation methods equally.
@@ -73,8 +76,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this(0.5d, AggregateFunction.GEOMETRIC_MEAN);
     }
 
-    /**
-     * Default constructor which treats all transformation methods equally.
+    /** Default constructor which treats all transformation methods equally.
      *
      * @param function
      */
@@ -186,7 +188,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                     } else {
                         int value = m.next();
                         int level = transformation[dimension];
-                        BigFraction shareReliable = ((DomainShareMaterialized)shares[dimension]).getShareReliable(value, level);
+                        BigFraction shareReliable = sharesReliable[dimension].getShareReliable(value, level);
                         ObjectLongOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
                         sharesToCount.putOrAdd(shareReliable, m.count, m.count);
                     }
@@ -413,10 +415,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this.tuples = (double)super.getNumRecords(config, input);
         
         // Save domain shares
-        boolean getReliableShares =
-                config.isPrivacyModelSpecified(EDDifferentialPrivacy.class) &&
-                config.isReliableAnonymizationEnabled();
-        this.shares = manager.getDomainShares(getReliableShares);
+        this.shares = manager.getDomainShares();
 
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             // Store minimal size of equivalence classes
@@ -427,6 +426,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 if(this.tuples * (double)getDimensionsGeneralized() > (double)Long.MAX_VALUE) {
                     throw new RuntimeException("Too many records and attributes to perform reliable computations");
                 }
+                // Save reliable domain shares
+                this.sharesReliable = manager.getDomainSharesReliable();
             }
         }
         
