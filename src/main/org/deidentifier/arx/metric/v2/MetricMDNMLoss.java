@@ -46,28 +46,28 @@ import com.carrotsearch.hppc.ObjectLongOpenHashMap;
 public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     /** SUID. */
-    private static final long         serialVersionUID = -573670902335136600L;
+    private static final long                 serialVersionUID = -573670902335136600L;
 
     /** Total number of tuples, depends on existence of research subset. */
-    private double                    tuples;
+    private double                            tuples;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]             shares;
+    private DomainShare[]                     shares;
 
     /** Reliable domain shares for each dimension. */
-    private DomainShareMaterialized[] sharesReliable;
+    private DomainShareMaterializedReliable[] sharesReliable;
 
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double              gFactor;
+    private final double                      gFactor;
 
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double              gsFactor;
+    private final double                      gsFactor;
 
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double              sFactor;
+    private final double                      sFactor;
 
     /** Minimal size of equivalence classes enforced by the differential privacy model */
-    private double                    k;
+    private double                            k;
     
     /**
      * Default constructor which treats all transformation methods equally.
@@ -188,7 +188,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                     } else {
                         int value = m.next();
                         int level = transformation[dimension];
-                        BigFraction shareReliable = sharesReliable[dimension].getShareReliable(value, level);
+                        BigFraction shareReliable = sharesReliable[dimension].getShare(value, level);
                         ObjectLongOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
                         sharesToCount.putOrAdd(shareReliable, m.count, m.count);
                     }

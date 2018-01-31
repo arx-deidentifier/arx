@@ -41,6 +41,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
+import org.deidentifier.arx.metric.v2.DomainShareMaterializedReliable;
 import org.deidentifier.arx.metric.v2.DomainShareRedaction;
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
@@ -61,46 +62,46 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 public class DataManager {
 
     /** Data. */
-    private final Data                       dataAnalyzed;
+    private final Data                        dataAnalyzed;
 
     /** Data */
-    private final Data                       dataGeneralized;
+    private final Data                        dataGeneralized;
 
     /** Data. */
-    private final Data                       dataInput;
+    private final Data                        dataInput;
 
     /** The data definition */
-    private final DataDefinition             definition;
+    private final DataDefinition              definition;
 
     /** The domain shares */
-    private DomainShare[]                    shares;
-    
+    private DomainShare[]                     shares;
+
     /** The reliable domain shares */
-    private DomainShareMaterialized[]        sharesReliable;
+    private DomainShareMaterializedReliable[] sharesReliable;
 
     /** The original input header. */
-    private final String[]                   header;
+    private final String[]                    header;
 
     /** Hierarchies for generalized attributes */
-    private final GeneralizationHierarchy[]  hierarchiesGeneralized;
+    private final GeneralizationHierarchy[]   hierarchiesGeneralized;
 
     /** Hierarchies for analyzed attributes */
-    private final GeneralizationHierarchy[]  hierarchiesAnalyzed;
+    private final GeneralizationHierarchy[]   hierarchiesAnalyzed;
 
     /** The maximum level for each QI. */
-    private final int[]                      generalizationLevelsMinimum;
+    private final int[]                       generalizationLevelsMinimum;
 
     /** The minimum level for each QI. */
-    private final int[]                      generalizationLevelsMaximum;
+    private final int[]                       generalizationLevelsMaximum;
 
     /** Information about micro-aggregation */
-    private final DataAggregationInformation aggregationInformation;
+    private final DataAggregationInformation  aggregationInformation;
 
     /** The research subset, if any. */
-    private RowSet                           subset     = null;
+    private RowSet                            subset     = null;
 
     /** The size of the research subset. */
-    private int                              subsetSize = 0;
+    private int                               subsetSize = 0;
 
     /**
      * Creates a new data manager from pre-encoded data.
@@ -457,8 +458,7 @@ public class DataManager {
                 } else {
                     this.shares[i] = new DomainShareMaterialized(hierarchy, 
                                                             dataGeneralized.getDictionary().getMapping()[i],
-                                                            hierarchiesGeneralized[i].getArray(),
-                                                            false);
+                                                            hierarchiesGeneralized[i].getArray());
                 }
             }
         }
@@ -472,13 +472,13 @@ public class DataManager {
      * @return
      */
     
-    public DomainShareMaterialized[] getDomainSharesReliable() {
+    public DomainShareMaterializedReliable[] getDomainSharesReliable() {
 
         // Build on-demand
         if (this.sharesReliable == null) {
             
             // Compute domain shares
-            this.sharesReliable = new DomainShareMaterialized[dataGeneralized.getHeader().length];
+            this.sharesReliable = new DomainShareMaterializedReliable[dataGeneralized.getHeader().length];
             for (int i=0; i<sharesReliable.length; i++) {
                 
                 // Extract info
@@ -486,10 +486,9 @@ public class DataManager {
                 String[][] hierarchy = definition.getHierarchy(attribute);
                 
                 // Create reliable materialized hierarchies
-                this.sharesReliable[i] = new DomainShareMaterialized(hierarchy, 
+                this.sharesReliable[i] = new DomainShareMaterializedReliable(hierarchy, 
                                                             dataGeneralized.getDictionary().getMapping()[i],
-                                                            hierarchiesGeneralized[i].getArray(),
-                                                            true);
+                                                            hierarchiesGeneralized[i].getArray());
             }
         }
         
