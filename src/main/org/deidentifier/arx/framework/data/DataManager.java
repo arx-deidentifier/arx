@@ -41,7 +41,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
-import org.deidentifier.arx.metric.v2.DomainShareMaterializedReliable;
+import org.deidentifier.arx.metric.v2.DomainShareReliable;
 import org.deidentifier.arx.metric.v2.DomainShareRedaction;
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
@@ -77,7 +77,7 @@ public class DataManager {
     private DomainShare[]                     shares;
 
     /** The reliable domain shares */
-    private DomainShareMaterializedReliable[] sharesReliable;
+    private DomainShareReliable[]             sharesReliable;
 
     /** The original input header. */
     private final String[]                    header;
@@ -471,14 +471,13 @@ public class DataManager {
      * Returns the reliable domain shares for all generalized quasi-identifiers
      * @return
      */
-    
-    public DomainShareMaterializedReliable[] getDomainSharesReliable() {
+    public DomainShareReliable[] getDomainSharesReliable() {
 
         // Build on-demand
         if (this.sharesReliable == null) {
             
             // Compute domain shares
-            this.sharesReliable = new DomainShareMaterializedReliable[dataGeneralized.getHeader().length];
+            this.sharesReliable = new DomainShareReliable[dataGeneralized.getHeader().length];
             for (int i=0; i<sharesReliable.length; i++) {
                 
                 // Extract info
@@ -486,7 +485,7 @@ public class DataManager {
                 String[][] hierarchy = definition.getHierarchy(attribute);
                 
                 // Create reliable materialized hierarchies
-                this.sharesReliable[i] = new DomainShareMaterializedReliable(hierarchy, 
+                this.sharesReliable[i] = new DomainShareReliable(hierarchy, 
                                                             dataGeneralized.getDictionary().getMapping()[i],
                                                             hierarchiesGeneralized[i].getArray());
             }

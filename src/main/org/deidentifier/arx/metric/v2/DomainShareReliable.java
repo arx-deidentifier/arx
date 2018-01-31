@@ -35,7 +35,7 @@ import com.carrotsearch.hppc.ObjectIntOpenHashMap;
  * 
  * @author Raffael Bild
  */
-public class DomainShareMaterializedReliable implements Serializable {
+public class DomainShareReliable implements Serializable {
 
     /** SVUID. */
     private static final long                            serialVersionUID = -396317436976075163L;
@@ -56,7 +56,7 @@ public class DomainShareMaterializedReliable implements Serializable {
      * @param encodedValues
      * @param encodedHierarchy
      */
-    public DomainShareMaterializedReliable(String[][] rawHierarchy, 
+    public DomainShareReliable(String[][] rawHierarchy, 
                                    String[] encodedValues, 
                                    int[][] encodedHierarchy) {
 
@@ -125,14 +125,14 @@ public class DomainShareMaterializedReliable implements Serializable {
      * @param shares
      * @param duplicates
      */
-    private DomainShareMaterializedReliable(BigFraction[] shares, LongObjectOpenHashMap<BigFraction> duplicates) {
+    private DomainShareReliable(BigFraction[] shares, LongObjectOpenHashMap<BigFraction> duplicates) {
         this.shares = shares;
         this.duplicates = duplicates;
     }
 
     @Override
-    public DomainShareMaterializedReliable clone() {
-        return new DomainShareMaterializedReliable(this.shares.clone(), this.duplicates.clone());
+    public DomainShareReliable clone() {
+        return new DomainShareReliable(this.shares.clone(), this.duplicates.clone());
     }
 
     /**
