@@ -40,7 +40,6 @@ import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedPrecisi
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAECS;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAmbiguity;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedDiscernibility;
-import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedKLDivergence;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSSE;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
@@ -236,7 +235,7 @@ public class StatisticsQuality {
         }
 
         // Build
-        workload = 1;
+        workload = 5;
         try {
             this.aecs = new QualityModelRowOrientedAECS(stop,
                                                         progress,
@@ -278,7 +277,7 @@ public class StatisticsQuality {
         }
         
         // Build
-        workload = 2;
+        workload = 5;
         try {
             this.discernibility = new QualityModelRowOrientedDiscernibility(stop,
                                                                             progress,
@@ -299,28 +298,7 @@ public class StatisticsQuality {
         }
 
         // Build
-        workload = 10;
-        try {
-            this.kldivergence = new QualityModelRowOrientedKLDivergence(stop,
-                                                                        progress,
-                                                                        workload,
-                                                                        input,
-                                                                        output,
-                                                                        groupedInput,
-                                                                        groupedOutput,
-                                                                        hierarchies,
-                                                                        shares,
-                                                                        indices,
-                                                                        configuration).evaluate();
-            this.checkInterrupt();
-        } catch (Exception e) {
-            // Fail silently
-            this.kldivergence = new QualityMeasureRowOriented();
-            this.progress.value += workload;
-        }
-
-        // Build
-        workload = 12;
+        workload = 15;
         try {
             this.sse = new QualityModelRowOrientedSSE(stop,
                                                       progress,
