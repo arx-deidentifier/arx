@@ -60,11 +60,10 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * Creates a new instance
      * @param solutionSpace
      * @param checker
-     * @param metric 
-     * @param deterministic 
+     * @param deterministic
      * @param steps
      * @param epsilonSearch
-     * @param reliable 
+     * @param reliable
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
@@ -76,11 +75,10 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * Constructor
      * @param space
      * @param checker
-     * @param metric
-     * @param deterministic 
+     * @param deterministic
      * @param steps
      * @param epsilonSearch
-     * @param reliable 
+     * @param reliable
      */
     private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
                                        boolean deterministic, int steps, double epsilonSearch, boolean reliable) {
@@ -191,8 +189,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
             Double[] scores = new Double[transformationIDToScore.size()];
 
             int i = 0;
-            for (ILScore<?> value : transformationIDToScore.values()) {
-                scores[i] = ((ILScore<Double>)value).getValue();
+            for (ILScore<?> score : transformationIDToScore.values()) {
+                scores[i] = ((ILScore<Double>)score).getValue();
                 i++;
             }
 
