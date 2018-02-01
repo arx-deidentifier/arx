@@ -107,7 +107,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         try {
             this.exponentialMechanism = reliable ?
                     new ExponentialMechanismReliable<Long>(epsilonPerStep, deterministic) :
-                    new ExponentialMechanism<Long>(epsilonPerStep, ExponentialMechanism.defaultPrecision, deterministic);
+                    new ExponentialMechanism<Long>(epsilonPerStep, ExponentialMechanism.DEFAULT_PRECISION, deterministic);
         } catch(IntervalArithmeticException e) {
             throw new RuntimeException(e);
         }
@@ -169,27 +169,31 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     @SuppressWarnings("unchecked")
     private long executeExponentialMechanism(Map<Long, ILScore<?>> transformationIDToScore) {
 
+        Long[] values = new Long[transformationIDToScore.size()];
+        
+        int index = 0;
+        for (Long value : transformationIDToScore.keySet()) {
+            values[index] = value;
+            index++;
+        }
+        
         if(reliable) {
-            Long[] values = new Long[transformationIDToScore.size()];
             BigFraction[] scores = new BigFraction[transformationIDToScore.size()];
 
-            int index = 0;
-            for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
-                values[index] = element.getKey();
-                scores[index] = ((ILScore<BigFraction>)element.getValue()).getValue();
-                index++;
+            int i = 0;
+            for (ILScore<?> score : transformationIDToScore.values()) {
+                scores[i] = ((ILScore<BigFraction>)score).getValue();
+                i++;
             }
 
             ((ExponentialMechanismReliable<Long>)exponentialMechanism).setDistribution(values, scores);
         } else {
-            Long[] values = new Long[transformationIDToScore.size()];
             Double[] scores = new Double[transformationIDToScore.size()];
 
-            int index = 0;
-            for (Entry<Long, ILScore<?>> element : transformationIDToScore.entrySet()) {
-                values[index] = element.getKey();
-                scores[index] = ((ILScore<Double>)element.getValue()).getValue();
-                index++;
+            int i = 0;
+            for (ILScore<?> value : transformationIDToScore.values()) {
+                scores[i] = ((ILScore<Double>)value).getValue();
+                i++;
             }
 
             ((ExponentialMechanism<Long>)exponentialMechanism).setDistribution(values, scores);

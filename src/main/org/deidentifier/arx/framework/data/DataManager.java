@@ -430,7 +430,7 @@ public class DataManager {
      * @return
      */
     public DomainShare[] getDomainShares() {
-        
+
         // Build on-demand
         if (this.shares == null) {
             

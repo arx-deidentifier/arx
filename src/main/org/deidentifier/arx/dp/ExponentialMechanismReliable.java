@@ -31,6 +31,9 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
  * An implementation of the reliable exponential mechanism.
  * This implementation assumes that all score values have been divided by the sensitivity of the respective score function.
  * 
+ * Note: This implementations uses internal caches which may grow up to the size of distinct values
+ * provided as scores to the method setDistribution during the lifetime of an instance.
+ * 
  * @author Raffael Bild
  */
 public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanism<T, BigFraction> {

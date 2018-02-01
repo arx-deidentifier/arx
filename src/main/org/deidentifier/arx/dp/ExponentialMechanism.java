@@ -46,7 +46,7 @@ import org.apache.commons.math3.util.Pair;
 public class ExponentialMechanism<T> extends AbstractExponentialMechanism<T, Double> {
 
     /** The precision to use for BigDecimal arithmetic */
-    public static final int           defaultPrecision = 100;
+    public static final int           DEFAULT_PRECISION = 100;
 
     /** The probability distribution */
     private EnumeratedDistribution<T> distribution;
@@ -111,7 +111,7 @@ public class ExponentialMechanism<T> extends AbstractExponentialMechanism<T, Dou
      * @param epsilon
      */
     public ExponentialMechanism(double epsilon) {
-        this(epsilon, defaultPrecision, false);
+        this(epsilon, DEFAULT_PRECISION, false);
     }
 
     /**
