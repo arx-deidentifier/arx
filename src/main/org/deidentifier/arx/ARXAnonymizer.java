@@ -565,6 +565,9 @@ public class ARXAnonymizer { // NO_UCD
                 if (config.getDPSearchStepNumber() < 0) {
                     throw new IllegalArgumentException("The the number of steps to use for the differentially private search algorithm must be >= 0");
                 }
+                if (config.isReliableAnonymizationEnabled() && !(config.getQualityModel().isReliableScoreFunctionSupported())) {
+                    throw new IllegalArgumentException("Reliable data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+                }
             }
         }
         
@@ -612,7 +615,7 @@ public class ARXAnonymizer { // NO_UCD
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget());
+                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget(), config.isReliableAnonymizationEnabled());
             }
         }
 

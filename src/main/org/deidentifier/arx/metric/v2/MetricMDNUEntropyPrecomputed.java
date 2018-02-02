@@ -138,8 +138,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        
+    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
+
         // Prepare
         int dimensionsGeneralized = getDimensionsGeneralized();
         IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
@@ -180,7 +180,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
         score *= -1d / ((double)rows * (double)dimensionsGeneralized);
-        return new ILScore((k==1) ? score / 5d : score / (double)(k * k / (k - 1d) + 1d));
+        score /= (k==1) ? 5d : (double)(k * k / (k - 1d) + 1d);
+        
+        // Return
+        return new ILScoreDouble(score);
     }
     
     @Override

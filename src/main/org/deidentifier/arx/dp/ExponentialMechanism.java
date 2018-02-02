@@ -39,15 +39,26 @@ import org.apache.commons.math3.util.Pair;
  * Mechanism design via differential privacy.
  * Foundations of Computer Science 2007. pp. 94-103
  * 
+ * This implementation assumes that all score values have been divided by the sensitivity of the respective score function.
+ * 
  * @author Raffael Bild
  */
-public class ExponentialMechanism<T> {
+public class ExponentialMechanism<T> extends AbstractExponentialMechanism<T, Double> {
 
     /** The precision to use for BigDecimal arithmetic */
-    public static final int defaultPrecision = 100;
+    public static final int           DEFAULT_PRECISION = 100;
+
+    /** The probability distribution */
+    private EnumeratedDistribution<T> distribution;
+
+    /** The privacy parameter epsilon */
+    private double                    epsilon;
 
     /** The math context to use for BigDecimal arithmetic */
-    private MathContext     mc;
+    private MathContext               mc;
+
+    /** The random generator */
+    private AbstractRandomGenerator   random;
 
     /** A cryptographically strong random generator */
     private static class SecureRandomGenerator extends AbstractRandomGenerator {
@@ -95,40 +106,49 @@ public class ExponentialMechanism<T> {
         }
     }
 
-    /** The probability distribution */
-    private EnumeratedDistribution<T> distribution;
-    
     /**
      * Constructs a new instance
-     * @param valueToScore
      * @param epsilon
      */
-    public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon) {
-        this(valueToScore, epsilon, defaultPrecision, false);
+    public ExponentialMechanism(double epsilon) {
+        this(epsilon, DEFAULT_PRECISION, false);
     }
 
     /**
      * Constructs a new instance
      * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
      * 
-     * @param valueToScore
      * @param epsilon
      * @param precision
      * @param deterministic
      */
-    public ExponentialMechanism(Map<T, Double> valueToScore, double epsilon, int precision, boolean deterministic) {
+    public ExponentialMechanism(double epsilon, int precision, boolean deterministic) {
+        this.mc = new MathContext(precision, RoundingMode.HALF_UP);
+        this.epsilon = epsilon;
+        this.random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
+    }
+    
+    @Override
+    public T sample() {
+        T solution = distribution.sample();
+        return solution;
+    }
+    
+    @Override
+    public void setDistribution(T[] values, Double[]scores) {
+        
+        // Check arguments
+        super.setDistribution(values, scores);
         
         // The following code calculates the probability distribution which assigns every value
         // a probability proportional to exp(0,5 * epsilon * score)
-
-        mc = new MathContext(precision, RoundingMode.HALF_UP);
-
+        
         // Determine the smallest of all exponents having the form 0,5 * epsilon * score.
         // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
         // (which can get very large due to the application of the exponential function) while it does not change the result;
         // it is a trick to make the following computations feasible.
         double shift = Double.MAX_VALUE;
-        for (double score : valueToScore.values()) {
+        for (double score : scores) {
             shift = Math.min(shift, 0.5d * epsilon * score);
         }
 
@@ -136,9 +156,9 @@ public class ExponentialMechanism<T> {
         // Note that all numbers are effectively being multiplied with exp(-shift).
         BigDecimal divisor = new BigDecimal(0d, mc);
         Map<T, BigDecimal> valueToEnumerator = new HashMap<T, BigDecimal>();
-        for (Entry<T, Double> entry : valueToScore.entrySet()) {
-            T value = entry.getKey();
-            Double score = entry.getValue();
+        for (int i = 0; i < values.length; ++i) {
+            T value = values[i];
+            Double score = scores[i];
 
             BigDecimal enumerator = exp(0.5d * epsilon * score - shift);
             valueToEnumerator.put(value, enumerator);
@@ -156,26 +176,8 @@ public class ExponentialMechanism<T> {
             pmf.add(new Pair<T, Double>(value, probability.doubleValue()));
         }
 
-        AbstractRandomGenerator random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
-        
-        distribution = new EnumeratedDistribution<T>(random, pmf);
-    }
-
-    /**
-     * Returns the probability mass function
-     * @return
-     */
-    public List<Pair<T, Double>> getPmf() {
-        return distribution.getPmf();
-    }
-    
-    /**
-     * Returns a random value sampled from this distribution
-     * @return
-     */
-    public T sample() {
-        T solution = distribution.sample();
-        return solution;
+        // Store the distribution
+        this.distribution = new EnumeratedDistribution<T>(this.random, pmf);
     }
 
     /**
