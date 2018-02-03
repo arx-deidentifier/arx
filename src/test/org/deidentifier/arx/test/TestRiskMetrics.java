@@ -23,7 +23,11 @@ import static org.junit.Assert.fail;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,15 +35,22 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
+import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
+import org.deidentifier.arx.risk.RiskModelSampleWildcard;
 import org.junit.Test;
 
 /**
@@ -47,8 +58,11 @@ import org.junit.Test;
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Helmut Spengler
  */
 public class TestRiskMetrics {
+	
+	private static String MAGIC_NULL_VALUE = "*";
     
     /**
      * Returns the data object for a given dataset
@@ -240,6 +254,50 @@ public class TestRiskMetrics {
     }
     
     /**
+     * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds.
+     * @throws IOException 
+     */
+    @Test
+    public void testAnonymizationConcatenationWithoutRecordsAtRisk() throws IOException {
+    	
+    	// Configure 1st anonymization
+    	String inputdata = "./data/adult.csv";
+    	ParametersRisk parametersRisk1 = new ParametersRisk(new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass")));
+    	parametersRisk1.setHighestRisk(0.2d);
+    	parametersRisk1.setAverageRisk(0.1d);
+    	parametersRisk1.setRecordsAtRisk(0d);
+    	String anondata1 = "./data/adult-anon1.csv";
+    	
+    	// Configure 2nd anonymization
+    	ParametersRisk parametersRisk2 = new ParametersRisk(new HashSet<String>(Arrays.asList("marital-status", "education", "native-country", "workclass", "occupation", "salary-class")));
+    	parametersRisk2.setHighestRisk(0.2d);
+    	parametersRisk2.setAverageRisk(0.1d);
+    	parametersRisk2.setRecordsAtRisk(0d);
+    	String anondata2 = "./data/adult-anon2.csv";
+    	
+    	// Perform anonymizations
+    	anonymizeData(inputdata,       parametersRisk1, anondata1);    	
+    	anonymizeData(anondata1, parametersRisk2, anondata2);
+    	
+    	// Assess with wild card method
+    	parametersRisk1.setUseWcMatch(true);
+    	ParametersRisk assessmentWc1 = assessRisks(anondata1, parametersRisk1);
+    	ParametersRisk assessmentWc2 = assessRisks(anondata2, parametersRisk1);
+    	
+    	// Assess with wild own category method
+    	parametersRisk1.setUseWcMatch(false);
+    	ParametersRisk assessmentOc1 = assessRisks(anondata1, parametersRisk1);
+    	ParametersRisk assessmentOc2 = assessRisks(anondata2, parametersRisk1);
+
+    	// Assess
+    	assertTrue (assessmentWc1.getHighestRisk() >= assessmentWc2.getHighestRisk());
+    	assertTrue (assessmentWc1.getAverageRisk() >= assessmentWc2.getAverageRisk());
+    	
+    	assertTrue (assessmentOc1.getHighestRisk() < assessmentOc2.getHighestRisk());
+    	assertTrue (assessmentOc1.getAverageRisk() < assessmentOc2.getAverageRisk());
+    }
+    
+    /**
      * 2-Anonymizes the given data. No suppression allowed.
      *
      * @param data the data
@@ -261,4 +319,160 @@ public class TestRiskMetrics {
         final DataHandle outHandle = result.getOutput(false);
         return outHandle;
     }
+    
+    /**
+     * Anonymizes a given dataset in order to satisfy given risk thresholds and
+     * quasi-identifiers.
+     *
+     * @param data the input dataset
+     * @param parametersRisk the parameters related to the risk thresholds
+     * @param anondataset the output dataset
+     * @throws IOException 
+     */
+	private void anonymizeData(String dataset, ParametersRisk parametersRisk, String anondataset) throws IOException {
+		
+
+		final Data data = readData(dataset, parametersRisk);
+		
+		// Configure anonymization
+        final ARXAnonymizer anonymizer = new ARXAnonymizer();
+		ARXConfiguration config = ARXConfiguration.create();
+		double o_min = 0.01d;
+		double maxOutliers = 1.0d - o_min;
+		config.setSuppressionLimit(maxOutliers);
+		config.setQualityModel(Metric.createLossMetric(0d));
+		if (parametersRisk.getRecordsAtRisk() == 0d) {
+			int k = getSizeThreshold(parametersRisk.getHighestRisk());
+		    if (k != 1) {
+		        config.addPrivacyModel(new KAnonymity(k));
+		    }
+			config.addPrivacyModel(new AverageReidentificationRisk(parametersRisk.getAverageRisk()));
+		} else {
+			config.addPrivacyModel(new AverageReidentificationRisk(parametersRisk.getAverageRisk(), parametersRisk.getHighestRisk(), parametersRisk.getRecordsAtRisk()));
+		}
+		config.setHeuristicSearchEnabled(false);
+        
+		// Perform anonymization
+        ARXResult result = null;
+        try {
+            result = anonymizer.anonymize(data, config);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        DataHandle output = result.getOutput();
+		if (result.isOptimizable(output)) {
+		    try {
+                result.optimizeIterativeFast(output, o_min);
+            } catch (RollbackRequiredException e) {
+                throw new RuntimeException(e);
+            }
+		}
+		
+		// Write output
+		Iterator<String[]> iterator = result.getOutput().iterator();
+		PrintWriter writer = new PrintWriter(anondataset, "UTF-8");
+		while (iterator.hasNext()) {
+			String[] line = iterator.next();
+			for (int i = 0; i < data.getHandle().getNumColumns() - 1; i++) {
+				writer.print(line[i] + ";");
+			}
+			writer.println(line[data.getHandle().getNumColumns() - 1]);
+		}
+		writer.close();
+	}
+
+	/**
+	 * Create ARX dataset with trivial generalization hierarchies from a file.
+	 * 
+	 * @param dataset
+	 * @param parametersRisk
+	 * @return
+	 * @throws IOException
+	 */
+	private Data readData(String dataset, ParametersRisk parametersRisk) throws IOException {
+		final Data data = Data.create(dataset, StandardCharsets.UTF_8, ';');
+        int numColunns = data.getHandle().getNumColumns();
+        String[] attributes = new String[numColunns];
+        for (int i = 0; i < numColunns; i++) {
+        	attributes[i] = data.getHandle().getAttributeName(i);
+		}
+		
+		// Configure QI settings
+		for (String attribute : attributes) {
+		    data.getDefinition().setAttributeType(attribute, AttributeType.INSENSITIVE_ATTRIBUTE);
+		}		
+		for (String qi : parametersRisk.getQis()) {
+			data.getDefinition().setAttributeType(qi, getHierarchy(data, qi));
+		}
+		return data;
+	}
+    
+    /**
+     * Assess the re-identification risks of a dataset.
+     * 
+     * @param data the data
+     * @param whether to interpret missing values as wild cards or as an own category
+     * @param the maximum highest risk based on which the records at risk are determined
+     * @param riskSettings the risk related parameters
+     * @return
+     * @throws IOException 
+     */
+    private ParametersRisk assessRisks(String dataset, ParametersRisk parametersRisk) throws IOException {
+    	
+    	final Data data = readData(dataset, parametersRisk);
+
+		RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
+		ParametersRisk result = new ParametersRisk(data.getDefinition().getQuasiIdentifyingAttributes());
+        
+		if (parametersRisk.useWcMatch()) {
+		    // Treat missing values as wild card
+            RiskModelSampleWildcard riskModel = builder.getSampleBasedRiskSummaryWildcard(parametersRisk.getHighestRisk(), MAGIC_NULL_VALUE);
+            result.setHighestRisk(riskModel.getHighestRisk());
+            result.setRecordsAtRisk(riskModel.getRecordsAtRisk());
+            result.setAverageRisk(riskModel.getAverageRisk());
+            
+		} else {
+		    // Treat missing values as own category
+            ProsecutorRisk pr = builder.getSampleBasedRiskSummary(parametersRisk.getHighestRisk()).getProsecutorRisk();
+            result.setHighestRisk(pr.getHighestRisk());
+            result.setRecordsAtRisk(pr.getRecordsAtRisk());
+            result.setAverageRisk(pr.getSuccessRate());
+            
+		}
+		return result;
+    	
+    }
+
+	/**
+	 * Returns a minimal class size for the given risk threshold.
+	 * 
+	 * @param threshold
+	 * @return
+	 */
+	private int getSizeThreshold(double riskThreshold) {
+		double size = 1d / riskThreshold;
+		double floor = Math.floor(size);
+		if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
+			floor += 1d;
+		}
+		return (int) floor;
+	}
+
+	/**
+	 * Returns the generalization hierarchy for the dataset and attribute
+	 * 
+	 * @param data
+	 * @param attribute
+	 * @return
+	 * @throws IOException
+	 */
+	private Hierarchy getHierarchy(Data data, String attribute) {
+		DefaultHierarchy hierarchy = Hierarchy.create();
+		int col = data.getHandle().getColumnIndexOf(attribute);
+		String[] values = data.getHandle().getDistinctValues(col);
+		for (String value : values) {
+			hierarchy.add(value, MAGIC_NULL_VALUE);
+		}
+		return hierarchy;
+	}
 }
