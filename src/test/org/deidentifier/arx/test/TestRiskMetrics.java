@@ -252,31 +252,56 @@ public class TestRiskMetrics {
         // Risk after anonymization
         assertTrue(getAnonymizedData(data).getRiskEstimator(ARXPopulationModel.create(data.getHandle().getNumRows(), 0.1d)).getSampleBasedReidentificationRisk().getHighestRisk() == 0.5d);
     }
+
     
     /**
-     * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds.
-     * @throws IOException 
+     * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds using the adult
+     * dataset without allowing any records at risk.
+     * 
+     * @throws IOException
      */
     @Test
-    public void testAnonymizationConcatenationWithoutRecordsAtRisk() throws IOException {
+    public void testAnonymizationConcatenationWithoutRecordsAtRisk () throws IOException {
+    	performAnonymizationConcatenation(0.2d, 0.05, 0d);
+    }
+
+    
+    /**
+     * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds using the adult
+     * dataset without allowing any records at risk.
+     * 
+     * @throws IOException
+     */
+    @Test
+    public void testAnonymizationConcatenationWithRecordsAtRisk () throws IOException {
+    	performAnonymizationConcatenation(0.333d, 0.2, 0.1d);
+    }
+    
+    /**
+     * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds using the adult dataset.
+     * 
+     * @param recordsAtRisk
+     * @throws IOException 
+     */
+    private void performAnonymizationConcatenation(double highestRisk, double averageRisk, double recordsAtRisk) throws IOException {
     	
     	// Configure 1st anonymization
     	String inputdata = "./data/adult.csv";
     	ParametersRisk parametersRisk1 = new ParametersRisk(new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass")));
-    	parametersRisk1.setHighestRisk(0.2d);
-    	parametersRisk1.setAverageRisk(0.1d);
-    	parametersRisk1.setRecordsAtRisk(0d);
+    	parametersRisk1.setHighestRisk(highestRisk);
+    	parametersRisk1.setAverageRisk(averageRisk);
+    	parametersRisk1.setRecordsAtRisk(recordsAtRisk);
     	String anondata1 = "./data/adult-anon1.csv";
     	
     	// Configure 2nd anonymization
     	ParametersRisk parametersRisk2 = new ParametersRisk(new HashSet<String>(Arrays.asList("marital-status", "education", "native-country", "workclass", "occupation", "salary-class")));
-    	parametersRisk2.setHighestRisk(0.2d);
-    	parametersRisk2.setAverageRisk(0.1d);
-    	parametersRisk2.setRecordsAtRisk(0d);
+    	parametersRisk2.setHighestRisk(highestRisk);
+    	parametersRisk2.setAverageRisk(averageRisk);
+    	parametersRisk2.setRecordsAtRisk(recordsAtRisk);
     	String anondata2 = "./data/adult-anon2.csv";
     	
     	// Perform anonymizations
-    	anonymizeData(inputdata,       parametersRisk1, anondata1);    	
+    	anonymizeData(inputdata, parametersRisk1, anondata1);    	
     	anonymizeData(anondata1, parametersRisk2, anondata2);
     	
     	// Assess with wild card method
@@ -284,17 +309,41 @@ public class TestRiskMetrics {
     	ParametersRisk assessmentWc1 = assessRisks(anondata1, parametersRisk1);
     	ParametersRisk assessmentWc2 = assessRisks(anondata2, parametersRisk1);
     	
-    	// Assess with wild own category method
+    	// Assess with own category method
     	parametersRisk1.setUseWcMatch(false);
     	ParametersRisk assessmentOc1 = assessRisks(anondata1, parametersRisk1);
     	ParametersRisk assessmentOc2 = assessRisks(anondata2, parametersRisk1);
-
-    	// Assess
-    	assertTrue (assessmentWc1.getHighestRisk() >= assessmentWc2.getHighestRisk());
-    	assertTrue (assessmentWc1.getAverageRisk() >= assessmentWc2.getAverageRisk());
     	
-    	assertTrue (assessmentOc1.getHighestRisk() < assessmentOc2.getHighestRisk());
-    	assertTrue (assessmentOc1.getAverageRisk() < assessmentOc2.getAverageRisk());
+    	
+    	if (recordsAtRisk == 0d) {
+    		// Assessment after 1st anonymization
+    		// Wild card
+    		assertTrue (assessmentWc1.getHighestRisk() <= highestRisk);
+    		assertTrue (assessmentWc1.getAverageRisk() <= averageRisk);
+    		// Own category
+    		assertTrue (assessmentOc1.getHighestRisk() <= highestRisk);
+    		assertTrue (assessmentOc1.getAverageRisk() <= averageRisk);    		
+    		
+    		// Assessment after 2nd anonymization
+    		// Wild card
+    		assertTrue (assessmentWc2.getHighestRisk() <= assessmentWc1.getHighestRisk());
+    		assertTrue (assessmentWc2.getAverageRisk() <= assessmentWc1.getAverageRisk());
+    		// Own category
+    		assertTrue (assessmentOc2.getHighestRisk() >  highestRisk);
+    		assertTrue (assessmentOc2.getAverageRisk() >  assessmentOc1.getAverageRisk());
+    	} else {
+    		// Assessment after 1st anonymization
+    		// Wild card
+        	assertTrue (assessmentWc1.getRecordsAtRisk() <= recordsAtRisk);
+    		// Own category
+//        	assertTrue (assessmentOc1.getRecordsAtRisk() <=  recordsAtRisk);    		
+
+    		// Assessment after 2nd anonymization
+    		// Wild card
+        	assertTrue (assessmentWc2.getRecordsAtRisk() <= assessmentWc1.getRecordsAtRisk());
+    		// Own category
+        	assertTrue (assessmentOc2.getRecordsAtRisk() >  recordsAtRisk);
+    	}
     }
     
     /**
@@ -321,18 +370,18 @@ public class TestRiskMetrics {
     }
     
     /**
-     * Anonymizes a given dataset in order to satisfy given risk thresholds and
+     * Anonymizes a given dataset in order to satisfy given risk thresholds using the given
      * quasi-identifiers.
      *
      * @param data the input dataset
      * @param parametersRisk the parameters related to the risk thresholds
-     * @param anondataset the output dataset
+     * @param ouputdataset the output dataset
      * @throws IOException 
      */
-	private void anonymizeData(String dataset, ParametersRisk parametersRisk, String anondataset) throws IOException {
+	private void anonymizeData(String inputdataset, ParametersRisk parametersRisk, String ouputdataset) throws IOException {
 		
 
-		final Data data = readData(dataset, parametersRisk);
+		final Data data = readData(inputdataset, parametersRisk);
 		
 		// Configure anonymization
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -370,7 +419,7 @@ public class TestRiskMetrics {
 		
 		// Write output
 		Iterator<String[]> iterator = result.getOutput().iterator();
-		PrintWriter writer = new PrintWriter(anondataset, "UTF-8");
+		PrintWriter writer = new PrintWriter(ouputdataset, "UTF-8");
 		while (iterator.hasNext()) {
 			String[] line = iterator.next();
 			for (int i = 0; i < data.getHandle().getNumColumns() - 1; i++) {
