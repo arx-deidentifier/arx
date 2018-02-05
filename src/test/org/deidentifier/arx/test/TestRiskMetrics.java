@@ -262,28 +262,28 @@ public class TestRiskMetrics {
      */
     @Test
     public void testAnonymizationConcatenationWithoutRecordsAtRisk () throws IOException {
-    	performAnonymizationConcatenation(0.2d, 0.05, 0d);
+    	performAndTestAnonymizationConcatenation(0.2d, 0.05, 0d);
     }
 
     
     /**
      * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds using the adult
-     * dataset without allowing any records at risk.
+     * dataset allowing records at risk.
      * 
      * @throws IOException
      */
     @Test
     public void testAnonymizationConcatenationWithRecordsAtRisk () throws IOException {
-    	performAnonymizationConcatenation(0.333d, 0.2, 0.1d);
+    	performAndTestAnonymizationConcatenation(0.333d, 0.2, 0.1d);
     }
     
     /**
-     * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds using the adult dataset.
+     * Perform concatenated anonymizations with overlapping qi definitions and validate the results.
      * 
      * @param recordsAtRisk
      * @throws IOException 
      */
-    private void performAnonymizationConcatenation(double highestRisk, double averageRisk, double recordsAtRisk) throws IOException {
+    private void performAndTestAnonymizationConcatenation(double highestRisk, double averageRisk, double recordsAtRisk) throws IOException {
     	
     	// Configure 1st anonymization
     	String inputdata = "./data/adult.csv";
@@ -336,7 +336,7 @@ public class TestRiskMetrics {
     		// Wild card
         	assertTrue (assessmentWc1.getRecordsAtRisk() <= recordsAtRisk);
     		// Own category
-//        	assertTrue (assessmentOc1.getRecordsAtRisk() <=  recordsAtRisk);    		
+        	assertTrue (assessmentOc1.getRecordsAtRisk() <=  recordsAtRisk);    		
 
     		// Assessment after 2nd anonymization
     		// Wild card
@@ -370,8 +370,8 @@ public class TestRiskMetrics {
     }
     
     /**
-     * Anonymizes a given dataset in order to satisfy given risk thresholds using the given
-     * quasi-identifiers.
+     * Anonymize a given dataset in order to satisfy given risk thresholds using the
+     * quasi-identifiers defined in parametersRisk.
      *
      * @param data the input dataset
      * @param parametersRisk the parameters related to the risk thresholds
