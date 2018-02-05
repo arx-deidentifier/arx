@@ -121,8 +121,6 @@ public class TestAnonymizationConcatenation {
         // Iterate over anonymizations
         for (int i = 0; i < anonymizations.length; i++) {
             
-            System.out.println(i);
-            
             // Perform cell suppression
             Data anondata = anonymize(indata, anonymizations[i]);
             
@@ -227,8 +225,8 @@ public class TestAnonymizationConcatenation {
                            double averageRisk,
                            double recordsAtRisk,
                            ParametersRisk parametersRisk) {
-
-        assertTrue("Average risk (" + message + ")", averageRisk <= parametersRisk.averageRisk);
+        
+        assertTrue("Average risk (" + message + ") - actual vs. specified: " + averageRisk + "/" + parametersRisk.averageRisk, averageRisk <= parametersRisk.averageRisk);
         if (recordsAtRisk == 0d) {
             assertTrue("Highest risk (" + message + ")", highestRisk <= parametersRisk.highestRisk);
         }
