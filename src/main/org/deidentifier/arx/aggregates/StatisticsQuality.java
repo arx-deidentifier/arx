@@ -34,13 +34,13 @@ import org.deidentifier.arx.aggregates.quality.QualityDomainShareRedaction;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureColumnOriented;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureRowOriented;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedLoss;
-import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedMSE;
+import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedSquaredError;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedNonUniformEntropy;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedPrecision;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAECS;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAmbiguity;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedDiscernibility;
-import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSSE;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSquaredError;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -213,7 +213,7 @@ public class StatisticsQuality {
         // Build
         workload = 10;
         try {
-            this.mse = new QualityModelColumnOrientedMSE(stop,
+            this.mse = new QualityModelColumnOrientedSquaredError(stop,
                                                          progress,
                                                          workload,
                                                          input,
@@ -297,7 +297,7 @@ public class StatisticsQuality {
         // Build
         workload = 15;
         try {
-            this.sse = new QualityModelRowOrientedSSE(stop,
+            this.sse = new QualityModelRowOrientedSquaredError(stop,
                                                       progress,
                                                       workload,
                                                       input,
@@ -329,7 +329,7 @@ public class StatisticsQuality {
     }
 
     /**
-     * Mean squared error for microaggregated attributes
+     * Attribute-level squared error
      * 
      * @return Quality measure
      */
@@ -425,12 +425,10 @@ public class StatisticsQuality {
     }
 
     /**
-     * Quality according to the "SSE" model proposed in:<br>
+     * Quality according to the model proposed in:<br>
      * <br>
-     * Soria-Comas, Jordi, et al.:
-     * "t-closeness through microaggregation: Strict privacy with enhanced utility preservation."
-     * IEEE Transactions on Knowledge and Data Engineering 27.11 (2015):
-     * 3098-3110.
+     * D. Sanchez, S. Martinez, and J. Domingo-Ferrer. Comment on unique in the shopping
+     * mall: On the reidentifiability of credit card metadata. Science, 351(6279):1274–1274, 2016.
      * 
      * @return Quality measure
      */
