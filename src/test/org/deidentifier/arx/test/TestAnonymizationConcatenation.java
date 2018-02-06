@@ -37,6 +37,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
+import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
@@ -58,7 +59,7 @@ public class TestAnonymizationConcatenation {
      * @author Fabian Prasser
      * @author Helmut Spengler
      */
-    private class ParametersRisk {
+    private class Risks {
         
         /** Threshold for the average risk */
         final private double averageRisk;;
@@ -66,7 +67,6 @@ public class TestAnonymizationConcatenation {
         final private double highestRisk;;
         /** Threshold for records at risk. */
         final private double recordsAtRisk;
-
         /** The quasi-identifiers */
         final private Set<String> qis;
 
@@ -74,11 +74,17 @@ public class TestAnonymizationConcatenation {
          * Creates a new instance
          * @param qis
          */
-        public ParametersRisk(double averageRisk, double highestRisk, double recordsAtRisk, Set<String> qis) {
+        public Risks(double averageRisk, double highestRisk, double recordsAtRisk, Set<String> qis) {
             this.qis = qis;
             this.averageRisk   = averageRisk;
             this.highestRisk   = highestRisk;
             this.recordsAtRisk = recordsAtRisk;
+        }
+
+        @Override
+        public String toString() {
+            return "Risks [averageRisk=" + averageRisk + ", highestRisk=" + highestRisk +
+                   ", recordsAtRisk=" + recordsAtRisk + ", qis=" + qis + "]";
         }
     }
     
@@ -91,14 +97,25 @@ public class TestAnonymizationConcatenation {
      */
     @Test
     public void testAnonymizationConcatenation () throws IOException {
+
+        performConcatenatedAnonymizations(
+          "./data/adult.csv",
+          new Risks[] {
+              new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
+              new Risks(0.3, 0.1, 0.1, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
+              new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
+              new Risks(0.1, 0.3, 0.1, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))}
+        );
         
         performConcatenatedAnonymizations(
           "./data/adult.csv",
-          new ParametersRisk[] {
-              new ParametersRisk(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass"))),
-              new ParametersRisk(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country", "workclass", "occupation", "salary-class")))
-          }
+          new Risks[] {
+              new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
+              new Risks(0.3, 0.1, 0, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
+              new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
+              new Risks(0.1, 0.3, 0, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))}
         );
+
     }
     
     /**
@@ -108,7 +125,7 @@ public class TestAnonymizationConcatenation {
      * @param anonymizations at least two have to be specified
      * @throws IOException if the input dataset cannot be read
      */
-    private void performConcatenatedAnonymizations (String dataset, ParametersRisk... anonymizations) throws IOException {
+    private void performConcatenatedAnonymizations (String dataset, Risks... anonymizations) throws IOException {
         
         // Check arguments
         if (anonymizations.length < 2) {
@@ -116,26 +133,37 @@ public class TestAnonymizationConcatenation {
         }
         
         // Read input data
-        Data indata = Data.create(dataset, StandardCharsets.UTF_8, ';');
+        Data inputData = Data.create(dataset, StandardCharsets.UTF_8, ';');
         
         // Iterate over anonymizations
         for (int i = 0; i < anonymizations.length; i++) {
             
+            System.out.println("Step: " + i);
+            
             // Perform cell suppression
-            Data anondata = anonymize(indata, anonymizations[i]);
+            Data outputData = anonymize(inputData, anonymizations[i]);
             
             // Validate results
-            assessRisks(anondata, Arrays.copyOfRange(anonymizations, 0, i + 1));
+            assessRisks(outputData, Arrays.copyOfRange(anonymizations, 0, i + 1));
 
             // Prepare for next iteration
-            indata = anondata;
+            inputData = outputData;
+            
+            new CSVDataOutput("tmp.csv").write(outputData.getHandle().iterator());
         }
     }
     
-    private Data anonymize(Data data, ParametersRisk parametersRisk) {
+    /**
+     * Anonymize
+     * @param data
+     * @param risks
+     * @return
+     * @throws IOException 
+     */
+    private Data anonymize(Data data, Risks risks) throws IOException {
         
         // Configure QIs
-        configureQIs(data, parametersRisk.qis);
+        configureQIs(data, risks.qis);
 
         // Setup anonymization
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -144,24 +172,19 @@ public class TestAnonymizationConcatenation {
         double maxOutliers = 1.0d - o_min;
         config.setSuppressionLimit(maxOutliers);
         config.setQualityModel(Metric.createLossMetric(0d));
-        if (parametersRisk.recordsAtRisk == 0d) {
-            int k = getSizeThreshold(parametersRisk.highestRisk);
+        if (risks.recordsAtRisk == 0d) {
+            int k = getSizeThreshold(risks.highestRisk);
             if (k != 1) {
                 config.addPrivacyModel(new KAnonymity(k));
             }
-            config.addPrivacyModel(new AverageReidentificationRisk(parametersRisk.averageRisk));
+            config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk));
         } else {
-            config.addPrivacyModel(new AverageReidentificationRisk(parametersRisk.averageRisk, parametersRisk.highestRisk, parametersRisk.recordsAtRisk));
+            config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk, risks.highestRisk, risks.recordsAtRisk));
         }
         config.setHeuristicSearchEnabled(false);
         
         // Perform anonymization
-        ARXResult result = null;
-        try {
-            result = anonymizer.anonymize(data, config);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        ARXResult result = anonymizer.anonymize(data, config);
         
         // Perform cell suppression
         DataHandle output = result.getOutput();
@@ -174,9 +197,9 @@ public class TestAnonymizationConcatenation {
         }
         
         // Release handles
-        Data anonData =  Data.create(result.getOutput().iterator());
+        Data anonData =  Data.create(output.iterator());
         anonData.getHandle();
-        result.getOutput().release();
+        output.release();
         
         // Return result
         return anonData;
@@ -190,24 +213,26 @@ public class TestAnonymizationConcatenation {
          * @return
          * @throws IOException 
          */
-    private void assessRisks(Data data, ParametersRisk... anonymizations) throws IOException {
-
-        RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
+    private void assessRisks(Data data, Risks... anonymizations) throws IOException {
 
         // For each concatenated anonymization
-        for (int i = 0; i < anonymizations.length - 1; i++) {
+        for (int i = 0; i < anonymizations.length; i++) {
             
             // Configure QIs
             configureQIs(data, anonymizations[i].qis);
-            
+            RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
+
+            System.out.println(" - Substep: " + i);
+            System.out.println(" - " + anonymizations[i]);
+
             // Check wildcard risk
             RiskModelSampleWildcard riskModel = builder.getSampleBasedRiskSummaryWildcard(anonymizations[i].highestRisk, DataType.ANY_VALUE);
-            checkRisk("wildcard" + i, riskModel.getHighestRisk(), riskModel.getAverageRisk(), riskModel.getRecordsAtRisk(), anonymizations[i]);
+            checkRisk("Wildcard", riskModel.getHighestRisk(), riskModel.getAverageRisk(), riskModel.getRecordsAtRisk(), anonymizations[i]);
 
             // Check own category
-            if ( i == anonymizations.length-1) {
+            if (i == anonymizations.length - 1) {
                 ProsecutorRisk riskModel2 = builder.getSampleBasedRiskSummary(anonymizations[i].highestRisk).getProsecutorRisk();
-                checkRisk("own category" + i, riskModel2.getHighestRisk(), riskModel2.getSuccessRate(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
+                checkRisk("Own category", riskModel2.getHighestRisk(), riskModel2.getSuccessRate(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
             }
         }
     }
@@ -224,7 +249,7 @@ public class TestAnonymizationConcatenation {
                            double highestRisk,
                            double averageRisk,
                            double recordsAtRisk,
-                           ParametersRisk parametersRisk) {
+                           Risks parametersRisk) {
         
         assertTrue("Average risk (" + message + ") - actual vs. specified: " + averageRisk + "/" + parametersRisk.averageRisk, averageRisk <= parametersRisk.averageRisk);
         if (recordsAtRisk == 0d) {
