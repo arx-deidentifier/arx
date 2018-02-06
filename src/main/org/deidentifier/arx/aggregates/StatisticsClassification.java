@@ -34,7 +34,6 @@ import org.deidentifier.arx.aggregates.classification.ClassificationResult;
 import org.deidentifier.arx.aggregates.classification.MultiClassLogisticRegression;
 import org.deidentifier.arx.aggregates.classification.MultiClassNaiveBayes;
 import org.deidentifier.arx.aggregates.classification.MultiClassRandomForest;
-import org.deidentifier.arx.aggregates.classification.MultiClassSVM;
 import org.deidentifier.arx.aggregates.classification.MultiClassZeroR;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
@@ -249,9 +248,6 @@ public class StatisticsClassification {
         } else if (config instanceof ClassificationConfigurationNaiveBayes) {
             System.setProperty("smile.threads", "1");
             return new MultiClassNaiveBayes(specification, (ClassificationConfigurationNaiveBayes)config);
-        } else if (config instanceof ClassificationConfigurationSVM) {
-            System.setProperty("smile.threads", "1");
-            return new MultiClassSVM(specification, (ClassificationConfigurationSVM)config);
         } else if (config instanceof ClassificationConfigurationRandomForest) {
             System.setProperty("smile.threads", "1");
             return new MultiClassRandomForest(specification, (ClassificationConfigurationRandomForest)config);

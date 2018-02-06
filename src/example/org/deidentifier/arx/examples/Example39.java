@@ -115,7 +115,7 @@ public class Example39 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
         config.setSuppressionLimit(1d);
-        config.setQualityModel(Metric.createLossMetric());
+        config.setQualityModel(Metric.createClassificationMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
         System.out.println("5-anonymous dataset (logistic regression)");
@@ -124,7 +124,5 @@ public class Example39 extends Example {
         System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createNaiveBayes()));
         System.out.println("5-anonymous dataset (random forest)");
         System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createRandomForest()));
-        System.out.println("5-anonymous dataset (SVM)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createSVM()));
     }
 }
