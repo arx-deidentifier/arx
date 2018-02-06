@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.commons.math3.random.RandomDataGenerator;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -304,5 +305,14 @@ public class TestAnonymizationConcatenation {
 			hierarchy.add(value, DataType.ANY_VALUE);
 		}
 		return hierarchy;
+	}
+	
+	@Test
+	public void permuteConcatenations() {
+		RandomDataGenerator rdg = new RandomDataGenerator();
+//		rdg.reSeed(42);
+		System.out.println(Arrays.toString(rdg.nextSample(new HashSet<String> (Arrays.asList("These", "are", "some", "Strings", "for", "testing", "the", "random", "data", "generator")), 4)));
+		System.out.println(rdg.nextUniform(0d, 0.5d, false));
+		System.out.println(rdg.nextBinomial(1, 0.7d));
 	}
 }
