@@ -70,8 +70,6 @@ public class StatisticsQuality {
     /** Row-oriented model */
     private QualityMeasureRowOriented          discernibility;
     /** Row-oriented model */
-    private QualityMeasureRowOriented          kldivergence;
-    /** Row-oriented model */
     private QualityMeasureRowOriented          sse;
 
     /** Quality */
@@ -131,7 +129,6 @@ public class StatisticsQuality {
             this.aecs = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.ambiguity = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.discernibility = new QualityMeasureRowOriented(0d, 0d, 1d);
-            this.kldivergence = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.sse = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.progress.value = 100;
             
@@ -404,19 +401,6 @@ public class StatisticsQuality {
      */
     public QualityMeasureColumnOriented getGranularity() {
         return loss;
-    }
-
-    /**
-     * Quality according to the "KL-Divergence" model proposed in:<br>
-     * <br>
-     * Ashwin Machanavajjhala, Daniel Kifer, Johannes Gehrke, Muthuramakrishnan Venkitasubramaniam: <br>
-     * L-diversity: Privacy beyond k-anonymity<br>
-     * ACM Transactions on Knowledge Discovery from Data (TKDD), Volume 1 Issue 1, March 2007
-     * 
-     * @return Quality measure
-     */
-    public QualityMeasureRowOriented getKullbackLeiblerDivergence() {
-        return kldivergence;
     }
 
     /**
