@@ -22,10 +22,10 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
-import org.apache.commons.math3.random.RandomDataGenerator;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -69,13 +69,13 @@ public class TestAnonymizationConcatenation {
         /** Threshold for records at risk. */
         final private double recordsAtRisk;
         /** The quasi-identifiers */
-        final private Set<String> qis;
+        final private List<String> qis;
 
         /**
          * Creates a new instance
          * @param qis
          */
-        public Risks(double averageRisk, double highestRisk, double recordsAtRisk, Set<String> qis) {
+        public Risks(double averageRisk, double highestRisk, double recordsAtRisk, List<String> qis) {
             this.qis = qis;
             this.averageRisk   = averageRisk;
             this.highestRisk   = highestRisk;
@@ -124,61 +124,63 @@ public class TestAnonymizationConcatenation {
     public void testStaticAnonymizationConcatenation () throws IOException {
 
         TestCase[] tests = new TestCase[] { new TestCase("./data/adult.csv",
-                                                         new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
-                                                         new Risks(0.3, 0.1, 0.1, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
-                                                         new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
-                                                         new Risks(0.1, 0.3, 0.1, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))),
+                                                         new Risks(0.2, 0.05, 0.05, Arrays.asList("sex", "age", "race", "marital-status")),
+                                                         new Risks(0.3, 0.1, 0.1, Arrays.asList("marital-status", "education", "native-country")),
+                                                         new Risks(0.2, 0.05, 0.05, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
+                                                         new Risks(0.1, 0.3, 0.1, Arrays.asList("age", "race", "marital-status", "education"))),
                                             new TestCase("./data/adult.csv",
-                                                         new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
-                                                         new Risks(0.3, 0.1, 0, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
-                                                         new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
-                                                         new Risks(0.1, 0.3, 0, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))),
-                                            new TestCase("./data/adult.csv", new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("sex", "age", "race"))),
-                                                         new Risks(0.2, 0.05, 0.2, new HashSet<String>(Arrays.asList("age", "race", "marital-status"))),
-                                                         new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("race", "marital-status", "education"))),
-                                                         new Risks(0.3, 0.1, 0.05, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
-                                                         new Risks(0.3, 0.1, 0, new HashSet<String>(Arrays.asList("education", "native-country", "workclass"))),
-                                                         new Risks(0.2, 0.05, 0.3, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation"))),
-                                                         new Risks(0.1, 0.3, 0.1, new HashSet<String>(Arrays.asList("workclass", "occupation", "salary-class")))) };
+                                                         new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race", "marital-status")),
+                                                         new Risks(0.3, 0.1, 0, Arrays.asList("marital-status", "education", "native-country")),
+                                                         new Risks(0.2, 0.05, 0, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
+                                                         new Risks(0.1, 0.3, 0, Arrays.asList("age", "race", "marital-status", "education"))),
+                                            new TestCase("./data/adult.csv", new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race")),
+                                                         new Risks(0.2, 0.05, 0.2, Arrays.asList("age", "race", "marital-status")),
+                                                         new Risks(0.2, 0.05, 0, Arrays.asList("race", "marital-status", "education")),
+                                                         new Risks(0.3, 0.1, 0.05, Arrays.asList("marital-status", "education", "native-country")),
+                                                         new Risks(0.3, 0.1, 0, Arrays.asList("education", "native-country", "workclass")),
+                                                         new Risks(0.2, 0.05, 0.3, Arrays.asList("native-country", "workclass", "occupation")),
+                                                         new Risks(0.1, 0.3, 0.1, Arrays.asList("workclass", "occupation", "salary-class"))) };
 
         for (TestCase test : tests) {
             performConcatenatedAnonymizations(test);
         }
     }
     
+    /**
+     * Randomly creates and concatenizes a specified number of anonymization steps.
+     * 
+     * @throws IOException
+     */
     @Test
     public void testRandomizedAnonymizationConcatenation() throws IOException {
         
         // Parameters
-        Set<String> qis = new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass", "occupation", "salary-class"));
-        int numAnons = 5;
-        int numQisPerAnon = 3;
-        double[] rangeHighestRisk  = { 0.0d, 0.5d };
-        double[] rangeAverageRisk  = { 0.0d, 0.3d };
-        double[] rangeRecordsAtRisk= { 0.0d, 0.3d };
-
-        // Initialize random data generator
-        RandomDataGenerator rdg = new RandomDataGenerator();
-        rdg.reSeed(42);
+        List<String> qis = Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass", "occupation", "salary-class");
+        Random random = new Random(42);
         
-        // Initialize test case
-        TestCase tc = new TestCase("./data/adult.csv", new Risks[numAnons]);
-        for (int i = 0; i < numAnons; i++) {
-            // Get random values
-            Set<String> randomQis = new HashSet<String>(Arrays.asList(Arrays.stream(rdg.nextSample(qis, numQisPerAnon)).toArray(String[]::new)));
+        // Perform a lot of random tests
+        for (int j = 0; j < 20; j++) {
             
-            // TODO ggf. Normalverteilung mit bspw. Mittelwert = 0.1 verwenden
-            // TODO ggf. mit Hilfe der Binomialverteilung ab und zu einen risk-value von 0 erzeugen
-            double randomHighestRisk = rdg.nextUniform(rangeHighestRisk[0], rangeHighestRisk[1], true);
-            double randomAverageRisk = rdg.nextUniform(rangeAverageRisk[0], rangeAverageRisk[1], true);
-            double randomRecordsAtRisk = rdg.nextUniform(rangeRecordsAtRisk[0], rangeRecordsAtRisk[1], true);
+            // Initialize test case
+            int numberOfDefinitions = random.nextInt(10) + 1;
+            int numberOfQisPerDefinition = random.nextInt(8) + 1;
+            TestCase tc = new TestCase("./data/adult.csv", new Risks[numberOfDefinitions]);
+            for (int i = 0; i < numberOfDefinitions; i++) {
+                
+                // Get random values
+                Collections.shuffle(qis);
+                List<String> randomQis = qis.subList(0, numberOfQisPerDefinition);
+                double randomHighestRisk = random.nextDouble();
+                double randomAverageRisk = random.nextDouble();
+                double randomRecordsAtRisk = random.nextDouble();
+                
+                // Configure test case
+                tc.scenarios[i] = new Risks(randomAverageRisk, randomHighestRisk, randomRecordsAtRisk, randomQis);
+            }
             
-            // Configure test case
-            tc.scenarios[i] = new Risks(randomAverageRisk, randomHighestRisk, randomRecordsAtRisk, randomQis);
+            // Perform tests
+            performConcatenatedAnonymizations(tc);
         }
-        
-        // Perform tests
-        performConcatenatedAnonymizations(tc);
     }
     
     /**
@@ -310,11 +312,11 @@ public class TestAnonymizationConcatenation {
                            double recordsAtRisk,
                            Risks parametersRisk) {
         
-        assertTrue("Average risk (" + message + ") - actual vs. specified: " + averageRisk + "/" + parametersRisk.averageRisk, averageRisk <= parametersRisk.averageRisk);
+        assertTrue("Average risk (" + message + ") - actual vs. specified: " + averageRisk + " / " + parametersRisk.averageRisk, averageRisk <= parametersRisk.averageRisk);
         if (recordsAtRisk == 0d) {
-            assertTrue("Highest risk (" + message + ")", highestRisk <= parametersRisk.highestRisk);
+            assertTrue("Highest risk (" + message + ") - actual vs. specified: " + highestRisk + " / " + parametersRisk.highestRisk, highestRisk <= parametersRisk.highestRisk);
         }
-        assertTrue("Records at risk (" + message + ")", recordsAtRisk <= parametersRisk.recordsAtRisk);
+        assertTrue("Records at risk (" + message + ") - actual vs. specified: " + recordsAtRisk + " / " + parametersRisk.recordsAtRisk, recordsAtRisk <= parametersRisk.recordsAtRisk);
         
         System.out.println(message + "  " + highestRisk + ", " + averageRisk + ", " + recordsAtRisk);
     }
@@ -325,7 +327,7 @@ public class TestAnonymizationConcatenation {
      * @param data
      * @param qis
      */
-    private void configureQIs(Data data, Set<String> qis) {
+    private void configureQIs(Data data, List<String> qis) {
         for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
             data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
         }       
