@@ -51,7 +51,7 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Helmut Spengler
  */
-public class TestAnonymizationConcatenation {
+public class TestCellSuppression {
     
     /**
      * This class encapsulates parameters related to risk management. It can be used
@@ -237,7 +237,9 @@ public class TestAnonymizationConcatenation {
             if (k != 1) {
                 config.addPrivacyModel(new KAnonymity(k));
             }
-            config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk));
+            if (risks.averageRisk != 1d) {
+                config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk));
+            }
         } else {
             config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk, risks.highestRisk, risks.recordsAtRisk));
         }
