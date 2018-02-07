@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.math3.random.RandomDataGenerator;
@@ -122,7 +121,7 @@ public class TestAnonymizationConcatenation {
      * @throws IOException
      */
     @Test
-    public void testAnonymizationConcatenation () throws IOException {
+    public void testStaticAnonymizationConcatenation () throws IOException {
 
         TestCase[] tests = new TestCase[] { new TestCase("./data/adult.csv",
                                                          new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
@@ -145,6 +144,41 @@ public class TestAnonymizationConcatenation {
         for (TestCase test : tests) {
             performConcatenatedAnonymizations(test);
         }
+    }
+    
+    @Test
+    public void testRandomizedAnonymizationConcatenation() throws IOException {
+        
+        // Parameters
+        Set<String> qis = new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass", "occupation", "salary-class"));
+        int numAnons = 5;
+        int numQisPerAnon = 3;
+        double[] rangeHighestRisk  = { 0.0d, 0.51d };
+        double[] rangeAverageRisk  = { 0.0d, 0.3d };
+        double[] rangeRecordsAtRisk= { 0.0d, 0.3d };
+
+        // Initialize random data generator
+        RandomDataGenerator rdg = new RandomDataGenerator();
+        rdg.reSeed(42);
+        
+        // Initialize test case
+        TestCase tc = new TestCase("./data/adult.csv", new Risks[numAnons]);
+        for (int i = 0; i < numAnons; i++) {
+            // Get random values
+            Set<String> randomQis = new HashSet<String>(Arrays.asList(Arrays.stream(rdg.nextSample(qis, numQisPerAnon)).toArray(String[]::new)));
+            
+            // TODO ggf. Normalverteilung mit bspw. Mittelwert = 0.1 verwenden
+            // TODO ggf. mit Hilfe der Binomialverteilung ab und zu einen risk-value von 0 erzeugen
+            double randomHighestRisk = rdg.nextUniform(rangeHighestRisk[0], rangeHighestRisk[1], true);
+            double randomAverageRisk = rdg.nextUniform(rangeAverageRisk[0], rangeAverageRisk[1], true);
+            double randomRecordsAtRisk = rdg.nextUniform(rangeRecordsAtRisk[0], rangeRecordsAtRisk[1], true);
+            
+            // Configure test case
+            tc.scenarios[i] = new Risks(randomAverageRisk, randomHighestRisk, randomRecordsAtRisk, randomQis);
+        }
+        
+        // Perform tests
+        performConcatenatedAnonymizations(tc);
     }
     
     /**
@@ -331,14 +365,5 @@ public class TestAnonymizationConcatenation {
 			hierarchy.add(value, DataType.ANY_VALUE);
 		}
 		return hierarchy;
-	}
-	
-	@Test
-	public void permuteConcatenations() {
-		RandomDataGenerator rdg = new RandomDataGenerator();
-//		rdg.reSeed(42);
-		System.out.println(Arrays.toString(rdg.nextSample(new HashSet<String> (Arrays.asList("These", "are", "some", "Strings", "for", "testing", "the", "random", "data", "generator")), 4)));
-		System.out.println(rdg.nextUniform(0d, 0.5d, false));
-		System.out.println(rdg.nextBinomial(1, 0.7d));
 	}
 }
