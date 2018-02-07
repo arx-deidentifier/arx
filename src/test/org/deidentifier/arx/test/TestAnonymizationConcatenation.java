@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer;
@@ -88,6 +89,30 @@ public class TestAnonymizationConcatenation {
         }
     }
     
+    /**
+     * This class encapsulates a number of concatenation scenarios.
+     * 
+     * @author Helmut Spengler
+     *
+     */
+    private class TestCase {
+
+        /** The name of the input data file. */
+        private final String dataset;
+        /** The concatenation scenarios */
+        private final Risks[] scenarios;
+        
+        /**
+         * Creates a new instance.
+         * @param dataset
+         * @param scenarios
+         */
+        public TestCase(String dataset, Risks... scenarios) {
+            this.dataset = dataset;
+            this.scenarios = scenarios;
+        }
+    }
+    
     
     /**
      * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds using the adult
@@ -98,24 +123,27 @@ public class TestAnonymizationConcatenation {
     @Test
     public void testAnonymizationConcatenation () throws IOException {
 
-        performConcatenatedAnonymizations(
-          "./data/adult.csv",
-          new Risks[] {
-              new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
-              new Risks(0.3, 0.1, 0.1, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
-              new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
-              new Risks(0.1, 0.3, 0.1, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))}
-        );
-        
-        performConcatenatedAnonymizations(
-          "./data/adult.csv",
-          new Risks[] {
-              new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
-              new Risks(0.3, 0.1, 0, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
-              new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
-              new Risks(0.1, 0.3, 0, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))}
-        );
+        TestCase[] tests = new TestCase[] { new TestCase("./data/adult.csv",
+                                                         new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
+                                                         new Risks(0.3, 0.1, 0.1, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
+                                                         new Risks(0.2, 0.05, 0.05, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
+                                                         new Risks(0.1, 0.3, 0.1, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))),
+                                            new TestCase("./data/adult.csv",
+                                                         new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status"))),
+                                                         new Risks(0.3, 0.1, 0, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
+                                                         new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation", "salary-class"))),
+                                                         new Risks(0.1, 0.3, 0, new HashSet<String>(Arrays.asList("age", "race", "marital-status", "education")))),
+                                            new TestCase("./data/adult.csv", new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("sex", "age", "race"))),
+                                                         new Risks(0.2, 0.05, 0.2, new HashSet<String>(Arrays.asList("age", "race", "marital-status"))),
+                                                         new Risks(0.2, 0.05, 0, new HashSet<String>(Arrays.asList("race", "marital-status", "education"))),
+                                                         new Risks(0.3, 0.1, 0.05, new HashSet<String>(Arrays.asList("marital-status", "education", "native-country"))),
+                                                         new Risks(0.3, 0.1, 0, new HashSet<String>(Arrays.asList("education", "native-country", "workclass"))),
+                                                         new Risks(0.2, 0.05, 0.3, new HashSet<String>(Arrays.asList("native-country", "workclass", "occupation"))),
+                                                         new Risks(0.1, 0.3, 0.1, new HashSet<String>(Arrays.asList("workclass", "occupation", "salary-class")))) };
 
+        for (TestCase test : tests) {
+            performConcatenatedAnonymizations(test);
+        }
     }
     
     /**
@@ -125,26 +153,21 @@ public class TestAnonymizationConcatenation {
      * @param anonymizations at least two have to be specified
      * @throws IOException if the input dataset cannot be read
      */
-    private void performConcatenatedAnonymizations (String dataset, Risks... anonymizations) throws IOException {
-        
-        // Check arguments
-        if (anonymizations.length < 2) {
-            throw new IllegalArgumentException("Need to specify at least two anonymizations");
-        }
+    private void performConcatenatedAnonymizations (TestCase test) throws IOException {
         
         // Read input data
-        Data inputData = Data.create(dataset, StandardCharsets.UTF_8, ';');
+        Data inputData = Data.create(test.dataset, StandardCharsets.UTF_8, ';');
         
         // Iterate over anonymizations
-        for (int i = 0; i < anonymizations.length; i++) {
+        for (int i = 0; i < test.scenarios.length; i++) {
             
             System.out.println("Step: " + i);
             
             // Perform cell suppression
-            Data outputData = anonymize(inputData, anonymizations[i]);
+            Data outputData = anonymize(inputData, test.scenarios[i]);
             
             // Validate results
-            assessRisks(outputData, Arrays.copyOfRange(anonymizations, 0, i + 1));
+            assessRisks(outputData, Arrays.copyOfRange(test.scenarios, 0, i + 1));
 
             // Prepare for next iteration
             inputData = outputData;
@@ -235,6 +258,7 @@ public class TestAnonymizationConcatenation {
                 checkRisk("Own category", riskModel2.getHighestRisk(), riskModel2.getSuccessRate(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
             }
         }
+        
     }
     
     /**
@@ -256,6 +280,8 @@ public class TestAnonymizationConcatenation {
             assertTrue("Highest risk (" + message + ")", highestRisk <= parametersRisk.highestRisk);
         }
         assertTrue("Records at risk (" + message + ")", recordsAtRisk <= parametersRisk.recordsAtRisk);
+        
+        System.out.println(message + "  " + highestRisk + ", " + averageRisk + ", " + recordsAtRisk);
     }
 
     /**
