@@ -45,8 +45,8 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
                               double riskThreshold){
         super(monotonicWithSuppression, monotonicWithGeneralization);
         this.threshold = riskThreshold;
-        if (this.threshold < 0d || this.threshold >= 1d) {
-            throw new IllegalArgumentException("Threshold out of range. Must be in [0, 1[");
+        if (this.threshold < 0d || this.threshold > 1d) {
+            throw new IllegalArgumentException("Threshold out of range. Must be in [0, 1]");
         }
     }
     
