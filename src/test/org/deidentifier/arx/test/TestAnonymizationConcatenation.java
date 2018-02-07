@@ -153,7 +153,7 @@ public class TestAnonymizationConcatenation {
         Set<String> qis = new HashSet<String>(Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass", "occupation", "salary-class"));
         int numAnons = 5;
         int numQisPerAnon = 3;
-        double[] rangeHighestRisk  = { 0.0d, 0.51d };
+        double[] rangeHighestRisk  = { 0.0d, 0.5d };
         double[] rangeAverageRisk  = { 0.0d, 0.3d };
         double[] rangeRecordsAtRisk= { 0.0d, 0.3d };
 
