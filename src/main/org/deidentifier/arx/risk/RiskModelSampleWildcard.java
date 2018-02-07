@@ -187,13 +187,13 @@ public class RiskModelSampleWildcard {
         }
         
         // Records at risk
-        this.recordsAtRisk = (double)numAtRisk / (double)numRecords;
+        this.recordsAtRisk = numRecords == 0 ? 0d : (double)numAtRisk / (double)numRecords;
 
         // Highest risk
-        this.highestRisk = highestRisk;
+        this.highestRisk = numRecords == 0 ? 0d : highestRisk;
         
         // Average risk
-        this.averageRisk = (double)totalRisk / (double)numRecords;
+        this.averageRisk = numRecords == 0 ? 0d : (double)totalRisk / (double)numRecords;
     }
 
     /**
