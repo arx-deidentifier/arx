@@ -73,6 +73,9 @@ public class TestCellSuppression {
 
         /**
          * Creates a new instance
+         * @param averageRisk
+         * @param highestRisk
+         * @param recordsAtRisk
          * @param qis
          */
         public Risks(double averageRisk, double highestRisk, double recordsAtRisk, List<String> qis) {
