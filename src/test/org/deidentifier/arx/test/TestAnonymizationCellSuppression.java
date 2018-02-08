@@ -282,8 +282,6 @@ public class TestAnonymizationCellSuppression {
             assertTrue("Highest risk (" + message + ") - actual vs. specified: " + highestRisk + " / " + parametersRisk.highestRisk, highestRisk <= parametersRisk.highestRisk);
         }
         assertTrue("Records at risk (" + message + ") - actual vs. specified: " + recordsAtRisk + " / " + parametersRisk.recordsAtRisk, recordsAtRisk <= parametersRisk.recordsAtRisk);
-        
-        System.out.println(message + "  " + highestRisk + ", " + averageRisk + ", " + recordsAtRisk);
     }
     
     /**
