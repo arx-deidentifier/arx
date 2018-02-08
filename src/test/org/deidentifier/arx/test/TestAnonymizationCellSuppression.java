@@ -38,7 +38,6 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
-import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
@@ -51,11 +50,10 @@ import org.junit.Test;
  * @author Fabian Prasser
  * @author Helmut Spengler
  */
-public class TestCellSuppression {
+public class TestAnonymizationCellSuppression {
     
     /**
-     * This class encapsulates parameters related to risk management. It can be used
-     * for threshold definitions as well as for storing/retrieving results.
+     * This class encapsulates a risk management scenario.
      * 
      * @author Fabian Prasser
      * @author Helmut Spengler
@@ -90,7 +88,7 @@ public class TestCellSuppression {
     }
     
     /**
-     * This class encapsulates a number of concatenation scenarios.
+     * This class encapsulates a number of scenarios to handle in a row.
      * 
      * @author Helmut Spengler
      *
@@ -99,7 +97,7 @@ public class TestCellSuppression {
 
         /** The name of the input data file. */
         private final String dataset;
-        /** The concatenation scenarios */
+        /** The scenarios to handle in a row */
         private final Risks[] scenarios;
         
         /**
@@ -115,44 +113,12 @@ public class TestCellSuppression {
     
     
     /**
-     * Test the influence of concatenating anonymizations with overlapping qi definitions on the satisfaction of risk thresholds using the adult
-     * dataset.
+     * Randomly generates, permutes and executes risk management scenarios.
      * 
      * @throws IOException
      */
     @Test
-    public void testStaticAnonymizationConcatenation () throws IOException {
-
-        TestCase[] tests = new TestCase[] { new TestCase("./data/adult.csv",
-                                                         new Risks(0.2, 0.05, 0.05, Arrays.asList("sex", "age", "race", "marital-status")),
-                                                         new Risks(0.3, 0.1, 0.1, Arrays.asList("marital-status", "education", "native-country")),
-                                                         new Risks(0.2, 0.05, 0.05, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
-                                                         new Risks(0.1, 0.3, 0.1, Arrays.asList("age", "race", "marital-status", "education"))),
-                                            new TestCase("./data/adult.csv",
-                                                         new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race", "marital-status")),
-                                                         new Risks(0.3, 0.1, 0, Arrays.asList("marital-status", "education", "native-country")),
-                                                         new Risks(0.2, 0.05, 0, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
-                                                         new Risks(0.1, 0.3, 0, Arrays.asList("age", "race", "marital-status", "education"))),
-                                            new TestCase("./data/adult.csv", new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race")),
-                                                         new Risks(0.2, 0.05, 0.2, Arrays.asList("age", "race", "marital-status")),
-                                                         new Risks(0.2, 0.05, 0, Arrays.asList("race", "marital-status", "education")),
-                                                         new Risks(0.3, 0.1, 0.05, Arrays.asList("marital-status", "education", "native-country")),
-                                                         new Risks(0.3, 0.1, 0, Arrays.asList("education", "native-country", "workclass")),
-                                                         new Risks(0.2, 0.05, 0.3, Arrays.asList("native-country", "workclass", "occupation")),
-                                                         new Risks(0.1, 0.3, 0.1, Arrays.asList("workclass", "occupation", "salary-class"))) };
-
-        for (TestCase test : tests) {
-            performConcatenatedAnonymizations(test);
-        }
-    }
-    
-    /**
-     * Randomly creates and concatenizes a specified number of anonymization steps.
-     * 
-     * @throws IOException
-     */
-    @Test
-    public void testRandomizedAnonymizationConcatenation() throws IOException {
+    public void testRandomized() throws IOException {
         
         // Parameters
         List<String> qis = Arrays.asList("sex", "age", "race", "marital-status", "education", "native-country", "workclass", "occupation", "salary-class");
@@ -184,32 +150,33 @@ public class TestCellSuppression {
     }
     
     /**
-     * Concatenate anonymizations and check if the privacy guarantees of preceeding anonymizations are sustained.
+     * Test
      * 
-     * @param dataset
-     * @param anonymizations at least two have to be specified
-     * @throws IOException if the input dataset cannot be read
+     * @throws IOException
      */
-    private void performConcatenatedAnonymizations (TestCase test) throws IOException {
-        
-        // Read input data
-        Data inputData = Data.create(test.dataset, StandardCharsets.UTF_8, ';');
-        
-        // Iterate over anonymizations
-        for (int i = 0; i < test.scenarios.length; i++) {
-            
-            System.out.println("Step: " + i);
-            
-            // Perform cell suppression
-            Data outputData = anonymize(inputData, test.scenarios[i]);
-            
-            // Validate results
-            assessRisks(outputData, Arrays.copyOfRange(test.scenarios, 0, i + 1));
+    @Test
+    public void testStatic () throws IOException {
 
-            // Prepare for next iteration
-            inputData = outputData;
-            
-            new CSVDataOutput("tmp.csv").write(outputData.getHandle().iterator());
+        TestCase[] tests = new TestCase[] { new TestCase("./data/adult.csv",
+                                                         new Risks(0.2, 0.05, 0.05, Arrays.asList("sex", "age", "race", "marital-status")),
+                                                         new Risks(0.3, 0.1, 0.1, Arrays.asList("marital-status", "education", "native-country")),
+                                                         new Risks(0.2, 0.05, 0.05, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
+                                                         new Risks(0.1, 0.3, 0.1, Arrays.asList("age", "race", "marital-status", "education"))),
+                                            new TestCase("./data/adult.csv",
+                                                         new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race", "marital-status")),
+                                                         new Risks(0.3, 0.1, 0, Arrays.asList("marital-status", "education", "native-country")),
+                                                         new Risks(0.2, 0.05, 0, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
+                                                         new Risks(0.1, 0.3, 0, Arrays.asList("age", "race", "marital-status", "education"))),
+                                            new TestCase("./data/adult.csv", new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race")),
+                                                         new Risks(0.2, 0.05, 0.2, Arrays.asList("age", "race", "marital-status")),
+                                                         new Risks(0.2, 0.05, 0, Arrays.asList("race", "marital-status", "education")),
+                                                         new Risks(0.3, 0.1, 0.05, Arrays.asList("marital-status", "education", "native-country")),
+                                                         new Risks(0.3, 0.1, 0, Arrays.asList("education", "native-country", "workclass")),
+                                                         new Risks(0.2, 0.05, 0.3, Arrays.asList("native-country", "workclass", "occupation")),
+                                                         new Risks(0.1, 0.3, 0.1, Arrays.asList("workclass", "occupation", "salary-class"))) };
+
+        for (TestCase test : tests) {
+            performConcatenatedAnonymizations(test);
         }
     }
     
@@ -266,15 +233,15 @@ public class TestCellSuppression {
         // Return result
         return anonData;
     }
-
+    
     /**
-         * Assess the re-identification risks of a dataset.
-         * 
-         * @param data the data
-         * @param anonymizations the risk setttings for the previous anonmizations
-         * @return
-         * @throws IOException 
-         */
+     * Check risks
+     * 
+     * @param data the data
+     * @param anonymizations the risk setttings for the previous anonmizations
+     * @return
+     * @throws IOException
+     */
     private void assessRisks(Data data, Risks... anonymizations) throws IOException {
 
         // For each concatenated anonymization
@@ -283,9 +250,6 @@ public class TestCellSuppression {
             // Configure QIs
             configureQIs(data, anonymizations[i].qis);
             RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
-
-            System.out.println(" - Substep: " + i);
-            System.out.println(" - " + anonymizations[i]);
 
             // Check wildcard risk
             RiskModelSampleWildcard riskModel = builder.getSampleBasedRiskSummaryWildcard(anonymizations[i].highestRisk, DataType.ANY_VALUE);
@@ -297,9 +261,8 @@ public class TestCellSuppression {
                 checkRisk("Own category", riskModel2.getHighestRisk(), riskModel2.getSuccessRate(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
             }
         }
-        
     }
-    
+
     /**
      * Check risks
      * @param message
@@ -322,9 +285,9 @@ public class TestCellSuppression {
         
         System.out.println(message + "  " + highestRisk + ", " + averageRisk + ", " + recordsAtRisk);
     }
-
+    
     /**
-     * Configure the dataset to the given quasi-identifiers. The remaining attributes are configured as insensitive.
+     * Configure the QIs
      * 
      * @param data
      * @param qis
@@ -337,6 +300,24 @@ public class TestCellSuppression {
             data.getDefinition().setAttributeType(qi, getHierarchy(data, qi));
         }
     }
+
+    /**
+	 * Returns the generalization hierarchy for the dataset and attribute
+	 * 
+	 * @param data
+	 * @param attribute
+	 * @return
+	 * @throws IOException
+	 */
+	private Hierarchy getHierarchy(Data data, String attribute) {
+		DefaultHierarchy hierarchy = Hierarchy.create();
+		int col = data.getHandle().getColumnIndexOf(attribute);
+		String[] values = data.getHandle().getDistinctValues(col);
+		for (String value : values) {
+			hierarchy.add(value, DataType.ANY_VALUE);
+		}
+		return hierarchy;
+	}
    
     /**
 	 * Returns a minimal class size for the given risk threshold.
@@ -354,20 +335,28 @@ public class TestCellSuppression {
 	}
 
 	/**
-	 * Returns the generalization hierarchy for the dataset and attribute
-	 * 
-	 * @param data
-	 * @param attribute
-	 * @return
-	 * @throws IOException
-	 */
-	private Hierarchy getHierarchy(Data data, String attribute) {
-		DefaultHierarchy hierarchy = Hierarchy.create();
-		int col = data.getHandle().getColumnIndexOf(attribute);
-		String[] values = data.getHandle().getDistinctValues(col);
-		for (String value : values) {
-			hierarchy.add(value, DataType.ANY_VALUE);
-		}
-		return hierarchy;
-	}
+     * Perform test
+     * 
+     * @param dataset
+     * @param anonymizations at least two have to be specified
+     * @throws IOException if the input dataset cannot be read
+     */
+    private void performConcatenatedAnonymizations (TestCase test) throws IOException {
+        
+        // Read input data
+        Data inputData = Data.create(test.dataset, StandardCharsets.UTF_8, ';');
+        
+        // Iterate over anonymizations
+        for (int i = 0; i < test.scenarios.length; i++) {
+            
+            // Perform cell suppression
+            Data outputData = anonymize(inputData, test.scenarios[i]);
+            
+            // Validate results
+            assessRisks(outputData, Arrays.copyOfRange(test.scenarios, 0, i + 1));
+
+            // Prepare for next iteration
+            inputData = outputData;
+        }
+    }
 }
