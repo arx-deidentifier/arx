@@ -134,7 +134,7 @@ public class TestAnonymizationCellSuppression {
             for (int i = 0; i < numberOfDefinitions; i++) {
                 
                 // Get random values
-                Collections.shuffle(qis);
+                Collections.shuffle(qis, random);
                 List<String> randomQis = qis.subList(0, numberOfQisPerDefinition);
                 double randomHighestRisk = random.nextDouble();
                 double randomAverageRisk = random.nextDouble();
@@ -238,7 +238,7 @@ public class TestAnonymizationCellSuppression {
      * Check risks
      * 
      * @param data the data
-     * @param anonymizations the risk setttings for the previous anonmizations
+     * @param anonymizations the risk settings for the previous anonmizations
      * @return
      * @throws IOException
      */
