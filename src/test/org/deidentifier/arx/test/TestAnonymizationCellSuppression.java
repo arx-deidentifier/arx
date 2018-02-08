@@ -145,7 +145,7 @@ public class TestAnonymizationCellSuppression {
             }
             
             // Perform tests
-            performConcatenatedAnonymizations(tc);
+            test(tc);
         }
     }
     
@@ -176,7 +176,7 @@ public class TestAnonymizationCellSuppression {
                                                          new Risks(0.1, 0.3, 0.1, Arrays.asList("workclass", "occupation", "salary-class"))) };
 
         for (TestCase test : tests) {
-            performConcatenatedAnonymizations(test);
+            test(test);
         }
     }
     
@@ -339,7 +339,7 @@ public class TestAnonymizationCellSuppression {
      * @param anonymizations at least two have to be specified
      * @throws IOException if the input dataset cannot be read
      */
-    private void performConcatenatedAnonymizations (TestCase test) throws IOException {
+    private void test (TestCase test) throws IOException {
         
         // Read input data
         Data inputData = Data.create(test.dataset, StandardCharsets.UTF_8, ';');
