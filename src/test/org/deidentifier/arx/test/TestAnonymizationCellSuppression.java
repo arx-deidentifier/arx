@@ -258,7 +258,12 @@ public class TestAnonymizationCellSuppression {
             // Check own category
             if (i == anonymizations.length - 1) {
                 ProsecutorRisk riskModel2 = builder.getSampleBasedRiskSummary(anonymizations[i].highestRisk).getProsecutorRisk();
-                checkRisk("Own category", riskModel2.getHighestRisk(), riskModel2.getSuccessRate(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
+                try {
+                    checkRisk("Own category", riskModel2.getHighestRisk(), riskModel2.getSuccessRate(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
+                } catch (AssertionError e) {
+                    System.out.println(riskModel2.getHighestRisk() + " - " + riskModel2.getSuccessRate() + " - " + riskModel2.getRecordsAtRisk());
+                    throw(e);
+                }
             }
         }
     }
