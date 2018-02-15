@@ -60,7 +60,7 @@ public class TestSingleTraFo {
 
         @Override
         public String toString() {
-            return "Risks [highestRisk=" + highestRisk + ", averageRisk=" + averageRisk + 
+            return "Risks [averageRisk=" + averageRisk + ", highestRisk=" + highestRisk +
                    ", recordsAtRisk=" + recordsAtRisk + ", qis=" + qis + "]";
         }
     }
@@ -116,14 +116,14 @@ public class TestSingleTraFo {
     /**
      * Check risks
      * @param message
-     * @param highestRisk
      * @param averageRisk
+     * @param highestRisk
      * @param recordsAtRisk
      * @param parametersRisk
      */
     private void checkRisk(String message,
-                           double highestRisk,
                            double averageRisk,
+                           double highestRisk,
                            double recordsAtRisk,
                            Risks parametersRisk) {
         
@@ -181,13 +181,18 @@ public class TestSingleTraFo {
         // Release handles
         Data anonData =  Data.create(output.iterator());
         anonData.getHandle();
-        output.release();
         
+        // Assess risks
         configureQIs(anonData, risks.qis);
         RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
         ProsecutorRisk riskModel = builder.getSampleBasedRiskSummary(risks.highestRisk).getProsecutorRisk();
-        
-        checkRisk("", riskModel.getHighestRisk(), riskModel.getSuccessRate(), riskModel.getRecordsAtRisk(), risks);
+        try {
+            checkRisk("", riskModel.getSuccessRate(), riskModel.getHighestRisk(), riskModel.getRecordsAtRisk(), risks);
+        } catch (AssertionError e) {
+            System.out.println(risks);
+            System.out.println(riskModel.getSuccessRate() + " - " + riskModel.getHighestRisk() + " - " + riskModel.getRecordsAtRisk());
+            throw(e);
+        }
     }
 
 }
