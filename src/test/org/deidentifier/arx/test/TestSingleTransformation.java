@@ -141,7 +141,7 @@ public class TestSingleTransformation {
                                 Arrays.asList("occupation", "age", "workclass", "sex", "native-country", "education", "marital-status"));
         
         // Load file
-        Data data = Data.create("TestFileOut.csv", Charset.defaultCharset(), ';');
+        Data data = Data.create("TestFileIn.csv", Charset.defaultCharset(), ';');
         configureQIs(data, risks.qis);
         
         
@@ -184,7 +184,7 @@ public class TestSingleTransformation {
         
         // Assess risks
         configureQIs(anonData, risks.qis);
-        RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
+        RiskEstimateBuilder builder = anonData.getHandle().getRiskEstimator();
         ProsecutorRisk riskModel = builder.getSampleBasedRiskSummary(risks.highestRisk).getProsecutorRisk();
         try {
             checkRisk("", riskModel.getSuccessRate(), riskModel.getHighestRisk(), riskModel.getRecordsAtRisk(), risks);
