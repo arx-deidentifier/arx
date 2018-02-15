@@ -137,11 +137,11 @@ public class TestSingleTransformation {
     @Test
     public void test() throws IOException {
         
-        Risks risks = new Risks(0.3928991653679357, 0.05871560541486287, 0.0699862407603622,
-                                Arrays.asList("occupation", "age", "workclass", "sex", "native-country", "education", "marital-status"));
+        Risks risks = new Risks(1d, 0.05871560541486287, 0d,
+                                Arrays.asList("sex", "age", "workclass"));
         
         // Load file
-        Data data = Data.create("TestFileIn.csv", Charset.defaultCharset(), ';');
+        Data data = Data.create("data/adult.csv", Charset.defaultCharset(), ';');
         configureQIs(data, risks.qis);
         
         
@@ -178,7 +178,7 @@ public class TestSingleTransformation {
             }
         }
         
-        // Release handles
+        // Copy data to new handle
         Data anonData =  Data.create(output.iterator());
         anonData.getHandle();
         
