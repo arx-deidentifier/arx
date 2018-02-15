@@ -38,6 +38,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
+import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
@@ -51,6 +52,8 @@ import org.junit.Test;
  * @author Helmut Spengler
  */
 public class TestAnonymizationCellSuppression {
+    
+    int runningIndex = 0;
     
     /**
      * This class encapsulates a risk management scenario.
@@ -253,15 +256,15 @@ public class TestAnonymizationCellSuppression {
 
             // Check wildcard risk
             RiskModelSampleWildcard riskModel = builder.getSampleBasedRiskSummaryWildcard(anonymizations[i].highestRisk, DataType.ANY_VALUE);
-            checkRisk("Wildcard", riskModel.getHighestRisk(), riskModel.getAverageRisk(), riskModel.getRecordsAtRisk(), anonymizations[i]);
+            checkRisk("Wildcard", riskModel.getAverageRisk(), riskModel.getHighestRisk(), riskModel.getRecordsAtRisk(), anonymizations[i]);
 
             // Check own category
             if (i == anonymizations.length - 1) {
                 ProsecutorRisk riskModel2 = builder.getSampleBasedRiskSummary(anonymizations[i].highestRisk).getProsecutorRisk();
                 try {
-                    checkRisk("Own category", riskModel2.getHighestRisk(), riskModel2.getSuccessRate(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
+                    checkRisk("Own category", riskModel2.getSuccessRate(), riskModel2.getHighestRisk(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
                 } catch (AssertionError e) {
-                    System.out.println(riskModel2.getHighestRisk() + " - " + riskModel2.getSuccessRate() + " - " + riskModel2.getRecordsAtRisk());
+                    System.out.println(riskModel2.getSuccessRate() + " - " + riskModel2.getHighestRisk() + " - " + riskModel2.getRecordsAtRisk());
                     throw(e);
                 }
             }
@@ -271,14 +274,14 @@ public class TestAnonymizationCellSuppression {
     /**
      * Check risks
      * @param message
-     * @param highestRisk
      * @param averageRisk
+     * @param highestRisk
      * @param recordsAtRisk
      * @param parametersRisk
      */
     private void checkRisk(String message,
-                           double highestRisk,
                            double averageRisk,
+                           double highestRisk,
                            double recordsAtRisk,
                            Risks parametersRisk) {
         
@@ -354,6 +357,18 @@ public class TestAnonymizationCellSuppression {
             
             // Perform cell suppression
             Data outputData = anonymize(inputData, test.scenarios[i]);
+            
+            if (runningIndex++ == 38) {
+
+                System.out.println("PrivacySettings:" + test.scenarios[i]);
+                
+                CSVDataOutput csvInData = new CSVDataOutput("testFileIn.csv");
+                csvInData.write(inputData.getHandle().iterator());
+
+                CSVDataOutput csvOutData = new CSVDataOutput("testFileOut.csv");
+                csvOutData.write(outputData.getHandle().iterator());
+            }
+        
             
             // Validate results
             assessRisks(outputData, Arrays.copyOfRange(test.scenarios, 0, i + 1));
