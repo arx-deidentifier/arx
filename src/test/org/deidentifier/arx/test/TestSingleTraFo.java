@@ -60,7 +60,7 @@ public class TestSingleTraFo {
 
         @Override
         public String toString() {
-            return "Risks [averageRisk=" + averageRisk + ", highestRisk=" + highestRisk +
+            return "Risks [highestRisk=" + highestRisk + ", averageRisk=" + averageRisk + 
                    ", recordsAtRisk=" + recordsAtRisk + ", qis=" + qis + "]";
         }
     }
@@ -137,7 +137,7 @@ public class TestSingleTraFo {
     @Test
     public void test() throws IOException {
         
-        Risks risks = new Risks(0.07692307692307693, 0.03772959352828062, 0.12068165241031761,
+        Risks risks = new Risks(0.3928991653679357, 0.05871560541486287, 0.0699862407603622,
                                 Arrays.asList("occupation", "age", "workclass", "sex", "native-country", "education", "marital-status"));
         
         // Load file
