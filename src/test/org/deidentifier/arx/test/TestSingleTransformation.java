@@ -24,7 +24,7 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
 import org.junit.Test;
 
-public class TestSingleTraFo {    
+public class TestSingleTransformation {    
     
     /**
      * This class encapsulates a risk management scenario.
@@ -141,7 +141,7 @@ public class TestSingleTraFo {
                                 Arrays.asList("occupation", "age", "workclass", "sex", "native-country", "education", "marital-status"));
         
         // Load file
-        Data data = Data.create("TestFileIn.csv", Charset.defaultCharset(), ';');
+        Data data = Data.create("TestFileOut.csv", Charset.defaultCharset(), ';');
         configureQIs(data, risks.qis);
         
         
