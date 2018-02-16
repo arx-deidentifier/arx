@@ -269,7 +269,7 @@ abstract class QualityModel<T> {
     boolean isSuppressed(Group<TupleWrapper> entry) {
 
         // Check flag
-        if (entry.getElement().isOutlier()) { return true; }
+        if (entry.getElement().isSuppressed()) { return true; }
 
         // Check values
         String[] array = entry.getElement().getValues();

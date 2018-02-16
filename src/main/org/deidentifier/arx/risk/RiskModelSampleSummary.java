@@ -162,12 +162,31 @@ public class RiskModelSampleSummary {
      * @param handle Handle
      * @param identifiers Identifiers
      * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param suppressed 
      * @param stop Stop flag
      * @param progress Progress
      */
     public RiskModelSampleSummary(DataHandleInternal handle,
                                   Set<String> identifiers,
                                   double threshold,
+                                  WrappedBoolean stop,
+                                  WrappedInteger progress) {
+        this(handle, identifiers, threshold, null, stop, progress);
+    }
+    
+    /**
+     * Creates a new instance
+     * @param handle Handle
+     * @param identifiers Identifiers
+     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param suppressed 
+     * @param stop Stop flag
+     * @param progress Progress
+     */
+    public RiskModelSampleSummary(DataHandleInternal handle,
+                                  Set<String> identifiers,
+                                  double threshold,
+                                  String suppressed, 
                                   WrappedBoolean stop,
                                   WrappedInteger progress) {
 
@@ -178,10 +197,10 @@ public class RiskModelSampleSummary {
         Groupify<TupleWrapper> sample;
         Groupify<TupleWrapper> population;
         if (handle.getSuperset() != null) {
-            sample = getGroups(handle, identifiers, 0d, 0.45d, stop, progress, false);
-            population = getGroups(handle.getSuperset(), identifiers,  0.45d, 0.45d, stop, progress, true);
+            sample = getGroups(handle, identifiers, 0d, 0.45d, stop, progress, false, suppressed);
+            population = getGroups(handle.getSuperset(), identifiers,  0.45d, 0.45d, stop, progress, true, suppressed);
         } else {
-            sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress, false);
+            sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress, false, suppressed);
             population = sample;
         }
         
@@ -231,6 +250,7 @@ public class RiskModelSampleSummary {
      * @param stop
      * @param progress
      * @param ignoreOutliers 
+     * @param suppressed 
      * @return
      */
     private Groupify<TupleWrapper> getGroups(DataHandleInternal handle,
@@ -239,7 +259,8 @@ public class RiskModelSampleSummary {
                                              double factor,
                                              WrappedBoolean stop,
                                              WrappedInteger progress,
-                                             boolean ignoreOutliers) {
+                                             boolean ignoreOutliers,
+                                             String suppressed) {
 
         /* ********************************
          * Check 
@@ -272,7 +293,7 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, ignoreOutliers);
+            TupleWrapper tuple = new TupleWrapper(handle, indices, row, ignoreOutliers, suppressed);
             map.add(tuple);
             if (stop.value) { throw new ComputationInterruptedException(); }
         }
@@ -318,7 +339,7 @@ public class RiskModelSampleSummary {
             }
             
             // Only process unsuppressed records
-            if (!element.getElement().isOutlier()) {
+            if (!element.getElement().isSuppressed()) {
                 
                 int groupSizeInSample = element.getCount();
                 int groupSizeInPopulation = groupSizeInSample;
@@ -395,7 +416,7 @@ public class RiskModelSampleSummary {
             }
             
             // Only process unsuppressed records
-            if (!element.getElement().isOutlier()) {
+            if (!element.getElement().isSuppressed()) {
                 
                 int groupSizeInSample = element.getCount();
                 int groupSizeInPopulation = groupSizeInSample;
@@ -458,7 +479,7 @@ public class RiskModelSampleSummary {
             }
             
             // Only process unsuppressed records
-            if (!element.getElement().isOutlier()) {
+            if (!element.getElement().isSuppressed()) {
                 
                 // Compute rA
                 int groupSize = element.getCount();

@@ -616,7 +616,7 @@ public class StatisticsBuilder {
             averageEquivalenceClassSizeIncludingOutliers += element.getCount();
             numberOfTuples += element.getCount();
             
-            if (!element.getElement().isOutlier()) {
+            if (!element.getElement().isSuppressed()) {
                 
                 maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
                 minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);

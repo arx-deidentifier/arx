@@ -143,7 +143,23 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-    
+
+    /**
+     * Returns a risk summary
+     *
+     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param suppressed
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold, String suppressed) throws InterruptedException {
+        try {
+            return parent.getSampleBasedRiskSummary(threshold, suppressed);
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
     /**
      * Returns a risk summary, using wildcard matching. "*" will be interpreted as a wildcard
      *

@@ -153,7 +153,7 @@ public class RiskModelSampleWildcard {
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
-            if (!group.getElement().isOutlier()) {
+            if (!group.getElement().isSuppressed()) {
                 frequencies.put(group, group.getCount());
                 numRecords += group.getCount();
                 add(stop, frequencies, group, index, 0);
@@ -175,7 +175,7 @@ public class RiskModelSampleWildcard {
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
-            if (!group.getElement().isOutlier()) {
+            if (!group.getElement().isSuppressed()) {
                 double risk = 1d / (double)group.getCount();
                 highestRisk = Math.max(highestRisk, risk);
                 totalRisk += risk * (double)frequencies.get(group);

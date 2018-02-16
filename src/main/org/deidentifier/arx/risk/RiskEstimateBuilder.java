@@ -265,6 +265,18 @@ public class RiskEstimateBuilder {
     }
 
     /**
+     * Returns a risk summary
+     *
+     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param suppressed
+     * @return
+     */
+    public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold, String suppressed) {
+        progress.value = 0;
+        return new RiskModelSampleSummary(handle, identifiers, threshold, suppressed, stop, progress);
+    }
+
+    /**
      * Returns a risk summary, using wildcard matching. "*" will be interpreted as a wildcard
      *
      * @param threshold Acceptable highest probability of re-identification for a single record
