@@ -24,7 +24,7 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
 import org.junit.Test;
 
-public class TestSingleTransformation {    
+public class TestAnonymizationCellSuppressionDebug {    
     
     /**
      * This class encapsulates a risk management scenario.
