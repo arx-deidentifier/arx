@@ -33,12 +33,12 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
-import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
@@ -192,8 +192,11 @@ public class TestAnonymizationCellSuppression {
      */
     private Data anonymize(Data data, Risks risks) throws IOException {
         
+        DataHandle handle = data.getHandle();
+        DataDefinition definition = data.getDefinition();
+        
         // Configure QIs
-        configureQIs(data, risks.qis);
+        configureQIs(handle, definition, risks.qis);
 
         // Setup anonymization
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -240,19 +243,20 @@ public class TestAnonymizationCellSuppression {
     /**
      * Check risks
      * 
-     * @param data the data
+     * @param handle
+     * @param definition
      * @param anonymizations the risk settings for the previous anonmizations
      * @return
      * @throws IOException
      */
-    private void assessRisks(Data data, Risks... anonymizations) throws IOException {
+    private void assessRisks(DataHandle handle, DataDefinition definition, Risks... anonymizations) throws IOException {
 
         // For each concatenated anonymization
         for (int i = 0; i < anonymizations.length; i++) {
             
             // Configure QIs
-            configureQIs(data, anonymizations[i].qis);
-            RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
+            configureQIs(handle, definition, anonymizations[i].qis);
+            RiskEstimateBuilder builder = handle.getRiskEstimator();
 
             // Check wildcard risk
             RiskModelSampleWildcard riskModel = builder.getSampleBasedRiskSummaryWildcard(anonymizations[i].highestRisk, DataType.ANY_VALUE);
@@ -295,15 +299,16 @@ public class TestAnonymizationCellSuppression {
     /**
      * Configure the QIs
      * 
-     * @param data
+     * @param handle
+     * @param definition
      * @param qis
      */
-    private void configureQIs(Data data, List<String> qis) {
-        for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
-            data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
+    private void configureQIs(DataHandle handle, DataDefinition definition, List<String> qis) {
+        for (int i = 0; i < handle.getNumColumns(); i++) {
+            definition.setAttributeType(handle.getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
         }       
         for (String qi : qis) {
-            data.getDefinition().setAttributeType(qi, getHierarchy(data, qi));
+            definition.setAttributeType(qi, getHierarchy(handle, qi));
         }
     }
 
@@ -315,10 +320,10 @@ public class TestAnonymizationCellSuppression {
 	 * @return
 	 * @throws IOException
 	 */
-	private Hierarchy getHierarchy(Data data, String attribute) {
+	private Hierarchy getHierarchy(DataHandle handle, String attribute) {
 		DefaultHierarchy hierarchy = Hierarchy.create();
-		int col = data.getHandle().getColumnIndexOf(attribute);
-		String[] values = data.getHandle().getDistinctValues(col);
+		int col = handle.getColumnIndexOf(attribute);
+		String[] values = handle.getDistinctValues(col);
 		for (String value : values) {
 			hierarchy.add(value, DataType.ANY_VALUE);
 		}
@@ -357,21 +362,11 @@ public class TestAnonymizationCellSuppression {
             
             // Perform cell suppression
             Data outputData = anonymize(inputData, test.scenarios[i]);
-            
-            if (runningIndex++ == 38) {
-
-                System.out.println("PrivacySettings:" + test.scenarios[i]);
-                
-                CSVDataOutput csvInData = new CSVDataOutput("testFileIn.csv");
-                csvInData.write(inputData.getHandle().iterator());
-
-                CSVDataOutput csvOutData = new CSVDataOutput("testFileOut.csv");
-                csvOutData.write(outputData.getHandle().iterator());
-            }
-        
+            DataHandle outHandle = outputData.getHandle();
+            DataDefinition outDefinition = outputData.getDefinition();        
             
             // Validate results
-            assessRisks(outputData, Arrays.copyOfRange(test.scenarios, 0, i + 1));
+            assessRisks(outHandle, outDefinition, Arrays.copyOfRange(test.scenarios, 0, i + 1));
 
             // Prepare for next iteration
             inputData = outputData;
