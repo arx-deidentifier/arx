@@ -33,6 +33,7 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
@@ -189,8 +190,11 @@ public class TestAnonymizationCellSuppression {
      */
     private Data anonymize(Data data, Risks risks) throws IOException {
         
+        DataHandle handle = data.getHandle();
+        DataDefinition definition = data.getDefinition();
+        
         // Configure QIs
-        configureQIs(data, risks.qis);
+        configureQIs(handle, definition, risks.qis);
 
         // Setup anonymization
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -237,19 +241,20 @@ public class TestAnonymizationCellSuppression {
     /**
      * Check risks
      * 
-     * @param data the data
+     * @param handle
+     * @param definition
      * @param anonymizations the risk settings for the previous anonmizations
      * @return
      * @throws IOException
      */
-    private void assessRisks(Data data, Risks... anonymizations) throws IOException {
+    private void assessRisks(DataHandle handle, DataDefinition definition, Risks... anonymizations) throws IOException {
 
         // For each concatenated anonymization
         for (int i = 0; i < anonymizations.length; i++) {
             
             // Configure QIs
-            configureQIs(data, anonymizations[i].qis);
-            RiskEstimateBuilder builder = data.getHandle().getRiskEstimator();
+            configureQIs(handle, definition, anonymizations[i].qis);
+            RiskEstimateBuilder builder = handle.getRiskEstimator();
 
             // Check wildcard risk
             RiskModelSampleWildcard riskModel = builder.getSampleBasedRiskSummaryWildcard(anonymizations[i].highestRisk, DataType.ANY_VALUE);
@@ -292,52 +297,53 @@ public class TestAnonymizationCellSuppression {
     /**
      * Configure the QIs
      * 
-     * @param data
+     * @param handle
+     * @param definition
      * @param qis
      */
-    private void configureQIs(Data data, List<String> qis) {
-        for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
-            data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
+    private void configureQIs(DataHandle handle, DataDefinition definition, List<String> qis) {
+        for (int i = 0; i < handle.getNumColumns(); i++) {
+            definition.setAttributeType(handle.getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
         }       
         for (String qi : qis) {
-            data.getDefinition().setAttributeType(qi, getHierarchy(data, qi));
+            definition.setAttributeType(qi, getHierarchy(handle, qi));
         }
     }
 
     /**
-	 * Returns the generalization hierarchy for the dataset and attribute
-	 * 
-	 * @param data
-	 * @param attribute
-	 * @return
-	 * @throws IOException
-	 */
-	private Hierarchy getHierarchy(Data data, String attribute) {
-		DefaultHierarchy hierarchy = Hierarchy.create();
-		int col = data.getHandle().getColumnIndexOf(attribute);
-		String[] values = data.getHandle().getDistinctValues(col);
-		for (String value : values) {
-			hierarchy.add(value, DataType.ANY_VALUE);
-		}
-		return hierarchy;
-	}
+     * Returns the generalization hierarchy for the dataset and attribute
+     * 
+     * @param data
+     * @param attribute
+     * @return
+     * @throws IOException
+     */
+    private Hierarchy getHierarchy(DataHandle handle, String attribute) {
+        DefaultHierarchy hierarchy = Hierarchy.create();
+        int col = handle.getColumnIndexOf(attribute);
+        String[] values = handle.getDistinctValues(col);
+        for (String value : values) {
+            hierarchy.add(value, DataType.ANY_VALUE);
+        }
+        return hierarchy;
+    }
    
     /**
-	 * Returns a minimal class size for the given risk threshold.
-	 * 
-	 * @param threshold
-	 * @return
-	 */
-	private int getSizeThreshold(double riskThreshold) {
-		double size = 1d / riskThreshold;
-		double floor = Math.floor(size);
-		if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
-			floor += 1d;
-		}
-		return (int) floor;
-	}
+     * Returns a minimal class size for the given risk threshold.
+     * 
+     * @param threshold
+     * @return
+     */
+    private int getSizeThreshold(double riskThreshold) {
+        double size = 1d / riskThreshold;
+        double floor = Math.floor(size);
+        if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
+            floor += 1d;
+        }
+        return (int) floor;
+    }
 
-	/**
+    /**
      * Perform test
      * 
      * @param dataset
@@ -354,9 +360,11 @@ public class TestAnonymizationCellSuppression {
             
             // Perform cell suppression
             Data outputData = anonymize(inputData, test.scenarios[i]);
+            DataHandle outHandle = outputData.getHandle();
+            DataDefinition outDefinition = outputData.getDefinition();        
             
             // Validate results
-            assessRisks(outputData, Arrays.copyOfRange(test.scenarios, 0, i + 1));
+            assessRisks(outHandle, outDefinition, Arrays.copyOfRange(test.scenarios, 0, i + 1));
 
             // Prepare for next iteration
             inputData = outputData;
