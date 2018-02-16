@@ -25,7 +25,7 @@ import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
 import org.junit.Test;
 
 public class TestSingleTransformation {    
-    
+
     /**
      * This class encapsulates a risk management scenario.
      * 
@@ -33,7 +33,7 @@ public class TestSingleTransformation {
      * @author Helmut Spengler
      */
     private class Risks {
-        
+
         /** Threshold for the average risk */
         final private double averageRisk;;
         /** Threshold for the highest risk */
@@ -61,10 +61,10 @@ public class TestSingleTransformation {
         @Override
         public String toString() {
             return "Risks [averageRisk=" + averageRisk + ", highestRisk=" + highestRisk +
-                   ", recordsAtRisk=" + recordsAtRisk + ", qis=" + qis + "]";
+                    ", recordsAtRisk=" + recordsAtRisk + ", qis=" + qis + "]";
         }
     }
-   
+
     /**
      * Returns a minimal class size for the given risk threshold.
      * 
@@ -126,7 +126,7 @@ public class TestSingleTransformation {
                            double highestRisk,
                            double recordsAtRisk,
                            Risks parametersRisk) {
-        
+
         assertTrue("Average risk (" + message + ") - actual vs. specified: " + averageRisk + " / " + parametersRisk.averageRisk, averageRisk <= parametersRisk.averageRisk);
         if (recordsAtRisk == 0d) {
             assertTrue("Highest risk (" + message + ") - actual vs. specified: " + highestRisk + " / " + parametersRisk.highestRisk, highestRisk <= parametersRisk.highestRisk);
@@ -136,16 +136,16 @@ public class TestSingleTransformation {
 
     @Test
     public void test() throws IOException {
-        
+
         // 17-anonymity
         Risks risks = new Risks(1d, 0.05871560541486287, 0d,
                                 Arrays.asList("sex", "age", "workclass"));
-        
+
         // Load file
         Data data = Data.create("data/adult.csv", Charset.defaultCharset(), ';');
         configureQIs(data, risks.qis);
-        
-        
+
+
         // Setup anonymization
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
@@ -165,10 +165,10 @@ public class TestSingleTransformation {
             config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk, risks.highestRisk, risks.recordsAtRisk));
         }
         config.setHeuristicSearchEnabled(false);
-        
+
         // Perform anonymization
         ARXResult result = anonymizer.anonymize(data, config);
-        
+
         // Perform cell suppression
         DataHandle output = result.getOutput();
         if (result.isOptimizable(output)) {
@@ -178,11 +178,11 @@ public class TestSingleTransformation {
                 throw new RuntimeException(e);
             }
         }
-        
+
         // Copy data to new handle
         Data anonData =  Data.create(output.iterator());
         anonData.getHandle();
-        
+
         // Assess risks
         configureQIs(anonData, risks.qis);
         RiskEstimateBuilder builder = anonData.getHandle().getRiskEstimator();
