@@ -88,7 +88,7 @@ public class MultiClassRandomForest implements ClassificationMethod {
         
         // Set number of variables to split as floor(sqrt(number of features)) if default value was chosen
         if (config.getNumberOfVariablesToSplit() == ClassificationConfigurationRandomForest.DEFAULT_NUMBER_OF_VARIABLES_TO_SPLIT) {
-            config.setNumberOfVariablesToSplit((int) Math.floor(Math.sqrt(features.size())));
+            config.setNumberOfVariablesToSplit((int) Math.floor(Math.sqrt(features.get(0).length)));
         }
         
         // Learn now
