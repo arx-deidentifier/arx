@@ -46,7 +46,7 @@ public class LayoutAttributeSettings implements ILayout {
                                    final Controller controller) {
         
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-1"); //$NON-NLS-1$
-        bar.add(Resources.getMessage("AttributeDefinitionView.10"), //$NON-NLS-1$
+        bar.add(Resources.getMessage("AttributeDefinitionView.13"), //$NON-NLS-1$
                 controller.getResources().getImage(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE), // $NON-NLS-1$
                 new Runnable() {
                     @Override
