@@ -53,8 +53,6 @@ import org.junit.Test;
  */
 public class TestAnonymizationCellSuppression {
     
-    int runningIndex = 0;
-    
     /**
      * This class encapsulates a risk management scenario.
      * 
