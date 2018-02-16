@@ -224,6 +224,10 @@ public class TestAnonymizationCellSuppression {
                 throw new RuntimeException(e);
             }
         }
+
+        // Check own category
+        ProsecutorRisk riskModel2 = output.getRiskEstimator().getSampleBasedRiskSummary(risks.highestRisk).getProsecutorRisk();
+        checkRisk("Own category", riskModel2.getSuccessRate(), riskModel2.getHighestRisk(), riskModel2.getRecordsAtRisk(), risks);
         
         // Release handles
         Data anonData =  Data.create(output.iterator());
@@ -254,17 +258,6 @@ public class TestAnonymizationCellSuppression {
             // Check wildcard risk
             RiskModelSampleWildcard riskModel = builder.getSampleBasedRiskSummaryWildcard(anonymizations[i].highestRisk, DataType.ANY_VALUE);
             checkRisk("Wildcard", riskModel.getAverageRisk(), riskModel.getHighestRisk(), riskModel.getRecordsAtRisk(), anonymizations[i]);
-
-            // Check own category
-            if (i == anonymizations.length - 1) {
-                ProsecutorRisk riskModel2 = builder.getSampleBasedRiskSummary(anonymizations[i].highestRisk).getProsecutorRisk();
-                try {
-                    checkRisk("Own category", riskModel2.getSuccessRate(), riskModel2.getHighestRisk(), riskModel2.getRecordsAtRisk(), anonymizations[i]);
-                } catch (AssertionError e) {
-                    System.out.println(riskModel2.getSuccessRate() + " - " + riskModel2.getHighestRisk() + " - " + riskModel2.getRecordsAtRisk());
-                    throw(e);
-                }
-            }
         }
     }
 
