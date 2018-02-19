@@ -1,11 +1,7 @@
 package org.deidentifier.arx.test;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -17,69 +13,13 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.metric.Metric;
-import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
 import org.junit.Test;
 
 public class TestAnonymizationCellSuppressionDebug {    
     
-    /**
-     * This class encapsulates a risk management scenario.
-     * 
-     * @author Fabian Prasser
-     * @author Helmut Spengler
-     */
-    private class Risks {
-        
-        /** Threshold for the average risk */
-        final private double averageRisk;;
-        /** Threshold for the highest risk */
-        final private double highestRisk;;
-        /** Threshold for records at risk. */
-        final private double recordsAtRisk;
-        /** The quasi-identifiers */
-        final private List<String> qis;
-
-        /**
-         * Creates a new instance
-         * 
-         * @param averageRisk
-         * @param highestRisk
-         * @param recordsAtRisk
-         * @param qis
-         */
-        public Risks(double averageRisk, double highestRisk, double recordsAtRisk, List<String> qis) {
-            this.qis = qis;
-            this.averageRisk   = averageRisk;
-            this.highestRisk   = highestRisk;
-            this.recordsAtRisk = recordsAtRisk;
-        }
-
-        @Override
-        public String toString() {
-            return "Risks [averageRisk=" + averageRisk + ", highestRisk=" + highestRisk +
-                   ", recordsAtRisk=" + recordsAtRisk + ", qis=" + qis + "]";
-        }
-    }
-   
-    /**
-     * Returns a minimal class size for the given risk threshold.
-     * 
-     * @param threshold
-     * @return
-     */
-    private int getSizeThreshold(double riskThreshold) {
-        double size = 1d / riskThreshold;
-        double floor = Math.floor(size);
-        if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
-            floor += 1d;
-        }
-        return (int) floor;
-    }
-
     /**
      * Returns the generalization hierarchy for the dataset and attribute
      * 
@@ -98,52 +38,27 @@ public class TestAnonymizationCellSuppressionDebug {
         return hierarchy;
     }
 
-    /**
-     * Configure the QIs
-     * 
-     * @param data
-     * @param qis
-     */
-    private void configureQIs(Data data, List<String> qis) {
+    @Test
+    public void test() throws IOException {
+
+        // Thresholds
+        String[] qis = new String[]{"occupation", "age", "workclass", "sex", "native-country", "education", "marital-status"};
+        double highestRisk = 0.05871560541486287;
+        double averageRisk = 0.3928991653679357;
+        double recordsAtRisk = 0.0699862407603622;
+        
+        // Load file
+        // TODO: Remove debug data
+        // TODO: Remove debug data
+        // TODO: Remove debug data
+        // TODO: Remove debug data
+        Data data = Data.create("temp2.csv", Charset.defaultCharset(), ';');
         for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
             data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
         }       
         for (String qi : qis) {
             data.getDefinition().setAttributeType(qi, getHierarchy(data, qi));
         }
-    }
-
-    /**
-     * Check risks
-     * @param message
-     * @param averageRisk
-     * @param highestRisk
-     * @param recordsAtRisk
-     * @param parametersRisk
-     */
-    private void checkRisk(String message,
-                           double averageRisk,
-                           double highestRisk,
-                           double recordsAtRisk,
-                           Risks parametersRisk) {
-        
-        assertTrue("Average risk (" + message + ") - actual vs. specified: " + averageRisk + " / " + parametersRisk.averageRisk, averageRisk <= parametersRisk.averageRisk);
-        if (recordsAtRisk == 0d) {
-            assertTrue("Highest risk (" + message + ") - actual vs. specified: " + highestRisk + " / " + parametersRisk.highestRisk, highestRisk <= parametersRisk.highestRisk);
-        }
-        assertTrue("Records at risk (" + message + ") - actual vs. specified: " + recordsAtRisk + " / " + parametersRisk.recordsAtRisk, recordsAtRisk <= parametersRisk.recordsAtRisk);
-    }
-
-    @Test
-    public void test() throws IOException {
-        
-        Risks risks = new Risks(1d, 0.05871560541486287, 0d,
-                                Arrays.asList("sex", "age", "workclass"));
-        
-        // Load file
-        Data data = Data.create("data/adult.csv", Charset.defaultCharset(), ';');
-        configureQIs(data, risks.qis);
-        
         
         // Setup anonymization
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -152,17 +67,7 @@ public class TestAnonymizationCellSuppressionDebug {
         double maxOutliers = 1.0d - o_min;
         config.setSuppressionLimit(maxOutliers);
         config.setQualityModel(Metric.createLossMetric(0d));
-        if (risks.recordsAtRisk == 0d) {
-            int k = getSizeThreshold(risks.highestRisk);
-            if (k != 1) {
-                config.addPrivacyModel(new KAnonymity(k));
-            }
-            if (risks.averageRisk != 1d) {
-                config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk));
-            }
-        } else {
-            config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk, risks.highestRisk, risks.recordsAtRisk));
-        }
+        config.addPrivacyModel(new AverageReidentificationRisk(averageRisk, highestRisk, recordsAtRisk));
         config.setHeuristicSearchEnabled(false);
         
         // Perform anonymization
@@ -179,20 +84,27 @@ public class TestAnonymizationCellSuppressionDebug {
         }
         
         // Copy data to new handle
-        Data anonData =  Data.create(output.iterator());
-        anonData.getHandle();
-        
-        // Assess risks
-        configureQIs(anonData, risks.qis);
-        RiskEstimateBuilder builder = anonData.getHandle().getRiskEstimator();
-        ProsecutorRisk riskModel = builder.getSampleBasedRiskSummary(risks.highestRisk).getProsecutorRisk();
-        try {
-            checkRisk("", riskModel.getSuccessRate(), riskModel.getHighestRisk(), riskModel.getRecordsAtRisk(), risks);
-        } catch (AssertionError e) {
-            System.out.println(risks);
-            System.out.println(riskModel.getSuccessRate() + " - " + riskModel.getHighestRisk() + " - " + riskModel.getRecordsAtRisk());
-            throw(e);
-        }
-    }
+        Data outputData = Data.create(output.iterator());
 
+        // Assess risks
+        for (int i = 0; i < outputData.getHandle().getNumColumns(); i++) {
+            outputData.getDefinition().setAttributeType(outputData.getHandle().getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
+        }
+        for (String qi : qis) {
+            outputData.getDefinition().setAttributeType(qi, getHierarchy(outputData, qi));
+        }
+        
+        ProsecutorRisk riskModelExternal = outputData.getHandle().getRiskEstimator().getSampleBasedRiskSummary(highestRisk, DataType.ANY_VALUE).getProsecutorRisk();
+        ProsecutorRisk riskModelInternal = output.getRiskEstimator().getSampleBasedRiskSummary(highestRisk, DataType.ANY_VALUE).getProsecutorRisk();
+        
+        System.out.println("Average risk: " + averageRisk + " internal: " + riskModelInternal.getSuccessRate());
+        System.out.println("Average risk: " + averageRisk + " external: " + riskModelExternal.getSuccessRate());
+        
+        System.out.println("Highest risk: " + highestRisk + " internal: " + riskModelInternal.getHighestRisk());
+        System.out.println("Highest risk: " + highestRisk + " external: " + riskModelExternal.getHighestRisk());
+        
+        System.out.println("Records at risk: " + recordsAtRisk + " internal: " + riskModelInternal.getRecordsAtRisk());
+        System.out.println("Records at risk: " + recordsAtRisk + " external: " + riskModelExternal.getRecordsAtRisk());
+        
+    }
 }
