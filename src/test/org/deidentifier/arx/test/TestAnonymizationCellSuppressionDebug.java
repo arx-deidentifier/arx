@@ -52,7 +52,7 @@ public class TestAnonymizationCellSuppressionDebug {
         // TODO: Remove debug data
         // TODO: Remove debug data
         // TODO: Remove debug data
-        Data data = Data.create("temp2.csv", Charset.defaultCharset(), ';');
+        Data data = Data.create("data/adult.csv", Charset.defaultCharset(), ';');
         for (int i = 0; i < data.getHandle().getNumColumns(); i++) {
             data.getDefinition().setAttributeType(data.getHandle().getAttributeName(i), AttributeType.INSENSITIVE_ATTRIBUTE);
         }       
