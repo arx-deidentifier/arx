@@ -226,7 +226,7 @@ public class TestAnonymizationCellSuppression {
         }
 
         // Check own category
-        ProsecutorRisk riskModel2 = output.getRiskEstimator().getSampleBasedRiskSummary(risks.highestRisk).getProsecutorRisk();
+        ProsecutorRisk riskModel2 = output.getRiskEstimator().getSampleBasedRiskSummary(risks.highestRisk, DataType.ANY_VALUE).getProsecutorRisk();
         checkRisk("Own category", riskModel2.getSuccessRate(), riskModel2.getHighestRisk(), riskModel2.getRecordsAtRisk(), risks);
         
         // Release handles
