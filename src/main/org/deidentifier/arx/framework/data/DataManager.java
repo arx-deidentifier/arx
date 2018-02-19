@@ -333,30 +333,6 @@ public class DataManager {
     }
 
     /**
-     * Returns centroid distances
-     * @param normalized 
-     * @return
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public DataCentroidDistances<?>[] getCentroidDistances(boolean normalized) {
-
-        // Compute centroid distances
-        DataCentroidDistances[] result = new DataCentroidDistances[dataGeneralized.getHeader().length];
-        for (int column = 0; column < result.length; column++) {
-
-            // Extract info
-            String attribute = dataGeneralized.getHeader()[column];
-            result[column] = new DataCentroidDistances(dataGeneralized, column,
-                                                       definition.getDataType(attribute),
-                                                       hierarchiesGeneralized[column].map,
-                                                       normalized);
-        }
-
-        // Return
-        return result;
-    }
-
-    /**
      * Returns the input data that will be analyzed.
      * 
      * @return the data

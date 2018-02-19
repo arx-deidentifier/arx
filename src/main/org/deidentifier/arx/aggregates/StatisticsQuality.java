@@ -34,14 +34,13 @@ import org.deidentifier.arx.aggregates.quality.QualityDomainShareRedaction;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureColumnOriented;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureRowOriented;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedLoss;
-import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedMSE;
+import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedSquaredError;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedNonUniformEntropy;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedPrecision;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAECS;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAmbiguity;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedDiscernibility;
-import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedKLDivergence;
-import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSSE;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSquaredError;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
@@ -70,8 +69,6 @@ public class StatisticsQuality {
     private QualityMeasureRowOriented          ambiguity;
     /** Row-oriented model */
     private QualityMeasureRowOriented          discernibility;
-    /** Row-oriented model */
-    private QualityMeasureRowOriented          kldivergence;
     /** Row-oriented model */
     private QualityMeasureRowOriented          sse;
 
@@ -132,7 +129,6 @@ public class StatisticsQuality {
             this.aecs = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.ambiguity = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.discernibility = new QualityMeasureRowOriented(0d, 0d, 1d);
-            this.kldivergence = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.sse = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.progress.value = 100;
             
@@ -217,7 +213,7 @@ public class StatisticsQuality {
         // Build
         workload = 10;
         try {
-            this.mse = new QualityModelColumnOrientedMSE(stop,
+            this.mse = new QualityModelColumnOrientedSquaredError(stop,
                                                          progress,
                                                          workload,
                                                          input,
@@ -236,7 +232,7 @@ public class StatisticsQuality {
         }
 
         // Build
-        workload = 1;
+        workload = 5;
         try {
             this.aecs = new QualityModelRowOrientedAECS(stop,
                                                         progress,
@@ -278,7 +274,7 @@ public class StatisticsQuality {
         }
         
         // Build
-        workload = 2;
+        workload = 5;
         try {
             this.discernibility = new QualityModelRowOrientedDiscernibility(stop,
                                                                             progress,
@@ -299,30 +295,9 @@ public class StatisticsQuality {
         }
 
         // Build
-        workload = 10;
+        workload = 15;
         try {
-            this.kldivergence = new QualityModelRowOrientedKLDivergence(stop,
-                                                                        progress,
-                                                                        workload,
-                                                                        input,
-                                                                        output,
-                                                                        groupedInput,
-                                                                        groupedOutput,
-                                                                        hierarchies,
-                                                                        shares,
-                                                                        indices,
-                                                                        configuration).evaluate();
-            this.checkInterrupt();
-        } catch (Exception e) {
-            // Fail silently
-            this.kldivergence = new QualityMeasureRowOriented();
-            this.progress.value += workload;
-        }
-
-        // Build
-        workload = 12;
-        try {
-            this.sse = new QualityModelRowOrientedSSE(stop,
+            this.sse = new QualityModelRowOrientedSquaredError(stop,
                                                       progress,
                                                       workload,
                                                       input,
@@ -354,7 +329,7 @@ public class StatisticsQuality {
     }
 
     /**
-     * Mean squared error for microaggregated attributes
+     * Attribute-level squared error
      * 
      * @return Quality measure
      */
@@ -429,19 +404,6 @@ public class StatisticsQuality {
     }
 
     /**
-     * Quality according to the "KL-Divergence" model proposed in:<br>
-     * <br>
-     * Ashwin Machanavajjhala, Daniel Kifer, Johannes Gehrke, Muthuramakrishnan Venkitasubramaniam: <br>
-     * L-diversity: Privacy beyond k-anonymity<br>
-     * ACM Transactions on Knowledge Discovery from Data (TKDD), Volume 1 Issue 1, March 2007
-     * 
-     * @return Quality measure
-     */
-    public QualityMeasureRowOriented getKullbackLeiblerDivergence() {
-        return kldivergence;
-    }
-
-    /**
      * Returns the fraction of missing values of the attributes considered
      * 
      * @return the datatypes
@@ -463,12 +425,10 @@ public class StatisticsQuality {
     }
 
     /**
-     * Quality according to the "SSE" model proposed in:<br>
+     * Quality according to the model proposed in:<br>
      * <br>
-     * Soria-Comas, Jordi, et al.:
-     * "t-closeness through microaggregation: Strict privacy with enhanced utility preservation."
-     * IEEE Transactions on Knowledge and Data Engineering 27.11 (2015):
-     * 3098-3110.
+     * D. Sanchez, S. Martinez, and J. Domingo-Ferrer. Comment on unique in the shopping
+     * mall: On the reidentifiability of credit card metadata. Science, 351(6279):1274–1274, 2016.
      * 
      * @return Quality measure
      */

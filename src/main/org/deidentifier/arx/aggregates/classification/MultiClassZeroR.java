@@ -18,7 +18,6 @@ package org.deidentifier.arx.aggregates.classification;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.deidentifier.arx.DataHandleInternal;
 
@@ -31,7 +30,7 @@ public class MultiClassZeroR implements ClassificationMethod {
     /** Counts */
     private final Map<Integer, Integer>           counts = new HashMap<>();
     /** Result */
-    private Integer                               result = null;
+    private MultiClassZeroRClassificationResult   result = null;
     /** Index */
     private final ClassificationDataSpecification specification;
     
@@ -45,15 +44,13 @@ public class MultiClassZeroR implements ClassificationMethod {
 
     @Override
     public ClassificationResult classify(DataHandleInternal handle, int row) {
-        if (result == null) {
-            result = getIndexWithMostCounts();
-        }
-        return new MultiClassZeroRClassificationResult(result, counts, specification.classMap);
+        return result;
     }
 
     @Override
     public void close() {
-        // Nothing to do
+        result = new MultiClassZeroRClassificationResult(counts, specification.classMap);
+        counts.clear();
     }
 
     @Override
@@ -63,23 +60,5 @@ public class MultiClassZeroR implements ClassificationMethod {
         count = count == null ? 1 : count + 1;
         counts.put(key, count);
         result = null;
-    }
-
-    /**
-     * Returns the index of the most frequent element
-     * @return
-     */
-    private Integer getIndexWithMostCounts() {
-        int max = Integer.MIN_VALUE;
-        Integer result = null;
-        for (Entry<Integer, Integer> entry : counts.entrySet()) {
-            int count = entry.getValue();
-            int index = entry.getKey();
-            if (count > max) {
-                max = count;
-                result = index;
-            }
-        }
-        return result;
     }
 }

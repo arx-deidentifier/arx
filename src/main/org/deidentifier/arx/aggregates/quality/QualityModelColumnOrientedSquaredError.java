@@ -18,18 +18,17 @@
 package org.deidentifier.arx.aggregates.quality;
 
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 
 /**
- * Implementation of the Mean Squared Error for microaggregated columns.
+ * Implementation of the mean squared error for individual columns
  * 
  * @author Fabian Prasser
  */
-public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureColumnOriented> {
+public class QualityModelColumnOrientedSquaredError extends QualityModel<QualityMeasureColumnOriented> {
     
 
     /**
@@ -47,7 +46,7 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
      * @param indices
      * @param config
      */
-    public QualityModelColumnOrientedMSE(WrappedBoolean interrupt,
+    public QualityModelColumnOrientedSquaredError(WrappedBoolean interrupt,
                                          WrappedInteger progress,
                                          int totalWorkload,
                                          DataHandle input,
@@ -76,12 +75,11 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
         
         // Prepare
         int[] indices = getIndices();
-        DataHandle inputHandle = getInput();
-        DataHandle outputHandle = getOutput();
         double[] result = new double[indices.length];
         double[] min = new double[indices.length];
         double[] max = new double[indices.length];
-
+        String[][][] hierarchies = getHierarchies();
+        
         // Progress
         setSteps(result.length);
         
@@ -89,41 +87,70 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
         for (int i = 0; i < result.length; i++) {
             
             try {
+                
                 // Map
                 int column = indices[i];
-                
-                // Convert
-                double[] output = getNumbersFromNumericColumn(outputHandle, column);
                 double[] input = null;
-                if (output != null) {
-                    input = getNumbersFromNumericColumn(inputHandle, column);
-                }
+                double[] output = null;
                 
+                // Parse
+                try {
+                    double[][] columnsAsNumbers = getColumnsAsNumbers(getInput(), getOutput(), 
+                                                                      hierarchies[i], column);
+                    if (columnsAsNumbers != null) {
+                        input = columnsAsNumbers[0];
+                        output= columnsAsNumbers[1];
+                    }
+                } catch (Exception e) {
+                    // Fail silently
+                }
+
                 // Check
                 if (input != null && output != null) {
                     
                     // For normalization
-                    double avg = getAvg(input);
+                    double[] minmax = getMinMax(input);
+                    double minimum = minmax[0];
+                    double maximum = minmax[1];
                     
                     // 1 / N * SUM_i (x_i - y_i)^2
-                    for (int index = 0; index < output.length; index++) {
+                    for (int index = 0; index < output.length; index += 2) {
                         
-                        // Calculate
-                        double maxdiff = input[index] - avg;
-                        double diff = (!Double.isNaN(output[index])) ? input[index] - output[index] : maxdiff;
+                        // Calculate maximum distance
+                        double maxMin = input[index] - minimum;
+                        double maxMax = input[index] - maximum;
                         
-                        // Square and store
-                        result[i] += diff * diff;
-                        max[i] += maxdiff * maxdiff;
+                        // Square for abs()
+                        maxMin *= maxMin;
+                        maxMax *= maxMax;
+                        double maxDiff = Math.max(maxMin, maxMax);
+                        
+                        // If present
+                        if ((!Double.isNaN(output[index]))) {
+                            
+                            // Try bounds
+                            double diff1 = input[index] - output[index];
+                            double diff2 = input[index] - output[index + 1];
+                            
+                            // Square for abs()
+                            diff1 *= diff1;
+                            diff2 *= diff2;
+                            double diff = Math.max(diff1, diff2);
+                            
+                            // Store
+                            result[i] += Math.min(diff, maxDiff);
+                            
+                        } else {
+
+                            // Store
+                            result[i] += maxDiff;
+                        }
+                        
+                        // Max
+                        max[i] += maxDiff;
 
                         // Check
                         checkInterrupt();
-                    }
-                    
-                    // We use the average (dataset centroid) for normalization. When very weird things happen, 
-                    // the actual result may even be worse. That's why we sanitize results here.
-                    if (max[i] < result[i]) {
-                        max[i] = result[i];
                     }
                     
                 // Not available
@@ -144,63 +171,6 @@ public class QualityModelColumnOrientedMSE extends QualityModel<QualityMeasureCo
         setStepsDone();
         
         // Return
-        return new QualityMeasureColumnOriented(outputHandle, indices, min, result, max);
-    }
-
-    /**
-     * Returns the average of the given vector
-     * @param input
-     * @return
-     */
-    private double getAvg(double[] input) {
-        double result = 0d;
-        for (double value : input) {
-            result += value;
-        }
-        return result / (double)input.length;
-    }
-
-    /**
-     * Parses numbers from a numeric column
-     * @param handle
-     * @param column
-     * @return
-     */
-    private double[] getNumbersFromNumericColumn(DataHandle handle, int column) {
-        
-        try {
-            
-            // Prepare
-            String attribute = handle.getAttributeName(column);
-            double[] result = new double[handle.getNumRows()];
-            
-            // Parse numbers
-            if (handle.getDataType(attribute) instanceof DataTypeWithRatioScale) {
-
-                QualityConfigurationValueParser<?> parser = QualityConfigurationValueParser.create(handle.getDataType(attribute));
-                for (int row = 0; row < handle.getNumRows(); row++) {
-                    String value = handle.getValue(row, column);
-                    if (handle.isOutlier(row) || super.isSuppressed(column, value)) {
-                        result[row] = Double.NaN;
-                    } else {
-                        result[row] = parser.getDouble(value);
-                    }
-                    
-                    // Check
-                    checkInterrupt();
-                }
-                
-                // Return
-                return result;
-            } else {
-                
-                // Return
-                return null;
-            }
-        } catch (Exception e) {
-            
-            // Fail silently
-            return null;
-        }
+        return new QualityMeasureColumnOriented(getOutput(), indices, min, result, max);
     }
 }
