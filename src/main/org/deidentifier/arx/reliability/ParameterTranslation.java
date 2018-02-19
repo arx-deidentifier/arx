@@ -25,4 +25,32 @@ package org.deidentifier.arx.reliability;
  */
 public class ParameterTranslation {
 
+    /**
+     * Returns a minimal class size for the given risk threshold
+     * TODO: There are similar issues in multiple privacy models, e.g. in the game-theoretic model
+     * TODO: This should be fixed once and for all
+     * @param threshold
+     * @return
+     */
+    private Integer getSizeThreshold(double riskThreshold) {
+        double size = 1d / riskThreshold;
+        double floor = Math.floor(size);
+        if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
+            floor += 1d;
+        }
+        return (int)floor;
+    }
+    
+    if (this.config.getAdversaryGain() == 0) {
+        this.k = 1;
+    } else if (Double.isInfinite(threshold)) {
+        this.k = Integer.MAX_VALUE;
+    } else if ((threshold == Math.floor(threshold))) {
+        this.k = (int) threshold + 1;
+    } else {
+        this.k = (int)Math.ceil(threshold);
+    }
+    
+    // See also floating point issues in
+    MetricSDNMEntropyBasedInformationLoss
 }

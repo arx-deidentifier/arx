@@ -117,15 +117,7 @@ public class ProfitabilityProsecutorNoAttack extends ImplicitPrivacyCriterion {
         // -> 1 / [size of (population) group of r] < adversaryCost / adversaryGain
         // -> [size of (population) group of r] > adversaryGain / adversaryCost
         double threshold = this.config.getAdversaryGain() / this.config.getAdversaryCost();
-        if (this.config.getAdversaryGain() == 0) {
-            this.k = 1;
-        } else if (Double.isInfinite(threshold)) {
-            this.k = Integer.MAX_VALUE;
-        } else if ((threshold == Math.floor(threshold))) {
-            this.k = (int) threshold + 1;
-        } else {
-            this.k = (int)Math.ceil(threshold);
-        }
+        this.k = ParameterTranslation
     }
 
     @Override

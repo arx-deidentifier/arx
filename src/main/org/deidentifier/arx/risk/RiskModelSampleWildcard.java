@@ -162,8 +162,6 @@ public class RiskModelSampleWildcard {
             group = group.next();
         }
         
-        //DEBUG_print("", frequencies, index, 0);
-
         // And evaluate
         double totalRisk = 0d;
         double highestRisk = 0d;
@@ -336,50 +334,7 @@ public class RiskModelSampleWildcard {
         // Return
         return map;
     }
-//    
-//    /**
-//     * Just for debugging purposes
-//     * @param frequencies
-//     * @param index
-//     * @param depth
-//     */
-//    private void DEBUG_print(String current, Map<Group<TupleWrapper>, Integer> frequencies, List<Node> index, int depth) {
-//
-//        // For each node
-//        for (Node node : index) {
-//            
-//            String out = current + node.value + ", ";
-//            if (node instanceof LeafNode) {
-//                LeafNode leaf = (LeafNode)node;
-//                int withoutWildcard = frequencies.get(leaf.records);
-//                int withWildcard = leaf.records.getCount();
-//                if (withoutWildcard != withWildcard) {
-//                    out += " (" + withoutWildcard +", " + withWildcard + ")";
-//                    System.out.println(out);
-//                }
-//            } else {
-//                InnerNode inner = (InnerNode)node;
-//                DEBUG_print(out, frequencies, inner.children, depth + 1);
-//            }
-//        }
-//    }
-
-    /**
-     * Returns a minimal class size for the given risk threshold
-     * TODO: There are similar issues in multiple privacy models, e.g. in the game-theoretic model
-     * TODO: This should be fixed once and for all
-     * @param threshold
-     * @return
-     */
-    private int getSizeThreshold(double threshold) {
-        double size = 1d / threshold;
-        double floor = Math.floor(size);
-        if ((1d / floor) - (1d / size) >= 0.01d * threshold) {
-            floor += 1d;
-        }
-        return (int)floor;
-    }
-
+    
     /**
      * Adds element to index
      * @param stop

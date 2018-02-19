@@ -138,22 +138,6 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
         }
     }
 
-    /**
-     * Returns a minimal class size for the given risk threshold
-     * TODO: There are similar issues in multiple privacy models, e.g. in the game-theoretic model
-     * TODO: This should be fixed once and for all
-     * @param threshold
-     * @return
-     */
-    private Integer getSizeThreshold(double riskThreshold) {
-        double size = 1d / riskThreshold;
-        double floor = Math.floor(size);
-        if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
-            floor += 1d;
-        }
-        return (int)floor;
-    }
-
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         
