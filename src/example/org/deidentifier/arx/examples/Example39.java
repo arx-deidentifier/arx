@@ -97,7 +97,6 @@ public class Example39 extends Example {
                                            "sex",
                                            "age",
                                            "race",
-                                           "marital-status",
                                            "education",
                                            "native-country",
                                            "workclass",
@@ -110,6 +109,7 @@ public class Example39 extends Example {
         Data data = createData("adult");
         data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setDataType("age", DataType.INTEGER);
+        data.getDefinition().setResponseVariable("marital-status", true);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();

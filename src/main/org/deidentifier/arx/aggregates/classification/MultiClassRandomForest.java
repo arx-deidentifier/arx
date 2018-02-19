@@ -45,6 +45,8 @@ public class MultiClassRandomForest implements ClassificationMethod {
     private List<double[]>                                features = new ArrayList<double[]>();
     /** Data */
     private IntArrayList                                  classes  = new IntArrayList();
+    /** Config */
+    private final int                                     numberOfVariablesToSplit;
 
     /**
      * Creates a new instance
@@ -57,6 +59,12 @@ public class MultiClassRandomForest implements ClassificationMethod {
         // Store
         this.config = config;
         this.specification = specification;
+        // Set number of variables to split as floor(sqrt(number of features)) if default value was chosen
+        if (config.getNumberOfVariablesToSplit() == ClassificationConfigurationRandomForest.DEFAULT_NUMBER_OF_VARIABLES_TO_SPLIT) {
+            this.numberOfVariablesToSplit = (int) Math.floor(Math.sqrt(this.specification.featureIndices.length));
+        } else {
+            this.numberOfVariablesToSplit = config.getNumberOfVariablesToSplit();
+        }
     }
 
     @Override
@@ -86,15 +94,10 @@ public class MultiClassRandomForest implements ClassificationMethod {
         
         }
         
-        // Set number of variables to split as floor(sqrt(number of features)) if default value was chosen
-        if (config.getNumberOfVariablesToSplit() == ClassificationConfigurationRandomForest.DEFAULT_NUMBER_OF_VARIABLES_TO_SPLIT) {
-            config.setNumberOfVariablesToSplit((int) Math.floor(Math.sqrt(features.size())));
-        }
-        
         // Learn now
         rm = new RandomForest((Attribute[])null, features.toArray(new double[features.size()][]), classes.toArray(), 
                               config.getNumberOfTrees(), config.getMaximumNumberOfLeafNodes(), config.getMinimumSizeOfLeafNodes(),
-                              config.getNumberOfVariablesToSplit(), config.getSubsample(), rule);
+                              this.numberOfVariablesToSplit, config.getSubsample(), rule);
         
         // Clear
         features.clear();
