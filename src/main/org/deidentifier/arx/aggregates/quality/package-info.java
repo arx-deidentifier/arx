@@ -17,10 +17,9 @@
  */
 
 /**
- * This package provides implementations of search algorithms
+ * This package provides implementations of various quality models which can be
+ * used for quality analysis (but not as optimization functions)
  * 
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-package org.deidentifier.arx.algorithm;
-
+package org.deidentifier.arx.aggregates.quality;

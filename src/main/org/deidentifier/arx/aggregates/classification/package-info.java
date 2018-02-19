@@ -17,10 +17,9 @@
  */
 
 /**
- * This package provides implementations of search algorithms
+ * This package implementations for analyzing the effect of 
+ * anonymization on classification tasks
  * 
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-package org.deidentifier.arx.algorithm;
-
+package org.deidentifier.arx.aggregates.classification;

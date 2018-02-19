@@ -17,10 +17,8 @@
  */
 
 /**
- * This package provides implementations of search algorithms
+ * A package implementing elements used in certificates
  * 
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-package org.deidentifier.arx.algorithm;
-
+package org.deidentifier.arx.certificate.elements;

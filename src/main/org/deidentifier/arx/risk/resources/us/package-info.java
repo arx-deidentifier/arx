@@ -17,10 +17,8 @@
  */
 
 /**
- * This package provides implementations of search algorithms
+ * A package containing resources needed for risk analyses
  * 
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-package org.deidentifier.arx.algorithm;
-
+package org.deidentifier.arx.risk.resources.us;

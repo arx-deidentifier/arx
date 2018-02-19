@@ -17,10 +17,9 @@
  */
 
 /**
- * This package provides implementations of search algorithms
+ * A package containing code that is needed to support 
+ * reliability of the privacy models implemented
  * 
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-package org.deidentifier.arx.algorithm;
-
+package org.deidentifier.arx.reliability;

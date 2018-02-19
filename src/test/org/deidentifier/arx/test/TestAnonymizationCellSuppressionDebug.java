@@ -13,6 +13,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
+import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
@@ -38,6 +39,21 @@ public class TestAnonymizationCellSuppressionDebug {
         return hierarchy;
     }
 
+    /**
+     * Returns a minimal class size for the given risk threshold.
+     * 
+     * @param threshold
+     * @return
+     */
+    private int getSizeThreshold(double riskThreshold) {
+        double size = 1d / riskThreshold;
+        double floor = Math.floor(size);
+        if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
+            floor += 1d;
+        }
+        return (int) floor;
+    }
+
     @Test
     public void test() throws IOException {
 
@@ -45,7 +61,7 @@ public class TestAnonymizationCellSuppressionDebug {
         String[] qis = new String[]{"occupation", "age", "workclass", "sex", "native-country", "education", "marital-status"};
         double highestRisk = 0.05871560541486287;
         double averageRisk = 0.3928991653679357;
-        double recordsAtRisk = 0.0699862407603622;
+        double recordsAtRisk = 0;
         
         // Load file
         // TODO: Remove debug data
@@ -67,7 +83,9 @@ public class TestAnonymizationCellSuppressionDebug {
         double maxOutliers = 1.0d - o_min;
         config.setSuppressionLimit(maxOutliers);
         config.setQualityModel(Metric.createLossMetric(0d));
-        config.addPrivacyModel(new AverageReidentificationRisk(averageRisk, highestRisk, recordsAtRisk));
+//        config.addPrivacyModel(new AverageReidentificationRisk(averageRisk, highestRisk, recordsAtRisk));
+        config.addPrivacyModel(new AverageReidentificationRisk(averageRisk));
+        config.addPrivacyModel(new KAnonymity(getSizeThreshold(highestRisk)));
         config.setHeuristicSearchEnabled(false);
         
         // Perform anonymization
@@ -93,18 +111,19 @@ public class TestAnonymizationCellSuppressionDebug {
         for (String qi : qis) {
             outputData.getDefinition().setAttributeType(qi, getHierarchy(outputData, qi));
         }
+
+        System.out.println("Given: " + highestRisk + " is " + 1d / getSizeThreshold(highestRisk));
         
-        ProsecutorRisk riskModelExternal = outputData.getHandle().getRiskEstimator().getSampleBasedRiskSummary(highestRisk, DataType.ANY_VALUE).getProsecutorRisk();
-        ProsecutorRisk riskModelInternal = output.getRiskEstimator().getSampleBasedRiskSummary(highestRisk, DataType.ANY_VALUE).getProsecutorRisk();
+        // ProsecutorRisk riskModelExternal = outputData.getHandle().getRiskEstimator().getSampleBasedRiskSummary(highestRisk, DataType.ANY_VALUE).getProsecutorRisk();
+        ProsecutorRisk riskModelInternal = output.getRiskEstimator().getSampleBasedRiskSummary(1d / getSizeThreshold(highestRisk), DataType.ANY_VALUE).getProsecutorRisk();
         
         System.out.println("Average risk: " + averageRisk + " internal: " + riskModelInternal.getSuccessRate());
-        System.out.println("Average risk: " + averageRisk + " external: " + riskModelExternal.getSuccessRate());
+        //System.out.println("Average risk: " + averageRisk + " external: " + riskModelExternal.getSuccessRate());
         
         System.out.println("Highest risk: " + highestRisk + " internal: " + riskModelInternal.getHighestRisk());
-        System.out.println("Highest risk: " + highestRisk + " external: " + riskModelExternal.getHighestRisk());
+        //System.out.println("Highest risk: " + highestRisk + " external: " + riskModelExternal.getHighestRisk());
         
         System.out.println("Records at risk: " + recordsAtRisk + " internal: " + riskModelInternal.getRecordsAtRisk());
-        System.out.println("Records at risk: " + recordsAtRisk + " external: " + riskModelExternal.getRecordsAtRisk());
-        
+        //System.out.println("Records at risk: " + recordsAtRisk + " external: " + riskModelExternal.getRecordsAtRisk());
     }
 }

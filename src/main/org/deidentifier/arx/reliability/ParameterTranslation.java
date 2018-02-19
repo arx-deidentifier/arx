@@ -16,11 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+package org.deidentifier.arx.reliability;
+
 /**
- * This package provides implementations of search algorithms
+ * Class supporting parameter calculations and translations
  * 
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-package org.deidentifier.arx.algorithm;
+public class ParameterTranslation {
 
+}
