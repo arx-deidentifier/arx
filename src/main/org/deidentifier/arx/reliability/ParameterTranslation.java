@@ -19,38 +19,49 @@
 package org.deidentifier.arx.reliability;
 
 /**
- * Class supporting parameter calculations and translations
+ * Class supporting parameter calculations and translations.
  * 
  * @author Fabian Prasser
  */
 public class ParameterTranslation {
+    
+    /** Relative threshold precision*/
+    public static final double RELATIVE_THRESHOLD_PRECISION = 0.01d;
 
     /**
      * Returns a minimal class size for the given risk threshold
-     * TODO: There are similar issues in multiple privacy models, e.g. in the game-theoretic model
-     * TODO: This should be fixed once and for all
      * @param threshold
      * @return
      */
-    private Integer getSizeThreshold(double riskThreshold) {
+    public static int getSizeThreshold(double riskThreshold) {
+        
+        // Check
+        if (riskThreshold < 0d || riskThreshold >1d) {
+            throw new IllegalArgumentException("Invalid threshold");
+        }
+        
+        // Special case
+        if (riskThreshold == 0d) {
+            return Integer.MAX_VALUE;
+        }
+        
+        // Calculate
         double size = 1d / riskThreshold;
         double floor = Math.floor(size);
-        if ((1d / floor) - (1d / size) >= 0.01d * riskThreshold) {
+        if ((1d / floor) - (1d / size) >= RELATIVE_THRESHOLD_PRECISION * riskThreshold) {
             floor += 1d;
         }
+        
+        // Return
         return (int)floor;
     }
     
-    if (this.config.getAdversaryGain() == 0) {
-        this.k = 1;
-    } else if (Double.isInfinite(threshold)) {
-        this.k = Integer.MAX_VALUE;
-    } else if ((threshold == Math.floor(threshold))) {
-        this.k = (int) threshold + 1;
-    } else {
-        this.k = (int)Math.ceil(threshold);
+    /**
+     * Returns the effective risk threshold
+     * @param riskThreshold
+     * @return
+     */
+    public static double getEffectiveRiskThreshold(double riskThreshold) {
+        return 1d / getSizeThreshold(riskThreshold);
     }
-    
-    // See also floating point issues in
-    MetricSDNMEntropyBasedInformationLoss
 }

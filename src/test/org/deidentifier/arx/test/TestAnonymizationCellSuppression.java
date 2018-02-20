@@ -39,6 +39,7 @@ import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.reliability.ParameterTranslation;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary.ProsecutorRisk;
 import org.deidentifier.arx.risk.RiskModelSampleWildcard;
@@ -125,7 +126,7 @@ public class TestAnonymizationCellSuppression {
         Random random = new Random(42);
         
         // Perform a lot of random tests
-        for (int j = 0; j < 20; j++) {
+        for (int j = 0; j < 100; j++) {
             
             // Initialize test case
             int numberOfDefinitions = random.nextInt(10) + 1;
@@ -136,7 +137,7 @@ public class TestAnonymizationCellSuppression {
                 // Get random values
                 Collections.shuffle(qis, random);
                 List<String> randomQis = qis.subList(0, numberOfQisPerDefinition);
-                double randomHighestRisk = random.nextDouble();
+                double randomHighestRisk = ParameterTranslation.getEffectiveRiskThreshold(random.nextDouble());
                 double randomAverageRisk = random.nextDouble();
                 double randomRecordsAtRisk = random.nextDouble();
                 

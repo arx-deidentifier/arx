@@ -132,7 +132,8 @@ public class RiskEstimateBuilderInterruptible {
     
     /**
      * Returns a risk summary
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @return
      * @throws InterruptedException 
      */
@@ -147,7 +148,8 @@ public class RiskEstimateBuilderInterruptible {
     /**
      * Returns a risk summary
      *
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @param suppressed
      * @return
      * @throws InterruptedException 
@@ -163,7 +165,8 @@ public class RiskEstimateBuilderInterruptible {
     /**
      * Returns a risk summary, using wildcard matching. "*" will be interpreted as a wildcard
      *
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @return
      * @throws InterruptedException 
      */
@@ -178,7 +181,8 @@ public class RiskEstimateBuilderInterruptible {
     /**
      * Returns a risk summary, using wildcard matching
      *
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @param wildcard String to interpret as a wildcard
      * @return
      * @throws InterruptedException 

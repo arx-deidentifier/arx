@@ -30,6 +30,7 @@ import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
+import org.deidentifier.arx.reliability.ParameterTranslation;
 
 /**
  * This class implements risk measures as proposed by El Emam in
@@ -115,7 +116,7 @@ public class RiskModelSampleWildcard {
      * Creates a new instance
      * @param handle handle
      * @param identifiers quasi-identifiers
-     * @param threshold highest risk
+     * @param threshold Note: due to rounding issues this threshold may be exceeded by up to 1%
      * @param wildcard string representing suppressed values
      * @param stop stop flag
      * @param progress progress
@@ -130,7 +131,7 @@ public class RiskModelSampleWildcard {
         // Init
         this.wildcard = wildcard;
         this.threshold = threshold;
-        this.sizeThreshold = getSizeThreshold(threshold);
+        this.sizeThreshold = ParameterTranslation.getSizeThreshold(threshold);
         
         if (wildcard == null) {
             throw new IllegalArgumentException("Wildcard must not be null");
@@ -203,13 +204,21 @@ public class RiskModelSampleWildcard {
     }
 
     /**
+     * Returns the effective risk threshold, which may differ from the specified risk threshold due to rounding issues
+     * @return the effective risk threshold
+     */
+    public double getEffectiveRiskThreshold() {
+        return ParameterTranslation.getEffectiveRiskThreshold(threshold);
+    }
+    
+    /**
      * Returns the highest risk
      * @return the highest risk
      */
     public double getHighestRisk() {
         return highestRisk;
     }
-
+    
     /**
      * Returns the fraction of records with a risk higher than the given threshold
      * @return the records at risk
@@ -217,13 +226,22 @@ public class RiskModelSampleWildcard {
     public double getRecordsAtRisk() {
         return recordsAtRisk;
     }
-    
+
     /**
-     * Returns the user-specified threshold
+     * Returns the user-specified threshold. Note: the effective threshold may differ slightly due to rounding issues.
+     * See: <code>getEffectiveRiskThreshold</code>
      * @return
      */
     public double getRiskThreshold() {
         return threshold;
+    }
+    
+    /**
+     * Returns the success rate
+     * @return
+     */
+    public double getSuccessRate() {
+        return getAverageRisk();
     }
 
     /**

@@ -18,6 +18,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
+import org.deidentifier.arx.reliability.ParameterTranslation;
 
 /**
  * This criterion ensures that an estimate for the average re-identification risk falls
@@ -41,7 +42,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
     private final Double      recordsAtRisk;
 
     /**
-     * Creates a new instance of this criterion.
+     * Creates a new instance of this model.
      *  
      * @param riskThreshold
      */
@@ -53,11 +54,13 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
     }
     
     /**
-     * Creates a new instance of a relaxed variant of this criterion with average risk, 
-     * highest risk and the fraction of records with a risk exceeding the highest risk
+     * Creates a new instance of a relaxed variant of this model with average risk, 
+     * highest risk and the fraction of records with a risk exceeding the highest risk.
+     * Note: Due to rounding issues, the highest risk may be exceeded by up to 1%. To see the
+     * threshold that is actually being used, invoke <code>getEffectiveHighestRisk()</code>
      *  
      * @param averageRisk
-     * @param highestRisk Please note: due to rounding issues, this risk may be exceeded by up to 1%
+     * @param highestRisk 
      * @param recordsAtRisk
      */
     public AverageReidentificationRisk(double averageRisk, double highestRisk, double recordsAtRisk){
@@ -70,7 +73,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
         }
         this.highestRisk = highestRisk;
         this.recordsAtRisk = recordsAtRisk;
-        this.smallestSize = getSizeThreshold(highestRisk);
+        this.smallestSize = ParameterTranslation.getSizeThreshold(highestRisk);
     }
 
     @Override
@@ -88,8 +91,19 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
     public double getAverageRisk() {
         return getRiskThreshold();
     }
+
+    /**
+     * Returns the effective highest risk, i.e. the threshold that is actually being used by the software.
+     * @return the highest risk
+     */
+    public double getEffectiveHighestRisk() {
+        return ParameterTranslation.getEffectiveRiskThreshold(highestRisk);
+    }
     
     /**
+     * Returns the threshold set by the user. Please consider the effective threshold, 
+     * i.e. the threshold that is actually being used by the software.
+     * 
      * @return the highest risk
      */
     public double getHighestRisk() {
@@ -121,7 +135,8 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
         ElementData result = new ElementData("Average re-identification risk");
         result.addProperty("Threshold", this.getRiskThreshold());
         if (highestRisk != null) {
-            result.addProperty("Highest risk", highestRisk);    
+            result.addProperty("Highest risk", highestRisk);
+            result.addProperty("Effective highest risk", getEffectiveHighestRisk());
         }
         if (recordsAtRisk != null) {
             result.addProperty("Records at risk", recordsAtRisk);    
@@ -134,7 +149,7 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
         if (highestRisk == null) {
             return "("+getRiskThreshold()+")-avg-reidentification-risk";
         } else {
-            return "("+getRiskThreshold()+", " + highestRisk + ", " + recordsAtRisk + ")-avg-reidentification-risk";
+            return "("+getRiskThreshold()+", " + getEffectiveHighestRisk() + " (" + highestRisk + "), " + recordsAtRisk + ")-avg-reidentification-risk";
         }
     }
 

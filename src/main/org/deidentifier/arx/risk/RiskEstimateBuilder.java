@@ -256,7 +256,8 @@ public class RiskEstimateBuilder {
     /**
      * Returns a risk summary
      *
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @return
      */
     public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold) {
@@ -267,7 +268,8 @@ public class RiskEstimateBuilder {
     /**
      * Returns a risk summary
      *
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @param suppressed
      * @return
      */
@@ -279,7 +281,8 @@ public class RiskEstimateBuilder {
     /**
      * Returns a risk summary, using wildcard matching. "*" will be interpreted as a wildcard
      *
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @return
      */
     public RiskModelSampleWildcard getSampleBasedRiskSummaryWildcard(double threshold) {
@@ -290,7 +293,8 @@ public class RiskEstimateBuilder {
     /**
      * Returns a risk summary, using wildcard matching
      *
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @param wildcard String to interpret as a wildcard
      * @return
      */
