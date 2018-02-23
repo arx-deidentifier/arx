@@ -505,6 +505,13 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         
         if (testCase.statistics != null) {
             
+            // Expand
+            for (int level = 0; level < result.getLattice().getLevels().length; level++) {
+                for (ARXNode node : result.getLattice().getLevels()[level]) {
+                    node.expand();
+                }
+            }
+            
             // Collect statistics
             int[] statistics = new int[7];
             for (ARXNode[] level : result.getLattice().getLevels()) {
