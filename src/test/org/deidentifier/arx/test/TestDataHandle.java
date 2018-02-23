@@ -473,13 +473,28 @@ public class TestDataHandle extends AbstractTest {
         
         // Sort
         data.getHandle().sort(false, 0, 1, 2);
+
+        // Expand
+        for (int level = 0; level < result.getLattice().getLevels().length; level++) {
+            for (ARXNode node : result.getLattice().getLevels()[level]) {
+                node.expand();
+            }
+        }
         
         // Transform
-        ARXNode n = result.getLattice().getLevels()[2][1];
+        ARXNode n = result.getLattice().getLevels()[2][0];
         DataHandle h = result.getOutput(n, false);
         
         String[][] given = iteratorToArray(h.getView().iterator());
         String[][] expected = { { "age", "gender", "zipcode" }, { ">=61", "*", "81825" }, { ">=61", "*", "81925" }, { "20-60", "*", "82667" }, { "20-60", "*", "82451" } };
+        
+        for (String[] r : given) {
+            System.out.println(Arrays.toString(r));
+        }
+        
+        for (String[] r : expected) {
+            System.out.println(Arrays.toString(r));
+        }
         
         assertTrue(Arrays.deepEquals(given, expected));
     }
