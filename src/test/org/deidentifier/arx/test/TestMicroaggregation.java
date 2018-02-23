@@ -145,8 +145,7 @@ public class TestMicroaggregation extends AbstractTest {
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray = {
-                                           { "age", "gender", "zipcode" },
+        final String[][] expectedArray = { { "age", "gender", "zipcode" },
                                            { "54", "male", "81***" },
                                            { "50", "female", "81***" },
                                            { "54", "male", "81***" },
@@ -181,8 +180,7 @@ public class TestMicroaggregation extends AbstractTest {
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray = {
-                                           { "age", "gender", "zipcode" },
+        final String[][] expectedArray = { { "age", "gender", "zipcode" },
                                            { "52", "male", "81***" },
                                            { "48", "female", "81***" },
                                            { "52", "male", "81***" },

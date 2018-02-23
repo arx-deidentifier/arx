@@ -504,7 +504,7 @@ public class DataDefinition implements Cloneable{
         if (type instanceof Hierarchy) {
             this.hierarchies.put(attribute, (Hierarchy)type);
         } else if (type instanceof MicroAggregationFunction) {
-            this.functions.put(attribute, (MicroAggregationFunction)type);
+            setMicroAggregationFunction(attribute, (MicroAggregationFunction)type);
         }
     }
 
