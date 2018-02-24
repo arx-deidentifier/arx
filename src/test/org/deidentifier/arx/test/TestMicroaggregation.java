@@ -36,6 +36,7 @@ import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.StatisticsSummary;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
@@ -111,15 +112,12 @@ public class TestMicroaggregation extends AbstractTest {
         config.setQualityModel(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = anonymizer.anonymize(data, config);
-        DataHandle exptectedOutput = Data.create("./data/adult_age_microaggregated.csv", StandardCharsets.UTF_8, ';').getHandle();
-        
         DataHandle output = result.getOutput();
-        for (int i = 0; i < output.getNumRows(); i++) {
-            for (int j = 0; j < output.getNumColumns(); j++) {
-                assertEquals(exptectedOutput.getValue(i, j), output.getValue(i, j));
-            }
-        }
-        
+        StatisticsSummary<?> statistics = output.getStatistics().getSummaryStatistics(false).get("age");
+        assertEquals(statistics.getArithmeticMeanAsDouble(), 37.86159590875886d, 0d);
+        assertEquals(Integer.valueOf(statistics.getMinAsString()), 18, 0d);
+        assertEquals(Integer.valueOf(statistics.getMaxAsString()), 63, 0d);
+        assertEquals(Integer.valueOf(statistics.getMedianAsString()), 40, 0d);
     }
     
     /**
