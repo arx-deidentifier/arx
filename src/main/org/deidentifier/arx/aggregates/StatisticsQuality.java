@@ -428,7 +428,7 @@ public class StatisticsQuality {
      * Quality according to the model proposed in:<br>
      * <br>
      * D. Sanchez, S. Martinez, and J. Domingo-Ferrer. Comment on unique in the shopping
-     * mall: On the reidentifiability of credit card metadata. Science, 351(6279):1274–1274, 2016.
+     * mall: On the reidentifiability of credit card metadata. Science, 351(6279):1274-1274, 2016.
      * 
      * @return Quality measure
      */

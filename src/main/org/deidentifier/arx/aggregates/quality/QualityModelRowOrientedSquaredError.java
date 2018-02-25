@@ -29,7 +29,7 @@ import org.deidentifier.arx.common.WrappedInteger;
 /**
  * Implementation of the Sum of Squared Errors introduced in the supplementary material to:<br>
  * D. Sanchez, S. Martinez, and J. Domingo-Ferrer. Comment on unique in the shopping
- * mall: On the reidentifiability of credit card metadata. Science, 351(6279):1274–1274, 2016.
+ * mall: On the reidentifiability of credit card metadata. Science, 351(6279):1274-1274, 2016.
  * 
  * @author Fabian Prasser
  */
