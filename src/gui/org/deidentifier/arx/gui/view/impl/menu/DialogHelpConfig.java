@@ -86,10 +86,6 @@ public class DialogHelpConfig {
         entries.add(new Entry("id-74", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.5"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives_risk.html")); //$NON-NLS-1$
-        
-        entries.add(new Entry("id-75", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.6"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/help/v" + version + "/perspectives_import.html")); //$NON-NLS-1$
 
         entries.add(new Entry("id-3", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.7"), //$NON-NLS-1$
