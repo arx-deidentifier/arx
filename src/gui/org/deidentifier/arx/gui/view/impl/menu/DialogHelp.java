@@ -160,6 +160,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         
         // Browser
         browser = new HTMLBrowser(base, SWT.BORDER | SWT.DOUBLE_BUFFERED);
+        browser.getStyle().setClickableLinks(false);
         browser.setLayoutData(SWTUtil.createFillGridData());
 
         // Listeners
