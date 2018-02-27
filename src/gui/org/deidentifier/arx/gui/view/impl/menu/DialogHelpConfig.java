@@ -67,6 +67,22 @@ public class DialogHelpConfig {
         
         final String version = Resources.getVersion();
         
+        entries.add(new Entry("id.overview.1", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-5"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/overview.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id.overview.2", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-4"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/privacy.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id.overview.3", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-3"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/transformation.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id.overview.4", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-2"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/utility.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-70", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.0"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives.html")); //$NON-NLS-1$
