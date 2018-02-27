@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.explore;
 import java.util.Arrays;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXProcessStatistics.Step;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -179,27 +180,50 @@ public class ViewProperties implements IView {
         for (final TableItem i : table.getItems()) {
             i.dispose();
         }
-
         TableItem c = new TableItem(table, SWT.NONE);
-        c.setText(0, Resources.getMessage("NodePropertiesView.18")); //$NON-NLS-1$
-        c.setText(1, String.valueOf(node.getAnonymity()));
-        c = new TableItem(table, SWT.NONE);
-        c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
-        if (node.getLowestScore() != null) {
-            c.setText(1, node.getLowestScore().toString() +
-                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-            c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
-        }
-        c = new TableItem(table, SWT.NONE);
-        c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
-        if (node.getHighestScore() != null) {
-            c.setText(1, node.getHighestScore().toString() +
-                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-            c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
+        c.setText(0, Resources.getMessage("NodePropertiesView.29")); //$NON-NLS-1$
+        c.setText(1, Arrays.toString(node.getTransformation()));
+        
+        // Print local transformation statistics
+        Step step = null;
+        if (node.getAttributes().containsKey(Integer.MAX_VALUE)) {
+            if (node.getAttributes().get(Integer.MAX_VALUE) instanceof Step) {
+                step = (Step)node.getAttributes().get(Integer.MAX_VALUE);
+            }
         }
         
+        if (step != null) {
+            c = new TableItem(table, SWT.NONE);
+            c.setText(0, Resources.getMessage("NodePropertiesView.40")); //$NON-NLS-1$
+            c.setText(1, String.valueOf(step.getNumberOfRecordsTransformed()));
+        }
+        
+        c = new TableItem(table, SWT.NONE);
+        c.setText(0, Resources.getMessage("NodePropertiesView.18")); //$NON-NLS-1$
+        c.setText(1, String.valueOf(node.getAnonymity()));
+        
+        if (node.getLowestScore() != null && node.getHighestScore() != null && node.getLowestScore().compareTo(node.getHighestScore()) == 0) {
+            c = new TableItem(table, SWT.NONE);
+            c.setText(0, Resources.getMessage("NodePropertiesView.41")); //$NON-NLS-1$
+            c.setText(1, node.getLowestScore().toString() + " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+            c = new TableItem(table, SWT.NONE);
+            c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
+            if (node.getLowestScore() != null) {
+                c.setText(1, node.getLowestScore().toString() +
+                             " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
+            }
+            c = new TableItem(table, SWT.NONE);
+            c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
+            if (node.getHighestScore() != null) {
+                c.setText(1, node.getHighestScore().toString() +
+                             " [" + SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+            } else {
+                c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
+            }
+        }
         // Print metadata
         if (node.isChecked()) {
             for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
@@ -215,9 +239,6 @@ public class ViewProperties implements IView {
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.28")); //$NON-NLS-1$
         c.setText(1, String.valueOf(node.getPredecessors().length));
-        c = new TableItem(table, SWT.NONE);
-        c.setText(0, Resources.getMessage("NodePropertiesView.29")); //$NON-NLS-1$
-        c.setText(1, Arrays.toString(node.getTransformation()));
         c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.30")); //$NON-NLS-1$
         c.setText(1, String.valueOf(node.isChecked()));

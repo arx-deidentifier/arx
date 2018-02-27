@@ -451,6 +451,7 @@ public class ARXLattice implements Serializable {
             this.lowerBound = null;
             this.checked = true;
             this.anonymity = Anonymity.ANONYMOUS;
+            this.getAttributes().put(Integer.MAX_VALUE, step);
         }
 
         /**
