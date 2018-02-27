@@ -242,6 +242,14 @@ public class ARXProcessStatistics implements Serializable {
         public boolean isOptimal() {
             return optimal;
         }
+
+        /**
+         * Maps attribute name to position
+         * @return
+         */
+        public Map<String, Integer> getHeader() {
+            return this.headermap;
+        }
     }
 
     /** SVUID */
@@ -363,13 +371,21 @@ public class ARXProcessStatistics implements Serializable {
     }
     
     /**
+     * Converts the statistics into a lattice
+     * @return
+     */
+    public ARXLattice getLattice() {
+        return new ARXLattice(this);
+    }
+    
+    /**
      * Returns the number of steps performed
      * @return
      */
     public int getNumberOfSteps() {
         return steps.size();
     }
-    
+
     /**
      * Returns a step performed during the anonymization process
      * @param index
@@ -382,9 +398,17 @@ public class ARXProcessStatistics implements Serializable {
             return steps.get(index);
         }
     }
+    
+    /**
+     * Returns all steps
+     * @return
+     */
+    public List<Step> getSteps() {
+        return this.steps;
+    }
 
     /**
-     * Returns the number of transformations available in this step
+     * Returns the number of transformations available in this process
      * @return
      */
     public long getTransformationsAvailable() {
@@ -392,13 +416,13 @@ public class ARXProcessStatistics implements Serializable {
     }
     
     /**
-     * Returns the number of transformations checked in this step
+     * Returns the number of transformations checked in this process
      * @return
      */
     public long getTransformationsChecked() {
         return this.transformationsChecked;
     }
-
+    
     /**
      * Returns whether optimization has been performed
      * @return
@@ -406,7 +430,7 @@ public class ARXProcessStatistics implements Serializable {
     public boolean isSolutationAvailable() {
         return !this.steps.isEmpty();
     }
-    
+
     /**
      * Returns new process statistics that are a merger of this and the other statistics
      * @param statistics
@@ -416,7 +440,7 @@ public class ARXProcessStatistics implements Serializable {
         result.mergeInternal(statistics);
         return result;
     }
-    
+
     /**
      * Merges this instance with the other instance
      * @param stats

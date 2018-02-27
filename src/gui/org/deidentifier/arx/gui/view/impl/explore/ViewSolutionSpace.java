@@ -196,7 +196,7 @@ public abstract class ViewSolutionSpace implements IView {
             eventNodeSelected();
         } else if (event.part == ModelPart.RESULT) {
             ARXResult result = (ARXResult)event.data;
-            if (model != null && result != null && result.getGlobalOptimum() != null) {
+            if (model != null && result != null && result.getGlobalOptimum() != null && model.getProcessStatistics().getNumberOfSteps() <= 1) {
                 optimum = result.getGlobalOptimum();
             } else {
                 optimum = null;
@@ -207,7 +207,7 @@ public abstract class ViewSolutionSpace implements IView {
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             if (model != null && model.getResult() != null &&
-                model.getResult().getGlobalOptimum() != null) {
+                model.getResult().getGlobalOptimum() != null && model.getProcessStatistics().getNumberOfSteps() <= 1) {
                 optimum = model.getResult().getGlobalOptimum();
             } else {
                 optimum = null;

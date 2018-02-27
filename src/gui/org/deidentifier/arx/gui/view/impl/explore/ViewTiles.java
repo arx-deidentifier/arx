@@ -247,9 +247,12 @@ public class ViewTiles extends ViewSolutionSpace {
             public void run() {
                 SWTUtil.enable(tiles);
                 tiles.setRedraw(true);
+                
+                final ARXLattice l = getModel().getProcessStatistics().getNumberOfSteps() > 1 ? 
+                                     getModel().getProcessStatistics().getLattice() : lattice;
 
                 List<ARXNode> list = new ArrayList<ARXNode>();
-                for (final ARXNode[] level : lattice.getLevels()) {
+                for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
                         list.add(node);
                     }

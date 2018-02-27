@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
+import org.deidentifier.arx.ARXProcessStatistics.Step;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -436,6 +437,23 @@ public class ARXLattice implements Serializable {
         }
 
         /**
+         * Creates a new node from a step
+         * @param lattice
+         * @param step
+         */
+        private ARXNode(final ARXLattice lattice, 
+                        final Step step) {
+            this.lattice = lattice;
+            this.headermap = step.getHeader();
+            this.transformation = step.getTransformation();
+            this.minInformationLoss = step.getScore();
+            this.maxInformationLoss = step.getScore();
+            this.lowerBound = null;
+            this.checked = true;
+            this.anonymity = Anonymity.ANONYMOUS;
+        }
+
+        /**
          * Alter associated fields.
          *
          * @return
@@ -740,6 +758,96 @@ public class ARXLattice implements Serializable {
     /**
      * Constructor.
      *
+     * @param statistics
+     */
+    ARXLattice(final ARXProcessStatistics statistics) {
+        
+        // Lots of null values
+        solutions = null;
+        map = null;
+        monotonicNonAnonymous = false;
+        monotonicAnonymous = false;
+        complete = null;
+        uncertainty = false;
+        optimum = null;
+        top = null;
+        bottom = null;
+
+        // Basic data
+        virtualSize = Long.valueOf(statistics.getNumberOfSteps());
+        size = statistics.getNumberOfSteps();
+        
+        // Build lattice
+        int minLevel = Integer.MAX_VALUE;
+        int maxLevel = Integer.MIN_VALUE;
+        minimumInformationLoss = null;
+        maximumInformationLoss = null;
+        for (Step s : statistics.getSteps()) {
+            if (minimumInformationLoss == null) {
+                minimumInformationLoss = s.getScore().clone();
+            } else {
+                minimumInformationLoss.min(s.getScore());
+            }
+            if (maximumInformationLoss == null) {
+                maximumInformationLoss = s.getScore().clone();
+            } else {
+                maximumInformationLoss.max(s.getScore());
+            }
+            minLevel = Math.min(minLevel, s.getTotalGeneralizationLevel());
+            maxLevel = Math.max(maxLevel, s.getTotalGeneralizationLevel());
+        }
+        List<List<ARXNode>> lattice = new ArrayList<List<ARXNode>>();
+        for (int level = 0; level <= maxLevel; level++) {
+            lattice.add(new ArrayList<ARXNode>());
+        }
+        for (Step s : statistics.getSteps()) {
+            ARXNode node = new ARXNode(this, s);
+            node.predecessors = new ARXNode[0];
+            node.successors = new ARXNode[0];
+            lattice.get(s.getTotalGeneralizationLevel()).add(node);
+        }
+        this.levels = new ARXNode[maxLevel + 1][];
+        for (int level = 0; level < levels.length; level++) {
+            levels[level] = lattice.get(level).toArray(new ARXNode[lattice.get(level).size()]);
+        }
+        
+        // Create relationships
+        for (int level = 0; level < levels.length - 1; level++) {
+
+            // Outer loop
+            for (ARXNode lower : levels[level]) {
+                
+                // Inner loop
+                for (ARXNode upper : levels[level + 1]) {
+                    
+                    // Check
+                    boolean relationship = true;
+                    loop: for (int i=0; i<lower.getTransformation().length; i++) {
+                        if (lower.getTransformation()[i] > upper.getTransformation()[i]) {
+                            relationship = false;
+                            break loop;
+                        }
+                    }
+                    
+                    // Connect
+                    if (relationship) {
+                        List<ARXNode> predecessors = new ArrayList<>();
+                        predecessors.addAll(Arrays.asList(upper.getPredecessors()));
+                        List<ARXNode> successors = new ArrayList<>();
+                        successors.addAll(Arrays.asList(lower.getSuccessors()));
+                        predecessors.add(lower);
+                        successors.add(upper);
+                        lower.predecessors = predecessors.toArray(new ARXNode[predecessors.size()]);
+                        lower.successors = successors.toArray(new ARXNode[successors.size()]);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Constructor.
+     *
      * @param solutions The solution space
      * @param optimum The optimum
      * @param header The header
@@ -810,6 +918,11 @@ public class ARXLattice implements Serializable {
      * Materializes any non-materialized predecessors and successors
      */
     public void expand(ARXNode center) {
+        
+        // For results of local recoding
+        if (solutions == null) {
+            return;
+        }
         
         // Initialize
         int[] indices = center.getTransformation();

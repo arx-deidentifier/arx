@@ -658,7 +658,10 @@ public class Controller implements IView {
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
                                                          model.getInitialNodesInViewer());
-            filter.initialize(result);
+            filter.initialize(result, allResults.getSecond().getNumberOfSteps() > 1);
+            if (allResults.getSecond().getNumberOfSteps() > 1) {
+                filter.reset(workerResult.getSecond(), workerResult.getSecond() == null ? null : workerResult.getSecond().getDefinition());
+            }
             model.setNodeFilter(filter);
             
             // Update model

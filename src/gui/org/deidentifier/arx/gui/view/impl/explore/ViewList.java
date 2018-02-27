@@ -342,7 +342,8 @@ public class ViewList extends ViewSolutionSpace {
                 }
                 list.clear();
                 
-                final ARXLattice l = result.getLattice();
+                final ARXLattice l = getModel().getProcessStatistics().getNumberOfSteps() > 1 ? 
+                                     getModel().getProcessStatistics().getLattice() : result.getLattice();
                 for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
                         if (filter.isAllowed(result.getLattice(), node)) {
