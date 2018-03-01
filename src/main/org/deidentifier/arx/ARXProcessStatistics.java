@@ -446,8 +446,8 @@ public class ARXProcessStatistics implements Serializable {
      * @param stats
      */
     private void mergeInternal(ARXProcessStatistics stats) {
-        if (this.initialNumberOfRecords == -1 && !this.steps.isEmpty() && !this.steps.get(0).isNumberOfRecordsTransformedAvailable()) {
-            this.steps.get(0).numRecordsTransformed = stats.initialNumberOfRecords;
+        if (this.initialNumberOfRecords == -1 && stats.initialNumberOfRecords != -1) {
+            this.initialNumberOfRecords = stats.initialNumberOfRecords;
         }
         for (Step step : stats.steps) {
             step = step.clone();
@@ -455,6 +455,9 @@ public class ARXProcessStatistics implements Serializable {
                 step.headermap = steps.get(0).headermap;
             }
             this.steps.add(step);
+        }
+        if (!this.steps.isEmpty() && !this.steps.get(0).isNumberOfRecordsTransformedAvailable()) {
+            this.steps.get(0).numRecordsTransformed = this.initialNumberOfRecords;
         }
         this.transformationsTotal += stats.transformationsTotal;
         this.transformationsChecked += stats.transformationsChecked;
