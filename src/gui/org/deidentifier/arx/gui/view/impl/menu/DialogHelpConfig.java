@@ -82,11 +82,15 @@ public class DialogHelpConfig {
         entries.add(new Entry("id.overview.4", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.-2"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/methods/utility.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("id.anonymization", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-6"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/anonymization.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-70", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.0"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives.html")); //$NON-NLS-1$
-        
+
         entries.add(new Entry("id-71", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.2"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives_configuration.html")); //$NON-NLS-1$
