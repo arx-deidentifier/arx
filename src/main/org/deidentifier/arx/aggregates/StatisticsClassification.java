@@ -239,18 +239,20 @@ public class StatisticsClassification {
      * Returns the classification method for the given config
      * @param specification
      * @param config
+     * @param inputHandle
      * @return
      */
     private static ClassificationMethod getClassifier(ClassificationDataSpecification specification,
-                                                      ARXClassificationConfiguration<?> config) {
+                                                      ARXClassificationConfiguration<?> config,
+                                                      DataHandleInternal inputHandle) {
         if (config instanceof ClassificationConfigurationLogisticRegression) {
-            return new MultiClassLogisticRegression(specification, (ClassificationConfigurationLogisticRegression)config);
+            return new MultiClassLogisticRegression(specification, (ClassificationConfigurationLogisticRegression)config, inputHandle);
         } else if (config instanceof ClassificationConfigurationNaiveBayes) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassNaiveBayes(specification, (ClassificationConfigurationNaiveBayes)config);
+            return new MultiClassNaiveBayes(specification, (ClassificationConfigurationNaiveBayes)config, inputHandle);
         } else if (config instanceof ClassificationConfigurationRandomForest) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassRandomForest(specification, (ClassificationConfigurationRandomForest)config);
+            return new MultiClassRandomForest(specification, (ClassificationConfigurationRandomForest)config, inputHandle);
         } else {
             throw new IllegalArgumentException("Unknown type of configuration");
         }
@@ -355,11 +357,11 @@ public class StatisticsClassification {
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
             // Create classifiers
-            ClassificationMethod inputClassifier = getClassifier(specification, config);
+            ClassificationMethod inputClassifier = getClassifier(specification, config, inputHandle);
             ClassificationMethod inputZeroR = new MultiClassZeroR(specification);
             ClassificationMethod outputClassifier = null;
             if (inputHandle != outputHandle) {
-                outputClassifier = getClassifier(specification, config);
+                outputClassifier = getClassifier(specification, config, inputHandle);
             }
             
             // Try
