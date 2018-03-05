@@ -275,7 +275,9 @@ public class ViewTiles extends ViewSolutionSpace {
     @Override
     protected void eventFilterChanged(ARXResult result, ModelNodeFilter filter) {
         if (getModel() != null && result != null) {
-            updateFilter(result.getLattice(), filter);
+            ARXLattice lattice = getModel().getProcessStatistics().getNumberOfSteps() > 1 ?
+                                 getModel().getProcessStatistics().getLattice() : result.getLattice();
+            updateFilter(lattice, filter);
         } else {
             reset();
         }
