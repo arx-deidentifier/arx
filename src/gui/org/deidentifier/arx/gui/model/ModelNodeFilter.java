@@ -102,7 +102,6 @@ public class ModelNodeFilter implements Serializable {
         this.maxNumNodesInitial = maxNumNodesInitial;
         this.minInformationLoss = minInformationLoss;
         this.maxInformationLoss = maxInformationLoss;
-
     }
 
     /**
