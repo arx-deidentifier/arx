@@ -119,8 +119,8 @@ public class WorkerSave extends Worker<Model> {
             writeFilter(model, zip);
             zip.close();
             arg0.worked(1);
-            FileUtils.deleteQuietly(new File(path));
-            FileUtils.moveFile(temp, new File(path));
+            FileUtils.copyFile(temp, new File(path));
+            FileUtils.deleteQuietly(temp);
         } catch (final Exception e) {
             error = e;
             arg0.done();
