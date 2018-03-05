@@ -23,6 +23,7 @@ import java.io.PrintStream;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -201,7 +202,7 @@ public abstract class ViewSolutionSpace implements IView {
             } else {
                 optimum = null;
             }
-            if (model!=null && !isTooLarge(result, model.getNodeFilter(), model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(result, model.getProcessStatistics(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
                 eventResultChanged(result);
             }
         } else if (event.part == ModelPart.MODEL) {
@@ -212,15 +213,15 @@ public abstract class ViewSolutionSpace implements IView {
             } else {
                 optimum = null;
             }
-            if (model!=null && !isTooLarge(model.getResult(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(model.getResult(), model.getProcessStatistics(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
                 eventModelChanged();
             }
         } else if (event.part == ModelPart.FILTER) {
-            if (model!=null && !isTooLarge(model.getResult(), (ModelNodeFilter) event.data, model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(model.getResult(), model.getProcessStatistics(), (ModelNodeFilter) event.data, model.getMaxNodesInViewer())) {
                 eventFilterChanged(model.getResult(), (ModelNodeFilter) event.data);
             }
         } else if (event.part == ModelPart.EXPAND) {
-            if (model!=null && !isTooLarge(model.getResult(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(model.getResult(), model.getProcessStatistics(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
                 eventFilterChanged(model.getResult(), model.getNodeFilter());
             }
         }
@@ -302,12 +303,18 @@ public abstract class ViewSolutionSpace implements IView {
     /**
      * Check whether the filtered part of the solution space is too large
      * @param result
+     * @param statistics
      * @param filter
      * @return
      */
-    private boolean isTooLarge(ARXResult result, ModelNodeFilter filter, int max) {
+    private boolean isTooLarge(ARXResult result, ARXProcessStatistics statistics, ModelNodeFilter filter, int max) {
 
         if(result == null) {
+            showPrimaryComposite();
+            return false;
+        }
+        
+        if (statistics.getSteps().size() > 1) {
             showPrimaryComposite();
             return false;
         }
