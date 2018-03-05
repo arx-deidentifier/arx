@@ -175,6 +175,18 @@ public class ViewClipboard implements IView {
                 if (event.button == 3) {
                     final TableItem i = getItemAt(event.x, event.y);
                     if (i != null) {
+                        
+                        // Prepare menu
+                        for (MenuItem item : menu.getItems()) {
+                            if (item.getText().equals(Resources.getMessage("NodeClipboardView.3"))) { //$NON-NLS-1$
+                                if (model.getProcessStatistics().isLocalTransformation()) {
+                                    item.setEnabled(false);
+                                } else {
+                                    item.setEnabled(true);
+                                }
+                            }
+                        }
+                        
                         final ARXNode node = (ARXNode) i.getData();
                         model.setSelectedNode(node);
                         controller.update(new ModelEvent(ViewClipboard.this, ModelPart.SELECTED_NODE, node));

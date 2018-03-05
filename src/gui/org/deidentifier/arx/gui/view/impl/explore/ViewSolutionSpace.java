@@ -358,8 +358,11 @@ public abstract class ViewSolutionSpace implements IView {
      * @param y
      */
     protected void actionShowMenu(int x, int y){
-        menu.setLocation(x, y);
-        menu.setVisible(true);
+        // Only show for global transformation schemes
+        if (model != null && model.getProcessStatistics() != null && !model.getProcessStatistics().isLocalTransformation()) {
+            menu.setLocation(x, y);
+            menu.setVisible(true);
+        }
     }
 
     /**
