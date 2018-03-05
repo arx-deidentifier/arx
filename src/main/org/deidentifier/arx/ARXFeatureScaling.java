@@ -52,18 +52,12 @@ public class ARXFeatureScaling implements Serializable {
     }
     
     /**
-     * Returns a scaling function
-     * @param attribute
-     * @return
+     * Parse expression string.
+     * @param function
+     * @return the expression 
+     * @throws IllegalArgumentException
      */
-    public Expression getScalingExpression(String attribute) {
-        if (attribute == null) {
-            return null;
-        }
-        String function = this.functions.get(attribute);
-        if (function == null || function.equals("")) {
-            return null;
-        }
+    private Expression getExpression(String function) throws IllegalArgumentException {
         Expression expression = null;
         try {
             expression = new ExpressionBuilder(function).variable("x").build();
@@ -84,6 +78,22 @@ public class ARXFeatureScaling implements Serializable {
      * @param attribute
      * @return
      */
+    public Expression getScalingExpression(String attribute) {
+        if (attribute == null) {
+            return null;
+        }
+        String function = this.functions.get(attribute);
+        if (function == null || function.equals("")) {
+            return null;
+        }
+        return getExpression(function);
+    }
+
+    /**
+     * Returns a scaling function
+     * @param attribute
+     * @return
+     */
     public String getScalingFunction(String attribute) {
         return this.functions.get(attribute);
     }
@@ -97,16 +107,9 @@ public class ARXFeatureScaling implements Serializable {
         if (function == null || function.equals("")) {
             return true;
         }
-        Expression expression = null;
         try {
-            expression = new ExpressionBuilder(function).variable("x").build();
-        } catch (Exception e) {
-            return false;
-        }
-        if (expression == null || !expression.validate(false).isValid()) {
-            return false;
-        }
-        if (expression.getVariableNames().size() != 1 || !expression.getVariableNames().contains("x")) {
+            getExpression(function);
+        } catch (IllegalArgumentException e) {
             return false;
         }
         return true;
@@ -135,18 +138,8 @@ public class ARXFeatureScaling implements Serializable {
             this.functions.remove(attribute);
             return this;
         }
-        Expression expression = null;
-        try {
-            expression = new ExpressionBuilder(function).variable("x").build();
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
-        if (expression == null || !expression.validate(false).isValid()) {
-            throw new IllegalArgumentException("Invalid function: " + function);
-        }
-        if (expression.getVariableNames().size() != 1 || !expression.getVariableNames().contains("x")) {
-            throw new IllegalArgumentException("Function must have exactly one variable 'x': " + function);
-        }
+        // Check expression string
+        getExpression(function);
         this.functions.put(attribute, function);
         return this;
     }
