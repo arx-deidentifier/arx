@@ -371,8 +371,12 @@ public abstract class ViewSolutionSpace implements IView {
     protected double asRelativeValue(final InformationLoss<?> infoLoss) {
         if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
             model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
-            return infoLoss.relativeTo(model.getResult().getLattice().getLowestScore(),
-                                       model.getResult().getLattice().getHighestScore()) * 100d;
+            
+            final ARXLattice lattice = getModel().getProcessStatistics().getNumberOfSteps() > 1 ? 
+                                       getModel().getProcessStatistics().getLattice() : model.getResult().getLattice();
+            
+            return infoLoss.relativeTo(lattice.getLowestScore(),
+                                       lattice.getHighestScore()) * 100d;
         } else {
             return 0;
         }
