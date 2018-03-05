@@ -30,10 +30,10 @@ import java.util.Set;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.ARXResult;
 
 /**
  * This class implements a filter for a generalization lattice.
@@ -255,12 +255,11 @@ public class ModelNodeFilter implements Serializable {
             return;
         }
         if (result.isResultAvailable()) {
-
+            
             // Allow specializations and generalizations of optimum
             allowAnonymous();
             final double min = 0d;
             final double max = 1d;
-            
             
             allowInformationLoss(min, max);
             final int[] optimum = result.getGlobalOptimum().getTransformation();
@@ -444,6 +443,7 @@ public class ModelNodeFilter implements Serializable {
 
         List<String> attributes = new ArrayList<String>();
         attributes.addAll(definition.getQuasiIdentifiersWithGeneralization());
+        attributes.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
         Collections.sort(attributes, new Comparator<String>(){
             public int compare(String arg0, String arg1) {
                 return handle.getColumnIndexOf(arg0)- handle.getColumnIndexOf(arg1);
