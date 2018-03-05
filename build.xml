@@ -109,7 +109,7 @@
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
                 <fileset refid="test.jars" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/swt/swt-4.7.2-gtk-linux-x86.jar" />
             </classpath>
         </javac>
 
@@ -142,7 +142,7 @@
                 <path path="build/test" />
                 <path path="lib/log4j/log4j-1.2.17.jar" />
                 <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/swt/swt-4.7.2-gtk-linux-x86.jar" />
             </classpath>
             <batchtest todir="build/junitReports">
                 <fileset dir="src/test/">
@@ -179,7 +179,7 @@
                 <path path="build/test" />
                 <path path="lib/log4j/log4j-1.2.17.jar" />
                 <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/swt/swt-4.7.2-gtk-linux-x86.jar" />
             </classpath>
             <batchtest todir="build/junitReports" fork="yes">
                 <fileset dir="src/test/" includes="**/Test*.java" />
@@ -268,7 +268,7 @@
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/swt/swt-4.7.2-gtk-linux-x86.jar" />
                 <path path="src/main" />
             </classpath>
 
@@ -297,7 +297,7 @@
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/swt/swt-4.7.2-gtk-linux-x86.jar" />
                 <path path="src/main" />
             </classpath>
         </javac>
@@ -346,7 +346,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.7.2-win32-win32-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -355,7 +355,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.7.2-win32-win32-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -367,7 +367,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.7.2-gtk-linux-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -376,7 +376,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.7.2-gtk-linux-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -384,20 +384,11 @@
     </target>
 
     <target name="jar-osx" depends="compile, buildExternalLibs">
-        <jar destfile="jars/arx-${arx.version}-osx.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
         <jar destfile="jars/arx-${arx.version}-osx-64.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/swt/swt-4.7.2-cocoa-macosx-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
