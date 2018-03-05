@@ -417,7 +417,7 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                 for (int i = 0; i < frequencies.length; i++) {
                     frequencies[i] *= 100d;
                     cumulative[i] *= 100d;
-                    if (enforced != 1d && enforced <= model.getAvailableUpperRiskThresholds()[i]) {
+                    if (enforced != 1d && enforced < model.getAvailableUpperRiskThresholds()[i]) {
                         threshold[i] = 100d;
                     }
                     labels[i] = "]" + String.valueOf(SWTUtil.getPrettyString(model.getAvailableLowerRiskThresholds()[i] * 100d)) + //$NON-NLS-1$
