@@ -28,6 +28,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressPro
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
+import org.deidentifier.arx.reliability.ParameterTranslation;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelSampleRiskDistribution;
 import org.eclipse.swt.SWT;
@@ -417,7 +418,7 @@ public class ViewRisksRiskDistributionPlot extends ViewRisks<AnalysisContextRisk
                 for (int i = 0; i < frequencies.length; i++) {
                     frequencies[i] *= 100d;
                     cumulative[i] *= 100d;
-                    if (enforced != 1d && enforced < model.getAvailableUpperRiskThresholds()[i]) {
+                    if (enforced != 1d && ParameterTranslation.getEffectiveRiskThreshold(enforced) < ParameterTranslation.getEffectiveRiskThreshold(model.getAvailableUpperRiskThresholds()[i])) {
                         threshold[i] = 100d;
                     }
                     labels[i] = "]" + String.valueOf(SWTUtil.getPrettyString(model.getAvailableLowerRiskThresholds()[i] * 100d)) + //$NON-NLS-1$
