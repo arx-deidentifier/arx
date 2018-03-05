@@ -145,6 +145,14 @@ public class ARXProcessStatistics implements Serializable {
         }
 
         /**
+         * Maps attribute name to position
+         * @return
+         */
+        public Map<String, Integer> getHeader() {
+            return this.headermap;
+        }
+
+        /**
          * Returns the maximal generalization level for the attribute.
          *
          * @param attribute
@@ -172,7 +180,7 @@ public class ARXProcessStatistics implements Serializable {
         public List<QualityMetadata<?>> getMetadata() {
             return score.getMetadata();
         }
-
+        
         /**
          * Returns the number of records transformed in this step, <code>-1</code>
          * if not known.
@@ -181,7 +189,7 @@ public class ARXProcessStatistics implements Serializable {
         public int getNumberOfRecordsTransformed() {
             return this.numRecordsTransformed;
         }
-        
+
         /**
          * Returns the quasi identifiers.
          *
@@ -194,7 +202,7 @@ public class ARXProcessStatistics implements Serializable {
             }
             return result;
         }
-
+        
         /**
          * Returns a node's lower bound, if any.
          *
@@ -203,7 +211,7 @@ public class ARXProcessStatistics implements Serializable {
         public InformationLoss<?> getScore(){
             return this.score;
         }
-        
+
         /**
          * Returns the sum of all generalization levels.
          *
@@ -216,7 +224,7 @@ public class ARXProcessStatistics implements Serializable {
             }
             return level;
         }
-
+        
         /**
          * Returns the transformation as an array.
          *
@@ -225,7 +233,7 @@ public class ARXProcessStatistics implements Serializable {
         public int[] getTransformation() {
             return this.transformation;
         }
-        
+
         /**
          * Returns whether it is known how many records have been transformed
          * in this step.
@@ -241,14 +249,6 @@ public class ARXProcessStatistics implements Serializable {
          */
         public boolean isOptimal() {
             return optimal;
-        }
-
-        /**
-         * Maps attribute name to position
-         * @return
-         */
-        public Map<String, Integer> getHeader() {
-            return this.headermap;
         }
     }
 
@@ -423,6 +423,14 @@ public class ARXProcessStatistics implements Serializable {
         return this.transformationsChecked;
     }
     
+    /**
+     * Returns whether the result is a local transformation scheme
+     * @return
+     */
+    public boolean isLocalTransformation() {
+        return this.getNumberOfSteps() > 1;
+    }
+
     /**
      * Returns whether optimization has been performed
      * @return

@@ -149,7 +149,7 @@ public class ViewProperties implements IView {
         
         if (result == null || model == null) return 0;
         
-        final ARXLattice lattice = model.getProcessStatistics().getNumberOfSteps() > 1 ? 
+        final ARXLattice lattice = model.getProcessStatistics().isLocalTransformation() ? 
                                    model.getProcessStatistics().getLattice() : result.getLattice();
         
         return infoLoss.relativeTo(lattice.getLowestScore(), lattice.getHighestScore()) * 100d;

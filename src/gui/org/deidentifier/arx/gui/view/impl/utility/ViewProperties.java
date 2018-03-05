@@ -235,7 +235,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
      */
     protected double asRelativeValue(final InformationLoss<?> infoLoss, final ARXResult result) {
 
-        ARXLattice lattice = model.getProcessStatistics().getNumberOfSteps() > 1 ? 
+        ARXLattice lattice = model.getProcessStatistics().isLocalTransformation() ? 
                              model.getProcessStatistics().getLattice() : result.getLattice();
         
         return infoLoss.relativeTo(lattice.getLowestScore(),  lattice.getHighestScore()) * 100d;

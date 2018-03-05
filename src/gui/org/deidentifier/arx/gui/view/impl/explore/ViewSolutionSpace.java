@@ -197,7 +197,7 @@ public abstract class ViewSolutionSpace implements IView {
             eventNodeSelected();
         } else if (event.part == ModelPart.RESULT) {
             ARXResult result = (ARXResult)event.data;
-            if (model != null && result != null && result.getGlobalOptimum() != null && model.getProcessStatistics().getNumberOfSteps() <= 1) {
+            if (model != null && result != null && result.getGlobalOptimum() != null && !model.getProcessStatistics().isLocalTransformation()) {
                 optimum = result.getGlobalOptimum();
             } else {
                 optimum = null;
@@ -208,7 +208,7 @@ public abstract class ViewSolutionSpace implements IView {
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             if (model != null && model.getResult() != null &&
-                model.getResult().getGlobalOptimum() != null && model.getProcessStatistics().getNumberOfSteps() <= 1) {
+                model.getResult().getGlobalOptimum() != null && !model.getProcessStatistics().isLocalTransformation()) {
                 optimum = model.getResult().getGlobalOptimum();
             } else {
                 optimum = null;
@@ -314,7 +314,7 @@ public abstract class ViewSolutionSpace implements IView {
             return false;
         }
         
-        if (statistics.getSteps().size() > 1) {
+        if (statistics.isLocalTransformation()) {
             showPrimaryComposite();
             return false;
         }
@@ -372,7 +372,7 @@ public abstract class ViewSolutionSpace implements IView {
         if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
             model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
             
-            final ARXLattice lattice = getModel().getProcessStatistics().getNumberOfSteps() > 1 ? 
+            final ARXLattice lattice = getModel().getProcessStatistics().isLocalTransformation() ? 
                                        getModel().getProcessStatistics().getLattice() : model.getResult().getLattice();
             
             return infoLoss.relativeTo(lattice.getLowestScore(),
