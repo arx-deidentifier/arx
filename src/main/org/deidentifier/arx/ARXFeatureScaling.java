@@ -42,9 +42,6 @@ public class ARXFeatureScaling implements Serializable {
     }
 
     /** Functions for feature scaling */
-    private Map<String, Expression> expressions = new HashMap<>();
-
-    /** Functions for feature scaling */
     private Map<String, String>     functions   = new HashMap<>();
 
     /**
@@ -60,7 +57,26 @@ public class ARXFeatureScaling implements Serializable {
      * @return
      */
     public Expression getScalingExpression(String attribute) {
-        return this.expressions.get(attribute);
+        if (attribute == null) {
+            return null;
+        }
+        String function = this.functions.get(attribute);
+        if (function == null || function.equals("")) {
+            return null;
+        }
+        Expression expression = null;
+        try {
+            expression = new ExpressionBuilder(function).variable("x").build();
+        } catch (Exception e) {
+            throw new IllegalArgumentException(e.getMessage());
+        }
+        if (expression == null || !expression.validate(false).isValid()) {
+            throw new IllegalArgumentException("Invalid function: " + function);
+        }
+        if (expression.getVariableNames().size() != 1 || !expression.getVariableNames().contains("x")) {
+            throw new IllegalArgumentException("Function must have exactly one variable 'x': " + function);
+        }
+        return expression;
     }
 
     /**
@@ -116,7 +132,6 @@ public class ARXFeatureScaling implements Serializable {
             return this;
         }
         if (function == null || function.equals("")) {
-            this.expressions.remove(attribute);
             this.functions.remove(attribute);
             return this;
         }
@@ -132,7 +147,6 @@ public class ARXFeatureScaling implements Serializable {
         if (expression.getVariableNames().size() != 1 || !expression.getVariableNames().contains("x")) {
             throw new IllegalArgumentException("Function must have exactly one variable 'x': " + function);
         }
-        this.expressions.put(attribute, expression);
         this.functions.put(attribute, function);
         return this;
     }
