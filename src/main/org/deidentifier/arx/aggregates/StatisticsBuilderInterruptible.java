@@ -63,6 +63,8 @@ public class StatisticsBuilderInterruptible { // NO_UCD
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
+                throw new InterruptedException("Interrupted");
             } else {
                 throw new UnexpectedErrorException(e);
             }
@@ -83,6 +85,8 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             return builder.getClassificationPerformance(features, clazz, config);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
                 throw new UnexpectedErrorException(e);
@@ -107,8 +111,10 @@ public class StatisticsBuilderInterruptible { // NO_UCD
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
+                throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
