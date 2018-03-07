@@ -22,11 +22,12 @@ import java.util.List;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
+
 import smile.classification.DecisionTree.SplitRule;
 import smile.classification.RandomForest;
 import smile.data.Attribute;
-
-import com.carrotsearch.hppc.IntArrayList;
 
 /**
  * Implements a classifier
@@ -34,7 +35,7 @@ import com.carrotsearch.hppc.IntArrayList;
  * @author Fabian Prasser
  */
 public class MultiClassRandomForest implements ClassificationMethod {
-    
+
     /** Config */
     private final ClassificationConfigurationRandomForest config;
     /** Instance */
@@ -42,11 +43,13 @@ public class MultiClassRandomForest implements ClassificationMethod {
     /** Specification */
     private final ClassificationDataSpecification         specification;
     /** Data */
-    private List<double[]>                                features = new ArrayList<double[]>();
+    private List<double[]>                                features        = new ArrayList<double[]>();
     /** Data */
-    private IntArrayList                                  classes  = new IntArrayList();
+    private IntArrayList                                  classes         = new IntArrayList();
     /** Config */
     private final int                                     numberOfVariablesToSplit;
+    /** Because SMILE sucks */
+    private IntIntOpenHashMap                             mapping;
 
     /**
      * Creates a new instance
@@ -69,8 +72,19 @@ public class MultiClassRandomForest implements ClassificationMethod {
 
     @Override
     public ClassificationResult classify(DataHandleInternal features, int row) {
+
+        // Call SMILE
+        double[] _probabilities = new double[mapping.size()];
+        int _result = rm.predict(encodeFeatures(features, row), _probabilities);
+        
+        // Mapping
+        int result = mapping.get(_result);
         double[] probabilities = new double[specification.classMap.size()];
-        int result = rm.predict(encodeFeatures(features, row), probabilities);
+        for (int i = 0; i < _probabilities.length; i++) {
+            probabilities[mapping.get(i)] = _probabilities[i];
+        }
+        
+        // Return
         return new MultiClassRandomForestClassificationResult(result, probabilities, specification.classMap);
     }
 
@@ -94,8 +108,24 @@ public class MultiClassRandomForest implements ClassificationMethod {
         
         }
         
+        // Encode classes because SMILE sucks!
+        this.mapping = new IntIntOpenHashMap();
+        IntIntOpenHashMap classMap = new IntIntOpenHashMap();
+        int[] encodedClasses = new int[classes.size()];
+        for (int i = 0; i < classes.size(); i++) {
+            int value = classes.get(i);
+            int encoded = classMap.size();
+            if (classMap.containsKey(value)) {
+                encoded = classMap.lget();
+            } else {
+                classMap.put(value, encoded);
+                this.mapping.put(encoded, value);
+            }
+            encodedClasses[i] = encoded;
+        }
+        
         // Learn now
-        rm = new RandomForest((Attribute[])null, features.toArray(new double[features.size()][]), classes.toArray(), 
+        rm = new RandomForest((Attribute[])null, features.toArray(new double[features.size()][]), encodedClasses, 
                               config.getNumberOfTrees(), config.getMaximumNumberOfLeafNodes(), config.getMinimumSizeOfLeafNodes(),
                               this.numberOfVariablesToSplit, config.getSubsample(), rule);
         
@@ -108,7 +138,7 @@ public class MultiClassRandomForest implements ClassificationMethod {
 
     @Override
     public void train(DataHandleInternal features, DataHandleInternal clazz, int row) {
-        // The Random Forst does not support online learning, so we have to cache data
+        // Random forest does not support online learning, so we have to cache data
         this.features.add(encodeFeatures(features, row));
         this.classes.add(encodeClass(clazz, row));
     }
