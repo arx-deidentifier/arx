@@ -138,7 +138,7 @@ public class MultiClassRandomForest implements ClassificationMethod {
 
     @Override
     public void train(DataHandleInternal features, DataHandleInternal clazz, int row) {
-        // Random forest does not support online learning, so we have to cache data
+        // The Random Forest does not support online learning, so we have to cache data
         this.features.add(encodeFeatures(features, row));
         this.classes.add(encodeClass(clazz, row));
     }
