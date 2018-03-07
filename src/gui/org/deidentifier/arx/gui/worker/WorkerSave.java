@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.worker;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -36,6 +37,7 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
@@ -93,9 +95,10 @@ public class WorkerSave extends Worker<Model> {
                                                         InterruptedException {
 
         arg0.beginTask(Resources.getMessage("WorkerSave.0"), 8); //$NON-NLS-1$
-
+        File temp = null;
         try {
-            final FileOutputStream f = new FileOutputStream(path);
+            temp = File.createTempFile("arx", "deid");
+            final FileOutputStream f = new FileOutputStream(temp);
             final ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
             zip.setLevel(Deflater.BEST_SPEED);
             model.createConfig(); 
@@ -116,9 +119,12 @@ public class WorkerSave extends Worker<Model> {
             writeFilter(model, zip);
             zip.close();
             arg0.worked(1);
+            FileUtils.copyFile(temp, new File(path));
+            FileUtils.deleteQuietly(temp);
         } catch (final Exception e) {
             error = e;
             arg0.done();
+            FileUtils.deleteQuietly(temp);
             return;
         }
 

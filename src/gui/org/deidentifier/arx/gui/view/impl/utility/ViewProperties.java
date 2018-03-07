@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -233,8 +234,11 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
      * @return
      */
     protected double asRelativeValue(final InformationLoss<?> infoLoss, final ARXResult result) {
-        return infoLoss.relativeTo(model.getResult().getLattice().getLowestScore(), 
-                                   model.getResult().getLattice().getHighestScore()) * 100d;
+
+        ARXLattice lattice = model.getProcessStatistics().isLocalTransformation() ? 
+                             model.getProcessStatistics().getLattice() : result.getLattice();
+        
+        return infoLoss.relativeTo(lattice.getLowestScore(),  lattice.getHighestScore()) * 100d;
     }
     
     /**

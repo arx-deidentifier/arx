@@ -187,7 +187,7 @@ public class RiskModelSampleRiskDistribution {
     }
 
     /**
-     * Returns the threshold for which is available on prosecutor risks
+     * Returns the threshold which is available on prosecutor risks
      * @return
      */
     public double getRiskThreshold() {

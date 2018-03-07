@@ -19,10 +19,12 @@ package org.deidentifier.arx.gui.view.impl.explore;
 
 import java.util.Arrays;
 
+import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXProcessStatistics.Step;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -48,13 +50,15 @@ import org.eclipse.swt.widgets.TableItem;
 public class ViewProperties implements IView {
 
     /** Model */
-    private ARXResult               result;
+    private Model            model;
+    /** Model */
+    private ARXResult        result;
     /** Controller */
-    private final Controller        controller;
+    private final Controller controller;
     /** View */
-    private final Composite         root;
+    private final Composite  root;
     /** View */
-    private final Table             table;
+    private final Table      table;
 
     /**
      * Creates a new instance.
@@ -66,6 +70,7 @@ public class ViewProperties implements IView {
                           final Controller controller) {
 
         controller.addListener(ModelPart.RESULT, this);
+        controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_NODE, this);
         this.controller = controller;
 
@@ -97,7 +102,7 @@ public class ViewProperties implements IView {
         }
         
         // Reset view
-        reset();
+        clearTable();
     }
 
     @Override
@@ -107,11 +112,57 @@ public class ViewProperties implements IView {
 
     @Override
     public void reset() {
+        clearTable();
+        SWTUtil.disable(root);
+        result = null;
+        model = null;
+    }
+
+    @Override
+    public void update(final ModelEvent event) {
+        if (event.part == ModelPart.MODEL) {
+            model = (Model) event.data;
+            if (model.getSelectedNode() != null) {
+                update(model.getSelectedNode());
+                SWTUtil.enable(root);
+            }
+        } else if (event.part == ModelPart.RESULT) {
+            result = (ARXResult) event.data;
+            clearTable();
+        } else if (event.part == ModelPart.SELECTED_NODE) {
+            if (event.data == null) {
+                clearTable();
+            } else {
+                update((ARXNode) event.data);
+                SWTUtil.enable(root);
+            }
+        }
+    }
+
+    /**
+     * Converts a score into a relative value in percent.
+     * 
+     * @param infoLoss
+     * @return
+     */
+    private double asRelativeValue(final InformationLoss<?> infoLoss) {
+        
+        if (result == null || model == null) return 0;
+        
+        final ARXLattice lattice = model.getProcessStatistics().isLocalTransformation() ? 
+                                   model.getProcessStatistics().getLattice() : result.getLattice();
+        
+        return infoLoss.relativeTo(lattice.getLowestScore(), lattice.getHighestScore()) * 100d;
+    }
+
+    /**
+     * Clears the table
+     */
+    private void clearTable() {
         table.setRedraw(false);
         for (final TableItem i : table.getItems()) {
             i.dispose();
         }
-
         TableItem c = new TableItem(table, SWT.NONE);
         c.setText(0, Resources.getMessage("NodePropertiesView.2")); //$NON-NLS-1$
         c.setText(1, ""); //$NON-NLS-1$
@@ -138,34 +189,6 @@ public class ViewProperties implements IView {
         }
         table.setRedraw(true);
         table.redraw();
-        SWTUtil.disable(root);
-    }
-
-    @Override
-    public void update(final ModelEvent event) {
-        if (event.part == ModelPart.RESULT) {
-            result = (ARXResult) event.data;
-            reset();
-        } else if (event.part == ModelPart.SELECTED_NODE) {
-            if (event.data == null) {
-                reset();
-            } else {
-                update((ARXNode) event.data);
-                SWTUtil.enable(root);
-            }
-        }
-    }
-
-    /**
-     * Converts a score into a relative value in percent.
-     * 
-     * @param infoLoss
-     * @return
-     */
-    private double asRelativeValue(final InformationLoss<?> infoLoss) {
-        if (result == null) return 0;
-        return infoLoss.relativeTo(result.getLattice().getLowestScore(),
-                                   result.getLattice().getHighestScore()) * 100d;
     }
 
     /**
@@ -174,6 +197,10 @@ public class ViewProperties implements IView {
      * @param node
      */
     private void update(final ARXNode node) {
+        
+        if (node == null) {
+            return;
+        }
 
         // TODO: Implement Anonymity.UNKNOWN
         table.setRedraw(false);
@@ -210,16 +237,14 @@ public class ViewProperties implements IView {
             c = new TableItem(table, SWT.NONE);
             c.setText(0, Resources.getMessage("NodePropertiesView.19")); //$NON-NLS-1$
             if (node.getLowestScore() != null) {
-                c.setText(1, node.getLowestScore().toString() +
-                             " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+                c.setText(1, node.getLowestScore().toString() + " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                 c.setText(1, Resources.getMessage("NodePropertiesView.22")); //$NON-NLS-1$
             }
             c = new TableItem(table, SWT.NONE);
             c.setText(0, Resources.getMessage("NodePropertiesView.23")); //$NON-NLS-1$
             if (node.getHighestScore() != null) {
-                c.setText(1, node.getHighestScore().toString() +
-                             " [" + SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
+                c.setText(1, node.getHighestScore().toString() + " [" + SWTUtil.getPrettyString(asRelativeValue(node.getHighestScore())) + "%]"); //$NON-NLS-1$ //$NON-NLS-2$
             } else {
                 c.setText(1, Resources.getMessage("NodePropertiesView.26")); //$NON-NLS-1$
             }

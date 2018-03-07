@@ -590,7 +590,7 @@ public class ViewLattice extends ViewSolutionSpace {
         }
 
         // Obtain lattice
-        final ARXLattice lattice = getModel().getProcessStatistics().getNumberOfSteps() > 1 ? 
+        final ARXLattice lattice = getModel().getProcessStatistics().isLocalTransformation() ? 
                                    getModel().getProcessStatistics().getLattice() : result.getLattice();
         
         // Clear the lattice
