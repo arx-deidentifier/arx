@@ -21,12 +21,14 @@ import java.util.List;
 
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
+import org.deidentifier.arx.common.WrappedBoolean;
 
 import com.carrotsearch.hppc.IntArrayList;
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 import smile.classification.DecisionTree.SplitRule;
 import smile.classification.RandomForest;
+import smile.classification.TrainingInterrupt;
 import smile.data.Attribute;
 
 /**
@@ -34,7 +36,7 @@ import smile.data.Attribute;
  * 
  * @author Fabian Prasser
  */
-public class MultiClassRandomForest implements ClassificationMethod {
+public class MultiClassRandomForest extends ClassificationMethod {
 
     /** Config */
     private final ClassificationConfigurationRandomForest config;
@@ -53,11 +55,15 @@ public class MultiClassRandomForest implements ClassificationMethod {
 
     /**
      * Creates a new instance
+     * @param interrupt
      * @param specification
      * @param config
      */
-    public MultiClassRandomForest(ClassificationDataSpecification specification,
+    public MultiClassRandomForest(WrappedBoolean interrupt,
+                                  ClassificationDataSpecification specification,
                                   ClassificationConfigurationRandomForest config) {
+
+        super(interrupt);
 
         // Store
         this.config = config;
@@ -127,7 +133,12 @@ public class MultiClassRandomForest implements ClassificationMethod {
         // Learn now
         rm = new RandomForest((Attribute[])null, features.toArray(new double[features.size()][]), encodedClasses, 
                               config.getNumberOfTrees(), config.getMaximumNumberOfLeafNodes(), config.getMinimumSizeOfLeafNodes(),
-                              this.numberOfVariablesToSplit, config.getSubsample(), rule);
+                              this.numberOfVariablesToSplit, config.getSubsample(), rule, new TrainingInterrupt() {
+                                @Override
+                                public boolean isInterrupted() {
+                                    return interrupt.value;
+                                }
+        });
         
         // Clear
         features.clear();

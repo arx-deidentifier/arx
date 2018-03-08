@@ -28,12 +28,13 @@ import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
+import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
  * Implements a classifier
  * @author Fabian Prasser
  */
-public class MultiClassLogisticRegression implements ClassificationMethod {
+public class MultiClassLogisticRegression extends ClassificationMethod {
 
     /** Config */
     private final ClassificationConfigurationLogisticRegression config;
@@ -48,12 +49,16 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
 
     /**
      * Creates a new instance
+     * @param interrupt
      * @param specification
      * @param config
      */
-    public MultiClassLogisticRegression(ClassificationDataSpecification specification,
+    public MultiClassLogisticRegression(WrappedBoolean interrupt,
+                                        ClassificationDataSpecification specification,
                                         ClassificationConfigurationLogisticRegression config) {
 
+        super(interrupt);
+        
         // Store
         this.config = config;
         this.specification = specification;
