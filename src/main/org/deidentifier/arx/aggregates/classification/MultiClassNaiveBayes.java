@@ -23,9 +23,10 @@ import org.apache.mahout.math.function.DoubleDoubleFunction;
 import org.apache.mahout.math.function.DoubleFunction;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes.Type;
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.WrappedBoolean;
 
 import smile.classification.NaiveBayes;
 import smile.classification.NaiveBayes.Model;
@@ -34,7 +35,7 @@ import smile.classification.NaiveBayes.Model;
  * Implements a classifier
  * @author Fabian Prasser
  */
-public class MultiClassNaiveBayes implements ClassificationMethod {
+public class MultiClassNaiveBayes extends ClassificationMethod {
     
     private static class NBVector implements Vector {
 
@@ -93,23 +94,27 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
     }
 
     /** Config */
-    private final ClassificationConfigurationNaiveBayes      config;
+    private final ClassificationConfigurationNaiveBayes config;
     /** Encoder */
-    private final ConstantValueEncoder            interceptEncoder;
+    private final ConstantValueEncoder                  interceptEncoder;
     /** Instance */
-    private final NaiveBayes                      nb;
+    private final NaiveBayes                            nb;
     /** Specification */
-    private final ClassificationDataSpecification specification;
+    private final ClassificationDataSpecification       specification;
     /** Encoder */
-    private final StaticWordValueEncoder          wordEncoder;
+    private final StaticWordValueEncoder                wordEncoder;
 
     /**
      * Creates a new instance
+     * @param interrupt
      * @param specification
      * @param config
      */
-    public MultiClassNaiveBayes(ClassificationDataSpecification specification,
+    public MultiClassNaiveBayes(WrappedBoolean interrupt,
+                                ClassificationDataSpecification specification,
                                 ClassificationConfigurationNaiveBayes config) {
+
+        super(interrupt);
 
         // Store
         this.config = config;
@@ -117,7 +122,7 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
         
         // Prepare classifier
         this.nb = new NaiveBayes(config.getType() == Type.BERNOULLI ? Model.BERNOULLI : Model.MULTINOMIAL, 
-                                 this.specification.classMap.size(), config.getVectorLength(), config.getSigma());
+                                 this.specification.classMap.size(), config.getVectorLength(), config.getSigma(), null);
                 
         // Prepare encoders
         this.interceptEncoder = new ConstantValueEncoder("intercept");
