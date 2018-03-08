@@ -443,6 +443,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
                     @Override
                     public void keyReleased(KeyEvent arg0) {
                         updateCombo(attribute, combo, defaultColor);
+                        updateFunction(attribute, combo);
                     }
                 });
                 combo.addKeyListener(new DelayedChangeListener(DELAY) {
