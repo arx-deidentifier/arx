@@ -17,12 +17,24 @@
 package org.deidentifier.arx.aggregates.classification;
 
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
  * Implements a classifier
  * @author Fabian Prasser
  */
-public interface ClassificationMethod {
+public abstract class ClassificationMethod {
+    
+    /** Interrupt flag */
+    protected final WrappedBoolean interrupt;
+    
+    /**
+     * Creates a new instance
+     * @param interrupt
+     */
+    public ClassificationMethod(WrappedBoolean interrupt) {
+        this.interrupt = interrupt;
+    }
     
     /**
      * Classify
