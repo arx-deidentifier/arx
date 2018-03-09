@@ -219,8 +219,6 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         
         // Update
         if (event.part == target ||
-            event.part == ModelPart.SELECTED_ATTRIBUTE ||
-            event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.SELECTED_VIEW_CONFIG ||
             event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION ||
             (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.ANALYSIS)) {
