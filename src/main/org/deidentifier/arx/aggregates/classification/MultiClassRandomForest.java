@@ -50,6 +50,8 @@ public class MultiClassRandomForest extends ClassificationMethod {
     private IntArrayList                                  classes         = new IntArrayList();
     /** Config */
     private final int                                     numberOfVariablesToSplit;
+    /** Input handle */
+    private final DataHandleInternal                      inputHandle;
     /** Because SMILE sucks */
     private IntIntOpenHashMap                             mapping;
 
@@ -58,16 +60,20 @@ public class MultiClassRandomForest extends ClassificationMethod {
      * @param interrupt
      * @param specification
      * @param config
+     * @param inputHandle
      */
     public MultiClassRandomForest(WrappedBoolean interrupt,
                                   ClassificationDataSpecification specification,
-                                  ClassificationConfigurationRandomForest config) {
+                                  ClassificationConfigurationRandomForest config,
+                                  DataHandleInternal inputHandle) {
 
         super(interrupt);
 
         // Store
         this.config = config;
         this.specification = specification;
+        this.inputHandle = inputHandle;
+        
         // Set number of variables to split as floor(sqrt(number of features)) if default value was chosen
         if (config.getNumberOfVariablesToSplit() == ClassificationConfigurationRandomForest.DEFAULT_NUMBER_OF_VARIABLES_TO_SPLIT) {
             this.numberOfVariablesToSplit = (int) Math.floor(Math.sqrt(this.specification.featureIndices.length));
@@ -81,7 +87,7 @@ public class MultiClassRandomForest extends ClassificationMethod {
 
         // Call SMILE
         double[] _probabilities = new double[mapping.size()];
-        int _result = rm.predict(encodeFeatures(features, row), _probabilities);
+        int _result = rm.predict(encodeFeatures(features, row, true), _probabilities);
         
         // Mapping
         int result = mapping.get(_result);
@@ -150,7 +156,7 @@ public class MultiClassRandomForest extends ClassificationMethod {
     @Override
     public void train(DataHandleInternal features, DataHandleInternal clazz, int row) {
         // The Random Forest does not support online learning, so we have to cache data
-        this.features.add(encodeFeatures(features, row));
+        this.features.add(encodeFeatures(features, row, false));
         this.classes.add(encodeClass(clazz, row));
     }
 
@@ -168,9 +174,10 @@ public class MultiClassRandomForest extends ClassificationMethod {
      * Encodes a feature
      * @param handle
      * @param row
+     * @param classify
      * @return
      */
-    private double[] encodeFeatures(DataHandleInternal handle, int row) {
+    private double[] encodeFeatures(DataHandleInternal handle, int row, boolean classify) {
 
         // Prepare
         double[] vector = new double[specification.featureIndices.length];
@@ -186,7 +193,12 @@ public class MultiClassRandomForest extends ClassificationMethod {
             
             // Obtain data
             ClassificationFeatureMetadata metadata = specification.featureMetadata[count];
-            String value = handle.getValue(row, index, true);
+            String value = null;
+            if (classify && metadata.isNumericMicroaggregation()) {
+                value = inputHandle.getValue(row, index, true);
+            } else {
+                value = handle.getValue(row, index, true);
+            }
             Double numeric = metadata.getNumericValue(value);
             if (Double.isNaN(numeric)) {    
                 vector[count] = handle.getValueIdentifier(index, value);
