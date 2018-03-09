@@ -53,9 +53,9 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
     private static final String LICENSE      = Resources.getLicenseText();
     
     /**  About */
-    private static final String ABOUT =   Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
-                                          Resources.getMessage("AboutDialog.18") + "\n\n" + //$NON-NLS-1$ //$NON-NLS-2$
-                                          Resources.getMessage("AboutDialog.21") + Resources.getVersion(); //$NON-NLS-1$
+    private static final String ABOUT        = Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
+                                               Resources.getMessage("AboutDialog.18") + "\n\n" + //$NON-NLS-1$ //$NON-NLS-2$
+                                               Resources.getMessage("AboutDialog.21") + Resources.getVersion(); //$NON-NLS-1$
     
     /**  Contributors */
     private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" + //$NON-NLS-1$
@@ -70,7 +70,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "Maximilian Zitzmann (distinction and separation)\n" + //$NON-NLS-1$
                                                "James Gaupp (game-theoretic privacy)\n" + //$NON-NLS-1$
                                                "Annika Saken (certificates)\n" + //$NON-NLS-1$
-                                               "Martin Waltl (summary statistics, GUI improvements)"; //$NON-NLS-1$
+                                               "Martin Waltl (summary statistics, GUI improvements)\n" + //$NON-NLS-1$
+                                               "Philip Offtermatt (performance improvements)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;
@@ -174,15 +175,11 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
         // Contributors
         CTabItem item2 = new CTabItem(folder, SWT.NULL);
         item2.setText("Contributors"); //$NON-NLS-1$
-        Composite composite = new Composite(folder, SWT.BORDER);
-        composite.setBackground(license.getBackground());
-        item2.setControl(composite);
-        composite.setLayout(SWTUtil.createGridLayout(1, false));
-        
-        final Label contributors = new Label(composite, SWT.NONE);
+        final Text contributors = new Text(folder, SWT.NONE | SWT.MULTI | SWT.V_SCROLL | SWT.BORDER);
         contributors.setText(CONTRIBUTORS);
-        contributors.setBackground(license.getBackground());
+        contributors.setEditable(false);
         contributors.setLayoutData(SWTUtil.createFillGridData());
+        item2.setControl(contributors);
         
         // Information
         CTabItem item3 = new CTabItem(folder, SWT.NULL);
