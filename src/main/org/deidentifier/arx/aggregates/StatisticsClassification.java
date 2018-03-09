@@ -237,22 +237,24 @@ public class StatisticsClassification {
     
     /**
      * Returns the classification method for the given config
+     * @param interrupt
      * @param specification
      * @param config
      * @param inputHandle
      * @return
      */
-    private static ClassificationMethod getClassifier(ClassificationDataSpecification specification,
+    private static ClassificationMethod getClassifier(WrappedBoolean interrupt,
+                                                      ClassificationDataSpecification specification,
                                                       ARXClassificationConfiguration<?> config,
                                                       DataHandleInternal inputHandle) {
         if (config instanceof ClassificationConfigurationLogisticRegression) {
-            return new MultiClassLogisticRegression(specification, (ClassificationConfigurationLogisticRegression)config, inputHandle);
+            return new MultiClassLogisticRegression(interrupt, specification, (ClassificationConfigurationLogisticRegression)config, inputHandle);
         } else if (config instanceof ClassificationConfigurationNaiveBayes) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassNaiveBayes(specification, (ClassificationConfigurationNaiveBayes)config, inputHandle);
+            return new MultiClassNaiveBayes(interrupt, specification, (ClassificationConfigurationNaiveBayes)config, inputHandle);
         } else if (config instanceof ClassificationConfigurationRandomForest) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassRandomForest(specification, (ClassificationConfigurationRandomForest)config, inputHandle);
+            return new MultiClassRandomForest(interrupt, specification, (ClassificationConfigurationRandomForest)config, inputHandle);
         } else {
             throw new IllegalArgumentException("Unknown type of configuration");
         }
@@ -357,11 +359,11 @@ public class StatisticsClassification {
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
             // Create classifiers
-            ClassificationMethod inputClassifier = getClassifier(specification, config, inputHandle);
-            ClassificationMethod inputZeroR = new MultiClassZeroR(specification);
+            ClassificationMethod inputClassifier = getClassifier(interrupt, specification, config, inputHandle);
+            ClassificationMethod inputZeroR = new MultiClassZeroR(interrupt, specification);
             ClassificationMethod outputClassifier = null;
             if (inputHandle != outputHandle) {
-                outputClassifier = getClassifier(specification, config, inputHandle);
+                outputClassifier = getClassifier(interrupt, specification, config, inputHandle);
             }
             
             // Try
