@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -58,7 +59,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
      * @param infoloss
      */
     protected MetricMDStatic(final AggregateFunction function, final Map<String, List<Double>> infoloss) {
-        super(true, true, function);
+        super(true, true, true, function);
         _infoloss = infoloss;
     }
 
@@ -68,7 +69,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
      * @param infoloss
      */
     protected MetricMDStatic(final Map<String, List<Double>> infoloss) {
-        super(true, true, AggregateFunction.SUM);
+        super(true, true, true, AggregateFunction.SUM);
         _infoloss = infoloss;
     }
 
@@ -87,10 +88,18 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Static");
+        result.addProperty("Aggregate function", super.getAggregateFunction().toString());
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+    
+    @Override
     public String toString() {
         return "Static";
     }
-    
+
     @Override
     protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
         AbstractILMultiDimensional loss = this.getLowerBoundInternal(node);
@@ -167,13 +176,5 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
         
         setMin(min);
         setMax(max);
-    }
-    
-    /**
-     * Does this metric handle microaggregation
-     * @return
-     */
-    protected boolean isAbleToHandleMicroaggregation() {
-        return false;
     }
 }

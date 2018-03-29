@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.PopulationUniqueness;
+import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelConfiguration;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -115,7 +115,7 @@ public class AnalysisContext {
             return hierarchy;
         }
         
-        // TODO: Superfluous?
+        // This is probably not needed anymore, but we leave it just in case...
         // Second, check for hierarchies associated with t-closeness
         for (HierarchicalDistanceTCloseness t : context.config.getCriteria(HierarchicalDistanceTCloseness.class)){
             if (t.getAttribute().equals(attribute)) {
@@ -144,12 +144,10 @@ public class AnalysisContext {
     public ARXPopulationModel getPopulationModel() {
 
         // First, try to return a model associated with an output criterion
-        if (model.getRiskModel().isUseOutputPopulationModelIfAvailable() &&
-            model.getOutputConfig() != null) {
-            for (PopulationUniqueness t : model.getOutputConfig()
-                                                              .getCriteria(PopulationUniqueness.class)) {
-                if (t.getPopulationModel() != null) { 
-                    return t.getPopulationModel(); 
+        if (model.getOutputConfig() != null) {
+            for (PrivacyCriterion c : model.getOutputConfig().getCriteria()) {
+                if (c.getPopulationModel() != null) {
+                    return c.getPopulationModel();
                 }
             }
         }

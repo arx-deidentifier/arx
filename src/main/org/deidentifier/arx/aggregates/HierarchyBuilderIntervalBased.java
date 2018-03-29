@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,7 +203,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             this.min = min;
             this.max = max;
             this.function = function;
-            this.lower = false;
+            this.lower = null;
         }
         
         @Override
@@ -1002,7 +1002,7 @@ public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBa
             if (cache.size()>1) {
                 AbstractGroup[] column = new AbstractGroup[data.length];
                 @SuppressWarnings("serial")
-                AbstractGroup element = new AbstractGroup("*") {};
+                AbstractGroup element = new AbstractGroup(DataType.ANY_VALUE) {};
                 for (int i = 0; i < column.length; i++) {
                     column[i] = element;
                 }

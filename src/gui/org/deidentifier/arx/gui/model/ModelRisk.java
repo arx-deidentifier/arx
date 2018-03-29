@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import java.util.Map;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.ARXSolverConfiguration;
-import org.deidentifier.arx.DataHandle;
 
 /**
  * A model for risk analysis
@@ -63,7 +62,7 @@ public class ModelRisk implements Serializable {
     /** SVUID */
     private static final long          serialVersionUID          = 5405871228130041796L;
     /** The default sample size */
-    private static final double        DEFAULT_SMAPLE_SIZE       = 0.01d;
+    private static final Region        DEFAULT_REGION            = Region.USA;
     /** Modified */
     private boolean                    modified                  = false;
     /** Model */
@@ -77,8 +76,6 @@ public class ModelRisk implements Serializable {
     /** Model */
     private Map<ViewRiskType, Boolean> viewEnabledForOutput      = new HashMap<ViewRiskType, Boolean>();
     /** Model */
-    private boolean                    useOutputModelIfAvailable = true;
-    /** Model */
     private RiskModelForAttributes     riskModelForAttributes    = RiskModelForAttributes.POPULATION_UNIQUENESS_DANKAR;
     /** Model */
     private Double                     riskThresholdRecordsAtRisk;
@@ -91,7 +88,7 @@ public class ModelRisk implements Serializable {
      * Creates a new instance
      */
     public ModelRisk() {
-        this.populationModel = new ARXPopulationModel(DEFAULT_SMAPLE_SIZE);
+        this.populationModel = ARXPopulationModel.create(DEFAULT_REGION);
     }
 
     /**
@@ -112,19 +109,10 @@ public class ModelRisk implements Serializable {
     /**
      * @param handle
      * @return
-     * @see org.deidentifier.arx.ARXPopulationModel#getPopulationSize(org.deidentifier.arx.DataHandle)
+     * @see org.deidentifier.arx.ARXPopulationModel#getPopulationSize()
      */
-    public double getPopulationSize(DataHandle handle) {
-        return populationModel.getPopulationSize(handle);
-    }
-
-    /**
-     * @param sampleSize
-     * @return
-     * @see org.deidentifier.arx.ARXPopulationModel#getPopulationSize(double)
-     */
-    public double getPopulationSize(double sampleSize) {
-        return populationModel.getPopulationSize(sampleSize);
+    public double getPopulationSize() {
+        return populationModel.getPopulationSize();
     }
 
     /**
@@ -177,24 +165,6 @@ public class ModelRisk implements Serializable {
     }
 
     /**
-     * Returns the sample fraction
-     * @param handle
-     * @return
-     */
-    public double getSampleFraction(DataHandle handle) {
-        return this.populationModel.getSamplingFraction(handle);
-    }
-
-    /**
-     * @param sampleSize
-     * @return
-     * @see org.deidentifier.arx.ARXPopulationModel#getSamplingFraction(double)
-     */
-    public double getSampleFraction(double sampleSize) {
-        return populationModel.getSamplingFraction(sampleSize);
-    }
-    
-    /**
      * Returns the solver configuration
      */
     public ARXSolverConfiguration getSolverConfiguration() {
@@ -207,13 +177,6 @@ public class ModelRisk implements Serializable {
      */
     public boolean isModified() {
         return modified || config.isModified();
-    }
-    
-    /**
-     * Use the output or the input model?
-     */
-    public boolean isUseOutputPopulationModelIfAvailable() {
-        return useOutputModelIfAvailable;
     }
 
     /***
@@ -254,12 +217,11 @@ public class ModelRisk implements Serializable {
 
     /**
      * Sets the population size
-     * @param handle
      * @param populationSize
      */
-    public void setPopulationSize(DataHandle handle, double populationSize) {
-        if (populationSize != populationModel.getPopulationSize(handle)) {
-            this.populationModel = new ARXPopulationModel(handle, populationSize);
+    public void setPopulationSize(long populationSize) {
+        if (populationSize != populationModel.getPopulationSize()) {
+            this.populationModel = ARXPopulationModel.create(populationSize);
             this.modified = true;
         }
     }
@@ -270,7 +232,7 @@ public class ModelRisk implements Serializable {
      */
     public void setRegion(Region region) {
         if (region != populationModel.getRegion()) {
-            this.populationModel = new ARXPopulationModel(region);
+            this.populationModel = ARXPopulationModel.create(region);
             this.modified = true;
         }
     }
@@ -320,27 +282,11 @@ public class ModelRisk implements Serializable {
     }
 
     /**
-     * Sets the sample fraction
-     * @param sampleFraction
-     */
-    public void setSampleFraction(double sampleFraction) {
-        this.populationModel = new ARXPopulationModel(sampleFraction);
-        this.modified = true;
-    }
-    
-    /**
      * Set unmodified
      */
     public void setUnmodified() {
         this.modified = false;
         this.config.setUnmodified();
-    }
-
-    /**
-     * Use the output or the input model?
-     */
-    public void setUseOutputPopulationModelIfAvailable(boolean value) {
-        this.useOutputModelIfAvailable = value;
     }
 
     /**

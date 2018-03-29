@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,9 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The k-anonymity criterion
@@ -30,7 +32,7 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class KAnonymity extends ImplicitPrivacyCriterion{
+public class KAnonymity extends ImplicitPrivacyCriterion {
 
     /**  SVUID */
     private static final long serialVersionUID = -8370928677928140572L;
@@ -49,6 +51,11 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
         this.k = k;
     }
 
+    @Override
+    public KAnonymity clone() {
+        return new KAnonymity(this.getK());
+    }
+
     /**
      * Returns the parameter k.
      *
@@ -59,23 +66,64 @@ public class KAnonymity extends ImplicitPrivacyCriterion{
     }
 
     @Override
+    public int getMinimalClassSize() {
+        return k;
+    }
+    
+	@Override
     public int getRequirements(){
         // Requires only one counter
         return ARXConfiguration.REQUIREMENT_COUNTER;
     }
 
+	/**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdJournalist() {
+        return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        return 1d / (double)k;
+    }
+
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         throw new RuntimeException("This should never be called!");
     }
-    
-	@Override
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isMinimalClassSizeAvailable() {
+        return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("k-Anonymity");
+        result.addProperty("Threshold (k)", k);
+        return result;
+    }
+
+    @Override
 	public String toString() {
 		return k+"-anonymity";
 	}
-
-    @Override
-    public KAnonymity clone() {
-        return new KAnonymity(this.getK());
-    }
 }

@@ -101,7 +101,7 @@ public class ImportAdapterCSV extends ImportAdapter {
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
 
         /* Get CSV iterator */
-        in = new CSVDataInput(cin, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+        in = new CSVDataInput(cin, config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
         it = in.iterator();
 
         /* Check whether there is actual data within the CSV file */
@@ -172,16 +172,21 @@ public class ImportAdapterCSV extends ImportAdapter {
         }
 
         /* Create regular row */
-        String[] result = new String[indexes.length];
-        for (int i = 0; i < indexes.length; i++) {
-            result[i] = row[indexes[i]];
-            if (!dataTypes[i].isValid(result[i])) {
-                if (config.columns.get(i).isCleansing()) {
-                    result[i] = DataType.NULL_VALUE;
-                } else {
-                    throw new IllegalArgumentException("Data value does not match data type");
+        String[] result;
+        try {
+            result = new String[indexes.length];
+            for (int i = 0; i < indexes.length; i++) {
+                result[i] = row[indexes[i]];
+                if (!dataTypes[i].isValid(result[i])) {
+                    if (config.columns.get(i).isCleansing()) {
+                        result[i] = DataType.NULL_VALUE;
+                    } else {
+                        throw new IllegalArgumentException("Data value does not match data type");
+                    }
                 }
             }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new IllegalArgumentException("Inconsistent length of header and records");
         }
 
         /* Fetches the next row, which will be used in next iteration */

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class RiskModelHistogram {
     /** Summary */
     private double avgClassSize;
     /** Summary */
-    private double numTuples;
+    private double numRecords;
     /** Summary */
     private double numClasses;
 
@@ -161,10 +161,10 @@ public class RiskModelHistogram {
     /**
      * Returns a property of the class distribution
      * 
-     * @return the numTuples
+     * @return the numRecords
      */
-    public double getNumTuples() {
-        return numTuples;
+    public double getNumRecords() {
+        return numRecords;
     }
 
     /**
@@ -212,8 +212,8 @@ public class RiskModelHistogram {
             numTuples += entry[0] * entry[1];
             if (stop.value) { throw new ComputationInterruptedException(); }
         }
-        this.numTuples = numTuples;
+        this.numRecords = numTuples;
         this.numClasses = numClasses;
-        this.avgClassSize = this.numTuples / this.numClasses;
+        this.avgClassSize = this.numRecords / this.numClasses;
     }
 }

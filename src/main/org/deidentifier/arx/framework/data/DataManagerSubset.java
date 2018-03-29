@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.data;
 
 import java.util.Map;
 
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 
 /**
@@ -48,6 +49,7 @@ public class DataManagerSubset extends DataManager {
      * @param microaggregationNumAttributes
      * @param microaggregationStartIndex
      * @param minLevels
+     * @param dataTypesSensitive 
      */
     protected DataManagerSubset(DataManager source,
                                 Data dataAnalyzed,
@@ -62,10 +64,13 @@ public class DataManagerSubset extends DataManager {
                                 DistributionAggregateFunction[] microaggregationFunctions,
                                 String[] microaggregationHeader,
                                 int[] microaggregationMap,
+                                int[] microaggregationDomainSizes,
                                 int microaggregationNumAttributes,
                                 int microaggregationStartIndex,
-                                int[] minLevels) {
-        super(dataAnalyzed,
+                                int[] minLevels,
+                                Map<String, DataType<?>> dataTypesSensitive) {
+        super(source.getDataDefinition(),
+              dataAnalyzed,
               dataGeneralized,
               dataStatic,
               header,
@@ -77,9 +82,11 @@ public class DataManagerSubset extends DataManager {
               microaggregationFunctions,
               microaggregationHeader,
               microaggregationMap,
+              microaggregationDomainSizes,
               microaggregationNumAttributes,
               microaggregationStartIndex,
-              minLevels);
+              minLevels,
+              dataTypesSensitive);
         
         this.source = source;
     }
@@ -94,6 +101,12 @@ public class DataManagerSubset extends DataManager {
     public double[] getDistribution(String attribute) {
         // Delegate to source
         return source.getDistribution(attribute);
+    }
+
+    @Override
+    public int[] getOrder(String attribute) {
+        // Delegate to source
+        return source.getOrder(attribute);
     }
 
     @Override

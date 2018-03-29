@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,8 +33,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * This class implements an a menu for the editor for generalization hierarchies. It is partly
- * based upon code implemented by Ledian Xhani and Ljubomir Dshevlekov.
+ * This class implements an a menu for the editor for generalization hierarchies.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -85,6 +84,9 @@ public class ComponentHierarchyMenu implements IView {
 
     /** Item. */
     private MenuItem           itemInitialize;
+
+    /** Item. */
+    private MenuItem           itemTopBottomCoding;
     
     /**
      * Creates a new instance
@@ -130,6 +132,23 @@ public class ComponentHierarchyMenu implements IView {
         }
     }
     
+    /**
+     * Checks and asks users whether functional hierarchies should be removed
+     * @return
+     */
+    private boolean check() {
+        if (model != null && model.getInputConfig() != null && model.getSelectedAttribute() != null) {
+            if (model.getInputConfig().getHierarchyBuilder(model.getSelectedAttribute()) != null) {
+                return controller.actionShowQuestionDialog(Resources.getMessage("HierarchyView.20"),  //$NON-NLS-1$
+                                                                   Resources.getMessage("HierarchyView.21")); //$NON-NLS-1$
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
     /**
      * Creates all components required for making the table editable.
      */
@@ -270,6 +289,22 @@ public class ComponentHierarchyMenu implements IView {
                 }
             }
         });
+        
+        // Action top/bottom coding
+        itemTopBottomCoding = new MenuItem(menu, SWT.NONE);
+        itemTopBottomCoding.setText(Resources.getMessage("HierarchyView.22")); //$NON-NLS-1$
+        itemTopBottomCoding.addSelectionListener(new SelectionAdapter() {
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() ||
+                        hierarchy.isCellSelected() || model == null || model.getInputConfig() == null ||
+                        model.getInputConfig().getInput() == null ||
+                        model.getSelectedAttribute() == null) { return; }
+    
+                    controller.actionMenuEditCreateTopBottomCodingHierarchy();
+                }
+            }
+        });
     }
 
     /**
@@ -310,26 +345,10 @@ public class ComponentHierarchyMenu implements IView {
         // ---------
         itemClear.setEnabled(cell || row || column);
         itemInitialize.setEnabled(hierarchy.isEmpty());
+        itemTopBottomCoding.setEnabled(hierarchy.isEmpty());
         
         // Show
         this.menu.setLocation(point);
         this.menu.setVisible(true);
-    }
-
-    /**
-     * Checks and asks users whether functional hierarchies should be removed
-     * @return
-     */
-    private boolean check() {
-        if (model != null && model.getInputConfig() != null && model.getSelectedAttribute() != null) {
-            if (model.getInputConfig().getHierarchyBuilder(model.getSelectedAttribute()) != null) {
-                return controller.actionShowQuestionDialog(Resources.getMessage("HierarchyView.20"),  //$NON-NLS-1$
-                                                                   Resources.getMessage("HierarchyView.21")); //$NON-NLS-1$
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
     }
 }

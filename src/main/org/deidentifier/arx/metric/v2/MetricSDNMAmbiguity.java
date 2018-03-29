@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
@@ -52,7 +53,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
      * Default constructor.
      */
     public MetricSDNMAmbiguity(){
-        super(false, false);
+        super(true, false, false);
     }
 
     @Override
@@ -93,10 +94,17 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     }
 
     @Override
+    public ElementData render(ARXConfiguration config) {
+        ElementData result = new ElementData("Ambiguity");
+        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Ambiguity";
     }
-
+    
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
 
@@ -149,7 +157,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensionalWithBound(result, result);
     }
-    
+
     @Override
     protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
         return null;
@@ -185,7 +193,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         // Return
         return new ILSingleDimensional(result);
     }
-
+    
     /**
      * For subclasses.
      *
@@ -194,7 +202,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     protected DomainShare[] getShares(){
         return this.shares;
     }
-    
+
     @Override
     protected void initializeInternal(final DataManager manager,
                                       final DataDefinition definition, 

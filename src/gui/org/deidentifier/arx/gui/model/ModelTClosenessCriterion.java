@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
@@ -39,6 +40,9 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     /** Variant. */
     public static final int   VARIANT_HIERARCHICAL = 1;
 
+    /** Variant. */
+    public static final int   VARIANT_ORDERED      = 2;
+
     /** The variant. */
     private int               variant              = 0;
 
@@ -50,12 +54,8 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelTClosenessCriterion(String attribute,
-                                    int variant,
-                                    double t) {
+    public ModelTClosenessCriterion(String attribute) {
         super(attribute);
-        this.variant = variant;
-        this.t = t;
     }
     
     /**
@@ -63,8 +63,12 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
      *
      * @param attribute
      */
-    public ModelTClosenessCriterion(String attribute) {
+    public ModelTClosenessCriterion(String attribute,
+                                    int variant,
+                                    double t) {
         super(attribute);
+        this.variant = variant;
+        this.t = t;
     }
     
     @Override
@@ -80,8 +84,9 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
 	public PrivacyCriterion getCriterion(Model model) {
 	    switch (variant) {
             case VARIANT_EQUAL: return new EqualDistanceTCloseness(getAttribute(), t);
+            case VARIANT_ORDERED: return new OrderedDistanceTCloseness(getAttribute(), t);
             case VARIANT_HIERARCHICAL: return new HierarchicalDistanceTCloseness(getAttribute(), t,
-                                                                            model.getInputConfig().getHierarchy(getAttribute()));
+                                                                                 model.getInputConfig().getHierarchy(getAttribute()));
             default: throw new RuntimeException(Resources.getMessage("Model.0c")); //$NON-NLS-1$
 	    }
 	}
@@ -117,7 +122,9 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
         ModelTClosenessCriterion other = (ModelTClosenessCriterion)criterion;
         this.t = other.t;
         this.variant = other.variant;
-        this.setEnabled(other.isEnabled());
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
     }
     
 	@Override
@@ -152,6 +159,7 @@ public class ModelTClosenessCriterion extends ModelExplicitCriterion{
     public String toString() {
         switch (variant) {
             case VARIANT_EQUAL: return SWTUtil.getPrettyString(t)+Resources.getMessage("Model.3b"); //$NON-NLS-1$
+            case VARIANT_ORDERED: return SWTUtil.getPrettyString(t)+Resources.getMessage("Model.34"); //$NON-NLS-1$
             case VARIANT_HIERARCHICAL: return SWTUtil.getPrettyString(t)+Resources.getMessage("Model.4b"); //$NON-NLS-1$
             default: throw new RuntimeException(Resources.getMessage("Model.5b")); //$NON-NLS-1$
         }

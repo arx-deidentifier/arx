@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,9 +18,10 @@
 package org.deidentifier.arx.gui.view.impl.menu;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -114,12 +115,13 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
      * Detects the most frequent separator in the first few lines.
      *
      * @param file
+     * @param charset TODO
      * @throws IOException
      */
-    private void detect(final String file) throws IOException {
+    private void detect(final String file, Charset charset) throws IOException {
 
         // Open file
-        final BufferedReader r = new BufferedReader(new FileReader(new File(file)));
+        final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
 
         // Count chars
         int count = 0;
@@ -161,10 +163,10 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
      * @param file
      * @throws IOException
      */
-    private void read(final String file) throws IOException {
+    private void read(final String file, final Charset charset) throws IOException {
 
         // Read the first few lines
-        final CSVDataInput in = new CSVDataInput(file, separators[selection]);
+        final CSVDataInput in = new CSVDataInput(file, charset, separators[selection]);
         final Iterator<String[]> it = in.iterator();
         final List<String[]> data = new ArrayList<String[]>();
 
@@ -272,8 +274,8 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
         table.setLinesVisible(true);
 
         try {
-            detect(file);
-            read(file);
+            detect(file, Charset.defaultCharset());
+            read(file, Charset.defaultCharset());
         } catch (final Exception e) {
             if (e instanceof RuntimeException){
                 throw (RuntimeException)e;
@@ -298,7 +300,7 @@ public class DialogSeparator extends TitleAreaDialog implements IDialog {
                 try {
                     if (combo.getSelectionIndex() == -1) { return; }
                     selection = combo.getSelectionIndex();
-                    read(file);
+                    read(file, Charset.defaultCharset());
                 } catch (final Exception e) {
                     if (e instanceof RuntimeException){
                         throw (RuntimeException)e;

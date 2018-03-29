@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,16 +44,11 @@ public class LayoutRisksBottom extends LayoutRisksAbstract {
                             final ModelPart reset) {
         
         super(parent, controller, target == ModelPart.INPUT, false);
-
         registerView(0, new ViewRisksReIdentificationTable(createTab(Resources.getMessage("RiskAnalysis.5"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(1, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.13"), "help.risk.uniques"), controller, target, reset, false)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(2, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.24"), "help.risk.uniques"), controller, target, reset, true)); //$NON-NLS-1$ //$NON-NLS-2$
-        new ViewRisksPopulationModel(createTab(Resources.getMessage("RiskAnalysis.16"), "help.risk.population"), controller, target != ModelPart.INPUT); //$NON-NLS-1$ //$NON-NLS-2$
-
+        registerView(1, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.24"), "help.risk.uniques"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         if (target == ModelPart.INPUT) {
             new ViewRisksQuasiIdentifiers(createTab(Resources.getMessage("RiskAnalysis.23"), "help.risk.quasiidentifiers"), controller); //$NON-NLS-1$ //$NON-NLS-2$
         } 
-        
         setSelectionIdex(0);
     }
 }

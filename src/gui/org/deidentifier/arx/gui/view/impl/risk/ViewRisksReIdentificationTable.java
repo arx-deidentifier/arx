@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,6 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
         return new AnalysisContextRisk(context);
     }
     
-
     @Override
     protected void doReset() {
         if (this.manager != null) {
@@ -178,14 +177,17 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
         // Create an analysis
         Analysis analysis = new Analysis(){
 
-            private boolean                    stopped = false;
-            private double                     lowestRisk;
-            private double                     fractionOfTuplesAffectedByLowestRisk;
-            private double                     averageRisk;
-            private double                     highestRisk;
-            private double                     fractionOfTuplesAffectedByHighestRisk;
-            private double                     fractionOfUniqueTuples;
-            private double                     fractionOfUniqueTuplesDankar;
+            private boolean                   stopped = false;
+            private double                    lowestRisk;
+            private double                    fractionOfTuplesAffectedByLowestRisk;
+            private double                    averageRisk;
+            private double                    highestRisk;
+            private double                    fractionOfTuplesAffectedByHighestRisk;
+            private double                    estimatedProsecutorRisk;
+            private double                    estimatedJournalistRisk;
+            private double                    estimatedMarketerRisk;
+            private double                    fractionOfUniqueTuples;
+            private double                    fractionOfUniqueTuplesDankar;
             private PopulationUniquenessModel populationModel;
 
             @Override
@@ -215,12 +217,16 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
                 createItem(Resources.getMessage("RiskAnalysis.8"), averageRisk); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.9"), highestRisk); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.10"), fractionOfTuplesAffectedByHighestRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.40"), estimatedProsecutorRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.41"), estimatedJournalistRisk); //$NON-NLS-1$
+                createItem(Resources.getMessage("RiskAnalysis.42"), estimatedMarketerRisk); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.11"), fractionOfUniqueTuples); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.12"), fractionOfUniqueTuplesDankar); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.18"), populationModel); //$NON-NLS-1$
                 createItem(Resources.getMessage("RiskAnalysis.25"), getQuasiIdentifiers(context)); //$NON-NLS-1$
 
                 table.setRedraw(true);
+                table.layout();
                 
                 setStatusDone();
             }
@@ -250,6 +256,9 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
                 averageRisk = samReidModel.getAverageRisk();
                 highestRisk = samReidModel.getHighestRisk();
                 fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfTuplesAffectedByHighestRisk();
+                estimatedProsecutorRisk = samReidModel.getEstimatedProsecutorRisk();
+                estimatedJournalistRisk = samReidModel.getEstimatedJournalistRisk();
+                estimatedMarketerRisk = samReidModel.getEstimatedMarketerRisk();
                 fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueTuples();
                 fractionOfUniqueTuplesDankar = popUniqueModel.getFractionOfUniqueTuplesDankar();
                 populationModel = popUniqueModel.getPopulationUniquenessModel();

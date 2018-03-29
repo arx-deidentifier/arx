@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,12 +19,13 @@ package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.criteria.KMap;
+import org.deidentifier.arx.criteria.KMap.CellSizeEstimator;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
- * This class implements a model for the d-presence criterion.
+ * This class implements a model for the k-map criterion.
  *
  * @author Fabian Prasser
  */
@@ -33,9 +34,15 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
     /** SVUID. */
     private static final long serialVersionUID = 2268947734419591705L;
     
-    /** Dmin. */
+    /** k. */
 	private int k = 5;
 	
+	/** The significance level */
+	private double significanceLevel = 0.01d;
+
+	/** The estimator */
+    private CellSizeEstimator estimator;
+    
 	/**
 	 * Creates a new instance
 	 */
@@ -50,6 +57,7 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
 	public ModelKMapCriterion(int k) {
         super();
         this.k = k;
+        this.estimator = null;
     }
 
     @Override
@@ -57,14 +65,28 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         ModelKMapCriterion result = new ModelKMapCriterion();
         result.k = this.k;
         result.setEnabled(this.isEnabled());
+        result.setEstimator(this.estimator);
         return result;
     }
-	
-	@Override
-	public PrivacyCriterion getCriterion(Model model) {
-	    DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), model.getInputConfig().getResearchSubset());
-		return new KMap(k, subset);
-	}
+    
+    @Override
+    public PrivacyCriterion getCriterion(Model model) {
+        if (estimator == null) {
+            DataSubset subset = DataSubset.create(model.getInputConfig().getInput(), model.getInputConfig().getResearchSubset());
+            return new KMap(k, subset);
+        } else {
+            ModelRisk riskModel = model.getRiskModel();
+            return new KMap(k, significanceLevel, riskModel.getPopulationModel(), estimator);
+        }
+    }
+    
+    /**
+     * Returns the estimator.
+     * @return
+     */
+    public CellSizeEstimator getEstimator() {
+        return estimator;
+    }
 	
 	/**
      * Returns k.
@@ -74,10 +96,18 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
 	public int getK() {
 		return k;
 	}
-	
-	@Override
+
+    @Override
     public String getLabel() {
         return Resources.getMessage("Model.32"); //$NON-NLS-1$
+    }
+
+    /**
+     * Returns the significance level.
+     * @return
+     */
+    public double getSignificanceLevel() {
+        return significanceLevel;
     }
 
     @Override
@@ -87,7 +117,19 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
         }
         ModelKMapCriterion other = (ModelKMapCriterion)criterion;
         this.k = other.k;
-        this.setEnabled(other.isEnabled());
+        this.setEstimator(other.estimator);
+        this.significanceLevel = other.significanceLevel;
+        if (!_default) {
+            this.setEnabled(other.isEnabled());
+        }
+    }
+
+    /**
+     * Sets the used estimator.
+     * @param estimator
+     */
+    public void setEstimator(CellSizeEstimator estimator) {
+       this.estimator = estimator;
     }
 
     /**
@@ -99,8 +141,22 @@ public class ModelKMapCriterion extends ModelImplicitCriterion{
 		this.k = k;
 	}
 
+    /**
+     * Sets the significance level.
+     * @param significanceLevel
+     */
+    public void setSignificanceLevel(double significanceLevel) {
+        this.significanceLevel = significanceLevel;
+    }
+
     @Override
     public String toString() {
-        return SWTUtil.getPrettyString(k) + Resources.getMessage("Model.33"); //$NON-NLS-1$
+        String value = SWTUtil.getPrettyString(k) + Resources.getMessage("Model.33"); //$NON-NLS-1$
+        if (estimator != null) {
+            value += " (" + estimator + "/" + SWTUtil.getPrettyString(significanceLevel) + ")";
+        }
+        return value;
     }
+
+
 }

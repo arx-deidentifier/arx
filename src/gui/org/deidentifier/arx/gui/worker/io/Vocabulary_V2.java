@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,8 +31,9 @@ public class Vocabulary_V2 extends Vocabulary_V1 {
     @Override
     public void checkVersion(String version) throws SAXException {
         if (!(version.equals("2.0") || version.startsWith("2.1") || version.startsWith("2.2") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-              || version.startsWith("2.3") || version.startsWith("3.0") || version.startsWith("3.1")
-              || version.startsWith("3.2") || version.startsWith("3.3"))) { //$NON-NLS-1$ //$NON-NLS-2$
+              || version.startsWith("2.3") || version.startsWith("3.0") || version.startsWith("3.1") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              || version.startsWith("3.2") || version.startsWith("3.3") || version.startsWith("3.4") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+              || version.startsWith("3.5") || version.startsWith("3.6"))) { //$NON-NLS-1$ //$NON-NLS-2$
             throw new SAXException(Resources.getMessage("WorkerLoad.10") + version); //$NON-NLS-1$
         }
     }

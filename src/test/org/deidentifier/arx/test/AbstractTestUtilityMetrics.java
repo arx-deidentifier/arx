@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -57,19 +58,19 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
      * @author Florian Kohlmayer
      */
     public static class ARXUtilityMetricsTestCase {
-        
-        /** TODO */
-        public ARXConfiguration config;
-        
-        /** TODO */
-        public String dataset;
-        
-        /** TODO */
-        public String sensitiveAttribute;
-        
-        /** TODO */
+
+        /** Config */
+        public ARXConfiguration    config;
+
+        /** Dataset */
+        public String              dataset;
+
+        /** Attribute */
+        public String              sensitiveAttribute;
+
+        /** Score */
         public Map<String, String> informationLoss;
-        
+
         /**
          * Creates a new instance.
          *
@@ -104,9 +105,9 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
             builder.append(" - Dataset: ").append(dataset).append("\n");
             builder.append(" - Sensitive: ").append(sensitiveAttribute).append("\n");
             builder.append(" - Suppression: ").append(config.getMaxOutliers()).append("\n");
-            builder.append(" - Metric: ").append(config.getMetric().toString()).append("\n");
+            builder.append(" - Metric: ").append(config.getQualityModel().toString()).append("\n");
             builder.append(" - Criteria:\n");
-            for (PrivacyCriterion c : config.getCriteria()) {
+            for (PrivacyCriterion c : config.getPrivacyModels()) {
                 builder.append("   * ").append(c.toString()).append("\n");
             }
             builder.append("}");
@@ -115,7 +116,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
         
         @Override
         public String toString() {
-            return config.getCriteria() + "-" + config.getMaxOutliers() + "-" + config.getMetric() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }
@@ -129,7 +130,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
      */
     public static Data getDataObject(final ARXUtilityMetricsTestCase testCase) throws IOException {
         
-        final Data data = Data.create(testCase.dataset, ';');
+        final Data data = Data.create(testCase.dataset, StandardCharsets.UTF_8, ';');
         
         // Read generalization hierachies
         final FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -152,13 +153,13 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
             final Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
                 
-                final CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                final CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 final String attributeName = matcher.group(1);
                 
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
                 } else { // sensitive attribute
-                    if (testCase.config.containsCriterion(LDiversity.class) || testCase.config.containsCriterion(TCloseness.class)) {
+                    if (testCase.config.isPrivacyModelSpecified(LDiversity.class) || testCase.config.isPrivacyModelSpecified(TCloseness.class)) {
                         data.getDefinition().setAttributeType(attributeName, AttributeType.SENSITIVE_ATTRIBUTE);
                     }
                 }
@@ -208,11 +209,11 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
                 String loss = testcase.informationLoss.get(label);
                 
                 if (loss != null) {
-                    if (node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
+                    if (node.getHighestScore().compareTo(node.getLowestScore()) != 0) {
                         result.getOutput(node, false);
                     }
                     
-                    String actualLoss = node.getMaximumInformationLoss().toString();
+                    String actualLoss = node.getHighestScore().toString();
                     String expectedLoss = testcase.informationLoss.get(label);
                     
                     assertEquals(label, expectedLoss, actualLoss);

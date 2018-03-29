@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,18 +55,6 @@ public abstract class ViewData implements IView {
     /** Image */
     private final Image                  IMAGE_DESCENDING;
 
-    /** Image */
-    private final Image                  IMAGE_INSENSITIVE;
-
-    /** Image */
-    private final Image                  IMAGE_SENSITIVE;
-
-    /** Image */
-    private final Image                  IMAGE_QUASI_IDENTIFYING;
-
-    /** Image */
-    private final Image                  IMAGE_IDENTIFYING;
-
     /** Widget */
     private final ToolItem               groupsButton;
 
@@ -120,10 +108,6 @@ public abstract class ViewData implements IView {
         this.controller = controller;
         
         // Load images
-        IMAGE_INSENSITIVE       = controller.getResources().getManagedImage("bullet_green.png");   //$NON-NLS-1$
-        IMAGE_SENSITIVE         = controller.getResources().getManagedImage("bullet_purple.png");  //$NON-NLS-1$
-        IMAGE_QUASI_IDENTIFYING = controller.getResources().getManagedImage("bullet_yellow.png");  //$NON-NLS-1$
-        IMAGE_IDENTIFYING       = controller.getResources().getManagedImage("bullet_red.png");     //$NON-NLS-1$
         IMAGE_ASCENDING         = controller.getResources().getManagedImage("sort_ascending.png"); //$NON-NLS-1$
         IMAGE_DESCENDING        = controller.getResources().getManagedImage("sort_descending.png");//$NON-NLS-1$
 
@@ -208,6 +192,14 @@ public abstract class ViewData implements IView {
     }
     
     /**
+     * Adds a listener to the folder
+     * @param listener
+     */
+    public void addSelectionListener(SelectionListener listener) {
+        this.folder.addSelectionListener(listener);
+    }
+    
+    /**
      * Adds an additional item to the folder
      * @param title
      * @param helpid 
@@ -226,6 +218,14 @@ public abstract class ViewData implements IView {
     }
     
     /**
+     * Returns the selection index of the folder
+     * @return
+     */
+    public int getSelectionIndex() {
+        return folder.getSelectionIndex();
+    }
+
+    /**
      * Returns the NatTable viewport layer.
      *
      * @return
@@ -233,7 +233,7 @@ public abstract class ViewData implements IView {
     public ViewportLayer getViewportLayer() {
         return table.getViewportLayer();
     }
-    
+
     @Override
     public void reset() {
         table.reset();
@@ -251,6 +251,14 @@ public abstract class ViewData implements IView {
         folder.setSelection(index);
     }
 
+    /**
+     * Sets the selection index of the folder
+     * @param index
+     */
+    public void setSelectionIndex(int index) {
+        folder.setSelection(index);
+    }
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -282,7 +290,7 @@ public abstract class ViewData implements IView {
         	table.setSelectedAttribute((String)event.data);
         }
     }
-
+    
     /**
      * Selects the given column.
      *
@@ -322,6 +330,7 @@ public abstract class ViewData implements IView {
         }
     }
     
+
     /**
      * Called when the sort button is pressed.
      */
@@ -334,14 +343,13 @@ public abstract class ViewData implements IView {
         ascendingButton.setEnabled(true);
         descendingButton.setEnabled(true);
     }
-    
+
     /**
      * Returns the data definition.
      *
      * @return
      */
     protected abstract DataDefinition getDefinition();
-    
 
     /**
      * Returns the data definition.
@@ -360,38 +368,6 @@ public abstract class ViewData implements IView {
         while (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }
-        if (type == AttributeType.INSENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(index, IMAGE_INSENSITIVE);
-        } else if (type == AttributeType.IDENTIFYING_ATTRIBUTE) {
-            table.getHeaderImages().set(index, IMAGE_IDENTIFYING);
-        } else if (type == AttributeType.SENSITIVE_ATTRIBUTE) {
-            table.getHeaderImages().set(index, IMAGE_SENSITIVE);
-        } else {
-            table.getHeaderImages().set(index, IMAGE_QUASI_IDENTIFYING);
-        }
-    }
-
-    /**
-     * Adds a listener to the folder
-     * @param listener
-     */
-    public void addSelectionListener(SelectionListener listener) {
-        this.folder.addSelectionListener(listener);
-    }
-
-    /**
-     * Returns the selection index of the folder
-     * @return
-     */
-    public int getSelectionIndex() {
-        return folder.getSelectionIndex();
-    }
-
-    /**
-     * Sets the selection index of the folder
-     * @param index
-     */
-    public void setSelectionIndex(int index) {
-        folder.setSelection(index);
+        table.getHeaderImages().set(index, controller.getResources().getImage(type));
     }
 }

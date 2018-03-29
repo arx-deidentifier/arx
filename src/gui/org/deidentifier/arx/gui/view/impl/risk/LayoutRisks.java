@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -125,11 +125,16 @@ public class LayoutRisks implements ILayout {
         layoutBottomLeft.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
+                
+                // Synchronize left and right side
                 layoutBottomRight.setSelectionIdex(layoutBottomLeft.getSelectionIndex());
                 
-                if (layoutBottomLeft.getSelectionIndex() == 4) {
+                // Synchronize "Quasi-identifiers"
+                if (layoutBottomLeft.getSelectionIndex() == 2) {
                     layoutTopLeft.setSelectionIdex(2);
                     layoutTopRight.setSelectionIdex(2);
+                    
+                // Synchronize "Re-identification risks"
                 } else if (layoutBottomLeft.getSelectionIndex() == 0) {
                     layoutTopLeft.setSelectionIdex(3);
                     layoutTopRight.setSelectionIdex(3);
@@ -141,8 +146,11 @@ public class LayoutRisks implements ILayout {
         layoutBottomRight.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
+                
+                // Synchronize left and right side
                 layoutBottomLeft.setSelectionIdex(layoutBottomRight.getSelectionIndex());
                 
+                // Synchronize "Re-identification risks"
                 if (layoutBottomRight.getSelectionIndex() == 0) {
                     layoutTopLeft.setSelectionIdex(3);
                     layoutTopRight.setSelectionIdex(3);
@@ -155,10 +163,15 @@ public class LayoutRisks implements ILayout {
         layoutTopLeft.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                layoutTopRight.setSelectionIdex(layoutTopLeft.getSelectionIndex());
                 
+                // Synchronize left and right
+                layoutTopRight.setSelectionIdex(layoutTopLeft.getSelectionIndex());
+
+                // Synchronize "Quasi-identifiers"
                 if (layoutTopLeft.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(4);
+                    layoutBottomLeft.setSelectionIdex(2);
+
+                // Synchronize "Re-identification risks"
                 } else if (layoutTopLeft.getSelectionIndex() == 3) {
                     layoutBottomLeft.setSelectionIdex(0);
                     layoutBottomRight.setSelectionIdex(0);
@@ -170,10 +183,16 @@ public class LayoutRisks implements ILayout {
         layoutTopRight.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
+                
+                // Synchronize left and right
                 layoutTopLeft.setSelectionIdex(layoutTopRight.getSelectionIndex());
 
+                // Synchronize "Quasi-identifiers"
                 if (layoutTopRight.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(4);
+                    layoutBottomLeft.setSelectionIdex(2);
+                    
+
+                // Synchronize "Re-identification risks"
                 } else if (layoutTopRight.getSelectionIndex() == 3) {
                     layoutBottomLeft.setSelectionIdex(0);
                     layoutBottomRight.setSelectionIdex(0);
@@ -187,5 +206,10 @@ public class LayoutRisks implements ILayout {
         centerSash.setWeights(new int[] { WEIGHT_TOP, WEIGHT_BOTTOM });
         bottomSash.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
         center.setWeights(new int[] { WEIGHT_LEFT, WEIGHT_RIGHT });
+
+        // Fix resize bug
+        SWTUtil.fixOSXSashBug(centerSash);
+        SWTUtil.fixOSXSashBug(bottomSash);
+        SWTUtil.fixOSXSashBug(center);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +60,8 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
+     * Performs a test
      * 
-     *
      * @throws IOException
      */
     @Test
@@ -75,8 +75,7 @@ public class TestAnonymization extends AbstractTest {
             
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final ARXConfiguration config = ARXConfiguration.create();
-            config.setSuppressionString("*");
-            config.addCriterion(new KAnonymity(2));
+            config.addPrivacyModel(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
             
@@ -88,7 +87,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -103,7 +102,7 @@ public class TestAnonymization extends AbstractTest {
             
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             final ARXConfiguration config = ARXConfiguration.create();
-            config.addCriterion(new KAnonymity(2));
+            config.addPrivacyModel(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(provider.getData(), config);
             
@@ -115,7 +114,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -131,7 +130,7 @@ public class TestAnonymization extends AbstractTest {
             data.getDefinition().setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
             
             final ARXConfiguration config = ARXConfiguration.create();
-            config.addCriterion(new KAnonymity(2));
+            config.addPrivacyModel(new KAnonymity(2));
             config.setMaxOutliers(-0.2d);
             anonymizer.anonymize(provider.getData(), config);
         } catch (final IllegalArgumentException e) {
@@ -141,7 +140,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -211,10 +210,10 @@ public class TestAnonymization extends AbstractTest {
         // Create an instance of the anonymizer
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new DPresence(1d / 2d, 2d / 3d, subset));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new DPresence(1d / 2d, 2d / 3d, subset));
         config.setMaxOutliers(0d);
-        config.setMetric(org.deidentifier.arx.metric.Metric.createPrecisionMetric());
+        config.setQualityModel(org.deidentifier.arx.metric.Metric.createPrecisionMetric());
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         
         // TODO: check if result is correct!
@@ -237,7 +236,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -248,15 +247,14 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         ARXResult result = anonymizer.anonymize(provider.getData(), config);
         assertFalse(result.isResultAvailable());
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -267,8 +265,7 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(provider.getData(), config));
         
@@ -286,7 +283,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -299,8 +296,7 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new DistinctLDiversity("age", 2));
+        config.addPrivacyModel(new DistinctLDiversity("age", 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         
@@ -319,7 +315,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -332,8 +328,7 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new EntropyLDiversity("age", 2));
+        config.addPrivacyModel(new EntropyLDiversity("age", 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         
@@ -352,7 +347,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -365,8 +360,7 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new RecursiveCLDiversity("age", 3.0d, 2));
+        config.addPrivacyModel(new RecursiveCLDiversity("age", 3.0d, 2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         
@@ -385,7 +379,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -401,7 +395,7 @@ public class TestAnonymization extends AbstractTest {
             data.getDefinition().setAttributeType("zipcode", AttributeType.SENSITIVE_ATTRIBUTE);
             
             final ARXConfiguration config = ARXConfiguration.create();
-            config.addCriterion(new KAnonymity(2));
+            config.addPrivacyModel(new KAnonymity(2));
             config.setMaxOutliers(0d);
             anonymizer.anonymize(data, config);
             
@@ -412,7 +406,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -424,22 +418,19 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         data.getHandle().release();
         
         config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new KAnonymity(3));
+        config.addPrivacyModel(new KAnonymity(3));
         config.setMaxOutliers(0d);
         final String[][] result3 = resultToArray(anonymizer.anonymize(data, config));
         data.getHandle().release();
         
         config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         final String[][] result2 = resultToArray(anonymizer.anonymize(data, config));
         data.getHandle().release();
@@ -472,7 +463,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -483,7 +474,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -494,7 +485,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -544,9 +535,8 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new EqualDistanceTCloseness("disease", 0.6d));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new EqualDistanceTCloseness("disease", 0.6d));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         
@@ -567,7 +557,7 @@ public class TestAnonymization extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test
      *
      * @throws IOException
      */
@@ -630,9 +620,8 @@ public class TestAnonymization extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.setSuppressionString("*");
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new HierarchicalDistanceTCloseness("disease", 0.4d, disease));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new HierarchicalDistanceTCloseness("disease", 0.4d, disease));
         config.setMaxOutliers(0d);
         final String[][] result = resultToArray(anonymizer.anonymize(data, config));
         

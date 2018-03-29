@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,8 @@ package org.deidentifier.arx;
 import java.text.ParseException;
 import java.util.Date;
 
+import org.deidentifier.arx.aggregates.StatisticsBuilder;
+
 /**
  * Wrapper class that provides information to StatisticsBuilder.
  *
@@ -33,16 +35,40 @@ public class DataHandleInternal {
         /** Method*/
         public void checkInterrupt();
     }
-    
-    /**  Handle */
+
+    /** Handle */
     private DataHandle handle;
-    
+
     /**
      * Constructor
      * @param handle
+     * @param anonymous
      */
     protected DataHandleInternal(DataHandle handle){
         this.handle = handle;
+    }
+
+    /**
+     * Returns the associated input handle, itself if there is none.
+     * @return
+     */
+    public DataHandleInternal getAssociatedInput() {
+        
+        // Check if input already
+        if (!this.isOutput()) {
+            return this;
+        }
+        
+        // Obtain
+        DataHandle input = this.handle.registry.getInputHandle();
+        
+        // Map to subset
+        if (this.getSuperset() != null) {
+            input = input.getView();
+        }
+        
+        // Return
+        return new DataHandleInternal(input);
     }
 
     /**
@@ -113,11 +139,22 @@ public class DataHandleInternal {
     /**
      * Method
      * @param column
+     * @param ignoreSuppression
+     * @param stop
+     * @return
+     */
+    public String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler stop) {
+        return handle.getDistinctValues(column, ignoreSuppression, stop);
+    }
+    
+    /**
+     * Method
+     * @param column
      * @param stop
      * @return
      */
     public String[] getDistinctValues(int column, InterruptHandler stop) {
-        return handle.getDistinctValues(column, stop);
+        return handle.getDistinctValues(column, false, stop);
     }
 
     /**
@@ -130,7 +167,7 @@ public class DataHandleInternal {
     public Double getDouble(int row, int column) throws ParseException {
         return handle.getDouble(row, column);
     }
-
+    
     /**
      * Method
      * @param attribute
@@ -139,7 +176,7 @@ public class DataHandleInternal {
     public int getGeneralization(String attribute) {
         return handle.getGeneralization(attribute);
     }
-    
+
     /**
      * Delegate
      * @param row
@@ -167,6 +204,10 @@ public class DataHandleInternal {
         return handle.getNumRows();
     }
 
+    public StatisticsBuilder getStatisticsBuilder() {
+        return this.handle.getStatistics();
+    }
+
     /**
      * Returns the superset, if this handle is a subset
      * @return
@@ -178,15 +219,7 @@ public class DataHandleInternal {
             return new DataHandleInternal(((DataHandleSubset)handle).getSource());
         }
     }
-
-    /**
-     * Method
-     * @return
-     */
-    public String getSuppressionString() {
-        return handle.getSuppressionString();
-    }
-
+  
     /**
      * Method
      * @param row
@@ -203,13 +236,21 @@ public class DataHandleInternal {
     public String getValue(final int row, final int col, final boolean ignoreSuppression) {
         return handle.internalGetValue(row, col, ignoreSuppression);
     }
-  
+    
     /**
      * Returns the view
      * @return
      */
     public DataHandleInternal getView() {
         return new DataHandleInternal(handle.getView());
+    }
+    
+    /**
+     * Returns whether the handle is anonymous
+     * @return
+     */
+    public boolean isAnonymous() {
+        return handle.isAnonymous();
     }
 
     /**
@@ -219,7 +260,7 @@ public class DataHandleInternal {
     public boolean isOptimized() {
         return handle.isOptimized();
     }
-    
+
     /**
      * Returns whether the given row is suppressed
      * @param row
@@ -228,7 +269,7 @@ public class DataHandleInternal {
     public boolean isOutlier(int row) {
         return handle.isOutlier(row);
     }
-    
+
     /**
      * Returns whether this is an output handle
      * @return

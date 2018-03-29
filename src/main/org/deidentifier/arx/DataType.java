@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -319,11 +319,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public Double toDouble(Date date) {
-            if (date == null) {
-                return null;
-            } else {
-                return new Long(date.getTime()).doubleValue();
-            }
+            return (date == null) ? null : new Long(date.getTime()).doubleValue();
         }
 
         @Override
@@ -879,11 +875,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
         @Override
         public Double toDouble(Long val) {
-            if (val == null) {
-                return null;
-            } else {
-                return val.doubleValue();
-            }
+            return (val == null) ? null : val.doubleValue();
         }
 
         @Override
@@ -1508,6 +1500,9 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
 
     /** The string representing the NULL value */
     public static final String NULL_VALUE = "NULL";
+
+    /** The string representing the ANY value */
+    public static final String ANY_VALUE = "*";
     
     /**  SVUID */
     private static final long serialVersionUID = -4380267779210935078L;
@@ -1625,6 +1620,15 @@ public abstract class DataType<T> implements Serializable, Comparator<T> {
         return new ARXOrderedString(format);
     }
     
+    /**
+     * Returns whether the value represents any value
+     * @param value
+     * @return
+     */
+    public static final boolean isAny(String value) {
+        return value != null && value.equals(ANY_VALUE);
+    }
+
     /**
      * Returns whether the value represents null
      * @param value

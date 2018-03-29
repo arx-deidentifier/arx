@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,9 +17,12 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXSolverConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
@@ -28,20 +31,20 @@ import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquen
  * 
  * @author Fabian Prasser
  */
-public class PopulationUniqueness extends RiskBasedCriterion{
+public class PopulationUniqueness extends RiskBasedCriterion {
 
     /** SVUID */
-    private static final long          serialVersionUID = 618039085843721351L;
+    private static final long         serialVersionUID = 618039085843721351L;
 
     /** The statistical model */
     private PopulationUniquenessModel statisticalModel;
 
     /** The population model */
-    private ARXPopulationModel         populationModel;
+    private ARXPopulationModel        populationModel;
 
-    /** The solver config*/
-    private ARXSolverConfiguration     solverConfig;
-    
+    /** The solver config */
+    private ARXSolverConfiguration    solverConfig;
+
     /**
      * Creates a new instance of this criterion. Uses Dankar's method for estimating population uniqueness.
      * This constructor will clone the population model, making further changes to it will not influence
@@ -64,8 +67,8 @@ public class PopulationUniqueness extends RiskBasedCriterion{
      * @param config
      */
     public PopulationUniqueness(double riskThreshold,
-                                               ARXPopulationModel populationModel,
-                                               ARXSolverConfiguration config) {
+                                ARXPopulationModel populationModel,
+                                ARXSolverConfiguration config) {
         this(riskThreshold, PopulationUniquenessModel.DANKAR, populationModel, config);
     }
 
@@ -79,8 +82,8 @@ public class PopulationUniqueness extends RiskBasedCriterion{
      * @param populationModel
      */
     public PopulationUniqueness(double riskThreshold,
-                                               PopulationUniquenessModel statisticalModel, 
-                                               ARXPopulationModel populationModel){
+                                PopulationUniquenessModel statisticalModel,
+                                ARXPopulationModel populationModel) {
         this(riskThreshold, statisticalModel, populationModel, ARXSolverConfiguration.create());
     }
     /**
@@ -94,20 +97,35 @@ public class PopulationUniqueness extends RiskBasedCriterion{
      * @param config
      */
     public PopulationUniqueness(double riskThreshold,
-                                               PopulationUniquenessModel statisticalModel, 
-                                               ARXPopulationModel populationModel,
-                                               ARXSolverConfiguration config){
+                                PopulationUniquenessModel statisticalModel,
+                                ARXPopulationModel populationModel,
+                                ARXSolverConfiguration config) {
         super(false, statisticalModel == PopulationUniquenessModel.ZAYATZ, riskThreshold);
         this.statisticalModel = statisticalModel;
         this.populationModel = populationModel.clone();
         this.solverConfig = config;
     }
 
-    /**
-     * @return the populationModel
-     */
+    @Override
+    public PopulationUniqueness clone() {
+        return new PopulationUniqueness(this.getRiskThreshold(),
+                                        this.getStatisticalModel(),
+                                        this.getPopulationModel(),
+                                        this.solverConfig);
+    }
+
+    @Override
     public ARXPopulationModel getPopulationModel() {
         return populationModel;
+    }
+    
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        // TODO: Risk is estimated different from the other models, here
+        return getRiskThreshold();
     }
 
     /**
@@ -118,8 +136,33 @@ public class PopulationUniqueness extends RiskBasedCriterion{
     }
 
     @Override
+    @SuppressWarnings("deprecation")
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
+        
+        // TODO: Needed for backwards compatibility of ARX 3.4.0 with previous versions
+        if (this.populationModel != null) {
+            this.populationModel.makeBackwardsCompatible(manager.getDataGeneralized().getDataLength());
+        }
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return false;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Population uniqueness");
+        result.addProperty("Threshold", super.getRiskThreshold());
+        result.addProperty("Population", this.populationModel.getPopulationSize());
+        result.addProperty("Estimator", this.statisticalModel.toString());
+        return result;
+    }
+    
+    @Override
     public String toString() {
-        return "(<" + getRiskThreshold() + "-population-uniques (" + statisticalModel.toString().toLowerCase() + ")";
+        return "(" + getRiskThreshold() + ")-population-uniqueness (" + statisticalModel.toString().toLowerCase() + ")";
     }
 
     /**
@@ -132,10 +175,9 @@ public class PopulationUniqueness extends RiskBasedCriterion{
      */
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
 
-        RiskModelPopulationUniqueness riskModel = new RiskModelPopulationUniqueness(this.populationModel, 
-                                                                                                      distribution.getEquivalenceClasses(), 
-                                                                                                      distribution.getNumberOfTuples(),
-                                                                                                      solverConfig);
+        RiskModelPopulationUniqueness riskModel = new RiskModelPopulationUniqueness(this.populationModel,
+                                                                                    distribution.getHistogram(),
+                                                                                    solverConfig);
         
         double populationUniques = 0d;
         if (this.statisticalModel == PopulationUniquenessModel.DANKAR) {
@@ -145,18 +187,10 @@ public class PopulationUniqueness extends RiskBasedCriterion{
         }
         if (populationUniques > 0d && populationUniques <= getRiskThreshold()) {
             return true;
-        } else if (populationUniques == 0d && distribution.getFractionOfTuplesInClassesOfSize(1) == 0d) {
+        } else if (populationUniques == 0d && distribution.getFractionOfRecordsInClassesOfSize(1) == 0d) {
             return true;
         } else {
             return false;
         }
-    }
-
-    @Override
-    public PopulationUniqueness clone() {
-        return new PopulationUniqueness(this.getRiskThreshold(),
-                                        this.getStatisticalModel(),
-                                        this.getPopulationModel(),
-                                        this.solverConfig);
     }
 }

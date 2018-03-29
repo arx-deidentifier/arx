@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
@@ -41,7 +43,7 @@ import org.deidentifier.arx.framework.data.DataManager;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
+public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     
     /** SVUID */
     private static final long        serialVersionUID = 242579895476272606L;
@@ -59,10 +61,27 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
     /** Parameter */
     private transient DataManager    manager;
     /** Parameter */
-    private transient Random         random;
+    private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
 
+    /**
+     * Creates a new instance
+     * @param epsilon
+     * @param delta
+     * @param generalization
+     */
+    public EDDifferentialPrivacy(double epsilon, double delta, 
+                                 DataGeneralizationScheme generalization) {
+        super(false, false);
+        this.epsilon = epsilon;
+        this.delta = delta;
+        this.generalization = generalization;
+        this.beta = calculateBeta(epsilon);
+        this.k = calculateK(delta, epsilon, this.beta);
+        this.deterministic = false;
+    }
+    
     /**
      * Creates a new instance which may be configured to produce deterministic output.
      * Note: *never* use this in production. It is implemented for testing purposes, only.
@@ -81,27 +100,149 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         this.generalization = generalization;
         this.beta = calculateBeta(epsilon);
         this.k = calculateK(delta, epsilon, this.beta);
-        if (deterministic) {
-            this.random = new Random(0xDEADBEEF);
-        }
+        this.deterministic = true;
     }
     
+
+    @Override
+    public EDDifferentialPrivacy clone() {
+        return new EDDifferentialPrivacy(this.getEpsilon(), this.getDelta(), this.getGeneralizationScheme());
+    }
+
     /**
-     * Creates a new instance
-     * @param epsilon
-     * @param delta
-     * @param generalization
+     * Returns the k parameter of (k,b)-SDGS
+     * @return
      */
-    public EDDifferentialPrivacy(double epsilon, double delta, 
-                                 DataGeneralizationScheme generalization) {
-        super(false, false);
-        this.epsilon = epsilon;
-        this.delta = delta;
-        this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(delta, epsilon, this.beta);
+    public double getBeta() {
+        return beta;
     }
     
+    @Override
+    public DataSubset getDataSubset() {
+        return subset;
+    }
+
+    /**
+     * Returns the delta parameter of (e,d)-DP
+     * @return
+     */
+    public double getDelta() {
+        return delta;
+    }
+
+    /**
+     * Returns the epsilon parameter of (e,d)-DP
+     * @return
+     */
+    public double getEpsilon() {
+        return epsilon;
+    }
+
+    /**
+     * Returns the defined generalization scheme
+     * @return
+     */
+    public DataGeneralizationScheme getGeneralizationScheme() {
+        return this.generalization;
+    }
+
+    /**
+     * Returns the k parameter of (k,b)-SDGS
+     * @return
+     */
+    public int getK() {
+        return k;
+    }
+
+    @Override
+    public int getMinimalClassSize() {
+        return k;
+    }
+    
+    @Override
+    public int getRequirements(){
+        // Requires two counters
+        return ARXConfiguration.REQUIREMENT_COUNTER |
+               ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
+    }
+
+    /**
+     * Creates a random sample based on beta
+     *
+     * @param manager
+     */
+    public void initialize(DataManager manager, ARXConfiguration config){
+        
+        // Needed for consistent de-serialization. We need to call this
+        // method in the constructor of the class DataManager. The following
+        // condition should hold, when this constructor is called during 
+        // de-serialization, when we must not change the subset.
+        if (subset != null && this.manager == null) {
+            this.manager = manager;
+            return;
+        }
+        
+        // Needed to prevent inconsistencies. We need to call this
+        // method in the constructor of the class DataManager. It will be called again, when
+        // ARXConfiguration is initialized(). During the second call we must not change the subset.
+        if (subset != null && this.manager == manager) {
+            return;
+        }
+
+        // Create RNG
+        Random random;
+        if (deterministic) {
+            random = new Random(0xDEADBEEF);
+        } else {
+            random = new SecureRandom();
+        }
+
+        // Create a data subset via sampling based on beta
+        Set<Integer> subsetIndices = new HashSet<Integer>();
+        int records = manager.getDataGeneralized().getDataLength();
+        for (int i = 0; i < records; ++i) {
+            if (random.nextDouble() < beta) {
+                subsetIndices.add(i);
+            }
+        }
+        this.subset = DataSubset.create(records, subsetIndices);
+        this.manager = manager;
+    }
+
+    @Override
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+        return entry.count >= k;
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return false;
+    }
+    
+    @Override
+    public boolean isMinimalClassSizeAvailable() {
+        return true;
+    }
+
+    @Override
+    public boolean isSubsetAvailable() {
+        return subset != null;
+    }
+    
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Differential privacy");
+        result.addProperty("Epsilon", epsilon);
+        result.addProperty("Delta", delta);
+        result.addProperty("Uniqueness threshold (k)", k);
+        result.addProperty("Sampling probability (beta)", beta);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "("+epsilon+","+delta+")-DP";
+    }
 
     /**
      * Calculates a_n
@@ -114,7 +255,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         double gamma = calculateGamma(epsilon, beta);
         return calculateBinomialSum((int) Math.floor(n * gamma) + 1, n, beta);
     }
-
+    
     /**
      * Calculates beta_max
      * @param epsilon
@@ -202,114 +343,5 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion{
         }
 
         return k;
-    }
-    
-    /**
-     * Returns the epsilon parameter of (e,d)-DP
-     * @return
-     */
-    public double getEpsilon() {
-        return epsilon;
-    }
-
-    /**
-     * Returns the delta parameter of (e,d)-DP
-     * @return
-     */
-    public double getDelta() {
-        return delta;
-    }
-
-    /**
-     * Returns the k parameter of (k,b)-SDGS
-     * @return
-     */
-    public int getK() {
-        return k;
-    }
-
-    /**
-     * Returns the k parameter of (k,b)-SDGS
-     * @return
-     */
-    public double getBeta() {
-        return beta;
-    }
-
-    @Override
-    public int getRequirements(){
-        // Requires two counters
-        return ARXConfiguration.REQUIREMENT_COUNTER |
-               ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
-    }
-    
-    /**
-     * Returns the defined generalization scheme
-     * @return
-     */
-    public DataGeneralizationScheme getGeneralizationScheme() {
-        return this.generalization;
-    }
-
-    /**
-     * Creates a random sample based on beta
-     *
-     * @param manager
-     */
-    public void initialize(DataManager manager){
-        
-        // Needed for consistent de-serialization. We need to call this
-        // method in the constructor of the class DataManager. The following
-        // condition should hold, when this constructor is called during 
-        // de-serialization, when we must not change the subset.
-        if (subset != null && this.manager == null) {
-            this.manager = manager;
-            return;
-        }
-        
-        // Needed to prevent inconsistencies. We need to call this
-        // method in the constructor of the class DataManager. It will be called again, when
-        // ARXConfiguration is initialized(). During the second call we must not change the subset.
-        if (subset != null && this.manager == manager) {
-            return;
-        }
-
-        // Create a data subset via sampling based on beta
-        Set<Integer> subsetIndices = new HashSet<Integer>();
-        if (random == null) {
-            random = new SecureRandom();
-        }
-        int records = manager.getDataGeneralized().getDataLength();
-        for (int i = 0; i < records; ++i) {
-            if (random.nextDouble() < beta) {
-                subsetIndices.add(i);
-            }
-        }
-        this.subset = DataSubset.create(records, subsetIndices);
-        this.manager = manager;
-    }
-    
-    /**
-     * Returns the research subset.
-     *
-     * @return
-     */
-    public DataSubset getSubset() {
-        return this.subset;
-    }
-
-    @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
-        return entry.count >= k;
-    }
-
-    @Override
-    public String toString() {
-        return "("+epsilon+","+delta+")-DP";
-    }
-    
-    @Override
-    public EDDifferentialPrivacy clone() {
-        return new EDDifferentialPrivacy(this.getEpsilon(), this.getDelta(), this.getGeneralizationScheme());
     }
 }

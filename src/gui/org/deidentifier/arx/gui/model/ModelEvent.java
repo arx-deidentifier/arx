@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,7 +110,23 @@ public class ModelEvent {
         RISK_THRESHOLD_MAIN,
         
         /** RISK THRESHOLD*/
-        RISK_THRESHOLD_DERIVED
+        RISK_THRESHOLD_DERIVED,
+        
+        /** G/S FACTOR*/
+        GS_FACTOR,
+        
+        /** ATTRIBUTE WEIGHT*/
+        ATTRIBUTE_WEIGHT,
+        
+        /** COST/BENEFIT MODEL*/
+        COST_BENEFIT_MODEL,
+
+        // TODO Consolidate Masking events?
+        MASKING_VARIABLE_SELECTED,
+        MASKING_VARIABLE_CHANGED, // Added, removed, changed
+
+        MASKING_ATTRIBUTE_CHANGED,
+
     }
 
     /** The part of the model that has changed. */

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,10 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * Delta-disclosure privacy as proposed in:<br>
@@ -39,12 +41,6 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     /** Log 2. */
     private static final double LOG2             = Math.log(2);
 
-    /** Parameter */
-    private final double        d;
-
-    /** The original distribution. */
-    private double[]            distribution;
-
     /**
      * Computes log 2.
      *
@@ -54,6 +50,12 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     static final double log2(final double num) {
         return Math.log(num) / LOG2;
     }
+
+    /** Parameter */
+    private final double        d;
+
+    /** The original distribution. */
+    private double[]            distribution;
     
     /**
      * Creates a new instance
@@ -67,13 +69,33 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
     }
 
     @Override
-    public void initialize(DataManager manager) {
-        super.initialize(manager);
+    public DDisclosurePrivacy clone() {
+        return new DDisclosurePrivacy(this.getAttribute(), this.getD());
+    }
+
+    /**
+     * Returns the parameter delta.
+     *
+     * @return
+     */
+    public double getD(){
+        return d;
+    }
+
+	@Override
+    public int getRequirements(){
+        // Requires a distribution
+        return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
+    }
+
+    @Override
+    public void initialize(DataManager manager, ARXConfiguration config) {
+        super.initialize(manager, config);
         distribution = manager.getDistribution(attribute);
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
         // For table t
         // Foreach class c
@@ -99,29 +121,22 @@ public class DDisclosurePrivacy extends ExplicitPrivacyCriterion {
         // check
         return true;
     }
+    
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
 
-	@Override
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Disclosure privacy");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (delta)", d);
+        return result;
+    }
+
+    @Override
 	public String toString() {
 		return d+"-disclosure privacy for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public DDisclosurePrivacy clone() {
-        return new DDisclosurePrivacy(this.getAttribute(), this.getD());
-    }
-
-    @Override
-    public int getRequirements(){
-        // Requires a distribution
-        return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
-    }
-    
-    /**
-     * Returns the parameter delta.
-     *
-     * @return
-     */
-    public double getD(){
-        return d;
-    }
 }

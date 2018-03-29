@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -188,6 +188,23 @@ public class ComponentGSSlider {
     }
     
     /**
+     * Adds a selection listener
+     * @param listener
+     */
+    public void addSelectionListener(SelectionListener listener) {
+        this.slider.addSelectionListener(listener);
+        this.button.addSelectionListener(listener);
+    }
+    
+    /**
+     * Gets the selection
+     * @return
+     */
+    public double getSelection() {
+        return ((double)slider.getSelection() - MINIMUM) / (double)(MAXIMUM - MINIMUM);
+    }
+    
+    /**
      * Sets layout data
      * @param data
      */
@@ -207,24 +224,9 @@ public class ComponentGSSlider {
             selection = 0d;
         }
         int value = (int)(MINIMUM + selection * (double)(MAXIMUM - MINIMUM));
+        if (!this.root.isDisposed()) this.root.setRedraw(false);
         if (!this.slider.isDisposed()) this.slider.setSelection(value);
         if (!this.canvas.isDisposed()) this.canvas.redraw();
-    }
-    
-    /**
-     * Gets the selection
-     * @return
-     */
-    public double getSelection() {
-        return ((double)slider.getSelection() - MINIMUM) / (double)(MAXIMUM - MINIMUM);
-    }
-    
-    /**
-     * Adds a selection listener
-     * @param listener
-     */
-    public void addSelectionListener(SelectionListener listener) {
-        this.slider.addSelectionListener(listener);
-        this.button.addSelectionListener(listener);
+        if (!this.root.isDisposed()) this.root.setRedraw(true);
     }
 }

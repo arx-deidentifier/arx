@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014-2015 Karol Babioch, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,10 +95,13 @@ public class ImportWizardModel {
 
     /** Separator for columns (in case of CSV import). */
     private char                          csvDelimiter;
-    
+                                          
     /** Character to enclose strings (in case of CSV import). */
     private char                          csvQuote;
-
+                                          
+    /** The charset of the file */
+    private Charset                       charset = Charset.defaultCharset();
+                                          
     /**
      * Indicates whether first row contains header
      * 
@@ -150,6 +154,14 @@ public class ImportWizardModel {
     }
 
     /**
+     * Returns the charset
+     * @return
+     */
+    public Charset getCharset() {
+        return charset;
+    }
+
+    /**
      * @return the csvDelimiter
      */
     public char getCsvDelimiter() {
@@ -163,21 +175,21 @@ public class ImportWizardModel {
             return csvEscape;
         }
 
-    /**
-     * Getter
-     * @return
-     */
-    public char[] getCsvLinebreak() {
-        return csvLinebreak;
-    }
-
    /**
  * Getter
  * @return
  */
-public char getCsvQuote() {
-    return csvQuote;
+public char[] getCsvLinebreak() {
+    return csvLinebreak;
 }
+
+    /**
+     * Getter
+     * @return
+     */
+    public char getCsvQuote() {
+        return csvQuote;
+    }
 
     /**
      * Returns list of enabled columns
@@ -239,7 +251,7 @@ public char getCsvQuote() {
 
         return jdbcTables;
     }
-
+    
     /**
      * Returns a list of matching data types
      * @param column
@@ -261,7 +273,7 @@ public char getCsvQuote() {
         
         return data.getHandle().getMatchingDataTypes(columnIndex, locale, 0d);
     }
-    
+
     /**
      * @return {@link #previewData}
      */
@@ -333,6 +345,14 @@ public char getCsvQuote() {
     public boolean isPerformCleansing() {
         return performCleansing;
     }
+    
+    /**
+     * Sets the charset
+     * @param charset
+     */
+    public void setCharset(Charset charset) {
+        this.charset = charset;
+    }
 
     /**
      * @param csvDelimiter the csvDelimiter to set
@@ -340,7 +360,7 @@ public char getCsvQuote() {
     public void setCsvDelimiter(char csvDelimiter) {
         this.csvDelimiter = csvDelimiter;
     }
-    
+
     /**
      * 
      * @param csvEscape
@@ -445,7 +465,7 @@ public char getCsvQuote() {
 
         this.sourceType = sourceType;
     }
-
+    
     /**
      * @param columns
      *            {@link #wizardColumns}

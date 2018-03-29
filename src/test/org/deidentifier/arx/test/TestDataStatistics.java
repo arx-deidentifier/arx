@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,12 +39,68 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Test;
 
 /**
+ * Test class for data statistics
  * 
+ * @author Fabian Prasser
  */
 public class TestDataStatistics extends AbstractTest {
     
     /**
+     * Helper class
      * 
+     * @author Fabian Prasser
+     */
+    class DoubleArrayWrapper {
+        
+        /** Double array*/
+        double[] values;
+        
+        /**
+         * Creates a new instance
+         * @param values
+         */
+        public DoubleArrayWrapper(double[] values) {
+            this.values = values;
+        }
+        
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            DoubleArrayWrapper other = (DoubleArrayWrapper) obj;
+            if (!getOuterType().equals(other.getOuterType())) {
+                return false;
+            }
+            if (!Arrays.equals(this.values, other.values)) {
+                return false;
+            }
+            return true;
+        }
+        
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = (prime * result) + getOuterType().hashCode();
+            result = (prime * result) + Arrays.hashCode(this.values);
+            return result;
+        }
+        
+        private TestDataStatistics getOuterType() {
+            return TestDataStatistics.this;
+        }
+        
+    }
+    
+    /**
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -52,15 +108,15 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testContingency1() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsContingencyTable contingency;
@@ -69,25 +125,24 @@ public class TestDataStatistics extends AbstractTest {
         double[][] frequencies;
         
         // Check input
-        contingency = provider.getData()
-                              .getHandle()
-                              .getStatistics()
-                              .getContingencyTable(0, true, 2, true);
-                              
+        contingency = this.provider.getData()
+                                   .getHandle()
+                                   .getStatistics()
+                                   .getContingencyTable(0, true, 2, true);
+                                   
         values1 = new String[] { "34", "45", "66", "70" };
         values2 = new String[] { "81667", "81675", "81925", "81931" };
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {
-                                       { 0, 0, 0.14285714285714285 },
+        frequencies = new double[][] { { 0, 0, 0.14285714285714285 },
                                        { 1, 1, 0.14285714285714285 },
                                        { 2, 2, 0.14285714285714285 },
                                        { 3, 3, 0.2857142857142857 },
                                        { 1, 3, 0.14285714285714285 },
                                        { 0, 3, 0.14285714285714285 } };
-                                       
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+                           
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
         
         // Check output
         contingency = result.getOutput(false)
@@ -99,16 +154,15 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {
-                                       { 0, 0, 0.2857142857142857 },
+        frequencies = new double[][] { { 0, 0, 0.2857142857142857 },
                                        { 1, 1, 0.42857142857142855 },
                                        { 0, 1, 0.2857142857142857 } };
-                                       
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+        
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -116,22 +170,22 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testContingency2() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         // Subset
         Set<Integer> set = new HashSet<Integer>();
         set.add(0);
         set.add(6);
-        DataSubset subset = DataSubset.create(provider.getData(), set);
+        DataSubset subset = DataSubset.create(this.provider.getData(), set);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new DPresence(0.0d, 1.0d, subset));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new DPresence(0.0d, 1.0d, subset));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsContingencyTable contingency;
@@ -140,18 +194,17 @@ public class TestDataStatistics extends AbstractTest {
         double[][] frequencies;
         
         // Check input
-        contingency = provider.getData().getHandle().getView().getStatistics().getContingencyTable(0, true, 2, true);
+        contingency = this.provider.getData().getHandle().getView().getStatistics().getContingencyTable(0, true, 2, true);
         
         values1 = new String[] { "34", "45" };
         values2 = new String[] { "81667", "81931" };
         assertTrue(Arrays.equals(values1, contingency.values1));
         assertTrue(Arrays.equals(values2, contingency.values2));
         
-        frequencies = new double[][] {
-                                       { 0, 0, 0.5 },
+        frequencies = new double[][] { { 0, 0, 0.5 },
                                        { 1, 1, 0.5 } };
-                                       
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+        
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
         
         // Check output
         contingency = result.getOutput(false).getView().getStatistics().getContingencyTable(0, true, 2, true);
@@ -162,12 +215,11 @@ public class TestDataStatistics extends AbstractTest {
         assertTrue(Arrays.equals(values2, contingency.values2));
         
         frequencies = new double[][] { { 0, 0, 1.0 } };
-        
-        assertTrue(Arrays.deepEquals(contingencyToArray(contingency), frequencies));
+        assertTrue("Unexpected result", deepEquals(toArray(contingency), frequencies));
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -175,15 +227,15 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testDistribution1() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsFrequencyDistribution distribution;
@@ -191,7 +243,7 @@ public class TestDataStatistics extends AbstractTest {
         double[] frequency;
         
         // Check input
-        distribution = provider.getData().getHandle().getStatistics().getFrequencyDistribution(0, true);
+        distribution = this.provider.getData().getHandle().getStatistics().getFrequencyDistribution(0, true);
         values = new String[] { "34", "45", "66", "70" };
         frequency = new double[] { 0.2857142857142857, 0.2857142857142857, 0.14285714285714285, 0.2857142857142857 };
         assertTrue(Arrays.equals(values, distribution.values));
@@ -206,7 +258,7 @@ public class TestDataStatistics extends AbstractTest {
     }
     
     /**
-     * 
+     * Performs a test.
      *
      * @throws IllegalArgumentException
      * @throws IOException
@@ -214,15 +266,15 @@ public class TestDataStatistics extends AbstractTest {
     @Test
     public void testDistribution2() throws IllegalArgumentException, IOException {
         
-        provider.createDataDefinition();
-        provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
+        this.provider.createDataDefinition();
+        this.provider.getData().getDefinition().setDataType("age", DataType.INTEGER);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
-        ARXResult result = anonymizer.anonymize(provider.getData(), config);
+        ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
         
         // Define
         StatisticsFrequencyDistribution distribution;
@@ -230,7 +282,7 @@ public class TestDataStatistics extends AbstractTest {
         double[] frequency;
         
         // Check input
-        distribution = provider.getData().getHandle().getStatistics().getFrequencyDistribution(1, false);
+        distribution = this.provider.getData().getHandle().getStatistics().getFrequencyDistribution(1, false);
         values = new String[] { "female", "male" };
         frequency = new double[] { 0.42857142857142855, 0.5714285714285714 };
         assertTrue(Arrays.equals(values, distribution.values));
@@ -245,12 +297,41 @@ public class TestDataStatistics extends AbstractTest {
     }
     
     /**
+     * Checks the two arrays regarding equality, treating a double[][]
+     * as a set of comparable double[]'s
      * 
-     *
+     * @param set1
+     * @param set2
+     */
+    private boolean deepEquals(double[][] set1, double[][] set2) {
+        
+        if (set1.length != set2.length) {
+            return false;
+        }
+        
+        Set<DoubleArrayWrapper> frequencies = new HashSet<DoubleArrayWrapper>();
+        for (int i = 0; i < set1.length; i++) {
+            frequencies.add(new DoubleArrayWrapper(set1[i]));
+        }
+        
+        // Check
+        for (int j = 0; j < set2.length; j++) {
+            if (!frequencies.contains(new DoubleArrayWrapper(set2[j]))) {
+                return false;
+            }
+        }
+        
+        // They are equal
+        return true;
+    }
+    
+    /**
+     * Converts a contigency table to an array
+     * 
      * @param contingency
      * @return
      */
-    private double[][] contingencyToArray(StatisticsContingencyTable contingency) {
+    private double[][] toArray(StatisticsContingencyTable contingency) {
         
         List<double[]> list = new ArrayList<double[]>();
         while (contingency.iterator.hasNext()) {

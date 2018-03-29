@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -109,7 +109,7 @@ public class HashGroupify {
         // Set params
         this.currentNumOutliers = 0;
         this.suppressionLimit = config.getAbsoluteMaxOutliers();
-        this.utilityMeasure = config.getMetric();
+        this.utilityMeasure = config.getQualityModel();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
         // Extract research subset
@@ -120,8 +120,8 @@ public class HashGroupify {
         }
         
         // Extract criteria
-        this.classBasedCriteria = config.getClassBasedCriteriaAsArray();
-        this.sampleBasedCriteria = config.getSampleBasedCriteriaAsArray();
+        this.classBasedCriteria = config.getClassBasedPrivacyModelsAsArray();
+        this.sampleBasedCriteria = config.getSampleBasedPrivacyModelsAsArray();
         this.minimalClassSize = config.getMinimalGroupSize();
         
         // Sanity check: by convention, d-presence must be the first criterion
@@ -484,7 +484,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -537,7 +537,7 @@ public class HashGroupify {
             criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
             
             // Early abort
-            this.currentNumOutliers = distribution.getNumOfSuppressedTuples();
+            this.currentNumOutliers = distribution.getNumSuppressedRecords();
             if (earlyAbort && currentNumOutliers > suppressionLimit) {
                 return;
             }
@@ -573,7 +573,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -676,12 +676,12 @@ public class HashGroupify {
         
     /**
      * Checks whether the given entry is anonymous.
-     *
+     * @param transformation
      * @param entry
      * @return
      * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private int isPrivacyModelFulfilled(HashGroupifyEntry entry) {
+    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry) {
         
         // Check minimal group size
         if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {
@@ -692,7 +692,7 @@ public class HashGroupify {
         // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
         // This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
         for (int i = 0; i < classBasedCriteria.length; i++) {
-            if (!classBasedCriteria[i].isAnonymous(entry)) {
+            if (!classBasedCriteria[i].isAnonymous(transformation, entry)) {
                 return i + 1;
             }
         }

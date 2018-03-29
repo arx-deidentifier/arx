@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -29,7 +30,7 @@ import org.junit.Test;
 import cern.colt.Arrays;
 
 /**
- * Tests for importing more complex csv files
+ * Tests for importing complex csv files
  * 
  * @author Fabian Prasser
  */
@@ -43,7 +44,7 @@ public class TestDataImport extends AbstractTest {
      */
     @Test
     public void test1() throws IllegalArgumentException, IOException {
-        Data data = Data.create(new File("data/test-import.csv"), ';', '\"');
+        Data data = Data.create(new File("data/test-import.csv"), StandardCharsets.UTF_8, ';', '\"');
         Iterator<String[]> iter = data.getHandle().iterator();
         List<String[]> result = new ArrayList<String[]>();
         while (iter.hasNext()) {

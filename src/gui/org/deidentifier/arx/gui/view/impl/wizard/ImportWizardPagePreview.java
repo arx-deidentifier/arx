@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014-2015 Karol Babioch, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -189,8 +189,7 @@ public class ImportWizardPagePreview extends WizardPage {
             /* Add enabled columns with appropriate label providers */
             for (ImportColumn column : wizardImport.getData().getEnabledColumns()) {
 
-                TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer,
-                                                                            SWT.NONE);
+                TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
                 tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(((IImportColumnIndexed) column).getIndex()));
 
                 TableColumn tblclmnColumn = tableViewerColumn.getColumn();
@@ -199,8 +198,7 @@ public class ImportWizardPagePreview extends WizardPage {
                 tblclmnColumn.setWidth(100);
                 tblclmnColumn.setText(column.getAliasName());
 
-                ColumnViewerToolTipSupport.enableFor(tableViewer,
-                                                     ToolTip.NO_RECREATE);
+                ColumnViewerToolTipSupport.enableFor(tableViewer, ToolTip.NO_RECREATE);
             }
 
             /* Apply input to tableViewer */

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.deidentifier.arx.aggregates.StatisticsFrequencyDistribution;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -34,6 +35,7 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -92,49 +94,6 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
     }
 
     /**
-     * Makes the chart show category labels or not.
-     */
-    private void updateCategories(){
-        if (chart != null){
-            IAxisSet axisSet = chart.getAxisSet();
-            if (axisSet != null) {
-                IAxis xAxis = axisSet.getXAxis(0);
-                if (xAxis != null) {
-                    String[] series = xAxis.getCategorySeries();
-                    if (series != null) {
-                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
-                        xAxis.enableCategory(enoughSpace);
-                        xAxis.getTick().setVisible(enoughSpace);
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    protected Control createControl(Composite parent) {
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
-        return this.root;
-    }
-
-    @Override
-    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
-        return new AnalysisContextDistribution(context);
-    }
-
-    @Override
-    protected void doReset() {
-        root.setRedraw(false);
-        if (this.manager != null) {
-            this.manager.stop();
-        }
-        resetChart();
-        root.setRedraw(true);
-        setStatusEmpty();
-    }
-
-    /**
      * Resets the chart
      */
     private void resetChart() {
@@ -150,29 +109,6 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
             @Override
             public void controlResized(ControlEvent arg0) {
                 updateCategories();
-            }
-        });
-        
-        // Tool tip
-        chart.getPlotArea().addListener(SWT.MouseMove, new Listener() {
-            @Override
-            public void handleEvent(Event event) {
-                IAxisSet axisSet = chart.getAxisSet();
-                if (axisSet != null) {
-                    IAxis xAxis = axisSet.getXAxis(0);
-                    if (xAxis != null) {
-                        String[] series = xAxis.getCategorySeries();
-                        ISeries[] data = chart.getSeriesSet().getSeries();
-                        if (data != null && data.length>0 && series != null) {
-                            int x = (int) Math.round(xAxis.getDataCoordinate(event.x));
-                            if (x >= 0 && x < series.length) {
-                                chart.getPlotArea().setToolTipText("("+series[x]+", "+data[0].getYSeries()[x]+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                                return;
-                            }
-                        }
-                    }
-                }
-                chart.getPlotArea().setToolTipText(null);
             }
         });
 
@@ -239,6 +175,79 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
         updateCategories();
     }
 
+    /**
+     * Makes the chart show category labels or not.
+     */
+    private void updateCategories(){
+        if (chart != null){
+            IAxisSet axisSet = chart.getAxisSet();
+            if (axisSet != null) {
+                IAxis xAxis = axisSet.getXAxis(0);
+                if (xAxis != null) {
+                    String[] series = xAxis.getCategorySeries();
+                    if (series != null) {
+                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
+                        xAxis.enableCategory(enoughSpace);
+                        xAxis.getTick().setVisible(enoughSpace);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected Control createControl(Composite parent) {
+        this.root = new Composite(parent, SWT.NONE);
+        this.root.setLayout(new FillLayout());
+
+        // Tool tip
+        root.addListener(SWT.MouseMove, new Listener() {
+            @Override
+            public void handleEvent(Event event) {
+                if (chart != null) {
+                    IAxisSet axisSet = chart.getAxisSet();
+                    if (axisSet != null) {
+                        IAxis xAxis = axisSet.getXAxis(0);
+                        if (xAxis != null) {
+                            Point cursor = chart.getPlotArea().toControl(Display.getCurrent().getCursorLocation());
+                            if (cursor.x >= 0 && cursor.x < chart.getPlotArea().getSize().x && 
+                                cursor.y >= 0 && cursor.y < chart.getPlotArea().getSize().y) {
+                                String[] series = xAxis.getCategorySeries();
+                                ISeries[] data = chart.getSeriesSet().getSeries();
+                                if (data != null && data.length>0 && series != null) {
+                                    int x = (int) Math.round(xAxis.getDataCoordinate(cursor.x));
+                                    if (x >= 0 && x < series.length) {
+                                        root.setToolTipText("("+series[x]+", "+SWTUtil.getPrettyString(data[0].getYSeries()[x])+")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    root.setToolTipText(null);
+                }
+            }
+        });
+
+        return this.root;
+    }
+
+    @Override
+    protected AnalysisContextDistribution createViewConfig(AnalysisContext context) {
+        return new AnalysisContextDistribution(context);
+    }
+
+    @Override
+    protected void doReset() {
+        root.setRedraw(false);
+        if (this.manager != null) {
+            this.manager.stop();
+        }
+        resetChart();
+        root.setRedraw(true);
+        setStatusEmpty();
+    }
+
     @Override
     protected void doUpdate(AnalysisContextDistribution context) {
 
@@ -281,13 +290,16 @@ public class ViewStatisticsDistributionHistogram extends ViewStatistics<Analysis
                 series.getLabel().setVisible(false);
                 series.getLabel().setFont(chart.getFont());
                 series.setBarColor(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
+                for (int i = 0; i < this.distribution.frequency.length; i++) {
+                    this.distribution.frequency[i] *= 100d;
+                }
                 series.setYSeries(this.distribution.frequency);
                 chart.getLegend().setVisible(false);
 
                 IAxisSet axisSet = chart.getAxisSet();
 
                 IAxis yAxis = axisSet.getYAxis(0);
-                yAxis.setRange(new Range(0d, 1d));
+                yAxis.setRange(new Range(0d, 100d));
                 yAxis.adjustRange();
 
                 IAxis xAxis = axisSet.getXAxis(0);

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.criteria;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution;
 
 /**
@@ -40,17 +41,37 @@ public class AverageReidentificationRisk extends RiskBasedCriterion{
     }
 
     @Override
+    public AverageReidentificationRisk clone() {
+        return new AverageReidentificationRisk(this.getRiskThreshold());
+    }
+    
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThreshold();
+    }
+
+    @Override
+    public boolean isLocalRecodingSupported() {
+        return false;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Average re-identification risk");
+        result.addProperty("Threshold", this.getRiskThreshold());
+        return result;
+    }
+
+    @Override
     public String toString() {
-        return "(<"+getRiskThreshold()+")-avg-reidentification-risk";
+        return "("+getRiskThreshold()+")-avg-reidentification-risk";
     }
 
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         return 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
-    }
-
-    @Override
-    public AverageReidentificationRisk clone() {
-        return new AverageReidentificationRisk(this.getRiskThreshold());
     }
 }

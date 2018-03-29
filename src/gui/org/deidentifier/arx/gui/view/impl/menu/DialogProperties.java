@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration.PriorFunction;
+import org.deidentifier.arx.ARXSolverConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -191,30 +193,29 @@ public class DialogProperties implements IDialog {
 
         window.addGroup(Resources.getMessage("DialogProperties.8")); //$NON-NLS-1$
 
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.50"), 1.0e-12, 1d, 1.0e-6) { //$NON-NLS-1$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.50"), 1.0e-12, 1d, ARXSolverConfiguration.getDefaultAccuracy()) { //$NON-NLS-1$
             protected Double getValue() { return model.getRiskModel().getSolverConfiguration().getAccuracy(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().accuracy((Double)t); }});
 
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.51"), 1, 100000, 1000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.51"), 1, 100000, ARXSolverConfiguration.getDefaultIterationsPerTry()) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getIterationsPerTry(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().iterationsPerTry((Integer)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.52"), 1, 1000000, 10000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.52"), 1, 1000000, ARXSolverConfiguration.getDefaultIterationsTotal()) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getIterationsTotal(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().iterationsTotal((Integer)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.53"), 1, 100000, 100) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.53"), 1, 100000, ARXSolverConfiguration.getDefaultTimePerTry()) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimePerTry(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timePerTry((Integer)t); }});
         
-        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.54"), 1, 1000000, 1000) { //$NON-NLS-1$
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.54"), 1, 1000000, ARXSolverConfiguration.getDefaultTimeTotal()) { //$NON-NLS-1$
             protected Integer getValue() { return model.getRiskModel().getSolverConfiguration().getTimeTotal(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().timeTotal((Integer)t); }});
 
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), false) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getRiskModel().getSolverConfiguration().getStartValues() != null; }
-            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().preparedStartValues((Boolean)t ? getSolverStartValues() : null); }});
-        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), ARXSolverConfiguration.getDefaultDeterministic()) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getRiskModel().getSolverConfiguration().isDeterministic(); }
+            protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().setDeterministic((Boolean)t); }});        
     }
 
     /**
@@ -268,10 +269,6 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.32"), false) { //$NON-NLS-1$
             protected Boolean getValue() { return model.getInputConfig().isAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE); }
             protected void setValue(Object t) { model.getInputConfig().setAttributeTypeSuppressed(AttributeType.INSENSITIVE_ATTRIBUTE, (Boolean)t); }});
-        
-        window.addPreference(new PreferenceString(Resources.getMessage("PropertyDialog.13"), "*") { //$NON-NLS-1$ //$NON-NLS-2$
-            protected String getValue() { return model.getInputConfig().getSuppressionString(); }
-            protected void setValue(Object t) { model.getInputConfig().setSuppressionString((String)t); }});
     }
 
     /**
@@ -298,16 +295,25 @@ public class DialogProperties implements IDialog {
         window.addGroup(Resources.getMessage("DialogProperties.14")); //$NON-NLS-1$
 
         window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.15"), 1000, Integer.MAX_VALUE, 100000) { //$NON-NLS-1$
-            protected Integer getValue() { return model.getClassificationModel().getMaximalNumberOfRecords(); }
-            protected void setValue(Object t) { model.getClassificationModel().setMaximalNumberOfRecords((Integer)t); }});
-
-        window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.16")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getClassificationModel().isIgnoreSuppressedRecords(); }
-            protected void setValue(Object t) { model.getClassificationModel().setIgnoreSuppressedRecords((Boolean)t); }});
+            protected Integer getValue() { return model.getClassificationModel().getMaxRecords(); }
+            protected void setValue(Object t) { model.getClassificationModel().setMaxRecords((Integer)t); }});
 
         window.addPreference(new PreferenceBoolean(Resources.getMessage("DialogProperties.17")) { //$NON-NLS-1$
-            protected Boolean getValue() { return model.getClassificationModel().getSeed()==Integer.MAX_VALUE; }
-            protected void setValue(Object t) { model.getClassificationModel().setSeed((Boolean)t ? Integer.MAX_VALUE : null); }});        
+            protected Boolean getValue() { return model.getClassificationModel().isDeterministic(); }
+            protected void setValue(Object t) { model.getClassificationModel().setDeterministic((Boolean)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.18"), 2, 100, 10) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getNumberOfFolds(); }
+            protected void setValue(Object t) { model.getClassificationModel().setNumberOfFolds((Integer)t); }});
+
+        window.addPreference(new PreferenceInteger(Resources.getMessage("DialogProperties.19"), 10, Integer.MAX_VALUE, 1000) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getClassificationModel().getVectorLength(); }
+            protected void setValue(Object t) { model.getClassificationModel().setVectorLength((Integer)t); }});
+
+        window.addPreference(new PreferenceSelection(Resources.getMessage("DialogProperties.20"), getPriorFunctions()) { //$NON-NLS-1$
+            protected String getValue() { return model.getClassificationModel().getPriorFunction().name(); }
+            protected void setValue(Object arg0) { model.getClassificationModel().setPriorFunction(PriorFunction.valueOf((String)arg0)); }
+        });
     }
     
     /**
@@ -324,6 +330,18 @@ public class DialogProperties implements IDialog {
     }
 
     /**
+     * Creates a list of prior functions
+     * @return
+     */
+    private String[] getPriorFunctions() {
+        List<String> result = new ArrayList<String>();
+        for (PriorFunction function : PriorFunction.values()) {
+            result.add(function.name());
+        }
+        return result.toArray(new String[result.size()]);
+    }
+
+    /**
      * Creates a list of models
      * @return
      */
@@ -333,20 +351,5 @@ public class DialogProperties implements IDialog {
             result.add(model.name());
         }
         return result.toArray(new String[result.size()]);
-    }
-
-    /**
-     * Returns start values for the solver, if it is configured to be deterministic
-     * @return
-     */
-    private double[][] getSolverStartValues() {
-        double[][] result = new double[16][];
-        int index = 0;
-        for (double d1 = 0.25d; d1 <= 1d; d1 += 0.25d) {
-            for (double d2 = 0.25d; d2 <= 1d; d2 += 0.25d) {
-                result[index++] = new double[] { d1, d2 };
-            }
-        }
-        return result;
     }
 }

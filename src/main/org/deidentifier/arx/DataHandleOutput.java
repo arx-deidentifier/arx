@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
 import org.deidentifier.arx.framework.data.Data;
@@ -113,12 +114,12 @@ public class DataHandleOutput extends DataHandle {
     /** Suppression handling. */
     private final int    suppressedAttributeTypes;
 
-    /** Suppression handling. */
-    private final String suppressionString;
-
     /** Flag determining whether this buffer has been optimized */
     private boolean      optimized = false;
-        
+
+    /** Flag determining whether this buffer is anonymous */
+    private boolean      anonymous = false;
+    
     /**
      * Instantiates a new handle.
      * 
@@ -144,11 +145,10 @@ public class DataHandleOutput extends DataHandle {
         this.setRegistry(registry);
         
         // Init
-        this.suppressionString = config.getSuppressionString();
         this.suppressedAttributeTypes = convert(config.getSuppressedAttributeTypes());
         this.result = result;
         this.definition = definition;
-        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
+        this.anonymous = node.getAnonymity() == Anonymity.ANONYMOUS;
         this.node = node;
         
         // Extract data
@@ -225,7 +225,7 @@ public class DataHandleOutput extends DataHandle {
         checkColumn(col);
         return header[col];
     }
-    
+
     @Override
     public DataType<?> getDataType(String attribute) {
         
@@ -243,13 +243,13 @@ public class DataHandleOutput extends DataHandle {
             return dataTypes[type][index];
         }
     }
-    
+
     @Override
     public int getGeneralization(final String attribute) {
         checkRegistry();
         return node.getGeneralization(attribute);
     }
-
+    
     /**
      * Gets the num columns.
      * 
@@ -270,6 +270,11 @@ public class DataHandleOutput extends DataHandle {
     public int getNumRows() {
         checkRegistry();
         return outputGeneralized.getDataLength();
+    }
+
+    @Override
+    public StatisticsBuilder getStatistics() {
+        return new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     /**
@@ -315,6 +320,59 @@ public class DataHandleOutput extends DataHandle {
     }
     
     /**
+     * Used to update data when loading projects after local recoding. This is part of the internal API
+     * and should never be called by users
+     * @param data
+     * @param types
+     */
+    public void updateData(DataHandle data, 
+                           Map<String, DataType<?>> types,
+                           int[] outliers) {
+
+        updateData(data, outputGeneralized, types, outliers);
+        updateData(data, outputMicroaggregated, types, outliers);
+        
+        // Update outliers
+        int previous = 0;
+        for (int index : outliers) {
+
+            // Mark as not outlier from previous to index
+            for (int i = previous; i < index; i++) {
+                outputGeneralized.getArray()[i][0] &= Data.REMOVE_OUTLIER_MASK;
+            }
+
+            // Mark index as outlier
+            outputGeneralized.getArray()[index][0] |= Data.OUTLIER_MASK;
+
+            // Update
+            previous = index + 1;
+        }
+        
+        // Mark as not outlier from previous to num rows
+        for (int i = previous; i < this.getNumRows(); i++) {
+            outputGeneralized.getArray()[i][0] &= Data.REMOVE_OUTLIER_MASK;
+        }
+                
+        // Update data types
+        for (int i = 0; i < dataTypes.length; i++) {
+            DataType<?>[] type = dataTypes[i];
+            if (type != null) {
+                for (int j = 0; j < type.length; j++) {
+                    if (i == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
+                        String attribute = this.outputGeneralized.getHeader()[j];
+                        if (types.get(attribute) == DataType.STRING) {
+                            dataTypes[i][j] = DataType.STRING;
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Mark as optimized
+        this.optimized = true;
+    }
+    
+    /**
      * Converts the suppressed attribute type bitset to the internal datatypes.
      * 
      * @param suppressedAttributeTypes
@@ -345,6 +403,61 @@ public class DataHandleOutput extends DataHandle {
     }
     
     /**
+     * Used to update data when loading projects after local recoding. This is part of the internal API
+     * and should never be called by users
+     * @param input
+     * @param output
+     * @param types
+     * @param outliers 
+     */
+    private void updateData(DataHandle input,
+                            Data output,
+                            Map<String, DataType<?>> types, 
+                            int[] outliers) {
+        
+        // Init
+        String[] header = output.getHeader();
+        int[][] data = output.getData();
+        Dictionary dictionary = output.getDictionary();
+        
+        // De-finalize
+        dictionary.definalizeAll();
+        
+        // Update
+        for (int column = 0; column < header.length; column++) {
+            String attribute = header[column];
+            int columnindex = input.getColumnIndexOf(attribute);
+
+            // Update only tuples that are not outliers
+            int previous = 0;
+            for (int index : outliers) {
+
+                // Update
+                for (int row = previous; row < index; row++) {
+                    
+                    String value = input.internalGetValue(row, columnindex, false);
+                    int identifier = dictionary.register(column, value);
+                    data[row][column] = identifier;                    
+                }
+
+                // Update
+                previous = index + 1;
+            }
+
+            // Update remaining tuples
+            for (int row = previous; row < input.getNumRows(); row++) {
+                
+                String value = input.internalGetValue(row, columnindex, false);
+                int identifier = dictionary.register(column, value);
+                data[row][column] = identifier;                    
+            }
+        }
+        
+        // Finalize
+        dictionary.finalizeAll();
+    }
+
+    /**
      * Releases all resources.
      */
     protected void doRelease() {
@@ -362,8 +475,12 @@ public class DataHandleOutput extends DataHandle {
         dataTypes = null;
         definition = null;
         header = null;
-        statistics = null;
         node = null;
+    }
+    
+    @Override
+    protected ARXConfiguration getConfiguration() {
+        return result.getConfiguration();
     }
     
     /**
@@ -417,11 +534,12 @@ public class DataHandleOutput extends DataHandle {
      * Gets the distinct values.
      *
      * @param col the column
+     * @param ignoreSuppression
      * @param handler
      * @return the distinct values
      */
     @Override
-    protected String[] getDistinctValues(final int col, InterruptHandler handler) {
+    protected String[] getDistinctValues(final int col, final boolean ignoreSuppression, InterruptHandler handler) {
         
         // Check
         checkRegistry();
@@ -430,12 +548,12 @@ public class DataHandleOutput extends DataHandle {
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
             handler.checkInterrupt();
-            vals.add(getValue(i, col));
+            vals.add(internalGetValue(i, col, ignoreSuppression));
         }
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
     }
-    
+        
     /**
      * Returns the input buffer
      * @return
@@ -452,22 +570,13 @@ public class DataHandleOutput extends DataHandle {
     protected Data getOutputBufferGeneralized() {
         return outputGeneralized;
     }
-        
+    
     /**
      * Returns the output buffer
      * @return
      */
     protected Data getOutputBufferMicroaggregated() {
         return outputMicroaggregated;
-    }
-    
-    /**
-     * Returns the suppression string.
-     *
-     * @return
-     */
-    protected String getSuppressionString() {
-        return this.suppressionString;
     }
     
     /**
@@ -507,9 +616,9 @@ public class DataHandleOutput extends DataHandle {
             try {
                 String s1 = internalGetValue(row1, index, false);
                 String s2 = internalGetValue(row2, index, false);
-                cmp = (s1 == suppressionString && s2 == suppressionString) ? 0
-                        : (s1 == suppressionString ? +1
-                                : (s2 == suppressionString ? -1
+                cmp = (s1 == DataType.ANY_VALUE && s2 == DataType.ANY_VALUE) ? 0
+                        : (s1 == DataType.ANY_VALUE ? +1
+                                : (s2 == DataType.ANY_VALUE ? -1
                                         : dataTypes[attributeType][indexMap].compare(s1, s2)));
             } catch (final Exception e) {
                 throw new RuntimeException(e);
@@ -541,14 +650,14 @@ public class DataHandleOutput extends DataHandle {
         final int type = inverseMap[key];
         switch (type) {
         case AttributeTypeInternal.IDENTIFYING:
-            return suppressionString;
+            return DataType.ANY_VALUE;
         default:
             final int index = inverseMap[key + 1];
             final int[][] data = inverseData[type];
             
             if (!ignoreSuppression && (suppressedAttributeTypes & (1 << type)) != 0 &&
                 ((outputGeneralized.getArray()[row][0] & Data.OUTLIER_MASK) != 0)) {
-                return suppressionString;
+                return DataType.ANY_VALUE;
             }
             
             final int value = data[row][index] & Data.REMOVE_OUTLIER_MASK;
@@ -617,6 +726,13 @@ public class DataHandleOutput extends DataHandle {
         }
     }
     
+
+    @Override
+    protected boolean isAnonymous() {
+        return this.anonymous;
+    }
+
+
     /**
      * Marks this handle as optimized
      * @param optimized
@@ -625,6 +741,7 @@ public class DataHandleOutput extends DataHandle {
         this.optimized = true;
     }
     
+
     /**
      * Used to update data types after local recoding
      * @param transformation
@@ -641,115 +758,5 @@ public class DataHandleOutput extends DataHandle {
                 }
             }
         }
-    }
-    
-
-    /**
-     * Used to update data when loading projects after local recoding. This is part of the internal API
-     * and should never be called by users
-     * @param data
-     * @param types
-     */
-    public void updateData(DataHandle data, 
-                           Map<String, DataType<?>> types,
-                           int[] outliers) {
-
-        updateData(data, outputGeneralized, types, outliers);
-        updateData(data, outputMicroaggregated, types, outliers);
-        
-        // Update outliers
-        int previous = 0;
-        for (int index : outliers) {
-
-            // Mark as not outlier from previous to index
-            for (int i = previous; i < index; i++) {
-                outputGeneralized.getArray()[i][0] &= Data.REMOVE_OUTLIER_MASK;
-            }
-
-            // Mark index as outlier
-            outputGeneralized.getArray()[index][0] |= Data.OUTLIER_MASK;
-
-            // Update
-            previous = index + 1;
-        }
-        
-        // Mark as not outlier from previous to num rows
-        for (int i = previous; i < this.getNumRows(); i++) {
-            outputGeneralized.getArray()[i][0] &= Data.REMOVE_OUTLIER_MASK;
-        }
-                
-        // Update data types
-        for (int i = 0; i < dataTypes.length; i++) {
-            DataType<?>[] type = dataTypes[i];
-            if (type != null) {
-                for (int j = 0; j < type.length; j++) {
-                    if (i == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
-                        String attribute = this.outputGeneralized.getHeader()[j];
-                        if (types.get(attribute) == DataType.STRING) {
-                            dataTypes[i][j] = DataType.STRING;
-                        }
-                    }
-                }
-            }
-        }
-        
-        // Mark as optimized
-        this.optimized = true;
-    }
-
-
-    /**
-     * Used to update data when loading projects after local recoding. This is part of the internal API
-     * and should never be called by users
-     * @param input
-     * @param output
-     * @param types
-     * @param outliers 
-     */
-    private void updateData(DataHandle input,
-                            Data output,
-                            Map<String, DataType<?>> types, 
-                            int[] outliers) {
-        
-        // Init
-        String[] header = output.getHeader();
-        int[][] data = output.getData();
-        Dictionary dictionary = output.getDictionary();
-        
-        // De-finalize
-        dictionary.definalizeAll();
-        
-        // Update
-        for (int column = 0; column < header.length; column++) {
-            String attribute = header[column];
-            int columnindex = input.getColumnIndexOf(attribute);
-
-            // Update only tuples that are not outliers
-            int previous = 0;
-            for (int index : outliers) {
-
-                // Update
-                for (int row = previous; row < index; row++) {
-                    
-                    String value = input.internalGetValue(row, columnindex, false);
-                    int identifier = dictionary.register(column, value);
-                    data[row][column] = identifier;                    
-                }
-
-                // Update
-                previous = index + 1;
-            }
-
-            // Update remaining tuples
-            for (int row = previous; row < input.getNumRows(); row++) {
-                
-                String value = input.internalGetValue(row, columnindex, false);
-                int identifier = dictionary.register(column, value);
-                data[row][column] = identifier;                    
-            }
-        }
-        
-        // Finalize
-        dictionary.finalizeAll();
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014-2015 Karol Babioch, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,16 @@
 package org.deidentifier.arx.gui.view.impl.wizard;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.resources.Charsets;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.CSVDataInput;
@@ -126,46 +128,52 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
     /* Widgets */
-    /** TODO. */
+    /** Label. */
     private Label                              lblLocation;
 
-    /** TODO. */
+    /** Combo. */
     private Combo                              comboLocation;
 
-    /** TODO. */
+    /** Button. */
     private Button                             btnChoose;
 
-    /** TODO. */
+    /** Button. */
     private Button                             btnContainsHeader;
 
-    /** TODO. */
+    /** Combo. */
     private Combo                              comboDelimiter;
     
-    /** TODO. */
+    /** Combo. */
     private Combo                              comboLinebreak;
 
-    /** TODO. */
+    /** Combo. */
     private Combo                              comboQuote;
 
-    /** TODO. */
+    /** Combo. */
     private Combo                              comboEscape;
 
-    /** TODO. */
+    /** Combo. */
+    private Combo                              comboCharset;
+
+    /** Label. */
     private Label                              lblDelimiter;
 
-    /** TODO. */
+    /** Label. */
     private Label                              lblQuote;
     
-    /** TODO. */
+    /** Label. */
     private Label                              lblLinebreak;
 
-    /** TODO. */
+    /** Label. */
     private Label                              lblEscape;
 
-    /** TODO. */
+    /** Label. */
+    private Label                              lblCharset;
+
+    /** Table. */
     private Table                              tablePreview;
 
-    /** TODO. */
+    /** TableViewer. */
     private TableViewer                        tableViewerPreview;
 
     /**
@@ -193,6 +201,11 @@ public class ImportWizardPageCSV extends WizardPage {
      * Currently selected line break (index).
      */
     private int                                selectedLinebreak    = 0;
+
+    /**
+     * Currently selected charset (index).
+     */
+    private int                                selectedCharset    = 0;
 
 
     /**
@@ -245,7 +258,7 @@ public class ImportWizardPageCSV extends WizardPage {
      */
     private boolean                            customLinebreak;
 
-    /** TODO. */
+    /** Data for preview. */
     private final ArrayList<String[]>          previewData       = new ArrayList<String[]>();
 
     /**
@@ -300,6 +313,8 @@ public class ImportWizardPageCSV extends WizardPage {
                 lblLinebreak.setVisible(true);
                 comboLinebreak.setVisible(true);
                 lblEscape.setVisible(true);
+                lblCharset.setVisible(true);
+                comboCharset.setVisible(true);
                 comboEscape.setVisible(true);
                 btnContainsHeader.setVisible(true);
                 customDelimiter = false;
@@ -342,6 +357,43 @@ public class ImportWizardPageCSV extends WizardPage {
             }
         });
 
+        /* Delimiter label */
+        lblCharset = new Label(container, SWT.NONE);
+        lblCharset.setVisible(false);
+        lblCharset.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+        lblCharset.setText(Resources.getMessage("ImportWizardPageCSV.20")); //$NON-NLS-1$
+
+        /* Delimiter combobox */
+        comboCharset = new Combo(container, SWT.READ_ONLY);
+        comboCharset.setVisible(false);
+
+        /* Add labels */
+        int index = 0;
+        for (final String s : Charsets.getNamesOfAvailableCharsets()) {
+            comboCharset.add(s);
+            if (s.equals(Charsets.getNameOfDefaultCharset())) {
+                selectedCharset = index;
+            }
+            index++;
+        }
+
+        comboCharset.select(selectedCharset);
+        comboCharset.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        comboCharset.addSelectionListener(new SelectionAdapter() {
+
+            /**
+             * Set selection index and customDelimiter and (re-)evaluates page
+             */
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                selectedCharset = comboCharset.getSelectionIndex();
+                evaluatePage();
+            }
+        });
+        
+        /* Place holder */
+        new Label(container, SWT.NONE);
+        
         /* Delimiter label */
         lblDelimiter = new Label(container, SWT.NONE);
         lblDelimiter.setVisible(false);
@@ -523,8 +575,9 @@ public class ImportWizardPageCSV extends WizardPage {
      * @throws IOException In case file couldn't be accessed successfully
      */
     private void detectDelimiter() throws IOException {
+        Charset charset = getCharset();
 
-        final BufferedReader r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
+        final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), charset));
         final IntIntOpenHashMap map = new IntIntOpenHashMap();
         final CharIntOpenHashMap delimitors = new CharIntOpenHashMap();
         for (int i=0; i<this.delimiters.length; i++) {
@@ -571,6 +624,7 @@ public class ImportWizardPageCSV extends WizardPage {
         }
     }
 
+    
     /**
      * Tries to detect the line break.
      *
@@ -580,9 +634,11 @@ public class ImportWizardPageCSV extends WizardPage {
         BufferedReader r = null;
         final char[] buffer = new char[ImportWizardModel.DETECT_MAX_CHARS];
         int read = 0;
+        
+        Charset charset = getCharset();
 
         try {
-            r = new BufferedReader(new FileReader(new File(comboLocation.getText())));
+            r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), charset));
             read = r.read(buffer);
         } finally {
             if (r != null) {
@@ -665,10 +721,16 @@ public class ImportWizardPageCSV extends WizardPage {
         data.setCsvDelimiter(delimiters[selectedDelimiter]);
         data.setCsvQuote(quotes[selectedQuote]);
         data.setCsvEscape(escapes[selectedEscape]);
+        data.setCharset(Charsets.getCharsetForName(Charsets.getNamesOfAvailableCharsets()[selectedCharset]));
         data.setCsvLinebreak(CSVSyntax.getLinebreakForLabel(CSVSyntax.getAvailableLinebreaks()[selectedLinebreak]));
 
         /* Mark page as completed */
         setPageComplete(true);
+    }
+
+    private Charset getCharset() {
+        // TODO: get charset from user
+        return Charset.defaultCharset();
     }
 
     /**
@@ -691,13 +753,14 @@ public class ImportWizardPageCSV extends WizardPage {
         final char quote = quotes[selectedQuote];
         final char escape = escapes[selectedEscape];
         final boolean containsHeader = btnContainsHeader.getSelection();
+        final Charset charset = Charsets.getCharsetForName(Charsets.getNamesOfAvailableCharsets()[selectedCharset]);
 
         /* Variables needed for processing */
-        final CSVDataInput in = new CSVDataInput(location, delimiter, quote, escape, linebreak);
+        final CSVDataInput in = new CSVDataInput(location, charset, delimiter, quote, escape, linebreak);
         final Iterator<String[]> it = in.iterator();
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
-        ImportConfigurationCSV config = new ImportConfigurationCSV(location, delimiter, quote, escape, linebreak, containsHeader);
+        ImportConfigurationCSV config = new ImportConfigurationCSV(location, charset, delimiter, quote, escape, linebreak, containsHeader);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {

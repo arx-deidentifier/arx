@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,25 +37,23 @@ abstract class RiskModelPopulation {
     private final WrappedBoolean     stop;
     /** Progress */
     private final WrappedInteger     progress;
-    /** The sample size */
-    private final int                sampleSize;
 
     /**
      * Creates a new instance
      * 
      * @param histogram
+     * @param populationModel
+     * @param stop
      * @param progress
      */
     RiskModelPopulation(RiskModelHistogram histogram,
                         ARXPopulationModel populationModel,
-                        int sampleSize,
                         WrappedBoolean stop,
                         WrappedInteger progress) {
         this.histogram = histogram;
         this.populationModel = populationModel;
         this.stop = stop;
         this.progress = progress;
-        this.sampleSize = sampleSize;
     }
 
     /**
@@ -113,7 +111,7 @@ abstract class RiskModelPopulation {
      * @return
      */
     protected double getPopulationSize() {
-        return this.populationModel.getPopulationSize(this.sampleSize);
+        return this.populationModel.getPopulationSize();
     }
 
     /**
@@ -122,7 +120,7 @@ abstract class RiskModelPopulation {
      * @return
      */
     protected double getSampleSize() {
-        return this.sampleSize;
+        return this.histogram.getNumRecords();
     }
 
     /**
@@ -131,7 +129,7 @@ abstract class RiskModelPopulation {
      * @return
      */
     protected double getSamplingFraction() {
-        return this.populationModel.getSamplingFraction(this.sampleSize);
+        return this.getSampleSize() / this.getPopulationSize();
     }
 
     /**

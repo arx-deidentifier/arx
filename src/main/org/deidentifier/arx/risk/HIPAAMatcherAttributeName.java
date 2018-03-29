@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,17 +34,17 @@ class HIPAAMatcherAttributeName {
      * Constructor.
      * @param value
      */
-    HIPAAMatcherAttributeName(String value, int tolerance) {
-        this.value = value.trim().toLowerCase();
-        this.tolerance = tolerance;
+    HIPAAMatcherAttributeName(String value) {
+        this(value, 0);
     }
     
     /**
      * Constructor.
      * @param value
      */
-    HIPAAMatcherAttributeName(String value) {
-        this(value, 0);
+    HIPAAMatcherAttributeName(String value, int tolerance) {
+        this.value = value.trim().toLowerCase();
+        this.tolerance = tolerance;
     }
     
     /**

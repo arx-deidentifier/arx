@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.deidentifier.arx.test;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.deidentifier.arx.ARXAnonymizer;
@@ -41,6 +42,8 @@ import org.junit.Test;
 
 /**
  * Tests for data handles
+ * 
+ * @author Fabian Prasser
  */
 public class TestDataHandle extends AbstractTest {
     
@@ -77,7 +80,7 @@ public class TestDataHandle extends AbstractTest {
         final DataHandle inHandle = provider.getData().getHandle();
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         config.setSuppressionAlwaysEnabled(false);
         
@@ -123,7 +126,7 @@ public class TestDataHandle extends AbstractTest {
         final DataHandle inHandle = provider.getData().getHandle();
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         config.setSuppressionAlwaysEnabled(false);
         
@@ -173,7 +176,7 @@ public class TestDataHandle extends AbstractTest {
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -210,7 +213,7 @@ public class TestDataHandle extends AbstractTest {
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -251,7 +254,7 @@ public class TestDataHandle extends AbstractTest {
         provider.createDataDefinition();
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -288,7 +291,7 @@ public class TestDataHandle extends AbstractTest {
         provider.getData().getDefinition().setAttributeType("gender", AttributeType.IDENTIFYING_ATTRIBUTE);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
+        config.addPrivacyModel(new KAnonymity(2));
         config.setMaxOutliers(0d);
         
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -328,8 +331,8 @@ public class TestDataHandle extends AbstractTest {
         DataSubset subset = DataSubset.create(provider.getData(), selector);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new DPresence(0, 1, subset));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new DPresence(0, 1, subset));
         config.setMaxOutliers(0d);
         
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -365,8 +368,8 @@ public class TestDataHandle extends AbstractTest {
         DataSubset subset = DataSubset.create(provider.getData(), selector);
         
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new DPresence(0, 1, subset));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new DPresence(0, 1, subset));
         config.setMaxOutliers(0d);
         
         final ARXResult result = anonymizer.anonymize(provider.getData(), config);
@@ -391,8 +394,8 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset3() throws IllegalArgumentException, IOException {
         
-        Data data = Data.create("../arx-data/data-junit/dis.csv", ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_age.csv", ';'));
+        Data data = Data.create("./data/dis.csv", StandardCharsets.UTF_8, ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create("./data/dis_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
         
@@ -401,8 +404,8 @@ public class TestDataHandle extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(2));
-        config.addCriterion(new Inclusion(subset));
+        config.addPrivacyModel(new KAnonymity(2));
+        config.addPrivacyModel(new Inclusion(subset));
         
         final ARXResult result = anonymizer.anonymize(data, config);
         final DataHandle outHandle = result.getOutput(false);
@@ -424,8 +427,8 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset4() throws IllegalArgumentException, IOException {
         
-        Data data = Data.create("../arx-data/data-junit/dis.csv", ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_age.csv", ';'));
+        Data data = Data.create("./data/dis.csv", StandardCharsets.UTF_8, ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create("./data/dis_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
         
@@ -434,7 +437,7 @@ public class TestDataHandle extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new Inclusion(subset));
+        config.addPrivacyModel(new Inclusion(subset));
         
         anonymizer.anonymize(data, config);
         
@@ -453,9 +456,9 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset5() throws IllegalArgumentException, IOException {
         
-        Data data = Data.create("../arx-data/data-junit/dis.csv", ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_age.csv", ';'));
-        data.getDefinition().setAttributeType("gender", Hierarchy.create("../arx-data/data-junit/dis_hierarchy_gender.csv", ';'));
+        Data data = Data.create("./data/dis.csv", StandardCharsets.UTF_8, ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create("./data/dis_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("gender", Hierarchy.create("./data/dis_hierarchy_gender.csv", StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
         
         DataSelector selector = DataSelector.create(data).field("gender").equals("male");
@@ -463,7 +466,7 @@ public class TestDataHandle extends AbstractTest {
         
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new Inclusion(subset));
+        config.addPrivacyModel(new Inclusion(subset));
         
         // Transform
         ARXResult result = anonymizer.anonymize(data, config);

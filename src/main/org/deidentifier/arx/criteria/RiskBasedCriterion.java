@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
                 boolean fulfilled = RiskBasedCriterion.this.isFulfilled(distribution);
                 
                 // Early abort
-                if (!fulfilled && distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers) {
+                if (!fulfilled && distribution.getNumSuppressedRecords() > numMaxSuppressedOutliers) {
                     return State.ABORT;
                     
                 // Go on

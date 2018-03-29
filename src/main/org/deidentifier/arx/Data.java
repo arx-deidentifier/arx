@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.deidentifier.arx;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -172,8 +173,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file) throws IOException {
-        return new IterableData(new CSVDataInput(file).iterator());
+    public static Data create(final File file, final Charset charset) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset).iterator());
     }
 
     /**
@@ -184,8 +185,8 @@ public abstract class Data {
      * @return A Data object
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final char delimiter) throws IOException {
-        return new IterableData(new CSVDataInput(file, delimiter).iterator());
+    public static Data create(final File file, final Charset charset, final char delimiter) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset, delimiter).iterator());
     }
 
     /**
@@ -197,8 +198,8 @@ public abstract class Data {
      * @return A Data object
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final char delimiter, final char quote) throws IOException {
-        return new IterableData(new CSVDataInput(file, delimiter, quote).iterator());
+    public static Data create(final File file, final Charset charset, final char delimiter, final char quote) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset, delimiter, quote).iterator());
     }
 
     /**
@@ -211,8 +212,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final char delimiter, final char quote, final char escape) throws IOException {
-        return new IterableData(new CSVDataInput(file, delimiter, quote, escape).iterator());
+    public static Data create(final File file, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset, delimiter, quote, escape).iterator());
     }
 
     /**
@@ -226,8 +227,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        return new IterableData(new CSVDataInput(file, delimiter, quote, escape, linebreak).iterator());
+    public static Data create(final File file, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset, delimiter, quote, escape, linebreak).iterator());
     }
 
     /**
@@ -238,8 +239,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final CSVSyntax config) throws IOException {
-        return new IterableData(new CSVDataInput(file, config).iterator());
+    public static Data create(final File file, final Charset charset, final CSVSyntax config) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset, config).iterator());
     }
 
     /**
@@ -251,8 +252,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
-        return new IterableData(new CSVDataInput(file, config, datatypes).iterator());
+    public static Data create(final File file, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset, config, datatypes).iterator());
     }
 
     /**
@@ -262,8 +263,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream) throws IOException {
-        return new IterableData(new CSVDataInput(stream).iterator());
+    public static Data create(final InputStream stream, final Charset charset) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset).iterator());
     }
 
     /**
@@ -274,8 +275,8 @@ public abstract class Data {
      * @return A Data object
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final char delimiter) throws IOException {
-        return new IterableData(new CSVDataInput(stream, delimiter).iterator());
+    public static Data create(final InputStream stream, final Charset charset, final char delimiter) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset, delimiter).iterator());
     }
 
     /**
@@ -287,8 +288,8 @@ public abstract class Data {
      * @return A Data object
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final char delimiter, final char quote) throws IOException {
-        return new IterableData(new CSVDataInput(stream, delimiter, quote).iterator());
+    public static Data create(final InputStream stream, final Charset charset, final char delimiter, final char quote) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset, delimiter, quote).iterator());
     }
 
     /**
@@ -301,8 +302,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
-        return new IterableData(new CSVDataInput(stream, delimiter, quote, escape).iterator());
+    public static Data create(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset, delimiter, quote, escape).iterator());
     }
 
     /**
@@ -316,8 +317,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        return new IterableData(new CSVDataInput(stream, delimiter, quote, escape, linebreak).iterator());
+    public static Data create(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset, delimiter, quote, escape, linebreak).iterator());
     }
 
     /**
@@ -328,8 +329,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final CSVSyntax config) throws IOException {
-        return new IterableData(new CSVDataInput(stream, config).iterator());
+    public static Data create(final InputStream stream, final Charset charset, final CSVSyntax config) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset, config).iterator());
     }
 
     /**
@@ -341,8 +342,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
-        return new IterableData(new CSVDataInput(stream, config, datatypes).iterator());
+    public static Data create(final InputStream stream, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset, config, datatypes).iterator());
     }
 
     /**
@@ -382,8 +383,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path) throws IOException {
-        return new IterableData(new CSVDataInput(path).iterator());
+    public static Data create(final String path, final Charset charset) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset).iterator());
     }
 
     /**
@@ -394,8 +395,8 @@ public abstract class Data {
      * @return A Data object
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final char delimiter) throws IOException {
-        return new IterableData(new CSVDataInput(path, delimiter).iterator());
+    public static Data create(final String path, final Charset charset, final char delimiter) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset, delimiter).iterator());
     }
 
     /**
@@ -407,8 +408,8 @@ public abstract class Data {
      * @return A Data object
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final char delimiter, final char quote) throws IOException {
-        return new IterableData(new CSVDataInput(path, delimiter, quote).iterator());
+    public static Data create(final String path, final Charset charset, final char delimiter, final char quote) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset, delimiter, quote).iterator());
     }
 
     /**
@@ -421,8 +422,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final char delimiter, final char quote, final char escape) throws IOException {
-        return new IterableData(new CSVDataInput(path, delimiter, quote, escape).iterator());
+    public static Data create(final String path, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset, delimiter, quote, escape).iterator());
     }
 
     /**
@@ -436,8 +437,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-        return new IterableData(new CSVDataInput(path, delimiter, quote, escape, linebreak).iterator());
+    public static Data create(final String path, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset, delimiter, quote, escape, linebreak).iterator());
     }
 
     /**
@@ -448,8 +449,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final CSVSyntax config) throws IOException {
-        return new IterableData(new CSVDataInput(path, config).iterator());
+    public static Data create(final String path, final Charset charset, final CSVSyntax config) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset, config).iterator());
     }
 
     /**
@@ -461,8 +462,8 @@ public abstract class Data {
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
-        return new IterableData(new CSVDataInput(path, config, datatypes).iterator());
+    public static Data create(final String path, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset, config, datatypes).iterator());
     }
 
     /**

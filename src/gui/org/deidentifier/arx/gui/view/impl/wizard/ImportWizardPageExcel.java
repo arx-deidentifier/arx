@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2014-2015 Karol Babioch, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -208,6 +208,8 @@ public class ImportWizardPageExcel extends WizardPage {
                     readSheets();
                 } catch (IOException e) {
                     setErrorMessage(Resources.getMessage("ImportWizardPageExcel.4")); //$NON-NLS-1$
+                    resetPage();
+                    return;
                 }
 
                 /* Make widgets visible */
@@ -281,7 +283,7 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Place holders */
         new Label(container, SWT.NONE);
-        new Label(container, SWT.NONE);
+        new Label(container, SWT.NONE);       
 
         /* Contains header button */
         btnContainsHeader = new Button(container, SWT.CHECK);
@@ -301,7 +303,6 @@ public class ImportWizardPageExcel extends WizardPage {
 
         /* Place holders */
         new Label(container, SWT.NONE);
-
         new Label(container, SWT.NONE);
         new Label(container, SWT.NONE);
         new Label(container, SWT.NONE);
@@ -332,7 +333,7 @@ public class ImportWizardPageExcel extends WizardPage {
             /* Die silently*/
         }
     }
-
+    
     /**
      * Evaluates the page
      *
@@ -473,7 +474,7 @@ public class ImportWizardPageExcel extends WizardPage {
         tablePreview.layout();
         tablePreview.setRedraw(true);
     }
-    
+
     /**
      * Reads in the available sheets from file
      * 
@@ -498,11 +499,28 @@ public class ImportWizardPageExcel extends WizardPage {
             workbook = WorkbookFactory.create(stream);
         } catch (InvalidFormatException e) {
             throw new IOException(Resources.getMessage("ImportWizardPageExcel.14")); //$NON-NLS-1$
+        } catch (IllegalArgumentException e) {
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.14")); //$NON-NLS-1$
+        } catch (Exception e) {
+            throw new IOException(Resources.getMessage("ImportWizardPageExcel.15")); //$NON-NLS-1$
         }
 
         /* Add all sheets to combo */
         for (int i = 0; i < workbook.getNumberOfSheets(); i++) {
             comboSheet.add(workbook.getSheetName(i));
         }
+    }
+    
+    /**
+     * Reset page
+     */
+    private void resetPage() {
+        comboSheet.setVisible(false);
+        comboSheet.removeAll();
+        lblSheet.setVisible(false);
+        btnContainsHeader.setEnabled(true);
+        btnContainsHeader.setVisible(false);
+        tablePreview.removeAll();
+        tablePreview.setVisible(false);
     }
 }

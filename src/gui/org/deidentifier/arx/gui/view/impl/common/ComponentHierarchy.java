@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,8 +35,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 
 /**
- * This class implements an editor for generalization hierarchies. It is partly
- * based upon code implemented by Ledian Xhani and Ljubomir Dshevlekov.
+ * This class implements an editor for generalization hierarchies.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -133,15 +132,8 @@ public class ComponentHierarchy {
     /**
      * Clears the hierarchy.
      */
-    public void actionReset() {
-        setHierarchy(null);
-    }
-    
-    /**
-     * Clears the hierarchy.
-     */
     public void actionClear() {
-        setHierarchy(null);
+        this.setHierarchy(null);
         this.triggerChangedEvent();
     }
     
@@ -344,6 +336,13 @@ public class ComponentHierarchy {
         
         this.table.refresh();
         this.triggerChangedEvent();
+    }
+    
+    /**
+     * Clears the hierarchy.
+     */
+    public void actionReset() {
+        this.setHierarchy(null);
     }
     
     /**

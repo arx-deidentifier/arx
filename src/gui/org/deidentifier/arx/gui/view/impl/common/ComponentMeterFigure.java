@@ -125,7 +125,7 @@ public class ComponentMeterFigure extends AbstractRoundRampedFigure {
                 Dimension labelSize = valueLabel.getPreferredSize();
                 
                 int lY1 = area.y + area.height/2 -(scale.getInnerRadius() - area.height/5)/2 - labelSize.height/2;
-                int lY2 = container.getClientArea().height - labelSize.height + 3;
+                int lY2 = container.getClientArea().height - labelSize.height - 3;
                 
                 valueLabel.setBounds(new Rectangle(area.x + area.width/2 - labelSize.width/2,
                         Math.min(lY1, lY2),

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>EditorCriterion (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
@@ -34,8 +34,8 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogSeparator.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDDisclosurePrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogTopBottomCoding.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionBLikeness.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" target="_top">Frames</a></li>
@@ -94,13 +94,13 @@
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDDisclosurePrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDDisclosurePrivacy</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDifferentialPrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDifferentialPrivacy</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDPresence.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDPresence</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionKAnonymity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionKAnonymity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionKMap.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionKMap</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionLDiversity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionLDiversity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionRiskBased.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionRiskBased</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionTCloseness.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionTCloseness</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionBLikeness.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionBLikeness</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDDisclosurePrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDDisclosurePrivacy</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDifferentialPrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDifferentialPrivacy</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDPresence.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionDPresence</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionKAnonymity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionKAnonymity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionKMap.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionKMap</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionLDiversity.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionLDiversity</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionProfitability.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionProfitability</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionRiskBased.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionRiskBased</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionTCloseness.html" title="class in org.deidentifier.arx.gui.view.impl.menu">EditorCriterionTCloseness</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public abstract class <span class="strong">EditorCriterion&lt;T extends <a href="../../../../../../../org/deidentifier/arx/gui/model/ModelCriterion.html" title="class in org.deidentifier.arx.gui.model">ModelCriterion</a>&gt;</span>
 extends java.lang.Object</pre>
-<div class="block">Base class</div>
+<div class="block">Base class for editors</div>
 </li>
 </ul>
 </div>
@@ -428,6 +428,18 @@ extends java.lang.Object</pre>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>model</code> - </dd><dd><code>default</code> - </dd></dl>
 </li>
 </ul>
+<a name="updateLabel(org.eclipse.swt.widgets.Label, int)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>updateLabel</h4>
+<pre>protected&nbsp;void&nbsp;updateLabel(org.eclipse.swt.widgets.Label&nbsp;label,
+               int&nbsp;value)</pre>
+<div class="block">Updates the label and tool tip text.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>label</code> - </dd><dd><code>value</code> - </dd></dl>
+</li>
+</ul>
 <a name="updateLabel(org.eclipse.swt.widgets.Text, double)">
 <!--   -->
 </a>
@@ -443,22 +455,10 @@ extends java.lang.Object</pre>
 <a name="updateLabel(org.eclipse.swt.widgets.Text, int)">
 <!--   -->
 </a>
-<ul class="blockList">
-<li class="blockList">
-<h4>updateLabel</h4>
-<pre>protected&nbsp;void&nbsp;updateLabel(org.eclipse.swt.widgets.Text&nbsp;label,
-               int&nbsp;value)</pre>
-<div class="block">Updates the label and tool tip text.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>label</code> - </dd><dd><code>value</code> - </dd></dl>
-</li>
-</ul>
-<a name="updateLabel(org.eclipse.swt.widgets.Label, int)">
-<!--   -->
-</a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>updateLabel</h4>
-<pre>protected&nbsp;void&nbsp;updateLabel(org.eclipse.swt.widgets.Label&nbsp;label,
+<pre>protected&nbsp;void&nbsp;updateLabel(org.eclipse.swt.widgets.Text&nbsp;label,
                int&nbsp;value)</pre>
 <div class="block">Updates the label and tool tip text.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>label</code> - </dd><dd><code>value</code> - </dd></dl>
@@ -490,8 +490,8 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogSeparator.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionDDisclosurePrivacy.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/DialogTopBottomCoding.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Prev Class</span></a></li>
+<li><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/menu/EditorCriterionBLikeness.html" title="class in org.deidentifier.arx.gui.view.impl.menu"><span class="strong">Next Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../../index.html?org/deidentifier/arx/gui/view/impl/menu/EditorCriterion.html" target="_top">Frames</a></li>

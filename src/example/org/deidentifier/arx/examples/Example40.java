@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
@@ -88,30 +89,30 @@ public class Example40 extends Example {
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
 
-        double inputAccuracy = data.getHandle().getStatistics()
-                                    .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
-                                    .getFractionCorrect();
-        
         System.out.println("Input dataset");
-        System.out.println(" - Classification accuracy: " + inputAccuracy);
+
+        Iterator<String[]> input = data.getHandle().iterator();
+        while (input.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(input.next()));
+        }
+
+        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new KAnonymity(3));
+        config.addPrivacyModel(new KAnonymity(3));
         ARXResult result = anonymizer.anonymize(data, config);
+
+        System.out.println("3-anonymous dataset");
 
         Iterator<String[]> transformed = result.getOutput().iterator();
         while (transformed.hasNext()) {
             System.out.print("   ");
             System.out.println(Arrays.toString(transformed.next()));
         }
-        
-        double outputAccuracy = result.getOutput().getStatistics()
-                .getClassificationPerformance(features, clazz, Integer.MAX_VALUE, true, 1d)
-                .getFractionCorrect();
 
-        System.out.println("3-anonymous dataset");
-        System.out.println(" - Classification accuracy: " + outputAccuracy);
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.framework.data;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,14 +25,24 @@ import java.util.Set;
 
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
+import org.deidentifier.arx.DataSubset;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.RowSet;
-import org.deidentifier.arx.criteria.DPresence;
+import org.deidentifier.arx.aggregates.HierarchyBuilder;
+import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
+import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.KMap;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
+import org.deidentifier.arx.metric.v2.DomainShare;
+import org.deidentifier.arx.metric.v2.DomainShareInterval;
+import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
+import org.deidentifier.arx.metric.v2.DomainShareRedaction;
+
+import cern.colt.Sorting;
+import cern.colt.function.IntComparator;
 
 import com.carrotsearch.hppc.IntObjectOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
@@ -70,6 +81,12 @@ public class DataManager {
     /** The data which is insensitive */
     private final Data                                 dataStatic;
 
+    /** The data definition */
+    private final DataDefinition                       definition;
+
+    /** The domain shares */
+    private DomainShare[]                              shares;
+
     /** The original input header. */
     private final String[]                             header;
 
@@ -81,6 +98,9 @@ public class DataManager {
 
     /** The sensitive attributes. */
     private final Map<String, GeneralizationHierarchy> hierarchiesSensitive;
+
+    /** The data types of sensitive attributes. */
+    private final Map<String, DataType<?>>             dataTypesSensitive;
 
     /** The indexes of sensitive attributes. */
     private final Map<String, Integer>                 indexesSensitive;
@@ -97,6 +117,9 @@ public class DataManager {
     /** Map for microaggregated attributes */
     private final int[]                                microaggregationMap;
 
+    /** Map for microaggregated attributes */
+    private final int[]                                microaggregationDomainSizes;
+
     /** The number of microaggregation attributes in the dataDI */
     private final int                                  microaggregationNumAttributes;
 
@@ -112,61 +135,6 @@ public class DataManager {
     /** The size of the research subset. */
     private int                                        subsetSize = 0;
     
-    /**
-     * For creating a projected instance
-     * @param dataAnalyzed
-     * @param dataGeneralized
-     * @param dataStatic
-     * @param header
-     * @param hierarchiesGeneralized
-     * @param hierarchiesHeights
-     * @param hierarchiesSensitive
-     * @param indexesSensitive
-     * @param maxLevels
-     * @param microaggregationFunctions
-     * @param microaggregationHeader
-     * @param microaggregationMap
-     * @param microaggregationNumAttributes
-     * @param microaggregationStartIndex
-     * @param minLevels
-     */
-    protected DataManager(Data dataAnalyzed,
-                       Data dataGeneralized,
-                       Data dataStatic,
-                       String[] header,
-                       GeneralizationHierarchy[] hierarchiesGeneralized,
-                       int[] hierarchiesHeights,
-                       Map<String, GeneralizationHierarchy> hierarchiesSensitive,
-                       Map<String, Integer> indexesSensitive,
-                       int[] maxLevels,
-                       DistributionAggregateFunction[] microaggregationFunctions,
-                       String[] microaggregationHeader,
-                       int[] microaggregationMap,
-                       int microaggregationNumAttributes,
-                       int microaggregationStartIndex,
-                       int[] minLevels) {
-        this.dataAnalyzed = dataAnalyzed;
-        this.dataGeneralized = dataGeneralized;
-        this.dataStatic = dataStatic;
-        this.header = header;
-        this.hierarchiesGeneralized = hierarchiesGeneralized;
-        this.hierarchiesHeights = hierarchiesHeights;
-        this.hierarchiesSensitive = hierarchiesSensitive;
-        this.indexesSensitive = indexesSensitive;
-        this.maxLevels = maxLevels;
-        this.microaggregationFunctions = microaggregationFunctions;
-        this.microaggregationHeader = microaggregationHeader;
-        this.microaggregationMap = microaggregationMap;
-        this.microaggregationNumAttributes = microaggregationNumAttributes;
-        this.microaggregationStartIndex = microaggregationStartIndex;
-        this.minLevels = minLevels;
-        
-        // Both variables are only used for getDistribution() and getTree()
-        // The projected instance delegates these methods to the original data manager
-        this.subset = null;
-        this.subsetSize = 0;
-    }
-
     /**
      * Creates a new data manager from pre-encoded data.
      * 
@@ -186,14 +154,15 @@ public class DataManager {
 
         // Store columns for reordering the output
         this.header = header;
+        this.definition = definition;
 
-        Set<String> attributesGemeralized = definition.getQuasiIdentifiersWithGeneralization();
+        Set<String> attributesGeneralized = definition.getQuasiIdentifiersWithGeneralization();
         Set<String> attributesSensitive = definition.getSensitiveAttributes();
         Set<String> attributesMicroaggregated = definition.getQuasiIdentifiersWithMicroaggregation();
         Set<String> attributesInsensitive = definition.getInsensitiveAttributes();
 
         // Init dictionary
-        final Dictionary dictionaryGeneralized = new Dictionary(attributesGemeralized.size());
+        final Dictionary dictionaryGeneralized = new Dictionary(attributesGeneralized.size());
         final Dictionary dictionaryAnalyzed = new Dictionary(attributesSensitive.size() + attributesMicroaggregated.size());
         final Dictionary dictionaryStatic = new Dictionary(attributesInsensitive.size());
 
@@ -213,17 +182,17 @@ public class DataManager {
         int indexMicroaggregated = this.microaggregationStartIndex;
         int counter = 0;
 
-        // A map for column indices. map[i*2]=attribute type, map[i*2+1]=index
-        // position. */
+        // A map for column indices. map[i*2]=attribute type, map[i*2+1]=index position.
         final int[] map = new int[header.length * 2];
         final String[] headerGH = new String[dictionaryGeneralized.getNumDimensions()];
         final String[] headerDI = new String[dictionaryAnalyzed.getNumDimensions()];
         final String[] headerIS = new String[dictionaryStatic.getNumDimensions()];
-        microaggregationHeader = new String[attributesMicroaggregated.size()];
+        this.microaggregationHeader = new String[attributesMicroaggregated.size()];
+        this.dataTypesSensitive = new HashMap<>();
 
         for (final String column : header) {
             final int idx = counter * 2;
-            if (attributesGemeralized.contains(column)) {
+            if (attributesGeneralized.contains(column)) {
                 map[idx] = AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED;
                 map[idx + 1] = indexGeneralized;
                 mapGeneralized[indexGeneralized] = counter;
@@ -254,9 +223,10 @@ public class DataManager {
                 dictionaryAnalyzed.registerAll(indexSensitive, dictionary, counter);
                 headerDI[indexSensitive] = header[counter];
                 indexSensitive++;
+                dataTypesSensitive.put(column, definition.getDataType(column));
             } else {
                 // TODO: CHECK: Changed default? - now all undefined attributes
-                // are identifying! Previously they were sensitive?
+                // are identifying! Previously they were considered sensitive?
                 map[idx] = AttributeTypeInternal.IDENTIFYING;
                 map[idx + 1] = -1;
             }
@@ -280,15 +250,15 @@ public class DataManager {
         dataStatic = ddata[2];
 
         // Initialize minlevels
-        minLevels = new int[attributesGemeralized.size()];
-        hierarchiesHeights = new int[attributesGemeralized.size()];
-        maxLevels = new int[attributesGemeralized.size()];
+        minLevels = new int[attributesGeneralized.size()];
+        hierarchiesHeights = new int[attributesGeneralized.size()];
+        maxLevels = new int[attributesGeneralized.size()];
 
         // Build hierarchiesQI
-        hierarchiesGeneralized = new GeneralizationHierarchy[attributesGemeralized.size()];
+        hierarchiesGeneralized = new GeneralizationHierarchy[attributesGeneralized.size()];
         for (int i = 0; i < header.length; i++) {
             final int idx = i * 2;
-            if (attributesGemeralized.contains(header[i]) &&
+            if (attributesGeneralized.contains(header[i]) &&
                 map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
                 final int dictionaryIndex = map[idx + 1];
                 final String name = header[i];
@@ -298,8 +268,7 @@ public class DataManager {
                                                                                           dictionaryIndex,
                                                                                           dictionaryGeneralized);
                 } else {
-                    throw new IllegalStateException("No hierarchy available for attribute (" +
-                                                    header[i] + ")");
+                    throw new IllegalStateException("No hierarchy available for attribute (" + header[i] + ")");
                 }
                 // Initialize hierarchy height and minimum / maximum
                 // generalization
@@ -317,7 +286,7 @@ public class DataManager {
                 DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
                 for (int i = 0; i < header.length; i++) {
                     final int idx = i * 2;
-                    if (attributesGemeralized.contains(header[i]) &&
+                    if (attributesGeneralized.contains(header[i]) &&
                         map[idx] == AttributeTypeInternal.QUASI_IDENTIFYING_GENERALIZED) {
                         minLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
                         maxLevels[map[idx + 1]] = scheme.getGeneralizationLevel(header[i], definition);
@@ -396,6 +365,7 @@ public class DataManager {
 
         // Init microaggregation functions
         microaggregationFunctions = new DistributionAggregateFunction[attributesMicroaggregated.size()];
+        microaggregationDomainSizes = new int[attributesMicroaggregated.size()];
         for (int i = 0; i < header.length; i++) {
             final int idx = i * 2;
             if (attributesMicroaggregated.contains(header[i]) &&
@@ -403,6 +373,7 @@ public class DataManager {
                 final int dictionaryIndex = map[idx + 1] - microaggregationStartIndex;
                 final String name = header[i];
                 if (definition.getMicroAggregationFunction(name) != null) {
+                    microaggregationDomainSizes[dictionaryIndex] = dictionaryAnalyzed.getMapping()[dictionaryIndex + microaggregationStartIndex].length;
                     microaggregationFunctions[dictionaryIndex] = functions.get(name);
                     microaggregationFunctions[dictionaryIndex].initialize(dictionaryAnalyzed.getMapping()[dictionaryIndex + microaggregationStartIndex],
                                                                           definition.getDataType(name),
@@ -416,18 +387,82 @@ public class DataManager {
 
         // Store research subset
         for (PrivacyCriterion c : criteria) {
-            if (c instanceof DPresence) {
-                subset = ((DPresence) c).getSubset().getSet();
-                subsetSize = ((DPresence) c).getSubset().getArray().length;
-            } else if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy)c).initialize(this);
-                subset = ((EDDifferentialPrivacy) c).getSubset().getSet();
-                subsetSize = ((EDDifferentialPrivacy) c).getSubset().getArray().length;
-            } else if (c instanceof KMap) {
-                subset = ((KMap) c).getSubset().getSet();
-                subsetSize = ((KMap) c).getSubset().getArray().length;
+            if (c instanceof EDDifferentialPrivacy) {
+                ((EDDifferentialPrivacy) c).initialize(this, null);
+            }
+            if (c.isSubsetAvailable()) {
+                DataSubset _subset = c.getDataSubset();
+                if (_subset != null) {
+                    subset = _subset.getSet();
+                    subsetSize = _subset.getArray().length;
+                    break;
+                }
             }
         }
+    }
+
+    /**
+     * For creating a projected instance
+     * @param definition
+     * @param dataAnalyzed
+     * @param dataGeneralized
+     * @param dataStatic
+     * @param header
+     * @param hierarchiesGeneralized
+     * @param hierarchiesHeights
+     * @param hierarchiesSensitive
+     * @param indexesSensitive
+     * @param maxLevels
+     * @param microaggregationFunctions
+     * @param microaggregationHeader
+     * @param microaggregationMap
+     * @param microaggregationDomainSizes
+     * @param microaggregationNumAttributes
+     * @param microaggregationStartIndex
+     * @param minLevels
+     * @param dataTypesSensitive 
+     */
+    protected DataManager(DataDefinition definition,
+                          Data dataAnalyzed,
+                          Data dataGeneralized,
+                          Data dataStatic,
+                          String[] header,
+                          GeneralizationHierarchy[] hierarchiesGeneralized,
+                          int[] hierarchiesHeights,
+                          Map<String, GeneralizationHierarchy> hierarchiesSensitive,
+                          Map<String, Integer> indexesSensitive,
+                          int[] maxLevels,
+                          DistributionAggregateFunction[] microaggregationFunctions,
+                          String[] microaggregationHeader,
+                          int[] microaggregationMap,
+                          int[] microaggregationDomainSizes,
+                          int microaggregationNumAttributes,
+                          int microaggregationStartIndex,
+                          int[] minLevels,
+                          Map<String, DataType<?>> dataTypesSensitive) {
+        this.definition = definition;
+        this.dataAnalyzed = dataAnalyzed;
+        this.dataGeneralized = dataGeneralized;
+        this.dataStatic = dataStatic;
+        this.header = header;
+        this.hierarchiesGeneralized = hierarchiesGeneralized;
+        this.hierarchiesHeights = hierarchiesHeights;
+        this.hierarchiesSensitive = hierarchiesSensitive;
+        this.indexesSensitive = indexesSensitive;
+        this.maxLevels = maxLevels;
+        this.microaggregationFunctions = microaggregationFunctions;
+        this.microaggregationDomainSizes = microaggregationDomainSizes;
+        this.microaggregationHeader = microaggregationHeader;
+        this.microaggregationMap = microaggregationMap;
+        this.microaggregationNumAttributes = microaggregationNumAttributes;
+        this.microaggregationStartIndex = microaggregationStartIndex;
+        this.minLevels = minLevels;
+        this.dataTypesSensitive = dataTypesSensitive;
+        
+        // Both variables are only used for getDistribution() and getTree()
+        // The projected instance delegates these methods to the original data manager
+        this.subset = null;
+        this.subsetSize = 0;
     }
 
     /**
@@ -482,23 +517,66 @@ public class DataManager {
         }
         return distribution;
     }
-    
+
     /**
-     * Returns the distribution of the given sensitive attribute in the original dataset. Required for t-closeness.
+     * Returns the distribution of the given sensitive attribute in the original dataset. 
+     * Required for t-closeness.
      * 
      * @param attribute
      * @return distribution
      */
     public double[] getDistribution(String attribute) {
 
+        // Check
         if (!indexesSensitive.containsKey(attribute)) {
             throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
         }
         
-        final int index = indexesSensitive.get(attribute);
-        final int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
-        final int[][] data = dataAnalyzed.getArray();
+        // Prepare
+        int index = indexesSensitive.get(attribute);
+        int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
+        int[][] data = dataAnalyzed.getArray();
+        
+        // Calculate and return
         return getDistribution(data, index, distinctValues);
+    }
+
+    public DomainShare[] getDomainShares() {
+
+        // Build on-demand
+        if (this.shares == null) {
+            
+            // Compute domain shares
+            this.shares = new DomainShare[dataGeneralized.getHeader().length];
+            for (int i=0; i<shares.length; i++) {
+                
+                // Extract info
+                String attribute = dataGeneralized.getHeader()[i];
+                String[][] hierarchy = definition.getHierarchy(attribute);
+                HierarchyBuilder<?> builder = definition.getHierarchyBuilder(attribute);
+                
+                // Create shares for redaction-based hierarchies
+                if (builder != null && (builder instanceof HierarchyBuilderRedactionBased) &&
+                    ((HierarchyBuilderRedactionBased<?>)builder).isDomainPropertiesAvailable()){
+                    this.shares[i] = new DomainShareRedaction((HierarchyBuilderRedactionBased<?>)builder);
+                    
+                 // Create shares for interval-based hierarchies
+                } else if (builder != null && (builder instanceof HierarchyBuilderIntervalBased)) {
+                    this.shares[i] = new DomainShareInterval<>((HierarchyBuilderIntervalBased<?>)builder,
+                                                           hierarchiesGeneralized[i].getArray(),
+                                                           dataGeneralized.getDictionary().getMapping()[i]);
+                    
+                // Create fallback-shares for materialized hierarchies
+                } else {
+                    this.shares[i] = new DomainShareMaterialized(hierarchy, 
+                                                            dataGeneralized.getDictionary().getMapping()[i],
+                                                            hierarchiesGeneralized[i].getArray());
+                }
+            }
+        }
+        
+        // Return
+        return this.shares;
     }
 
     /**
@@ -549,6 +627,14 @@ public class DataManager {
     }
 
     /**
+     * Returns the map for the according buffer
+     * @return
+     */
+    public int[] getMicroaggregationDomainSizes() {
+        return microaggregationDomainSizes;
+    }
+
+    /**
      * Returns the microaggregation functions.
      * 
      * @return
@@ -593,6 +679,79 @@ public class DataManager {
         return microaggregationStartIndex;
     }
 
+    /**
+     * Returns the order of the given sensitive attribute in the original dataset. 
+     * Required for t-closeness.
+     * 
+     * @param attribute
+     * @return distribution
+     */
+    public int[] getOrder(String attribute) {
+
+        // Check
+        if (!indexesSensitive.containsKey(attribute)) {
+            throw new IllegalArgumentException("Attribute " + attribute + " is not sensitive");
+        }
+        
+        // Prepare
+        final String[] dictionary = dataAnalyzed.getDictionary().getMapping()[indexesSensitive.get(attribute)];
+        final DataType<?> type = this.dataTypesSensitive.get(attribute);
+        
+        // Init
+        int[] order = new int[dictionary.length];
+        for (int i = 0; i < order.length; i++) {
+            order[i] = i;
+        }
+        
+        // Sort
+        Sorting.mergeSort(order, 0, order.length, new IntComparator() {
+            @Override public int compare(int arg0, int arg1) {
+                String value1 = dictionary[arg0];
+                String value2 = dictionary[arg1];
+                try {
+                    return type.compare(value1, value2);
+                } catch (NumberFormatException | ParseException e) {
+                    throw new IllegalStateException(e);
+                }
+            }
+        });
+        
+        // Return
+        return order;
+    }
+
+    /**
+     * Returns an instance of this data manager, that is projected onto the given rowset
+     * @param rowset
+     * @return
+     */
+    public DataManager getSubsetInstance(RowSet rowset) {
+        
+        DistributionAggregateFunction[] microaggregationFunctions = new DistributionAggregateFunction[this.microaggregationFunctions.length];
+        for (int i = 0; i < this.microaggregationFunctions.length; i++) {
+            microaggregationFunctions[i] = this.microaggregationFunctions[i].clone();
+        }
+        
+        return new DataManagerSubset(this,
+                                     this.dataAnalyzed.getSubsetInstance(rowset),
+                                     this.dataGeneralized.getSubsetInstance(rowset),
+                                     this.dataStatic.getSubsetInstance(rowset),
+                                     this.header,
+                                     this.hierarchiesGeneralized,
+                                     this.hierarchiesHeights,
+                                     this.hierarchiesSensitive,
+                                     this.indexesSensitive,
+                                     this.maxLevels,
+                                     microaggregationFunctions,
+                                     this.microaggregationHeader,
+                                     this.microaggregationMap,
+                                     this.microaggregationDomainSizes,
+                                     this.microaggregationNumAttributes,
+                                     this.microaggregationStartIndex,
+                                     this.minLevels,
+                                     this.dataTypesSensitive);
+    }
+    
     /**
      * Returns a tree for the given attribute at the index within the given data array, using the given hierarchy.
      * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
@@ -707,7 +866,7 @@ public class DataManager {
 
         return treeArray;
     }
-    
+
     /**
      * Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.
      * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
@@ -723,7 +882,7 @@ public class DataManager {
         final int index = indexesSensitive.get(attribute);
         return getTree(data, index, hierarchiesSensitive.get(attribute).map);
     }
-
+    
     /**
      * Encodes the data.
      * 
@@ -804,32 +963,10 @@ public class DataManager {
     }
 
     /**
-     * Returns an instance of this data manager, that is projected onto the given rowset
-     * @param rowset
+     * Returns the data definitions
      * @return
      */
-    public DataManager getSubsetInstance(RowSet rowset) {
-        
-        DistributionAggregateFunction[] microaggregationFunctions = new DistributionAggregateFunction[this.microaggregationFunctions.length];
-        for (int i = 0; i < this.microaggregationFunctions.length; i++) {
-            microaggregationFunctions[i] = this.microaggregationFunctions[i].clone();
-        }
-        
-        return new DataManagerSubset(this,
-                                     this.dataAnalyzed.getSubsetInstance(rowset),
-                                     this.dataGeneralized.getSubsetInstance(rowset),
-                                     this.dataStatic.getSubsetInstance(rowset),
-                                     this.header,
-                                     this.hierarchiesGeneralized,
-                                     this.hierarchiesHeights,
-                                     this.hierarchiesSensitive,
-                                     this.indexesSensitive,
-                                     this.maxLevels,
-                                     microaggregationFunctions,
-                                     this.microaggregationHeader,
-                                     this.microaggregationMap,
-                                     this.microaggregationNumAttributes,
-                                     this.microaggregationStartIndex,
-                                     this.minLevels);
+    protected DataDefinition getDataDefinition() {
+        return this.definition;
     }
 }

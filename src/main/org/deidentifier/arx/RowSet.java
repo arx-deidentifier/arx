@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,13 +26,13 @@ import java.io.Serializable;
  */
 public class RowSet implements Serializable, Cloneable {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 1492499772279795327L;
     
-    /**  TODO */
+    /**  Bits per unit */
     private static final int   ADDRESS_BITS_PER_UNIT = 6;
     
-    /**  TODO */
+    /**  Index mask */
     private static final int   BIT_INDEX_MASK        = 63;
     
     /**
@@ -55,47 +55,47 @@ public class RowSet implements Serializable, Cloneable {
         return new RowSet(length);
     }
     
-    /**  TODO */
+    /**  Array */
     private final long[]       array;
     
-    /**  TODO */
+    /**  Length of array */
     private final int          length;
 
-    /**  TODO */
+    /**  Number of bits set */
     private int                size;
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param data
      */
     private RowSet(Data data) {
         this.length = data.getHandle().getNumRows();
         int chunks = (int) (Math.ceil((double) this.length / 64d));
-        array = new long[chunks];
+        this.array = new long[chunks];
     }
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param length
      */
     private RowSet(int length) {
         this.length = length;
         int chunks = (int) (Math.ceil((double) this.length / 64d));
-        array = new long[chunks];
+        this.array = new long[chunks];
     }
 
     /**
-     * 
+     * Sets a bit
      *
      * @param rowIndex
      */
     public void add(int rowIndex) {
         int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
         long temp = array[offset];
-        array[offset] |= 1L << (rowIndex & BIT_INDEX_MASK);
-        size += array[offset] != temp ? 1 : 0; 
+        this.array[offset] |= 1L << (rowIndex & BIT_INDEX_MASK);
+        this.size += array[offset] != temp ? 1 : 0; 
     }
     
     @Override
@@ -107,7 +107,7 @@ public class RowSet implements Serializable, Cloneable {
     }
 
     /**
-     * 
+     * Checks whether the bit is set
      *
      * @param rowIndex
      * @return
@@ -117,7 +117,7 @@ public class RowSet implements Serializable, Cloneable {
     }
 
     /**
-     * 
+     * Returns the number of available bits
      *
      * @return
      */
@@ -126,19 +126,19 @@ public class RowSet implements Serializable, Cloneable {
     }
     
     /**
-     * 
+     * Unsets a bit
      *
      * @param rowIndex
      */
     public void remove(int rowIndex){
         int offset = rowIndex >> ADDRESS_BITS_PER_UNIT;
         long temp = array[offset];
-        array[offset] &= ~(1L << (rowIndex & BIT_INDEX_MASK));
-        size -= array[offset] != temp ? 1 : 0; 
+        this.array[offset] &= ~(1L << (rowIndex & BIT_INDEX_MASK));
+        this.size -= array[offset] != temp ? 1 : 0; 
     }
 
     /**
-     * 
+     * Returns the number of bits set
      *
      * @return
      */
@@ -147,7 +147,7 @@ public class RowSet implements Serializable, Cloneable {
     }
     
     /**
-     * 
+     * Swaps two bits
      *
      * @param rowIndex1
      * @param rowIndex2

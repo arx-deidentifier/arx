@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +19,10 @@ package org.deidentifier.arx.criteria;
 
 import java.util.Arrays;
 
+import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
  * The recursive-(c,l)-diversity criterion.
@@ -50,6 +52,13 @@ public class RecursiveCLDiversity extends LDiversity{
         super(attribute, l, false, true);
         this.c = c;
     }
+    
+    @Override
+    public RecursiveCLDiversity clone() {
+        return new RecursiveCLDiversity(this.getAttribute(),
+                                        this.getC(),
+                                        (int)this.getL());
+    }
 
     /**
      * Returns the parameter c.
@@ -61,7 +70,7 @@ public class RecursiveCLDiversity extends LDiversity{
     }
 
     @Override
-    public boolean isAnonymous(HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
 
         Distribution d = entry.distributions[index];
         
@@ -93,14 +102,21 @@ public class RecursiveCLDiversity extends LDiversity{
     }
     
 	@Override
+    public boolean isLocalRecodingSupported() {
+        return true;
+    }
+
+    @Override
+    public ElementData render() {
+        ElementData result = new ElementData("Recursive-(c,l)-diversity");
+        result.addProperty("Attribute", attribute);
+        result.addProperty("Threshold (l)", this.l);
+        result.addProperty("Multiplier (c)", this.c);
+        return result;
+    }
+
+    @Override
 	public String toString() {
 		return "recursive-("+c+","+minSize+")-diversity for attribute '"+attribute+"'";
 	}
-
-    @Override
-    public RecursiveCLDiversity clone() {
-        return new RecursiveCLDiversity(this.getAttribute(),
-                                        this.getC(),
-                                        (int)this.getL());
-    }
 }

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>StatisticsBuilderInterruptible (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
@@ -118,37 +118,16 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String[]&nbsp;features,
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20org.deidentifier.arx.ARXLogisticRegressionConfiguration)">getClassificationPerformance</a></strong>(java.lang.String[]&nbsp;features,
                             java.lang.String&nbsp;clazz,
-                            boolean&nbsp;ignoreSuppressedRecords,
-                            double&nbsp;samplingFraction)</code>
+                            <a href="../../../../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a>&nbsp;config)</code>
 <div class="block">Creates a new set of statistics for the given classification task</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String[],%20java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String[]&nbsp;features,
-                            java.lang.String&nbsp;clazz,
-                            java.lang.Integer&nbsp;seed,
-                            boolean&nbsp;ignoreSuppressedRecords,
-                            double&nbsp;samplingFraction)</code>
-<div class="block">Creates a new set of statistics for the given classification task</div>
-</td>
-</tr>
-<tr class="altColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String&nbsp;clazz,
-                            boolean&nbsp;ignoreSuppressedRecords,
-                            double&nbsp;samplingFraction)</code>
-<div class="block">Creates a new set of statistics for the given classification task</div>
-</td>
-</tr>
-<tr class="rowColor">
-<td class="colFirst"><code><a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String,%20java.lang.Integer,%20boolean,%20double)">getClassificationPerformance</a></strong>(java.lang.String&nbsp;clazz,
-                            java.lang.Integer&nbsp;seed,
-                            boolean&nbsp;ignoreSuppressedRecords,
-                            double&nbsp;samplingFraction)</code>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getClassificationPerformance(java.lang.String,%20org.deidentifier.arx.ARXLogisticRegressionConfiguration)">getClassificationPerformance</a></strong>(java.lang.String&nbsp;clazz,
+                            <a href="../../../../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a>&nbsp;config)</code>
 <div class="block">Creates a new set of statistics for the given classification task</div>
 </td>
 </tr>
@@ -264,12 +243,19 @@ extends java.lang.Object</pre>
 </td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><code>int</code></td>
+<td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getProgress()">getProgress</a></strong>()</code>
+<div class="block">If supported by the according builder, this method will report a progress
+ value in [0,100].</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../org/deidentifier/arx/aggregates/StatisticsSummary.html" title="class in org.deidentifier.arx.aggregates">StatisticsSummary</a>&lt;?&gt;&gt;</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#getSummaryStatistics(boolean)">getSummaryStatistics</a></strong>(boolean&nbsp;listwiseDeletion)</code>
 <div class="block">Returns summary statistics for all attributes.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../org/deidentifier/arx/aggregates/StatisticsBuilderInterruptible.html#interrupt()">interrupt</a></strong>()</code>
 <div class="block">Interrupts all computations.</div>
@@ -297,42 +283,23 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getClassificationPerformance(java.lang.String, boolean, double)">
+<a name="getClassificationPerformance(java.lang.String, org.deidentifier.arx.ARXLogisticRegressionConfiguration)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getClassificationPerformance</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String&nbsp;clazz,
-                                                    boolean&nbsp;ignoreSuppressedRecords,
-                                                    double&nbsp;samplingFraction)
+                                                    <a href="../../../../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a>&nbsp;config)
                                                       throws java.lang.InterruptedException</pre>
 <div class="block">Creates a new set of statistics for the given classification task</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - - The class attributes</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - - The class attributes</dd><dd><code>config</code> - - The configuration</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.text.ParseException</code></dd>
 <dd><code>java.lang.InterruptedException</code></dd></dl>
 </li>
 </ul>
-<a name="getClassificationPerformance(java.lang.String, java.lang.Integer, boolean, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getClassificationPerformance</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String&nbsp;clazz,
-                                                    java.lang.Integer&nbsp;seed,
-                                                    boolean&nbsp;ignoreSuppressedRecords,
-                                                    double&nbsp;samplingFraction)
-                                                      throws java.lang.InterruptedException</pre>
-<div class="block">Creates a new set of statistics for the given classification task</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>clazz</code> - - The class attributes</dd><dd><code>seed</code> - - The random seed, null, if the process should be randomized</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.text.ParseException</code></dd>
-<dd><code>java.lang.InterruptedException</code></dd></dl>
-</li>
-</ul>
-<a name="getClassificationPerformance(java.lang.String[], java.lang.String, boolean, double)">
+<a name="getClassificationPerformance(java.lang.String[], java.lang.String, org.deidentifier.arx.ARXLogisticRegressionConfiguration)">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -340,30 +307,10 @@ extends java.lang.Object</pre>
 <h4>getClassificationPerformance</h4>
 <pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String[]&nbsp;features,
                                                     java.lang.String&nbsp;clazz,
-                                                    boolean&nbsp;ignoreSuppressedRecords,
-                                                    double&nbsp;samplingFraction)
+                                                    <a href="../../../../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a>&nbsp;config)
                                                       throws java.lang.InterruptedException</pre>
 <div class="block">Creates a new set of statistics for the given classification task</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>features</code> - - The feature attributes</dd><dd><code>clazz</code> - - The class attributes</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
-<dt><span class="strong">Throws:</span></dt>
-<dd><code>java.text.ParseException</code></dd>
-<dd><code>java.lang.InterruptedException</code></dd></dl>
-</li>
-</ul>
-<a name="getClassificationPerformance(java.lang.String[], java.lang.String, java.lang.Integer, boolean, double)">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getClassificationPerformance</h4>
-<pre>public&nbsp;<a href="../../../../org/deidentifier/arx/aggregates/StatisticsClassification.html" title="class in org.deidentifier.arx.aggregates">StatisticsClassification</a>&nbsp;getClassificationPerformance(java.lang.String[]&nbsp;features,
-                                                    java.lang.String&nbsp;clazz,
-                                                    java.lang.Integer&nbsp;seed,
-                                                    boolean&nbsp;ignoreSuppressedRecords,
-                                                    double&nbsp;samplingFraction)
-                                                      throws java.lang.InterruptedException</pre>
-<div class="block">Creates a new set of statistics for the given classification task</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>features</code> - - The feature attributes</dd><dd><code>clazz</code> - - The class attributes</dd><dd><code>seed</code> - - The random seed, null, if the process should be randomized</dd><dd><code>ignoreSuppressedRecords</code> - - Ignore suppressed records</dd><dd><code>samplingFraction</code> - - The sampling fraction</dd>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>features</code> - - The feature attributes</dd><dd><code>clazz</code> - - The class attributes</dd><dd><code>config</code> - - The configuration</dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.text.ParseException</code></dd>
 <dd><code>java.lang.InterruptedException</code></dd></dl>
@@ -627,6 +574,18 @@ extends java.lang.Object</pre>
 <dt><span class="strong">Returns:</span></dt><dd></dd>
 <dt><span class="strong">Throws:</span></dt>
 <dd><code>java.lang.InterruptedException</code></dd></dl>
+</li>
+</ul>
+<a name="getProgress()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getProgress</h4>
+<pre>public&nbsp;int&nbsp;getProgress()</pre>
+<div class="block">If supported by the according builder, this method will report a progress
+ value in [0,100]. Otherwise, it will always return 0</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getSummaryStatistics(boolean)">

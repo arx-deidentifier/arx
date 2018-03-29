@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.text.ParseException;
 import java.util.Map;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
@@ -49,38 +50,13 @@ public class StatisticsBuilderInterruptible {
     /**
      * Creates a new set of statistics for the given classification task
      * @param clazz - The class attributes
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
+     * @param config - The configuration
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws InterruptedException {
+                                                                 ARXLogisticRegressionConfiguration config) throws InterruptedException {
         try {
-            return builder.getClassificationPerformance(clazz, ignoreSuppressedRecords, samplingFraction);
-        } catch (Exception e) {
-            if (e instanceof ComputationInterruptedException) {
-                throw new InterruptedException("Interrupted");
-            } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Creates a new set of statistics for the given classification task
-     * @param clazz - The class attributes
-     * @param seed - The random seed, null, if the process should be randomized
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
-     * @throws ParseException
-     */
-    public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 Integer seed,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws InterruptedException {
-        try {
-            return builder.getClassificationPerformance(clazz, seed, ignoreSuppressedRecords, samplingFraction);
+            return builder.getClassificationPerformance(clazz, config);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -94,41 +70,14 @@ public class StatisticsBuilderInterruptible {
      * Creates a new set of statistics for the given classification task
      * @param features - The feature attributes
      * @param clazz - The class attributes
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
+     * @param config - The configuration
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws InterruptedException {
+                                                                 ARXLogisticRegressionConfiguration config) throws InterruptedException {
         try {
-            return builder.getClassificationPerformance(features, clazz, ignoreSuppressedRecords, samplingFraction);
-        } catch (Exception e) {
-            if (e instanceof ComputationInterruptedException) {
-                throw new InterruptedException("Interrupted");
-            } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Creates a new set of statistics for the given classification task
-     * @param features - The feature attributes
-     * @param clazz - The class attributes
-     * @param seed - The random seed, null, if the process should be randomized
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
-     * @throws ParseException
-     */
-    public StatisticsClassification getClassificationPerformance(String[] features,
-                                                                 String clazz,
-                                                                 Integer seed,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws InterruptedException {
-        try {
-            return builder.getClassificationPerformance(features, clazz, seed, ignoreSuppressedRecords, samplingFraction);
+            return builder.getClassificationPerformance(features, clazz, config);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
@@ -515,6 +464,16 @@ public class StatisticsBuilderInterruptible {
                 throw new InterruptedException("Interrupted by exception: " + e.getMessage());
             }
         }
+    }
+
+    /**
+     * If supported by the according builder, this method will report a progress
+     * value in [0,100]. Otherwise, it will always return 0
+     * 
+     * @return
+     */
+    public int getProgress() {
+        return builder.getProgress();
     }
 
     /**

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>DataHandleInput (ARX Developer Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
@@ -138,7 +138,7 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <!--   -->
 </a>
 <h3>Fields inherited from class&nbsp;org.deidentifier.arx.<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></h3>
-<code><a href="../../../org/deidentifier/arx/DataHandle.html#dataTypes">dataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#definition">definition</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#header">header</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#node">node</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#registry">registry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#statistics">statistics</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#subset">subset</a></code></li>
+<code><a href="../../../org/deidentifier/arx/DataHandle.html#dataTypes">dataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#definition">definition</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#header">header</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#node">node</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#registry">registry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#subset">subset</a></code></li>
 </ul>
 </li>
 </ul>
@@ -194,40 +194,54 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getConfiguration()">getConfiguration</a></strong>()</code>
+<div class="block">Returns the ARXConfiguration that is currently being used, null if this is an input handle</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../org/deidentifier/arx/DataType.html" title="class in org.deidentifier.arx">DataType</a>&lt;?&gt;[][]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getDataTypeArray()">getDataTypeArray</a></strong>()</code>
 <div class="block">Generates an array of data types.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected java.lang.String[]</code></td>
-<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></strong>(int&nbsp;column,
+                 boolean&nbsp;ignoreSuppression,
                  <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</code>
 <div class="block">Returns the distinct values.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getGeneralization(java.lang.String)">getGeneralization</a></strong>(java.lang.String&nbsp;attribute)</code>
 <div class="block">Returns the generalization level for the attribute.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected int[][]</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getInputBuffer()">getInputBuffer</a></strong>()</code>
 <div class="block">Returns the input buffer</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getNumColumns()">getNumColumns</a></strong>()</code>
 <div class="block">Returns the number of columns in the dataset.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getNumRows()">getNumRows</a></strong>()</code>
 <div class="block">Returns the number of rows in the dataset.</div>
+</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code><a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a></code></td>
+<td class="colLast"><code><strong><a href="../../../org/deidentifier/arx/DataHandleInput.html#getStatistics()">getStatistics</a></strong>()</code>
+<div class="block">Returns an object providing access to basic descriptive statistics about the data represented
+ by this handle.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -311,7 +325,7 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;org.deidentifier.arx.<a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></h3>
-<code><a href="../../../org/deidentifier/arx/DataHandle.html#checkColumn(int)">checkColumn</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#checkColumns(int[])">checkColumns</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#checkRegistry()">checkRegistry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#checkRow(int,%20int)">checkRow</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getColumnIndexOf(java.lang.String)">getColumnIndexOf</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDataType(java.lang.String)">getDataType</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDate(int,%20int)">getDate</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDefinition()">getDefinition</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int)">getDistinctValues</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDouble(int,%20int)">getDouble</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getFloat(int,%20int)">getFloat</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getInt(int,%20int)">getInt</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getLong(int,%20int)">getLong</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getNonConformingValues(int,%20org.deidentifier.arx.DataType,%20int)">getNonConformingValues</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getNumConformingValues(int,%20org.deidentifier.arx.DataType)">getNumConformingValues</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRegistry()">getRegistry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.risk.RiskModelHistogram)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20java.util.Set)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20java.util.Set,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getStatistics()">getStatistics</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getSuppressionString()">getSuppressionString</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getTransformation()">getTransformation</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getView()">getView</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#internalCompare(int,%20int,%20int[],%20boolean)">internalCompare</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#isOptimized()">isOptimized</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#isOrphaned()">isOrphaned</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#release()">release</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#replace(int,%20java.lang.String,%20java.lang.String)">replace</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File,%20char)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream,%20char)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream,%20org.deidentifier.arx.io.CSVSyntax)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String,%20char)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#setRegistry(org.deidentifier.arx.DataRegistry)">setRegistry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#setView(org.deidentifier.arx.DataHandle)">setView</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(int,%20int,%20boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(cern.colt.Swapper,%20boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(cern.colt.Swapper,%20int,%20int,%20boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#swap(int,%20int)">swap</a></code></li>
+<code><a href="../../../org/deidentifier/arx/DataHandle.html#checkColumn(int)">checkColumn</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#checkColumns(int[])">checkColumns</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#checkRegistry()">checkRegistry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#checkRow(int,%20int)">checkRow</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getColumnIndexOf(java.lang.String)">getColumnIndexOf</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDataType(java.lang.String)">getDataType</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDate(int,%20int)">getDate</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDefinition()">getDefinition</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int)">getDistinctValues</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getDouble(int,%20int)">getDouble</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getFloat(int,%20int)">getFloat</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getInt(int,%20int)">getInt</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getLong(int,%20int)">getLong</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.lang.Class,%20java.util.Locale,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getMatchingDataTypes(int,%20java.util.Locale,%20double)">getMatchingDataTypes</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getNonConformingValues(int,%20org.deidentifier.arx.DataType,%20int)">getNonConformingValues</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getNumConformingValues(int,%20org.deidentifier.arx.DataType)">getNumConformingValues</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRegistry()">getRegistry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.risk.RiskModelHistogram)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20org.deidentifier.arx.risk.RiskModelHistogram,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20java.util.Set)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getRiskEstimator(org.deidentifier.arx.ARXPopulationModel,%20java.util.Set,%20org.deidentifier.arx.ARXSolverConfiguration)">getRiskEstimator</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getTransformation()">getTransformation</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#getView()">getView</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#internalCompare(int,%20int,%20int[],%20boolean)">internalCompare</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#isAnonymous()">isAnonymous</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#isOptimized()">isOptimized</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#isOrphaned()">isOrphaned</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#release()">release</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#render()">render</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#replace(int,%20java.lang.String,%20java.lang.String)">replace</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File,%20char)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.File,%20org.deidentifier.arx.io.CSVSyntax)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream,%20char)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.io.OutputStream,%20org.deidentifier.arx.io.CSVSyntax)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String,%20char)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#save(java.lang.String,%20org.deidentifier.arx.io.CSVSyntax)">save</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#setRegistry(org.deidentifier.arx.DataRegistry)">setRegistry</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#setView(org.deidentifier.arx.DataHandle)">setView</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(int,%20int,%20boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(cern.colt.Swapper,%20boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#sort(cern.colt.Swapper,%20int,%20int,%20boolean,%20int...)">sort</a>, <a href="../../../org/deidentifier/arx/DataHandle.html#swap(int,%20int)">swap</a></code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
@@ -443,6 +457,22 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dt><span class="strong">Returns:</span></dt><dd>the num rows</dd></dl>
 </li>
 </ul>
+<a name="getStatistics()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getStatistics</h4>
+<pre>public&nbsp;<a href="../../../org/deidentifier/arx/aggregates/StatisticsBuilder.html" title="class in org.deidentifier.arx.aggregates">StatisticsBuilder</a>&nbsp;getStatistics()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getStatistics()">DataHandle</a></code></strong></div>
+<div class="block">Returns an object providing access to basic descriptive statistics about the data represented
+ by this handle.</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getStatistics()">getStatistics</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd>the statistics</dd></dl>
+</li>
+</ul>
 <a name="getValue(int, int)">
 <!--   -->
 </a>
@@ -522,6 +552,21 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dt><span class="strong">Returns:</span></dt><dd>the base data type</dd></dl>
 </li>
 </ul>
+<a name="getConfiguration()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getConfiguration</h4>
+<pre>protected&nbsp;<a href="../../../org/deidentifier/arx/ARXConfiguration.html" title="class in org.deidentifier.arx">ARXConfiguration</a>&nbsp;getConfiguration()</pre>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getConfiguration()">DataHandle</a></code></strong></div>
+<div class="block">Returns the ARXConfiguration that is currently being used, null if this is an input handle</div>
+<dl>
+<dt><strong>Specified by:</strong></dt>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getConfiguration()">getConfiguration</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
+<dt><span class="strong">Returns:</span></dt><dd></dd></dl>
+</li>
+</ul>
 <a name="getDataTypeArray()">
 <!--   -->
 </a>
@@ -537,19 +582,20 @@ extends <a href="../../../org/deidentifier/arx/DataHandle.html" title="class in 
 <dt><span class="strong">Returns:</span></dt><dd>the data type array</dd></dl>
 </li>
 </ul>
-<a name="getDistinctValues(int, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
+<a name="getDistinctValues(int, boolean, org.deidentifier.arx.DataHandleInternal.InterruptHandler)">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getDistinctValues</h4>
 <pre>protected&nbsp;java.lang.String[]&nbsp;getDistinctValues(int&nbsp;column,
+                                   boolean&nbsp;ignoreSuppression,
                                    <a href="../../../org/deidentifier/arx/DataHandleInternal.InterruptHandler.html" title="interface in org.deidentifier.arx">DataHandleInternal.InterruptHandler</a>&nbsp;handler)</pre>
-<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">DataHandle</a></code></strong></div>
+<div class="block"><strong>Description copied from class:&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">DataHandle</a></code></strong></div>
 <div class="block">Returns the distinct values.</div>
 <dl>
 <dt><strong>Specified by:</strong></dt>
-<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
+<dd><code><a href="../../../org/deidentifier/arx/DataHandle.html#getDistinctValues(int,%20boolean,%20org.deidentifier.arx.DataHandleInternal.InterruptHandler)">getDistinctValues</a></code>&nbsp;in class&nbsp;<code><a href="../../../org/deidentifier/arx/DataHandle.html" title="class in org.deidentifier.arx">DataHandle</a></code></dd>
 <dt><span class="strong">Parameters:</span></dt><dd><code>column</code> - the column</dd><dd><code>handler</code> - the handler</dd>
 <dt><span class="strong">Returns:</span></dt><dd>the distinct values</dd></dl>
 </li>

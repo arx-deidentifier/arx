@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,9 +64,20 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
                                                          AbstractMetricMultiDimensional precomputedMetric,
                                                          double threshold) {
 
-        super(defaultMetric.isMonotonic(), false, defaultMetric.getAggregateFunction());
-        if (defaultMetric.getAggregateFunction() != precomputedMetric.getAggregateFunction()) { throw new IllegalArgumentException("Aggregate function does not match"); }
-        if (defaultMetric.isMonotonic() != precomputedMetric.isMonotonic()) { throw new IllegalArgumentException("Monotonicity does not match"); }
+        super(defaultMetric.isMonotonicWithGeneralization(), 
+              defaultMetric.isMonotonicWithSuppression(),
+              false, defaultMetric.getAggregateFunction());
+        
+        // Sanity checks
+        if (defaultMetric.getAggregateFunction() != precomputedMetric.getAggregateFunction()) {
+            throw new IllegalArgumentException("Aggregate function does not match");
+        }
+        if (defaultMetric.isMonotonicWithSuppression() != precomputedMetric.isMonotonicWithSuppression()) {
+            throw new IllegalArgumentException("Monotonicity does not match");
+        }
+        if (defaultMetric.isMonotonicWithGeneralization() != precomputedMetric.isMonotonicWithGeneralization()) {
+            throw new IllegalArgumentException("Monotonicity does not match");
+        }
 
         // Default is non-precomputed
         this.threshold = threshold;
@@ -129,6 +140,11 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
   
     
+    @Override
+    public boolean isPrecomputed() {
+        return this.precomputed;
+    }
+
     /**
      * Returns the default variant.
      *
@@ -153,7 +169,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
             return defaultMetric.getInformationLoss(node, entry);
         }
     }
-
+    
     @Override
     protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
         return precomputed ? precomputedMetric.getLowerBound(node) : 
@@ -165,7 +181,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         return precomputed ? precomputedMetric.getLowerBound(node, groupify) : 
                              defaultMetric.getLowerBound(node, groupify);
     }
-    
+
     /**
      * Returns the precomputed variant.
      *
@@ -174,7 +190,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     protected AbstractMetricMultiDimensional getPrecomputedMetric(){
         return this.precomputedMetric;
     }
-
+    
     /**
      * Returns the threshold.
      *
@@ -206,14 +222,5 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
         } else {
             defaultMetric.initializeInternal(manager, definition, input, ahierarchies, config);
         }
-    }
-    
-    /**
-     * Returns whether the metric is precomputed.
-     *
-     * @return
-     */
-    protected boolean isPrecomputed() {
-        return this.precomputed;
     }
 }

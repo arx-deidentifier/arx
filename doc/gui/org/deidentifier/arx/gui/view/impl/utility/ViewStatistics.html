@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>ViewStatistics (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../../stylesheet.css" title="Style">
@@ -99,7 +99,7 @@
 </dl>
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyHeatmap.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyHeatmap</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionHistogram</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsEquivalenceClassTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsEquivalenceClassTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsRegressionInput.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsRegressionInput</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsRegressionOutput.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsRegressionOutput</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsSummaryTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsSummaryTable</a></dd>
+<dd><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyHeatmap.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyHeatmap</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsContingencyTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsContingencyTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionHistogram.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionHistogram</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsDistributionTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsDistributionTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsEquivalenceClassTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsEquivalenceClassTable</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsLogisticRegression.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsLogisticRegression</a>, <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatisticsSummaryTable.html" title="class in org.deidentifier.arx.gui.view.impl.utility">ViewStatisticsSummaryTable</a></dd>
 </dl>
 <hr>
 <br>
@@ -198,78 +198,84 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a></code></td>
+<td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getController()">getController</a></strong>()</code>
+<div class="block">Returns the controller</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/model/Model.html" title="class in org.deidentifier.arx.gui.model">Model</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getModel()">getModel</a></strong>()</code>
 <div class="block">Returns the model</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected org.eclipse.swt.widgets.Composite</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getParent()">getParent</a></strong>()</code>
 <div class="block">Returns the parent composite</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/common/ComponentStatusLabelProgressProvider.html" title="interface in org.deidentifier.arx.gui.view.impl.common">ComponentStatusLabelProgressProvider</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getProgressProvider()">getProgressProvider</a></strong>()</code>
 <div class="block">Overwrite this to return a progress provider</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected <a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.ModelPart.html" title="enum in org.deidentifier.arx.gui.model">ModelEvent.ModelPart</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getTarget()">getTarget</a></strong>()</code>
 <div class="block">Returns the target</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>abstract <a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/LayoutUtility.ViewUtilityType.html" title="enum in org.deidentifier.arx.gui.view.impl.utility">LayoutUtility.ViewUtilityType</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#getType()">getType</a></strong>()</code>
 <div class="block">Returns the type</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#isEnabled()">isEnabled</a></strong>()</code>
 <div class="block">Is this view enabled</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected abstract boolean</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#isRunning()">isRunning</a></strong>()</code>
 <div class="block">Is a job running</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#reset()">reset</a></strong>()</code>
 <div class="block">Resets the view.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusDone()">setStatusDone</a></strong>()</code>
 <div class="block">Status update.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusEmpty()">setStatusEmpty</a></strong>()</code>
 <div class="block">Status empty.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#setStatusWorking()">setStatusWorking</a></strong>()</code>
 <div class="block">Status working.</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><code>protected void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#triggerUpdate()">triggerUpdate</a></strong>()</code>
 <div class="block">Triggers an update</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><strong><a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html#update(org.deidentifier.arx.gui.model.ModelEvent)">update</a></strong>(<a href="../../../../../../../org/deidentifier/arx/gui/model/ModelEvent.html" title="class in org.deidentifier.arx.gui.model">ModelEvent</a>&nbsp;event)</code>
 <div class="block">Updates the view.</div>
@@ -439,6 +445,17 @@ implements <a href="../../../../../../../org/deidentifier/arx/gui/view/def/IView
 <pre>protected abstract&nbsp;void&nbsp;doUpdate(<a href="../../../../../../../org/deidentifier/arx/gui/view/impl/utility/ViewStatistics.html" title="type parameter in ViewStatistics">T</a>&nbsp;context)</pre>
 <div class="block">Implement this to update.</div>
 <dl><dt><span class="strong">Parameters:</span></dt><dd><code>context</code> - </dd></dl>
+</li>
+</ul>
+<a name="getController()">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getController</h4>
+<pre>protected&nbsp;<a href="../../../../../../../org/deidentifier/arx/gui/Controller.html" title="class in org.deidentifier.arx.gui">Controller</a>&nbsp;getController()</pre>
+<div class="block">Returns the controller</div>
+<dl><dt><span class="strong">Returns:</span></dt><dd></dd></dl>
 </li>
 </ul>
 <a name="getModel()">

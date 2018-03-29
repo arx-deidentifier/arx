@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <!-- NewPage -->
-<html lang="de">
+<html lang="en">
 <head>
 <title>org.deidentifier.arx (ARX GUI Documentation)</title>
 <link rel="stylesheet" type="text/css" href="../../../stylesheet.css" title="Style">
@@ -128,20 +128,33 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/ARXConfiguration.ARXConfigurationInternal.html" title="class in org.deidentifier.arx">ARXConfiguration.ARXConfigurationInternal</a></td>
 <td class="colLast">
-<div class="block">Class for internal use that provides access to more details.</div>
+<div class="block">Class for internal use that provides access to more parameters and functionality.</div>
 </td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><a href="../../../org/deidentifier/arx/ARXCostBenefitConfiguration.html" title="class in org.deidentifier.arx">ARXCostBenefitConfiguration</a></td>
+<td class="colLast">
+<div class="block">Basic configuration of monetary amounts, such as the publisher's benefit
+ per record or the per-record fine fine for a successful re-identification attack.</div>
+</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/ARXLattice.html" title="class in org.deidentifier.arx">ARXLattice</a></td>
 <td class="colLast">
 <div class="block">This class implements a representation of the generalization lattice that is
  exposed to users of the API.</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/ARXLattice.LatticeDeserializationContext.html" title="class in org.deidentifier.arx">ARXLattice.LatticeDeserializationContext</a></td>
 <td class="colLast">
 <div class="block">Context for deserialization.</div>
+</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><a href="../../../org/deidentifier/arx/ARXLogisticRegressionConfiguration.html" title="class in org.deidentifier.arx">ARXLogisticRegressionConfiguration</a></td>
+<td class="colLast">
+<div class="block">Configuration for logistic regression</div>
 </td>
 </tr>
 <tr class="altColor">
@@ -262,7 +275,8 @@
 <tr class="altColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/DataSubset.html" title="class in org.deidentifier.arx">DataSubset</a></td>
 <td class="colLast">
-<div class="block">This class represents a data subset as required for d-presence.</div>
+<div class="block">This class represents a the dataset that is to be de-identified 
+ as a subset of the given population table.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -332,21 +346,29 @@
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/ARXLattice.Anonymity.html" title="enum in org.deidentifier.arx">ARXLattice.Anonymity</a></td>
-<td class="colLast">&nbsp;</td>
+<td class="colLast">
+<div class="block">ReflectS different anonymity properties</div>
+</td>
 </tr>
 <tr class="altColor">
+<td class="colFirst"><a href="../../../org/deidentifier/arx/ARXLogisticRegressionConfiguration.PriorFunction.html" title="enum in org.deidentifier.arx">ARXLogisticRegressionConfiguration.PriorFunction</a></td>
+<td class="colLast">
+<div class="block">Prior function for regularization</div>
+</td>
+</tr>
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/ARXPopulationModel.Region.html" title="enum in org.deidentifier.arx">ARXPopulationModel.Region</a></td>
 <td class="colLast">
 <div class="block">Regions</div>
 </td>
 </tr>
-<tr class="rowColor">
+<tr class="altColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/DataGeneralizationScheme.GeneralizationDegree.html" title="enum in org.deidentifier.arx">DataGeneralizationScheme.GeneralizationDegree</a></td>
 <td class="colLast">
 <div class="block">A specific generalization degree</div>
 </td>
 </tr>
-<tr class="altColor">
+<tr class="rowColor">
 <td class="colFirst"><a href="../../../org/deidentifier/arx/DataScale.html" title="enum in org.deidentifier.arx">DataScale</a></td>
 <td class="colLast">
 <div class="block">This class represents different scales of measure.</div>

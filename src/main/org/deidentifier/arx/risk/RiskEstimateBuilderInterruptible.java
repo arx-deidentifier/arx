@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,13 +18,12 @@
 package org.deidentifier.arx.risk;
 
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
-import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 
 /**
  * A builder for risk estimates, interruptible
  * 
  * @author Fabian Prasser
- *         
+ * @author Maximilian Zitzmann
  */
 public class RiskEstimateBuilderInterruptible {
     
@@ -34,10 +33,24 @@ public class RiskEstimateBuilderInterruptible {
     /**
      * Creates a new instance
      * 
-     * @param builder
+     * @param parent
      */
     RiskEstimateBuilderInterruptible(RiskEstimateBuilder parent) {
         this.parent = parent;
+    }
+
+    /**
+     * Returns a class providing access to an analysis of potential quasi-identifiers using
+     * the concepts of alpha distinction and alpha separation.
+     *
+     * @return the RiskModelAttributes data from risk analysis
+     */
+    public RiskModelAttributes getAttributeRisks() throws InterruptedException {
+        try {
+            return parent.getAttributeRisks();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
     }
 
     /**
@@ -53,7 +66,6 @@ public class RiskEstimateBuilderInterruptible {
             throw new InterruptedException("Computation interrupted");
         }
     }
-
     /**
      * Returns a class providing access to the identifier HIPAA identifiers.
      * 
@@ -63,38 +75,6 @@ public class RiskEstimateBuilderInterruptible {
     public HIPAAIdentifierMatch[] getHIPAAIdentifiers() throws InterruptedException {
         try {
             return parent.getHIPAAIdentifiers();
-        } catch (ComputationInterruptedException e) {
-            throw new InterruptedException("Computation interrupted");
-        }
-    }
-    
-    /**
-     * Returns a class providing access to population-based risk estimates about
-     * the attributes. Uses the decision rule by Dankar et al., excluding the
-     * SNB model
-     * 
-     * @return
-     */
-    public RiskModelAttributes getPopulationBasedAttributeRisks() throws InterruptedException {
-        try {
-            return parent.getPopulationBasedAttributeRisks();
-        } catch (ComputationInterruptedException e) {
-            throw new InterruptedException("Computation interrupted");
-        }
-    }
-    
-    /**
-     * Returns a class providing access to population-based risk estimates about
-     * the attributes.
-     * 
-     * @param model
-     *            Uses the given statistical model
-     * @return
-     */
-    public RiskModelAttributes
-           getPopulationBasedAttributeRisks(PopulationUniquenessModel model) throws InterruptedException {
-        try {
-            return parent.getPopulationBasedAttributeRisks(model);
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
@@ -125,20 +105,6 @@ public class RiskEstimateBuilderInterruptible {
     }
     
     /**
-     * Returns a class providing access to sample-based risk estimates about the
-     * attributes
-     * 
-     * @return
-     */
-    public RiskModelAttributes getSampleBasedAttributeRisks() throws InterruptedException {
-        try {
-            return parent.getSampleBasedAttributeRisks();
-        } catch (ComputationInterruptedException e) {
-            throw new InterruptedException("Computation interrupted");
-        }
-    }
-    
-    /**
      * Returns a class providing sample-based re-identification risk estimates
      * 
      * @return
@@ -146,6 +112,19 @@ public class RiskEstimateBuilderInterruptible {
     public RiskModelSampleRisks getSampleBasedReidentificationRisk() throws InterruptedException {
         try {
             return parent.getSampleBasedReidentificationRisk();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+    
+    /**
+     * Returns a class representing the distribution of prosecutor risks in the sample
+     * 
+     * @return
+     */
+    public RiskModelSampleRiskDistribution getSampleBasedRiskDistribution() throws InterruptedException {
+        try {
+            return parent.getSampleBasedRiskDistribution();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }

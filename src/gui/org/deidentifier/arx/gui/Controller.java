@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,11 +18,13 @@
 
 package org.deidentifier.arx.gui;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.Charset;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,6 +48,7 @@ import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataScale;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.DataType;
@@ -56,9 +59,10 @@ import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelCriterion;
+import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -79,6 +83,7 @@ import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizard
 import org.deidentifier.arx.gui.view.impl.wizard.ImportWizard;
 import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.gui.worker.WorkerAnonymize;
+import org.deidentifier.arx.gui.worker.WorkerCreateCertificate;
 import org.deidentifier.arx.gui.worker.WorkerExport;
 import org.deidentifier.arx.gui.worker.WorkerImport;
 import org.deidentifier.arx.gui.worker.WorkerLoad;
@@ -245,6 +250,9 @@ public class Controller implements IView {
         if (!model.getDPresenceModel().isEnabled()) {
             criteria.add(model.getDPresenceModel());
         }
+        if (!model.getStackelbergModel().isEnabled()) {
+        	criteria.add(model.getStackelbergModel());
+        }
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
         
@@ -260,6 +268,11 @@ public class Controller implements IView {
             }
         }
         for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+            if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
+        for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
             if (!other.isEnabled() && sensitive.contains(other.getAttribute())) {
                 explicit.add(other);
             }
@@ -316,6 +329,9 @@ public class Controller implements IView {
         if (model.getDPresenceModel().isEnabled()) {
             criteria.add(model.getDPresenceModel());
         }
+        if (model.getStackelbergModel().isEnabled()) {
+        	criteria.add(model.getStackelbergModel());
+        }
         
         Set<String> sensitive = model.getInputDefinition().getSensitiveAttributes();
         
@@ -331,6 +347,11 @@ public class Controller implements IView {
             }
         }
         for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+            if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
+                explicit.add(other);
+            }
+        }
+        for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
             if (other.isEnabled() && sensitive.contains(other.getAttribute())) {
                 explicit.add(other);
             }
@@ -406,6 +427,12 @@ public class Controller implements IView {
                     others.add((ModelExplicitCriterion) other);
                 }
             }
+        } else if (criterion instanceof ModelBLikenessCriterion) {
+            for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
+                if (!other.equals(criterion) && other.isEnabled()) {
+                    others.add((ModelExplicitCriterion) other);
+                }
+            }
         } else {
             throw new RuntimeException(Resources.getMessage("Controller.1")); //$NON-NLS-1$
         }
@@ -453,6 +480,12 @@ public class Controller implements IView {
                 }
             } else if (criterion instanceof ModelDDisclosurePrivacyCriterion) {
                 for (ModelDDisclosurePrivacyCriterion other : model.getDDisclosurePrivacyModel().values()) {
+                    if (!other.equals(criterion) && other.isEnabled()) {
+                        other.pull((ModelExplicitCriterion) criterion);
+                    }
+                }
+            } else if (criterion instanceof ModelBLikenessCriterion) {
+                for (ModelBLikenessCriterion other : model.getBLikenessModel().values()) {
                     if (!other.equals(criterion) && other.isEnabled()) {
                         other.pull((ModelExplicitCriterion) criterion);
                     }
@@ -524,78 +557,6 @@ public class Controller implements IView {
      */
     public void actionExpand(ARXNode transformation) {
         model.getResult().getLattice().expand(transformation);
-    }
-
-    /**
-     * Find and replace action
-     */
-    public void actionFindReplace() {
-
-        // Check
-        if (model == null) {
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.3"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.4")); //$NON-NLS-1$
-            return;
-        }
-
-        // Check
-        if (model.getInputConfig().getInput() == null) {
-            main.showInfoDialog(main.getShell(),
-                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
-                                Resources.getMessage("Controller.6")); //$NON-NLS-1$
-            return;
-        }
-
-        // Show dialog
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        int column = handle.getColumnIndexOf(model.getSelectedAttribute());
-        Pair<String, String> pair = main.showFindReplaceDialog(model, handle, column);
-        
-        // If action must be performed
-        if (pair != null) {
-            
-            // Replace in input
-            handle.replace(column, pair.getFirst(), pair.getSecond());
-            
-            // Replace in output
-            if (model.getOutputConfig() != null) {
-                Hierarchy hierarchy = model.getOutputConfig().getHierarchy(model.getSelectedAttribute());
-                if (hierarchy != null) {
-                    for (String[] array : hierarchy.getHierarchy()) {
-                        for (int i=0; i<array.length; i++) {
-                            if (array[i].equals(pair.getFirst())) {
-                                array[i] = pair.getSecond();
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Replace in input hierarchy
-            if (model.getInputConfig() != null) {
-                Hierarchy hierarchy = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
-                if (hierarchy != null) {
-                    for (String[] array : hierarchy.getHierarchy()) {
-                        for (int i=0; i<array.length; i++) {
-                            if (array[i].equals(pair.getFirst())) {
-                                array[i] = pair.getSecond();
-                            }
-                        }
-                    }
-                }
-            }
-            
-            // Fire event
-            ModelAuditTrailEntry entry = ModelAuditTrailEntry.createfindReplaceEntry( model.getSelectedAttribute(), 
-                                                                                      pair.getFirst(), 
-                                                                                      pair.getSecond());
-            update(new ModelEvent(this, ModelPart.ATTRIBUTE_VALUE, entry));
-            
-            // Store in model
-            model.addAuditTrailEntry(entry);
-            model.setModified();
-        }
     }
 
     /**
@@ -794,6 +755,154 @@ public class Controller implements IView {
     }
 
     /**
+     * Initializes the hierarchy for the currently selected attribute with a scheme
+     * for top-/bottom coding.
+     */
+    public void actionMenuEditCreateTopBottomCodingHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Check
+        DataType<?>type = model.getInputDefinition().getDataType(model.getSelectedAttribute());
+        if (type.getDescription().getScale() != DataScale.INTERVAL &&
+            type.getDescription().getScale() != DataScale.RATIO) {
+            actionShowInfoDialog(this.main.getShell(), Resources.getMessage("Controller.150"), Resources.getMessage("Controller.151")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // User input
+        Pair<Pair<String, Boolean>, Pair<String, Boolean>> pair = main.showTopBottomCodingDialog(type);
+        if (pair == null || (pair.getFirst() == null && pair.getSecond() == null)) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        String bottom = pair.getFirst() != null ? pair.getFirst().getFirst() : null;
+        Boolean bottomInclusive = pair.getFirst() != null ? pair.getFirst().getSecond() : null;
+        String top = pair.getSecond() != null ? pair.getSecond().getFirst() : null;
+        Boolean topInclusive = pair.getSecond() != null ? pair.getSecond().getSecond() : null;
+        
+        // Create hierarchy
+        String[][] array;
+        try {
+            array = new String[values.length][2];
+            for (int i = 0; i < values.length; i++) {
+
+                String value = values[i];
+                String coded = null;
+
+                if (top != null) {
+                    int cmp = type.compare(value, top);
+                    if (cmp > 0 || (topInclusive && cmp == 0)) {
+                        coded = topInclusive ? ">=" + top : ">" + top; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                }
+                if (coded == null && bottom != null) {
+                    int cmp = type.compare(value, bottom);
+                    if (cmp < 0 || (bottomInclusive && cmp == 0)) {
+                        coded = bottomInclusive ? "<=" + bottom : "<" + bottom; //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                }
+                if (coded == null) {
+                    coded = value;
+                }
+                
+                array[i] = new String[] {value, coded};
+            }
+        } catch (Exception e) {
+            this.actionShowInfoDialog(main.getShell(), Resources.getMessage("Controller.152"), Resources.getMessage("Controller.153")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+    }
+
+    /**
+     * Find and replace action
+     */
+    public void actionMenuEditFindReplace() {
+
+        // Check
+        if (model == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.3"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.4")); //$NON-NLS-1$
+            return;
+        }
+
+        // Check
+        if (model.getInputConfig().getInput() == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.6")); //$NON-NLS-1$
+            return;
+        }
+
+        // Show dialog
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int column = handle.getColumnIndexOf(model.getSelectedAttribute());
+        Pair<String, String> pair = main.showFindReplaceDialog(model, handle, column);
+        
+        // If action must be performed
+        if (pair != null) {
+            
+            // Replace in input
+            handle.replace(column, pair.getFirst(), pair.getSecond());
+            
+            // Replace in output
+            if (model.getOutputConfig() != null) {
+                Hierarchy hierarchy = model.getOutputConfig().getHierarchy(model.getSelectedAttribute());
+                if (hierarchy != null) {
+                    for (String[] array : hierarchy.getHierarchy()) {
+                        for (int i=0; i<array.length; i++) {
+                            if (array[i].equals(pair.getFirst())) {
+                                array[i] = pair.getSecond();
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Replace in input hierarchy
+            if (model.getInputConfig() != null) {
+                Hierarchy hierarchy = model.getInputConfig().getHierarchy(model.getSelectedAttribute());
+                if (hierarchy != null) {
+                    for (String[] array : hierarchy.getHierarchy()) {
+                        for (int i=0; i<array.length; i++) {
+                            if (array[i].equals(pair.getFirst())) {
+                                array[i] = pair.getSecond();
+                            }
+                        }
+                    }
+                }
+            }
+            
+            // Fire event
+            ModelAuditTrailEntry entry = ModelAuditTrailEntry.createfindReplaceEntry( model.getSelectedAttribute(), 
+                                                                                      pair.getFirst(), 
+                                                                                      pair.getSecond());
+            update(new ModelEvent(this, ModelPart.ATTRIBUTE_VALUE, entry));
+            
+            // Store in model
+            model.addAuditTrailEntry(entry);
+            model.setModified();
+        }
+    }
+
+    /**
      * Initializes the hierarchy for the currently selected attribute
      */
     public void actionMenuEditInitializeHierarchy() {
@@ -822,7 +931,6 @@ public class Controller implements IView {
         this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
         this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
     }
-
     /**
      * Resets the current output
      */
@@ -868,6 +976,72 @@ public class Controller implements IView {
             main.showErrorDialog(main.getShell(),
                                  Resources.getMessage("Controller.25"), e); //$NON-NLS-1$
             getResources().getLogger().info(e);
+        }
+    }
+
+    /**
+     * Creates and displays a certificate
+     */
+    public void actionMenuFileCreateCertificate() {
+        
+        if (model == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.30"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.31")); //$NON-NLS-1$
+            return;
+        } else if (model.getOutput() == null) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.32"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.33")); //$NON-NLS-1$
+            return;
+        }
+
+        // Check node
+        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+            if (!main.showQuestionDialog(main.getShell(),
+                                         Resources.getMessage("Controller.34"), //$NON-NLS-1$
+                                         Resources.getMessage("Controller.156"))) //$NON-NLS-1$
+            {
+                return;
+            }
+        }
+
+        // Ask for file
+        String file = main.showSaveFileDialog(main.getShell(), "*.pdf"); //$NON-NLS-1$
+        if (file == null) {
+            return;
+        }
+        if (!file.endsWith(".pdf")) { //$NON-NLS-1$
+            file = file + ".pdf"; //$NON-NLS-1$
+        }
+
+        // Export
+        final WorkerCreateCertificate worker = new WorkerCreateCertificate(file,
+                                                                           model.getCSVSyntax(),
+                                                                           model.getInputConfig().getInput().getHandle(),
+                                                                           model.getOutputDefinition(),
+                                                                           model.getOutputConfig().getConfig(),
+                                                                           model.getResult(),
+                                                                           model.getOutputNode(),
+                                                                           model.getOutput(),
+                                                                           model);
+
+        main.showProgressDialog(Resources.getMessage("Controller.154"), worker); //$NON-NLS-1$
+
+        if (worker.getError() != null) {
+            main.showErrorDialog(main.getShell(),
+                                 Resources.getMessage("Controller.155"), //$NON-NLS-1$
+                                 worker.getError());
+            return;
+        }
+
+        // Open
+        if (Desktop.isDesktopSupported()) {
+            try {
+                Desktop.getDesktop().open(worker.getResult());
+            } catch (Exception e) {
+                // Drop silently
+            }
         }
     }
 
@@ -1087,7 +1261,8 @@ public class Controller implements IView {
 
             // Load hierarchy
             final char separator = dialog.getSeparator();
-            final Hierarchy hierarchy = actionImportHierarchy(path, separator);
+            final Charset charset = Charset.defaultCharset();
+            final Hierarchy hierarchy = actionImportHierarchy(path, charset, separator);
             if (hierarchy != null) {
                 String attr = model.getSelectedAttribute();
                 model.getInputConfig().setMaximumGeneralization(attr, null);
@@ -1369,6 +1544,15 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows an input dialog for selecting a charset.
+     * @param shell
+     * @return
+     */
+    public Charset actionShowCharsetInputDialog(final Shell shell) {
+        return main.showCharsetInputDialog(shell);
+    }
+
+    /**
      * Shows an error dialog.
      *
      * @param shell
@@ -1420,7 +1604,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-
+    
     /**
      * Shows a dialog for selecting a format string for a data type.
      *
@@ -1463,7 +1647,6 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
-
     /**
      * Shows an input dialog.
      *
@@ -1479,6 +1662,7 @@ public class Controller implements IView {
                                         final String initial) {
         return main.showInputDialog(shell, header, text, initial);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1565,7 +1749,6 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
-
     /**
      * Shows a question dialog.
      *
@@ -1577,6 +1760,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(this.main.getShell(), header, text);
     }
+    
     /**
      * Internal method for showing a "save file" dialog.
      *
@@ -1587,7 +1771,7 @@ public class Controller implements IView {
     public String actionShowSaveFileDialog(final Shell shell, String filter) {
         return main.showSaveFileDialog(shell, filter);
     }
-    
+
     /**
      * Includes all tuples in the research subset.
      */
@@ -1726,7 +1910,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Registers a listener at the controller.
      *
@@ -1739,7 +1923,7 @@ public class Controller implements IView {
         }
         listeners.get(target).add(listener);
     }
-    
+
     @Override
     public void dispose() {
         for (final Set<IView> listeners : getListeners().values()) {
@@ -1908,9 +2092,10 @@ public class Controller implements IView {
      * @return
      */
     private Hierarchy actionImportHierarchy(final String path,
+                                            final Charset charset,
                                             final char separator) {
         try {
-            return Hierarchy.create(path, separator);
+            return Hierarchy.create(path, charset, separator);
         } catch (Throwable error) {
             if (error instanceof RuntimeException) {
                 if (error.getCause() != null) {

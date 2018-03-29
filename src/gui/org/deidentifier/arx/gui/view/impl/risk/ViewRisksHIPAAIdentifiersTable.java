@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -198,9 +198,13 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
             @Override
             public void onFinish() {
                 
+                // Check
                 if (stopped || !isEnabled()) {
                     return;
                 }
+
+                // Disable drawing
+                table.setRedraw(false);
                 
                 // Update chart
                 for (final TableItem i : table.getItems()) {
@@ -212,12 +216,19 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
                     createItem(item);
                 }
                 
+                // Pack columns
                 for (final TableColumn col : table.getColumns()) {
                     col.pack();
                 }
-                
-                table.redraw();
+
+                // Layout
                 table.layout();
+
+                // Enable drawing and redraw
+                table.setRedraw(true);
+                table.redraw();
+
+                // Set status
                 setStatusDone();
             }
             

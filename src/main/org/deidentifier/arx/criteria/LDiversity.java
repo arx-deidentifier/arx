@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,19 +64,44 @@ public abstract class LDiversity extends ExplicitPrivacyCriterion {
         return l;
     }
 
-    /**
-     * Returns the minimal group size required to fulfill this criterion.
-     *
-     * @return
-     */
-    public int getMinimalGroupSize(){
-        return minSize;
+    @Override
+    public int getMinimalClassSize() {
+        return this.minSize;
     }
-    
+
     @Override
     public int getRequirements() {
 
         // Requires a distribution, but nothing else
         return ARXConfiguration.REQUIREMENT_DISTRIBUTION;
+    }
+
+    /**
+     * Return journalist risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdJournalist() {
+        return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return marketer risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdMarketer() {
+        return getRiskThresholdProsecutor();
+    }
+
+    /**
+     * Return prosecutor risk threshold, 1 if there is none
+     * @return
+     */
+    public double getRiskThresholdProsecutor() {
+        return 1d / minSize;
+    }
+
+    @Override
+    public boolean isMinimalClassSizeAvailable() {
+        return true;
     }
 }

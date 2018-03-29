@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,21 +19,11 @@ package org.deidentifier.arx;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.criteria.DDisclosurePrivacy;
-import org.deidentifier.arx.criteria.DistinctLDiversity;
-import org.deidentifier.arx.criteria.EntropyLDiversity;
-import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
-import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
-import org.deidentifier.arx.criteria.Inclusion;
-import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.criteria.RecursiveCLDiversity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.framework.check.NodeChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
@@ -128,7 +118,7 @@ public class ARXResult {
                                                     dataArray,
                                                     dictionary,
                                                     handle.getDefinition(),
-                                                    config.getCriteria(),
+                                                    config.getPrivacyModels(),
                                                     getAggregateFunctions(handle.getDefinition()));
 
         // Update handle
@@ -221,7 +211,9 @@ public class ARXResult {
     /**
      * Returns a handle to the data obtained by applying the optimal transformation. This method will not copy the buffer, 
      * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
-     * obtained. Use this only if you know exactly what you are doing.
+     * obtained. Use this only if you know exactly what you are doing.<br>
+     * <br>
+     * This method is obsolete. Please use getOutput() instead.
      * 
      * @return
      */
@@ -234,7 +226,10 @@ public class ARXResult {
     /**
      * Returns a handle to data obtained by applying the given transformation. This method will not copy the buffer, 
      * i.e., only one instance can be obtained for each transformation. All previous handles for output data will be invalidated when a new handle is 
-     * obtained. Use this only if you know exactly what you are doing.
+     * obtained. Use this only if you know exactly what you are doing.<br>
+     * <br>
+     * This method is obsolete. Please use getOutput(...) instead.
+     * 
      * @param node the transformation
      * 
      * @return
@@ -322,7 +317,7 @@ public class ARXResult {
         transformation.setChecked(information.properties);
 
         // Store
-        if (!node.isChecked() || node.getMaximumInformationLoss().compareTo(node.getMinimumInformationLoss()) != 0) {
+        if (!node.isChecked() || node.getHighestScore().compareTo(node.getLowestScore()) != 0) {
             
             node.access().setChecked(true);
             if (transformation.hasProperty(solutionSpace.getPropertyAnonymous())) {
@@ -330,8 +325,8 @@ public class ARXResult {
             } else {
                 node.access().setNotAnonymous();
             }
-            node.access().setMaximumInformationLoss(transformation.getInformationLoss());
-            node.access().setMinimumInformationLoss(transformation.getInformationLoss());
+            node.access().setHighestScore(transformation.getInformationLoss());
+            node.access().setLowestScore(transformation.getInformationLoss());
             node.access().setLowerBound(transformation.getLowerBound());
             lattice.estimateInformationLoss();
         }
@@ -406,14 +401,13 @@ public class ARXResult {
             return false;
         }
         
-        // Create a set of supported privacy models
-        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
-        for (PrivacyCriterion c : config.getCriteria()) {
-            if (!supportedModels.contains(c.getClass())) {
+        // Check if optimizable
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
+            if (!c.isLocalRecodingSupported()) {
                 return false;
             }
         }
-
+        
         // Check, if there are enough outliers
         int outliers = 0;
         for (int row = 0; row < output.getNumRows(); row++) {
@@ -435,7 +429,7 @@ public class ARXResult {
         // Yes, we probably can do this
         return true;
     }
-
+    
     /**
      * Indicates if a result is available.
      *
@@ -495,14 +489,29 @@ public class ARXResult {
      */
     public int optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
         
+        // Check if null
+        if (listener == null) {
+            throw new NullPointerException("Listener must not be null");
+        }
+        
+        // Check if null
+        if (handle == null) {
+            throw new NullPointerException("Handle must not be null");
+        }
 
+        // Check bounds
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
         }
         
-        // Check, if output
+        // Check if output
         if (!(handle instanceof DataHandleOutput)) {
-            throw new IllegalArgumentException("Can only be applied to output data");
+            throw new IllegalArgumentException("Local recoding can only be applied to output data");
+        }
+        
+        // Check if optimizable
+        if (!isOptimizable(handle)) {
+            return 0;
         }
         
         // Extract
@@ -510,17 +519,9 @@ public class ARXResult {
         
         // Check, if input matches
         if (output.getInputBuffer() == null || !output.getInputBuffer().equals(this.checker.getInputBuffer())) {
-            throw new IllegalArgumentException("This output data is associated to the correct input data");
+            throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
-        // Create a set of supported privacy models
-        Set<Class<?>> supportedModels = getOptimizablePrivacyModels();
-        for (PrivacyCriterion c : config.getCriteria()) {
-            if (!supportedModels.contains(c.getClass())) {
-                throw new UnsupportedOperationException("This method does currently not supported the model: " + c.getClass().getSimpleName());
-            }
-        }
-
         // We are now ready, to go
         // Collect input and row indices
         RowSet rowset = RowSet.create(output.getNumRows());
@@ -536,11 +537,11 @@ public class ARXResult {
 
         // We start by creating a projected instance of the configuration
         // - All privacy models will be cloned
-        // - Subsets in d-presence will be projected accordingly
+        // - Subsets will be projected accordingly
         // - Utility measures will be cloned
-        ARXConfiguration config = this.config.getSubsetInstance(rowset, gsFactor);
+        ARXConfiguration config = this.config.getInstanceForLocalRecoding(rowset, gsFactor);
 
-        // In the data definition, only MicroAggregationFunctions maintain a state, but these 
+        // In the data definition, only microaggregation functions maintain a state, but these 
         // are cloned, when cloning the definition
         // TODO: This is probably not necessary, because they are used from the data manager,
         //       which in turn creates a clone by itself
@@ -550,7 +551,7 @@ public class ARXResult {
         DataManager manager = this.manager.getSubsetInstance(rowset);
         
         // Create an anonymizer
-        // TODO: It stores some values that should be transferred?
+        // TODO: May this object stores some values that should be transferred?
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         anonymizer.setListener(listener);
         
@@ -606,10 +607,10 @@ public class ARXResult {
         // If anything happens in the above block, the operation needs to be rolled back, because
         // the buffer might be in an inconsistent state
         } catch (Exception e) {
-            throw new RollbackRequiredException("Handle must be rebuild to ensure privacy", e);
+            throw new RollbackRequiredException("Handle must be rebuild to guarantee privacy", e);
         }
     }
-    
+
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -635,7 +636,7 @@ public class ARXResult {
             }
         });
     }
-
+    
     /**
      * This method optimizes the given data output with local recoding to improve its utility
      * @param handle
@@ -701,7 +702,7 @@ public class ARXResult {
             iterations++;
         }
     }
-    
+
     /**
      * Returns a map of all microaggregation functions
      * @param definition
@@ -712,23 +713,6 @@ public class ARXResult {
         for (String key : definition.getQuasiIdentifiersWithMicroaggregation()) {
             result.put(key, definition.getMicroAggregationFunction(key).getFunction());
         }
-        return result;
-    }
-    
-    /**
-     * Returns a set of classes of privacy models that may be optimized
-     * @return
-     */
-    private Set<Class<?>> getOptimizablePrivacyModels() {
-        Set<Class<?>> result = new HashSet<Class<?>>();
-        result.add(KAnonymity.class);
-        result.add(DDisclosurePrivacy.class);
-        result.add(DistinctLDiversity.class);
-        result.add(RecursiveCLDiversity.class);
-        result.add(EntropyLDiversity.class);
-        result.add(HierarchicalDistanceTCloseness.class);
-        result.add(EqualDistanceTCloseness.class);
-        result.add(Inclusion.class);
         return result;
     }
     

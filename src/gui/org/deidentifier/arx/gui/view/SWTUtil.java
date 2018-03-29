@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,9 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -105,6 +108,26 @@ public class SWTUtil {
         shell.setBounds(left + bounds.x, top + bounds.y, p.x, p.y);
     }
     
+    /**
+     * Changes a control's font
+     * @param control
+     * @param style
+     */
+    public static void changeFont(Control control, int style) {
+        FontDescriptor boldDescriptor = FontDescriptor.createFrom(control.getFont()).setStyle(style);
+        final Font boldFont = boldDescriptor.createFont(control.getDisplay());
+        control.setFont(boldFont);
+        control.addDisposeListener(new DisposeListener() {
+            @Override
+            public void widgetDisposed(DisposeEvent arg0) {
+                if (boldFont != null && !boldFont.isDisposed()) {
+                    boldFont.dispose();
+                }
+            }
+            
+        });
+    }
+
     /**
      * Adds a bar chart to a column
      * @param table
@@ -237,7 +260,6 @@ public class SWTUtil {
     public static GridData createFillHorizontallyGridData() {
         return createFillHorizontallyGridData(true);
     }
-
     /**
      * Creates grid data.
      *
@@ -246,6 +268,7 @@ public class SWTUtil {
     public static GridData createFillHorizontallyGridData(boolean fill) {
         return createFillHorizontallyGridData(fill, 1);
     }
+
     /**
      * Creates grid data.
      *
@@ -316,7 +339,7 @@ public class SWTUtil {
             }
         });
     }
-
+    
     /**
      * Creates grid data.
      *
@@ -330,7 +353,7 @@ public class SWTUtil {
         data.grabExcessVerticalSpace = false;
         return data;
     }
-    
+
     /**
      * Creates a grid layout.
      *
@@ -362,6 +385,7 @@ public class SWTUtil {
         layout.numColumns = columns;
         return layout;
     }
+    
 
     /**
      * Creates a grid layout with equal-width columns
@@ -373,7 +397,7 @@ public class SWTUtil {
         layout.makeColumnsEqualWidth = true;
         return layout;
     }
-    
+
 
     /**
      * Creates a help button in the given folder.
@@ -385,7 +409,6 @@ public class SWTUtil {
     public static void createHelpButton(final Controller controller, final CTabFolder folder, final String id) {
         createHelpButton(controller, folder, id, null);
     }
-
 
     /**
      * Creates a help button in the given folder.
@@ -417,26 +440,6 @@ public class SWTUtil {
                     controller.actionShowHelpDialog(id);
                 }
             }
-        });
-    }
-
-    /**
-     * Changes a control's font
-     * @param control
-     * @param style
-     */
-    public static void changeFont(Control control, int style) {
-        FontDescriptor boldDescriptor = FontDescriptor.createFrom(control.getFont()).setStyle(style);
-        final Font boldFont = boldDescriptor.createFont(control.getDisplay());
-        control.setFont(boldFont);
-        control.addDisposeListener(new DisposeListener() {
-            @Override
-            public void widgetDisposed(DisposeEvent arg0) {
-                if (boldFont != null && !boldFont.isDisposed()) {
-                    boldFont.dispose();
-                }
-            }
-            
         });
     }
 
@@ -574,6 +577,45 @@ public class SWTUtil {
     }
 
     /**
+     * Tries to fix a bug when resizing sash forms in OSX
+     * @param sash
+     */
+    public static void fixOSXSashBug(final SashForm sash) {
+        
+        // Only if on OSX
+        if (isMac()) {
+            
+            // Listen for resize event in first composite
+            for (Control c : sash.getChildren()) {
+                if (c instanceof Composite) {
+                    
+                    // In case of resize, redraw the sash form
+                    c.addControlListener(new ControlAdapter(){
+                        @Override
+                        public void controlResized(ControlEvent arg0) {
+                            sash.redraw();
+                        }
+                    });
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Converts a boolean into a pretty string
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(boolean value) {
+        if (value) {
+            return Resources.getMessage("PropertiesView.159");
+        } else {
+            return Resources.getMessage("PropertiesView.170");
+        }
+    }
+
+    /**
      * Returns a pretty string representing the given double
      * @param value
      * @return
@@ -616,6 +658,24 @@ public class SWTUtil {
     }
 
     /**
+     * Fallback for objects of unknown type
+     * @param value
+     * @return
+     */
+    public static String getPrettyString(Object value) {
+        if (value instanceof Boolean) {
+            return SWTUtil.getPrettyString(((Boolean)value).booleanValue());
+        } else if (value instanceof Double) {
+            return SWTUtil.getPrettyString(((Double)value).doubleValue());
+        } if (value instanceof Integer) {
+            return SWTUtil.getPrettyString(((Integer)value).intValue());
+        } if (value instanceof Long) {
+            return SWTUtil.getPrettyString(((Long)value).longValue());
+        }
+        return String.valueOf(value);
+    }
+    
+    /**
      * Converts the integer value to a slider selection.
      *
      * @param min
@@ -626,7 +686,7 @@ public class SWTUtil {
     public static int intToSlider(final int min, final int max, final int value) {
         return doubleToSlider(min, max, value);
     }
-
+    
     /**
      * Are we running on an OSX system
      * @return

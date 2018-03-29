@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -49,7 +49,6 @@ public class DataHandleSubset extends DataHandle {
         this.definition = source.definition;
         this.header = source.header;
         this.subset = subset;
-        this.statistics = new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     @Override
@@ -60,9 +59,10 @@ public class DataHandleSubset extends DataHandle {
     
     @Override
     public DataType<?> getDataType(String attribute) {
+        checkRegistry();
         return source.getDataType(attribute);
     }
-
+    
     @Override
     public int getGeneralization(String attribute) {
         checkRegistry();
@@ -79,6 +79,11 @@ public class DataHandleSubset extends DataHandle {
     public int getNumRows() {
         checkRegistry();
         return this.subset.getArray().length;
+    }
+
+    @Override
+    public StatisticsBuilder getStatistics() {
+        return new StatisticsBuilder(new DataHandleInternal(this));
     }
 
     /**
@@ -105,6 +110,7 @@ public class DataHandleSubset extends DataHandle {
 
     @Override
     public boolean isOptimized() {
+        checkRegistry();
         return source.isOptimized();
     }
 
@@ -159,12 +165,17 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
+    protected ARXConfiguration getConfiguration() {
+        return source.getConfiguration();
+    }
+
+    @Override
     protected DataType<?>[][] getDataTypeArray() {
         return source.dataTypes;
     }    
 
     @Override
-    protected String[] getDistinctValues(int column, InterruptHandler handler) {
+    protected String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler handler) {
 
         // Check
         checkRegistry();
@@ -173,7 +184,7 @@ public class DataHandleSubset extends DataHandle {
         final Set<String> vals = new HashSet<String>();
         for (int i = 0; i < getNumRows(); i++) {
             handler.checkInterrupt();
-            vals.add(getValue(i, column));
+            vals.add(internalGetValue(i, column, ignoreSuppression));
         }
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
@@ -186,11 +197,6 @@ public class DataHandleSubset extends DataHandle {
      */
     protected DataHandle getSource(){
         return source;
-    }
-
-    @Override
-    protected String getSuppressionString(){
-        return source.getSuppressionString();
     }
 
     @Override
@@ -240,5 +246,10 @@ public class DataHandleSubset extends DataHandle {
      */
     protected int internalTranslate(int row) {
         return this.subset.getArray()[row];
+    }
+
+    @Override
+    protected boolean isAnonymous() {
+        return source.isAnonymous();
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -33,9 +34,6 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderOrderBased;
  * @param <T>
  */
 public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T> {
-    
-    /** Var. */
-    private final transient String[] data;
 
     /** Locale. */
     private Locale                   locale;
@@ -49,9 +47,7 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
      */
     public HierarchyWizardModelOrder(final DataType<T> dataType, final Locale locale, String[] data) {
         super(data, dataType, false);
-        this.data = data;
         this.locale = locale;
-        this.internalSort(super.getDataType());
         this.update();
     }
 
@@ -135,33 +131,24 @@ public class HierarchyWizardModelOrder<T> extends HierarchyWizardModelGrouping<T
      * @param type
      * @return
      */
-    public boolean sort(DataType<?> type){
-        boolean result = internalSort(type);
+    public boolean sort(final DataType<?> type){
+        
+        boolean result = true;
+        try {
+            Arrays.sort(this.data, new Comparator<String>(){
+                @Override public int compare(String o1, String o2) {
+                    try {
+                        return type.compare(o1, o2);
+                    } catch (NumberFormatException | ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+        } catch (Exception e) {
+            result = false;
+        }
         update();
         return result;
-    }
-    
-
-    /**
-     * Sort.
-     *
-     * @param <U>
-     * @param type
-     * @return successful, or not
-     */
-    private <U> boolean internalSort(final DataType<U> type) {
-
-        try {
-            ArrayList<U> list = new ArrayList<U>();
-            for (String s : data) list.add(type.parse(s));
-            Collections.sort(list, type);
-            for (int i = 0; i < list.size(); i++) {
-                data[i] = type.format(list.get(i));
-            }
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     @Override

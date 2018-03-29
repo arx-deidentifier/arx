@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import java.util.Set;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.moment.GeometricMean;
+import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataScale;
@@ -42,6 +43,7 @@ import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
+import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 import cern.colt.GenericSorting;
@@ -56,10 +58,13 @@ import cern.colt.function.IntComparator;
 public class StatisticsBuilder {
 
     /** The handle. */
-    private DataHandleInternal    handle;
+    private DataHandleInternal      handle;
 
     /** The stop flag. */
     private volatile WrappedBoolean interrupt = new WrappedBoolean(false);
+
+    /** Model */
+    private final WrappedInteger    progress  = new WrappedInteger();
 
     /**
      * Creates a new instance.
@@ -72,67 +77,31 @@ public class StatisticsBuilder {
     
     /**
      * Creates a new set of statistics for the given classification task
-     * @param clazz - The class attributes
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
+     * @param clazz - The class attribute
+     * @param config - The configuration
      * @throws ParseException
      */
-    public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws ParseException {
-        return getClassificationPerformance(new String[] {}, clazz, null, ignoreSuppressedRecords, samplingFraction);
-    }
-    
-    /**
-     * Creates a new set of statistics for the given classification task
-     * @param clazz - The class attributes
-     * @param seed - The random seed, null, if the process should be randomized
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
-     * @throws ParseException
-     */
-    public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 Integer seed,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws ParseException {
-        return getClassificationPerformance(new String[] {}, clazz, seed, ignoreSuppressedRecords, samplingFraction);
+    public StatisticsClassification getClassificationPerformance(String clazz, ARXLogisticRegressionConfiguration config) throws ParseException {
+        return getClassificationPerformance(new String[] {}, clazz, config);
     }
     
     /**
      * Creates a new set of statistics for the given classification task
      * @param features - The feature attributes
      * @param clazz - The class attributes
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
+     * @param config - The configuration
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws ParseException {
-        return getClassificationPerformance(features, clazz, null, ignoreSuppressedRecords, samplingFraction);
-    }
+                                                                 ARXLogisticRegressionConfiguration config) throws ParseException {
     
-    /**
-     * Creates a new set of statistics for the given classification task
-     * @param features - The feature attributes
-     * @param clazz - The class attributes
-     * @param seed - The random seed, null, if the process should be randomized
-     * @param ignoreSuppressedRecords - Ignore suppressed records
-     * @param samplingFraction - The sampling fraction
-     * @throws ParseException
-     */
-    public StatisticsClassification getClassificationPerformance(String[] features,
-                                                                 String clazz,
-                                                                 Integer seed,
-                                                                 boolean ignoreSuppressedRecords,
-                                                                 double samplingFraction) throws ParseException {
-
         // Reset stop flag
         interrupt.value = false;
-
+        progress.value = 0;
+        
         // Return
-        return new StatisticsClassification(this, handle, ignoreSuppressedRecords, features, clazz, seed, samplingFraction, interrupt);
+        return new StatisticsClassification(handle.getAssociatedInput(), handle, features, clazz, config, interrupt, progress);
     }
     
     /**
@@ -479,7 +448,7 @@ public class StatisticsBuilder {
         
         // Sort by data type
         if (hierarchy == null || level == 0) {
-            sort(list, datatype, handle.getSuppressionString());
+            sort(list, datatype);
             // Sort by hierarchy and data type
         } else {
             // Build order directly from the hierarchy
@@ -498,7 +467,7 @@ public class StatisticsBuilder {
                 if (baseType.isValid(element)) baseSet.add(element);
             }
             String[] baseArray = baseSet.toArray(new String[baseSet.size()]);
-            sort(baseArray, handle.getBaseDataType(attribute), handle.getSuppressionString());
+            sort(baseArray, handle.getBaseDataType(attribute));
             Map<String, Integer> baseOrder = new HashMap<String, Integer>();
             for (int i = 0; i < baseArray.length; i++) {
                 checkInterrupt();
@@ -506,7 +475,7 @@ public class StatisticsBuilder {
             }
             
             // Handle optimized handles
-            int lower = handle.isOptimized() ? 1 : level;
+            int lower = handle.isOptimized() ? 0 : level;
             int upper = handle.isOptimized() ? hierarchy[0].length: level + 1;
             
             // Build higher level order from base order
@@ -525,8 +494,7 @@ public class StatisticsBuilder {
             }
             
             // Add suppression string
-            String supp = handle.getSuppressionString();
-            if (supp != null) order.put(supp, max);
+            order.put(DataType.ANY_VALUE, max);
             
             // Sort
             sort(list, order);
@@ -591,7 +559,7 @@ public class StatisticsBuilder {
             averageEquivalenceClassSizeIncludingOutliers += element.getCount();
             numberOfTuples += element.getCount();
             
-            if (!isOutlier(element, handle.getSuppressionString())) {
+            if (!element.getElement().isOutlier()) {
                 
                 maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
                 minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);
@@ -600,6 +568,7 @@ public class StatisticsBuilder {
             } else {
                 
                 containsOutliers = true;
+                // All suppressed records will collapse into a single group, so we can use the "=" assignment operator here
                 numberOfOutlyingTuples = element.getCount();
             }
             
@@ -614,6 +583,12 @@ public class StatisticsBuilder {
         averageEquivalenceClassSize /= (double)numberOfEquivalenceClasses;
         averageEquivalenceClassSizeIncludingOutliers /= (double)numberOfEquivalenceClassesIncludingOutliers;
         
+        // Fix corner cases
+        if (numberOfEquivalenceClasses == 0) {
+            averageEquivalenceClassSize = 0;
+            maximalEquivalenceClassSize = 0;
+            minimalEquivalenceClassSize = 0;
+        }
 
         // And return
         return new StatisticsEquivalenceClasses(averageEquivalenceClassSize,
@@ -779,7 +754,7 @@ public class StatisticsBuilder {
                     DataType<?> type = handle.getDataType(attribute);
                     
                     // Analyze
-                    if (!value.equals(handle.getSuppressionString()) && !DataType.isNull(value)) {
+                    if (!DataType.isAny(value) && !DataType.isNull(value)) {
                         ordinal.get(attribute).addValue(value);
                         if (type instanceof DataTypeWithRatioScale) {
                             double doubleValue = ((DataTypeWithRatioScale) type).toDouble(type.parse(value));
@@ -807,12 +782,14 @@ public class StatisticsBuilder {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.NOMINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode())));
             } else if (scale == DataScale.ORDINAL) {
                 StatisticsSummaryOrdinal stats = ordinal.get(attribute);
                 result.put(attribute, new StatisticsSummary<T>(DataScale.ORDINAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -834,6 +811,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.INTERVAL,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -873,6 +851,7 @@ public class StatisticsBuilder {
                 
                 result.put(attribute, new StatisticsSummary<T>(DataScale.RATIO,
                                                                stats.getNumberOfMeasures(),
+                                                               stats.getDistinctNumberOfValues(),
                                                                stats.getMode(),
                                                                type.parse(stats.getMode()),
                                                                stats.getMedian(),
@@ -1026,28 +1005,12 @@ public class StatisticsBuilder {
     }
     
     /**
-     * Returns whether the given element is suppressed
-     * @param element
-     * @param suppression
-     * @return
-     */
-    private boolean isOutlier(Group<TupleWrapper> element, String suppression) {
-        for (String value : element.getElement().getValues()) {
-            if (!value.equals(suppression)) {
-                return false;
-            }
-        }
-        return true;
-    }
-    
-    /**
      * Orders the given array by data type.
      *
      * @param array
      * @param type
-     * @param suppressionString
      */
-    private void sort(final String[] array, final DataType<?> type, final String suppressionString) {
+    private void sort(final String[] array, final DataType<?> type) {
         GenericSorting.mergeSort(0, array.length, new IntComparator() {
             
             @Override
@@ -1056,9 +1019,9 @@ public class StatisticsBuilder {
                 try {
                     String s1 = array[arg0];
                     String s2 = array[arg1];
-                    return (s1 == suppressionString && s2 == suppressionString) ? 0
-                            : (s1 == suppressionString ? +1
-                                    : (s2 == suppressionString ? -1
+                    return (s1 == DataType.ANY_VALUE && s2 == DataType.ANY_VALUE) ? 0
+                            : (s1 == DataType.ANY_VALUE ? +1
+                                    : (s2 == DataType.ANY_VALUE ? -1
                                             : type.compare(s1, s2)));
                 } catch (
                         IllegalArgumentException
@@ -1090,7 +1053,10 @@ public class StatisticsBuilder {
                 Integer order1 = order.get(array[arg0]);
                 Integer order2 = order.get(array[arg1]);
                 if (order1 == null || order2 == null) {
-                    throw new RuntimeException("The hierarchy seems to not cover all data values");
+                    String message = "The hierarchy seems to not cover all data values";
+                    message += order1 == null ? " (unknown = "+array[arg0]+")" : "";
+                    message += order2 == null ? " (unknown = "+array[arg1]+")" : "";
+                    throw new RuntimeException(message);
                 } else {
                     return order1.compareTo(order2);
                 }
@@ -1214,5 +1180,14 @@ public class StatisticsBuilder {
      */
     void interrupt() {
         this.interrupt.value = true;
+    }
+
+    /**
+     * Returns progress data, if available
+     *
+     * @return
+     */
+    int getProgress() {
+        return this.progress.value;
     }
 }

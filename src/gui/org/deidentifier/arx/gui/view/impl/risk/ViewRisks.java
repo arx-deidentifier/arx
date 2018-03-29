@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -264,7 +264,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         if (analysisContext.getData() == null || analysisContext.getData().definition == null) {
             return null;
         }
-        return context.handle.getRiskEstimator(analysisContext.getModel().getRiskModel().getPopulationModel(),
+        return context.handle.getRiskEstimator(analysisContext.getPopulationModel(),
                                                analysisContext.getData().definition.getQuasiIdentifyingAttributes(),
                                                analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();
@@ -273,16 +273,16 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
     /**
      * Creates a risk estimate builder
      * @param context
-     * @param model
+     * @param population
      * @param classes
      * @return
      */
     protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context, 
-                                                          ARXPopulationModel model, 
+                                                          ARXPopulationModel population, 
                                                           RiskModelHistogram classes) {
 
         AnalysisContext analysisContext = context.context;
-        return context.handle.getRiskEstimator(model, 
+        return context.handle.getRiskEstimator(population, 
                                                classes, 
                                                analysisContext.getModel().getRiskModel().getSolverConfiguration())
                                                .getInterruptibleInstance();

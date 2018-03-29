@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,17 +33,17 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public abstract class MetricDefault extends Metric<InformationLossDefault> {
 
-    /**  TODO */
+    /**  SVUID */
     private static final long serialVersionUID = 2672819203235170632L;
 
     /**
      * 
-     *
-     * @param monotonic
+     * @param monotonicWithGeneralization
+     * @param monotonicWithSuppression
      * @param independent
      */
-    public MetricDefault(final boolean monotonic, final boolean independent) {
-        super(monotonic, independent, 0.5d);
+    public MetricDefault(final boolean monotonicWithGeneralization, final boolean monotonicWithSuppression, final boolean independent) {
+        super(monotonicWithGeneralization, monotonicWithSuppression, independent, 0.5d);
     }
     
     @Override

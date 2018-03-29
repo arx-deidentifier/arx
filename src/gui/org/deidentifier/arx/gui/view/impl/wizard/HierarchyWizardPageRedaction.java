@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -263,7 +263,10 @@ public class HierarchyWizardPageRedaction<T> extends HierarchyWizardPageBuilder<
      * @param padding
      */
     private void createItems(Combo combo, boolean padding){
-        if (padding) combo.add("( )"); //$NON-NLS-1$
+        if (padding) {
+            combo.add("( )"); //$NON-NLS-1$
+            combo.add("(0)"); //$NON-NLS-1$
+        }
         combo.add("(*)"); //$NON-NLS-1$
         combo.add("(x)"); //$NON-NLS-1$
         combo.add("(#)"); //$NON-NLS-1$

@@ -61,3 +61,13 @@
 /test.csv
 /.gitignore
 /tlfnc
+/adult_subset.csv
+/atus_subset.csv
+/cup_subset.csv
+/fars_subset.csv
+/ihis_subset.csv
+/adult_age_microaggregated.csv
+/dis_hierarchy_age.csv
+/dis_hierarchy_gender.csv
+/dis_hierarchy_zipcode.csv
+/dis.csv

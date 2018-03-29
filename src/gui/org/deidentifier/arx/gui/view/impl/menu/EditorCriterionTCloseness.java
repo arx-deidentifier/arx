@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,9 @@ import de.linearbits.swt.widgets.Knob;
 public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCriterion> {
 
     /**  View */
-    private static final String VARIANTS[] = {Resources.getMessage("CriterionDefinitionView.9"), Resources.getMessage("CriterionDefinitionView.10") }; //$NON-NLS-1$ //$NON-NLS-2$
+    private static final String VARIANTS[] = {Resources.getMessage("CriterionDefinitionView.9"), //$NON-NLS-1$
+                                              Resources.getMessage("CriterionDefinitionView.10"), //$NON-NLS-1$
+                                              Resources.getMessage("CriterionDefinitionView.102")}; //$NON-NLS-1$
 
     /** View */
     private Knob<Double>        knobT;
@@ -63,7 +65,6 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
      */
     public EditorCriterionTCloseness(final Composite parent,
                                      final ModelTClosenessCriterion model) {
-
         super(parent, model);
     }
 
@@ -114,22 +115,21 @@ public class EditorCriterionTCloseness extends EditorCriterion<ModelTClosenessCr
     }
     
     @Override
-    protected void parse(ModelTClosenessCriterion model, boolean _default) {
-        
-        knobT.setValue(model.getT());
-        updateLabel(labelT, model.getT());
-        comboVariant.select(model.getVariant());
-    }
-
-
-    @Override
     protected List<ModelCriterion> getTypicalParameters() {
-
         List<ModelCriterion> result = new ArrayList<ModelCriterion>();
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_EQUAL, 0.15));
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_EQUAL, 0.2));
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_HIERARCHICAL, 0.15));
         result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_HIERARCHICAL, 0.2));
+        result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_ORDERED, 0.15));
+        result.add(new ModelTClosenessCriterion(this.model.getAttribute(), ModelTClosenessCriterion.VARIANT_ORDERED, 0.2));
         return result;
+    }
+
+    @Override
+    protected void parse(ModelTClosenessCriterion model, boolean _default) {
+        knobT.setValue(model.getT());
+        updateLabel(labelT, model.getT());
+        comboVariant.select(model.getVariant());
     }
 }

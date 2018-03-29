@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,9 +20,11 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -194,13 +196,14 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
      * Loads the array from a file.
      *
      * @param file
+     * @param charset TODO
      * @return
      */
-    private String[] loadArray(String file) {
+    private String[] loadArray(String file, Charset charset) {
         ArrayList<String> list = new ArrayList<String>();
         BufferedReader reader = null;
         try {
-            reader = new BufferedReader(new FileReader(new File(file)));
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(file), charset));
             String line = reader.readLine();
             while (line != null) {
                 list.add(line);
@@ -291,15 +294,16 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
 
         parent.setLayoutData(SWTUtil.createFillGridData());
         
-        final Button loadButton = createButton(parent,
+        // Create IMPORT Button
+        final Button importButton = createButton(parent,
                                              Integer.MAX_VALUE-1,
-                                             "Load", false); //$NON-NLS-1$
-        loadButton.addSelectionListener(new SelectionAdapter() {
+                                             Resources.getMessage("DialogOrderSelection.12"), false); //$NON-NLS-1$
+        importButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowOpenFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
                 if (file != null){
-                    String[] array = loadArray(file);
+                    String[] array = loadArray(file, Charset.defaultCharset());
                     if (array != null) {
                         
                         // Select string
@@ -317,10 +321,11 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             }
         });
 
-        final Button saveButton = createButton(parent,
+        // Create EXPORT Button
+        final Button exportButton = createButton(parent,
                                              Integer.MAX_VALUE-2,
-                                             "Save", false); //$NON-NLS-1$
-        saveButton.addSelectionListener(new SelectionAdapter() {
+                                             Resources.getMessage("DialogOrderSelection.13"), false); //$NON-NLS-1$
+        exportButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
                 String file = controller.actionShowSaveFileDialog(getShell(), "*.csv"); //$NON-NLS-1$
@@ -333,7 +338,7 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
         // Create OK Button
         final Button okButton = createButton(parent,
                                              Window.OK,
-                                             "OK", true); //$NON-NLS-1$
+                                             Resources.getMessage("DialogOrderSelection.14"), true); //$NON-NLS-1$
         okButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {
@@ -342,9 +347,10 @@ public class DialogOrderSelection extends TitleAreaDialog implements IDialog {
             }
         });
 
+        // Create CANCEL Button
         final Button cancelButton = createButton(parent,
                                                  Window.CANCEL,
-                                                 "Cancel", false); //$NON-NLS-1$
+                                                 Resources.getMessage("DialogOrderSelection.15"), false); //$NON-NLS-1$
         cancelButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent e) {

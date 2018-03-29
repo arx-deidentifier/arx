@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -175,13 +175,14 @@ public class ViewPopulationModel implements IView {
                                                                         }
                                                                     }});
                 if (_value != null) {
-                    double value = Double.valueOf(_value);
+                    
                     DataHandle handle = model.getInputConfig().getInput().getHandle();
-                    if (value == model.getRiskModel().getSampleFraction(handle)) {
+                    long populationSize = (long)Math.round((double)handle.getNumRows() / Double.valueOf(_value));
+                    if (populationSize == model.getRiskModel().getPopulationSize()) {
                         return;
                     }
                     
-                    model.getRiskModel().setSampleFraction(value);
+                    model.getRiskModel().setPopulationSize(populationSize);
                     
                     for (int i=0; i<combo.getItemCount(); i++) {
                         if (combo.getItem(i).equals(Region.NONE.getName())) {
@@ -238,8 +239,8 @@ public class ViewPopulationModel implements IView {
                                                                     }});
                 if (_value != null) {
                     
-                    int value = Integer.valueOf(_value);
-                    model.getRiskModel().setPopulationSize(handle, value);
+                    long value = Long.valueOf(_value);
+                    model.getRiskModel().setPopulationSize(value);
 
                     for (int i=0; i<combo.getItemCount(); i++) {
                         if (combo.getItem(i).equals(Region.NONE.getName())) {
@@ -291,11 +292,12 @@ public class ViewPopulationModel implements IView {
         }
 
         DataHandle handle = model.getInputConfig().getInput().getHandle();
-        double fraction = model.getRiskModel().getSampleFraction(handle);
+        long sampleSize = handle.getNumRows();
+        long populationSize = (long)model.getRiskModel().getPopulationSize();
+        double fraction = (double)sampleSize / (double)populationSize;
         text.setText(SWTUtil.getPrettyString(fraction));
         text.setToolTipText(String.valueOf(fraction));
-        long population = (long)model.getRiskModel().getPopulationSize(handle);
-        text2.setText(SWTUtil.getPrettyString(population));
-        text2.setToolTipText(String.valueOf(population));
+        text2.setText(SWTUtil.getPrettyString(populationSize));
+        text2.setToolTipText(String.valueOf(populationSize));
     }
 }

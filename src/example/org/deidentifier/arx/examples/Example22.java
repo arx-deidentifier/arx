@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ package org.deidentifier.arx.examples;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,7 +35,7 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 
 /**
- * This class implements an example on how to apply l-diversity criteria
+ * This class implements an example on how to use the l-diversity privacy model
  * without protecting sensitive assocations.
  *
  * @author Fabian Prasser
@@ -50,7 +51,7 @@ public class Example22 extends Example {
      */
     public static Data createData(final String dataset) throws IOException {
 
-        Data data = Data.create("data/" + dataset + ".csv", ';');
+        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
 
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -71,7 +72,7 @@ public class Example22 extends Example {
         for (File file : genHierFiles) {
             Matcher matcher = pattern.matcher(file.getName());
             if (matcher.find()) {
-                CSVHierarchyInput hier = new CSVHierarchyInput(file, ';');
+                CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 String attributeName = matcher.group(1);
                 data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
             }
@@ -93,9 +94,9 @@ public class Example22 extends Example {
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addCriterion(new EntropyLDiversity("occupation", 5));
+        config.addPrivacyModel(new EntropyLDiversity("occupation", 5));
         config.setMaxOutliers(0.04d);
-        config.setMetric(Metric.createEntropyMetric());
+        config.setQualityModel(Metric.createEntropyMetric());
         
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);

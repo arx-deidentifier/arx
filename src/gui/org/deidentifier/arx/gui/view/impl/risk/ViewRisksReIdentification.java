@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentRiskMonitor;
 import org.deidentifier.arx.gui.view.impl.common.ComponentRiskThresholds;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
-import org.deidentifier.arx.gui.view.impl.common.DelayedSelectionListener;
+import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
@@ -132,17 +132,6 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
     /**
      * Handles updates of risk thresholds
      */
-    private void handleThresholdUpdateInSettings() {
-        if (riskThresholds != null) {
-            riskThresholds.setThresholdHighestRisk(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
-            riskThresholds.setThresholdRecordsAtRisk(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
-            riskThresholds.setThresholdSuccessRate(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
-        }
-    }
-
-    /**
-     * Handles updates of risk thresholds
-     */
     private void handleThresholdUpdateInMonitors() {
         prosecutor1.setThreshold(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
         prosecutor2.setThreshold(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
@@ -151,6 +140,17 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         journalist2.setThreshold(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
         journalist3.setThreshold(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
         marketer1.setThreshold(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+    }
+
+    /**
+     * Handles updates of risk thresholds
+     */
+    private void handleThresholdUpdateInSettings() {
+        if (riskThresholds != null) {
+            riskThresholds.setThresholdHighestRisk(super.getModel().getRiskModel().getRiskThresholdHighestRisk());
+            riskThresholds.setThresholdRecordsAtRisk(super.getModel().getRiskModel().getRiskThresholdRecordsAtRisk());
+            riskThresholds.setThresholdSuccessRate(super.getModel().getRiskModel().getRiskThresholdSuccessRate());
+        }
     }
 
     @Override
@@ -222,9 +222,9 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
                     }
                 }
             });
-            riskThresholds.addSelectionListenerThresholdHighestRisk(new DelayedSelectionListener(1000) {
+            riskThresholds.addSelectionListenerThresholdHighestRisk(new DelayedChangeListener(1000) {
                 @Override
-                public void widgetDelayedSelected(SelectionEvent arg0) {
+                public void delayedEvent() {
                     getModel().getRiskModel().setRiskThresholdHighestRisk(riskThresholds.getThresholdHighestRisk());
                     controller.update(new ModelEvent(this, ModelPart.RISK_THRESHOLD_MAIN, null));
                     triggerUpdate();

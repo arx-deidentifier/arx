@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,17 +45,15 @@ class ModelSNB extends RiskModelPopulation {
      * 
      * @param model
      * @param histogram
-     * @param sampleSize
      * @param config
      * @param stop
      */
     ModelSNB(final ARXPopulationModel model,
              final RiskModelHistogram histogram,
-             final int sampleSize,
              final NewtonRaphsonConfiguration<?> config,
              final WrappedBoolean stop) {
 
-        super(histogram, model, sampleSize, stop, new WrappedInteger());
+        super(histogram, model, stop, new WrappedInteger());
 
         // Prepare
         int[] _histogram = super.getHistogram().getHistogram();

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2015 Florian Kohlmayer, Fabian Prasser
+ * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,10 @@ package org.deidentifier.arx;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -37,6 +39,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
+import org.deidentifier.arx.io.IOUtil;
 
 /**
  * Represents an attribute type.
@@ -118,6 +121,36 @@ public class AttributeType implements Serializable, Cloneable {
                 }
                 return array;
             }
+
+            /**
+             * This fixes a bug, where hierarchies which have been loaded from CSV files are trimmed but
+             * hierarchies which are deserialized are not. We fix this by implementing custom deserialization.
+             * @param ois
+             * @throws ClassNotFoundException
+             * @throws IOException
+             */
+            private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+                
+                // Default deserialization
+                ois.defaultReadObject();
+                
+                // Trim array
+                if (array != null) {
+                    for (int row = 0; row < array.length; row++) {
+                        if (array[row] != null && array[row].length > 0) {
+                            array[row][0] = IOUtil.trim(array[row][0]);
+                        }
+                    }
+                }
+                // Trim list
+                if (hierarchy != null) {
+                    for (int row = 0; row < hierarchy.size(); row++) {
+                        if (hierarchy.get(row) != null && hierarchy.get(row).length > 0) {
+                            hierarchy.get(row)[0] = IOUtil.trim(hierarchy.get(row)[0]);
+                        }
+                    }
+                }
+            }            
         }
 
         /**
@@ -152,6 +185,28 @@ public class AttributeType implements Serializable, Cloneable {
             public String[][] getHierarchy() {
                 return hierarchy;
             }
+
+            /**
+             * This fixes a bug, where hierarchies which have been loaded from CSV files are trimmed but
+             * hierarchies which are deserialized are not. We fix this by implementing custom deserialization.
+             * @param ois
+             * @throws ClassNotFoundException
+             * @throws IOException
+             */
+            private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+                
+                // Default deserialization
+                ois.defaultReadObject();
+                
+                // Trim array
+                if (hierarchy != null) {
+                    for (int row = 0; row < hierarchy.length; row++) {
+                        if (hierarchy[row] != null && hierarchy[row].length > 0) {
+                            hierarchy[row][0] = IOUtil.trim(hierarchy[row][0]);
+                        }
+                    }
+                }
+            }  
         }
 
         /**
@@ -204,6 +259,29 @@ public class AttributeType implements Serializable, Cloneable {
                 }
                 return array;
             }
+
+            /**
+             * This fixes a bug, where hierarchies which have been loaded from CSV files are trimmed but
+             * hierarchies which are deserialized are not. We fix this by implementing custom deserialization.
+             * @param ois
+             * @throws ClassNotFoundException
+             * @throws IOException
+             */
+            private void readObject(ObjectInputStream ois) throws ClassNotFoundException, IOException {
+                
+                // Default deserialization
+                ois.defaultReadObject();
+                
+                // Trim array
+                String[][] hierarchy = getHierarchy();
+                if (hierarchy != null) {
+                    for (int row = 0; row < hierarchy.length; row++) {
+                        if (hierarchy[row] != null && hierarchy[row].length > 0) {
+                            hierarchy[row][0] = IOUtil.trim(hierarchy[row][0]);
+                        }
+                    }
+                }
+            }  
         }
 
         /** SVUID */
@@ -222,11 +300,12 @@ public class AttributeType implements Serializable, Cloneable {
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset).getHierarchy());
         }
 
         /**
@@ -237,41 +316,44 @@ public class AttributeType implements Serializable, Cloneable {
          * @return A Hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter, final char quote) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter, quote).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter, final char quote) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter, quote).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter, final char quote, final char escape) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter, quote, escape).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter, quote, escape).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param file the file
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
@@ -279,8 +361,8 @@ public class AttributeType implements Serializable, Cloneable {
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final File file, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, delimiter, quote, escape, linebreak).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, delimiter, quote, escape, linebreak).getHierarchy());
         }
 
         /**
@@ -291,8 +373,8 @@ public class AttributeType implements Serializable, Cloneable {
          * @return
          * @throws IOException
          */
-        public static Hierarchy create(final File file, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(file, config).getHierarchy());
+        public static Hierarchy create(final File file, final Charset charset, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(file, charset, config).getHierarchy());
         }
 
         /**
@@ -302,53 +384,57 @@ public class AttributeType implements Serializable, Cloneable {
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream An input stream
+         * @param charset the charset
          * @param delimiter The utilized separator character
          * @return A Hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream the stream
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter, final char quote) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter, quote).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter, final char quote) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter, quote).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream the stream
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter, final char quote, final char escape) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter, quote, escape).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter, quote, escape).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          *
          * @param stream the stream
+         * @param charset the charset
          * @param delimiter the delimiter
          * @param quote the quote
          * @param escape the escape
@@ -356,19 +442,20 @@ public class AttributeType implements Serializable, Cloneable {
          * @return the hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final InputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, delimiter, quote, escape, linebreak).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, delimiter, quote, escape, linebreak).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          * @param stream
+         * @param charset
          * @param config
          * @return
          * @throws IOException
          */
-        public static Hierarchy create(final InputStream stream, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(stream, config).getHierarchy());
+        public static Hierarchy create(final InputStream stream, final Charset charset, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(stream, charset, config).getHierarchy());
         }
 
         /**
@@ -395,23 +482,25 @@ public class AttributeType implements Serializable, Cloneable {
          * Creates a new hierarchy from a CSV file.
          *
          * @param path A path to the file
+         * @param charset the charset
          * @param separator The utilized separator character
          * @return A Hierarchy
          * @throws IOException Signals that an I/O exception has occurred.
          */
-        public static Hierarchy create(final String path, final char separator) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(path, separator).getHierarchy());
+        public static Hierarchy create(final String path, final Charset charset, final char separator) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(path, charset, separator).getHierarchy());
         }
 
         /**
          * Creates a new hierarchy from a CSV file.
          * @param path
+         * @param charset
          * @param config
          * @return
          * @throws IOException
          */
-        public static Hierarchy create(final String path, final CSVSyntax config) throws IOException {
-            return new ArrayHierarchy(new CSVHierarchyInput(path, config).getHierarchy());
+        public static Hierarchy create(final String path, final Charset charset, final CSVSyntax config) throws IOException {
+            return new ArrayHierarchy(new CSVHierarchyInput(path, charset, config).getHierarchy());
         }
 
         /**
@@ -548,55 +637,6 @@ public class AttributeType implements Serializable, Cloneable {
     }
     
     /**
-     * This class describes a microaggregation function
-     * @author Fabian Prasser
-     */
-    public abstract static class MicroAggregationFunctionDescription implements Serializable {
-
-        /** SVUID*/
-        private static final long serialVersionUID = -6608355532280843693L;
-
-        /** The required scale*/
-        private final DataScale requiredScale;
-        
-        /** The label*/
-        private final String label;
-        
-        /**
-         * Instantiates a new hierarchy.
-         * @param requiredScale
-         * @param label 
-         */
-        private MicroAggregationFunctionDescription(DataScale requiredScale,
-                                                    String label) {
-            this.requiredScale = requiredScale;
-            this.label = label;
-        }
-        
-        /**
-         * @return the label
-         */
-        public String getLabel() {
-            return label;
-        }
-
-        /**
-         * @return the requiredScale
-         */
-        public DataScale getRequiredScale() {
-            return requiredScale;
-        }
-
-        /**
-         * Creates an instance
-         * @param ignoreMissingData
-         * @return
-         */
-        public abstract MicroAggregationFunction createInstance(boolean ignoreMissingData);
-    }
-
-
-    /**
      * This class is used to define aggregate functions for microaggregation.
      * 
      * @author Fabian Prasser
@@ -648,32 +688,13 @@ public class AttributeType implements Serializable, Cloneable {
         }
 
         /**
-         * Creates a microaggregation function returning intervals. Ignores missing data.
-         * @return
-         */
-        public static MicroAggregationFunction createInterval() {
-            return createInterval(true);
-        }
-        
-        /**
-         * Creates a microaggregation function returning intervals.
-         * 
-         * @param ignoreMissingData Should the function ignore missing data. Default is true.
-         * @return
-         */
-        public static MicroAggregationFunction createInterval(boolean ignoreMissingData) {
-            return new MicroAggregationFunction(new DistributionAggregateFunctionInterval(ignoreMissingData),
-                                                DataScale.ORDINAL, "Interval");
-        }
-        
-        /**
          * Creates a microaggregation function returning the geometric mean. Ignores missing data.
          * @return
          */
         public static MicroAggregationFunction createGeometricMean() {
             return createGeometricMean(true);
         }
-
+        
         /**
          * Creates a microaggregation function returning the geometric mean.
          * 
@@ -683,6 +704,25 @@ public class AttributeType implements Serializable, Cloneable {
         public static MicroAggregationFunction createGeometricMean(boolean ignoreMissingData) {
             return new MicroAggregationFunction(new DistributionAggregateFunctionGeometricMean(ignoreMissingData),
                                                 DataScale.INTERVAL, "Geometric mean");
+        }
+        
+        /**
+         * Creates a microaggregation function returning intervals. Ignores missing data.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval() {
+            return createInterval(true);
+        }
+
+        /**
+         * Creates a microaggregation function returning intervals.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createInterval(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionInterval(ignoreMissingData),
+                                                DataScale.ORDINAL, "Interval");
         }
         
         /**
@@ -748,13 +788,22 @@ public class AttributeType implements Serializable, Cloneable {
         }
         
         /**
+         * Clones this function
+         */
+        public MicroAggregationFunction clone() {
+            return new MicroAggregationFunction(this.function.clone(),
+                                                this.requiredScale,
+                                                this.label);
+        }
+
+        /**
          * Returns a label for this function
          * @return the label
          */
         public String getLabel() {
             return label;
         }
-
+        
         /**
          * Returns the required scale of measure
          * @return
@@ -762,7 +811,7 @@ public class AttributeType implements Serializable, Cloneable {
         public DataScale getRequiredScale() {
             return requiredScale;
         }
-        
+
         /**
          * Returns whether this is a type-preserving function
          * @return
@@ -770,7 +819,7 @@ public class AttributeType implements Serializable, Cloneable {
         public boolean isTypePreserving() {
             return function.isTypePreserving();
         }
-
+        
         /**
          * Returns the aggregate function.
          * @return
@@ -778,14 +827,54 @@ public class AttributeType implements Serializable, Cloneable {
         protected DistributionAggregateFunction getFunction() {
             return function;
         }
+    }
+
+
+    /**
+     * This class describes a microaggregation function
+     * @author Fabian Prasser
+     */
+    public abstract static class MicroAggregationFunctionDescription implements Serializable {
+
+        /** SVUID*/
+        private static final long serialVersionUID = -6608355532280843693L;
+
+        /** The required scale*/
+        private final DataScale requiredScale;
+        
+        /** The label*/
+        private final String label;
         
         /**
-         * Clones this function
+         * Instantiates a new hierarchy.
+         * @param requiredScale
+         * @param label 
          */
-        public MicroAggregationFunction clone() {
-            return new MicroAggregationFunction(this.function.clone(),
-                                                this.requiredScale,
-                                                this.label);
+        private MicroAggregationFunctionDescription(DataScale requiredScale,
+                                                    String label) {
+            this.requiredScale = requiredScale;
+            this.label = label;
+        }
+        
+        /**
+         * Creates an instance
+         * @param ignoreMissingData
+         * @return
+         */
+        public abstract MicroAggregationFunction createInstance(boolean ignoreMissingData);
+
+        /**
+         * @return the label
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * @return the requiredScale
+         */
+        public DataScale getRequiredScale() {
+            return requiredScale;
         }
     }
 
@@ -822,53 +911,6 @@ public class AttributeType implements Serializable, Cloneable {
     /** Represents a quasi-identifying attribute. */
     public static AttributeType QUASI_IDENTIFYING_ATTRIBUTE = new AttributeType(ATTR_TYPE_QI);
 
-    /** The type. */
-    private int                 type                        = 0x0;
-
-    /**
-     * Instantiates a new type.
-     *
-     * @param type the type
-     */
-    private AttributeType(final int type) {
-        this.type = type;
-    }
-
-    @Override
-    public AttributeType clone() {
-        return this;
-    }
-
-    /**
-     * Returns a string representation.
-     *
-     * @return the string
-     */
-    @Override
-    public String toString() {
-        switch (type) {
-        case ATTR_TYPE_ID:
-            return "IDENTIFYING_ATTRIBUTE";
-        case ATTR_TYPE_SE:
-            return "SENSITIVE_ATTRIBUTE";
-        case ATTR_TYPE_IS:
-            return "INSENSITIVE_ATTRIBUTE";
-        case ATTR_TYPE_QI:
-            return "QUASI_IDENTIFYING_ATTRIBUTE";
-        default:
-            return "UNKNOWN_ATTRIBUTE_TYPE";
-        }
-    }
-
-    /**
-     * Returns the type identifier.
-     *
-     * @return the type
-     */
-    protected int getType() {
-        return type;
-    }
-    
     /**
      * Lists all available microaggregation functions
      * @return
@@ -912,5 +954,52 @@ public class AttributeType implements Serializable, Cloneable {
                     }
                 }
         });
+    }
+
+    /** The type. */
+    private int                 type                        = 0x0;
+
+    /**
+     * Instantiates a new type.
+     *
+     * @param type the type
+     */
+    private AttributeType(final int type) {
+        this.type = type;
+    }
+
+    @Override
+    public AttributeType clone() {
+        return this;
+    }
+
+    /**
+     * Returns a string representation.
+     *
+     * @return the string
+     */
+    @Override
+    public String toString() {
+        switch (type) {
+        case ATTR_TYPE_ID:
+            return "IDENTIFYING_ATTRIBUTE";
+        case ATTR_TYPE_SE:
+            return "SENSITIVE_ATTRIBUTE";
+        case ATTR_TYPE_IS:
+            return "INSENSITIVE_ATTRIBUTE";
+        case ATTR_TYPE_QI:
+            return "QUASI_IDENTIFYING_ATTRIBUTE";
+        default:
+            return "UNKNOWN_ATTRIBUTE_TYPE";
+        }
+    }
+    
+    /**
+     * Returns the type identifier.
+     *
+     * @return the type
+     */
+    protected int getType() {
+        return type;
     }
 }
