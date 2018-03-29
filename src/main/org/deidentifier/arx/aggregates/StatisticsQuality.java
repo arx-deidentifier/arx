@@ -91,12 +91,14 @@ public class StatisticsQuality {
      * @param config
      * @param stop
      * @param progress
+     * @param qis
      */
     StatisticsQuality(DataHandle input,
                       DataHandle output,
                       ARXConfiguration config,
                       WrappedBoolean stop,
-                      WrappedInteger progress) {
+                      WrappedInteger progress,
+                      Set<String> qis) {
      
         // State
         this.stop = stop;
@@ -107,7 +109,7 @@ public class StatisticsQuality {
         // TODO: Do something with ARXConfiguration here.
         
         // Extract quasi-identifiers
-        int[] indices = getIndicesOfQuasiIdentifiers(input);
+        int[] indices = getIndicesOfQuasiIdentifiers(qis, input);
         
         // Basic measures
         this.attributes = getAttributes(output, indices);
@@ -618,15 +620,18 @@ public class StatisticsQuality {
 
     /**
      * Returns indices of quasi-identifiers
+     * @param userdefined 
      * 
      * @param handle
      * @return
      */
-    private int[] getIndicesOfQuasiIdentifiers(DataHandle handle) {
+    private int[] getIndicesOfQuasiIdentifiers(Set<String> userdefined, DataHandle handle) {
         int[] result = new int[handle.getDefinition().getQuasiIdentifyingAttributes().size()];
         int index = 0;
         for (String qi : handle.getDefinition().getQuasiIdentifyingAttributes()) {
-            result[index++] = handle.getColumnIndexOf(qi);
+            if (userdefined == null || userdefined.isEmpty() || userdefined.contains(qi)) {
+                result[index++] = handle.getColumnIndexOf(qi);
+            }
         }
         Arrays.sort(result);
         return result;
