@@ -201,11 +201,11 @@
         <delete dir="build/lib" failonerror="true" />
         <delete dir="build/gui" failonerror="true" />
         <delete dir="build/extLibs" failonerror="true" />
-        <delete dir="build" failonerror="true" />
+        <!--<delete dir="build" failonerror="true" />-->
     </target>
 
     <target name="prepare" depends="clean">
-        <mkdir dir="build" />
+        <!--<mkdir dir="build" />-->
         <mkdir dir="build/extLibs" />
         <mkdir dir="build/lib" />
         <mkdir dir="build/gui" />
@@ -293,7 +293,7 @@
                 <path path="src/main" />
             </classpath>
         </javac>
-        <javac includeantruntime="false" srcdir="src/main:src/gui/" destdir="build/gui" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui/" destdir="build/gui" source="1.7" debug="true" debuglevel="lines,vars,source">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
@@ -341,26 +341,26 @@
         </jar>
     </target>
 
-    <target name="jar-win" depends="compile, buildExternalLibs">
-        <jar destfile="jars/arx-${arx.version}-win.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
-        <jar destfile="jars/arx-${arx.version}-win-64.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
-    </target>
+    <!--<target name="jar-win" depends="compile, buildExternalLibs">-->
+        <!--<jar destfile="jars/arx-${arx.version}-win.jar">-->
+            <!--<fileset dir="build/gui" defaultexcludes="no" />-->
+            <!--<zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />-->
+            <!--<zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />-->
+            <!--<zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />-->
+            <!--<manifest>-->
+                <!--<attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />-->
+            <!--</manifest>-->
+        <!--</jar>-->
+        <!--<jar destfile="jars/arx-${arx.version}-win-64.jar">-->
+            <!--<fileset dir="build/gui" defaultexcludes="no" />-->
+            <!--<zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />-->
+            <!--<zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />-->
+            <!--<zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />-->
+            <!--<manifest>-->
+                <!--<attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />-->
+            <!--</manifest>-->
+        <!--</jar>-->
+    <!--</target>-->
 
     <target name="jar-linux" depends="compile, buildExternalLibs">
         <jar destfile="jars/arx-${arx.version}-gtk.jar">
@@ -436,7 +436,8 @@
         </jar>
     </target>
 
-    <target name="jars" depends="jar-win, jar-linux, jar-osx, jar-libs, jar-docs">
+    <!--<target name="jars" depends="jar-win, jar-linux, jar-osx, jar-libs, jar-docs">-->
+    <target name="jars" depends="jar-osx, jar-libs">
         <antcall target="end-clean" />
     </target>
 </project>
