@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="arx-3.7.0-osx-64-main" type="JarApplication" factoryName="JAR Application">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="idea" />
+    <option name="JAR_PATH" value="$PROJECT_DIR$/jars/arx-3.7.0-osx-64.jar" />
+    <option name="VM_PARAMETERS" value="-Xdebug -XstartOnFirstThread -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <envs />
+    <method />
+  </configuration>
+</component>
