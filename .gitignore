@@ -10,7 +10,7 @@
 target
 .classpath
 .project
-/build
+build/*
 .DS_Store
 target/*
 .idea/workspace.xml
