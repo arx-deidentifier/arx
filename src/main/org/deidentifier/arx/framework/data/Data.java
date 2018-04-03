@@ -18,9 +18,12 @@
 package org.deidentifier.arx.framework.data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.RowSet;
 
 /**
@@ -41,6 +44,86 @@ public class Data implements Cloneable, Serializable {
 
     /** The inverse outliers mask. */
     public static final int            REMOVE_OUTLIER_MASK = ~OUTLIER_MASK;
+
+
+    /**
+     * Creates an array of modifiable columns
+     * 
+     * @param data
+     * @param header
+     * @param columns
+     * @param dictionary
+     * @return
+     */
+    public static DataColumn[] createColumns(DataMatrix data, String[] header, int[] columns, Dictionary dictionary) {
+
+        // Create columns
+        DataColumn[] result = new DataColumn[columns.length];
+        int index = 0;
+        for (int column : columns) {
+            result[index++] = new DataColumn(data, header, column, dictionary);
+        }
+        
+        // Done
+        return result;
+    }
+    
+    /**
+     * Combines columns back into a data object
+     * @param input
+     * @param columns
+     * @return
+     */
+    public static Data createCombination(Data input, DataColumn[] columns) {
+
+        // Empty object
+        if (columns.length == 0) {
+            return new Data(null, new String[0], new int[0], new Dictionary(0));
+        }
+
+        // Init dictionary
+        Dictionary dictionary = new Dictionary(columns.length);
+
+        // Encode data
+        List<int[]> vals = new ArrayList<int[]>();
+        for (int row = 0; row < input.getDataLength(); row++) {
+
+            // Construct
+            String[] record = new String[columns.length];
+            for (int column = 0; column < columns.length; column++) {
+                record[column] = columns[column].get(row);
+            }
+            
+            // Encode
+            int[] tuple = new int[record.length];
+            for (int i = 0; i < record.length; i++) {
+                String value = record[i];
+                value = (value != null) ? value : DataType.NULL_VALUE;
+                tuple[i] = dictionary.register(i, value);
+            }
+            vals.add(tuple);
+        }
+
+        // Build array
+        DataMatrix data = new DataMatrix(vals.size(), columns.length);
+        for (int row = 0; row < vals.size(); row++) {
+            data.setRow(row, vals.get(row));
+        }
+
+        // Finalize dictionary
+        dictionary.finalizeAll();
+        
+        // Meta data
+        String[] header = new String[columns.length];
+        int[] _columns = new int[columns.length];
+        for (int i = 0; i < columns.length; i++) {
+            header[i] = columns[i].getAttribute();
+            _columns[i] = input.getIndexOf(header[i]);
+        }
+        
+        // Done
+        return new Data(data, header, _columns, dictionary);
+    }
 
     /**
      * Creates an object which projects the given data onto the given set of columns
@@ -172,7 +255,7 @@ public class Data implements Cloneable, Serializable {
     public int getDataLength() {
         return data.getNumRows();
     }
-
+    
     /**
      * Returns the dictionary.
      *
@@ -190,7 +273,7 @@ public class Data implements Cloneable, Serializable {
     public String[] getHeader() {
         return header;
     }
-    
+
     /**
      * Returns the index of the given attribute. Returns -1 if the attribute is not contained.
      * @param attribute

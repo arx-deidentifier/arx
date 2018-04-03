@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.AttributeType.MaskingFunction;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
@@ -37,6 +38,7 @@ import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.framework.data.DataColumn;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
@@ -63,25 +65,28 @@ public class ARXAnonymizer { // NO_UCD
     class Result {
 
         /** The algorithm. */
-        final AbstractAlgorithm     algorithm;
+        final AbstractAlgorithm                        algorithm;
 
         /** The checker. */
-        final TransformationChecker checker;
+        final TransformationChecker                    checker;
 
         /** The solution space. */
-        final SolutionSpace         solutionSpace;
+        final SolutionSpace                            solutionSpace;
 
         /** The data manager. */
-        final DataManager           manager;
+        final DataManager                              manager;
 
         /** The time. */
-        final long                  time;
+        final long                                     time;
 
         /** The global optimum */
-        final Transformation        optimum;
+        final Transformation                           optimum;
 
         /** Whether the optimum has been found */
-        final boolean               optimumFound;
+        final boolean                                  optimumFound;
+
+        /** Masked data */
+        final org.deidentifier.arx.framework.data.Data maskedData;
 
         /**
          * Creates a new instance.
@@ -90,18 +95,21 @@ public class ARXAnonymizer { // NO_UCD
          * @param checker the checker
          * @param lattice the solution space
          * @param manager the manager
+         * @param maskedData the masked data
          * @param algorithm
          * @param time
          */
         Result(final TransformationChecker checker,
                final SolutionSpace solutionSpace,
                final DataManager manager,
+               final org.deidentifier.arx.framework.data.Data maskedData,
                final AbstractAlgorithm algorithm,
                final long time,
                final boolean optimumFound) {
             this.checker = checker;
             this.solutionSpace = solutionSpace;
             this.manager = manager;
+            this.maskedData = maskedData;
             this.algorithm = algorithm;
             this.time = time;
             this.optimum = algorithm.getGlobalOptimum();
@@ -128,6 +136,7 @@ public class ARXAnonymizer { // NO_UCD
             return new ARXResult(ARXAnonymizer.this,
                                  handle.getRegistry(),
                                  this.manager,
+                                 this.maskedData,
                                  this.checker,
                                  handle.getDefinition(),
                                  config,
@@ -538,6 +547,19 @@ public class ARXAnonymizer { // NO_UCD
                 throw new IllegalArgumentException("Attribute '" + attribute + "' has an aggregation function specified wich needs a datatype with a scale of measure of at least " + f.getRequiredScale());
             }
         }
+
+        for (String attribute : handle.getDefinition().getIdentifyingAttributesWithMasking()) {
+            
+            if (handle.getDefinition().getMaskingFunction(attribute)==null) {
+                throw new IllegalArgumentException("No masking function specified for attribute '" + attribute + "'");
+            }
+            
+            MaskingFunction f = (MaskingFunction) definition.getMaskingFunction(attribute);
+            DataType<?> t = definition.getDataType(attribute);
+            if (!t.getDescription().getScale().provides(f.getRequiredScale())) {
+                throw new IllegalArgumentException("Attribute '" + attribute + "' has a masking function specified wich needs a datatype with a scale of measure of at least " + f.getRequiredScale());
+            }
+        }
         
         // Check constraints for (e,d)-DP
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
@@ -663,15 +685,33 @@ public class ARXAnonymizer { // NO_UCD
 
         
         // Execute
-
         long time = System.currentTimeMillis();
+        
+        // Perform data masking
+        org.deidentifier.arx.framework.data.Data maskedData = mask(manager, definition); 
+
+        // Execute search algorithm
         boolean optimumFound = algorithm.traverse();
         
         // Free resources
         checker.reset();
         
         // Return the result
-        return new Result(checker, solutionSpace, manager, algorithm, time, optimumFound);
+        return new Result(checker, solutionSpace, manager, maskedData, algorithm, time, optimumFound);
+    }
+
+    /**
+     * Performs data masking
+     * @param manager
+     * @param definition
+     * @return
+     */
+    private org.deidentifier.arx.framework.data.Data mask(DataManager manager, DataDefinition definition) {
+        DataColumn[] columns = manager.getDataMasking();
+        for (DataColumn column : columns) {
+            definition.getMaskingFunction(column.getAttribute()).apply(column);
+        }
+        return org.deidentifier.arx.framework.data.Data.createCombination(manager.getDataInput(), columns);
     }
 
     /**

@@ -95,6 +95,9 @@ public class DataHandleOutput extends DataHandle {
 
     /** A specific slice of data */
     private Data          dataAggregated;
+    
+    /** A specific slice of data */
+    private Data          dataMasked;
 
     /** Column to data */
     private Data[]        columnToData;
@@ -122,6 +125,7 @@ public class DataHandleOutput extends DataHandle {
      * @param manager
      * @param outputGeneralized
      * @param outputMicroaggregated
+     * @param outputMasked
      * @param node
      * @param definition
      * @param config
@@ -131,12 +135,13 @@ public class DataHandleOutput extends DataHandle {
                                final DataManager manager,
                                final Data outputGeneralized,
                                final Data outputMicroaggregated,
+                               final Data outputMasked,
                                final ARXNode node,
                                final DataDefinition definition,
                                final ARXConfiguration config) {
         
         // Initialize
-        this.initialize(result, registry, manager, outputGeneralized, outputMicroaggregated, node, definition, config);
+        this.initialize(result, registry, manager, outputGeneralized, outputMicroaggregated, outputMasked, node, definition, config);
 
         // Obtain data types
         this.columnToDataType = getColumnToDataType();
@@ -168,9 +173,10 @@ public class DataHandleOutput extends DataHandle {
         Data outputGeneralized = (Data) ois.readObject();
         Data outputMicroaggregated = (Data) ois.readObject();
         DataType<?>[] dataTypes = (DataType<?>[]) ois.readObject();
+        Data dataMasked = (Data) ois.readObject();
 
         // Initialize
-        this.initialize(result, registry, manager, outputGeneralized, outputMicroaggregated, node, definition, config);
+        this.initialize(result, registry, manager, outputGeneralized, outputMicroaggregated, dataMasked, node, definition, config);
 
         // Obtain data types
         this.columnToDataType = dataTypes;
@@ -258,6 +264,7 @@ public class DataHandleOutput extends DataHandle {
         oos.writeObject(this.dataGeneralized);
         oos.writeObject(this.dataAggregated);
         oos.writeObject(this.columnToDataType);
+        oos.writeObject(this.dataMasked);
     }
 
     /**
@@ -267,6 +274,7 @@ public class DataHandleOutput extends DataHandle {
      * @param manager
      * @param outputGeneralized
      * @param outputMicroaggregated
+     * @param dataMasked 
      * @param node
      * @param definition
      * @param config
@@ -276,6 +284,7 @@ public class DataHandleOutput extends DataHandle {
                             final DataManager manager,
                             final Data outputGeneralized,
                             final Data outputMicroaggregated,
+                            final Data dataMasked,
                             final ARXNode node,
                             final DataDefinition definition,
                             final ARXConfiguration config) {
@@ -286,6 +295,7 @@ public class DataHandleOutput extends DataHandle {
         // Extract data
         this.dataGeneralized = outputGeneralized;
         this.dataAggregated = outputMicroaggregated;
+        this.dataMasked = dataMasked;
         this.dataInput = manager.getDataInput();
         this.setHeader(manager.getHeader());
 
@@ -307,6 +317,21 @@ public class DataHandleOutput extends DataHandle {
                 // Store
                 this.columnToIndex[column] = i;
                 this.columnToData[column] = data;
+            }
+        }
+        
+        // Handle masked attributes
+        if (dataMasked != null) {
+            
+            // For each attribute in this block
+            for (int i = 0; i < dataMasked.getHeader().length; i++) {
+
+                // Extract
+                int column = dataMasked.getColumns()[i];
+
+                // Store
+                this.columnToIndex[column] = i;
+                this.columnToData[column] = dataMasked;
             }
         }
         
@@ -374,9 +399,13 @@ public class DataHandleOutput extends DataHandle {
             String attribute = header[i];
             Data data = columnToData[i];
             int index = columnToIndex[i];
-            
-            // We first check for aggregation, as it "dominates" generalization
-            if (data == dataAggregated && !definition.getMicroAggregationFunction(attribute).isTypePreserving()) {
+
+            // We first check for masking
+            if (data == dataMasked && !definition.getMaskingFunction(attribute).isTypePreserving()) {
+                result[i] = DataType.STRING;
+                
+            // Next, we check for aggregation, as it "dominates" generalization
+            } else if (data == dataAggregated && !definition.getMicroAggregationFunction(attribute).isTypePreserving()) {
                 result[i] = DataType.STRING;
                 
             // Now we check for generalization
@@ -482,6 +511,14 @@ public class DataHandleOutput extends DataHandle {
     }
     
     /**
+     * Returns masked data. For internal use only.
+     * @return
+     */
+    protected Data getMaskedData() {
+        return this.dataMasked;
+    }
+    
+    /**
      * Returns the output buffer
      * @return
      */
@@ -519,7 +556,7 @@ public class DataHandleOutput extends DataHandle {
             return -1;
         }
     }
-    
+
     /**
      * A negative integer, zero, or a positive integer as the first argument is
      * less than, equal to, or greater than the second. It uses the specified
@@ -564,7 +601,7 @@ public class DataHandleOutput extends DataHandle {
         }
         return 0;
     }
-
+    
     @Override
     protected int internalGetEncodedValue(final int row,
                                           final int col,
@@ -668,8 +705,7 @@ public class DataHandleOutput extends DataHandle {
         // Return
         return found;
     }
-    
-
+	
     /**
      * Swap internal.
      * 
@@ -686,12 +722,12 @@ public class DataHandleOutput extends DataHandle {
             dataAggregated.getArray().swap(row1, row2);
         }
     }
-
+	
     @Override
     protected boolean isAnonymous() {
         return this.anonymous;
     }
-
+    
     /**
      * Marks this handle as optimized
      * @param optimized

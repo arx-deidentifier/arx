@@ -47,43 +47,46 @@ import org.deidentifier.arx.metric.Metric;
 public class ARXResult {
 
     /** Anonymizer */
-    private ARXAnonymizer                   anonymizer;
+    private ARXAnonymizer              anonymizer;
 
     /** Lock the buffer. */
-    private DataHandle                      bufferLockedByHandle = null;
+    private DataHandle                 bufferLockedByHandle = null;
 
     /** Lock the buffer. */
-    private ARXNode                         bufferLockedByNode   = null;
+    private ARXNode                    bufferLockedByNode   = null;
 
     /** The output buffer. */
-    private final DataMatrix                buffer;
+    private final DataMatrix           buffer;
+
+    /** Masked data */
+    private Data                       masked;
 
     /** The config. */
-    private final ARXConfiguration          config;
+    private final ARXConfiguration     config;
 
     /** The data definition. */
-    private final DataDefinition            definition;
+    private final DataDefinition       definition;
 
     /** Wall clock. */
-    private final long                      duration;
+    private final long                 duration;
 
     /** The lattice. */
-    private final ARXLattice                lattice;
+    private final ARXLattice           lattice;
 
     /** The data manager. */
-    private final DataManager               manager;
+    private final DataManager          manager;
 
     /** The global optimum. */
-    private final ARXNode                   optimalTransformation;
+    private final ARXNode              optimalTransformation;
 
     /** The registry. */
-    private final DataRegistry              registry;
+    private final DataRegistry         registry;
 
     /** The solution space. */
-    private final SolutionSpace             solutionSpace;
+    private final SolutionSpace        solutionSpace;
 
     /** Whether the optimum has been found */
-    private final boolean                   optimumFound;
+    private final boolean              optimumFound;
 
     /** Optimization statistics */
     private final ARXProcessStatistics statistics;
@@ -165,13 +168,14 @@ public class ARXResult {
         this.optimumFound = this.statistics.isSolutationAvailable() ? this.statistics.getStep(0).isOptimal() : false;
         this.duration = this.statistics.getDuration();
     }
-    
+
     /**
      * Creates a new instance.
      *
      * @param anonymizer
      * @param registry
      * @param manager
+     * @param maskedData
      * @param checker
      * @param definition
      * @param config
@@ -183,6 +187,7 @@ public class ARXResult {
     protected ARXResult(ARXAnonymizer anonymizer,
                         DataRegistry registry,
                         DataManager manager,
+                        Data maskedData,
                         TransformationChecker checker,
                         DataDefinition definition,
                         ARXConfiguration config,
@@ -192,6 +197,7 @@ public class ARXResult {
                         boolean optimumFound) {
 
         this.anonymizer = anonymizer;
+        this.masked = maskedData;
         this.registry = registry;
         this.manager = manager;
         this.buffer = checker.getOutputBuffer();
@@ -348,6 +354,7 @@ public class ARXResult {
                                                        manager,
                                                        information.bufferGeneralized,
                                                        information.bufferMicroaggregated,
+                                                       masked,
                                                        node,
                                                        definition,
                                                        config);
@@ -397,9 +404,12 @@ public class ARXResult {
                                                        definition,
                                                        config);
         
+        // Remember masked data
+        this.masked = (result == null) ? null : result.getMaskedData();
+        
         // Lock
-        bufferLockedByHandle = result; 
-        bufferLockedByNode = transformation;
+        this.bufferLockedByHandle = result; 
+        this.bufferLockedByNode = transformation;
         
         // Return
         return result;

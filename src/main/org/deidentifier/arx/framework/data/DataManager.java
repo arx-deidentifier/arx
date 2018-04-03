@@ -283,7 +283,7 @@ public class DataManager {
             }
         }
     }
-
+    
     /**
      * For creating a projected instance
      * @param dataAnalyzed
@@ -333,6 +333,14 @@ public class DataManager {
     }
 
     /**
+     * Returns data configuring microaggregation
+     * @return
+     */
+    public DataAggregationInformation getAggregationInformation() {
+        return this.aggregationInformation;
+    }
+
+    /**
      * Returns the input data that will be analyzed.
      * 
      * @return the data
@@ -357,6 +365,15 @@ public class DataManager {
      */
     public Data getDataInput() {
         return dataInput;
+    }
+
+    /**
+     * Returns data columns for masking
+     */
+    public DataColumn[] getDataMasking() {
+        Set<String> attributesMasked = new HashSet<String>();
+        attributesMasked.addAll(definition.getIdentifyingAttributesWithMasking());
+        return Data.createColumns(dataInput.getArray(), header, getColumns(header, attributesMasked), dataInput.getDictionary());
     }
 
     /**
@@ -489,14 +506,6 @@ public class DataManager {
 
     public int[] getHierarchiesMinLevels() {
         return generalizationLevelsMaximum;
-    }
-
-    /**
-     * Returns data configuring microaggregation
-     * @return
-     */
-    public DataAggregationInformation getAggregationInformation() {
-        return this.aggregationInformation;
     }
 
     /**
@@ -670,7 +679,7 @@ public class DataManager {
 
         return treeArray;
     }
-
+    
     /**
      * Returns the tree for the given sensitive attribute, if a generalization hierarchy is associated.
      * The resulting tree can be used to calculate the earth mover's distance with hierarchical ground-distance.
@@ -683,7 +692,7 @@ public class DataManager {
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
     }
-    
+
     /**
      * Simple returns the set of all columns
      * @param header
@@ -696,7 +705,7 @@ public class DataManager {
         }
         return result;
     }
-
+    
     /**
      * Returns an array of indices for the given subsets of strings. All sets most be mutually exclusive.
      * @param header
@@ -736,8 +745,7 @@ public class DataManager {
         // Done
         return array;
     }
-    
-    
+
     /**
      * Returns the data definitions
      * @return

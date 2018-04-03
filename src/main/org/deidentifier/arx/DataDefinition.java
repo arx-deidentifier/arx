@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MaskingFunction;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.certificate.elements.ElementData;
@@ -54,6 +55,9 @@ public class DataDefinition implements Cloneable{
 
     /** The mapped functions. */
     private final Map<String, MicroAggregationFunction> functions         = new HashMap<String, MicroAggregationFunction>();
+
+    /** The mapped functions. */
+    private final Map<String, MaskingFunction>          masking           = new HashMap<String, MaskingFunction>();
 
     /** The mapped data types. */
     private final Map<String, DataType<?>>              dataTypes         = new HashMap<String, DataType<?>>();
@@ -86,6 +90,9 @@ public class DataDefinition implements Cloneable{
         }
         for (final String attr : functions.keySet()) {
             d.functions.put(attr, functions.get(attr) == null ? null : functions.get(attr).clone());
+        }
+        for (final String attr : masking.keySet()) {
+            d.masking.put(attr, masking.get(attr) == null ? null : masking.get(attr).clone());
         }
         for (final String attr : minGeneralization.keySet()) {
             d.minGeneralization.put(attr, minGeneralization.get(attr));
@@ -176,6 +183,20 @@ public class DataDefinition implements Cloneable{
     }
     
     /**
+     * Returns identifying attributes for which a masking function has been defined
+     * @return
+     */
+    public Set<String> getIdentifyingAttributesWithMasking() {
+        final Set<String> result = new HashSet<String>();
+        for (String attr : getAttributesByType(AttributeType.ATTR_TYPE_ID)) {
+            if (getMaskingFunction(attr) != null) {
+                result.add(attr);
+            }
+        }
+        return result;
+    }
+    
+    /**
      * Returns the insensitive attributes.
      *
      * @return
@@ -184,6 +205,16 @@ public class DataDefinition implements Cloneable{
         return getAttributesByType(AttributeType.ATTR_TYPE_IS);
     }
     
+    /**
+     * Returns the according masking function.
+     * 
+     * @param attribute
+     * @return
+     */
+    public MaskingFunction getMaskingFunction(final String attribute) {
+        return masking.get(attribute);
+    }
+
     /**
      * Returns the maximum generalization for the attribute.
      *
@@ -244,7 +275,7 @@ public class DataDefinition implements Cloneable{
         }
         return result;
     }
-    
+
     /**
      * Returns the quasi-identifiers for which generalization is specified.
      * @return
@@ -258,7 +289,7 @@ public class DataDefinition implements Cloneable{
         }
         return result;
     }
-
+    
     /**
      * Returns the quasi-identifiers for which microaggregation is specified.
      * @return
@@ -272,7 +303,7 @@ public class DataDefinition implements Cloneable{
         }
         return result;
     }
-    
+
     /**
      * Returns the quasi identifying attributes.
      *
@@ -281,7 +312,7 @@ public class DataDefinition implements Cloneable{
     public Set<String> getQuasiIdentifyingAttributes() {
         return getAttributesByType(AttributeType.ATTR_TYPE_QI);
     }
-
+    
     /**
      * Returns the set of defined response variables
      * @return
@@ -298,6 +329,7 @@ public class DataDefinition implements Cloneable{
         return result;
     }
     
+
     /**
      * Returns the sensitive attributes.
      *
@@ -317,7 +349,6 @@ public class DataDefinition implements Cloneable{
     public boolean isHierarchyAvailable(String attribute) {
         return getHierarchy(attribute) != null;
     }
-    
 
     /**
      * Returns whether a hierarchy builder is available.
@@ -349,7 +380,7 @@ public class DataDefinition implements Cloneable{
         return maxGeneralization.containsKey(attribute) || (this.getHierarchy(attribute) != null);
         
     }
-
+    
     /**
      * Returns whether a minimum generalization level is available.
      *
@@ -360,7 +391,7 @@ public class DataDefinition implements Cloneable{
         checkQuasiIdentifier(attribute);
         return true;
     }
-    
+
     /**
      * Returns whether the given attribute is a response variable
      * @param attribute
@@ -385,6 +416,8 @@ public class DataDefinition implements Cloneable{
         this.hierarchies.putAll(other.hierarchies);
         this.functions.clear();
         this.functions.putAll(other.functions);
+        this.masking.clear();
+        this.masking.putAll(other.masking);
         this.dataTypes.clear();
         this.dataTypes.putAll(other.dataTypes);
         this.minGeneralization.clear();
@@ -432,6 +465,11 @@ public class DataDefinition implements Cloneable{
                 result.add(render(attribute, this.functions.get(attribute)));
             }
         }
+        for (String attribute : attributes) {
+            if (this.masking.containsKey(attribute) && this.masking.get(attribute) != null) {
+                result.add(render(attribute, this.masking.get(attribute)));
+            }
+        }
         return result;
     }
 
@@ -452,7 +490,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         this.hierarchies.remove(attribute);
     }
-
+    
     /**
      * Resets the according setting
      * @param attribute
@@ -460,6 +498,15 @@ public class DataDefinition implements Cloneable{
     public void resetHierarchyBuilder(String attribute) {
         checkLocked();
         this.builders.remove(attribute);
+    }
+
+    /**
+     * Resets the according setting
+     * @param attribute
+     */
+    public void resetMaskingFunction(String attribute) {
+        checkLocked();
+        this.masking.remove(attribute);
     }
     
     /**
@@ -470,7 +517,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         this.minGeneralization.remove(attribute);
     }
-
+    
     /**
      * Resets the according setting
      * @param attribute
@@ -479,7 +526,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         this.functions.remove(attribute);
     }
-    
+
     /**
      * Resets the according setting
      * @param attribute
@@ -558,6 +605,16 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Associates the given masking function
+     * @param attribute
+     * @param function
+     */
+    public void setMaskingFunction(String attribute, MaskingFunction function) {
+        checkLocked();
+        this.masking.put(attribute, function);
+    }
+
+    /**
      * Define the maximal generalization of a given attribute.
      *
      * @param attribute
@@ -579,7 +636,7 @@ public class DataDefinition implements Cloneable{
     public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function) {
         this.setMicroAggregationFunction(attribute, function, false);
     }
-
+    
     /**
      * Associates the given microaggregation function
      * @param attribute
@@ -608,7 +665,7 @@ public class DataDefinition implements Cloneable{
         checkLocked();
         minGeneralization.put(attribute, minimumLevel);
     }
-    
+
     /**
      * Sets whether the given attribute is a response variable
      * @param attribute
@@ -630,7 +687,7 @@ public class DataDefinition implements Cloneable{
     private void checkLocked() throws IllegalStateException{
         if (locked) {throw new IllegalStateException("This definition is currently locked");}
     }
-
+    
     /**
      * Checks whether the argument is null.
      *
@@ -641,7 +698,7 @@ public class DataDefinition implements Cloneable{
     private void checkNullArgument(Object argument, String name) throws IllegalArgumentException {
         if (argument == null) { throw new NullPointerException(name + " must not be null"); }
     }
-    
+
     /**
      * Checks whether the attribute is a quasi-identifier.
      *
@@ -693,6 +750,21 @@ public class DataDefinition implements Cloneable{
     }
 
     /**
+     * Renders a masking function
+     * @param attribute
+     * @param function
+     * @return
+     */
+    private ElementData render(String attribute, MaskingFunction function) {
+        ElementData result = new ElementData("Masking function");
+        result.addProperty("Attribute", attribute);
+        if (function != null) {
+            result.addProperty("Type", function.getLabel());
+        }
+        return result;
+    }
+
+    /**
      * Renders a microaggregation function
      * @param attribute
      * @param function
@@ -727,7 +799,7 @@ public class DataDefinition implements Cloneable{
          }
          return result;
     }
-
+    
     /**
      * Materializes all functional hierarchies.
      *
@@ -762,7 +834,7 @@ public class DataDefinition implements Cloneable{
             }
         }
     }
-    
+
     /**
      * Parses the configuration of the import adapter.
      *

@@ -35,10 +35,13 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionInterval;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMedian;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMode;
+import org.deidentifier.arx.framework.data.DataColumn;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.IOUtil;
+import org.deidentifier.arx.masking.DataMaskingFunction;
+import org.deidentifier.arx.masking.DataMaskingFunction.DataMaskingFunctionRandomAlphanumericString;
 
 /**
  * Represents an attribute type.
@@ -634,7 +637,7 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
             output.write(getHierarchy());
         }
     }
-    
+
     /**
      * This class is used to define aggregate functions for microaggregation.
      * 
@@ -809,7 +812,6 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
         }
     }
 
-
     /**
      * This class describes a microaggregation function
      * @author Fabian Prasser
@@ -830,8 +832,7 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
          * @param requiredScale
          * @param label 
          */
-        private MicroAggregationFunctionDescription(DataScale requiredScale,
-                                                    String label) {
+        private MicroAggregationFunctionDescription(DataScale requiredScale, String label) {
             this.requiredScale = requiredScale;
             this.label = label;
         }
@@ -858,6 +859,147 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
         }
     }
 
+    /**
+     * This class is used to define masking functions for identifying attributes
+     * 
+     * @author Fabian Prasser
+     * @param <T>
+     *
+     */
+    public static class MaskingFunction extends AttributeType implements Serializable {
+
+        /** SVUID*/
+        private static final long serialVersionUID = -28667312229429486L;
+
+        /**
+         * Creates a masking function creating random alphanumeric strings of length 10
+         * 
+         * @return
+         */
+        public static MaskingFunction createRandomAlphanumericString() {
+            return createRandomAlphanumericString(true, 10);
+        }
+            /**
+             * Creates a masking function creating random alphanumeric strings
+             * 
+             * @param ignoreMissingData Should the function ignore missing data. Default is true.
+             * @param length Length of the string to create
+             * @return
+             */
+            public static MaskingFunction createRandomAlphanumericString(boolean ignoreMissingData, int length) {
+                return new MaskingFunction(new DataMaskingFunctionRandomAlphanumericString(ignoreMissingData, length),
+                                           DataScale.NOMINAL, "Random alphanumeric string");
+            }
+        
+        /** The actual masking function */
+        private final DataMaskingFunction function;
+        
+        /** The required scale*/
+        private final DataScale requiredScale;
+        
+        /** The label*/
+        private final String label;
+        
+        /**
+         * Instantiates a new function.
+         * @param function
+         * @param requiredScale
+         * @param label 
+         */
+        private MaskingFunction(DataMaskingFunction function, DataScale requiredScale, String label) {
+            super(ATTR_TYPE_ID);
+            this.function = function;
+            this.requiredScale = requiredScale;
+            this.label = label;
+        }
+
+        /**
+         * Clones this function
+         */
+        public MaskingFunction clone() {
+            return new MaskingFunction(this.function.clone(), this.requiredScale, this.label);
+        }
+        
+        /**
+         * Returns a label for this function
+         * @return the label
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * Returns the required scale of measure
+         * @return
+         */
+        public DataScale getRequiredScale() {
+            return requiredScale;
+        }
+        
+        /**
+         * Returns whether this is a type-preserving function
+         * @return
+         */
+        public boolean isTypePreserving() {
+            return function.isTypePreserving();
+        }
+        
+        /** 
+         * Applies the function
+         * @param column
+         */
+        protected void apply(DataColumn column) {
+            function.apply(column);
+        }
+    }
+
+    /**
+     * This class describes a masking function
+     * @author Fabian Prasser
+     */
+    public abstract static class MaskingFunctionDescription implements Serializable { // NO_UCD
+
+        /** SVUID*/
+        private static final long serialVersionUID = 1518395725471970719L;
+
+        /** The required scale*/
+        private final DataScale requiredScale;
+        
+        /** The label*/
+        private final String label;
+        
+        /**
+         * Instantiates a new hierarchy.
+         * @param requiredScale
+         * @param label 
+         */
+        private MaskingFunctionDescription(DataScale requiredScale, String label) {
+            this.requiredScale = requiredScale;
+            this.label = label;
+        }
+        
+        /**
+         * Creates an instance
+         * @param ignoreMissingData
+         * @return
+         */
+        public abstract MaskingFunction createInstance(boolean ignoreMissingData);
+
+        /**
+         * @return the label
+         */
+        public String getLabel() {
+            return label;
+        }
+
+        /**
+         * @return the requiredScale
+         */
+        public DataScale getRequiredScale() {
+            return requiredScale;
+        }
+    }
+    
     /** SVUID. */
     private static final long   serialVersionUID            = -7358540408016873823L;
 
@@ -924,8 +1066,35 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
         });
     }
 
+    /**
+     * Lists all available masking functions
+     * @return
+     */
+    public static List<MaskingFunctionDescription> listMaskingFunctions() {
+        return Arrays.asList(new MaskingFunctionDescription[] {
+                new MaskingFunctionDescription(DataScale.ORDINAL, "Random alphanumeric string (10)") {
+                    /** SVUID*/  private static final long serialVersionUID = 8001475078517380349L;
+                    @Override public MaskingFunction createInstance(boolean ignoreMissingData) {
+                        return MaskingFunction.createRandomAlphanumericString(ignoreMissingData, 10);
+                    }
+                },
+                new MaskingFunctionDescription(DataScale.ORDINAL, "Random alphanumeric string (20)") {
+                    /** SVUID*/  private static final long serialVersionUID = 2073791395439992948L;
+                    @Override public MaskingFunction createInstance(boolean ignoreMissingData) {
+                        return MaskingFunction.createRandomAlphanumericString(ignoreMissingData, 20);
+                    }
+                },
+                new MaskingFunctionDescription(DataScale.ORDINAL, "Random alphanumeric string (30)") {
+                    /** SVUID*/  private static final long serialVersionUID = -4081751825585451168L;
+                    @Override public MaskingFunction createInstance(boolean ignoreMissingData) {
+                        return MaskingFunction.createRandomAlphanumericString(ignoreMissingData, 30);
+                    }
+                }
+        });
+    }
+    
     /** The type. */
-    private int                 type                        = 0x0;
+    private int type = 0x0;
 
     /**
      * Instantiates a new type.
