@@ -36,17 +36,14 @@ public abstract class DataMaskingFunction implements Serializable {
      */
     public static class DataMaskingFunctionRandomAlphanumericString extends DataMaskingFunction {
         
-        /** SVUID*/
-        private static final long serialVersionUID = 918401877743413029L;
-        
-        /** Characters*/
-        private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-        
-        /** Random */
-        private final Random random;
-        
-        /** Buffer */
-        private final char[] buffer;
+        /** SVUID */
+        private static final long   serialVersionUID = 918401877743413029L;
+
+        /** Characters */
+        private static final char[] CHARACTERS       = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
+
+        /** Length */
+        private final int           length;
         
         /**
          * Creates a new instance
@@ -55,27 +52,33 @@ public abstract class DataMaskingFunction implements Serializable {
          */
         public DataMaskingFunctionRandomAlphanumericString(boolean ignoreMissingData, int length) {
             super(ignoreMissingData, false);
-            this.buffer = new char[length];
-            this.random = new SecureRandom();
+            this.length = length;
         }
 
         @Override
         public void apply(DataColumn column) {
+
+            // Prepare
+            Random random = new SecureRandom();
+            char[] buffer = new char[length];
+
             for (int row = 0; row < column.getNumRows(); row++) {
-                column.set(row, getRandomAlphanumericString());
+                column.set(row, getRandomAlphanumericString(buffer, random));
             }
         }
 
         @Override
         public DataMaskingFunction clone() {
-            return new DataMaskingFunctionRandomAlphanumericString(super.isIgnoreMissingData(), buffer.length);
+            return new DataMaskingFunctionRandomAlphanumericString(super.isIgnoreMissingData(), length);
         }
 
         /**
          * Creates a random string
+         * @param random 
+         * @param buffer 
          * @return
          */
-        private String getRandomAlphanumericString() {
+        private String getRandomAlphanumericString(char[] buffer, Random random) {
             for (int i = 0; i < buffer.length; i++) {
                 buffer[i] = CHARACTERS[random.nextInt(CHARACTERS.length)];
             }
