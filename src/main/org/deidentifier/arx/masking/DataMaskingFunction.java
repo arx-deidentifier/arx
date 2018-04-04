@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.framework.data.DataColumn;
 
 /**
@@ -62,8 +63,13 @@ public abstract class DataMaskingFunction implements Serializable {
             Random random = new SecureRandom();
             char[] buffer = new char[length];
 
+            // Mask
             for (int row = 0; row < column.getNumRows(); row++) {
-                column.set(row, getRandomAlphanumericString(buffer, random));
+                
+                // Leave null as is, if configured to not ignore missing data
+                if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
+                    column.set(row, getRandomAlphanumericString(buffer, random));
+                }
             }
         }
 
