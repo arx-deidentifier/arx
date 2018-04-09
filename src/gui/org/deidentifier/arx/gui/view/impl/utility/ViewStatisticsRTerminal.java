@@ -296,7 +296,6 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 
 	@Override
 	protected AnalysisContextR createViewConfig(AnalysisContext context) {
-		
 		return new AnalysisContextR(context);
 	}
 
@@ -314,8 +313,8 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	@Override
 	protected void doUpdate(AnalysisContextR context) {
 	    
-		final DataHandle handle = context.handle;
-		final DataHandle outputhandle = context.model.getOutput();
+		final DataHandle handle = context.input;
+		final DataHandle outputhandle = context.output;
 		
 		// For test purposes:
 		System.out.println("Columns output:" + outputhandle.getNumColumns());
