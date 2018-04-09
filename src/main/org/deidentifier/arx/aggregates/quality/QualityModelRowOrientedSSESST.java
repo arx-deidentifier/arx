@@ -168,8 +168,8 @@ public class QualityModelRowOrientedSSESST extends QualityModel<QualityMeasureRo
                 double maximum1 = input[column][row + 1];
                 double minimum2 = output[column][row];
                 double maximum2 = output[column][row + 1];
-                double inputVal = (minimum1 + maximum1) / 2;
-                double outputVal = (minimum2 + maximum2) / 2;
+                double inputVal = (minimum1 + maximum1) / 2d;
+                double outputVal = (minimum2 + maximum2) / 2d;
                 resultRow += Math.pow(inputVal - outputVal, 2d);
             }
             
@@ -201,10 +201,10 @@ public class QualityModelRowOrientedSSESST extends QualityModel<QualityMeasureRo
                 
             // For each column
             for(int column=0; column<input.length; column++){
-                double minimum2 = output[column][row];
-                double maximum2 = output[column][row + 1];
-                double outputVal = (minimum2 + maximum2) / 2;
-                centroid[column] += outputVal;
+                double minimum = input[column][row];
+                double maximum = input[column][row + 1];
+                double value = (minimum + maximum) / 2d;
+                centroid[column] += value;
             }
         }
         // For each column
@@ -220,10 +220,10 @@ public class QualityModelRowOrientedSSESST extends QualityModel<QualityMeasureRo
             double resultRow = 0;
             for(int column=0; column<input.length; column++){
                 
-                double minimum1 = input[column][row];
-                double maximum1 = input[column][row + 1];
-                double inputVal = (minimum1 + maximum1) / 2;
-                resultRow += Math.pow(inputVal - centroid[column], 2d);
+                double minimum = output[column][row];
+                double maximum = output[column][row + 1];
+                double value = (minimum + maximum) / 2d;
+                resultRow += Math.pow(value - centroid[column], 2d);
             }
             
             // Summarize
