@@ -74,6 +74,11 @@ public class RBuffer {
     
     public void clearBuffer() {
     	length = 0;
+    	//offset = 0;
+    }
+    
+    public int getLength() {
+    	return length;
     }
     
 }
