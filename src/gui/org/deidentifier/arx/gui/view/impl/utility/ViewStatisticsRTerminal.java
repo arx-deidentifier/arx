@@ -282,7 +282,6 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 
 	@Override
 	protected AnalysisContextR createViewConfig(AnalysisContext context) {
-		
 		return new AnalysisContextR(context);
 	}
 
@@ -300,7 +299,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	@Override
 	protected void doUpdate(AnalysisContextR context) {
 	    
-		final DataHandle handle = context.handle;
+		final DataHandle handle = context.input;
 		
 		Analysis analysis = new Analysis() {
 
