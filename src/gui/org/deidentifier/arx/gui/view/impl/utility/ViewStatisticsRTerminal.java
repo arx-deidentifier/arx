@@ -52,6 +52,10 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
     private StyledText output;
     /** R process*/
 	private RIntegration rIntegration;
+	
+	private RBuffer buffer;
+	
+	private RListener listener;
     
 	/**
 	 * Creates a new instance
@@ -111,18 +115,22 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	private String convertARXToRType(DataType<?> t, int numRows) {
 		//speed things up through allocating memory beforehand with numRows
 		if (t instanceof DataType.ARXDate) {
-			return "as.POSIXct(integer(" + numRows + "), origin=\"1970-01-01\")";
+			//return "as.POSIXct(integer(" + numRows + "), origin=\"1970-01-01\")";
+			//TODO: Check
+			return "rep(as.POSIXct(integer(NA), " + numRows + ")";
 			
 		} else if (t instanceof DataType.ARXDecimal) {
-			return "numeric(" + numRows + ")";
+			return "rep(as.numeric(NA), " + numRows + ")";
 			
 		} else if (t instanceof DataType.ARXInteger) {
-			return "integer(" + numRows + ")";
+			//return "integer(" + numRows + ")";
+			return "rep(as.integer(NA), " + numRows + ")";
 			
 		} else if (t instanceof DataType.ARXOrderedString) {
+			//TODO: Check
 			List<String> levelStringList = ((DataType.ARXOrderedString) t).getElements();
 			StringBuilder levelBuilder = new StringBuilder();
-			levelBuilder.append("ordered(c(" + numRows + "), levels=c(");
+			levelBuilder.append("rep(as.ordered(c(NA), " + numRows + "), levels=c(");
 			
 			int listSize = levelStringList.size();
 			for (int i = 0; i < listSize; i++) {
@@ -138,9 +146,11 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 			return levelBuilder.toString();
 			
 		} else if (t instanceof DataType.ARXString) {
-			return "character(" + numRows + ")";
+			return "rep(as.character(NA), " + numRows + ")";
 			
-		} else {
+		} /*else if (t instanceof DataType.ARXBoolean) { //at the moment not existing
+			return "rep(as.logical(NA), " + numRows + ")";
+		} */ else {
 			// Type unknown
 			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
 		}
@@ -164,13 +174,15 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 		} else if (t instanceof DataType.ARXString) {
 			return ("\"" + value + "\"");
 			
-		} else {
+		} /*else if (t instanceof DataType.ARXBoolean) { //at the moment not existing
+			return "as.logical(" + value + ")";
+		} */else {
 			// Type unknown
 			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
 		}
 	}
 	
-	private String createDataFrame(DataHandle handle) {		
+	private String createDataFrame(DataHandle handle, int numRows) {		
 		StringBuilder b = new StringBuilder();
 		b.append("data.frame(");
 		for (int i = 0; i < handle.getNumColumns(); i++) {
@@ -178,7 +190,8 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 			b.append('"'); //There have to be quotation marks because there could be hyphens which otherwise provoke an error.
 			b.append(attributeName);
 			b.append("\"=");
-			b.append(convertARXToRType(handle.getDataType(attributeName), handle.getNumColumns())); //speed things up through allocating memory beforehand with numRows
+			b.append(convertARXToRType(handle.getDataType(attributeName), numRows)); // speed things up through allocating memory beforehand with numRows
+			//numRows has to be used from the given arguments because of the outputhandle size problem
 			b.append(',');
 		}
 		b.append("stringsAsFactors=FALSE)");
@@ -218,8 +231,9 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	    this.stopR();
 
 	    // R integration
-	    final RBuffer buffer = new RBuffer(getModel().getRModel().getBufferSize());
-	    final RListener listener = new RListener(getModel().getRModel().getTicksPerSecond(), this.root.getDisplay()) {
+	    buffer = new RBuffer(getModel().getRModel().getBufferSize());
+	    /**RListener***/
+	    listener = new RListener(getModel().getRModel().getTicksPerSecond(), this.root.getDisplay()) {
 
 	        @Override
 	        public void bufferUpdated() {
@@ -301,6 +315,20 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	protected void doUpdate(AnalysisContextR context) {
 	    
 		final DataHandle handle = context.handle;
+		final DataHandle outputhandle = context.model.getOutput();
+		
+		// For test purposes:
+		System.out.println("Columns output:" + outputhandle.getNumColumns());
+		System.out.println("Rows output:" + outputhandle.getNumRows());
+		// Problem: Displays "NA" as first (0) row of output, while the GUI does not show something similar.
+		System.out.println("[9,0]:"  + outputhandle.getValue(9, 0));
+		System.out.println("[10,0]:" + outputhandle.getValue(10, 0));
+		System.out.println("[11,0]:" + outputhandle.getValue(11, 0));
+		System.out.println("[12,0]:" + outputhandle.getValue(12, 0));
+		System.out.println("[13,0]:" + outputhandle.getValue(13, 0));
+		System.out.println("[14,0]:" + outputhandle.getValue(14, 0));
+		System.out.println(outputhandle.toString());
+		// End test purposes
 		
 		Analysis analysis = new Analysis() {
 
@@ -324,7 +352,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 				
                 if (stopped || !isEnabled()) {
                     return;
-                }                
+                }    
 				setStatusDone();
 			}
 
@@ -344,26 +372,43 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
                 
                 startR();
                 
-        		String createcommand = createDataFrame(handle);
-        		executeR("f <- " + createcommand);
-        		executeR("str(f)");
+                //numRows is necessary as argument because somehow the size of outputhandle differs from inputhandle.
+                int numRows = handle.getNumRows();
+                initializeRTable(handle, "input", numRows);
+                initializeRTable(outputhandle, "output", numRows);
+                
+        		executeR("str(input)");
+        		executeR("str(output)");
+                
+        		while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
+                    Thread.sleep(10);
+                }
+			}
+			
+			public void initializeRTable(DataHandle handle, String data, int numRows) {	
+				String createcommand = createDataFrame(handle, numRows); //numRows as argument for the same reason as above
+        		executeR(data +" <- " + createcommand);
+        		executeR("str(" + data + ")");
         		
         		StringBuilder b = new StringBuilder();
         		
-        		for (int j = 0; j < handle.getNumRows(); j++) {
+        		for (int j = 0; j < numRows; j++) {
         		    
-        		    this.progress = j;
+        			//Progress is shown for both: first input then output initialization, should go from 0 to 100%. 
+        			if (handle.equals(outputhandle)) 
+        				this.progress = (numRows/2) + (j/2);
+        			else 
+        				this.progress = j/2;
         		    
         		    if (stopped) {
         		        stopR();
         		        break;
         		    }
         		    
-        			b.append("f[");
+        			b.append(data + "[");
         			b.append(j+1);
         			b.append(",] <-");
         			appendRow(handle, j, b);
-        			// System.out.println(b.toString());
         		
         			if (j % 100 == 0) {
         				executeR(b.toString());				
@@ -374,11 +419,6 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
         		}
         		
         		executeR(b.toString());
-        		executeR("str(f)");
-        		
-                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
-                    Thread.sleep(10);
-                }
 			}
 
 			@Override
