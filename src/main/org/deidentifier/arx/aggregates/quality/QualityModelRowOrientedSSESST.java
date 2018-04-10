@@ -192,7 +192,6 @@ public class QualityModelRowOrientedSSESST extends QualityModel<QualityMeasureRo
                           double[][] output) {
      
         // Prepare
-        double resultOverall = 0d;
         double[] centroid = new double[input.length];
         
         // Calculate centroid
@@ -212,6 +211,8 @@ public class QualityModelRowOrientedSSESST extends QualityModel<QualityMeasureRo
             centroid[column] /= (double)input[0].length / 2d;
         }
         
+        // Calculate SST
+        double resultOverall = 0d;
         
         // For each row
         for(int row=0; row<input[0].length; row+=2){
