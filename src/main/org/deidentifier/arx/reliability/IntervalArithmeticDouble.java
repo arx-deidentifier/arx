@@ -25,22 +25,6 @@ package org.deidentifier.arx.reliability;
  */
 public class IntervalArithmeticDouble {
 
-    public IntervalDouble ZERO;
-    public IntervalDouble ONE;
-    public IntervalDouble MINUS_ONE;
-    public IntervalDouble PI;
-
-    public IntervalArithmeticDouble() {
-        try {
-            ZERO      = createInterval(0d);
-            ONE       = createInterval(1d);
-            MINUS_ONE = createInterval(-1d);
-            PI        = createInterval(3.1415926535897932384d, 3.1415926535897932385d);
-        } catch (IntervalArithmeticException e) {
-            // May never happen
-        }
-    }
-    
     /**
      * Interface for binary operations
      * 
@@ -56,7 +40,6 @@ public class IntervalArithmeticDouble {
          */
         abstract double apply(double operand1, double operand2);
     }
-
     /**
      * Interface for unary operations
      * 
@@ -70,6 +53,46 @@ public class IntervalArithmeticDouble {
          * @return
          */
         abstract double apply(double operand);
+    }
+    
+    /** Interval representing zero */
+    public IntervalDouble ZERO;
+    
+    /** Interval representing one */
+    public IntervalDouble ONE;
+
+    /** Interval representing minus one */
+    public IntervalDouble MINUS_ONE;
+    
+    /** Interval containing pi */
+    public IntervalDouble PI;
+
+    public IntervalArithmeticDouble() {
+        try {
+            ZERO      = createInterval(0d);
+            ONE       = createInterval(1d);
+            MINUS_ONE = createInterval(-1d);
+            PI        = createInterval(3.1415926535897932384d, 3.1415926535897932385d);
+        } catch (IntervalArithmeticException e) {
+            // May never happen
+        }
+    }
+    
+    /**
+     * Absolute value
+     * @param operand
+     * @return
+     * @throws IntervalArithmeticException
+     */
+    public IntervalDouble abs(IntervalDouble operand) throws IntervalArithmeticException {
+        if (operand.lower < 0 && operand.upper > 0) {
+            throw new IntervalArithmeticException("Undecidable sign");
+        }
+        return apply(operand, new UnaryOperationDouble() {
+            public double apply(double operand) {
+                return Math.abs(operand);
+            }
+        }, false);
     }
     
     /**
@@ -300,7 +323,12 @@ public class IntervalArithmeticDouble {
      * @throws IntervalArithmeticException
      */
     public boolean greaterThan(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
-        checkComparison(operand1, operand2);
+
+        // Check for overlap
+        if (!(operand1.upper < operand2.lower || operand2.upper < operand1.lower)) {
+            throw new IntervalArithmeticException("Undecidable relationship");
+        }
+        
         return operand1.lower > operand2.upper;
     }
 
@@ -326,18 +354,13 @@ public class IntervalArithmeticDouble {
      * @throws IntervalArithmeticException
      */
     public boolean lessThan(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
-        checkComparison(operand1, operand2);
-        return operand1.upper < operand2.lower;
-    }
 
-    /**
-     * Less than or overlap
-     * @param operand1
-     * @param operand2
-     * @return
-     */
-    public boolean lessThanOrOverlap(IntervalDouble operand1, IntervalDouble operand2) {
-        return operand1.lower <= operand2.upper;
+        // Check for overlap
+        if (!(operand1.upper < operand2.lower || operand2.upper < operand1.lower)) {
+            throw new IntervalArithmeticException("Undecidable relationship");
+        }
+        
+        return operand1.upper < operand2.lower;
     }
 
     /**
@@ -348,7 +371,24 @@ public class IntervalArithmeticDouble {
      * @throws IntervalArithmeticException
      */
     public boolean lessThanOrEqual(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
-        return (operand1.upper < operand2.lower) || ((operand1.lower == operand2.lower) && (operand1.upper == operand2.upper));
+        
+        // Equals
+        if (operand1.upper == operand2.lower) {
+            return true;
+        }
+
+        // Must be less
+        return lessThan(operand1, operand2);
+    }
+
+    /**
+     * Less than or overlap
+     * @param operand1
+     * @param operand2
+     * @return
+     */
+    public boolean lessThanOrOverlap(IntervalDouble operand1, IntervalDouble operand2) {
+        return operand1.lower <= operand2.upper;
     }
 
     /**
@@ -395,7 +435,20 @@ public class IntervalArithmeticDouble {
      * @throws IntervalArithmeticException
      */
     public IntervalDouble max(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
-        checkComparison(operand1, operand2);
+
+        // Equals
+        if (operand1.upper == operand2.lower) {
+            return operand2;
+        }
+        if (operand2.upper == operand1.lower) {
+            return operand1;
+        }
+
+        // Check for overlap
+        if (!(operand1.upper < operand2.lower || operand2.upper < operand1.lower)) {
+            throw new IntervalArithmeticException("Undecidable relationship");
+        }
+        
         if (operand1.upper < operand2.lower) {
             return operand2;
         } else {
@@ -411,7 +464,20 @@ public class IntervalArithmeticDouble {
      * @throws IntervalArithmeticException
      */
     public IntervalDouble min(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
-        checkComparison(operand1, operand2);
+
+        // Equals
+        if (operand1.upper == operand2.lower) {
+            return operand1;
+        }
+        if (operand2.upper == operand1.lower) {
+            return operand2;
+        }
+
+        // Check for overlap
+        if (!(operand1.upper < operand2.lower || operand2.upper < operand1.lower)) {
+            throw new IntervalArithmeticException("Undecidable relationship");
+        }
+        
         if (operand1.upper < operand2.lower) {
             return operand1;
         } else {
@@ -571,24 +637,6 @@ public class IntervalArithmeticDouble {
         // Hence, we can calculate a reliable upper bound by returning the next adjacent floating-point number in direction +infinity.
         return Math.nextAfter(value, Double.POSITIVE_INFINITY);
     }
-
-    /**
-     * Checks the decidability of comparisons
-     * @param operand1
-     * @param operand2
-     * @throws IntervalArithmeticException
-     */
-    private void checkComparison(IntervalDouble operand1, IntervalDouble operand2) throws IntervalArithmeticException {
-        // Check for equality
-        if (operand1.lower == operand2.lower && operand1.upper == operand2.upper) {
-            return;
-        }
-        // Check for overlap
-        if (!(operand1.upper < operand2.lower || operand2.upper < operand1.lower)) {
-            throw new IntervalArithmeticException("Undecidable relationship");
-        }
-    }
-    
 
     /**
      * Checks an interval
