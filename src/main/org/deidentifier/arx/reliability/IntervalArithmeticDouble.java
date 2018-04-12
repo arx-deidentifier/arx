@@ -40,7 +40,7 @@ public class IntervalArithmeticDouble {
          */
         abstract double apply(double operand1, double operand2);
     }
-    
+
     /**
      * Interface for unary operations
      * 
