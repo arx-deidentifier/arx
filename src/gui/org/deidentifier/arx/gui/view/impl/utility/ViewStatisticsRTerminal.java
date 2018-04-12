@@ -15,10 +15,7 @@
  * limitations under the License.
  */
 package org.deidentifier.arx.gui.view.impl.utility;
-
 import java.util.Date;
-import java.util.List;
-
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
@@ -115,37 +112,15 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	private String convertARXToRType(DataType<?> t, int numRows) {
 		//speed things up through allocating memory beforehand with numRows
 		if (t instanceof DataType.ARXDate) {
-			//return "as.POSIXct(integer(" + numRows + "), origin=\"1970-01-01\")";
-			//TODO: Check
-			return "rep(as.POSIXct(integer(NA), " + numRows + ")";
+			return "rep(as.Date(NA), " + numRows + ")";
 			
 		} else if (t instanceof DataType.ARXDecimal) {
 			return "rep(as.numeric(NA), " + numRows + ")";
 			
 		} else if (t instanceof DataType.ARXInteger) {
-			//return "integer(" + numRows + ")";
 			return "rep(as.integer(NA), " + numRows + ")";
 			
-		} else if (t instanceof DataType.ARXOrderedString) {
-			//TODO: Check
-			List<String> levelStringList = ((DataType.ARXOrderedString) t).getElements();
-			StringBuilder levelBuilder = new StringBuilder();
-			levelBuilder.append("rep(as.ordered(c(NA), " + numRows + "), levels=c(");
-			
-			int listSize = levelStringList.size();
-			for (int i = 0; i < listSize; i++) {
-				levelBuilder.append('"');
-				levelBuilder.append(levelStringList.get(i));
-				levelBuilder.append('"');
-				if (i < listSize - 1) {
-					levelBuilder.append(',');
-				}
-			}
-			
-			levelBuilder.append("))");
-			return levelBuilder.toString();
-			
-		} else if (t instanceof DataType.ARXString) {
+		} else if (t instanceof DataType.ARXString || t instanceof DataType.ARXOrderedString) { 
 			return "rep(as.character(NA), " + numRows + ")";
 			
 		} /*else if (t instanceof DataType.ARXBoolean) { //at the moment not existing
@@ -159,8 +134,10 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	private String convertARXToRValue(DataType<?> t, String value) {
 		if (t instanceof DataType.ARXDate) {
 			Date javaDate = ((DataType.ARXDate) t).parse(value);
-			long seconds = javaDate.getTime() / 1000;
-			return "as.POSIXct(" + seconds + ", origin=\"1970-01-01\")";
+			@SuppressWarnings("deprecation")
+			int timezoneoffset = javaDate.getTimezoneOffset();
+			long seconds = (javaDate.getTime()- (60*timezoneoffset*1000)) / 1000;
+			return "as.Date(as.POSIXct(" + seconds + ", origin=\"1970-01-01\", tz=\"GMT+2\"))";
 			
 		} else if (t instanceof DataType.ARXDecimal) {
 			return "as.numeric(" + value + ")";
@@ -182,7 +159,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 		}
 	}
 	
-	private String createDataFrame(DataHandle handle, int numRows) {		
+	private String createDataFrame(DataHandle handle) {		
 		StringBuilder b = new StringBuilder();
 		b.append("data.frame(");
 		for (int i = 0; i < handle.getNumColumns(); i++) {
@@ -190,8 +167,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 			b.append('"'); //There have to be quotation marks because there could be hyphens which otherwise provoke an error.
 			b.append(attributeName);
 			b.append("\"=");
-			b.append(convertARXToRType(handle.getDataType(attributeName), numRows)); // speed things up through allocating memory beforehand with numRows
-			//numRows has to be used from the given arguments because of the outputhandle size problem
+			b.append(convertARXToRType(handle.getDataType(attributeName), handle.getNumRows())); // speed things up through allocating memory beforehand with numRows
 			b.append(',');
 		}
 		b.append("stringsAsFactors=FALSE)");
@@ -313,27 +289,14 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	@Override
 	protected void doUpdate(AnalysisContextR context) {
 	    
-		final DataHandle handle = context.input;
+		final DataHandle inputhandle = context.input;
 		final DataHandle outputhandle = context.output;
-		
-		// For test purposes:
-		System.out.println("Columns output:" + outputhandle.getNumColumns());
-		System.out.println("Rows output:" + outputhandle.getNumRows());
-		// Problem: Displays "NA" as first (0) row of output, while the GUI does not show something similar.
-		System.out.println("[9,0]:"  + outputhandle.getValue(9, 0));
-		System.out.println("[10,0]:" + outputhandle.getValue(10, 0));
-		System.out.println("[11,0]:" + outputhandle.getValue(11, 0));
-		System.out.println("[12,0]:" + outputhandle.getValue(12, 0));
-		System.out.println("[13,0]:" + outputhandle.getValue(13, 0));
-		System.out.println("[14,0]:" + outputhandle.getValue(14, 0));
-		System.out.println(outputhandle.toString());
-		// End test purposes
 		
 		Analysis analysis = new Analysis() {
 
             private boolean stopped  = false;
             private int     progress = 0;
-            private int     total    = handle.getNumRows();
+            private int     total    = inputhandle.getNumRows();
 
 			@Override
 			public int getProgress() {
@@ -371,23 +334,23 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
                 
                 startR();
                 
-                //numRows is necessary as argument because somehow the size of outputhandle differs from inputhandle.
-                int numRows = handle.getNumRows();
-                initializeRTable(handle, "input", numRows);
-                initializeRTable(outputhandle, "output", numRows);
+                initializeRTable(inputhandle, "input");
+                if (outputhandle != null) initializeRTable(outputhandle, "output");
                 
         		executeR("str(input)");
-        		executeR("str(output)");
+        		if (outputhandle != null) executeR("str(output)");
                 
         		while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
                     Thread.sleep(10);
                 }
 			}
 			
-			public void initializeRTable(DataHandle handle, String data, int numRows) {	
-				String createcommand = createDataFrame(handle, numRows); //numRows as argument for the same reason as above
+			public void initializeRTable(DataHandle handle, String data) {	
+				String createcommand = createDataFrame(handle);
+				
+				int numRows = handle.getNumRows();
+				
         		executeR(data +" <- " + createcommand);
-        		executeR("str(" + data + ")");
         		
         		StringBuilder b = new StringBuilder();
         		
@@ -413,7 +376,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
         				executeR(b.toString());				
         				b.setLength(0); //reset the String builder so the Java Garbage Collector does not have too much work.
         			} else {
-        				b.append('\n');
+        				b.append('\n'); 
         			}
         		}
         		
