@@ -16,37 +16,49 @@
  */
 package org.deidentifier.arx.aggregates.classification;
 
-import java.util.Date;
+import net.objecthunter.exp4j.Expression;
 
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.ARXDate;
 import org.deidentifier.arx.DataType.ARXDecimal;
 import org.deidentifier.arx.DataType.ARXInteger;
+import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 
 /**
  * Metadata about a single feature
+ * 
  * @author Fabian Prasser
- *
  */
 public class ClassificationFeatureMetadata {
 
     /** Attribute */
     private final String      attribute;
-    /** Maximum */
-    private double            maximum = -Double.MAX_VALUE;
-    /** Minimum */
-    private double            minimum = Double.MAX_VALUE;
     /** Data type */
     private final DataType<?> type;
+    /** Expression */
+    private final Expression  expression;
+    /** Is this a numeric attribute */
+    private final boolean     numeric;
 
     /**
      * Creates a new instance
      * @param attribute
      * @param type
+     * @param scaling
      */
-    public ClassificationFeatureMetadata(String attribute, DataType<?> type) {
+    public ClassificationFeatureMetadata(String attribute, 
+                                         DataType<?> type,
+                                         ARXFeatureScaling scaling) {
         this.attribute = attribute;
         this.type = type;
+        this.numeric = (type instanceof ARXDecimal) || (type instanceof ARXInteger) || (type instanceof ARXDate);
+        Expression e = scaling != null ? scaling.getScalingExpression(attribute) : null;
+        if (e != null && this.numeric) {
+            this.expression = e;
+        } else {
+            this.expression = null;
+        }
     }
 
     /**
@@ -62,36 +74,26 @@ public class ClassificationFeatureMetadata {
      * @return
      */
     public boolean isNumeric() {
-        return minimum != Double.MAX_VALUE || maximum != - Double.MAX_VALUE;
+        return this.expression != null;
     }
     
     /**
-     * Updates minimum and maximum for feature scaling
+     * Returns a scaled double representation, NaN if the value cannot be parsed or scaled
+     * 
      * @param value
      */
-    protected void updateMinMax(String value) {
-
-        // Convert
-        double numericValue = Double.NaN;
-        try {
-            if (type instanceof ARXDecimal) {
-                numericValue = 0d;
-                numericValue = (Double) type.parse(value);
-            } else if (type instanceof ARXInteger) {
-                numericValue = 0d;
-                numericValue = (Long) type.parse(value);
-            } else if (type instanceof ARXDate) {
-                numericValue = 0d;
-                numericValue = ((Date) type.parse(value)).getTime();
-            }
-        } catch (Exception e) {
-            // Ignore: this is for the handling of suppressed values
+    public double getNumericValue(String value) {
+        
+        if (!isNumeric()) {
+            return Double.NaN;
         }
-
-        // Trace
-        if (!Double.isNaN(numericValue)) {
-            minimum = Math.min(minimum, numericValue);
-            maximum = Math.max(maximum, numericValue);
+        
+        try {
+            @SuppressWarnings({ "unchecked", "rawtypes" })
+            double numeric = ((DataTypeWithRatioScale)type).toDouble(type.parse(value));
+            return this.expression != null ? this.expression.setVariable("x", numeric).evaluate() : Double.NaN;
+        } catch (Exception e) {
+            return Double.NaN;
         }
     }
 }

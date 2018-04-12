@@ -76,7 +76,7 @@ public class Example3 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
 
         ARXResult result = anonymizer.anonymize(data, config);
 

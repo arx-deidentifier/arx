@@ -21,7 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXListener;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
@@ -34,46 +34,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @author Fabian Prasser
  */
-public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
+public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, ARXProcessStatistics>> {
     
-    /**
-     * Simple progress listener
-     * 
-     * @author Fabian Prasser
-     */
-    private static final class ProgressListener implements ARXListener{
-        
-        /** Monitor*/
-        private final IProgressMonitor monitor;
-        
-        /**
-         * Creates a new instance
-         * @param monitor
-         */
-        private ProgressListener(IProgressMonitor monitor) {
-            this.monitor = monitor;
-        }
-        
-        /** State*/
-        private int previous = 0;
-        
-        /**
-         * Progress
-         * 
-         * @param progress
-         */
-        public void progress(final double progress) {
-            if (monitor.isCanceled()) { 
-                throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); //$NON-NLS-1$ 
-            }
-            int current = (int) (Math.round(progress * 100d));
-            if (current != previous) {
-                monitor.worked(current - previous);
-                previous = current;
-            }
-        }
-    }
-
     /** The model. */
     private final Model  model;
 
@@ -102,13 +64,11 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
         // Initialize anonymizer
         final ARXAnonymizer anonymizer = model.createAnonymizer();
 
-        // Update the progress bar
-        anonymizer.setListener(new ProgressListener(monitor));
-
         // Remember user-defined settings
         ARXConfiguration config = model.getInputConfig().getConfig();
         boolean heuristicSearchEnabled = config.isHeuristicSearchEnabled();
         int heuristicSearchTimeLimit = config.getHeuristicSearchTimeLimit();
+        double suppressionLimit = config.getSuppressionLimit();
         
         // Perform all tasks
         try {
@@ -127,11 +87,12 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
                 MetricConfiguration metricConfig = config.getQualityModel().getConfiguration();
                 metricConfig.setGsFactor(0d);
                 config.setQualityModel(config.getQualityModel().getDescription().createInstance(metricConfig));
+                config.setSuppressionLimit(1d - minRecordsPerIteration);
             }
             
             // Prepare progress tracking
-            int workload = minRecordsPerIteration == 0d ? 110 : 210;
-            monitor.beginTask(Resources.getMessage("WorkerAnonymize.0"), workload); //$NON-NLS-1$
+            monitor.beginTask(Resources.getMessage("WorkerAnonymize.0"), 100); //$NON-NLS-1$
+            anonymizer.setListener(new ProgressListener(monitor));
             
             // Anonymize
         	ARXResult result = anonymizer.anonymize(model.getInputConfig().getInput(), config);
@@ -141,15 +102,19 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
             if (result.isResultAvailable()) {
                 output = result.getOutput(false);
             }
+            ARXProcessStatistics statistics = result.getProcessStatistics();
             model.setAnonymizer(anonymizer);
             model.setTime(result.getTime());
-            this.result = new Pair<>(result, output);
             monitor.worked(10);
             
             // Local recoding
             if (output != null && minRecordsPerIteration != 0d) {
-                result.optimizeIterativeFast(output, minRecordsPerIteration, new ProgressListener(monitor));
+                monitor.beginTask(Resources.getMessage("WorkerAnonymize.4"), 100); //$NON-NLS-1$
+                statistics = statistics.merge(result.optimizeIterativeFast(output, minRecordsPerIteration, new ProgressListener(monitor)));
             }
+            
+            // Store results
+            this.result = new Pair<>(new Pair<>(result, output), statistics);
             
             // Now we are really done
             monitor.done();
@@ -166,6 +131,7 @@ public class WorkerAnonymize extends Worker<Pair<ARXResult, DataHandle>> {
             // Reset to user-defined settings
             config.setHeuristicSearchEnabled(heuristicSearchEnabled);
             config.setHeuristicSearchTimeLimit(heuristicSearchTimeLimit);
+            config.setSuppressionLimit(suppressionLimit);
         }
     }
 }

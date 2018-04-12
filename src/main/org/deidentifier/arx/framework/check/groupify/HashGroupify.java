@@ -26,6 +26,7 @@ import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -101,11 +102,15 @@ public class HashGroupify {
 
     /** Output */
     private final DataMatrix             dataAnalyzed;
+
+    /** Number of columns (from index 0) that need to be analyzed in hot-mode*/ 
+    private final int                    dataAnalyzedNumberOfColumns;
     
     /**
      * Constructs a new hash groupify operator.
      *
      * @param capacity The capacity
+     * @param aggregation The aggregation information
      * @param config The config
      * @param input
      * @param output
@@ -113,6 +118,7 @@ public class HashGroupify {
      */
     public HashGroupify(int capacity, 
                         final ARXConfigurationInternal config,
+                        final int dataAnalyzedNumberOfColumns,
                         final DataMatrix input,
                         final DataMatrix output,
                         final DataMatrix analyzed) {
@@ -121,6 +127,7 @@ public class HashGroupify {
         this.dataInput = input;
         this.dataOutput = output;
         this.dataAnalyzed = analyzed;
+        this.dataAnalyzedNumberOfColumns = dataAnalyzedNumberOfColumns;
         
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
@@ -175,7 +182,7 @@ public class HashGroupify {
         // Is a other attribute provided
         if (other != -1) {
             if (entry.distributions == null) {
-                entry.distributions = new Distribution[dataAnalyzed.getNumColumns()];
+                entry.distributions = new Distribution[dataAnalyzedNumberOfColumns];
                 
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
@@ -323,23 +330,21 @@ public class HashGroupify {
 
     /**
      * Returns a data object with microaggregation performed
-     * @param start
-     * @param num
-     * @param functions
-     * @param map
-     * @param header
+     * @param microaggregationData
      * @param dictionary
      * @return
      */
-    public Data performMicroaggregation(int start,
-                                        int num,
-                                        DistributionAggregateFunction[] functions,
-                                        int[] map,
-                                        String[] header,
+    public Data performMicroaggregation(DataAggregationInformation microaggregationData,
                                         Dictionary dictionary) {
         
+        // Initialize
+        int[] indices = microaggregationData.getMicroaggregationIndices();
+        DistributionAggregateFunction[] functions = microaggregationData.getMicroaggregationFunctions();
+        String[] header = microaggregationData.getMicroaggregationHeader();
+        int[] columns = microaggregationData.getMicroaggregationColumns();
+        
         // Prepare result
-        Data result = new Data(new DataMatrix(dataOutput.getNumRows(), num), header, map, dictionary);
+        Data result = Data.createWrapper(new DataMatrix(dataOutput.getNumRows(), indices.length), header, columns, dictionary);
 
         // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
         ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
@@ -351,17 +356,18 @@ public class HashGroupify {
                 while ((m != null) && ((m.hashcode != hash) || !dataOutput.equalsIgnoringOutliers(row, m.row))) {
                     m = m.next;
                 }
-                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before microaggregation!"); }
-                int dimension = 0;
+                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before performing microaggregation!"); }
                 result.getArray().iterator(row);
-                for (int i = start; i < start + num; i++) {
-                    if (!cache.containsKey(m.distributions[i])) {
-                        String value = functions[dimension].aggregate(m.distributions[i]);
-                        int code = result.getDictionary().register(dimension, value);
-                        cache.put(m.distributions[i], code);
+                for (int i = 0; i < indices.length; i++) {
+                    int columnIndex = indices[i];
+                    Distribution distribution = m.distributions[columnIndex];
+                    int code = cache.getOrDefault(distribution, -1);
+                    if (code == -1) {
+                        String value = functions[i].aggregate(distribution);
+                        code = result.getDictionary().register(i, value);
+                        cache.put(distribution, code);
                     }
-                    result.getArray().iterator_write(cache.get(m.distributions[i]));
-                    dimension++;
+                    result.getArray().iterator_write(code);
                 }
             }
         }
@@ -397,6 +403,20 @@ public class HashGroupify {
             }
         }
     }
+
+    /**
+     * Analyzes the current state
+     * @param transformation
+     * @param force
+     * @param reliable
+     */
+    public void stateAnalyze(Transformation transformation, boolean force, boolean reliable) {
+        if (force) {
+            analyzeAll(transformation, reliable);
+        } else {
+            analyzeWithEarlyAbort(transformation, reliable);
+        }
+    }
     
     /**
      * Analyzes the current state
@@ -404,8 +424,7 @@ public class HashGroupify {
      * @param force
      */
     public void stateAnalyze(Transformation transformation, boolean force) {
-        if (force) analyzeAll(transformation);
-        else analyzeWithEarlyAbort(transformation);
+        stateAnalyze(transformation, force, false);
     }
     
     /**
@@ -509,8 +528,9 @@ public class HashGroupify {
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
+     * @param reliable 
      */
-    private void analyzeAll(Transformation transformation) {
+    private void analyzeAll(Transformation transformation, boolean reliable) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -522,7 +542,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry, reliable);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -546,7 +566,7 @@ public class HashGroupify {
             entry = entry.nextOrdered;
         }
         
-        this.analyzeSampleBasedCriteria(transformation, false);
+        this.analyzeSampleBasedCriteria(transformation, false, reliable);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
     }
     
@@ -554,9 +574,10 @@ public class HashGroupify {
      * Analyze sample-based criteria
      * @param transformation
      * @param earlyAbort May we perform an early abort, if we reach the threshold
+     * @param reliable 
      * @return
      */
-    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort) {
+    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort, boolean reliable) {
         
         // Nothing to do
         if (this.sampleBasedCriteria.length == 0) {
@@ -572,7 +593,11 @@ public class HashGroupify {
         for (SampleBasedCriterion criterion : this.sampleBasedCriteria) {
             
             // Enforce
-            criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
+            if (reliable) {
+                criterion.enforceReliably(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
+            } else {
+                criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);   
+            }
             
             // Early abort
             this.currentNumOutliers = distribution.getNumSuppressedRecords();
@@ -585,8 +610,9 @@ public class HashGroupify {
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
+     * @param reliable 
      */
-    private void analyzeWithEarlyAbort(Transformation transformation) {
+    private void analyzeWithEarlyAbort(Transformation transformation, boolean reliable) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -611,7 +637,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry, reliable);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -645,7 +671,7 @@ public class HashGroupify {
             entry = entry.nextOrdered;
         }
         
-        this.analyzeSampleBasedCriteria(transformation, true);
+        this.analyzeSampleBasedCriteria(transformation, true, reliable);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
         
@@ -700,25 +726,37 @@ public class HashGroupify {
      * Checks whether the given entry is anonymous.
      * @param transformation
      * @param entry
+     * @param reliable
      * @return
      * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry) {
+    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry, boolean reliable) {
         
         // Check minimal group size
         if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {
             return 0;
         }
-        
+
         // Check other criteria
         // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
         // This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
-        for (int i = 0; i < classBasedCriteria.length; i++) {
-            if (!classBasedCriteria[i].isAnonymous(transformation, entry)) {
-                return i + 1;
+        
+        // Reliable
+        if (reliable) {
+            for (int i = 0; i < classBasedCriteria.length; i++) {
+                if (!classBasedCriteria[i].isReliablyAnonymous(transformation, entry)) {
+                    return i + 1;
+                }
             }
+            return -1;
+        } else {
+            for (int i = 0; i < classBasedCriteria.length; i++) {
+                if (!classBasedCriteria[i].isAnonymous(transformation, entry)) {
+                    return i + 1;
+                }
+            }
+            return -1;
         }
-        return -1;
     }
 
     /**

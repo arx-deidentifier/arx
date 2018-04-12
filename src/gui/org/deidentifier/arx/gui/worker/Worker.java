@@ -27,9 +27,9 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
  */
 public abstract class Worker<T> implements IRunnableWithProgress {
 
-	/** Error, if any. */
+    /** Error, if any. */
     protected Exception error  = null;
-    
+
     /** Result, if any. */
     protected T         result = null;
 
@@ -50,7 +50,7 @@ public abstract class Worker<T> implements IRunnableWithProgress {
     public T getResult() {
         return result;
     }
-
+    
     /**
      * Sets the error.
      *

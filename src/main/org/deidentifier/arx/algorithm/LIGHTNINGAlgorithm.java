@@ -20,7 +20,8 @@ package org.deidentifier.arx.algorithm;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -46,7 +47,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
      * @param checkLimit 
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace, NodeChecker checker, int timeLimit, int checkLimit) {
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker, int timeLimit, int checkLimit) {
         return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit, checkLimit);
     }
 
@@ -75,7 +76,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param timeLimit
     * @param checkLimit
     */
-    private LIGHTNINGAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit, int checkLimit) {
+    private LIGHTNINGAlgorithm(SolutionSpace space, TransformationChecker checker, int timeLimit, int checkLimit) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         int stepping = space.getTop().getLevel();
@@ -95,7 +96,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
 
     @Override
-    public void traverse() {
+    public boolean traverse() {
         timeStart = System.currentTimeMillis();
         checkCount = 0;
         PriorityQueue<Long> queue = new PriorityQueue<Long>(stepping, new Comparator<Long>() {
@@ -120,10 +121,14 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                     expand(queue, next);
                 }
                 if (mustStop()) {
-                    return;
+                    break;
                 }
             }
         }
+        
+
+        // Return whether the optimum has been found
+        return !this.mustStop() && (this.getGlobalOptimum() != null);
     }
     
     /**
@@ -132,7 +137,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     */
     private void assureChecked(final Transformation transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true));
+            transformation.setChecked(checker.check(transformation, true, ScoreType.CONVENTIONAL));
             trackOptimum(transformation);
             checkCount++;
             double progressSteps = (double)checkCount / (double)checkLimit;
@@ -152,7 +157,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         }
         Transformation next = expand(queue, transformation);
         if (next != null) {
-            queue.remove(next);
+            queue.remove(next.getIdentifier());
             dfs(queue, next);
         }
     }

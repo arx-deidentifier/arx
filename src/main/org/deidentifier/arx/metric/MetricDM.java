@@ -69,7 +69,7 @@ public class MetricDM extends MetricDefault {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Discernibility");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
 

@@ -121,7 +121,7 @@ public class Example12 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
         config.addPrivacyModel(new DPresence(1d / 2d, 2d / 3d, subset));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         config.setQualityModel(Metric.createEntropyMetric());
 
         // Now anonymize

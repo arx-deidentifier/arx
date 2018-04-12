@@ -57,7 +57,7 @@ public class MetricNMEntropy extends MetricEntropy {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Non-uniform entropy");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
 

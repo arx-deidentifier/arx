@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ARX" default="release" basedir=".">
 
+    <!-- **This ant file need to be executed using a JDK** -->
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
     <property name="arx.version" value="3.7.0" />
-
-    <!-- add extra parameter to javadoc generation if Java 1.8 is used -->
+    
+     <!-- add extra parameter to javadoc generation if Java 1.8 is used -->
     <condition property="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" else="-notimestamp">
         <equals arg1="${ant.java.version}" arg2="1.8" />
     </condition>
@@ -16,7 +17,7 @@
         <or>
             <filename name="**/colt-1.2.0.jar" />
             <filename name="**/commons-lang-2.6.jar" />
-            <filename name="**/commons-math3-3.1.1.jar" />
+            <filename name="**/commons-math3-3.6.1.jar" />
             <filename name="**/objectselector-0.1-lib.jar" />
             <filename name="**/commons-io-2.4.jar" />
             <filename name="**/commons-codec-1.5.jar" />
@@ -39,6 +40,8 @@
             <filename name="**/slf4j-api-1.7.13.jar" />
 			<filename name="**/pdfbox-app-2.0.1.jar" />
 			<filename name="**/pdfbox-layout.jar" />
+			<filename name="**/exp4j-0.4.8.jar" />
+			<filename name="**/smile-1.3.1-java7.jar" />
         </or>
     </fileset>
 
@@ -78,6 +81,7 @@
         </or>
     </fileset>
 
+	<echo message="Java version ${ant.java.version}"/>
 
     <available file=".git" type="dir" property="git.present" />
 
@@ -102,7 +106,7 @@
         <mkdir dir="build/test" />
         <mkdir dir="build/junitReports" />
 
-        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.8">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
@@ -230,8 +234,7 @@
 
     <target name="javadoc-api" depends="clean-javadoc">
         <mkdir dir="doc/api" />
-        <javadoc overview="doc/overview-api.html" destdir="doc/api" source="1.7" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX API Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
-
+        <javadoc overview="doc/overview-api.html" destdir="doc/api" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX API Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
@@ -247,7 +250,7 @@
 
     <target name="javadoc-dev" depends="clean-javadoc">
         <mkdir dir="doc/dev" />
-        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX Developer Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
+        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX Developer Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
@@ -262,7 +265,7 @@
 
     <target name="javadoc-gui" depends="clean-javadoc">
         <mkdir dir="doc/gui" />
-        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX GUI Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
+        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX GUI Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
@@ -285,13 +288,13 @@
     </target>
 
     <target name="compile" depends="prepare" description="compile the source ">
-        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib" source="1.8">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
             </classpath>
         </javac>
-        <javac includeantruntime="false" srcdir="src/main:src/gui/" destdir="build/gui" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui/" destdir="build/gui" source="1.8">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />

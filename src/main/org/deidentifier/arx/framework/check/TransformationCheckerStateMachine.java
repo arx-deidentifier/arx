@@ -27,7 +27,7 @@ import org.deidentifier.arx.framework.check.history.History;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class StateMachine {
+public class TransformationCheckerStateMachine {
 
     /**
      * The resulting transition.
@@ -69,7 +69,7 @@ public class StateMachine {
     private History    history  = null;
 
     /** The last node, which has been checked for k-anonymity. */
-    private int[]      lastNode;
+    private int[]      lastTransformation;
 
     /** The last transition, which has been performed. */
     private Transition lastTransition;
@@ -78,27 +78,26 @@ public class StateMachine {
     private int[]      snapshot = null;
 
     /** The node for the current snapshot. */
-    private int[]      snapshotNode;
+    private int[]      snapshotTransformation;
 
     /**
      * Instantiates a new state machine.
      * 
-     * @param history
-     *            the history
+     * @param history the history
      */
-    public StateMachine(final History history) {
-        this.lastNode = null;
+    public TransformationCheckerStateMachine(final History history) {
+        this.lastTransformation = null;
         this.lastTransition = null;
         this.history = history;
     }
 
     /**
-     * Returns the last node.
+     * Returns the last transformation.
      *
-     * @return the last node, which has been checked for k-anonymity
+     * @return the last transformation, which has been checked for k-anonymity
      */
-    public int[] getLastNode() {
-        return lastNode;
+    public int[] getLastTransformation() {
+        return lastTransformation;
     }
 
     /**
@@ -114,19 +113,20 @@ public class StateMachine {
      * Resets the state machine.
      */
     public void reset() {
-        lastNode = null;
+        lastTransformation = null;
         lastTransition = null;
     }
 
     /**
-     * Computes the best state transition.
+     * Calculates the best state transition.
      * 
-     * @param currentNode the current node
+     * @param transformation the current transformation
      * @return the transition
      */
-    public Transition transition(final int[] currentNode) {
+    public Transition transition(final int[] transformation) {
 
-        final Transition result = new Transition();
+        // Result
+        Transition result = new Transition();
 
         // First transition
         if (lastTransition == null) {
@@ -136,11 +136,11 @@ public class StateMachine {
         } else {
             switch (lastTransition.type) {
             case UNOPTIMIZED:
-                result.projection = getProjection(currentNode);
-                if (isPossibleSnapshot(currentNode)) {
+                result.projection = getProjection(transformation);
+                if (isPossibleSnapshot(transformation)) {
                     result.type = TransitionType.SNAPSHOT;
                     result.snapshot = snapshot;
-                } else if (isPossibleRollup(currentNode)) {
+                } else if (isPossibleRollup(transformation)) {
                     result.type = TransitionType.ROLLUP;
                     result.snapshot = null;
                 } else {
@@ -150,12 +150,12 @@ public class StateMachine {
                 break;
             case ROLLUP:
             case SNAPSHOT:
-                if (isPossibleSnapshot(currentNode)) {
-                    result.projection = isPredecessor(snapshotNode, lastNode) ? getProjection(currentNode) : 0L;
+                if (isPossibleSnapshot(transformation)) {
+                    result.projection = isPredecessor(snapshotTransformation, lastTransformation) ? getProjection(transformation) : 0L;
                     result.type = TransitionType.SNAPSHOT;
                     result.snapshot = snapshot;
-                } else if (isPossibleRollup(currentNode)) {
-                    result.projection = getProjection(currentNode);
+                } else if (isPossibleRollup(transformation)) {
+                    result.projection = getProjection(transformation);
                     result.type = TransitionType.ROLLUP;
                     result.snapshot = null;
                 } else {
@@ -168,7 +168,7 @@ public class StateMachine {
         }
 
         // Store
-        lastNode = currentNode;
+        lastTransformation = transformation;
         lastTransition = result;
 
         // Return
@@ -176,16 +176,15 @@ public class StateMachine {
     }
 
     /**
-     * Returns the projection. All bits are set for the columns that don't need
-     * to be checked
+     * Returns the projection. All bits are set for columns that don't need to be checked.
      * 
-     * @param currentNode the current node
+     * @param transformation the current transformation
      * @return the projection
      */
-    private long getProjection(final int[] currentNode) {
+    private long getProjection(final int[] transformation) {
         long projection = 0L;
-        for (int i = 0; i < currentNode.length; i++) {
-            if (currentNode[i] == lastNode[i]) {
+        for (int i = 0; i < transformation.length; i++) {
+            if (transformation[i] == lastTransformation[i]) {
                 projection |= 1L << i;
             }
         }
@@ -195,13 +194,12 @@ public class StateMachine {
     /**
      * Is a rollup optimization possible.
      * 
-     * @param currentNode
-     *            the current node
+     * @param transformation the current transformation
      * @return true, if is possible rollup
      */
-    private boolean isPossibleRollup(final int[] currentNode) {
-        for (int i = 0; i < lastNode.length; i++) {
-            if (currentNode[i] < lastNode[i]) { return false; }
+    private boolean isPossibleRollup(final int[] transformation) {
+        for (int i = 0; i < lastTransformation.length; i++) {
+            if (transformation[i] < lastTransformation[i]) { return false; }
         }
         return true;
     }
@@ -209,26 +207,26 @@ public class StateMachine {
     /**
      * Is a snapshot optimization possible.
      * 
-     * @param currentNode the current node
+     * @param transformation the current transformation
      * @return true, if is possible snapshot
      */
-    private boolean isPossibleSnapshot(final int[] currentNode) {
-        snapshot = history.get(currentNode);
-        snapshotNode = history.getTransformation();
+    private boolean isPossibleSnapshot(final int[] transformation) {
+        snapshot = history.get(transformation);
+        snapshotTransformation = history.getTransformation();
         if (snapshot != null) { return true; }
         return false;
     }
 
     /**
-     * Is node2 a predecessor of or equal to node1?.
+     * Is transformation1 a predecessor of or equal to transformation2?.
      *
-     * @param node1
-     * @param node2
+     * @param transformation1
+     * @param transformation2
      * @return
      */
-    private boolean isPredecessor(final int[] node1, final int[] node2) {
-        for (int i = 0; i < node2.length; i++) {
-            if (node1[i] < node2[i]) { return false; }
+    private boolean isPredecessor(final int[] transformation1, final int[] transformation2) {
+        for (int i = 0; i < transformation2.length; i++) {
+            if (transformation1[i] < transformation2[i]) { return false; }
         }
         return true;
     }

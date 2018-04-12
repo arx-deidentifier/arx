@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class ViewStatisticsLogisticRegressionInput extends ViewStatisticsLogisticRegression{
+public class ViewStatisticsClassificationInput extends ViewStatisticsClassification {
 
     /**
      * Creates a new instance.
@@ -38,8 +38,8 @@ public class ViewStatisticsLogisticRegressionInput extends ViewStatisticsLogisti
      * @param parent
      * @param controller
      */
-    public ViewStatisticsLogisticRegressionInput(final Composite parent,
-                                         final Controller controller) {
+    public ViewStatisticsClassificationInput(final Composite parent,
+                                             final Controller controller) {
         super(parent, controller, ModelPart.INPUT);
     }
 

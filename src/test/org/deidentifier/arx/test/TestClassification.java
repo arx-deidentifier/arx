@@ -30,8 +30,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -133,7 +133,7 @@ public class TestClassification {
             // Config
             ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(5));
-            config.setMaxOutliers(1d);
+            config.setSuppressionLimit(1d);
 
             ARXAnonymizer anonymizer = new ARXAnonymizer();
             result = anonymizer.anonymize(data, config);
@@ -144,8 +144,9 @@ public class TestClassification {
 
     @Test
     public void testLogisticRegression() throws IOException, ParseException {
+        
         // Config
-        ARXLogisticRegressionConfiguration config = ARXLogisticRegressionConfiguration.create();
+        ARXClassificationConfiguration<?> config = ARXClassificationConfiguration.createLogisticRegression();
 
         // Classify
         StatisticsClassification classResult = getResult().getOutput().getStatistics().getClassificationPerformance(getFeatures(), getClazz(), config);
@@ -172,8 +173,63 @@ public class TestClassification {
         double[] fscore = { 0.7970326646193115, 0.7970326646193115, 0.7970326646193115, 0.7969457981885784, 0.7949573246627055, 0.7496822483882504, 0.6473702297579599, 0.5112842610849505, 0.4351728037419361, 0.3754621301560845, 0.0 };
         assertTrue(Arrays.equals(fscore, classResult.getPrecisionRecall().getFscore()));
 
+        // AUC
+        assertEquals(0.7610027381987883, classResult.getROCCurve("Divorced").getAUC(), 0d);
+        assertEquals(0.7158081618137377, classResult.getROCCurve("Married-spouse-absent").getAUC(), 0d);
+        assertEquals(0.9062474533744251, classResult.getROCCurve("Widowed").getAUC(), 0d);
+        assertEquals(0.738607754107831, classResult.getROCCurve("Separated").getAUC(), 0d);
+        assertEquals(0.5363016046801997, classResult.getROCCurve("Married-AF-spouse").getAUC(), 0d);
+        assertEquals(0.8556280235042284, classResult.getROCCurve("Married-civ-spouse").getAUC(), 0d);
+        assertEquals(0.8405828559448054, classResult.getROCCurve("Never-married").getAUC(), 0d);
+
         // Other properties
         assertEquals(7, classResult.getNumClasses(), 0d);
         assertEquals(30162, classResult.getNumMeasurements(), 0d);
     }
+
+    @Test
+    public void testNaiveBayes() throws IOException, ParseException {
+
+        // Config
+        ARXClassificationConfiguration<?> config = ARXClassificationConfiguration.createNaiveBayes();
+
+        // Classify
+        StatisticsClassification classResult = getResult().getOutput().getStatistics().getClassificationPerformance(getFeatures(), getClazz(), config);
+
+        // Accuracy
+        assertEquals(0.6447516742921557, classResult.getOriginalAccuracy(), 0d);
+        assertEquals(0.4663152310854718, classResult.getZeroRAccuracy(), 0d);
+        assertEquals(0.6271798952324117, classResult.getAccuracy(), 0d);
+
+        // Average error
+        assertEquals(0.38050937350272185, classResult.getOriginalAverageError(), 0d);
+        assertEquals(0.5336847689145282, classResult.getZeroRAverageError(), 0d);
+        assertEquals(0.39543922724482766, classResult.getAverageError(), 0d);
+
+        // Precision
+        double[] precision = { 0.6271798952324117, 0.6271798952324117, 0.6271798952324117, 0.6271675342329498, 0.628262676641729, 0.6325347889079821, 0.6487757242576585, 0.6896084656084656, 0.7305730876041404, 0.766170980968117, 1.0 };
+        assertTrue(Arrays.equals(precision, classResult.getPrecisionRecall().getPrecision()));
+
+        // Recall
+        double[] recall = { 1.0, 1.0, 1.0, 0.9999668456998873, 0.997115575890193, 0.983986473045554, 0.9166832438167231, 0.7832703401631191, 0.6566209137325111, 0.541774418142033, 0.0 };
+        assertTrue(Arrays.equals(recall, classResult.getPrecisionRecall().getRecall()));
+
+        // F-score
+        double[] fscore = { 0.770879602273885, 0.770879602273885, 0.770879602273885, 0.7708604140712526, 0.770836572538217, 0.7700556629413132, 0.7598050764033778, 0.7334613755319069, 0.6916257825059526, 0.634723494870224, 0.0 };
+        assertTrue(Arrays.equals(fscore, classResult.getPrecisionRecall().getFscore()));
+
+        // AUC
+        assertEquals(0.743874984827819, classResult.getROCCurve("Divorced").getAUC(), 0d);
+        assertEquals(0.6968152161291502, classResult.getROCCurve("Married-spouse-absent").getAUC(), 0d);
+        assertEquals(0.8900171042551792, classResult.getROCCurve("Widowed").getAUC(), 0d);
+        assertEquals(0.7291373371893847, classResult.getROCCurve("Separated").getAUC(), 0d);
+        assertEquals(0.5805792142011149, classResult.getROCCurve("Married-AF-spouse").getAUC(), 0d);
+        assertEquals(0.8467899671784043, classResult.getROCCurve("Married-civ-spouse").getAUC(), 0d);
+        assertEquals(0.8265697069764216, classResult.getROCCurve("Never-married").getAUC(), 0d);
+
+        // Other properties
+        assertEquals(7, classResult.getNumClasses(), 0d);
+        assertEquals(30162, classResult.getNumMeasurements(), 0d);
+    }
+
 }

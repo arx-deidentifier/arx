@@ -82,7 +82,7 @@ public class ComponentStatusLabel extends Canvas {
     private String                               text;
 
     /** Field */
-    private Image                                        image;
+    private Image                                image;
 
     /** Field */
     private String                               appToolTipText;
@@ -129,7 +129,7 @@ public class ComponentStatusLabel extends Canvas {
     }
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param parent
      * @param style
@@ -165,6 +165,7 @@ public class ComponentStatusLabel extends Canvas {
 
     }
 
+    @Override
     public Point computeSize(int wHint, int hHint, boolean changed) {
         checkWidget();
         Point e = getTotalSize(image, text);
@@ -187,55 +188,50 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
-     *
+     * Returns the alignment
      * @return
      */
     public int getAlignment() {
-        // checkWidget();
         return align;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getBottomMargin() {
-        // checkWidget();
         return bottomMargin;
     }
 
     /**
-     * 
+     * Returns the image
      *
      * @return
      */
     public Image getImage() {
-        // checkWidget();
         return image;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getLeftMargin() {
-        // checkWidget();
         return leftMargin;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getRightMargin() {
-        // checkWidget();
         return rightMargin;
     }
 
+    @Override
     public int getStyle() {
         int style = super.getStyle();
         switch (align) {
@@ -253,32 +249,31 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Returns the text
      *
      * @return
      */
     public String getText() {
-        // checkWidget();
         return text;
     }
 
+    @Override
     public String getToolTipText() {
         checkWidget();
         return appToolTipText;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getTopMargin() {
-        // checkWidget();
         return topMargin;
     }
 
     /**
-     * 
+     * Sets the alignment
      *
      * @param align
      */
@@ -293,6 +288,7 @@ public class ComponentStatusLabel extends Canvas {
         }
     }
 
+    @Override
     public void setBackground(Color color) {
         super.setBackground(color);
         // Are these settings the same as before?
@@ -311,7 +307,7 @@ public class ComponentStatusLabel extends Canvas {
     }
     
     /**
-     * 
+     * Sets an image 
      *
      * @param image
      */
@@ -328,7 +324,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param bottomMargin
      */
@@ -339,13 +335,14 @@ public class ComponentStatusLabel extends Canvas {
         redraw();
     }
 
+    @Override
     public void setFont(Font font) {
         super.setFont(font);
         redraw();
     }
 
     /**
-     * 
+     * Sets the GIF
      *
      * @param inputStream
      */
@@ -376,7 +373,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets the GIF
      *
      * @param path
      */
@@ -390,7 +387,7 @@ public class ComponentStatusLabel extends Canvas {
     }
     
     /**
-     * 
+     * Sets the image
      *
      * @param image
      */
@@ -408,7 +405,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param leftMargin
      */
@@ -428,7 +425,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param rightMargin
      */
@@ -440,7 +437,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets the text
      *
      * @param text
      */
@@ -453,13 +450,14 @@ public class ComponentStatusLabel extends Canvas {
         }
     }
 
+    @Override
     public void setToolTipText(String string) {
         super.setToolTipText(string);
         appToolTipText = super.getToolTipText();
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param topMargin
      */
@@ -480,7 +478,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Drawing method 
      *
      * @param gc
      * @param x
@@ -501,7 +499,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Calculate size
      *
      * @param image
      * @param text
@@ -531,7 +529,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Initialize accessibility
      */
     private void initAccessible() {
         Accessible accessible = getAccessible();
@@ -580,7 +578,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Drawing method
      *
      * @param gc
      * @param r
@@ -608,7 +606,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Split string
      *
      * @param text
      * @return
@@ -633,7 +631,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Shorten text
      *
      * @param gc
      * @param t
@@ -673,7 +671,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Find mnemonic
      *
      * @param string
      * @return
@@ -693,7 +691,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * On dispose handler
      *
      * @param event
      */
@@ -716,7 +714,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * On mnemonic handler 
      *
      * @param event
      */
@@ -744,7 +742,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * On paint handler
      *
      * @param event
      */
@@ -929,6 +927,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
+     * Validate offset
      * 
      * @param layout
      * @param offset

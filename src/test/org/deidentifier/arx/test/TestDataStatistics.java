@@ -113,7 +113,7 @@ public class TestDataStatistics extends AbstractTest {
         
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
@@ -182,7 +182,7 @@ public class TestDataStatistics extends AbstractTest {
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
         config.addPrivacyModel(new DPresence(0.0d, 1.0d, subset));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
@@ -232,7 +232,7 @@ public class TestDataStatistics extends AbstractTest {
         
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(this.provider.getData(), config);
@@ -271,7 +271,7 @@ public class TestDataStatistics extends AbstractTest {
         
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(this.provider.getData(), config);

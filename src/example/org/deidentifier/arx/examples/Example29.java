@@ -99,7 +99,7 @@ public class Example29 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new AverageReidentificationRisk(0.5d));
-        config.setMaxOutliers(1d);
+        config.setSuppressionLimit(1d);
 
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);

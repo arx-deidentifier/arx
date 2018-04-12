@@ -268,7 +268,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
 
         @Override
         public String toString() {
-            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getSuppressionLimit() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }

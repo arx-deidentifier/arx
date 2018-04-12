@@ -26,12 +26,12 @@ import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.Pr
  * 
  * @author Fabian Prasser
  */
-public abstract class RiskBasedCriterion extends SampleBasedCriterion{
+public abstract class RiskBasedCriterion extends SampleBasedCriterion {
 
     /** SVUID */
     private static final long serialVersionUID = -2711630526630937284L;
     /** The threshold */
-    private final double    threshold;
+    private final double      threshold;
 
     /**
      * Creates a new instance of this criterion.
@@ -75,6 +75,32 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
             }
         });
     }
+
+    @Override
+    public void enforceReliably(final HashGroupifyDistribution distribution,
+                                final int numMaxSuppressedOutliers) {
+        
+        // Early abort
+        if (RiskBasedCriterion.this.isFulfilled(distribution)) {
+            return;
+        }
+       
+        // Binary search
+        distribution.suppressWhileNotFulfilledBinary(new PrivacyCondition(){
+            public State isFulfilled(HashGroupifyDistribution distribution) {
+                boolean fulfilled = RiskBasedCriterion.this.isReliablyFulfilled(distribution);
+                
+                // Early abort
+                if (!fulfilled && distribution.getNumSuppressedRecords() > numMaxSuppressedOutliers) {
+                    return State.ABORT;
+                    
+                // Go on
+                } else {
+                    return fulfilled ? State.FULFILLED : State.NOT_FULFILLED;
+                }
+            }
+        });
+    }
     
     @Override
     public int getRequirements(){
@@ -97,4 +123,13 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
      * @return
      */
     protected abstract boolean isFulfilled(HashGroupifyDistribution distribution);
+    
+    /**
+     * Overwrite this to implement reliable anonymization
+     * @param distribution
+     * @return
+     */
+    protected boolean isReliablyFulfilled(HashGroupifyDistribution distribution) {
+        return this.isFulfilled(distribution);
+    }
 }

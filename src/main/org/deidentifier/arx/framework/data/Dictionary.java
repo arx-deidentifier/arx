@@ -39,10 +39,24 @@ public class Dictionary implements Serializable {
     private transient ObjectIntOpenHashMap<String>[] maps;
 
     /**
+     * Instantiates a new dictionary by extracting a projection of the given dictionary
+     * 
+     * @param dimensions
+     */
+    @SuppressWarnings("unchecked")
+    public Dictionary(Dictionary input, int[] columns) {
+        maps = new ObjectIntOpenHashMap[columns.length];
+        mapping = new String[columns.length][];
+        for (int i = 0; i < columns.length; i++) {
+            maps[i] = input.maps == null ? null : input.maps[columns[i]].clone();
+            mapping[i] = input.mapping[columns[i]].clone();
+        }
+    }
+    
+    /**
      * Instantiates a new dictionary.
      * 
      * @param dimensions
-     *            the dimensions
      */
     @SuppressWarnings("unchecked")
     public Dictionary(final int dimensions) {
