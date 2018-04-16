@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -276,21 +276,37 @@ public class Model implements Serializable {
     /** The local recoding model */
     private ModelLocalRecoding                            localRecodingModel              = new ModelLocalRecoding();
 
+    /** Heuristic search threshold */
+    private Integer                                       heuristicSearchThreshold;
+
+    /** Heuristic search threshold */
+    private Integer                                       heuristicSearchTimeLimit;
+
+    /** Heuristic search threshold */
+    private Integer                                       heuristicSearchStepLimit;
+
+    /** General anonymization configuration. Proxy for some fields for backwards compatibility */
+    private ModelAnonymizationConfiguration               anonymizationConfiguration;
+
     /* *****************************************
      * Data Mining
-     *******************************************/
+     * *****************************************
+     */
     /** Selected attributes */
     private Set<String>                                   selectedFeatures                = null;
+
     /** Selected attributes */
     private Set<String>                                   selectedClasses                 = null;
+
     /** Model */
     private ModelClassification                           classificationModel             = new ModelClassification();
 
     /* *****************************************
      * Information about the last anonymization process
-     * ******************************************/
-    /** Statistics about the last optimization process*/
-    private ARXProcessStatistics                     optimizationStatistics          = null;
+     * *****************************************
+     */
+    /** Statistics about the last optimization process */
+    private ARXProcessStatistics                          optimizationStatistics          = null;
 
     /**
      * Creates a new instance.
@@ -503,7 +519,17 @@ public class Model implements Serializable {
             }            
         }
     }
-
+    /**
+     * Returns the current anonymization configuration
+     * @return
+     */
+    public ModelAnonymizationConfiguration getAnonymizationConfiguration() {
+        if (anonymizationConfiguration == null) {
+            anonymizationConfiguration = new ModelAnonymizationConfiguration(this);
+        }
+        return anonymizationConfiguration;
+    }
+    
     /**
      * Returns the current anonymizer.
      *
@@ -512,7 +538,7 @@ public class Model implements Serializable {
     public ARXAnonymizer getAnonymizer() {
         return anonymizer;
     }
-    
+
     /**
      * Returns the last two selected attributes.
      *
@@ -550,7 +576,7 @@ public class Model implements Serializable {
         }
         return bLikenessModel;
     }
-    
+
     /**
      * Returns the classification model
      * @return
@@ -623,7 +649,7 @@ public class Model implements Serializable {
         }
         return differentialPrivacyModel;
     }
-    
+
     /**
      * Returns the d-presence model.
      *
@@ -632,7 +658,7 @@ public class Model implements Serializable {
     public ModelDPresenceCriterion getDPresenceModel() {
         return dPresenceModel;
     }
-
+    
     /**
      * Returns a list of indices of all equivalence classes.
      *
@@ -644,6 +670,36 @@ public class Model implements Serializable {
     }
 
     /**
+     * @return the heuristicSearchStepLimit
+     */
+    public Integer getHeuristicSearchStepLimit() {
+        if (this.heuristicSearchStepLimit == null) {
+            return this.heuristicSearchStepLimit = 1000;
+        }
+        return heuristicSearchStepLimit;
+    }
+
+    /**
+     * @return the heuristicSearchThreshold
+     */
+    public Integer getHeuristicSearchThreshold() {
+        if (this.heuristicSearchThreshold == null) {
+            return this.heuristicSearchThreshold = 100000;
+        }
+        return heuristicSearchThreshold;
+    }
+
+    /**
+     * @return the heuristicSearchTimeLimit
+     */
+    public Integer getHeuristicSearchTimeLimit() {
+        if (this.heuristicSearchTimeLimit == null) {
+            return this.heuristicSearchTimeLimit = 30000;
+        }
+        return heuristicSearchTimeLimit;
+    }
+
+    /**
      * Returns the according parameter.
      *
      * @return
@@ -651,7 +707,7 @@ public class Model implements Serializable {
     public int getHistorySize() {
         return historySize;
     }
-
+    
     /**
      * Returns an upper bound on the number of nodes that will initially
      * be displayed in the lattice viewer.
@@ -679,7 +735,7 @@ public class Model implements Serializable {
     public ModelConfiguration getInputConfig() {
         return inputConfig;
     }
-    
+
     /**
      * Returns the input definition.
      *
@@ -698,7 +754,7 @@ public class Model implements Serializable {
     public ARXPopulationModel getInputPopulationModel() {
         return getRiskModel().getPopulationModel();
     }
-    
+
     /**
      * Returns the k-anonymity model.
      *
@@ -707,7 +763,7 @@ public class Model implements Serializable {
     public ModelKAnonymityCriterion getKAnonymityModel() {
         return kAnonymityModel;
     }
-
+    
     /**
      * Returns the k-map model.
      *
@@ -731,7 +787,7 @@ public class Model implements Serializable {
             }
         return lDiversityModel;
     }
-
+    
     /**
      * Returns the project locale.
      *
@@ -775,7 +831,7 @@ public class Model implements Serializable {
     public int getMaxNodesInViewer() {
         return maxNodesInViewer;
     }
-    
+
     /**
      * Returns the configuration of the metric.
      *
@@ -792,7 +848,7 @@ public class Model implements Serializable {
         }
         return this.metricConfig;
     }
-    
+
     /**
      * Returns a description of the metric.
      *
@@ -817,7 +873,7 @@ public class Model implements Serializable {
     public String getName() {
         return name;
     }
-
+    
     /**
      * Returns the current filter.
      *
@@ -826,7 +882,7 @@ public class Model implements Serializable {
     public ModelNodeFilter getNodeFilter() {
         return nodeFilter;
     }
-
+    
     /**
      * Returns a string representation of the current optimum.
      *
@@ -948,7 +1004,7 @@ public class Model implements Serializable {
     public ARXResult getResult() {
         return result;
     }
-    
+
     /**
      * Returns the risk-based model.
      *
@@ -963,7 +1019,7 @@ public class Model implements Serializable {
         }
         return riskBasedModel;
     }
-    
+
     /**
      * Returns the risk model
      * @return the risk model
@@ -983,9 +1039,9 @@ public class Model implements Serializable {
     public String getSelectedAttribute() {
         return selectedAttribute;
     }
-
+    
     /**
-     * Returns the selected features
+     * Returns the selected classes
      * @return
      */
     public Set<String> getSelectedClasses() {
@@ -994,7 +1050,7 @@ public class Model implements Serializable {
         }
         return this.selectedClasses;
     }
-
+    
     /**
      * Returns the currently selected class value.
      * 
@@ -1003,7 +1059,7 @@ public class Model implements Serializable {
     public String getSelectedClassValue() {
         return selectedClassValue;
     }
-    
+
     /**
      * Returns the selected features
      * @return
@@ -1015,7 +1071,6 @@ public class Model implements Serializable {
         return this.selectedFeatures;
     }
 
-
     /**
      * Returns the selected transformation.
      *
@@ -1024,7 +1079,7 @@ public class Model implements Serializable {
     public ARXNode getSelectedNode() {
         return selectedNode;
     }
-    
+
     /**
      * Returns a set of quasi identifiers selected for risk analysis
      * @return
@@ -1066,7 +1121,6 @@ public class Model implements Serializable {
         }
         return this.selectedQuasiIdentifiers;
     }
-
     
     /**
      * Returns the separator.
@@ -1085,7 +1139,7 @@ public class Model implements Serializable {
     public double getSnapshotSizeDataset() {
         return snapshotSizeDataset;
     }
-
+    
     /**
      * Returns the according parameter.
      *
@@ -1095,6 +1149,7 @@ public class Model implements Serializable {
         return snapshotSizeSnapshot;
     }
 
+    
     /**
      * Returns the size of the solution space for the current
      * input parameters
@@ -1271,14 +1326,21 @@ public class Model implements Serializable {
         this.subsetOrigin = Resources.getMessage("Model.0"); //$NON-NLS-1$
         this.groups = null;
         this.classificationModel = new ModelClassification();
+        this.anonymizationConfiguration = null;
+        this.heuristicSearchStepLimit = null;
+        this.heuristicSearchThreshold = null;
+        this.heuristicSearchTimeLimit = null;
+        this.optimizationStatistics = null;
+        this.localRecodingModel = null;
     }
-    
+
     /**
      * Returns the last two selected attributes.
      */
     public void resetAttributePair() {
-        if (pair == null)
+        if (pair == null) {
             pair = new String[] { null, null };
+        }
         pair[0] = null;
         pair[1] = null;
     }
@@ -1312,7 +1374,7 @@ public class Model implements Serializable {
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_SAMPLE_UNIQUES));
         riskBasedModel.add(new ModelRiskBasedCriterion(ModelRiskBasedCriterion.VARIANT_POPULATION_UNIQUES_DANKAR));
     }
-    
+
     /**
      * Sets the anonymizer.
      *
@@ -1332,7 +1394,7 @@ public class Model implements Serializable {
         this.debugEnabled = value;
         this.setModified();
     }
-    
+
     /**
      * Sets the project description.
      *
@@ -1342,7 +1404,7 @@ public class Model implements Serializable {
         this.description = description;
         setModified();
     }
-
+    
     /**
      * Sets the indices of equivalence classes.
      *
@@ -1350,6 +1412,27 @@ public class Model implements Serializable {
      */
     public void setGroups(int[] groups) {
         this.groups = groups;
+    }
+    
+    /**
+     * @param heuristicSearchStepLimit the heuristicSearchStepLimit to set
+     */
+    public void setHeuristicSearchStepLimit(Integer heuristicSearchStepLimit) {
+        this.heuristicSearchStepLimit = heuristicSearchStepLimit;
+    }
+    
+    /**
+     * @param heuristicSearchThreshold the heuristicSearchThreshold to set
+     */
+    public void setHeuristicSearchThreshold(Integer heuristicSearchThreshold) {
+        this.heuristicSearchThreshold = heuristicSearchThreshold;
+    }
+
+    /**
+     * @param heuristicSearchTimeLimit the heuristicSearchTimeLimit to set
+     */
+    public void setHeuristicSearchTimeLimit(Integer heuristicSearchTimeLimit) {
+        this.heuristicSearchTimeLimit = heuristicSearchTimeLimit;
     }
 
     /**
@@ -1410,7 +1493,7 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-
+    
     /**
      * Sets the according parameter.
      *
@@ -1436,7 +1519,7 @@ public class Model implements Serializable {
     public void setModified() {
         modified = true;
     }
-    
+
     /**
      * Sets the project name.
      *
@@ -1515,7 +1598,7 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-
+    
     /**
      * @param perspective the perspective to set
      */
@@ -1540,7 +1623,7 @@ public class Model implements Serializable {
         this.query = query;
         setModified();
     }
-    
+
     /**
      * Sets the result.
      *
@@ -1555,7 +1638,7 @@ public class Model implements Serializable {
         }
         setModified();
     }
-
+    
     /**
      * Sets the selected attribute.
      *
@@ -1579,7 +1662,7 @@ public class Model implements Serializable {
 
         setModified();
     }
-    
+
     /**
      * Sets a set of selected attributes
      * @param set
@@ -1653,7 +1736,7 @@ public class Model implements Serializable {
             this.subsetOrigin += Resources.getMessage("Model.2"); //$NON-NLS-1$
         }
     }
-
+    
     /**
      * Sets how the subset was defined.
      *
@@ -1671,7 +1754,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
         this.time = time;
     }
-    
+
     /**
      * Marks this model as unmodified.
      */
@@ -1689,13 +1772,13 @@ public class Model implements Serializable {
     }
 
     /**
-     * Sets whether funtional hierarchies should be used during anonymization to esimtate utility
+     * Sets whether functional hierarchies should be used during anonymization to estimate utility
      * @param useFunctionalHierarchies
      */
     public void setUseFunctionalHierarchies(boolean useFunctionalHierarchies) {
         this.useFunctionalHierarchies = useFunctionalHierarchies;
     }
-
+    
     /**
      * Sets whether list-wise deletion should be used for summary statistics
      * @param useListwiseDeletion
@@ -1712,7 +1795,7 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-    
+
     /**
      * Sets visualization as enabled/disabled.
      *

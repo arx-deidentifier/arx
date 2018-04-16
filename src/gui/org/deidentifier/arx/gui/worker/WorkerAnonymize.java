@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,8 @@ import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.SearchType;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.TransformationType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -35,27 +37,27 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Fabian Prasser
  */
 public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, ARXProcessStatistics>> {
-    
+
     /** The model. */
-    private final Model  model;
+    private final Model              model;
 
     /** Heuristic flag */
-    private final int    maxTimePerIteration;
+    private final SearchType         searchType;
 
     /** Heuristic flag */
-    private final double minRecordsPerIteration;
+    private final TransformationType transformationType;
 
     /**
      * Creates a new instance.
      *
      * @param model
-     * @param maxTimePerIteration 
-     * @param minRecordsPerIteration
+     * @param searchType 
+     * @param transformationType
      */
-    public WorkerAnonymize(final Model model, int maxTimePerIteration, double minRecordsPerIteration) {
+    public WorkerAnonymize(final Model model) {
         this.model = model;
-        this.maxTimePerIteration = maxTimePerIteration;
-        this.minRecordsPerIteration = minRecordsPerIteration;
+        this.searchType = model.getAnonymizationConfiguration().getSearchType();
+        this.transformationType = model.getAnonymizationConfiguration().getTransformationType();
     }
 
     @Override
@@ -76,18 +78,21 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
             // Release
             model.getInputConfig().getInput().getHandle().release();
             
-            // Temporarily overwrite user-defined settings regarding the heuristic search
-            if (maxTimePerIteration > 0) {
+            // Set properties for the heuristic search
+            if (searchType == SearchType.STEP_LIMIT) {
                 config.setHeuristicSearchEnabled(true);
-                config.setHeuristicSearchTimeLimit(maxTimePerIteration);
+                config.setHeuristicSearchStepLimit(model.getHeuristicSearchStepLimit());
+            } else if (searchType == SearchType.TIME_LIMIT) {
+                config.setHeuristicSearchEnabled(true);
+                config.setHeuristicSearchStepLimit(model.getHeuristicSearchTimeLimit());
             }
             
-            // Persistently overwrite user-defined settings to prepare local recoding
-            if (minRecordsPerIteration != 0) {
+            // Overwrite user-defined settings to prepare local recoding
+            if (transformationType == TransformationType.LOCAL) {
                 MetricConfiguration metricConfig = config.getQualityModel().getConfiguration();
                 metricConfig.setGsFactor(0d);
                 config.setQualityModel(config.getQualityModel().getDescription().createInstance(metricConfig));
-                config.setSuppressionLimit(1d - minRecordsPerIteration);
+                config.setSuppressionLimit(1d - (1d / (double)model.getLocalRecodingModel().getNumIterations()));
             }
             
             // Prepare progress tracking
@@ -108,9 +113,9 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
             monitor.worked(10);
             
             // Local recoding
-            if (output != null && minRecordsPerIteration != 0d) {
+            if (output != null && transformationType == TransformationType.LOCAL) {
                 monitor.beginTask(Resources.getMessage("WorkerAnonymize.4"), 100); //$NON-NLS-1$
-                statistics = statistics.merge(result.optimizeIterativeFast(output, minRecordsPerIteration, new ProgressListener(monitor)));
+                statistics = statistics.merge(result.optimizeIterativeFast(output, (1d / (double)model.getLocalRecodingModel().getNumIterations()), new ProgressListener(monitor)));
             }
             
             // Store results

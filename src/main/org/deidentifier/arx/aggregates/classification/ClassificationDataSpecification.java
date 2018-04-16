@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.deidentifier.arx.ARXFeatureScaling;
+import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.DataType;
@@ -190,7 +191,12 @@ public class ClassificationDataSpecification {
             int column = features[i];
             String attribute = handle.getAttributeName(column);
             DataType<?> type = handle.getDataType(attribute);
-            result[i] = new ClassificationFeatureMetadata(attribute, type, scaling);
+            boolean isTypePreservingMicroaggregation = false;
+            MicroAggregationFunction function = handle.getDefinition().getMicroAggregationFunction(attribute);
+            if(function != null) {
+                isTypePreservingMicroaggregation = function.isTypePreserving();
+            }
+            result[i] = new ClassificationFeatureMetadata(attribute, type, scaling, isTypePreservingMicroaggregation);
         }
         
         // Return

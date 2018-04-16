@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -79,8 +79,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
          *
          * @return
          */
-        public final int getAbsoluteMaxOutliers() {
-            return config.getAbsoluteMaxOutliers();
+        public final int getAbsoluteSuppressionLimit() {
+            return config.getAbsoluteSuppressionLimit();
         }
 
         /**
@@ -331,7 +331,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return new ARXConfiguration(metric);
     }
 
-    /** Absolute tuple outliers. */
+    /** Absolute suppression limit. */
     private int                                absMaxOutliers                        = 0;
 
     /** Criteria. */
@@ -399,6 +399,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Number of steps to use for the data-dependent differential privacy search algorithm */
     private Integer                            dpSearchStepNumber                    = 100;
+    
+    /** Number of output records */
+    private int                                numOutputRecords                      = 0;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -1163,14 +1166,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns the maximum number of allowed outliers.
+     * Returns the absolute record suppression limit
      *
      * @return
      */
-    protected final int getAbsoluteMaxOutliers() {
+    protected int getAbsoluteSuppressionLimit() {
         return this.absMaxOutliers;
     }
 
+    /**
+     * Returns the number of output records that will be produced,
+     * zero if this information is not available
+     * @return
+     */
+    protected int getNumOutputRecords() {
+        return this.numOutputRecords;
+    }
+    
     /**
      * Clones this config and projects everything onto the given subset.<br>
      * - All privacy models will be cloned<br>
@@ -1373,23 +1385,23 @@ public class ARXConfiguration implements Serializable, Cloneable {
                 c.initialize(manager, this);
             }
         }
-
-        int dataLength = 0;
+        
+        // Calculate number of records in output data
         if (this.getSubset() != null) {
-            dataLength = getSubset().getArray().length;
+            numOutputRecords = getSubset().getArray().length;
         } else {
-            dataLength = manager.getDataGeneralized().getDataLength();
+            numOutputRecords = manager.getDataGeneralized().getDataLength();
         }
 
-        // Compute max outliers
+        // Compute absolute suppression limit
         if (this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-            absMaxOutliers = (int) dataLength;
+            absMaxOutliers = (int) numOutputRecords;
         } else {
-            absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) dataLength);
+            absMaxOutliers = (int) Math.floor(this.relMaxOutliers * (double) numOutputRecords);
         }
 
-        // Compute optimized array with criteria, assuming complexities
-        // dPresence <= dDisclosurePrivacy <= lDiversity <= tCloseness and ignoring kAnonymity
+        // Compute optimized array with privacy models,
+        // in ascending order of computational complexity to evaluate
         List<PrivacyCriterion> list = new ArrayList<PrivacyCriterion>();
         if (this.isPrivacyModelSpecified(DPresence.class)) {
             list.add(this.getPrivacyModel(DPresence.class));

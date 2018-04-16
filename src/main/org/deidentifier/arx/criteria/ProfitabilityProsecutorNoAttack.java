@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -122,7 +122,7 @@ public class ProfitabilityProsecutorNoAttack extends ImplicitPrivacyCriterion {
         } else if (Double.isInfinite(threshold)) {
             this.k = Integer.MAX_VALUE;
         } else if ((threshold == Math.floor(threshold))) {
-            this.k = (int) threshold + 1;
+            this.k = (int)threshold + 1;
         } else {
             this.k = (int)Math.ceil(threshold);
         }

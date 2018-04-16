@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,6 @@ import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
-import org.deidentifier.arx.algorithm.FLASHAlgorithmImpl;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.criteria.BasicBLikeness;
@@ -121,7 +120,6 @@ public class ARXAnonymizer { // NO_UCD
 
             // Create lattice
             final ARXLattice lattice = new ARXLattice(solutionSpace,
-                                                      (algorithm instanceof FLASHAlgorithmImpl),
                                                       optimum,
                                                       manager.getDataGeneralized().getHeader(),
                                                       config.getInternalConfiguration());
@@ -313,18 +311,20 @@ public class ARXAnonymizer { // NO_UCD
      * @param manager the manager
      */
     private void checkAfterEncoding(final ARXConfiguration config, final DataManager manager) {
+        
+        // Obtain the number of output records
+        int numberOfOutputRecords = config.getNumOutputRecords();
 
+        // Check various privacy models
         if (config.isPrivacyModelSpecified(KAnonymity.class)){
             KAnonymity c = config.getPrivacyModel(KAnonymity.class);
-            // TODO: getDataGeneralized().getDataLength() does not consider data subsets
-            if ((c.getK() > manager.getDataGeneralized().getDataLength()) || (c.getK() < 1)) { 
+            if ((c.getK() > numberOfOutputRecords) || (c.getK() < 1)) { 
                 throw new IllegalArgumentException("Parameter k (" + c.getK() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
             }
         }
         if (config.isPrivacyModelSpecified(LDiversity.class)){
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)){
-                // TODO: getDataGeneralized().getDataLength() does not consider data subsets
-                if ((c.getL() > manager.getDataGeneralized().getDataLength()) || (c.getL() < 1)) { 
+                if ((c.getL() > numberOfOutputRecords) || (c.getL() < 1)) { 
                     throw new IllegalArgumentException("Parameter l (" + c.getL() + ") must be >=1 and less or equal than the number of rows (" + manager.getDataGeneralized().getDataLength()+")"); 
                 }
             }
@@ -607,9 +607,9 @@ public class ARXAnonymizer { // NO_UCD
      * @return
      */
     private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
-                                          final DataManager manager,
-                                          final SolutionSpace solutionSpace,
-                                          final TransformationChecker checker) {
+                                           final DataManager manager,
+                                           final SolutionSpace solutionSpace,
+                                           final TransformationChecker checker) {
 
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);

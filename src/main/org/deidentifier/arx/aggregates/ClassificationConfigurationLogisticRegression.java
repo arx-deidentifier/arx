@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -47,9 +47,9 @@ public class ClassificationConfigurationLogisticRegression extends ARXClassifica
     }
     
     /** Default value */
-    public static final double        DEFAULT_ALPHA          = 1 - 1.0e-3;
+    public static final double        DEFAULT_ALPHA          = 1d;
     /** Default value */
-    public static final double        DEFAULT_DECAY_EXPONENT = -0.5d;
+    public static final double        DEFAULT_DECAY_EXPONENT = 0.2d;
     /** Default value */
     public static final double        DEFAULT_LAMBDA         = 1.0e-5;
     /** Default value */

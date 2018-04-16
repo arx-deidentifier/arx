@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,6 +145,14 @@ public class ARXProcessStatistics implements Serializable {
         }
 
         /**
+         * Maps attribute name to position
+         * @return
+         */
+        public Map<String, Integer> getHeader() {
+            return this.headermap;
+        }
+
+        /**
          * Returns the maximal generalization level for the attribute.
          *
          * @param attribute
@@ -172,7 +180,7 @@ public class ARXProcessStatistics implements Serializable {
         public List<QualityMetadata<?>> getMetadata() {
             return score.getMetadata();
         }
-
+        
         /**
          * Returns the number of records transformed in this step, <code>-1</code>
          * if not known.
@@ -181,7 +189,7 @@ public class ARXProcessStatistics implements Serializable {
         public int getNumberOfRecordsTransformed() {
             return this.numRecordsTransformed;
         }
-        
+
         /**
          * Returns the quasi identifiers.
          *
@@ -194,7 +202,7 @@ public class ARXProcessStatistics implements Serializable {
             }
             return result;
         }
-
+        
         /**
          * Returns a node's lower bound, if any.
          *
@@ -203,7 +211,7 @@ public class ARXProcessStatistics implements Serializable {
         public InformationLoss<?> getScore(){
             return this.score;
         }
-        
+
         /**
          * Returns the sum of all generalization levels.
          *
@@ -216,7 +224,7 @@ public class ARXProcessStatistics implements Serializable {
             }
             return level;
         }
-
+        
         /**
          * Returns the transformation as an array.
          *
@@ -225,7 +233,7 @@ public class ARXProcessStatistics implements Serializable {
         public int[] getTransformation() {
             return this.transformation;
         }
-        
+
         /**
          * Returns whether it is known how many records have been transformed
          * in this step.
@@ -363,13 +371,21 @@ public class ARXProcessStatistics implements Serializable {
     }
     
     /**
+     * Converts the statistics into a lattice
+     * @return
+     */
+    public ARXLattice getLattice() {
+        return new ARXLattice(this);
+    }
+    
+    /**
      * Returns the number of steps performed
      * @return
      */
     public int getNumberOfSteps() {
         return steps.size();
     }
-    
+
     /**
      * Returns a step performed during the anonymization process
      * @param index
@@ -382,9 +398,17 @@ public class ARXProcessStatistics implements Serializable {
             return steps.get(index);
         }
     }
+    
+    /**
+     * Returns all steps
+     * @return
+     */
+    public List<Step> getSteps() {
+        return this.steps;
+    }
 
     /**
-     * Returns the number of transformations available in this step
+     * Returns the number of transformations available in this process
      * @return
      */
     public long getTransformationsAvailable() {
@@ -392,11 +416,19 @@ public class ARXProcessStatistics implements Serializable {
     }
     
     /**
-     * Returns the number of transformations checked in this step
+     * Returns the number of transformations checked in this process
      * @return
      */
     public long getTransformationsChecked() {
         return this.transformationsChecked;
+    }
+    
+    /**
+     * Returns whether the result is a local transformation scheme
+     * @return
+     */
+    public boolean isLocalTransformation() {
+        return this.getNumberOfSteps() > 1;
     }
 
     /**
@@ -406,7 +438,7 @@ public class ARXProcessStatistics implements Serializable {
     public boolean isSolutationAvailable() {
         return !this.steps.isEmpty();
     }
-    
+
     /**
      * Returns new process statistics that are a merger of this and the other statistics
      * @param statistics
@@ -416,14 +448,14 @@ public class ARXProcessStatistics implements Serializable {
         result.mergeInternal(statistics);
         return result;
     }
-    
+
     /**
      * Merges this instance with the other instance
      * @param stats
      */
     private void mergeInternal(ARXProcessStatistics stats) {
-        if (this.initialNumberOfRecords == -1 && !this.steps.isEmpty() && !this.steps.get(0).isNumberOfRecordsTransformedAvailable()) {
-            this.steps.get(0).numRecordsTransformed = stats.initialNumberOfRecords;
+        if (this.initialNumberOfRecords == -1 && stats.initialNumberOfRecords != -1) {
+            this.initialNumberOfRecords = stats.initialNumberOfRecords;
         }
         for (Step step : stats.steps) {
             step = step.clone();
@@ -431,6 +463,9 @@ public class ARXProcessStatistics implements Serializable {
                 step.headermap = steps.get(0).headermap;
             }
             this.steps.add(step);
+        }
+        if (!this.steps.isEmpty() && !this.steps.get(0).isNumberOfRecordsTransformedAvailable()) {
+            this.steps.get(0).numRecordsTransformed = this.initialNumberOfRecords;
         }
         this.transformationsTotal += stats.transformationsTotal;
         this.transformationsChecked += stats.transformationsChecked;

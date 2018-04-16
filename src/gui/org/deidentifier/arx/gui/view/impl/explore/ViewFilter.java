@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@
 package org.deidentifier.arx.gui.view.impl.explore;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -263,32 +261,7 @@ public class ViewFilter implements IView {
                 reset();
                 return;
             }
-
-            List<String> attributes = new ArrayList<String>();
-            attributes.addAll(definition.getQuasiIdentifiersWithGeneralization());
-            Collections.sort(attributes, new Comparator<String>(){
-                public int compare(String arg0, String arg1) {
-                    return model.getOutput().getColumnIndexOf(arg0)-
-                           model.getOutput().getColumnIndexOf(arg1);
-                }
-            });
-            
-
-            int dimension=0;
-            for (String attribute : attributes) {
-                int attributeMin = definition.getMinimumGeneralization(attribute);
-                int attributeMax = definition.getMaximumGeneralization(attribute);
-                for (int i=attributeMin; i<=attributeMax; i++){
-                    filter.allowGeneralization(dimension, i);
-                }
-                dimension++;
-            }
-
-            filter.allowAllInformationLoss();
-            filter.allowAnonymous();
-            filter.allowNonAnonymous();
-            filter.allowUnknown();
-            
+            filter.reset(model.getOutput(), definition);
             update();
             fireModelEvent();
         }
@@ -299,7 +272,7 @@ public class ViewFilter implements IView {
      */
     private void actionShowOptimum() {
         if (filter != null) {
-            filter.initialize(model.getResult());
+            filter.initialize(model.getResult(), false);
             update();
             fireModelEvent();
         }

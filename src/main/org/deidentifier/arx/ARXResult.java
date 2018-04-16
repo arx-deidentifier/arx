@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,7 +160,7 @@ public class ARXResult {
         this.lattice = lattice;
         this.optimalTransformation = lattice.getOptimum();
         this.solutionSpace = solutionSpace;
-        this.statistics = statistics != null ? statistics : new ARXProcessStatistics(lattice, optimalTransformation, lattice.isComplete(), time);
+        this.statistics = statistics != null ? statistics : new ARXProcessStatistics(lattice, optimalTransformation, lattice._legacySearchedWithFlash(), time);
         this.optimumFound = this.statistics.isSolutationAvailable() ? this.statistics.getStep(0).isOptimal() : false;
         this.duration = this.statistics.getDuration();
     }
@@ -447,11 +447,14 @@ public class ARXResult {
                 return false;
             }
         }
+
+        // Baseline records
+        RowSet baselineRowSet = config.getSubset() == null ? null : config.getSubset().getSet();
         
         // Check, if there are enough outliers
         int outliers = 0;
         for (int row = 0; row < output.getNumRows(); row++) {
-            if (output.isOutlier(row)) {
+            if (output.isOutlier(row) && (baselineRowSet == null || baselineRowSet.contains(row))) {
                 outliers++;
             }
         }
@@ -528,7 +531,7 @@ public class ARXResult {
      * @return The number of optimized records
      */
     public ARXProcessStatistics optimize(DataHandle handle, double gsFactor, ARXListener listener) throws RollbackRequiredException {
-        return optimizeFast(handle, gsFactor, Double.NaN, listener);
+        return optimizeFast(handle, Double.NaN, gsFactor, listener);
     }
 
     /**
@@ -617,17 +620,21 @@ public class ARXResult {
             throw new IllegalArgumentException("This output data is not associated to the correct input data");
         }
         
+        // Baseline records
+        RowSet baselineRowSet = config.getSubset() == null ? null : config.getSubset().getSet();
+        int baselineRecords = baselineRowSet == null ? output.getNumRows() : baselineRowSet.size();
+        
         // We are now ready to go
         // Collect input and row indices
         int initialRecords = 0;
         RowSet rowset = RowSet.create(output.getNumRows());
         for (int row = 0; row < output.getNumRows(); row++) {
-            if (output.isOutlier(row)) {
+            if (output.isOutlier(row) && (baselineRowSet == null || baselineRowSet.contains(row))) {
                 rowset.add(row);
                 initialRecords++;
             }
         }
-        initialRecords = output.getNumRows() - initialRecords;
+        initialRecords = baselineRecords - initialRecords;
         
         // Everything that is used from here on, needs to be either
         // (a) state-less, or
@@ -639,7 +646,7 @@ public class ARXResult {
         // - Utility measures will be cloned
         ARXConfiguration config = this.config.getInstanceForLocalRecoding(rowset, gsFactor);
         if (!Double.isNaN(records)) {
-            double absoluteRecords = records * handle.getNumRows();
+            double absoluteRecords = records * baselineRecords;
             double relativeRecords = absoluteRecords / (double)rowset.size();
             relativeRecords = relativeRecords < 0d ? 0d : relativeRecords;
             relativeRecords = relativeRecords > 1d ? 1d : relativeRecords;
@@ -735,9 +742,9 @@ public class ARXResult {
      * @throws RollbackRequiredException 
      */
     public ARXProcessStatistics optimizeIterative(DataHandle handle,
-                                                       double gsFactor,
-                                                       int maxIterations,
-                                                       double adaptionFactor) throws RollbackRequiredException {
+                                                  double gsFactor,
+                                                  int maxIterations,
+                                                  double adaptionFactor) throws RollbackRequiredException {
         
         return this.optimizeIterative(handle, gsFactor, maxIterations, adaptionFactor, new ARXListener(){
             @Override
@@ -762,10 +769,10 @@ public class ARXResult {
      * @throws RollbackRequiredException 
      */
     public ARXProcessStatistics optimizeIterative(final DataHandle handle,
-                                                       double gsFactor,
-                                                       final int maxIterations,
-                                                       final double adaptionFactor,
-                                                       final ARXListener listener) throws RollbackRequiredException {
+                                                  double gsFactor,
+                                                  final int maxIterations,
+                                                  final double adaptionFactor,
+                                                  final ARXListener listener) throws RollbackRequiredException {
         
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
@@ -835,7 +842,7 @@ public class ARXResult {
      * @throws RollbackRequiredException 
      */
     public ARXProcessStatistics optimizeIterativeFast(DataHandle handle,
-                                                           double records) throws RollbackRequiredException {
+                                                      double records) throws RollbackRequiredException {
         return this.optimizeIterativeFast(handle, records, Double.NaN, new ARXListener(){
             @Override
             public void progress(double progress) {
@@ -852,8 +859,8 @@ public class ARXResult {
      * @throws RollbackRequiredException 
      */
     public ARXProcessStatistics optimizeIterativeFast(DataHandle handle,
-                                                           double records,
-                                                           ARXListener listener) throws RollbackRequiredException {
+                                                      double records,
+                                                      ARXListener listener) throws RollbackRequiredException {
         return this.optimizeIterativeFast(handle, records, Double.NaN, listener);
     }
     
@@ -871,9 +878,9 @@ public class ARXResult {
      * @throws RollbackRequiredException 
      */
     public ARXProcessStatistics optimizeIterativeFast(final DataHandle handle,
-                                                           double records,
-                                                           double gsFactor,
-                                                           final ARXListener listener) throws RollbackRequiredException {
+                                                      double records,
+                                                      double gsFactor,
+                                                      final ARXListener listener) throws RollbackRequiredException {
         
         if (!Double.isNaN(gsFactor) && (gsFactor < 0d || gsFactor > 1d)) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");

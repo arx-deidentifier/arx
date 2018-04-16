@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,6 +160,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         
         // Browser
         browser = new HTMLBrowser(base, SWT.BORDER | SWT.DOUBLE_BUFFERED);
+        browser.getStyle().setClickableLinks(false);
         browser.setLayoutData(SWTUtil.createFillGridData());
 
         // Listeners
@@ -196,7 +197,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     
     @Override
     protected Point getInitialSize() {
-        return new Point(930,600);
+        return new Point(1000,600);
     }
 
     /**

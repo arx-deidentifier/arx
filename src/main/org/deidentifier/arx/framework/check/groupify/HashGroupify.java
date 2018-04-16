@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -137,7 +137,7 @@ public class HashGroupify {
         
         // Set params
         this.currentNumOutliers = 0;
-        this.suppressionLimit = config.getAbsoluteMaxOutliers();
+        this.suppressionLimit = config.getAbsoluteSuppressionLimit();
         this.utilityMeasure = config.getQualityModel();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
@@ -380,7 +380,9 @@ public class HashGroupify {
     }
     
     /**
-     * Marks all outliers in the output dataset
+     * Suppresses all records in the output dataset which <br>
+     * (a) do not satisfy privacy requirements, or <br>
+     * (b) are not included in the research subset
      */
     public void performSuppression() {
         
@@ -393,7 +395,7 @@ public class HashGroupify {
                     m = m.next;
                 }
                 if (m == null) {
-                    throw new RuntimeException("Invalid state! Groupify the data before marking outliers!");
+                    throw new RuntimeException("Invalid state! Group the data before suppressing records!");
                 }
                 if (!m.isNotOutlier) {
                     dataOutput.or(row, Data.OUTLIER_MASK);

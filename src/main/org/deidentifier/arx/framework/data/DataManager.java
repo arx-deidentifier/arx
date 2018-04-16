@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -332,30 +332,6 @@ public class DataManager {
      */
     public DataAggregationInformation getAggregationInformation() {
         return this.aggregationInformation;
-    }
-
-    /**
-     * Returns centroid distances
-     * @param normalized 
-     * @return
-     */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public DataCentroidDistances<?>[] getCentroidDistances(boolean normalized) {
-
-        // Compute centroid distances
-        DataCentroidDistances[] result = new DataCentroidDistances[dataGeneralized.getHeader().length];
-        for (int column = 0; column < result.length; column++) {
-
-            // Extract info
-            String attribute = dataGeneralized.getHeader()[column];
-            result[column] = new DataCentroidDistances(dataGeneralized, column,
-                                                       definition.getDataType(attribute),
-                                                       hierarchiesGeneralized[column].map,
-                                                       normalized);
-        }
-
-        // Return
-        return result;
     }
 
     /**

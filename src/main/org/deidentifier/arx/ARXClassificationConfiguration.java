@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import java.io.Serializable;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
 
 /**
  * An base class for configuration classes for classification experiments
@@ -52,13 +51,6 @@ public abstract class ARXClassificationConfiguration<T extends ARXClassification
      */
     public static ClassificationConfigurationRandomForest createRandomForest() {
         return ClassificationConfigurationRandomForest.create();
-    }
-    /**
-     * Creates a new instance for SVM classifiers
-     * @return
-     */
-    public static ClassificationConfigurationSVM createSVM() {
-        return ClassificationConfigurationSVM.create();
     }
     
     /** Default value */

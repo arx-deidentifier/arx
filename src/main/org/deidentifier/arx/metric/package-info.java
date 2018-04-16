@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,7 @@
  */
 
 /**
- * This package implements several metrics for information loss. 
- * An abstract base class can be utilized for implementing further metrics
+ * Package providing access to quality models
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

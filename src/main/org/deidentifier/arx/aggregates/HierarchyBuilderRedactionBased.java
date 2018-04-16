@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -488,7 +488,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
                 if (redactionOrder == Order.RIGHT_TO_LEFT) {
                     result[i][j] =  base[i].substring(0, length - j) + redact;
                 } else {
-                    result[i][j] =  redact + base[i].substring(0, length - j);
+                    result[i][j] =  redact + base[i].substring(j, length);
                 }
             }
         }

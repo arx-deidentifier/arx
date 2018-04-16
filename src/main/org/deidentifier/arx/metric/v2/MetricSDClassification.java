@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,8 @@ import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.check.groupify.MetaHashGroupify;
+import org.deidentifier.arx.framework.check.groupify.MetaHashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -42,20 +44,27 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     /** SVUID. */
-    private static final long serialVersionUID             = -7940144844158472876L;
+    private static final long serialVersionUID                = -7940144844158472876L;
 
     /** Indices of response variables in distributions */
-    private int[]             responseVariables            = null;
-    /** Number of response variables in quasi-identifiers */
-    private int               responseVariablesNotAnalyzed = 0;
+    private int[]             responseVariablesNonQI          = null;
+    /** Indices of response variables in quasi-identifiers */
+    private int[]             responseVariablesQI             = null;
+    /** Scale factors for QI target variables */
+    private double[][]        responseVariablesQIScaleFactors = null;
 
     /** Penalty */
-    private double            penaltySuppressed            = 1d;
+    private double            penaltySuppressed               = 1d;
     /** Penalty */
-    private double            penaltyInfrequentResponse    = 1d;
+    private double            penaltyInfrequentResponse       = 1d;
     /** Penalty */
-    private double            penaltyNoMajorityResponse    = 1d;
-
+    private double            penaltyNoMajorityResponse       = 1d;
+    /** Maximal penality */
+    private double            penaltyMax;
+    /** Maximal penality */
+    private double            penaltyMaxScale;
+    
+    
     /**
      * Creates a new instance.
      */
@@ -74,24 +83,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     @Override
     public ILSingleDimensional createMaxInformationLoss() {
-        Double rows = getNumTuples();
-        if (rows == null) {
-            
-            throw new IllegalStateException("Metric must be initialized first");
-            
-        } else {
-            
-            // TODO: This is probably crap. Non-analyzed RVs need to be treated differently.
-            // Non-analyzed response variables are only penalized if they are suppressed
-            double max = rows * responseVariablesNotAnalyzed * penaltySuppressed;
-            
-            // Use maximal penalty for other response variables
-            double maxPenalty = Math.max(penaltySuppressed, Math.max(penaltyInfrequentResponse, penaltyNoMajorityResponse));
-            max += rows * responseVariables.length * maxPenalty;
-            
-            // Done
-            return new ILSingleDimensional(max);
-        }
+        return new ILSingleDimensional(1d);
     }
     
     @Override
@@ -158,88 +150,154 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     }
     
     /**
-     * Returns the penalty for the given entry
-     * @param entry
+     * Returns sorted indices of response variables in the given data
+     * @param definition
+     * @param data
      * @return
      */
-    private double getPenalty(HashGroupifyEntry entry) {
+    private int[] getIndices(DataDefinition definition, Data data) {
 
-        // Prepare
-        double result = 0d;
-        
-        // Suppressed
-        if (!entry.isNotOutlier) {
-            
-            // According penalty for all records and response variables in this class
-            result += entry.count * (responseVariablesNotAnalyzed + responseVariables.length) * penaltySuppressed;
-            
-        // Not suppressed
-        } else {
-            
-            // For each analyzed response variable
-            for (int index : this.responseVariables) {
-                
-                // Find frequencies of most frequent and second most frequent attribute values
-                int top1 = -1;
-                int top2 = -1;
-                
-                // For each bucket
-                Distribution distribution = entry.distributions[index];
-                int[] buckets = distribution.getBuckets();
-                for (int i = 0; i < buckets.length; i += 2) {
-                    
-                    // Get frequency
-                    int frequency = buckets[i + 1];
-                    boolean largerThanTop1 = frequency > top1;
-                    boolean largerThanTop2 = frequency > top2;
-                    
-                    // Step 1: If frequency is > top1 
-                    //         --> top1 is moved down to top2
-                    top2 = largerThanTop1 ? top1 : top2;
-    
-                    // Step 2: If frequency is > top1 
-                    //         --> top1 is set to new frequency
-                    top1 = largerThanTop1 ? frequency : top1;
-                    
-                    // Step 3: If frequency is > top2 but not > top1 (which implies frequency != top1, because of step 2)
-                    //         --> top2 is set to new frequency
-                    top2 = largerThanTop2 && frequency != top1 ? frequency : top2;
-                }
-                
-                // If a majority class label exists
-                if (top1 != top2) {
-                    
-                    // Records with other than majority class label get penalized
-                    result += (entry.count - top1) * penaltyInfrequentResponse;
-                } else {
-                    
-                    // All records get penalized
-                    result += entry.count * penaltyNoMajorityResponse;
-                }
-                
-                // TODO: Non-analyzed RVs need to also be treated.
+        // Extract indices of response variables
+        List<Integer> indices = new ArrayList<>();
+        for (String variable : definition.getResponseVariables()){
+            int index = data.getIndexOf(variable);
+            if (index != -1) {
+                indices.add(index);
             }
         }
         
-        // Return overall penalty
+        // Store information about response variables
+        Collections.sort(indices);
+        int[] result = new int[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            result[i] = indices.get(i);
+        }
+        
+        // Return
         return result;
     }
     
+    /**
+     * Returns the penalty for a distribution
+     * @param distribution
+     * @param scaleFactor 
+     * @return
+     */
+    private double getPenaltyDistribution(Distribution distribution, double scaleFactor) {
+        
+        // Find frequencies of most frequent and second most frequent attribute values
+        int top1 = -1;
+        int top2 = -1;
+        int count = 0;
+        
+        // For each bucket
+        int[] buckets = distribution.getBuckets();
+        for (int i = 0; i < buckets.length; i += 2) {
+            
+            // bucket not empty
+            if (buckets[i] != -1) { 
+            
+                // Get frequency
+                int frequency = buckets[i + 1];
+                count += frequency;
+                boolean largerThanTop1 = frequency > top1;
+                boolean largerThanTop2 = frequency > top2;
+                
+                // Step 1: If frequency is > top1 
+                //         --> top1 is moved down to top2
+                top2 = largerThanTop1 ? top1 : top2;
+
+                // Step 2: If frequency is > top1 
+                //         --> top1 is set to new frequency
+                top1 = largerThanTop1 ? frequency : top1;
+                
+                // Step 3: If frequency is > top2 but not > top1
+                //         --> top2 is set to new frequency
+                top2 = largerThanTop2 && !largerThanTop1 ? frequency : top2;
+            }
+        }
+        
+        if (scaleFactor == 1d) {
+            return count * (penaltyMaxScale / penaltyMax);
+        }
+        
+        // If a majority class label exists
+        if (top1 != top2) {
+
+            // Records with other than majority class label get penalized
+            double penalty = penaltyInfrequentResponse * (1d - scaleFactor) + penaltyMaxScale * scaleFactor;
+            return (count - top1) * (penalty / penaltyMax);
+            
+        } else {
+            
+            // All records get penalized
+            double penalty = penaltyNoMajorityResponse * (1d - scaleFactor) + penaltyMaxScale * scaleFactor;
+            return count * (penalty / penaltyMax);
+        }
+    }
+    
+    /**
+     * Returns the penalty for an outlier
+     * @param count
+     * @return
+     */
+    private double getPenaltyOutlier(int count) {
+
+        // According penalty for all records and response variables in this class
+        return count * (penaltySuppressed / penaltyMax);
+    }
+
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
-       
+
         // Prepare
         double penalty = 0d;
-        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         
-        // For each group
+        // Sum up penalties for non-QI target variables
+        HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count > 0) {
-                penalty += getPenalty(m);
+                if (!m.isNotOutlier) {
+                    penalty += getPenaltyOutlier(m.count * this.responseVariablesNonQI.length);
+                } else {
+                    for (int index : this.responseVariablesNonQI) {
+                        penalty += getPenaltyDistribution(m.distributions[index], 0d);
+                    }
+                }
             }
             m = m.nextOrdered;
         }
-
+        
+        // Sum up penalties for QI target variables
+        int i = 0;
+        for (int index : this.responseVariablesQI) {
+            
+            // Scale factor
+            double scaleFactor = this.responseVariablesQIScaleFactors[i][node.getGeneralization()[index]];
+            
+            // Group equivalence classes
+            MetaHashGroupify mhg = new MetaHashGroupify(g, index);
+            m = g.getFirstEquivalenceClass();
+            while (m != null) {
+                if (m.count > 0) {
+                    if (!m.isNotOutlier) {
+                        penalty += getPenaltyOutlier(m.count);
+                    } else {
+                        mhg.add(m);
+                    }
+                }
+                m = m.nextOrdered;
+            }
+            
+            // Sum up penalties
+            MetaHashGroupifyEntry e = mhg.getFirstEntry();
+            while (e != null) {
+                penalty += getPenaltyDistribution(e.distribution, scaleFactor);
+                e = e.nextOrdered;
+            }
+            i++;
+        }
+        
         // Return
         // TODO: Can a lower bound be calculated for this model?
         return createInformationLoss(penalty);
@@ -248,9 +306,18 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     @Override
     protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry m) {
 
+        // TODO: Can a lower bound be calculated for this model?
+        // TODO: We can not consider QI target variables here...
         if (m.count > 0) {
-            // TODO: Can a lower bound be calculated for this model?
-            return createInformationLoss(getPenalty(m));
+            double penalty = 0d;
+            if (!m.isNotOutlier) {
+                penalty = getPenaltyOutlier(m.count);
+            } else {
+                for (int index : this.responseVariablesNonQI) {
+                    penalty = getPenaltyDistribution(m.distributions[index], 0d);
+                }
+            }
+            return createInformationLoss(penalty);
         } else {
             return createInformationLoss(0d);
         }
@@ -278,28 +345,40 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         // Super
         super.initializeInternal(manager, definition, input, hierarchies, config);
         
-        // Extract indices of response variables
-        List<Integer> indices = new ArrayList<>();
-        for (String variable : definition.getResponseVariables()){
-            int index = manager.getDataAnalyzed().getIndexOf(variable);
-            if (index != -1) {
-                indices.add(index);
-            }
-        }
-        
-        // Store information about response variables
-        Collections.sort(indices);
-        this.responseVariables = new int[indices.size()];
-        for (int i = 0; i < indices.size(); i++) {
-            responseVariables[i] = indices.get(i);
-        }
-        
-        // TODO: This is probably crap. Non-analyzed RVs need to be treated differently.
-        this.responseVariablesNotAnalyzed = definition.getResponseVariables().size() - responseVariables.length;
-        
+        // Extract response variables
+        this.responseVariablesNonQI = getIndices(definition, manager.getDataAnalyzed());
+        this.responseVariablesQI = getIndices(definition, manager.getDataGeneralized());
+
         // Set penalties using the gs-factor. This is sort of a hack but should be OK for now.
-        penaltySuppressed            = super.getSuppressionFactor();
+        penaltySuppressed            = super.getGeneralizationSuppressionFactor();
         penaltyInfrequentResponse    = super.getGeneralizationFactor();
-        penaltyNoMajorityResponse    = super.getGeneralizationSuppressionFactor();
+        penaltyNoMajorityResponse    = super.getSuppressionFactor();
+        penaltyMaxScale              = Math.max(penaltySuppressed, Math.max(penaltyInfrequentResponse, penaltyNoMajorityResponse));
+        penaltyMax                   = penaltyMaxScale * super.getNumTuples();
+        
+        // Calculate scale factors
+        this.responseVariablesQIScaleFactors = new double[this.responseVariablesQI.length][];
+        int i = 0;
+        for (int index : responseVariablesQI) {
+            
+            // Obtain hierarchy
+            GeneralizationHierarchy hierarchy = hierarchies[index];
+            int distinct0 = hierarchy.getDistinctValues(0).length;
+            int levels = hierarchy.getLevels();
+            this.responseVariablesQIScaleFactors[i] = new double[levels];
+            
+            // For each level
+            for (int level = 0; level < levels; level++) {
+                
+                // Special case
+                if (distinct0 == 1) {
+                    this.responseVariablesQIScaleFactors[i][level] = 0d;
+                } else {
+                    int distinctLevel = hierarchy.getDistinctValues(level).length;
+                    this.responseVariablesQIScaleFactors[i][level] = 1d - ((double)(distinctLevel - 1) / (double)(distinct0 - 1));
+                }
+            }
+            i++;
+        }
     }
 }
