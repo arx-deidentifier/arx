@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,6 +87,9 @@ public class ComponentHierarchyMenu implements IView {
 
     /** Item. */
     private MenuItem           itemTopBottomCoding;
+
+    /** Item. */
+    private MenuItem           itemAttributeSuppression;
     
     /**
      * Creates a new instance
@@ -305,6 +308,22 @@ public class ComponentHierarchyMenu implements IView {
                 }
             }
         });
+
+        // Action attribute suppression
+        itemAttributeSuppression = new MenuItem(menu, SWT.NONE);
+        itemAttributeSuppression.setText(Resources.getMessage("HierarchyView.23")); //$NON-NLS-1$
+        itemAttributeSuppression.addSelectionListener(new SelectionAdapter() {
+            @Override public void widgetSelected(final SelectionEvent e) {
+                if (check()) {
+                    if (hierarchy.isRowSelected() || hierarchy.isColumnSelected() ||
+                        hierarchy.isCellSelected() || model == null || model.getInputConfig() == null ||
+                        model.getInputConfig().getInput() == null ||
+                        model.getSelectedAttribute() == null) { return; }
+    
+                    controller.actionMenuEditCreateAttributeSuppressionHierarchy();
+                }
+            }
+        });
     }
 
     /**
@@ -346,6 +365,7 @@ public class ComponentHierarchyMenu implements IView {
         itemClear.setEnabled(cell || row || column);
         itemInitialize.setEnabled(hierarchy.isEmpty());
         itemTopBottomCoding.setEnabled(hierarchy.isEmpty());
+        itemAttributeSuppression.setEnabled(hierarchy.isEmpty());
         
         // Show
         this.menu.setLocation(point);

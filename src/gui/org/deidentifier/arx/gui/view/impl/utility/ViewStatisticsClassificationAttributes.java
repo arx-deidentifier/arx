@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,17 +73,19 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     private class State {
 
         /** Data */
-        private final List<String>        attributes = new ArrayList<String>();
+        private final List<String>        attributes        = new ArrayList<String>();
         /** Data */
-        private final List<AttributeType> types      = new ArrayList<AttributeType>();
+        private final List<AttributeType> types             = new ArrayList<AttributeType>();
         /** Data */
-        private final List<DataType<?>>   dtypes     = new ArrayList<DataType<?>>();
+        private final List<DataType<?>>   dtypes            = new ArrayList<DataType<?>>();
         /** Data */
-        private final Set<String>         features   = new HashSet<String>();
+        private final Set<String>         features          = new HashSet<String>();
         /** Data */
-        private final Set<String>         classes    = new HashSet<String>();
+        private final Set<String>         classes           = new HashSet<String>();
         /** Data */
-        private final List<String>        scaling = new ArrayList<String>();
+        private final Set<String>         responseVariables = new HashSet<String>();
+        /** Data */
+        private final List<String>        scaling           = new ArrayList<String>();
 
         /**
          * Creates a new instance
@@ -103,6 +105,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             }
             features.addAll(model.getSelectedFeatures());
             classes.addAll(model.getSelectedClasses());
+            responseVariables.addAll(definition.getResponseVariables());
         }
 
         @Override
@@ -120,6 +123,9 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             if (features == null) {
                 if (other.features != null) return false;
             } else if (!features.equals(other.features)) return false;
+            if (responseVariables == null) {
+                if (other.responseVariables != null) return false;
+            } else if (!responseVariables.equals(other.responseVariables)) return false;
             if (types == null) {
                 if (other.types != null) return false;
             } else if (!types.equals(other.types)) return false;
@@ -139,6 +145,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             result = prime * result + ((attributes == null) ? 0 : attributes.hashCode());
             result = prime * result + ((classes == null) ? 0 : classes.hashCode());
             result = prime * result + ((features == null) ? 0 : features.hashCode());
+            result = prime * result + ((responseVariables == null) ? 0 : responseVariables.hashCode());
             result = prime * result + ((types == null) ? 0 : types.hashCode());
             result = prime * result + ((dtypes == null) ? 0 : dtypes.hashCode());
             result = prime * result + ((scaling == null) ? 0 : scaling.hashCode());
@@ -184,6 +191,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.OUTPUT, this);
+        controller.addListener(ModelPart.RESPONSE_VARIABLES, this);
         
         this.controller = controller;
 
@@ -290,7 +298,8 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         } else if (event.part == ModelPart.INPUT ||
                    event.part == ModelPart.ATTRIBUTE_TYPE || 
                    event.part == ModelPart.OUTPUT ||
-                   event.part == ModelPart.DATA_TYPE) {
+                   event.part == ModelPart.DATA_TYPE ||
+                   event.part == ModelPart.RESPONSE_VARIABLES) {
            update();
         }
     }
@@ -400,6 +409,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             // Classes
             TableItem itemC = new TableItem(classes, SWT.NONE);
             itemC.setText(new String[] { "", attribute }); //$NON-NLS-1$
+            image = controller.getResources().getImage(type, state.responseVariables.contains(attribute));
             itemC.setImage(0, image);
             itemC.setChecked(model.getSelectedClasses().contains(attribute));
             
@@ -433,6 +443,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
                     @Override
                     public void keyReleased(KeyEvent arg0) {
                         updateCombo(attribute, combo, defaultColor);
+                        updateFunction(attribute, combo);
                     }
                 });
                 combo.addKeyListener(new DelayedChangeListener(DELAY) {

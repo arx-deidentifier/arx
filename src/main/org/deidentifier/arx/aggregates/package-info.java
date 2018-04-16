@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,9 @@
  */
 
 /**
- * This package provides methods for aggregating data. Firstly, it implements several methods from descriptive statistics
- * for utility analyses. Secondly, it provides builders for generalization hierarchies.
+ * This package provides methods for aggregating data: 
+ * (1) builders for generalization hierarchies,
+ * (2) various methods for analyzing data quality and utility
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                                  final ModelPart target,
                                  final ModelPart reset) {
         
-        super(parent, controller, target, reset, true);
+        super(parent, controller, target, reset, false);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
     
@@ -345,15 +345,11 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     setNumericValueAtIndex(item, 1, quality.getAverageClassSize().getValue());
                     
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.16")); //$NON-NLS-1$
-                    setNumericValueAtIndex(item, 1, quality.getKullbackLeiblerDivergence().getValue());
-                    
-                    item = new TableItem(table2, SWT.NONE);
                     item.setText(0, Resources.getMessage("ViewStatisticsQuality.17")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getRecordLevelSquaredError().getValue());
 
                     item = new TableItem(table2, SWT.NONE);
-                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.18")); //$NON-NLS-1$
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.19")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getAttributeLevelSquaredError().getArithmeticMean(false));
                     
                     // Done

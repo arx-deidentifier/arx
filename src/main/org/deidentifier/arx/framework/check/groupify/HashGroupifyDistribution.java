@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -356,7 +356,7 @@ public class HashGroupifyDistribution {
     private void unSuppressEntry(HashGroupifyEntry entry) {
         
         if (this.numSuppressed == 0 || entry.isNotOutlier) {
-            throw new IllegalStateException("Internal error. There are not suppressed entries.");
+            throw new IllegalStateException("Internal error. There are no suppressed entries.");
         }
         entry.isNotOutlier = true;
         this.numSuppressed -= entry.count;

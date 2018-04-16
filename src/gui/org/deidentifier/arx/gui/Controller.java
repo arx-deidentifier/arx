@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,9 +57,9 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
 import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelCriterion;
@@ -564,11 +564,8 @@ public class Controller implements IView {
 
     /**
      * Starts the anonymization.
-     * @param heuristicSearch 
-     * @param localRecoding
      */
-    public void actionMenuEditAnonymize(boolean heuristicSearch,
-                                        boolean localRecoding) {
+    public void actionMenuEditAnonymize() {
 
         if (model == null) {
             main.showInfoDialog(main.getShell(),
@@ -589,63 +586,27 @@ public class Controller implements IView {
             main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
             return;
         }
-        
-        // Check if optimizable
-        if (localRecoding) {
-            model.createConfig();
-            for (PrivacyCriterion c : model.getInputConfig().getCriteria()) {
-                if (!c.isLocalRecodingSupported()) {
-                    final String message = Resources.getMessage("Controller.158"); //$NON-NLS-1$
-                    main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.11"), message); //$NON-NLS-1$
-                    return;
-                }
-            }
+
+        try {
+            model.createConfig(); // This must be performed before opening the dialog
+        } catch (Exception e) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.14") + e.getMessage()); //$NON-NLS-1$
+            return;
         }
         
-        // TODO: Handle
-        // model.getSolutionSpaceSize();
-
-        // Query for parameters
-        int maxTimePerIteration = 0;
-        double minRecordsPerIteration = 0d;
-        if (localRecoding) {
-            
-            Pair<Double, Double> output = this.actionShowLocalAnonymizationDialog();
-            if (output == null) {
-                return;
-            }
-            maxTimePerIteration = Double.valueOf(output.getFirst() * 1000d).intValue();
-            minRecordsPerIteration = output.getSecond();
-            model.getLocalRecodingModel().setMinRecordsPerIteration(minRecordsPerIteration);
-
-        // Query for execution time
-        } else if (heuristicSearch) {
-            String output = this.actionShowInputDialog(main.getShell(), 
-                                                       Resources.getMessage("Controller.38"),  //$NON-NLS-1$
-                                                       Resources.getMessage("Controller.79") + //$NON-NLS-1$
-                                                       Resources.getMessage("Controller.80"), String.valueOf(model.getInputConfig().getHeuristicSearchTimeLimit() / 1000d), //$NON-NLS-1$ //$NON-NLS-2$
-                                                       new IInputValidator(){
-                                                        public String isValid(String arg0) {
-                                                            try { 
-                                                                double val = Double.parseDouble(arg0); 
-                                                                return val > 0d ? null : Resources.getMessage("Controller.98"); //$NON-NLS-1$
-                                                            } catch (Exception e) {
-                                                                return Resources.getMessage("Controller.99"); //$NON-NLS-1$
-                                                            }
-                                                        }
-            });
-            if (output == null) {
-                return;
-            }
-            maxTimePerIteration = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
-            model.getInputConfig().setHeuristicSearchTimeLimit(maxTimePerIteration);
+        // Open configuration dialog
+        ModelAnonymizationConfiguration configuration = this.actionShowLocalAnonymizationDialog();
+        if (configuration == null) {
+            return;
         }
-
+        
         // Reset
         actionMenuEditReset();
         
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(model, maxTimePerIteration, minRecordsPerIteration);
+        final WorkerAnonymize worker = new WorkerAnonymize(model);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
         
         // Show errors
@@ -697,7 +658,10 @@ public class Controller implements IView {
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
                                                          model.getInitialNodesInViewer());
-            filter.initialize(result);
+            filter.initialize(result, allResults.getSecond().isLocalTransformation());
+            if (allResults.getSecond().isLocalTransformation()) {
+                filter.reset(workerResult.getSecond(), workerResult.getSecond() == null ? null : workerResult.getSecond().getDefinition());
+            }
             model.setNodeFilter(filter);
             
             // Update model
@@ -708,6 +672,14 @@ public class Controller implements IView {
             if (result.isResultAvailable()) {
                 model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
+                
+                // Classification parameter
+                model.getSelectedFeatures().clear();
+                model.getSelectedFeatures().addAll(model.getOutputDefinition().getQuasiIdentifyingAttributes());
+                model.getSelectedClasses().clear();
+                model.getSelectedClasses().addAll(model.getOutputDefinition().getResponseVariables());
+                
+                // Events
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
                                       workerResult.getSecond()));
@@ -870,6 +842,45 @@ public class Controller implements IView {
         this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
     }
 
+    /**
+     * Initializes the hierarchy for the currently selected attribute with a scheme
+     * for attribute suppression.
+     */
+    public void actionMenuEditCreateAttributeSuppressionHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] array;
+        try {
+            array = new String[values.length][2];
+            for (int i = 0; i < values.length; i++) {
+
+                String value = values[i];
+                String coded = "*"; //$NON-NLS-1$
+                array[i] = new String[] {value, coded};
+            }
+        } catch (Exception e) {
+            this.actionShowInfoDialog(main.getShell(), Resources.getMessage("Controller.159"), Resources.getMessage("Controller.153")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+    }
     /**
      * Find and replace action
      */
@@ -1717,7 +1728,7 @@ public class Controller implements IView {
      * @return Returns the parameters selected by the user. Returns a pair. 
      *         First: max. time per iteration. Second: min. records per iteration.
      */
-    public Pair<Double, Double> actionShowLocalAnonymizationDialog() {
+    public ModelAnonymizationConfiguration actionShowLocalAnonymizationDialog() {
         return main.showLocalAnonymizationDialog(model);
     }
 

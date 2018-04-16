@@ -43,11 +43,6 @@ public class MultiClassLogisticRegressionClassificationResult implements Classif
     }
 
     @Override
-    public double confidence() {
-        return vector.getQuick(vector.maxValueIndex());
-    }
-
-    @Override
     public double[] confidences() {
         double[] result = new double[vector.size()];
         for (int i = 0; i < result.length; i++) {

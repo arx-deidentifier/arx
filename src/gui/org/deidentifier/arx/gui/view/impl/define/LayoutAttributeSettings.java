@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@ public class LayoutAttributeSettings implements ILayout {
                                    final Controller controller) {
         
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-1"); //$NON-NLS-1$
-        bar.add(Resources.getMessage("AttributeDefinitionView.10"), //$NON-NLS-1$
+        bar.add(Resources.getMessage("AttributeDefinitionView.13"), //$NON-NLS-1$
                 controller.getResources().getImage(AttributeType.QUASI_IDENTIFYING_ATTRIBUTE), // $NON-NLS-1$
                 new Runnable() {
                     @Override

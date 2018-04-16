@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,35 +28,45 @@ import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
+import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
  * Implements a classifier
  * @author Fabian Prasser
  */
-public class MultiClassLogisticRegression implements ClassificationMethod {
+public class MultiClassLogisticRegression extends ClassificationMethod {
 
     /** Config */
     private final ClassificationConfigurationLogisticRegression config;
     /** Encoder */
-    private final ConstantValueEncoder               interceptEncoder;
+    private final ConstantValueEncoder                          interceptEncoder;
     /** Instance */
-    private final OnlineLogisticRegression           lr;
+    private final OnlineLogisticRegression                      lr;
     /** Specification */
-    private final ClassificationDataSpecification    specification;
+    private final ClassificationDataSpecification               specification;
     /** Encoder */
-    private final StaticWordValueEncoder             wordEncoder;
+    private final StaticWordValueEncoder                        wordEncoder;
+    /** Input handle */
+    private final DataHandleInternal                            inputHandle;
 
     /**
      * Creates a new instance
+     * @param interrupt
      * @param specification
      * @param config
+     * @param inputHandle
      */
-    public MultiClassLogisticRegression(ClassificationDataSpecification specification,
-                                        ClassificationConfigurationLogisticRegression config) {
+    public MultiClassLogisticRegression(WrappedBoolean interrupt,
+                                        ClassificationDataSpecification specification,
+                                        ClassificationConfigurationLogisticRegression config,
+                                        DataHandleInternal inputHandle) {
 
+        super(interrupt);
+        
         // Store
         this.config = config;
         this.specification = specification;
+        this.inputHandle = inputHandle;
         
         // Prepare classifier
         PriorFunction prior = null;
@@ -92,7 +102,7 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
 
     @Override
     public ClassificationResult classify(DataHandleInternal features, int row) {
-        return new MultiClassLogisticRegressionClassificationResult(lr.classifyFull(encodeFeatures(features, row)), specification.classMap);
+        return new MultiClassLogisticRegressionClassificationResult(lr.classifyFull(encodeFeatures(features, row, true)), specification.classMap);
     }
 
     @Override
@@ -102,7 +112,7 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
 
     @Override
     public void train(DataHandleInternal features, DataHandleInternal clazz, int row) {
-        lr.train(encodeClass(clazz, row), encodeFeatures(features, row));
+        lr.train(encodeClass(clazz, row), encodeFeatures(features, row, false));
     }
 
     /**
@@ -119,9 +129,10 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
      * Encodes a feature
      * @param handle
      * @param row
+     * @param classify
      * @return
      */
-    private Vector encodeFeatures(DataHandleInternal handle, int row) {
+    private Vector encodeFeatures(DataHandleInternal handle, int row, boolean classify) {
 
         // Prepare
         DenseVector vector = new DenseVector(config.getVectorLength());
@@ -139,7 +150,12 @@ public class MultiClassLogisticRegression implements ClassificationMethod {
             
             // Obtain data
             ClassificationFeatureMetadata metadata = specification.featureMetadata[count];
-            String value = handle.getValue(row, index, true);
+            String value = null;
+            if (classify && metadata.isNumericMicroaggregation()) {
+                value = inputHandle.getValue(row, index, true);
+            } else {
+                value = handle.getValue(row, index, true);
+            }
             Double numeric = metadata.getNumericValue(value);
             if (Double.isNaN(numeric)) {    
                 wordEncoder.addToVector("Attribute-" + index + ":" + value, 1, vector);

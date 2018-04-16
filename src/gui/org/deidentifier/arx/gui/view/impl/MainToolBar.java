@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -424,10 +424,10 @@ public class MainToolBar extends AbstractMenu {
         if (stats.isSolutationAvailable()) {
             
             // Global transformation scheme
-            if (stats.getNumberOfSteps() == 1) {
+            if (!stats.isLocalTransformation()) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
                 .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
-                .append(SWTUtil.getPrettyString(stats.getStep(0).isOptimal()))
+                .append(stats.getStep(0).isOptimal() ? SWTUtil.getPrettyString(true) : Resources.getMessage("MainToolBar.72"))
                 .append(Resources.getMessage("MainToolBar.37")) //$NON-NLS-1$
                 .append(Arrays.toString(stats.getStep(0).getTransformation()));
               sb.append(Resources.getMessage("MainToolBar.38")) //$NON-NLS-1$

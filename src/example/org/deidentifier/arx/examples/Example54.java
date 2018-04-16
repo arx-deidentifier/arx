@@ -121,7 +121,6 @@ public class Example54 extends Example {
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
         System.out.println(" - Granularity: " + utility.getGranularity().getArithmeticMean(false));
         System.out.println(" - Attribute-level SE: " + utility.getAttributeLevelSquaredError().getArithmeticMean(false));
-        System.out.println(" - KL-Divergence: " + utility.getKullbackLeiblerDivergence().getValue());
         System.out.println(" - Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
         System.out.println(" - Precision: " + utility.getGeneralizationIntensity().getArithmeticMean(false));
         System.out.println(" - Record-level SE: " + utility.getRecordLevelSquaredError().getValue());
@@ -134,9 +133,8 @@ public class Example54 extends Example {
         System.out.println(" - Discernibility: " + utility.getDiscernibility().getValue());
         System.out.println(" - Granularity: " + utility.getGranularity().getArithmeticMean(false));
         System.out.println(" - MSE: " + utility.getAttributeLevelSquaredError().getArithmeticMean(false));
-        System.out.println(" - KL-Divergence: " + utility.getKullbackLeiblerDivergence().getValue());
         System.out.println(" - Non-Uniform Entropy: " + utility.getNonUniformEntropy().getArithmeticMean(false));
         System.out.println(" - Precision: " + utility.getGeneralizationIntensity().getArithmeticMean(false));
-        System.out.println(" - SSE: " + utility.getRecordLevelSquaredError().getValue());
+        System.out.println(" - Record-level SE: " + utility.getRecordLevelSquaredError().getValue());
     }
 }

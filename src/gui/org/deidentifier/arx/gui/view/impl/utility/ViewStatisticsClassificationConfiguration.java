@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -106,8 +105,7 @@ public class ViewStatisticsClassificationConfiguration implements IView, ViewSta
         // Create items
         combo.setItems(new String[]{getLabel(ClassificationConfigurationLogisticRegression.class),
                                     getLabel(ClassificationConfigurationNaiveBayes.class),
-                                    getLabel(ClassificationConfigurationRandomForest.class),
-                                    getLabel(ClassificationConfigurationSVM.class)});
+                                    getLabel(ClassificationConfigurationRandomForest.class)});
         
         // Button to prompt edit dialog
         Button button = new Button(composite, SWT.PUSH);
@@ -243,33 +241,26 @@ public class ViewStatisticsClassificationConfiguration implements IView, ViewSta
         TableItem item = new TableItem(this.table, SWT.NONE);
         item.setText(0, Resources.getMessage("ViewClassificationAttributes.24")); //$NON-NLS-1$
         item.setText(1, SWTUtil.getPrettyString(config.getNumberOfTrees()));
-    }
-
-    /**
-     * Creates table items for each parameter of a SVM configuration
-     * 
-     * @param config
-     */
-    private void createItemsForSVM(ClassificationConfigurationSVM config) {
-        TableItem item = new TableItem(this.table, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewClassificationAttributes.25")); //$NON-NLS-1$
-        item.setText(1, SWTUtil.getPrettyString(config.getC()));
 
         item = new TableItem(this.table, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewClassificationAttributes.26")); //$NON-NLS-1$
-        item.setText(1, SWTUtil.getPrettyString(config.getKernelDegree()));
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.33")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getNumberOfVariablesToSplit()));
 
         item = new TableItem(this.table, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewClassificationAttributes.27")); //$NON-NLS-1$
-        item.setText(1, SWTUtil.getPrettyString(config.getKernelSigma()));
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.34")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getMinimumSizeOfLeafNodes()));
 
         item = new TableItem(this.table, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewClassificationAttributes.28")); //$NON-NLS-1$
-        item.setText(1, SWTUtil.getPrettyString(config.getKernelType()));
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.35")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getMaximumNumberOfLeafNodes()));
 
         item = new TableItem(this.table, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewClassificationAttributes.29")); //$NON-NLS-1$
-        item.setText(1, SWTUtil.getPrettyString(config.getMulticlassType()));
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.36")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getSubsample()));
+
+        item = new TableItem(this.table, SWT.NONE);
+        item.setText(0, Resources.getMessage("ViewClassificationAttributes.37")); //$NON-NLS-1$
+        item.setText(1, SWTUtil.getPrettyString(config.getSplitRule()));
     }
 
     /**
@@ -283,8 +274,7 @@ public class ViewStatisticsClassificationConfiguration implements IView, ViewSta
         ARXClassificationConfiguration<?>[] configs = new ARXClassificationConfiguration[]{
             this.model.getClassificationModel().getLogisticRegressionConfiguration(),
             this.model.getClassificationModel().getNaiveBayesConfiguration(),
-            this.model.getClassificationModel().getRandomForestConfiguration(),
-            this.model.getClassificationModel().getSVMConfiguration()  
+            this.model.getClassificationModel().getRandomForestConfiguration()  
         };
         
         // Search
@@ -332,10 +322,6 @@ public class ViewStatisticsClassificationConfiguration implements IView, ViewSta
         if (config == ClassificationConfigurationRandomForest.class) { 
             return Resources.getMessage("ViewClassificationAttributes.9"); 
         }
-        // SVM
-        if (config == ClassificationConfigurationSVM.class) { 
-            return Resources.getMessage("ViewClassificationAttributes.10"); 
-        }
         return null;
     }
 
@@ -362,8 +348,6 @@ public class ViewStatisticsClassificationConfiguration implements IView, ViewSta
             createItemsForNaiveBayes((ClassificationConfigurationNaiveBayes) config);
         } else if (config instanceof ClassificationConfigurationRandomForest) {
             createItemsForRandomForest((ClassificationConfigurationRandomForest) config);
-        } else if (config instanceof ClassificationConfigurationSVM) {
-            createItemsForSVM((ClassificationConfigurationSVM) config);
         }
         
         this.root.setRedraw(true);
