@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,14 +126,14 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getCriterion();
-	
-	/**
+
+    /**
      * 
      *
      * @return
      */
 	public abstract String getDatatype();
-	
+    
 	/**
      * 
      *
@@ -286,20 +286,20 @@ public abstract class Vocabulary {
      * @return
      */
     public abstract String getMicroAggregationFunction();
-
-    /**
+	
+	/**
      * 
      * @return
      */
     public abstract String getMicroAggregationIgnoreMissingData();
-    
-	/**
+
+    /**
      * 
      *
      * @return
      */
 	public abstract String getMin();
-	
+    
 	/**
      * 
      *
@@ -327,14 +327,14 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getNode2();
-    
-    /**
+	
+	/**
      * 
      *
      * @return
      */
 	public abstract String getPracticalMonotonicity();
-
+    
     /**
      * 
      *
@@ -355,14 +355,14 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getProtectSensitiveAssociations();
-    
-    
+
     /**
      * 
      *
      * @return
      */
     public abstract String getQuote();
+    
     
     /**
      * 
@@ -384,6 +384,13 @@ public abstract class Vocabulary {
      * @return
      */
 	public abstract String getRemoveOutliers();
+    
+    /**
+     * 
+     *
+     * @return
+     */
+    public abstract String getResponseVariable();
     
     /**
      * 
@@ -668,12 +675,19 @@ public abstract class Vocabulary {
     
     /**
      * 
+     * @param value
+     * @return
+     */
+    public boolean isResponseVariable(String value) {return value.equals(getResponseVariable());}
+    
+    /**
+     * 
      *
      * @param value
      * @return
      */
 	public boolean isSuccessors(String value){return value.equals(getSuccessors());}
-    
+
     /**
      * 
      *

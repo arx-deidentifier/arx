@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,9 @@ public class MRUCacheEntry<T> {
     public MRUCacheEntry<T> prev;
 
     /**
-     * Instantiates a new mRU cache entry.
+     * Creates a new instance
      * 
-     * @param node
-     *            the node
+     * @param node the node
      */
     public MRUCacheEntry(final T node) {
         this.data = node;

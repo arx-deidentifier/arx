@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
@@ -97,7 +97,7 @@ public class Example40 extends Example {
             System.out.println(Arrays.toString(input.next()));
         }
 
-        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
+        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createLogisticRegression()));
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -113,6 +113,6 @@ public class Example40 extends Example {
             System.out.println(Arrays.toString(transformed.next()));
         }
 
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createLogisticRegression()));
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -588,23 +588,26 @@ public class ViewLattice extends ViewSolutionSpace {
             reset();
             return;
         }
+
+        // Obtain lattice
+        final ARXLattice lattice = getModel().getProcessStatistics().isLocalTransformation() ? 
+                                   getModel().getProcessStatistics().getLattice() : result.getLattice();
         
         // Clear the lattice
-        if (!result.getLattice().equals(this.arxLattice)) {
+        if (!lattice.equals(this.arxLattice)) {
             this.clearLatticeAndDisposePaths();
-            this.arxLattice = result.getLattice();
+            this.arxLattice = lattice;
         } else {
             this.lattice.clear();
         }
 
         // Build the visible sub-lattice
-        ARXLattice originalLattice = result.getLattice();
         this.latticeWidth = 0;
         this.numNodes = 0;
-        for (ARXNode[] originalLevel : originalLattice.getLevels()) {
+        for (ARXNode[] originalLevel : lattice.getLevels()) {
             List<ARXNode> level = new ArrayList<ARXNode>();
             for (ARXNode node : originalLevel) {
-                boolean visible = filter.isAllowed(result.getLattice(), node);
+                boolean visible = filter.isAllowed(lattice, node);
                 node.getAttributes().put(ATTRIBUTE_VISIBLE, visible);
                 if (visible) {
                     level.add(node);

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class TransformedData {
     public Data                       bufferMicroaggregated;
 
     /** The properties */
-    public NodeChecker.Result         properties;
+    public TransformationResult         properties;
     
     /**
      * Instantiate the helper object.
@@ -43,7 +43,7 @@ public class TransformedData {
      * @param bufferGH
      * @param bufferOT
      */
-    public TransformedData(Data bufferGH, Data bufferOT, NodeChecker.Result properties) {
+    public TransformedData(Data bufferGH, Data bufferOT, TransformationResult properties) {
         this.bufferGeneralized = bufferGH;
         this.bufferMicroaggregated = bufferOT;
         this.properties = properties;

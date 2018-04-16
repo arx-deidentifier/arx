@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -245,27 +245,35 @@ public class ViewPropertiesOutput extends ViewProperties {
         // Clear
         roots.clear();
         
-        // Print score
-        if (node.getHighestScore().getValue().equals( 
-            node.getLowestScore().getValue())) {
+        // Print stats
+        if (model.getProcessStatistics().isLocalTransformation()) {
             
-            final String infoloss = node.getLowestScore().toString() +
-                                    " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
-            Property score = new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
-
-            // Print metadata
-            if (node.isChecked()) {
-                for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
-                    new Property(score, metadata.getParameter(), new String[] { SWTUtil.getPrettyString(metadata.getValue()) });
+            // Local transformation
+            new Property(Resources.getMessage("PropertiesView.174"), new String[] { SWTUtil.getPrettyString(true) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.175"), new String[] { String.valueOf(model.getProcessStatistics().getNumberOfSteps()) }); //$NON-NLS-1$
+        } else {
+            
+            // Print score
+            if (node.getHighestScore().getValue().equals( node.getLowestScore().getValue())) {
+                
+                final String infoloss = node.getLowestScore().toString() +
+                                        " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+                Property score = new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
+    
+                // Print metadata
+                if (node.isChecked()) {
+                    for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
+                        new Property(score, metadata.getParameter(), new String[] { SWTUtil.getPrettyString(metadata.getValue()) });
+                    }
                 }
-            }
-        } 
+            } 
+            
+            // Print basic info on neighboring nodes
+            new Property(Resources.getMessage("PropertiesView.48"), new String[] { String.valueOf(node.getSuccessors().length) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.49"), new String[] { String.valueOf(node.getPredecessors().length) }); //$NON-NLS-1$
+            new Property(Resources.getMessage("PropertiesView.50"), new String[] { Arrays.toString(node.getTransformation()) }); //$NON-NLS-1$
+        }
         
-        // Print basic info on neighboring nodes
-        new Property(Resources.getMessage("PropertiesView.48"), new String[] { String.valueOf(node.getSuccessors().length) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.49"), new String[] { String.valueOf(node.getPredecessors().length) }); //$NON-NLS-1$
-        new Property(Resources.getMessage("PropertiesView.50"), new String[] { Arrays.toString(node.getTransformation()) }); //$NON-NLS-1$
-
         // If the node is anonymous
         if (node.getAnonymity() == Anonymity.ANONYMOUS) {
 

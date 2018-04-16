@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.aggregates.StatisticsSummary;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
@@ -107,19 +108,16 @@ public class TestMicroaggregation extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
-        config.setMaxOutliers(1d);
+        config.setSuppressionLimit(1d);
         config.setQualityModel(Metric.createLossMetric(AggregateFunction.RANK));
         
         ARXResult result = anonymizer.anonymize(data, config);
-        DataHandle exptectedOutput = Data.create("./data/adult_age_microaggregated.csv", StandardCharsets.UTF_8, ';').getHandle();
-        
         DataHandle output = result.getOutput();
-        for (int i = 0; i < output.getNumRows(); i++) {
-            for (int j = 0; j < output.getNumColumns(); j++) {
-                assertEquals(exptectedOutput.getValue(i, j), output.getValue(i, j));
-            }
-        }
-        
+        StatisticsSummary<?> statistics = output.getStatistics().getSummaryStatistics(false).get("age");
+        assertEquals(statistics.getArithmeticMeanAsDouble(), 37.86159590875886d, 0d);
+        assertEquals(Integer.valueOf(statistics.getMinAsString()), 18, 0d);
+        assertEquals(Integer.valueOf(statistics.getMaxAsString()), 63, 0d);
+        assertEquals(Integer.valueOf(statistics.getMedianAsString()), 40, 0d);
     }
     
     /**
@@ -139,14 +137,13 @@ public class TestMicroaggregation extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         ARXResult result = anonymizer.anonymize(provider.data, config);
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray = {
-                                           { "age", "gender", "zipcode" },
+        final String[][] expectedArray = { { "age", "gender", "zipcode" },
                                            { "54", "male", "81***" },
                                            { "50", "female", "81***" },
                                            { "54", "male", "81***" },
@@ -175,14 +172,13 @@ public class TestMicroaggregation extends AbstractTest {
         final ARXAnonymizer anonymizer = new ARXAnonymizer();
         final ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
-        config.setMaxOutliers(0d);
+        config.setSuppressionLimit(0d);
         
         ARXResult result = anonymizer.anonymize(provider.data, config);
         
         final String[][] resultArray = resultToArray(result);
         
-        final String[][] expectedArray = {
-                                           { "age", "gender", "zipcode" },
+        final String[][] expectedArray = { { "age", "gender", "zipcode" },
                                            { "52", "male", "81***" },
                                            { "48", "female", "81***" },
                                            { "52", "male", "81***" },

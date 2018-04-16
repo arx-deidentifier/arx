@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,9 +87,6 @@ public class ViewUtilityMeasures implements IView {
     private Button                monotonicVariant;
 
     /** View. */
-    private Combo                 comboMicroaggregation;
-
-    /** View. */
     private Combo                 comboAggregate;
 
     /**
@@ -117,7 +114,6 @@ public class ViewUtilityMeasures implements IView {
     public void reset() {
 
         comboMetric.select(0);
-        comboMicroaggregation.select(0);
         monotonicVariant.setSelection(false);
         SWTUtil.disable(root);
     }
@@ -211,50 +207,7 @@ public class ViewUtilityMeasures implements IView {
             }
         });
 
-        // Create microaggreation combo
-        final Label mLabel4 = new Label(mBase, SWT.PUSH);
-        mLabel4.setText(Resources.getMessage("CriterionDefinitionView.90")); //$NON-NLS-1$
-        GridData d24 = new GridData();
-        d24.heightHint = LABEL_HEIGHT;
-        d24.minimumHeight = LABEL_HEIGHT;
-        d24.grabExcessVerticalSpace = true;
-        d24.verticalAlignment = GridData.CENTER;
-        mLabel4.setLayoutData(d24);
-
-        comboMicroaggregation = new Combo(mBase, SWT.READ_ONLY);
-        comboMicroaggregation.setItems(new String[]{
-            Resources.getMessage("CriterionDefinitionView.124"), // Ignore
-            Resources.getMessage("CriterionDefinitionView.125"), // MSE
-            Resources.getMessage("CriterionDefinitionView.126") // IL
-        });
-        comboMicroaggregation.select(0);
-        comboMicroaggregation.setEnabled(false);
-        GridData d33 = SWTUtil.createFillHorizontallyGridData();
-        d33.horizontalSpan = 3;
-        d33.verticalAlignment = GridData.CENTER;
-        d33.grabExcessVerticalSpace = true;
-        comboMicroaggregation.setLayoutData(d33);
-        comboMicroaggregation.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                switch (comboMicroaggregation.getSelectionIndex()) {
-                    case 0:
-                        model.getInputConfig().setUseUtilityBasedMicroaggregation(false);
-                        break;
-                    case 1:
-                        model.getInputConfig().setUseUtilityBasedMicroaggregation(true);
-                        model.getInputConfig().setUseUtilityBasedMicroaggregationMeanSquaredError(true);
-                        break;
-                    case 2:
-                        model.getInputConfig().setUseUtilityBasedMicroaggregation(true);
-                        model.getInputConfig().setUseUtilityBasedMicroaggregationMeanSquaredError(false);
-                        break;
-                }
-                controller.update(new ModelEvent(this, ModelPart.METRIC, model.getMetricDescription()));
-            }
-        });
-
-        // Create monotonicity button
+        // Create section about aggregate functions
         final Label mLabel3 = new Label(mBase, SWT.PUSH);
         mLabel3.setText(Resources.getMessage("CriterionDefinitionView.72")); //$NON-NLS-1$
         GridData d23 = new GridData();
@@ -316,21 +269,7 @@ public class ViewUtilityMeasures implements IView {
         } else {
             this.monotonicVariant.setSelection(config.isMonotonic());
         }
-        
-        // Set - TODO: Creating a temporary instance is such an ugly hack
-        boolean isAbleToHandleMicroaggregation = description.createInstance(config).isAbleToHandleMicroaggregation();
-        boolean isUtilityBasedMicroaggregation = this.model.getInputConfig().isUtilityBasedMicroaggregation();
-        boolean isUtilityBasedMicroaggregationUseMeanSquaredError = this.model.getInputConfig().isUtilityBasedMicroaggregationUseMeanSquaredError();
-        if (isAbleToHandleMicroaggregation && isUtilityBasedMicroaggregation) {
-            if (isUtilityBasedMicroaggregationUseMeanSquaredError) {
-                this.comboMicroaggregation.select(1);
-            } else {
-                this.comboMicroaggregation.select(2);
-            }
-        } else {
-            this.comboMicroaggregation.select(0);
-        }
-        
+
         // Aggregate function
         this.comboAggregate.removeAll();
         int index = 0;
@@ -356,7 +295,6 @@ public class ViewUtilityMeasures implements IView {
             this.comboAggregate.setEnabled(false);
         }
         this.monotonicVariant.setEnabled(description.isMonotonicVariantSupported());
-        this.comboMicroaggregation.setEnabled(isAbleToHandleMicroaggregation);
         
         // Redraw
         this.root.setRedraw(true);

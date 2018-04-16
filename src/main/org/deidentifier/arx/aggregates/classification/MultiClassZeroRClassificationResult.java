@@ -17,6 +17,7 @@
 package org.deidentifier.arx.aggregates.classification;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A classification result
@@ -25,9 +26,11 @@ import java.util.Map;
  */
 public class MultiClassZeroRClassificationResult implements ClassificationResult {
 
-    /** Field*/
+    /** Field */
     private final Map<String, Integer> map;
-    /** Field*/
+    /** Counts */
+    private final double[]             confidences;
+    /** Field */
     private final Integer              result;
 
     /**
@@ -35,14 +38,15 @@ public class MultiClassZeroRClassificationResult implements ClassificationResult
      * @param result
      * @param map
      */
-    MultiClassZeroRClassificationResult(Integer result, Map<String, Integer> map) {
+    MultiClassZeroRClassificationResult(Map<Integer, Integer> counts, Map<String, Integer> map) {
         this.map = map;
-        this.result = result;
+        this.result = getIndexWithMostCounts(counts);
+        this.confidences = getConfidences(counts);
     }
 
     @Override
-    public double confidence() {
-        return 1d;
+    public double[] confidences() {
+        return confidences;
     }
 
     @Override
@@ -63,6 +67,44 @@ public class MultiClassZeroRClassificationResult implements ClassificationResult
         } else {
             return 1d;
         }
+    }
+
+    /**
+     * Calculate confidences
+     * @param counts
+     * @return
+     */
+    private double[] getConfidences(Map<Integer, Integer> counts) {
+        double[] confidences = new double[counts.size()];
+        int index=0;
+        double sum = 0d;
+        for(Integer count : counts.values()) {
+            confidences[index++] = count;
+            sum += count;
+        }
+        for (int i=0; i<confidences.length; i++) {
+            confidences[i] /= sum;
+        }
+        return confidences;
+    }
+
+    /**
+     * Returns the index of the most frequent element
+     * @param counts 
+     * @return
+     */
+    private Integer getIndexWithMostCounts(Map<Integer, Integer> counts) {
+        int max = Integer.MIN_VALUE;
+        Integer result = null;
+        for (Entry<Integer, Integer> entry : counts.entrySet()) {
+            int count = entry.getValue();
+            int index = entry.getKey();
+            if (count > max) {
+                max = count;
+                result = index;
+            }
+        }
+        return result;
     }
 
     @Override

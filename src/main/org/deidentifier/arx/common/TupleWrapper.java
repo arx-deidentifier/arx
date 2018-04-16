@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,9 +36,9 @@ public class TupleWrapper {
     private final boolean  suppressed;
 
     /**
-     * Constructor
-     * 
+     * Creates a new instance
      * @param handle
+     * @param indices
      * @param row
      */
     public TupleWrapper(DataHandle handle, int[] indices, int row) {
@@ -55,10 +55,11 @@ public class TupleWrapper {
     }
     
     /**
-     * Constructor
-     * 
+     * Creates a new instance
      * @param handle
+     * @param indices
      * @param row
+     * @param ignoreSuppression
      */
     public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreSuppression) {
         this.values = new String[indices.length];
@@ -71,6 +72,51 @@ public class TupleWrapper {
         }
         this.hashcode = hashcode;
         this.suppressed = handle.isOutlier(row);
+    }
+
+    /**
+     * Creates a new instance
+     * @param handle
+     * @param indices
+     * @param row
+     * @param ignoreSuppression
+     * @param wildcard
+     */
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreSuppression, String wildcard) {
+        this.values = new String[indices.length];
+        int hashcode = 1;
+        int idx = 0;
+        boolean suppressed = true;
+        for (int index : indices) {
+            String value = handle.getValue(row, index, ignoreSuppression);
+            hashcode = 31 * hashcode + value.hashCode();
+            values[idx++] = value;
+            suppressed = suppressed && (wildcard != null && value.equals(wildcard));
+        }
+        this.hashcode = hashcode;
+        this.suppressed = handle.isOutlier(row) || suppressed;
+    }
+    
+    /**
+     * Creates a new instance
+     * @param handle
+     * @param indices
+     * @param row
+     * @param wildcard
+     */
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, String wildcard) {
+        this.values = new String[indices.length];
+        int hashcode = 1;
+        int idx = 0;
+        boolean suppressed = true;
+        for (int index : indices) {
+            String value = handle.getValue(row, index, false);
+            hashcode = 31 * hashcode + value.hashCode();
+            values[idx++] = value;
+            suppressed = suppressed && value.equals(wildcard);
+        }
+        this.hashcode = hashcode;
+        this.suppressed = suppressed;
     }
 
     @Override
@@ -92,10 +138,10 @@ public class TupleWrapper {
     }
     
     /**
-     * Is this tuple suppressed
+     * Is this record suppressed
      * @return
      */
-    public boolean isOutlier() {
+    public boolean isSuppressed() {
         return suppressed;
     }
 }

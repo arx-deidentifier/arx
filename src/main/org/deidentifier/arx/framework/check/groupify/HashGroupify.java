@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.deidentifier.arx.criteria.SampleBasedCriterion;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -101,11 +102,15 @@ public class HashGroupify {
 
     /** Output */
     private final DataMatrix             dataAnalyzed;
+
+    /** Number of columns (from index 0) that need to be analyzed in hot-mode*/ 
+    private final int                    dataAnalyzedNumberOfColumns;
     
     /**
      * Constructs a new hash groupify operator.
      *
      * @param capacity The capacity
+     * @param aggregation The aggregation information
      * @param config The config
      * @param input
      * @param output
@@ -113,6 +118,7 @@ public class HashGroupify {
      */
     public HashGroupify(int capacity, 
                         final ARXConfigurationInternal config,
+                        final int dataAnalyzedNumberOfColumns,
                         final DataMatrix input,
                         final DataMatrix output,
                         final DataMatrix analyzed) {
@@ -121,6 +127,7 @@ public class HashGroupify {
         this.dataInput = input;
         this.dataOutput = output;
         this.dataAnalyzed = analyzed;
+        this.dataAnalyzedNumberOfColumns = dataAnalyzedNumberOfColumns;
         
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
@@ -130,7 +137,7 @@ public class HashGroupify {
         
         // Set params
         this.currentNumOutliers = 0;
-        this.suppressionLimit = config.getAbsoluteMaxOutliers();
+        this.suppressionLimit = config.getAbsoluteSuppressionLimit();
         this.utilityMeasure = config.getQualityModel();
         this.heuristicForSampleBasedCriteria = config.isUseHeuristicForSampleBasedCriteria();
         
@@ -175,7 +182,7 @@ public class HashGroupify {
         // Is a other attribute provided
         if (other != -1) {
             if (entry.distributions == null) {
-                entry.distributions = new Distribution[dataAnalyzed.getNumColumns()];
+                entry.distributions = new Distribution[dataAnalyzedNumberOfColumns];
                 
                 // TODO: Improve!
                 for (int i = 0; i < entry.distributions.length; i++) {
@@ -323,23 +330,21 @@ public class HashGroupify {
 
     /**
      * Returns a data object with microaggregation performed
-     * @param start
-     * @param num
-     * @param functions
-     * @param map
-     * @param header
+     * @param microaggregationData
      * @param dictionary
      * @return
      */
-    public Data performMicroaggregation(int start,
-                                        int num,
-                                        DistributionAggregateFunction[] functions,
-                                        int[] map,
-                                        String[] header,
+    public Data performMicroaggregation(DataAggregationInformation microaggregationData,
                                         Dictionary dictionary) {
         
+        // Initialize
+        int[] indices = microaggregationData.getMicroaggregationIndices();
+        DistributionAggregateFunction[] functions = microaggregationData.getMicroaggregationFunctions();
+        String[] header = microaggregationData.getMicroaggregationHeader();
+        int[] columns = microaggregationData.getMicroaggregationColumns();
+        
         // Prepare result
-        Data result = new Data(new DataMatrix(dataOutput.getNumRows(), num), header, map, dictionary);
+        Data result = Data.createWrapper(new DataMatrix(dataOutput.getNumRows(), indices.length), header, columns, dictionary);
 
         // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
         ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
@@ -351,17 +356,18 @@ public class HashGroupify {
                 while ((m != null) && ((m.hashcode != hash) || !dataOutput.equalsIgnoringOutliers(row, m.row))) {
                     m = m.next;
                 }
-                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before microaggregation!"); }
-                int dimension = 0;
+                if (m == null) { throw new RuntimeException("Invalid state! Groupify the data before performing microaggregation!"); }
                 result.getArray().iterator(row);
-                for (int i = start; i < start + num; i++) {
-                    if (!cache.containsKey(m.distributions[i])) {
-                        String value = functions[dimension].aggregate(m.distributions[i]);
-                        int code = result.getDictionary().register(dimension, value);
-                        cache.put(m.distributions[i], code);
+                for (int i = 0; i < indices.length; i++) {
+                    int columnIndex = indices[i];
+                    Distribution distribution = m.distributions[columnIndex];
+                    int code = cache.getOrDefault(distribution, -1);
+                    if (code == -1) {
+                        String value = functions[i].aggregate(distribution);
+                        code = result.getDictionary().register(i, value);
+                        cache.put(distribution, code);
                     }
-                    result.getArray().iterator_write(cache.get(m.distributions[i]));
-                    dimension++;
+                    result.getArray().iterator_write(code);
                 }
             }
         }
@@ -374,7 +380,9 @@ public class HashGroupify {
     }
     
     /**
-     * Marks all outliers in the output dataset
+     * Suppresses all records in the output dataset which <br>
+     * (a) do not satisfy privacy requirements, or <br>
+     * (b) are not included in the research subset
      */
     public void performSuppression() {
         
@@ -387,7 +395,7 @@ public class HashGroupify {
                     m = m.next;
                 }
                 if (m == null) {
-                    throw new RuntimeException("Invalid state! Groupify the data before marking outliers!");
+                    throw new RuntimeException("Invalid state! Group the data before suppressing records!");
                 }
                 if (!m.isNotOutlier) {
                     dataOutput.or(row, Data.OUTLIER_MASK);

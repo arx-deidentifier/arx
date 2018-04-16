@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import java.io.PrintStream;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -196,31 +197,31 @@ public abstract class ViewSolutionSpace implements IView {
             eventNodeSelected();
         } else if (event.part == ModelPart.RESULT) {
             ARXResult result = (ARXResult)event.data;
-            if (model != null && result != null && result.getGlobalOptimum() != null) {
+            if (model != null && result != null && result.getGlobalOptimum() != null && !model.getProcessStatistics().isLocalTransformation()) {
                 optimum = result.getGlobalOptimum();
             } else {
                 optimum = null;
             }
-            if (model!=null && !isTooLarge(result, model.getNodeFilter(), model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(result, model.getProcessStatistics(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
                 eventResultChanged(result);
             }
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             if (model != null && model.getResult() != null &&
-                model.getResult().getGlobalOptimum() != null) {
+                model.getResult().getGlobalOptimum() != null && !model.getProcessStatistics().isLocalTransformation()) {
                 optimum = model.getResult().getGlobalOptimum();
             } else {
                 optimum = null;
             }
-            if (model!=null && !isTooLarge(model.getResult(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(model.getResult(), model.getProcessStatistics(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
                 eventModelChanged();
             }
         } else if (event.part == ModelPart.FILTER) {
-            if (model!=null && !isTooLarge(model.getResult(), (ModelNodeFilter) event.data, model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(model.getResult(), model.getProcessStatistics(), (ModelNodeFilter) event.data, model.getMaxNodesInViewer())) {
                 eventFilterChanged(model.getResult(), (ModelNodeFilter) event.data);
             }
         } else if (event.part == ModelPart.EXPAND) {
-            if (model!=null && !isTooLarge(model.getResult(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
+            if (model!=null && !isTooLarge(model.getResult(), model.getProcessStatistics(), model.getNodeFilter(), model.getMaxNodesInViewer())) {
                 eventFilterChanged(model.getResult(), model.getNodeFilter());
             }
         }
@@ -302,12 +303,18 @@ public abstract class ViewSolutionSpace implements IView {
     /**
      * Check whether the filtered part of the solution space is too large
      * @param result
+     * @param statistics
      * @param filter
      * @return
      */
-    private boolean isTooLarge(ARXResult result, ModelNodeFilter filter, int max) {
+    private boolean isTooLarge(ARXResult result, ARXProcessStatistics statistics, ModelNodeFilter filter, int max) {
 
         if(result == null) {
+            showPrimaryComposite();
+            return false;
+        }
+        
+        if (statistics.isLocalTransformation()) {
             showPrimaryComposite();
             return false;
         }
@@ -351,8 +358,11 @@ public abstract class ViewSolutionSpace implements IView {
      * @param y
      */
     protected void actionShowMenu(int x, int y){
-        menu.setLocation(x, y);
-        menu.setVisible(true);
+        // Only show for global transformation schemes
+        if (model != null && model.getProcessStatistics() != null && !model.getProcessStatistics().isLocalTransformation()) {
+            menu.setLocation(x, y);
+            menu.setVisible(true);
+        }
     }
 
     /**
@@ -364,8 +374,12 @@ public abstract class ViewSolutionSpace implements IView {
     protected double asRelativeValue(final InformationLoss<?> infoLoss) {
         if (model != null && model.getResult() != null && model.getResult().getLattice() != null &&
             model.getResult().getLattice().getBottom() != null && model.getResult().getLattice().getTop() != null) {
-            return infoLoss.relativeTo(model.getResult().getLattice().getLowestScore(),
-                                       model.getResult().getLattice().getHighestScore()) * 100d;
+            
+            final ARXLattice lattice = getModel().getProcessStatistics().isLocalTransformation() ? 
+                                       getModel().getProcessStatistics().getLattice() : model.getResult().getLattice();
+            
+            return infoLoss.relativeTo(lattice.getLowestScore(),
+                                       lattice.getHighestScore()) * 100d;
         } else {
             return 0;
         }

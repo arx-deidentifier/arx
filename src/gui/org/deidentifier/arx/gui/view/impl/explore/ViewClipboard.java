@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -175,6 +175,18 @@ public class ViewClipboard implements IView {
                 if (event.button == 3) {
                     final TableItem i = getItemAt(event.x, event.y);
                     if (i != null) {
+                        
+                        // Prepare menu
+                        for (MenuItem item : menu.getItems()) {
+                            if (item.getText().equals(Resources.getMessage("NodeClipboardView.3"))) { //$NON-NLS-1$
+                                if (model.getProcessStatistics().isLocalTransformation()) {
+                                    item.setEnabled(false);
+                                } else {
+                                    item.setEnabled(true);
+                                }
+                            }
+                        }
+                        
                         final ARXNode node = (ARXNode) i.getData();
                         model.setSelectedNode(node);
                         controller.update(new ModelEvent(ViewClipboard.this, ModelPart.SELECTED_NODE, node));

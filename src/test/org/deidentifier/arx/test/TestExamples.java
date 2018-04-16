@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,6 +69,8 @@ import org.deidentifier.arx.examples.Example52;
 import org.deidentifier.arx.examples.Example53;
 import org.deidentifier.arx.examples.Example54;
 import org.deidentifier.arx.examples.Example55;
+import org.deidentifier.arx.examples.Example56;
+import org.deidentifier.arx.examples.Example57;
 import org.deidentifier.arx.examples.Example6;
 import org.deidentifier.arx.examples.Example7;
 import org.deidentifier.arx.examples.Example8;
@@ -717,6 +719,32 @@ public class TestExamples {
     public void testExample55() {
         try {
             Example55.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample56() {
+        try {
+            Example56.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample57() {
+        try {
+            Example57.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();

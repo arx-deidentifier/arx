@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,7 +141,7 @@ public class Example49 extends Example {
         ProfitabilityProsecutorNoAttack profitability = new ProfitabilityProsecutorNoAttack();
         
         // Configure ARX
-        arxconfig.setMaxOutliers(1d);
+        arxconfig.setSuppressionLimit(1d);
         arxconfig.setQualityModel(maximizePublisherPayout);
         arxconfig.addPrivacyModel(profitability);
 
@@ -156,7 +156,7 @@ public class Example49 extends Example {
         System.out.println(" - Configuration: " + config.toString());
         System.out.println(" - Policies available: " + result.getLattice().getSize());
         System.out.println(" - Solution: " + Arrays.toString(node.getTransformation()));
-        System.out.println("   * Optimal: " + result.getLattice().isComplete());
+        System.out.println("   * Optimal: " + result.getProcessStatistics().getStep(0).isOptimal());
         System.out.println("   * Time needed: " + result.getTime() + "[ms]");
         for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
             System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());

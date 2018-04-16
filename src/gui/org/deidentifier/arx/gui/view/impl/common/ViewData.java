@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.eclipse.swt.widgets.ToolItem;
  * A view on a <code>Data</code> object.
  *
  * @author Fabian Prasser
+ * @author Johanna Eicher
  */
 public abstract class ViewData implements IView {
 
@@ -364,10 +365,11 @@ public abstract class ViewData implements IView {
      * @param index
      * @param type
      */
-    protected void updateHeaderImage(final int index, final AttributeType type) {
+    protected void updateHeaderImage(final int index, final String attribute, DataDefinition def) {
+        AttributeType type = def.getAttributeType(attribute);
         while (table.getHeaderImages().size() <= index) {
             table.getHeaderImages().add(null);
         }
-        table.getHeaderImages().set(index, controller.getResources().getImage(type));
+        table.getHeaderImages().set(index, controller.getResources().getImage(type, def.isResponseVariable(attribute)));
     }
 }
