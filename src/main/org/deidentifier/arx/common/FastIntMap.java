@@ -21,28 +21,29 @@ package org.deidentifier.arx.common;
  * 
  * @author Fabian Prasser
  */
-public class FastIntDoubleMap {
+public class FastIntMap<T> {
 
-    /** The entry array. */
-    private final int[]    keys;
+    /** The key array. */
+    private final int[] keys;
 
-    /** The entry array. */
-    private final double[] values;
+    /** The values. */
+    private final T[]   values;
 
     /** The mask */
-    private final int      mask;
+    private final int   mask;
 
     /** The min */
-    private int            min;
+    private int         min;
 
-    /** The min */
-    private int            max;
+    /** The max */
+    private int         max;
     
     /**
      * Creates a new instance
      * @param size
      */
-    public FastIntDoubleMap(int size) {
+    @SuppressWarnings("unchecked")
+    public FastIntMap(int size) {
         
         // Calculate capacity needed for a set of given size
         int capacity = (int) (Math.round((double) size * 1.25d)) - 1;
@@ -55,7 +56,7 @@ public class FastIntDoubleMap {
         
         // Prepare
         this.keys = new int[capacity];
-        this.values = new double[capacity];
+        this.values = (T[])new Object[capacity];
         this.mask = keys.length - 1;
         this.min = Integer.MAX_VALUE;
         this.max = Integer.MIN_VALUE;
@@ -66,7 +67,7 @@ public class FastIntDoubleMap {
      * @param key
      * @param value
      */
-    public void put(int key, double value) {
+    public void put(int key, T value) {
 
         key++;
         this.min = Math.min(this.min, key);
@@ -85,7 +86,7 @@ public class FastIntDoubleMap {
      * @param _default
      * @return
      */
-    public double get(int key, double _default) {
+    public T get(int key, T _default) {
 
         key++;
         if (key < min || key > max) {
