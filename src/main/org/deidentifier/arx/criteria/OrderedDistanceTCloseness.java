@@ -20,15 +20,9 @@ package org.deidentifier.arx.criteria;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.common.FastIntDoubleMap;
-import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
-import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
-import org.deidentifier.arx.reliability.IntervalArithmeticException;
-import org.deidentifier.arx.reliability.IntervalDouble;
-
-import com.carrotsearch.hppc.IntObjectOpenHashMap;
 
 /**
  * The t-closeness criterion for ordered attributes.
@@ -61,9 +55,6 @@ public class OrderedDistanceTCloseness extends TCloseness {
     /** Minimal order number that must be present */
     private int               minOrder;
     
-    /** Reliable properties of the original distribution*/
-    private IntervalDouble[]  reliableDistribution;
-    
     /**
      * Creates a new instance of the t-closeness criterion for ordered attributes as proposed in:
      * Li N, Li T, Venkatasubramanian S.
@@ -94,11 +85,6 @@ public class OrderedDistanceTCloseness extends TCloseness {
         this.orderNumber = getOrderNumbers(order);
         this.baseDistances = new double[order.length];
         this.baseSums = new double[order.length];
-        try {
-            this.reliableDistribution = manager.getReliableDistribution(attribute);
-        } catch (ReliabilityException e) {
-            this.reliableDistribution = null;
-        }
         
         // Prepare
         double threshold = t * (order.length - 1d);
@@ -171,62 +157,6 @@ public class OrderedDistanceTCloseness extends TCloseness {
         return true;
     }
     
-    @Override
-    public boolean isReliablyAnonymous(Transformation node, HashGroupifyEntry entry) {
-        
-        try {
-            // Check
-            if (reliableDistribution == null) {
-                return isAnonymous(node, entry);
-            }
-            
-            // Init
-            IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
-            int[] buckets = entry.distributions[index].getBuckets();
-            IntervalDouble count = ia.createInterval(entry.count);
-            
-            // Prepare
-            IntObjectOpenHashMap<IntervalDouble> map = new IntObjectOpenHashMap<IntervalDouble>(buckets.length/2);
-            for (int i = 0; i < buckets.length; i += 2) {
-                if (buckets[i] != -1) { // bucket not empty
-                    int value = buckets[i];
-                    IntervalDouble frequency = ia.div(ia.createInterval(buckets[i + 1]), count);
-                    map.put(value, frequency);
-                }
-            }
-            IntervalDouble threshold = ia.mult(ia.createInterval(t), ia.createInterval(order.length - 1));
-            IntervalDouble distance = ia.createInterval(0);
-            IntervalDouble sum_i = ia.createInterval(0);
-            IntervalDouble zero = ia.createInterval(0);
-            
-            // Calculate and check
-            for (int i=0; i<order.length; i++) {
-                
-                // Compute summands and distance
-                int value = order[i];
-                sum_i = ia.add(sum_i, ia.sub(map.getOrDefault(value, zero), reliableDistribution[value]));
-                distance = ia.add(distance, ia.abs(sum_i));
-                
-                // Early abort
-                if (!ia.lessThanOrEqual(distance, threshold)) {
-                    return false;
-                }
-            }
-
-            // Yes
-            return true;
-            
-        // Check for arithmetic issues
-        } catch (IntervalArithmeticException | ArithmeticException | IndexOutOfBoundsException e) {
-            return false;
-        }
-    }
-
-    @Override
-    public boolean isReliableAnonymizationSupported() {
-        return reliableDistribution != null;
-    }
-
     @Override
     public boolean isLocalRecodingSupported() {
         return true;
