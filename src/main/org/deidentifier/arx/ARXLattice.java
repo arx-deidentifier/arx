@@ -860,6 +860,7 @@ public class ARXLattice implements Serializable {
                final ARXConfigurationInternal config) {
 
         // Init
+        this.solutions = solutions;
         this.metric = config.getQualityModel();
         this.setMonotonicity(config.isSuppressionAlwaysEnabled(), config.getAbsoluteSuppressionLimit());
         this.virtualSize = solutions.getSize();
@@ -918,11 +919,6 @@ public class ARXLattice implements Serializable {
      * Materializes any non-materialized predecessors and successors
      */
     public void expand(ARXNode center) {
-        
-        // Nothing to do
-        if (solutions == null) {
-            return;
-        }
         
         // For results of local recoding
         if (solutions == null) {
@@ -1131,6 +1127,11 @@ public class ARXLattice implements Serializable {
         return result;
     }
 
+    /**
+     * Build an ARX lattice for an incompletely classified solution space
+     * @param optimum
+     * @param headermap
+     */
     private void build(final Transformation optimum, Map<String, Integer> headermap) {
 
         // Create nodes
