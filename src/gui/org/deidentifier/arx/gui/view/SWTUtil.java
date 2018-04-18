@@ -468,6 +468,15 @@ public class SWTUtil {
         return d;
     }
 
+    public static Object createSpanColumnsGridData(final int i)
+    {
+    	final GridData d = new GridData();
+    	d.grabExcessHorizontalSpace = false;
+    	d.grabExcessVerticalSpace = false;
+    	d.horizontalSpan = i;
+    	return d;
+    }
+    
     /**
      * Returns a table. Implements hacks for fixing OSX bugs.
      * @param parent
