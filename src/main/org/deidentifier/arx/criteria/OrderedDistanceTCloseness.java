@@ -251,7 +251,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
             IntervalDouble sum_i = currentMinOrder > 0 ? baseSumsReliable[currentMinOrder - 1] : ia.ZERO;
             
             // Calculate and check
-            for (int i=0; i<order.length; i++) {
+            for (int i=currentMinOrder; i<order.length; i++) {
                 
                 // Compute summands and distance
                 int value = order[i];
