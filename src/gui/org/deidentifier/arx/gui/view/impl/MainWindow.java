@@ -54,6 +54,7 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
+import org.deidentifier.arx.gui.view.impl.masking.LayoutMasking;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAbout;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAnonymization;
 import org.deidentifier.arx.gui.view.impl.menu.DialogAuditTrail;
@@ -166,6 +167,9 @@ public class MainWindow implements IView {
         Composite item1 = root.createItem(Resources.getMessage("MainWindow.2"), controller.getResources().getManagedImage("perspective_define.png")); //$NON-NLS-1$ //$NON-NLS-2$
         helpids.put(item1, "id-3"); //$NON-NLS-1$
         new LayoutDefinition(item1, controller);
+        Composite item5 = root.createItem("Masking", controller.getResources().getManagedImage("perspective_masking.png"));
+        helpids.put(item5, "help.risk.masking"); //TODO implement help
+        new LayoutMasking(item5, controller);
         Composite item2 = root.createItem(Resources.getMessage("MainWindow.3"), controller.getResources().getManagedImage("perspective_explore.png")); //$NON-NLS-1$ //$NON-NLS-2$
         helpids.put(item2, "id-4"); //$NON-NLS-1$
         this.layoutExplore = new LayoutExplore(item2, controller);

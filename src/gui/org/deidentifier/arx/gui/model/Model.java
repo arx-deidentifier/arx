@@ -1803,4 +1803,15 @@ public class Model implements Serializable {
         this.showVisualization = value;
         this.setModified();
     }
+    
+    private ModelMasking maskingModel = null;
+    
+    public ModelMasking getMaskingModel()
+    {
+    	if (maskingModel == null)
+    	{
+    		maskingModel = new ModelMasking();
+    	}
+    	return maskingModel;
+    }
 }
