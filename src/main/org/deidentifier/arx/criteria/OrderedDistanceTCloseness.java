@@ -19,7 +19,8 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.common.FastIntMap;
+import org.deidentifier.arx.common.FastIntDoubleMap;
+import org.deidentifier.arx.common.FastIntObjectMap;
 import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
@@ -175,7 +176,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
         
         // Prepare
         int currentMinOrder = Integer.MAX_VALUE;
-        FastIntMap<Double> map = new FastIntMap<Double>(buckets.length / 2);
+        FastIntDoubleMap map = new FastIntDoubleMap(buckets.length / 2);
         for (int i = 0; i < buckets.length; i += 2) {
             if (buckets[i] != -1) { // bucket not empty
                 int value = buckets[i];
@@ -229,7 +230,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
             
             // Prepare
             int currentMinOrder = Integer.MAX_VALUE;
-            FastIntMap<IntervalDouble> map = new FastIntMap<IntervalDouble>(buckets.length / 2);
+            FastIntObjectMap<IntervalDouble> map = new FastIntObjectMap<IntervalDouble>(buckets.length / 2);
             for (int i = 0; i < buckets.length; i += 2) {
                 if (buckets[i] != -1) { // bucket not empty
                     int value = buckets[i];
