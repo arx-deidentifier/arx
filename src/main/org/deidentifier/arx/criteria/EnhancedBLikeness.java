@@ -91,6 +91,7 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
         try {
             this.reliableDistribution = manager.getReliableDistribution(attribute);
         } catch (ReliabilityException e) {
+            // Indicate that reliable anonymization is not supported.
             this.reliableDistribution = null;
         }
     }
@@ -134,7 +135,7 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
         try {
             // Check
             if (reliableDistribution == null) {
-                return isAnonymous(node, entry);
+                throw new IllegalStateException("Reliable version of the privacy model is being assessed even though reliable anonymization is not supported");
             }
             
             // Init
@@ -160,6 +161,8 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
             
         // Check for arithmetic issues
         } catch (IntervalArithmeticException | ArithmeticException | IndexOutOfBoundsException e) {
+            // Unable to determine reliably if the equivalence class satisfies the privacy model.
+            // Return false, assuming conservatively that it does not.
             return false;
         }
     }

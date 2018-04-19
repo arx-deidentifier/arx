@@ -190,6 +190,8 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
             IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
             return ia.lessThanOrEqual(ia.div(ia.ONE, distribution.getReliableAverageClassSize()), ia.createInterval(getRiskThreshold()));
         } catch (IntervalArithmeticException | ReliabilityException e) {
+            // Unable to determine reliably if the privacy model is satisfied.
+            // Return false, assuming conservatively that it does not.
             return false;
         }
     }
