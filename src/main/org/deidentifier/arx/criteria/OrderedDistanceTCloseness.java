@@ -279,6 +279,8 @@ public class OrderedDistanceTCloseness extends TCloseness {
             
         // Check for arithmetic issues
         } catch (IntervalArithmeticException | ArithmeticException | IndexOutOfBoundsException e) {
+            // Unable to determine reliably if the equivalence class satisfies the privacy model.
+            // Return false, assuming conservatively that it does not.
             return false;
         }
     }
