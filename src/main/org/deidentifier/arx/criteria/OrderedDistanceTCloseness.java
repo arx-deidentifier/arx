@@ -105,6 +105,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
         try {
             this.distributionReliable = manager.getReliableDistribution(attribute);
         } catch (ReliabilityException e) {
+            // Indicate that reliable anonymization is not supported.
             this.distributionReliable = null;
         }
         
@@ -162,7 +163,8 @@ public class OrderedDistanceTCloseness extends TCloseness {
                     }
                 }
             } catch (IntervalArithmeticException e) {
-                throw new RuntimeException("Unable to calculate the ordered distance t-closeness model reliably.");
+             // Indicate that reliable anonymization is not supported.
+                this.distributionReliable = null;
             }
         }
     }
