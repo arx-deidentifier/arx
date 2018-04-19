@@ -50,10 +50,10 @@ public class OrderedDistanceTCloseness extends TCloseness {
 
     /** The order of the elements. */
     private int[]             order;
-
+    
     /** The order of the elements. */
     private int[]             orderNumber;
-
+    
     /** Partial distances of the original distribution. */
     private double[]          baseDistances;
 
@@ -162,7 +162,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
                     }
                 }
             } catch (IntervalArithmeticException e) {
-                this.distributionReliable = null;
+                throw new RuntimeException("Unable to calculate the ordered distance t-closeness model reliably.");
             }
         }
     }
@@ -253,10 +253,18 @@ public class OrderedDistanceTCloseness extends TCloseness {
             // Calculate and check
             for (int i=currentMinOrder; i<order.length; i++) {
                 
-                // Compute summands and distance
+                // Compute summands
                 int value = order[i];
                 sum_i = ia.add(sum_i, ia.sub(map.get(value, ia.ZERO), distributionReliable[value]));
-                distance = ia.add(distance, ia.abs(sum_i));
+                
+                // Compute distance
+                if (sum_i.getLowerBound() < 0 && sum_i.getUpperBound() > 0) {
+                    // The sign is undecidable and hence the absolute value of sum_i can not be calculated.
+                    // However, it is safe to set the lower bound to zero as this can only overestimate the actual distance.
+                    distance = ia.add(distance, ia.createInterval(0d, sum_i.getUpperBound()));
+                } else {
+                    distance = ia.add(distance, ia.abs(sum_i));
+                }
                 
                 // Early abort
                 if (ia.greaterThan(distance, threshold)) {
