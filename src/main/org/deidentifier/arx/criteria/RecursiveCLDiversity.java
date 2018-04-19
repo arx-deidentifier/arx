@@ -141,6 +141,8 @@ public class RecursiveCLDiversity extends LDiversity{
             
         // Catch relevant exceptions
         } catch (ArithmeticException | IndexOutOfBoundsException | IntervalArithmeticException e) {
+             // Unable to determine reliably if the equivalence class satisfies the privacy model.
+             // Return false, assuming conservatively that it does not.
              return false;
         }
     }

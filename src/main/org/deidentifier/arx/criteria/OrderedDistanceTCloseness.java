@@ -222,7 +222,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
         try {
             // Check
             if (distributionReliable == null) {
-                return isAnonymous(node, entry);
+                throw new IllegalStateException("Reliable version of the privacy model is being assessed even though reliable anonymization is not supported");
             }
             
             // Init
