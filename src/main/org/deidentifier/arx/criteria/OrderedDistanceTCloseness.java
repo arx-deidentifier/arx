@@ -163,7 +163,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
                     }
                 }
             } catch (IntervalArithmeticException e) {
-             // Indicate that reliable anonymization is not supported.
+                // Indicate that reliable anonymization is not supported.
                 this.distributionReliable = null;
             }
         }
