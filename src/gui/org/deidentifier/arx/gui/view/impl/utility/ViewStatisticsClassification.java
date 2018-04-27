@@ -243,9 +243,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                             getController().update(new ModelEvent(ViewStatisticsClassification.this,
                                                                   ModelPart.SELECTED_ATTRIBUTE,
                                                                   getModel().getSelectedAttribute()));
-                            getController().update(new ModelEvent(ViewStatisticsClassification.this,
-                                                                  ModelPart.SELECTED_CLASS_VALUE,
-                                                                  getModel().getSelectedClassValue()));
                             return;
                         }
                         if (!visible && rect.intersects(clientArea)) {
