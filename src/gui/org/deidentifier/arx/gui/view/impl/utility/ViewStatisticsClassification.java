@@ -173,9 +173,6 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 getModel().setSelectedClassValue(classes.get(0));
                 updateOverviewSelection(super.getModel().getSelectedAttribute());
                 updateROCSelection(super.getModel().getSelectedClassValue());
-                getController().update(new ModelEvent(ViewStatisticsClassification.this,
-                                                      ModelPart.SELECTED_CLASS_VALUE,
-                                                      getModel().getSelectedClassValue()));
             }
         }
         
