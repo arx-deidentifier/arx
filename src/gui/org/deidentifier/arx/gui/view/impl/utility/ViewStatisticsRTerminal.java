@@ -112,7 +112,10 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 			public void widgetDefaultSelected(SelectionEvent event) {
 			}
 		});
-
+        
+        
+        
+        
         // User output
         output = new StyledText(root, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
         output.setLayoutData(RLayout.createFillGridData());
@@ -421,5 +424,11 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 			// Type unknown
 			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
 		}
+	}
+	
+	public void executeRfromTheOutside(String command) {
+		executeR(command);
+		commandBuffer.appendToCommandBuffer(command);
+        input.setItems(commandBuffer.getLastCommands()); 
 	}
 }
