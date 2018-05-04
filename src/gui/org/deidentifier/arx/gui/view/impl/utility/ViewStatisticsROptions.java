@@ -6,6 +6,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
+import org.deidentifier.arx.r.OS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -14,14 +15,18 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 
 public class ViewStatisticsROptions implements ViewStatisticsBasic {
 
 	/** View */
 	private Composite root;
-	/** Widget */
-	private Combo combo;
+	/** Controller */
 	private final Controller controller;
+	/** Widget */
+	private Combo loadScriptCombo;
+	/** Widget */
+	private Text pathText;
 
 	public ViewStatisticsROptions(final Composite parent, final Controller controller) {
 
@@ -30,29 +35,29 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		this.root = parent;
 		root.setLayout(SWTUtil.createGridLayout(3, false));
 
-		final Label label = new Label(root, SWT.PUSH);
-		label.setText("Please select a script: ");
+		final Label scriptlabel = new Label(root, SWT.PUSH);
+		scriptlabel.setText("Execute a script: ");
 
 		// Select from preexisting scripts
-		combo = new Combo(root, SWT.READ_ONLY);
-		combo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		combo.addSelectionListener(new SelectionAdapter() {
+		loadScriptCombo = new Combo(root, SWT.READ_ONLY);
+		loadScriptCombo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+		loadScriptCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent event) {
-				if (combo.getSelectionIndex() >= 0) {
-					String label = combo.getItem(combo.getSelectionIndex());
+				if (loadScriptCombo.getSelectionIndex() >= 0) {
+					String label = loadScriptCombo.getItem(loadScriptCombo.getSelectionIndex());
 					loadRScript(label);
 				}
 			}
 		});
 		// Some Tests scripts for presentation purposes, TODO: change
 		String[] testpaths = { "~/Documents/CAP/test.r" };
-		combo.setItems(testpaths);
+		loadScriptCombo.setItems(testpaths);
 
 		// File chooser button/File Dialog
-		Button button = new Button(root, SWT.PUSH);
-		button.setText("Select from files");
-		button.addSelectionListener(new SelectionAdapter() {
+		Button loadScriptButton = new Button(root, SWT.PUSH);
+		loadScriptButton.setText("Select from files");
+		loadScriptButton.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -63,14 +68,45 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 				String filename = fd.open();
 				if (filename != null) {
 					loadRScript(filename);
-					combo.setText(filename);
+					loadScriptCombo.setText(filename);
 				}
+			}
+		});
+
+		final Label pathlabel = new Label(root, SWT.PUSH);
+		pathlabel.setText("Path to your R installation: ");
+
+		pathText = new Text(root, SWT.READ_ONLY);
+		pathText.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+		pathText.setText(OS.getR()); // TODO
+
+		Button pathToRButton = new Button(root, SWT.PUSH);
+		pathToRButton.setText("Change manually");
+		pathToRButton.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				FileDialog fd = new FileDialog(root.getShell(), SWT.OPEN);
+				fd.setFilterPath(FileSystemView.getFileSystemView().getHomeDirectory().toString());
+
+				// With the following statement it should not be possible to select something
+				// that is not an R executable.
+				// Nevertheless it might be a good idea to check it a second time in the
+				// changePathToR function.
+				fd.setFilterExtensions(OS.getPossibleExecutables());
+
+				String filename = fd.open();
+				if (filename != null) {
+					changePathToR(filename);
+					pathText.setText(filename);
+				}
+
 			}
 		});
 
 	}
 
-	public void loadRScript(String path) {
+	private void loadRScript(String path) {
 		// We should check here if the path is a valid one. At least that it ends with
 		// .r
 		if (path.endsWith(".r")) {
@@ -80,6 +116,10 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		} else {
 			System.out.println("Selected File is not ending with '.r'."); // Could show message for user too.
 		}
+	}
+
+	private void changePathToR(String path) {
+		controller.update(new ModelEvent(ViewStatisticsROptions.this, ModelPart.R_PATH, path));
 	}
 
 

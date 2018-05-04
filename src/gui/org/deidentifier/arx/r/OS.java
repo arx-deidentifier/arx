@@ -164,4 +164,17 @@ public class OS {
         }
        
     }
+
+	public static String[] getPossibleExecutables() {
+		switch (getOS()) {
+		case MAC:
+			return executablesMac;
+		case UNIX:
+			return executablesUnix;
+		case WINDOWS:
+			return executablesWindows;
+		default:
+			throw new IllegalStateException("Unknown operating system");
+		}
+	}
 }

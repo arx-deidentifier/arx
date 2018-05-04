@@ -127,7 +127,9 @@ public class ModelEvent {
         /** RESPONSE VARIABLES */
         RESPONSE_VARIABLES,
         
-        R_SCRIPT
+		R_SCRIPT,
+
+		R_PATH
     }
 
     /** The part of the model that has changed. */

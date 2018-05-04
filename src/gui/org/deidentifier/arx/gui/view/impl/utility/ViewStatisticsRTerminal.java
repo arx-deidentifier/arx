@@ -61,6 +61,8 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 
 	private RListener listener;
 
+	private String pathToR;
+
 	/**
 	 * Creates a new instance
 	 * 
@@ -74,8 +76,11 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 		super(parent, controller, target, reset, true);
 
 		getController().addListener(ModelPart.R_SCRIPT, this);
+		getController().addListener(ModelPart.R_PATH, this);
 
 		this.manager = new AnalysisManager(parent.getDisplay());
+
+		this.pathToR = OS.getR();
 	}
 
 	@Override
@@ -173,6 +178,9 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			executeR(command);
 			commandBuffer.appendToCommandBuffer(command);
 			input.setItems(commandBuffer.getLastCommands());
+		} else if (event.part == ModelPart.R_PATH) {
+			this.pathToR = (String) event.data;
+			triggerUpdate();
 		}
 	}
 
@@ -317,7 +325,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 
 		// Start R
 		try {
-			this.rIntegration = new RIntegration(OS.getR(), buffer, listener);
+			this.rIntegration = new RIntegration(pathToR, buffer, listener);
 		} catch (Exception e) {
 			this.rIntegration = null;
 		}
