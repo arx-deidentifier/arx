@@ -76,7 +76,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
 
     private static final String 						TAB_RTERMINAL				= "R Terminal";
     
-    private static final String 						TAB_RSCRIPT					= "Load R Script";
+	private static final String TAB_ROPTIONS = "R Options";
     
     /** View */
     private final ComponentTitledFolder                 folder;
@@ -148,7 +148,8 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         } else {
             this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.outputproperties"); //$NON-NLS-1$
             this.registerView(new ViewStatisticsClassificationConfiguration(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false, new StackLayout()), controller), "help.utility.accuracy"); //$NON-NLS-1$
-            this.registerView(new ViewStatisticsRScript(folder.createItem(TAB_RSCRIPT, null, true), controller, target, reset), "help.utility.r");
+			this.registerView(new ViewStatisticsROptions(folder.createItem(TAB_ROPTIONS, null, true), controller),
+					"help.utility.r");
             this.registerView(new ViewLocalRecoding(folder.createItem(TAB_LOCAL_RECODING, null, false), controller), "help.utility.localrecoding"); //$NON-NLS-1$
         }
         
@@ -164,7 +165,7 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                                             TAB_CLASSES_TABLE,
                                                             TAB_PROPERTIES,
                                                             TAB_RTERMINAL,
-                                                            TAB_RSCRIPT}));
+				TAB_ROPTIONS }));
     }
 
     /**
