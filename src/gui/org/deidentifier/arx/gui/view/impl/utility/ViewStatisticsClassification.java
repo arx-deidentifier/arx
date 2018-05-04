@@ -943,7 +943,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             i.dispose();
         }
         rocTable.setRedraw(true);
-        if (rocCombo != null && rocCombo.getItemCount() != 0) rocCombo.select(0);
+        if (rocCombo != null && rocCombo.getItemCount() != 0) {
+            rocCombo.removeAll();
+        }
         if (rocCurves != null) {
             rocCurves.clear();
         }
