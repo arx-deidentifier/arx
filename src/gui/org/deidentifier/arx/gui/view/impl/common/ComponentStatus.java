@@ -66,53 +66,6 @@ public class ComponentStatus {
     private final ViewRisks<?>      view2;
 
     /**
-     * Creates a new instance.
-     *
-     * @param controller
-     * @param parent
-     * @param child
-     */
-    public ComponentStatus(Controller controller,
-                           Composite parent,
-                           Control child,
-                           ViewStatistics<?> view) {
-        this(controller, parent, child, view, null);
-    }
-
-    /**
-     * Creates a new instance.
-     *
-     * @param controller
-     * @param parent
-     * @param child
-     * @param view
-     * @param provider
-     */
-    public ComponentStatus(Controller controller, 
-                           Composite parent, 
-                           Control child,
-                           ViewStatistics<?> view,
-                           ComponentStatusLabelProgressProvider progressProvider){
-        
-        this.child = child;
-        this.parent = parent;
-        this.controller = controller;
-        this.view1 = view;
-        this.view2 = null;
-        
-        if (parent.getLayout() == null ||
-            !(parent.getLayout() instanceof StackLayout)) {
-            throw new RuntimeException("Parent must have a StackLayout"); //$NON-NLS-1$
-        }
-        
-        this.layout = (StackLayout)parent.getLayout();
-        this.working = getWorkingComposite(parent, progressProvider);
-        this.empty = getEmptyComposite(parent);
-        this.layout.topControl = child;
-        this.parent.layout(true);
-    }
-    
-    /**
      * Creates a new instace
      * @param controller
      * @param parent
@@ -145,6 +98,61 @@ public class ComponentStatus {
     }
 
     /**
+     * Creates a new instance.
+     *
+     * @param controller
+     * @param parent
+     * @param child
+     */
+    public ComponentStatus(Controller controller,
+                           Composite parent,
+                           Control child,
+                           ViewStatistics<?> view) {
+        this(controller, parent, child, view, null);
+    }
+    
+    /**
+     * Creates a new instance.
+     *
+     * @param controller
+     * @param parent
+     * @param child
+     * @param view
+     * @param provider
+     */
+    public ComponentStatus(Controller controller, 
+                           Composite parent, 
+                           Control child,
+                           ViewStatistics<?> view,
+                           ComponentStatusLabelProgressProvider progressProvider){
+        
+        this.child = child;
+        this.parent = parent;
+        this.controller = controller;
+        this.view1 = view;
+        this.view2 = null;
+        
+        if (parent.getLayout() == null ||
+            !(parent.getLayout() instanceof StackLayout)) {
+            throw new RuntimeException("Parent must have a StackLayout"); //$NON-NLS-1$
+        }
+        
+        this.layout = (StackLayout)parent.getLayout();
+        this.working = getWorkingComposite(parent, progressProvider);
+        this.empty = getEmptyComposite(parent);
+        this.layout.topControl = child;
+        this.parent.layout(true);
+    }
+
+    /**
+     * Returns whether the current status is "empty"
+     * @return
+     */
+    public boolean isEmpty() {
+        return this.layout.topControl == empty;
+    }
+
+    /**
      * Is the current status visible.
      *
      * @return
@@ -160,7 +168,7 @@ public class ComponentStatus {
         this.layout.topControl = child;
         this.parent.layout();
     }
-
+    
     /**
      * Enables status 'empty'.
      */
@@ -205,7 +213,7 @@ public class ComponentStatus {
         });
         return composite;
     }
-    
+
     /**
      * Creates a composite for the working status.
      *

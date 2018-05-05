@@ -104,6 +104,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     /** View */
     private SashForm                           performanceSash;
     /** View */
+    private Composite                          root;
+    /** View */
     private DynamicTable                       rocTable;
     /** View */
     private Composite                          rocRoot;
@@ -166,18 +168,11 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         }
         
         if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-            
-            if (originalRocCurves.containsKey(getModel().getSelectedAttribute())) {
-                List<String> classes = new ArrayList<>(originalRocCurves.get(getModel().getSelectedAttribute()).keySet());
-                Collections.sort(classes);
-                getModel().setSelectedClassValue(classes.get(0));
-                updateOverviewSelection(super.getModel().getSelectedAttribute());
-                updateROCSelection(super.getModel().getSelectedClassValue());
-            }
+            updateSelectedTarget(getModel().getSelectedAttribute());
         }
         
         if (event.part == ModelPart.SELECTED_CLASS_VALUE) {
-            updateROCSelection(super.getModel().getSelectedClassValue());
+            updateSelectedClassValue(super.getModel().getSelectedClassValue());
         }
     }
 
@@ -231,15 +226,12 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     for (int i = 0; i < performanceTableOverview.getColumnCount(); i++) {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
-                            getModel().setSelectedAttribute(item.getText(0));
-                            List<String> classes = new ArrayList<>(originalRocCurves.get(item.getText(0)).keySet());
-                            Collections.sort(classes);
-                            getModel().setSelectedClassValue(classes.get(0));
-                            updateOverview(getModel().getSelectedAttribute());
-                            updateROCSelection(classes.get(0));
+                            String attribute = item.getText(0);
+                            getModel().setSelectedAttribute(attribute);
+                            updateSelectedTarget(attribute);
                             getController().update(new ModelEvent(ViewStatisticsClassification.this,
                                                                   ModelPart.SELECTED_ATTRIBUTE,
-                                                                  getModel().getSelectedAttribute()));
+                                                                  attribute));
                             return;
                         }
                         if (!visible && rect.intersects(clientArea)) {
@@ -316,20 +308,12 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 if(rocCombo.getSelectionIndex() >=0){
-                    // Update target variable
-                    String selectedTarget = rocCombo.getItem(rocCombo.getSelectionIndex());
-                    getModel().setSelectedAttribute(selectedTarget);
-                    // Update class
-                    List<String> classes = new ArrayList<>(originalRocCurves.get(selectedTarget).keySet());
-                    Collections.sort(classes);
-                    getModel().setSelectedClassValue(classes.get(0));
-                    // Update performance overview view
-                    updateOverviewSelection(selectedTarget);
-                    // Update roc view
-                    updateROCSelection(classes.get(0));
+                    String attribute = rocCombo.getItem(rocCombo.getSelectionIndex());
+                    getModel().setSelectedAttribute(attribute);
+                    updateSelectedTarget(attribute);
                     getController().update(new ModelEvent(ViewStatisticsClassification.this,
                                                           ModelPart.SELECTED_ATTRIBUTE,
-                                                          selectedTarget));
+                                                          attribute));
                 }
             }
         });
@@ -415,13 +399,12 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     for (int i = 0; i < rocTable.getColumnCount(); i++) {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
-                            if (item.getData() != null) {
-                                rocSetChartSeries((ROCCurve[]) item.getData());
-                            }
-                            getModel().setSelectedClassValue(item.getText(0));
+                            String attribute = item.getText(0);
+                            getModel().setSelectedClassValue(attribute);
+                            updateSelectedClassValue(attribute);
                             getController().update(new ModelEvent(ViewStatisticsClassification.this,
                                                                   ModelPart.SELECTED_CLASS_VALUE,
-                                                                  item.getText(0)));
+                                                                  attribute));
                             return;
                         }
                         if (!visible && rect.intersects(clientArea)) {
@@ -556,11 +539,31 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     }
 
     /**
+     * Makes the chart show category labels or not.
+     */
+    private void updateCategories(Chart chart){
+        if (chart != null){
+            IAxisSet axisSet = chart.getAxisSet();
+            if (axisSet != null) {
+                IAxis xAxis = axisSet.getXAxis(0);
+                if (xAxis != null) {
+                    String[] series = xAxis.getCategorySeries();
+                    if (series != null) {
+                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
+                        xAxis.enableCategory(enoughSpace);
+                        xAxis.getTick().setVisible(enoughSpace);
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
      * Updates the chart with a new ROC Curve
      * 
      * @param data
      */
-    private void rocSetChartSeries(ROCCurve[] data) {
+    private void updateChartSeries(ROCCurve[] data) {
         
         ROCCurve baseline = data[0];
         ROCCurve output = data[1];
@@ -628,249 +631,254 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         rocChart.update();
         rocChart.redraw();
     }
-    
+
     /**
-     * Makes the chart show category labels or not.
+     * Updates the selected class value
+     * @param classValue
      */
-    private void updateCategories(Chart chart){
-        if (chart != null){
-            IAxisSet axisSet = chart.getAxisSet();
-            if (axisSet != null) {
-                IAxis xAxis = axisSet.getXAxis(0);
-                if (xAxis != null) {
-                    String[] series = xAxis.getCategorySeries();
-                    if (series != null) {
-                        boolean enoughSpace = chart.getPlotArea().getSize().x / series.length >= MIN_CATEGORY_WIDTH;
-                        xAxis.enableCategory(enoughSpace);
-                        xAxis.getTick().setVisible(enoughSpace);
-                    }
-                }
-            }
+    private void updateSelectedClassValue(String classValue) {
+        
+        // Check
+        if (rocCombo.getItemCount() == 0 || rocTable.getItemCount() == 0) {
+            return;
         }
+        
+        // Redraw
+        root.setRedraw(false);
+        
+        // Find and update
+        int index = 0;
+        ROCCurve[] curve = null;
+        for (TableItem item : rocTable.getItems()) {
+            
+            // Found
+            if (item.getText(0).equals(classValue)) {
+                
+                // Select
+                rocTable.select(index);
+                curve = (ROCCurve[])item.getData();
+                break;
+            }
+            
+            // Next index
+            index++;
+        }
+        
+        // If found
+        if (curve != null) {
+            updateChartSeries(curve);
+        }
+
+        // Redraw
+        root.setRedraw(true);
     }
 
     /**
-     * Updates the performance per class table
-     * @param target variable
+     * Updates the view when a new target variable has been set
+     * Selects the first class value available for this target.
+     * @param attribute
      */
-    private void updateOverview(String target) {
+    private void updateSelectedTarget(String attribute) {
+     
+        // Redraw
+        this.root.setRedraw(false);
+     
+        // ------------------------------------------------------
+        // Update selection in performance overview
+        // ------------------------------------------------------
+        int index = 0;
+        boolean selected = false;
+        for (TableItem item : performanceTableOverview.getItems()) {
+            if (item.getText(0).equals(attribute)) {
+                performanceTableOverview.select(index);
+                selected = true;
+                break;
+            }
+            index++;
+        }
         
+        // Break if not found
+        if (!selected) {
+            this.root.setRedraw(true);
+            return;
+        }
         
+        // ------------------------------------------------------
+        // Clear entries in performance details
+        // ------------------------------------------------------
         performanceTableSensitivitySpecificity.setRedraw(false);
         for (final TableItem i : performanceTableSensitivitySpecificity.getItems()) {
             i.dispose();
         }
         performanceTableSensitivitySpecificity.setRedraw(true);
 
-        if(!originalRocCurves.containsKey(target)) {
-            return;
-        }
-        
-        // Create entries
-        List<String> values = new ArrayList<>(originalRocCurves.get(target).keySet());
-        Collections.sort(values);
-        
-        // Prepare
-        List<Double> sensitivities = new ArrayList<Double>();
-        List<Double> specificities = new ArrayList<Double>();
-        List<Double> brierscores = new ArrayList<Double>();
-        
-        // For each class
-        for (String clazz : values) {
-
-            ROCCurve c;
-            if (isOutput) {
-                c = rocCurves.get(target).get(clazz);
-            } else {
-                c = originalRocCurves.get(target).get(clazz);
-            }
-
-            // Create entry
-            TableItem item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
-            item.setText(0, clazz);
-            item.setData("1", c.getSensitivity());
-            item.setData("2", c.getSpecificity());
-            item.setData("3", c.getBrierScore());
-            
-            // Collect measurements
-            sensitivities.add(c.getSensitivity());
-            specificities.add(c.getSpecificity());
-            brierscores.add(c.getBrierScore());
-        }  
-        
-        // Prepare
-        double[] min = new double[3];
-        double[] avg = new double[3];
-        double[] max = new double[3];
-        
-        // Determine aggregates
-        for (int i = 0; i < sensitivities.size(); i++) {
-            double sensitivity = sensitivities.get(i);
-            min[0] = min[0]==0d ? sensitivity : Math.min(min[0], sensitivity);
-            max[0] = Math.max(max[0], sensitivity);
-            avg[0] += sensitivity;
-
-            double specificity = specificities.get(i);
-            min[1] = min[1]==0d ? specificity : Math.min(min[1], specificity);
-            max[1] = Math.max(max[1], specificity);
-            avg[1] += specificity;
-
-            double brierscore = brierscores.get(i);
-            min[2] = min[2]==0d ? brierscore:  Math.min(min[2], brierscore);
-            max[2] = Math.max(max[2], brierscore);
-            avg[2] += brierscore;
-        }
-        
-        // Minimum
-        TableItem item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.7"));
-        item.setData("1", min[0]);
-        item.setData("2", min[1]);
-        item.setData("3", min[2]);
-
-        // Average
-        item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.6"));
-        item.setData("1", avg[0] / values.size());
-        item.setData("2", avg[1] / values.size());
-        item.setData("3", avg[2] / values.size());
-
-        // Maximum
-        item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
-        item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.4"));
-        item.setData("1", max[0]);
-        item.setData("2", max[1]);
-        item.setData("3", max[2]);
-    }
-    
-    
-    /**
-     * Update the performance overview on selection.
-     */
-    private void updateOverviewSelection(String attribute) {
-        
-        // Update table
-        int index = 0;
-        for (TableItem item : performanceTableOverview.getItems()) {
-            if (item.getText(0).equals(attribute)) {
-                performanceTableOverview.select(index);
-                updateOverview(attribute);
-                break;
-            }
-            index++;
-        }
-    }
-
-
-    /**
-     * Updates classes and corresponding AUC values in table and sets roc curve 
-     * data at each table item according to this target variable.
-     * 
-     * @param targetVariable
-     * @param clazz class value
-     */
-    private void updateROC(String targetVariable, String clazz){
-        
         // Check
-        if (originalRocCurves.isEmpty() || !originalRocCurves.containsKey(targetVariable)) {
-            return;
-        }
-        
-        // Reset chart
-        for (final TableItem i : rocTable.getItems()) {
-            i.dispose();
-        }
-        
-        // Collect classes
-        List<String> classes = new ArrayList<>(originalRocCurves.get(targetVariable).keySet());
-        Collections.sort(classes);
-        for(String value : classes){
+        if(originalRocCurves.containsKey(attribute)) {
             
-            // Class
-            TableItem item = new TableItem(rocTable, SWT.NONE);
-            item.setText(0, value);
-            ROCCurve[] data = {null, null, null};
-            item.setData(data);
+            // ------------------------------------------------------
+            // Update entries in performance details
+            // ------------------------------------------------------
+          
+            // Create entries
+            List<String> values = new ArrayList<>(originalRocCurves.get(attribute).keySet());
+            Collections.sort(values);
             
-            // Baseline AUC
-            ROCCurve rocZeror = zerorRocCurves.get(targetVariable).get(value);
-            item.setData("1", rocZeror.getAUC());
-            data[0] = rocZeror;
+            // Prepare
+            List<Double> sensitivities = new ArrayList<Double>();
+            List<Double> specificities = new ArrayList<Double>();
+            List<Double> brierscores = new ArrayList<Double>();
             
-            // Original AUC
-            ROCCurve rocOriginal = originalRocCurves.get(targetVariable).get(value);
-            item.setData(isOutput ? "3" : "2", rocOriginal.getAUC());
-            data[2] = rocOriginal;
-
-            // Output
-            if (isOutput) {
-                
-                // AUC (anonymized)
-                ROCCurve rocOutput = rocCurves.get(targetVariable).get(value);
-                item.setData("2", rocOutput.getAUC());
-                data[1] = rocOutput;
-
-                // Relative AUC
-                double relativeAUC;
-                if(rocOriginal.getAUC() - rocZeror.getAUC() == 0d) {
-                    relativeAUC = rocOutput.getAUC() / rocZeror.getAUC();
+            // For each class
+            for (String clazz : values) {
+    
+                ROCCurve c;
+                if (isOutput) {
+                    c = rocCurves.get(attribute).get(clazz);
                 } else {
-                    relativeAUC = (rocOutput.getAUC() - rocZeror.getAUC()) / (rocOriginal.getAUC() - rocZeror.getAUC());
+                    c = originalRocCurves.get(attribute).get(clazz);
                 }
-                item.setData("4", relativeAUC);
+    
+                // Create entry
+                TableItem item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
+                item.setText(0, clazz);
+                item.setData("1", c.getSensitivity());
+                item.setData("2", c.getSpecificity());
+                item.setData("3", c.getBrierScore());
+                
+                // Collect measurements
+                sensitivities.add(c.getSensitivity());
+                specificities.add(c.getSpecificity());
+                brierscores.add(c.getBrierScore());
+            }  
+            
+            // Prepare
+            double[] min = new double[3];
+            double[] avg = new double[3];
+            double[] max = new double[3];
+            
+            // Determine aggregates
+            for (int i = 0; i < sensitivities.size(); i++) {
+                double sensitivity = sensitivities.get(i);
+                min[0] = min[0]==0d ? sensitivity : Math.min(min[0], sensitivity);
+                max[0] = Math.max(max[0], sensitivity);
+                avg[0] += sensitivity;
+    
+                double specificity = specificities.get(i);
+                min[1] = min[1]==0d ? specificity : Math.min(min[1], specificity);
+                max[1] = Math.max(max[1], specificity);
+                avg[1] += specificity;
+    
+                double brierscore = brierscores.get(i);
+                min[2] = min[2]==0d ? brierscore:  Math.min(min[2], brierscore);
+                max[2] = Math.max(max[2], brierscore);
+                avg[2] += brierscore;
             }
-        }
-        
-        // Select according class
-        rocTable.setFocus();
-        int index = 0;
-        for (int i=0; i<rocTable.getItemCount(); i++) {
-            if (rocTable.getItem(i).getText().equals(clazz)) {
-                index = i;
-                break;
-            }
-        }
-        rocTable.select(index);
-    }
+            
+            // Minimum
+            TableItem item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
+            item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.7"));
+            item.setData("1", min[0]);
+            item.setData("2", min[1]);
+            item.setData("3", min[2]);
+    
+            // Average
+            item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
+            item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.6"));
+            item.setData("1", avg[0] / values.size());
+            item.setData("2", avg[1] / values.size());
+            item.setData("3", avg[2] / values.size());
+    
+            // Maximum
+            item = new TableItem(performanceTableSensitivitySpecificity, SWT.NONE);
+            item.setText(0, Resources.getMessage("ViewStatisticsClassificationInput.4"));
+            item.setData("1", max[0]);
+            item.setData("2", max[1]);
+            item.setData("3", max[2]);
+            
+            // Check
+            if (rocCombo.getItemCount() != 0) {
 
-    /**
-     * Updates the combo box to the selected target variable, the roc table with
-     * according auc values and the chart according to the selected class.
-     */
-    private void updateROCSelection(String classValue) {
-        
-        if (rocCombo.getItemCount() == 0) {
-            return;
-        }
-        
-        // Determine indices
-        final String[] targetVariables = getModel().getSelectedClasses().toArray(new String[0]);
-        String targetVariable = getModel().getSelectedAttribute();
-        int targetIndex = getIndexOf(targetVariables, targetVariable);
-        
-        // Update combo
-        rocCombo.select(targetIndex);
-        updateROC(rocCombo.getItem(targetIndex), classValue);
-        
-        // Update table
-        int index = 0;
-        for (TableItem item : rocTable.getItems()) {
-            if (item.getText(0).equals(classValue)) {
-                rocTable.select(index);
-                if (item.getData() != null) {
-                    rocSetChartSeries((ROCCurve[]) item.getData());
+                // ------------------------------------------------------
+                // Update ROC combo
+                // ------------------------------------------------------
+                
+                // Determine indices
+                String[] targetVariables = getModel().getSelectedClassesAsArray();
+                String targetVariable = getModel().getSelectedAttribute();
+                int targetIndex = getIndexOf(targetVariables, targetVariable);
+                
+                // Update combo
+                rocCombo.select(targetIndex);
+
+                // ------------------------------------------------------
+                // Clear ROC table
+                // ------------------------------------------------------
+                for (final TableItem i : rocTable.getItems()) {
+                    i.dispose();
                 }
-                break;
+                
+                // ------------------------------------------------------
+                // Update ROC table
+                // ------------------------------------------------------
+                
+                // For each class
+                List<String> classes = new ArrayList<>(originalRocCurves.get(targetVariable).keySet());
+                Collections.sort(classes);
+                for(String value : classes){
+                    
+                    // Class
+                    item = new TableItem(rocTable, SWT.NONE);
+                    item.setText(0, value);
+                    ROCCurve[] data = {null, null, null};
+                    item.setData(data);
+                    
+                    // Baseline AUC
+                    ROCCurve rocZeror = zerorRocCurves.get(targetVariable).get(value);
+                    item.setData("1", rocZeror.getAUC());
+                    data[0] = rocZeror;
+                    
+                    // Original AUC
+                    ROCCurve rocOriginal = originalRocCurves.get(targetVariable).get(value);
+                    item.setData(isOutput ? "3" : "2", rocOriginal.getAUC());
+                    data[2] = rocOriginal;
+
+                    // Output
+                    if (isOutput) {
+                        
+                        // AUC (anonymized)
+                        ROCCurve rocOutput = rocCurves.get(targetVariable).get(value);
+                        item.setData("2", rocOutput.getAUC());
+                        data[1] = rocOutput;
+
+                        // Relative AUC
+                        double relativeAUC;
+                        if(rocOriginal.getAUC() - rocZeror.getAUC() == 0d) {
+                            relativeAUC = rocOutput.getAUC() / rocZeror.getAUC();
+                        } else {
+                            relativeAUC = (rocOutput.getAUC() - rocZeror.getAUC()) / (rocOriginal.getAUC() - rocZeror.getAUC());
+                        }
+                        item.setData("4", relativeAUC);
+                    }
+                }
+                
+                // Select first class
+                if (classes.contains(getModel().getSelectedClassValue())) {
+                    updateSelectedClassValue(getModel().getSelectedClassValue());
+                } else if (!classes.isEmpty()) {
+                    updateSelectedClassValue(classes.get(0));
+                }
             }
-            index++;
         }
+
+        // Redraw
+        this.root.setRedraw(true);
     }
 
     @Override
     protected Control createControl(Composite parent) {
 
         // Create top composite
-        Composite root = new Composite(parent, SWT.NONE);
+        this.root = new Composite(parent, SWT.NONE);
         root.setLayout(new FillLayout());
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar();
 
@@ -967,8 +975,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
 
         // The statistics builder
         final StatisticsBuilderInterruptible builder = context.handle.getStatistics().getInterruptibleInstance();
-        final String[] features = context.model.getSelectedFeatures().toArray(new String[0]);
-        final String[] targetVariables = context.model.getSelectedClasses().toArray(new String[0]);
+        final String[] features = context.model.getSelectedFeaturesAsArray();
+        final String[] targetVariables = context.model.getSelectedClassesAsArray();
         final ARXClassificationConfiguration<?> config = context.model.getClassificationModel().getCurrentConfiguration();
         final ARXFeatureScaling scaling = context.model.getClassificationModel().getFeatureScaling();
         
@@ -1014,12 +1022,13 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     return;
                 }
 
-                // Update chart
+                // Redraw
+                root.setRedraw(false);
+                
+                // Update overview table
                 for (final TableItem i : performanceTableOverview.getItems()) {
                     i.dispose();
                 }
-
-                // Create entries
                 for (int i = 0; i < targetVariables.length; i++) {
                     TableItem item = new TableItem(performanceTableOverview, SWT.NONE);
                     item.setText(0, targetVariables[i]);
@@ -1028,38 +1037,23 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     }
                 }
 
-                // Update overview
-                String targetVariable = getModel().getSelectedAttribute();
-                int targetIndex = getIndexOf(targetVariables, targetVariable);
-                performanceTableOverview.setFocus();
-                performanceTableOverview.select(targetIndex);
-                updateOverview(performanceTableOverview.getItem(targetIndex).getText());
-                performanceRoot.layout();
-                performanceSash.setWeights(new int[] {2, 2});
-                
                 // Update combo box
                 rocCombo.setItems(targetVariables);
-                rocCombo.select(targetIndex);
                 
+                // Update complete view
+                updateSelectedTarget(getModel().getSelectedAttribute());
+
                 // Layout
+                performanceRoot.layout();
+                performanceSash.setWeights(new int[] {2, 2});
                 rocRoot.layout();
                 rocSash.setWeights(new int[] {2, 2});
+
+                // Redraw
+                root.setRedraw(true);
+                
+                // Done
                 setStatusDone();
-                
-                // Update overview
-                if (performanceTableOverview.getItemCount() != 0) {
-                    updateOverviewSelection(performanceTableOverview.getItem(targetIndex).getText());
-                }
-                
-                // Update roc
-                String[] classValues = new String[performanceTableSensitivitySpecificity.getItems().length];
-                for (int i = 0; i < classValues.length; i++) {
-                    classValues[i] = performanceTableSensitivitySpecificity.getItem(i).getText(0);
-                }
-                int classIndex = getIndexOf(classValues, getModel().getSelectedClassValue());
-                if (performanceTableSensitivitySpecificity.getItemCount() != 0) {
-                    updateROCSelection(performanceTableSensitivitySpecificity.getItem(classIndex).getText(0));
-                }
             }
 
             @Override
@@ -1162,10 +1156,10 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     }
 
     /**
-     * Is an analysis running
+     * Is an analysis running, or are we displaying an empty result
      */
     protected boolean isRunning() {
-        return manager != null && manager.isRunning();
+        return (manager != null && manager.isRunning()) || this.isEmpty();
     }
 
     /**

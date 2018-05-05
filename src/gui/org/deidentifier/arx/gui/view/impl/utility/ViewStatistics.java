@@ -354,7 +354,15 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @return
      */
     protected abstract boolean isRunning();           
-    
+
+    /**
+     * Returns whether the view displays an empty result
+     * @return
+     */
+    protected boolean isEmpty() {
+       return this.status.isEmpty();
+    }
+
     /**
      * Status update.
      */
