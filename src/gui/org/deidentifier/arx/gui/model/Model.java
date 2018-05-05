@@ -1346,6 +1346,8 @@ public class Model implements Serializable {
         this.heuristicSearchTimeLimit = null;
         this.optimizationStatistics = null;
         this.localRecodingModel = null;
+        this.selectedClassValue = null;
+        this.selectedAttribute = null;
     }
 
     /**

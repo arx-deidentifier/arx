@@ -674,11 +674,16 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     }
 
     /**
-     * Updates the view when a new target variable has been set
+     * Updates the view when a new target variable has been set.
      * Selects the first class value available for this target.
-     * @param attribute
+     * @param targetAttribute
      */
-    private void updateSelectedTarget(String attribute) {
+    private void updateSelectedTarget(String targetAttribute) {
+        
+        // Check
+        if (performanceTableOverview.getItemCount() == 0) {
+            return;
+        }
      
         // Redraw
         this.root.setRedraw(false);
@@ -689,7 +694,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         int index = 0;
         boolean selected = false;
         for (TableItem item : performanceTableOverview.getItems()) {
-            if (item.getText(0).equals(attribute)) {
+            if (item.getText(0).equals(targetAttribute)) {
                 performanceTableOverview.select(index);
                 selected = true;
                 break;
@@ -699,8 +704,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         
         // Break if not found
         if (!selected) {
-            this.root.setRedraw(true);
-            return;
+            performanceTableOverview.select(0);
+            targetAttribute = performanceTableOverview.getItem(0).getText(0);
         }
         
         // ------------------------------------------------------
@@ -713,14 +718,14 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         performanceTableSensitivitySpecificity.setRedraw(true);
 
         // Check
-        if(originalRocCurves.containsKey(attribute)) {
+        if(originalRocCurves.containsKey(targetAttribute)) {
             
             // ------------------------------------------------------
             // Update entries in performance details
             // ------------------------------------------------------
           
             // Create entries
-            List<String> values = new ArrayList<>(originalRocCurves.get(attribute).keySet());
+            List<String> values = new ArrayList<>(originalRocCurves.get(targetAttribute).keySet());
             Collections.sort(values);
             
             // Prepare
@@ -733,9 +738,9 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     
                 ROCCurve c;
                 if (isOutput) {
-                    c = rocCurves.get(attribute).get(clazz);
+                    c = rocCurves.get(targetAttribute).get(clazz);
                 } else {
-                    c = originalRocCurves.get(attribute).get(clazz);
+                    c = originalRocCurves.get(targetAttribute).get(clazz);
                 }
     
                 // Create entry
@@ -804,8 +809,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 
                 // Determine indices
                 String[] targetVariables = getModel().getSelectedClassesAsArray();
-                String targetVariable = getModel().getSelectedAttribute();
-                int targetIndex = getIndexOf(targetVariables, targetVariable);
+                int targetIndex = getIndexOf(targetVariables, targetAttribute);
                 
                 // Update combo
                 rocCombo.select(targetIndex);
@@ -822,7 +826,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                 // ------------------------------------------------------
                 
                 // For each class
-                List<String> classes = new ArrayList<>(originalRocCurves.get(targetVariable).keySet());
+                List<String> classes = new ArrayList<>(originalRocCurves.get(targetAttribute).keySet());
                 Collections.sort(classes);
                 for(String value : classes){
                     
@@ -833,12 +837,12 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     item.setData(data);
                     
                     // Baseline AUC
-                    ROCCurve rocZeror = zerorRocCurves.get(targetVariable).get(value);
+                    ROCCurve rocZeror = zerorRocCurves.get(targetAttribute).get(value);
                     item.setData("1", rocZeror.getAUC());
                     data[0] = rocZeror;
                     
                     // Original AUC
-                    ROCCurve rocOriginal = originalRocCurves.get(targetVariable).get(value);
+                    ROCCurve rocOriginal = originalRocCurves.get(targetAttribute).get(value);
                     item.setData(isOutput ? "3" : "2", rocOriginal.getAUC());
                     data[2] = rocOriginal;
 
@@ -846,7 +850,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     if (isOutput) {
                         
                         // AUC (anonymized)
-                        ROCCurve rocOutput = rocCurves.get(targetVariable).get(value);
+                        ROCCurve rocOutput = rocCurves.get(targetAttribute).get(value);
                         item.setData("2", rocOutput.getAUC());
                         data[1] = rocOutput;
 
