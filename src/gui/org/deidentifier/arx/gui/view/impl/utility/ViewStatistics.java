@@ -239,7 +239,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         }
 
         // Check visibility
-        if (!this.status.isVisible()){
+        if (!this.status.isVisible() || this.status.isStopped()) {
             return;
         }
 

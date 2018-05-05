@@ -65,6 +65,9 @@ public class ComponentStatus {
     /** View */
     private final ViewRisks<?>      view2;
 
+    /** Status */
+    private boolean                 stopped = false;
+
     /**
      * Creates a new instace
      * @param controller
@@ -153,14 +156,22 @@ public class ComponentStatus {
     }
 
     /**
+     * Has the analysis been stopped by the user.
+     * @return
+     */
+    public boolean isStopped() {
+        return stopped;
+    }
+
+    /**
      * Is the current status visible.
      *
      * @return
      */
-    public boolean isVisible(){
+    public boolean isVisible() {
         return this.parent.isVisible();
     }
-
+    
     /**
      * Enables status 'done'. Shows the actual control.
      */
@@ -203,6 +214,7 @@ public class ComponentStatus {
         update.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
+                stopped = false;
                 if (view1 != null) {
                     view1.triggerUpdate();
                 }
@@ -250,6 +262,7 @@ public class ComponentStatus {
         stop.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
+                stopped = true;
                 if (view1 != null) {
                     view1.triggerStop();
                 }
