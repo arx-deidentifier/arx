@@ -4,6 +4,7 @@ import javax.swing.filechooser.FileSystemView;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.deidentifier.arx.r.OS;
@@ -39,20 +40,21 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		scriptlabel.setText("Execute a script: ");
 
 		// Select from preexisting scripts
+		String[] testpaths = Resources.getScriptNames();
+
 		loadScriptCombo = new Combo(root, SWT.READ_ONLY);
 		loadScriptCombo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+		loadScriptCombo.setItems(testpaths);
 		loadScriptCombo.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent event) {
 				if (loadScriptCombo.getSelectionIndex() >= 0) {
 					String label = loadScriptCombo.getItem(loadScriptCombo.getSelectionIndex());
-					loadRScript(label);
+					String path = Resources.getRScript(label);
+					loadRScript(path);
 				}
 			}
 		});
-		// Some Tests scripts for presentation purposes, TODO: change
-		String[] testpaths = { "~/Documents/CAP/test.r" };
-		loadScriptCombo.setItems(testpaths);
 
 		// File chooser button/File Dialog
 		Button loadScriptButton = new Button(root, SWT.PUSH);
@@ -114,7 +116,8 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 			// communicate with RTerminal to execute command
 			controller.update(new ModelEvent(ViewStatisticsROptions.this, ModelPart.R_SCRIPT, command));
 		} else {
-			System.out.println("Selected File is not ending with '.r'."); // Could show message for user too.
+			System.out.println("Selected File is not ending with '.r'.");
+			// Could show message for user too.
 		}
 	}
 
