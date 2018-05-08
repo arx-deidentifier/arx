@@ -1422,6 +1422,25 @@ public class Model implements Serializable {
     }
     
     /**
+     * Updates features and classes to reflect the definition provided
+     * @param definition
+     * @return Whether an update has been performed
+     */
+    public boolean setFeaturesAndClasses(DataDefinition definition) {
+
+        // Previous
+        Set<String> features = this.getSelectedFeatures();
+        Set<String> classes = this.getSelectedClasses();
+
+        // New
+        this.setSelectedFeatures(new HashSet<String>(definition.getQuasiIdentifyingAttributes()));
+        this.setSelectedClasses(new HashSet<String>(definition.getResponseVariables()));
+        
+        // Return whether an update has been performed
+        return (!features.equals(this.getSelectedFeatures()) || !classes.equals(this.getSelectedClasses()));
+    }
+
+    /**
      * Sets the indices of equivalence classes.
      *
      * @param groups
@@ -1480,7 +1499,7 @@ public class Model implements Serializable {
         setModified();
         this.inputBytes = inputBytes;
     }
-
+    
     /**
      * Sets the input config.
      *
@@ -1509,7 +1528,7 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1572,7 +1591,7 @@ public class Model implements Serializable {
         }
         setModified();
     }
-
+    
     /**
      * Sets the current output, deserialized from a project
      *
@@ -1614,14 +1633,14 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-    
+
     /**
      * @param perspective the perspective to set
      */
     public void setPerspective(Perspective perspective) {
         this.perspective = perspective;
     }
-
+    
     /**
      * @param optimizationStatistics the optimizationStatistics to set
      */
@@ -1629,7 +1648,7 @@ public class Model implements Serializable {
         this.optimizationStatistics = optimizationStatistics;
         this.setModified();
     }
-    
+
     /**
      * Sets the query.
      *
@@ -1723,7 +1742,7 @@ public class Model implements Serializable {
         this.selectedQuasiIdentifiers = set;
         this.setModified();
     }
-
+    
     /**
      * 
      *
@@ -1743,7 +1762,7 @@ public class Model implements Serializable {
         setModified();
         snapshotSizeSnapshot = snapshotSize;
     }
-    
+
     /**
      * Sets how the subset was defined.
      */
@@ -1761,7 +1780,7 @@ public class Model implements Serializable {
     public void setSubsetOrigin(String origin){
         this.subsetOrigin = origin;
     }
-
+    
     /**
      * Sets the execution time of the last anonymization process.
      *
@@ -1786,7 +1805,7 @@ public class Model implements Serializable {
         }
         getClassificationModel().setUnmodified();
     }
-    
+
     /**
      * Sets whether functional hierarchies should be used during anonymization to estimate utility
      * @param useFunctionalHierarchies
@@ -1811,7 +1830,7 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-
+    
     /**
      * Sets visualization as enabled/disabled.
      *
@@ -1821,7 +1840,7 @@ public class Model implements Serializable {
         this.showVisualization = value;
         this.setModified();
     }
-    
+
     /**
      * Converts attributes into an array ordered by occurrence in the dataset
      * @param set
