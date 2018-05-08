@@ -2,7 +2,7 @@ colsout <- ncol(output)
 rowsout <- nrow(output)
 varnamesout <- names(output)
 
-old.par <- par(mfrow=c(2,ceiling(colsout/2)), oma=c(0,0,2,0))
+old.par <- par(mfrow=c(2,ceiling(colsout/2)), oma=c(4,0,2,0))
 
 for (i in 1:colsout) {
 	tabledata <- table(output[i])

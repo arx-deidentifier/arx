@@ -4,7 +4,11 @@ colsin <- table(nums)["TRUE"]
 rowsin <- nrow(input)
 varnamesin <- names(input)
 
-old.par <- par(mfrow=c(2,ceiling(colsin/2)), oma=c(0,0,2,0))
+if (colsin == 1) {
+	old.par <- par(mfrow=c(1,1), oma=c(0,0,2,0))
+} else {
+	old.par <- par(mfrow=c(2,ceiling(colsin/2)), oma=c(0,0,2,0))
+}
 
 if (rowsin >= 1) {
 	for (i in 1:ncol(input)) {

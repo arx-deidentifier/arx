@@ -2,7 +2,7 @@ colsin <- ncol(input)
 rowsin <- nrow(input)
 varnamesin <- names(input)
 
-old.par <- par(mfrow=c(2,ceiling(colsin/2)), oma=c(0,0,2,0))
+old.par <- par(mfrow=c(2,ceiling(colsin/2)), oma=c(4,0,2,0))
 
 for (i in 1:colsin) {
 	tabledata <- table(input[i])
