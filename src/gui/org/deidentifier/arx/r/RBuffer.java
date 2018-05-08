@@ -77,11 +77,31 @@ public class RBuffer {
 
 	public void clearBuffer() {
 		length = 0;
-		// offset = 0;
+		offset = 0;
 	}
 
 	public int getLength() {
 		return length;
+	}
+
+	public boolean compareEnding(char[] sequence) {
+		if (sequence.length > length) {
+			return false;
+		}
+		
+		int bufferPos;
+		for (int i = 0; i < sequence.length; i++) {
+			bufferPos = offset - 1 - i;
+			if (bufferPos < 0) {
+				bufferPos += buffer.length;
+			}
+
+			if (buffer[bufferPos] != sequence[sequence.length - 1 - i]) {
+				return false;
+			}
+		}
+		
+		return true;
 	}
 
 }

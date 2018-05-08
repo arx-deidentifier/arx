@@ -74,9 +74,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /** Constant */
     private static final String                         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9");             //$NON-NLS-1$
 
-    private static final String 						TAB_RTERMINAL				= "R Terminal";
+	private static final String TAB_RTERMINAL = Resources.getMessage("StatisticsView.12");
     
-	private static final String TAB_ROPTIONS = "R Options";
+	private static final String TAB_ROPTIONS = Resources.getMessage("StatisticsView.13");
     
     /** View */
     private final ComponentTitledFolder                 folder;

@@ -236,10 +236,17 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 				if (outputhandle != null)
 					initializeRTable(outputhandle, "output");
 
+				// For sync purposes so that the clearing of the console works properly (so that
+				// the user experiences a clear terminal to work with after the data frames are
+				// created).
+				executeR("cat(\"" + new String(RIntegration.ENDSEQUENCE) + "\")");
+
+				// I suggest to keep this in the output of the console, so the user is able to
+				// check whether the import of the data from ARX to R worked as expected.
 				executeR("str(input)");
 				if (outputhandle != null)
 					executeR("str(output)");
-
+			
 				while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
 					Thread.sleep(10);
 				}

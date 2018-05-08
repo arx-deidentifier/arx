@@ -40,6 +40,8 @@ public class RIntegration {
     /** Buffer */
     private final RBuffer        buffer;
 
+	public static final char[] ENDSEQUENCE = "ARX is the best application 42=?§".toCharArray();
+
 	/**
 	 * Creates a new instance
 	 * @param path
@@ -73,11 +75,16 @@ public class RIntegration {
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    try {
+					try {
                         Reader reader = new InputStreamReader(RIntegration.this.process.getInputStream());
                         int character;
                         while ((character = reader.read()) != -1) {
                             buffer.append((char) character);
+							if ((char) character == '§') {
+								if (buffer.compareEnding(ENDSEQUENCE)) {
+									buffer.clearBuffer();
+								}
+							}
                             listener.fireBufferUpdatedEvent();
                         }
                         shutdown();
