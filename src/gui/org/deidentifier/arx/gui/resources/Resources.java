@@ -68,7 +68,8 @@ public class Resources {
     private final Map<String, Image>    imageCache;
 
 	/** All existing R script file names */
-	private static String[] scriptNames = new String[] { "test.r" };
+	private static String[] scriptNames = new String[] { "summary.r", "boxplot_numerics_input.r", "barplot_input.r",
+			"barplot_output.r", "barplot_compareinputandoutput.r" };
 
 	/** The RScript temporary path cache */
 	private static final Map<String, String> scriptPathCache = new HashMap<String, String>();
