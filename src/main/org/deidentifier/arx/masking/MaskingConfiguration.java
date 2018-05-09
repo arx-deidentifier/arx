@@ -3,37 +3,69 @@ package org.deidentifier.arx.masking;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.deidentifier.arx.masking.variable.RandomVariable;
+
 /**
- * Class containing the masking configuration, i.e. a map of attributes and maskings
+ * Class containing the masking configuration, i.e. a map of attributes, MaskingTypes related configuration options
  *
- * @author Karol Babioch
+ * @author Sandro Schaeffler
+ * @author Peter Bock
  */
 public class MaskingConfiguration {
 
-    private Map<String, Masking> maskings = new HashMap<String, Masking>();
+    private static Map<String, AttributeParameters> maskings = new HashMap<String, AttributeParameters>();
 
-    public void addMasking(String attribute, Masking masking) {
+    public static void addMasking(String attribute, AttributeParameters attributeParameters) {
 
-        maskings.put(attribute, masking);
+        maskings.put(attribute, attributeParameters);
 
     }
+    public static void addMasking(String attribute, MaskingType maskingType) {
 
-    public void removeMasking(String attribute) {
+        maskings.put(attribute, new AttributeParameters(maskingType));
+    }
+    public static Map<String, AttributeParameters> getMapping()
+    {
+    	return maskings;
+    }
+    public static int size()
+    {
+    	return maskings.size();
+    }
+    
+    public static void addDistribution(String attribute, int distributionIndex)
+    {
+    	maskings.get(attribute).setDistribution(distributionIndex);
+    	System.out.println(maskings);
+    }
+
+    public static void removeMasking(String attribute) {
 
         maskings.remove(attribute);
-
     }
 
-    public Map<String, Masking> getMaskings() {
-
-        return maskings;
+    public static MaskingType getMaskingType(String attribute) {
+    	
+    	AttributeParameters parameter;
+    	parameter = maskings.get(attribute);
+    	if (parameter==null)
+    		return MaskingType.NONE;
+    	else
+    		return parameter.getMaskingType();
 
     }
-
-    public Masking getMasking(String attribute) {
-
-        return maskings.get(attribute);
-
+    public static int getDistributionIndex(String attribute) {
+    	
+    	AttributeParameters parameter;
+    	parameter = maskings.get(attribute);
+    	if (parameter==null)
+    	{
+    		//TODO: Does this occur?
+    		System.out.println("No parameter set at this point, but asked for one");
+    		return -1;
+    	}
+    	else
+    		return parameter.getDistributionIndex();
     }
 
 }

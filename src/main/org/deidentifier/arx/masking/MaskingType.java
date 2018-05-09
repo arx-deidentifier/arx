@@ -22,16 +22,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.gui.resources.Resources;
 
 /**
  * Set of classes describing all available masking types
  *
+ * previous MaskingTypes (commented out section):
  * @author Karol Babioch
+ * 
+ * current MaskingTypes:
+ * @author Sandro Schaeffler
+ * @author Peter Bock
  */
-abstract public class MaskingType implements Serializable {
-
+public class MaskingType implements Serializable {
+	
     private static final long serialVersionUID = 485104089887474387L;
 
+/*
     abstract public MaskingTypeDescription getDescription();
 
 
@@ -218,7 +225,7 @@ abstract public class MaskingType implements Serializable {
         }
 
     }
-
+*/
 
     public static abstract class MaskingTypeDescription implements Serializable {
 
@@ -245,25 +252,64 @@ abstract public class MaskingType implements Serializable {
     }
 
 
-    public static final MaskingType MatchAndReplaceString = new MatchAndReplaceString();
-    public static final MaskingType SplitAndReplaceString = new SplitAndReplaceString();
-    public static final MaskingType ConstantShiftDecimal = new ConstantShiftDecimal();
-    public static final MaskingType ConstantShiftDate = new ConstantShiftDate();
-    public static final MaskingType RandomShiftDecimal = new RandomShiftDecimal();
-
-
-    public static final List<MaskingTypeDescription> list() {
-
-        ArrayList<MaskingTypeDescription> list = new ArrayList<>();
-
-        list.add(MatchAndReplaceString.getDescription());
-        list.add(SplitAndReplaceString.getDescription());
-        list.add(ConstantShiftDecimal.getDescription());
-        list.add(ConstantShiftDate.getDescription());
-        list.add(RandomShiftDecimal.getDescription());
-
-        return list;
-
+//    public static final MaskingType MatchAndReplaceString = new MatchAndReplaceString();
+//    public static final MaskingType SplitAndReplaceString = new SplitAndReplaceString();
+//    public static final MaskingType ConstantShiftDecimal = new ConstantShiftDecimal();
+//    public static final MaskingType ConstantShiftDate = new ConstantShiftDate();
+//    public static final MaskingType RandomShiftDecimal = new RandomShiftDecimal();
+    
+	/** The type. */
+	private int type = 0x0;
+	
+	/**
+	 * Instatiates a new type.
+	 * 
+	 * @param type the type
+	 */
+	private MaskingType(final int type) {
+		this.type=type;
+	}
+	
+	protected int getType()
+	{
+		return type;
+	}
+	
+	private static final int MSK_TYPE_NONE = 0;
+	private static final int MSK_TYPE_PS = 1;
+	private static final int MSK_TYPE_NA = 2;
+	private static final int MSK_TYPE_RS = 3;
+	private static final int MSK_TYPE_RG = 4;
+	public static final MaskingType NONE = new MaskingType(MSK_TYPE_NONE);
+    public static final MaskingType PSEUDONYMIZATION_MASKING = new MaskingType(MSK_TYPE_PS);
+    public static final MaskingType NOISE_ADDITION_MASKING = new MaskingType(MSK_TYPE_NA);	
+    public static final MaskingType RANDOM_SHUFFLING_MASKING = new MaskingType(MSK_TYPE_RS);
+    public static final MaskingType RANDOM_GENERATION_MASKING= new MaskingType(MSK_TYPE_RG);
+    
+    public String getLabel()
+    {
+    	switch (type)
+    	{
+	    	case (MSK_TYPE_PS): return Resources.getMessage("MaskingConfigurationView.1");
+	    	case (MSK_TYPE_NA): return Resources.getMessage("MaskingConfigurationView.2");
+	    	case (MSK_TYPE_RS): return Resources.getMessage("MaskingConfigurationView.3");
+	    	case (MSK_TYPE_RG): return Resources.getMessage("MaskingConfigurationView.4");
+	    	default: return "None";
+    	}
     }
+
+//    public static final List<MaskingTypeDescription> list() {
+//
+//        ArrayList<MaskingTypeDescription> list = new ArrayList<>();
+//
+//        list.add(MatchAndReplaceString.getDescription());
+//        list.add(SplitAndReplaceString.getDescription());
+//        list.add(ConstantShiftDecimal.getDescription());
+//        list.add(ConstantShiftDate.getDescription());
+//        list.add(RandomShiftDecimal.getDescription());
+//
+//        return list;
+//
+//    }
 
 }

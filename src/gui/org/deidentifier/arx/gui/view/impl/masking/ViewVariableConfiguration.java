@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.gui.view.impl.masking;
 
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -25,6 +28,8 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolderButtonBar;
 import org.deidentifier.arx.gui.view.impl.menu.DialogVariableConfiguration;
+import org.deidentifier.arx.masking.AttributeParameters;
+import org.deidentifier.arx.masking.MaskingConfiguration;
 import org.deidentifier.arx.masking.variable.DistributionParameter;
 import org.deidentifier.arx.masking.variable.RandomVariable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -90,7 +95,33 @@ public class ViewVariableConfiguration implements IView {
 
                 // Get currently selected variable
                 RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-
+                
+                // Delete distribution mapped to selected attribute
+                int deletedIndex=-1;
+                Map<String,AttributeParameters> entries = MaskingConfiguration.getMapping();
+                for (Entry<String,AttributeParameters> entry : entries.entrySet())
+                {
+                	int value = entry.getValue().getDistributionIndex();
+                	if (tableViewer.getTable().getSelectionIndex() == value) 
+                	{
+                		MaskingConfiguration.removeMasking(entry.getKey());
+                		deletedIndex = value;
+                		break;
+                	}
+                }
+                //Update the indices after an attribute has been removed 
+                //(another for loop because the map is ordered alphabetically, not by Distributionindex)
+                for (Entry<String,AttributeParameters> entry : entries.entrySet())
+                {
+                	int value = entry.getValue().getDistributionIndex();
+                	if (deletedIndex>=0 && deletedIndex<entries.size()-1 && value>deletedIndex)
+                	{
+                		entry.getValue().setDistribution(value-1);
+                		System.out.println("updated" +value+" to "+(value-1));
+                	}
+                }
+            	controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
+                
                 // Remove from controller
                 controller.getModel().getMaskingModel().removeRandomVariable((variable));
 

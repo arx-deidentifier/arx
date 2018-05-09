@@ -1,6 +1,11 @@
 package org.deidentifier.arx.masking;
 
-import org.deidentifier.arx.masking.variable.RandomVariable;
+/** 
+ * This class is used to map attributes to their MaskingType and related configuration options, used in MaskingConfiguration.java
+ * 
+ * @author Sandro Schaeffler
+ * @author Peter Bock
+ */
 
 public class AttributeParameters{
 	
@@ -8,17 +13,48 @@ public class AttributeParameters{
 	
 	private int stringLength=-1;
 	
-	private RandomVariable selectedDistribution;
+	private int selectedDistributionIndex=-1;
 	
-	public AttributeParameters(MaskingType maskingType, RandomVariable selectedDistribution)
+	public AttributeParameters(MaskingType maskingType)
 	{
 		this.maskingType=maskingType;
-		this.selectedDistribution=selectedDistribution;
 	}
-	public AttributeParameters(MaskingType maskingType, int stringLength)
+	
+	public AttributeParameters(MaskingType maskingType,int stringLength ,int selectedDistributionIndex)
 	{
 		this.maskingType=maskingType;
 		this.stringLength=stringLength;
+		this.selectedDistributionIndex=selectedDistributionIndex;
+	}
+	
+	public MaskingType getMaskingType() {
+		return maskingType;
+	}
+	
+	public int getDistributionIndex()
+	{
+		return selectedDistributionIndex;
+	}
+	
+	public int getStringLength()
+	{
+		return stringLength;
+	}
+	
+	public void setDistribution(int distributionIndex)
+	{
+		this.selectedDistributionIndex=distributionIndex;
+	}
+	
+	public void setStringLength(int stringLength)
+	{
+		this.stringLength=stringLength;
+	}
+	
+	@Override
+	public String toString()
+	{
+		return "MaskingType: "+maskingType.getLabel()+", Distribution: "+selectedDistributionIndex;
 	}
 	
 }

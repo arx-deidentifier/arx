@@ -42,10 +42,10 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
 /**
- * A view on a <code>Data</code> object.
+ * A view on a <code>Data</code> object within the masking tab.
  *
- * @author Fabian Prasser
- * @author Johanna Eicher
+ * @author Sandro Schaeffler
+ * @author Peter Bock
  */
 public class ViewMaskedData extends ViewData {
  

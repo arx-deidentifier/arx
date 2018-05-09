@@ -27,10 +27,10 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.masking.Masking;
 import org.deidentifier.arx.masking.MaskingConfiguration;
 import org.deidentifier.arx.masking.MaskingType;
 import org.deidentifier.arx.masking.MaskingType.MaskingTypeDescription;
@@ -40,6 +40,7 @@ import org.eclipse.jface.viewers.ComboBoxCellEditor;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -54,6 +55,8 @@ import org.eclipse.swt.widgets.TableColumn;
  * This view displays all available attributes and allows to choose a masking operation for them
  *
  * @author Karol Babioch
+ * @author Sandro Schaeffler
+ * @author Peter Bock
  */
 public class ViewAttributeConfiguration implements IView {
 
@@ -62,9 +65,9 @@ public class ViewAttributeConfiguration implements IView {
      *
      * @author Karol Babioch
      */
-    private class Attribute {
-
-        private String name;
+    public class Attribute {	//changed to public, to use class in viewMaskingConfiguration
+        
+    	private String name;
         private DataType<?> type;
 
 
@@ -85,6 +88,14 @@ public class ViewAttributeConfiguration implements IView {
 
             return type;
 
+        }
+        
+        public boolean equals(String attribute)
+        {
+        	if (name.equals(attribute))
+        		return true;
+        	else
+        		return false;
         }
 
     }
@@ -155,6 +166,7 @@ public class ViewAttributeConfiguration implements IView {
      *
      * @author Karol Babioch
      */
+/*
     private class MaskingEditingSupport extends EditingSupport {
 
         private String[] items;
@@ -272,7 +284,7 @@ public class ViewAttributeConfiguration implements IView {
         }
 
     }
-
+*/
     private Controller controller;
 
     private TableViewer tableViewer;
@@ -289,6 +301,7 @@ public class ViewAttributeConfiguration implements IView {
         this.controller.addListener(ModelPart.INPUT, this); // TODO: Is this actually needed? Can data be imported with an attribute being set as identifying?
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
 
         // Get notified whenever the masking for an attribute is changed
         this.controller.addListener(ModelPart.MASKING_ATTRIBUTE_CHANGED, this);
@@ -303,7 +316,7 @@ public class ViewAttributeConfiguration implements IView {
         folder.setLayoutData(SWTUtil.createFillGridData());
 
         // First tab
-        Composite composite = folder.createItem("Attribute configuration", null);
+        Composite composite = folder.createItem(Resources.getMessage("MaskingView.1"), null);
         composite.setLayout(SWTUtil.createGridLayout(1));
         folder.setSelection(0);
 
@@ -322,14 +335,14 @@ public class ViewAttributeConfiguration implements IView {
             public void widgetSelected(SelectionEvent event) {
 
                 Attribute attribute = (Attribute) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
+                controller.getModel().setSelectedAttribute(attribute.getName());
 
                 // Send notification
-                controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, attribute.getName()));
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute.getName()));
 
             }
 
         });
-
 
         // Column containing attribute names
         TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -377,26 +390,22 @@ public class ViewAttributeConfiguration implements IView {
             public String getText(Object element) {
 
                 Attribute attribute = ((Attribute)element);
-                MaskingConfiguration maskingConfiguration = controller.getModel().getMaskingModel().getMaskingConfiguration();
-                Masking masking = maskingConfiguration.getMasking(attribute.getName());
-
-                if (masking == null) {
-
-                    return "None";
-
+                MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute.getName());
+                if (maskingType == null) {
+                	return "None";
                 }
 
-                return masking.getMaskingType().getDescription().getLabel();
+                return maskingType.getLabel();
 
             }
 
         });
-        tableViewerColumnMasking.setEditingSupport(new MaskingEditingSupport(tableViewer));
+//		tableViewerColumnMasking.setEditingSupport(new MaskingEditingSupport(tableViewer));
 
         TableColumn columnMasking = tableViewerColumnMasking.getColumn();
         columnMasking.setToolTipText("Masking operation for attribute");
         columnMasking.setText("Masking type");
-        columnMasking.setWidth(100);
+        columnMasking.setWidth(150);
 
     }
 
@@ -419,14 +428,38 @@ public class ViewAttributeConfiguration implements IView {
     public void update(ModelEvent event) {
 
         // Disable redrawing, so changes won't be noticed by the user and appear to be atomic
+    	Model model = controller.getModel();
         tableViewer.getTable().setRedraw(false);
 
         // Remove all data
         tableViewer.getTable().removeAll();
 
         // Apply new data
-        tableViewer.setInput(controller.getModel());
+        tableViewer.setInput(model);
 
+        // Highlights the currently active (highlighted) attribute
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE || event.part == ModelPart.MASKING_ATTRIBUTE_CHANGED) {
+            Object[] currentlyIdentifying = ((AttributeContentProvider)tableViewer.getContentProvider()).getElements(model);
+            String selectedAttribute = model.getSelectedAttribute();
+	        for (int i = 0; i< currentlyIdentifying.length; i++)
+	        {
+	        	if (((Attribute)currentlyIdentifying[i]).equals(selectedAttribute))
+	        	{
+	        		tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(i)),true);
+	        		break;
+	        	}
+	        	
+	        }
+        }
+        // Remove MaskingType data when Attribute Type gets changed to something other than "Identifying"
+        else if (event.part == ModelPart.ATTRIBUTE_TYPE)
+        {
+        	AttributeType typeChangedTo = model.getInputDefinition().getAttributeType((String)event.data);
+            if (typeChangedTo != AttributeType.IDENTIFYING_ATTRIBUTE)
+            	MaskingConfiguration.removeMasking((String)event.data);
+        	controller.update(new ModelEvent(this, ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED, ((AttributeContentProvider)tableViewer.getContentProvider()).getElements(model)));
+        }
+        
         // Reenable redrawing
         tableViewer.getTable().setRedraw(true);
 

@@ -22,12 +22,15 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 /**
  * This class layouts the masking view.
  *
  * @author Karol Babioch
+ * @author Sandro Schaeffler
+ * @author Peter Bock
  */
 public class LayoutMasking implements ILayout {
 
@@ -45,7 +48,12 @@ public class LayoutMasking implements ILayout {
         // Create top left composite
         Composite compositeTopLeft = new Composite(sashTop, SWT.NONE);
         compositeTopLeft.setLayoutData(SWTUtil.createFillGridData());
-        compositeTopLeft.setLayout(SWTUtil.createGridLayout(2));
+        compositeTopLeft.setLayout(SWTUtil.createGridLayout(1));
+        
+        // Create top center composite
+        Composite compositeTopCenter = new Composite(sashTop, SWT.NONE);
+        compositeTopCenter.setLayoutData(new FillLayout());
+        compositeTopCenter.setLayout(SWTUtil.createGridLayout(1));
 
         // Create top right composite
         Composite compositeTopRight = new Composite(sashTop, SWT.NONE);
@@ -58,7 +66,7 @@ public class LayoutMasking implements ILayout {
         // Create bottom left composite
         Composite compositeBottomLeft = new Composite(sashBottom, SWT.NONE);
         compositeBottomLeft.setLayoutData(SWTUtil.createFillGridData());
-        compositeBottomLeft.setLayout(SWTUtil.createGridLayout(2));
+        compositeBottomLeft.setLayout(SWTUtil.createGridLayout(1));
 
         // Create bottom right composite
         Composite compositeBottomRight = new Composite(sashBottom, SWT.NONE);
@@ -68,14 +76,16 @@ public class LayoutMasking implements ILayout {
 
         // Set SashForm weights
         sashMid.setWeights(new int[] { 50, 50 });
-        sashTop.setWeights(new int[] { 50, 50 });
+        sashTop.setWeights(new int[] { 25, 25, 50 });
         sashBottom.setWeights(new int[] { 50, 50 });
 
 
         // Add views and sub-layouts
         new ViewAttributeConfiguration(compositeTopLeft, controller);
+        new ViewMaskingConfiguration(compositeTopCenter, controller);
         new ViewVariableConfiguration(compositeBottomLeft, controller);
         new ViewVariableDistribution(compositeBottomRight, controller);
+        new ViewMaskedData(compositeTopRight, controller, "id-140",true);
 
     }
 

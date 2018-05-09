@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.masking;
 
+import java.util.List;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -29,18 +30,22 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.masking.ViewAttributeConfiguration.Attribute;
 import org.deidentifier.arx.masking.MaskingConfiguration;
 import org.deidentifier.arx.masking.MaskingType;
-import org.eclipse.jface.viewers.StructuredSelection;
+import org.deidentifier.arx.masking.variable.RandomVariable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+
+/** 
+ * @author Sandro Schaeffler
+ * @author Peter Bock
+ */
 
 public class ViewMaskingConfiguration implements IView{
 	
@@ -79,6 +84,9 @@ public class ViewMaskingConfiguration implements IView{
                                                         Resources.getMessage("MaskingConfigurationView.2"), //$NON-NLS-1$
                                                         Resources.getMessage("MaskingConfigurationView.3"), //$NON-NLS-1$
                                                         Resources.getMessage("MaskingConfigurationView.4") }; //$NON-NLS-1$
+    
+    private static String[] distributionItems;
+    
 	
 	public ViewMaskingConfiguration(final Composite parent, final Controller controller) {
 
@@ -104,6 +112,8 @@ public class ViewMaskingConfiguration implements IView{
 		
 		// Get notified whenever the masking for an attribute is changed
 		this.controller.addListener(ModelPart.MASKING_ATTRIBUTE_CHANGED, this);
+		//listens to whenever the list of distributions changes
+		this.controller.addListener(ModelPart.MASKING_VARIABLE_CHANGED, this);
 		this.controller.addListener(ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED, this);
 		
         // Group
@@ -200,14 +210,15 @@ public class ViewMaskingConfiguration implements IView{
 		});        
         Composite compositecmb= new Composite(second, SWT.NONE);
         cmbDistribution = new Combo(compositecmb, SWT.READ_ONLY);
-        //TODO: Set comboitems for distribution
         compositecmb.setLayout(compositeLabelMinLayout);
         cmbDistribution.setLayoutData(SWTUtil.createFillGridData());
-      //  cmbDistribution.setLayoutData(new GridData(SWT.FILL, SWT.CENTER));
         cmbDistribution.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                actionDistributionChanged();
+            	actionDistributionChanged();
+                if ((cmbDistribution.getSelectionIndex() != -1) && (attribute != null)) {
+        	        MaskingConfiguration.addDistribution(attribute, cmbDistribution.getSelectionIndex());
+                }
             }
         });
         
@@ -250,6 +261,15 @@ public class ViewMaskingConfiguration implements IView{
         	identifyingAttributes = (Object[]) event.data;
         	updateMaskingType();
         }
+        //gets called whenever a distribution is added/deleted, refreshes ComboButton and selects appropriate distribution
+        else if (event.part == ModelPart.MASKING_VARIABLE_CHANGED) {
+        	List<RandomVariable> variables = controller.getModel().getMaskingModel().getRandomVariables();
+        	distributionItems = new String[variables.size()];
+        	for (int i=0; i<variables.size();i++)
+        		distributionItems[i]=variables.get(i).getName();
+        	cmbDistribution.setItems(distributionItems);
+        	cmbDistribution.select(MaskingConfiguration.getDistributionIndex(attribute));
+        }
     }
     
     /**
@@ -274,6 +294,14 @@ public class ViewMaskingConfiguration implements IView{
             return;
         }
         MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute);
+        if (distributionItems!= null)	//Band-Aid fix to avoid lingering Distributions inside the ComboBoxes -> empties the box
+        	cmbDistribution.setItems(distributionItems);
+        if (maskingType == MaskingType.RANDOM_GENERATION_MASKING || maskingType == MaskingType.NOISE_ADDITION_MASKING)
+        {	//sets the ComboBox to the appropriate Distribution, only if set to RandomGeneration or NoiseAddition
+        	int index = MaskingConfiguration.getDistributionIndex(attribute);
+        	if (index!=-1)	//Added -1 condition to not override the Band-Aid fix
+        		cmbDistribution.select(index);
+        }
         for (int i = 0; i < COMBO1_TYPES.length; i++) {
             if (maskingType == COMBO1_TYPES[i]) {
                 cmbMasking.select(i);
