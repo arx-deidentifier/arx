@@ -1,6 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import java.io.File;
+
 import javax.swing.filechooser.FileSystemView;
+
+import org.apache.commons.lang.StringUtils;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -8,15 +12,15 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.deidentifier.arx.r.OS;
+import org.deidentifier.arx.r.OS.OSType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.List;
 
 public class ViewStatisticsROptions implements ViewStatisticsBasic {
 
@@ -25,9 +29,11 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 	/** Controller */
 	private final Controller controller;
 	/** Widget */
-	private Combo loadScriptCombo;
+	private List loadScriptList;
 	/** Widget */
-	private Text pathText;
+	private Label pathText;
+
+	private String pathToR;
 
 	public ViewStatisticsROptions(final Composite parent, final Controller controller) {
 
@@ -42,14 +48,14 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		// Select from preexisting scripts
 		String[] testpaths = Resources.getScriptNames();
 
-		loadScriptCombo = new Combo(root, SWT.READ_ONLY);
-		loadScriptCombo.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		loadScriptCombo.setItems(testpaths);
-		loadScriptCombo.addSelectionListener(new SelectionAdapter() {
+		loadScriptList = new List(root, SWT.SINGLE);
+		loadScriptList.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+		loadScriptList.setItems(testpaths);
+		loadScriptList.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent event) {
-				if (loadScriptCombo.getSelectionIndex() >= 0) {
-					String label = loadScriptCombo.getItem(loadScriptCombo.getSelectionIndex());
+				if (loadScriptList.getSelectionIndex() >= 0) {
+					String label = loadScriptList.getItem(loadScriptList.getSelectionIndex());
 					String path = Resources.getRScript(label);
 					loadRScript(path);
 				}
@@ -70,7 +76,6 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 				String filename = fd.open();
 				if (filename != null) {
 					loadRScript(filename);
-					loadScriptCombo.setText(filename);
 				}
 			}
 		});
@@ -78,9 +83,14 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		final Label pathlabel = new Label(root, SWT.PUSH);
 		pathlabel.setText("Path to your R installation: ");
 
-		pathText = new Text(root, SWT.READ_ONLY);
+		pathText = new Label(root, SWT.RIGHT);
 		pathText.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		pathText.setText(OS.getR()); // TODO
+		pathToR = OS.getR();
+        if ((new File(pathToR)).exists()) {
+			setSuccessString();
+		} else {
+			pathText.setText("Executable of R not found. Please select one manually.");
+		}
 
 		Button pathToRButton = new Button(root, SWT.PUSH);
 		pathToRButton.setText("Change manually");
@@ -88,19 +98,45 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				FileDialog fd = new FileDialog(root.getShell(), SWT.OPEN);
-				fd.setFilterPath(FileSystemView.getFileSystemView().getHomeDirectory().toString());
+				String filterpath = pathToR; // file has to be stripped away to work properly.
+				String[] filterExtensions = OS.getPossibleExecutables();
 
+				// Strip away file ending of path
+				if (OS.getOS() == OSType.WINDOWS) {
+					// delete the last "\\something" of the String (because this is the file, not
+					// the directory).
+					for (String s : filterExtensions) {
+						String stripped = StringUtils.removeEnd(pathToR, "\\" + s);
+						if (!pathToR.equals(stripped)) {
+							filterpath = stripped;
+							break;
+						}
+					}
+				} else {
+					// delet the last "/something" of the String (because this is the file, not the
+					// directory).
+					for (String s : filterExtensions) {
+						String stripped = StringUtils.removeEnd(pathToR, "/" + s);
+						if (!pathToR.equals(stripped)) {
+							filterpath = stripped;
+							break;
+						}
+					}
+				}
+
+				FileDialog fd = new FileDialog(root.getShell(), SWT.OPEN);
+				fd.setFilterPath(filterpath);
 				// With the following statement it should not be possible to select something
 				// that is not an R executable.
 				// Nevertheless it might be a good idea to check it a second time in the
 				// changePathToR function.
-				fd.setFilterExtensions(OS.getPossibleExecutables());
+				fd.setFilterExtensions(filterExtensions);
 
 				String filename = fd.open();
 				if (filename != null) {
 					changePathToR(filename);
-					pathText.setText(filename);
+					pathToR = filename;
+					setSuccessString();
 				}
 
 			}
@@ -125,6 +161,12 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		controller.update(new ModelEvent(ViewStatisticsROptions.this, ModelPart.R_PATH, path));
 	}
 
+	private void setSuccessString() {
+		pathText.setText("R executable found."); // TODO: get version. via the R terminal: "version$version.string"
+		// You can tell the version the package was compiled for by looking at the
+		// ‘Version:’ line in its DESCRIPTION file: R/library/datasets/DESCRIPTION ->
+		// Executable in R/bin/R -> only applicable in Unix.
+	}
 
 	@Override
 	public void dispose() {
