@@ -27,6 +27,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,6 +59,8 @@ public class Resources {
     /** Messages */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
 
+	private static final ResourceBundle RSCRIPT_BUNDLE = ResourceBundle
+			.getBundle("org.deidentifier.arx.gui.resources.r");
     /** The splash. */
     private static Image                splash          = null;
 
@@ -68,8 +71,7 @@ public class Resources {
     private final Map<String, Image>    imageCache;
 
 	/** All existing R script file names */
-	private static String[] scriptNames = new String[] { "summary.r", "boxplot_numerics_input.r", "barplot_input.r",
-			"barplot_output.r", "barplot_compareinputandoutput.r" };
+	private static String[] scriptNames = RSCRIPT_BUNDLE.keySet().toArray(new String[0]);
 
 	/** The RScript temporary path cache */
 	private static final Map<String, String> scriptPathCache = new HashMap<String, String>();
@@ -375,8 +377,14 @@ public class Resources {
         }
     }
 
-	public static String[] getScriptNames() {
-		return (String[]) scriptNames;
+	public static Map<String, String> getRMapping() {
+		Map<String, String> result = new HashMap<String, String>();
+		Enumeration<String> keys = RSCRIPT_BUNDLE.getKeys();
+		while (keys.hasMoreElements()) {
+			String key = keys.nextElement();
+			result.put(RSCRIPT_BUNDLE.getString(key), key);
+		}
+		return result;
 	}
 
 	public static String getRScript(String scriptName) {
@@ -393,7 +401,7 @@ public class Resources {
 
 		// Otherwise read from file, store in temporary file:
 		try {
-			String prefix = scriptName.split("\\.")[0];
+			String prefix = scriptName.split("\\.")[0].replace("\\", "\\\\"); // replace for Windows paths TODO: Check
 			File tempFile = File.createTempFile(prefix, ".r");
 
 			Files.copy(Resources.class.getResourceAsStream(scriptName), tempFile.toPath(),

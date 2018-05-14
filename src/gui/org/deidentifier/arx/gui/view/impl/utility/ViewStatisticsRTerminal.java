@@ -135,8 +135,8 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			String command = input.getText();
 			input.setText("");
 			executeR(command);
-			commandBuffer.appendToCommandBuffer(command);
-			input.setItems(commandBuffer.getLastCommands());
+			commandBuffer.add(command);
+			input.setItems((String[]) commandBuffer.getCommands());
 		}
 	}
 
@@ -176,8 +176,8 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 		if (event.part == ModelPart.R_SCRIPT) {
 			String command = (String) event.data;
 			executeR(command);
-			commandBuffer.appendToCommandBuffer(command);
-			input.setItems(commandBuffer.getLastCommands());
+			commandBuffer.add(command);
+			input.setItems(commandBuffer.getCommands());
 		} else if (event.part == ModelPart.R_PATH) {
 			this.pathToR = (String) event.data;
 			triggerUpdate();

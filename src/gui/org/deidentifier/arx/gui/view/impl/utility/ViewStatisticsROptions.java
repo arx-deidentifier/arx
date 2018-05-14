@@ -1,15 +1,17 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.Map;
 
 import javax.swing.filechooser.FileSystemView;
-
 import org.apache.commons.lang.StringUtils;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
 import org.deidentifier.arx.r.OS;
 import org.deidentifier.arx.r.OS.OSType;
@@ -20,7 +22,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.TableItem;
+
+import de.linearbits.swt.table.DynamicTable;
+import de.linearbits.swt.table.DynamicTableColumn;
 
 public class ViewStatisticsROptions implements ViewStatisticsBasic {
 
@@ -29,40 +34,66 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 	/** Controller */
 	private final Controller controller;
 	/** Widget */
-	private List loadScriptList;
+	private DynamicTable loadScriptTable;
 	/** Widget */
 	private Label pathText;
 
 	private String pathToR;
 
+	private Map<String, String> rmap;
+
 	public ViewStatisticsROptions(final Composite parent, final Controller controller) {
 
 		this.controller = controller;
-		// root = new Composite(parent, SWT.NONE);
 		this.root = parent;
-		root.setLayout(SWTUtil.createGridLayout(3, false));
+		root.setLayout(SWTUtil.createGridLayout(2));
 
-		final Label scriptlabel = new Label(root, SWT.PUSH);
-		scriptlabel.setText("Execute a script: ");
+		/**
+		 * Execute Script part
+		 */
+		// Title
+		ComponentTitledSeparator scriptLabel = new ComponentTitledSeparator(root, SWT.NONE);
+		scriptLabel.setLayoutData(SWTUtil.createFillGridData(2));
+		scriptLabel.setText("Execute a script: "); //$NON-NLS-1$
+
+		// Initialize table
+		loadScriptTable = SWTUtil.createTableDynamic(root,
+				SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
+		loadScriptTable.setLayoutData(SWTUtil.createFillGridData(2));
+		loadScriptTable.setLinesVisible(true);
+		DynamicTableColumn c = new DynamicTableColumn(loadScriptTable, SWT.LEFT);
+		c.setWidth("100%", "100px");
+		c.pack();
+		SWTUtil.createGenericTooltip(loadScriptTable);
 
 		// Select from preexisting scripts
-		String[] testpaths = Resources.getScriptNames();
+		rmap = Resources.getRMapping(); // Map<Description what script does,rscript.r name>
 
-		loadScriptList = new List(root, SWT.SINGLE);
-		loadScriptList.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		loadScriptList.setItems(testpaths);
-		loadScriptList.addSelectionListener(new SelectionAdapter() {
+		String[] paths = rmap.keySet().toArray(new String[0]); // Only description needed for table
+		Arrays.sort(paths); // Alphabetically sorted
+
+		for (String s : paths) {
+			TableItem item = new TableItem(loadScriptTable, SWT.NONE);
+			item.setText(0, s);
+		}
+		loadScriptTable.addSelectionListener(new SelectionAdapter() {
+
 			@Override
 			public void widgetSelected(final SelectionEvent event) {
-				if (loadScriptList.getSelectionIndex() >= 0) {
-					String label = loadScriptList.getItem(loadScriptList.getSelectionIndex());
+				if (loadScriptTable.getSelectionIndex() >= 0) {
+					// Get actual script name corresponding to the description which was chosen from
+					// the mapping
+					String label = rmap.get(loadScriptTable.getItem(loadScriptTable.getSelectionIndex()).getText());
+					// Get path to the temporary file where the r script was copied to, to be
+					// accessible for R.
 					String path = Resources.getRScript(label);
+					// Tell R to load it.
 					loadRScript(path);
 				}
 			}
 		});
 
-		// File chooser button/File Dialog
+		// File chooser button/File Dialog for choosing of an external R script
 		Button loadScriptButton = new Button(root, SWT.PUSH);
 		loadScriptButton.setText("Select from files");
 		loadScriptButton.addSelectionListener(new SelectionAdapter() {
@@ -80,9 +111,16 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 			}
 		});
 
-		final Label pathlabel = new Label(root, SWT.PUSH);
-		pathlabel.setText("Path to your R installation: ");
+		/**
+		 * Path to R installation part
+		 */
+		// Title
+		ComponentTitledSeparator pathLabel = new ComponentTitledSeparator(root, SWT.NONE);
+		pathLabel.setLayoutData(SWTUtil.createFillGridData(2));
+		pathLabel.setText("Path to your R installation: "); //$NON-NLS-1$
 
+
+		// Success message
 		pathText = new Label(root, SWT.RIGHT);
 		pathText.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 		pathToR = OS.getR();
@@ -92,6 +130,7 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 			pathText.setText("Executable of R not found. Please select one manually.");
 		}
 
+		// Change path manually file chooser dialog
 		Button pathToRButton = new Button(root, SWT.PUSH);
 		pathToRButton.setText("Change manually");
 		pathToRButton.addSelectionListener(new SelectionAdapter() {
@@ -106,14 +145,14 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 					// delete the last "\\something" of the String (because this is the file, not
 					// the directory).
 					for (String s : filterExtensions) {
-						String stripped = StringUtils.removeEnd(pathToR, "\\" + s);
+						String stripped = StringUtils.removeEnd(pathToR, "\\" + s); // TODO: Check
 						if (!pathToR.equals(stripped)) {
 							filterpath = stripped;
 							break;
 						}
 					}
 				} else {
-					// delet the last "/something" of the String (because this is the file, not the
+					// delete the last "/something" of the String (because this is the file, not the
 					// directory).
 					for (String s : filterExtensions) {
 						String stripped = StringUtils.removeEnd(pathToR, "/" + s);
