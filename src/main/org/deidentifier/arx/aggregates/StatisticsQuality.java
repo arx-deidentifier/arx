@@ -34,12 +34,13 @@ import org.deidentifier.arx.aggregates.quality.QualityDomainShareRedaction;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureColumnOriented;
 import org.deidentifier.arx.aggregates.quality.QualityMeasureRowOriented;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedLoss;
-import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedSquaredError;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedNonUniformEntropy;
 import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedPrecision;
+import org.deidentifier.arx.aggregates.quality.QualityModelColumnOrientedSquaredError;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAECS;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedAmbiguity;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedDiscernibility;
+import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSSESST;
 import org.deidentifier.arx.aggregates.quality.QualityModelRowOrientedSquaredError;
 import org.deidentifier.arx.common.Groupify;
 import org.deidentifier.arx.common.TupleWrapper;
@@ -71,6 +72,8 @@ public class StatisticsQuality {
     private QualityMeasureRowOriented          discernibility;
     /** Row-oriented model */
     private QualityMeasureRowOriented          sse;
+    /** Row-oriented model */
+    private QualityMeasureRowOriented          ssesst;
 
     /** Quality */
     private final List<String>                 attributes;
@@ -91,12 +94,14 @@ public class StatisticsQuality {
      * @param config
      * @param stop
      * @param progress
+     * @param qis
      */
     StatisticsQuality(DataHandle input,
                       DataHandle output,
                       ARXConfiguration config,
                       WrappedBoolean stop,
-                      WrappedInteger progress) {
+                      WrappedInteger progress,
+                      Set<String> qis) {
      
         // State
         this.stop = stop;
@@ -107,7 +112,7 @@ public class StatisticsQuality {
         // TODO: Do something with ARXConfiguration here.
         
         // Extract quasi-identifiers
-        int[] indices = getIndicesOfQuasiIdentifiers(input);
+        int[] indices = getIndicesOfQuasiIdentifiers(qis, input);
         
         // Basic measures
         this.attributes = getAttributes(output, indices);
@@ -130,6 +135,7 @@ public class StatisticsQuality {
             this.ambiguity = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.discernibility = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.sse = new QualityMeasureRowOriented(0d, 0d, 1d);
+            this.ssesst = new QualityMeasureRowOriented(0d, 0d, 1d);
             this.progress.value = 100;
             
             // Break
@@ -169,7 +175,7 @@ public class StatisticsQuality {
         }
         
         // Build
-        workload = 25;
+        workload = 15;
         try {
             this.entropy = new QualityModelColumnOrientedNonUniformEntropy(stop,
                                                                            progress,
@@ -294,6 +300,27 @@ public class StatisticsQuality {
             this.progress.value += workload;
         }
 
+        // Build
+        workload = 10;
+        try {
+            this.ssesst = new QualityModelRowOrientedSSESST(stop,
+                                                            progress,
+                                                            workload,
+                                                            input,
+                                                            output,
+                                                            groupedInput,
+                                                            groupedOutput,
+                                                            hierarchies,
+                                                            shares,
+                                                            indices,
+                                                            configuration).evaluate();
+            this.checkInterrupt();
+        } catch (Exception e) {
+            // Fail silently
+            this.ssesst = new QualityMeasureRowOriented();
+            this.progress.value += workload;
+        }
+        
         // Build
         workload = 15;
         try {
@@ -437,6 +464,19 @@ public class StatisticsQuality {
     }
 
     /**
+     * Quality according to the model proposed in:<br>
+     * <br>
+     * Solanas, Agusti, Antoni Martinez-Balleste, and J. Domingo-Ferrer. 
+     * V-MDAV: a multivariate microaggregation with variable group size.
+     * 17th COMPSTAT Symposium of the IASC, Rome. 2006.
+     * 
+     * @return Quality measure
+     */
+    public QualityMeasureRowOriented getSSESST() {
+        return ssesst;
+    }
+    
+    /**
      * Checks whether an interruption happened.
      */
     private void checkInterrupt() {
@@ -444,7 +484,6 @@ public class StatisticsQuality {
             throw new ComputationInterruptedException("Interrupted");
         }
     }
-
 
     /**
      * Returns a list of the attributes covered
@@ -618,15 +657,18 @@ public class StatisticsQuality {
 
     /**
      * Returns indices of quasi-identifiers
+     * @param userdefined 
      * 
      * @param handle
      * @return
      */
-    private int[] getIndicesOfQuasiIdentifiers(DataHandle handle) {
+    private int[] getIndicesOfQuasiIdentifiers(Set<String> userdefined, DataHandle handle) {
         int[] result = new int[handle.getDefinition().getQuasiIdentifyingAttributes().size()];
         int index = 0;
         for (String qi : handle.getDefinition().getQuasiIdentifyingAttributes()) {
-            result[index++] = handle.getColumnIndexOf(qi);
+            if (userdefined == null || userdefined.isEmpty() || userdefined.contains(qi)) {
+                result[index++] = handle.getColumnIndexOf(qi);
+            }
         }
         Arrays.sort(result);
         return result;
