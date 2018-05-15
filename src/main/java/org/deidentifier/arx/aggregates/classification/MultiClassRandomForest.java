@@ -16,16 +16,13 @@
  */
 package org.deidentifier.arx.aggregates.classification;
 
+import com.carrotsearch.hppc.IntArrayList;
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 import org.deidentifier.arx.common.WrappedBoolean;
-
-import com.carrotsearch.hppc.IntArrayList;
-import com.carrotsearch.hppc.IntIntOpenHashMap;
-
 import smile.classification.DecisionTree.SplitRule;
 import smile.classification.RandomForest;
 import smile.classification.TrainingInterrupt;

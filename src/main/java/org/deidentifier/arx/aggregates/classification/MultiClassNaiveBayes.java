@@ -68,7 +68,7 @@ public class MultiClassNaiveBayes extends ClassificationMethod {
         @Override public boolean isDense() { throw new UnsupportedOperationException(); }
         @Override public boolean isSequentialAccess() { throw new UnsupportedOperationException(); }
         @Override public Vector like() { throw new UnsupportedOperationException(); }
-        @Override public Vector like(int arg0) { throw new UnsupportedOperationException(); }
+         public Vector like(int arg0) { throw new UnsupportedOperationException(); }
         @Override public Vector logNormalize() { throw new UnsupportedOperationException(); }
         @Override public Vector logNormalize(double arg0) { throw new UnsupportedOperationException(); }
         @Override public double maxValue() { throw new UnsupportedOperationException(); }
