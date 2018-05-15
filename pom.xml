@@ -341,6 +341,7 @@
                 </dependency>
             </dependencies>
         </profile>
+        
         <!--NOTE: this build is specific for x86_64. Separate profiles may be required for arm64 or amd64 in the future -->
         <profile>
             <id>win-64</id>
