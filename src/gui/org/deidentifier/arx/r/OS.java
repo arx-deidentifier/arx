@@ -46,7 +46,8 @@ public class OS {
 	                                               "/usr/share/R/share"};
 
 	/** Locations*/
-	private static final String[] locationsWindows = {"C:\\Program Files\\R\\R-3.3.2\\bin", //Meanwhile there exists version 3.5.0
+	private static final String[] locationsWindows = {"C:\\Program Files\\R\\R-3.5.0\\bin",
+			                                          "C:\\Program Files\\R\\R-3.3.2\\bin",
 	                                                  "C:\\Program Files\\R\\R-2.1.5.1\\bin"}; //Suggestion: TODO change to version independent
 	/** Executables*/
 	private static final String[] executablesMac = {"R", "R.app"};
