@@ -1,6 +1,5 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
-import java.io.File;
 import java.util.Arrays;
 import java.util.Map;
 
@@ -124,7 +123,7 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		pathText = new Label(root, SWT.RIGHT);
 		pathText.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 		pathToR = OS.getR();
-        if ((new File(pathToR)).exists()) {
+        if (pathToR != null) {
 			setSuccessString();
 		} else {
 			pathText.setText("Executable of R not found. Please select one manually.");
@@ -137,34 +136,39 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 
 			@Override
 			public void widgetSelected(SelectionEvent event) {
-				String filterpath = pathToR; // file has to be stripped away to work properly.
-				String[] filterExtensions = OS.getPossibleExecutables();
-
-				// Strip away file ending of path
-				if (OS.getOS() == OSType.WINDOWS) {
-					// delete the last "\\something" of the String (because this is the file, not
-					// the directory).
-					for (String s : filterExtensions) {
-						String stripped = StringUtils.removeEnd(pathToR, "\\" + s); // TODO: Check
-						if (!pathToR.equals(stripped)) {
-							filterpath = stripped;
-							break;
-						}
-					}
-				} else {
-					// delete the last "/something" of the String (because this is the file, not the
-					// directory).
-					for (String s : filterExtensions) {
-						String stripped = StringUtils.removeEnd(pathToR, "/" + s);
-						if (!pathToR.equals(stripped)) {
-							filterpath = stripped;
-							break;
-						}
-					}
-				}
-
 				FileDialog fd = new FileDialog(root.getShell(), SWT.OPEN);
-				fd.setFilterPath(filterpath);
+				
+				String[] filterExtensions = OS.getPossibleExecutables();
+				
+				if (pathToR != null) {
+					String filterpath = pathToR; // file has to be stripped away to work properly.
+
+					// Strip away file ending of path
+					if (OS.getOS() == OSType.WINDOWS) {
+						// delete the last "\\something" of the String (because this is the file, not
+						// the directory).
+						for (String s : filterExtensions) {
+							String stripped = StringUtils.removeEnd(pathToR, "\\" + s); // TODO: Check
+							if (!pathToR.equals(stripped)) {
+								filterpath = stripped;
+								break;
+							}
+						}
+					} else {
+						// delete the last "/something" of the String (because this is the file, not the
+						// directory).
+						for (String s : filterExtensions) {
+							String stripped = StringUtils.removeEnd(pathToR, "/" + s);
+							if (!pathToR.equals(stripped)) {
+								filterpath = stripped;
+								break;
+							}
+						}
+					}
+					
+					fd.setFilterPath(filterpath);
+				}
+				
 				// With the following statement it should not be possible to select something
 				// that is not an R executable.
 				// Nevertheless it might be a good idea to check it a second time in the
@@ -187,8 +191,9 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		// We should check here if the path is a valid one. At least that it ends with
 		// .r
 		if (path.endsWith(".r")) {
-			String command = "source(\"" + path + "\")";
+			String command = "source(\"" + path.replace("\\", "/") + "\")"; // replace for Windows paths, R does not work otherwise
 			// communicate with RTerminal to execute command
+			System.out.println(command);
 			controller.update(new ModelEvent(ViewStatisticsROptions.this, ModelPart.R_SCRIPT, command));
 		} else {
 			System.out.println("Selected File is not ending with '.r'.");

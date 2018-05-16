@@ -401,7 +401,7 @@ public class Resources {
 
 		// Otherwise read from file, store in temporary file:
 		try {
-			String prefix = scriptName.split("\\.")[0].replace("\\", "\\\\"); // replace for Windows paths TODO: Check
+			String prefix = scriptName.split("\\.")[0];
 			File tempFile = File.createTempFile(prefix, ".r");
 
 			Files.copy(Resources.class.getResourceAsStream(scriptName), tempFile.toPath(),
