@@ -1,8 +1,10 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Map;
-
 import javax.swing.filechooser.FileSystemView;
 import org.apache.commons.lang.StringUtils;
 import org.deidentifier.arx.gui.Controller;
@@ -148,7 +150,7 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 						// delete the last "\\something" of the String (because this is the file, not
 						// the directory).
 						for (String s : filterExtensions) {
-							String stripped = StringUtils.removeEnd(pathToR, "\\" + s); // TODO: Check
+							String stripped = StringUtils.removeEnd(pathToR, "\\" + s);
 							if (!pathToR.equals(stripped)) {
 								filterpath = stripped;
 								break;
@@ -206,10 +208,77 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 	}
 
 	private void setSuccessString() {
-		pathText.setText("R executable found."); // TODO: get version. via the R terminal: "version$version.string"
+		pathText.setText("R executable found. Version: " + getRVersion()); // TODO: get version. via the R terminal: "version$version.string"
 		// You can tell the version the package was compiled for by looking at the
-		// ‘Version:’ line in its DESCRIPTION file: R/library/datasets/DESCRIPTION ->
+		// "Version:" line in its DESCRIPTION file: R/library/datasets/DESCRIPTION ->
 		// Executable in R/bin/R -> only applicable in Unix.
+	}
+	
+	private String getRVersion() {
+		String rVersionOutput = getRVersionOutput();
+		
+		/*
+		 * Output should have the following structure:
+		 * R version 3.5.0 (2018-04-23) --"Joy in Playing"
+		 * Copyright (C) 2018 The R Foundation for Statistical Computing
+		 * Platform: i386-w64-mingw32/i386 (32-bit)
+		 * 
+		 * R is free software [...]
+		 */
+		if (rVersionOutput != null) {
+			String[] lines = rVersionOutput.split("\n");
+			
+			if (lines.length>= 1) {
+				if (lines[0].startsWith("R version")) {
+
+					String[] words = lines[0].split(" ");
+					if (words.length >= 3) {
+						return words[2];
+					}
+			    }
+			}
+		}
+		
+		return "not found.";
+	}
+	
+	private String getRVersionOutput() {
+		
+		Runtime processBuilder = Runtime.getRuntime();//new ProcessBuilder(pathToR, "--version");
+		Process process = null;
+		try {
+			/*int index = pathToR.lastIndexOf("\\"); //TODO
+			String dir = pathToR.substring(0, index);
+			String exec = pathToR.substring(index+1, pathToR.length());*/
+			String[] commandarray = {pathToR, "--version"};
+			process = processBuilder.exec(commandarray);
+			//processBuilder.start();
+			//process = processBuilder.exec(commandarray, null, new File(dir));	
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+		
+		InputStream rOutStream = process.getInputStream();
+		ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
+		byte[] buffer = new byte[4096];
+		
+        try {
+        	int in;
+            while ((in = rOutStream.read(buffer)) != -1) {
+                outputstream.write(buffer, 0, in);
+            }
+            process.waitFor();
+            return outputstream.toString("UTF-8");
+        } catch (IOException e) { //read could throw this
+        	e.printStackTrace();
+        	process.destroy();
+        } catch (InterruptedException e) { //waitFor could throw this
+			e.printStackTrace();
+			process.destroy();
+		}
+			
+		return null;
 	}
 
 	@Override
