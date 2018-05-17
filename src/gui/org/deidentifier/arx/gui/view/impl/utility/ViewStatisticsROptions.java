@@ -244,22 +244,29 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 	
 	private String getRVersionOutput() {
 		
+		OSType os = OS.getOS();
+		
 		Runtime processBuilder = Runtime.getRuntime();//new ProcessBuilder(pathToR, "--version");
 		Process process = null;
-		try {
-			/*int index = pathToR.lastIndexOf("\\"); //TODO
-			String dir = pathToR.substring(0, index);
-			String exec = pathToR.substring(index+1, pathToR.length());*/
-			String[] commandarray = {pathToR, "--version"};
-			process = processBuilder.exec(commandarray);
-			//processBuilder.start();
-			//process = processBuilder.exec(commandarray, null, new File(dir));	
+		try { //TODO: test for OS X
+			if (os == OSType.WINDOWS) { //TODO: test on Linux if this if clause is necessary
+				String command = "cmd /c \""+pathToR+"\" --version";
+				process = processBuilder.exec(command);	
+			} else {
+				String[] commandarray = {pathToR, "--version"};
+				process = processBuilder.exec(commandarray);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 		
-		InputStream rOutStream = process.getInputStream();
+		InputStream rOutStream;
+		if (os == OSType.WINDOWS) {
+			rOutStream = process.getErrorStream();
+		} else {
+			rOutStream = process.getInputStream(); //TODO: Test for OS X!	
+		}
 		ByteArrayOutputStream outputstream = new ByteArrayOutputStream();
 		byte[] buffer = new byte[4096];
 		
