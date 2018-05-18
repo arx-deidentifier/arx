@@ -76,7 +76,7 @@ public class LayoutMasking implements ILayout {
 
         // Set SashForm weights
         sashMid.setWeights(new int[] { 50, 50 });
-        sashTop.setWeights(new int[] { 25, 25, 50 });
+        sashTop.setWeights(new int[] { 50, 50, 0 });
         sashBottom.setWeights(new int[] { 50, 50 });
 
 
@@ -85,7 +85,7 @@ public class LayoutMasking implements ILayout {
         new ViewMaskingConfiguration(compositeTopCenter, controller);
         new ViewVariableConfiguration(compositeBottomLeft, controller);
         new ViewVariableDistribution(compositeBottomRight, controller);
-        new ViewMaskedData(compositeTopRight, controller, "id-140",true);
+//      new ViewMaskedData(compositeTopRight, controller, "id-140",true);
 
     }
 

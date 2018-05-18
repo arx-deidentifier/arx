@@ -127,7 +127,8 @@ public class ModelEvent {
         
         MASKING_ATTRIBUTE_CHANGED,
         
-        /** Used to remove masking types if attribute isn't Identifying anymore*/
+        /** Used to share a list of Identifying attributes 
+         * to remove corresponding masking type if the attribute isn't Identifying anymore*/
         IDENTIFYING_ATTRIBUTES_CHANGED,
         
         /** SELECTED_CLASS_VALUE */

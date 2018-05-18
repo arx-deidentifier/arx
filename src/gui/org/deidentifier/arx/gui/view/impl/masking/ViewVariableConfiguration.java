@@ -23,6 +23,7 @@ import java.util.Map.Entry;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
@@ -77,7 +78,7 @@ public class ViewVariableConfiguration implements IView {
 
         // Create button bar
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(null); // TODO Assign help id
-        bar.add("Add variable", controller.getResources().getManagedImage("add.png"), new Runnable() {
+        bar.add(Resources.getMessage("VariableConfigurationView.0"), controller.getResources().getManagedImage("add.png"), new Runnable() {
 
             @Override
             public void run() {
@@ -88,7 +89,7 @@ public class ViewVariableConfiguration implements IView {
             }
 
         });
-        bar.add("Remove variable", controller.getResources().getManagedImage("remove.png"), new Runnable() {
+        bar.add(Resources.getMessage("VariableConfigurationView.1"), controller.getResources().getManagedImage("remove.png"), new Runnable() {
 
             @Override
             public void run() {
@@ -117,7 +118,6 @@ public class ViewVariableConfiguration implements IView {
                 	if (deletedIndex>=0 && deletedIndex<entries.size()-1 && value>deletedIndex)
                 	{
                 		entry.getValue().setDistribution(value-1);
-                		System.out.println("updated" +value+" to "+(value-1));
                 	}
                 }
             	controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
@@ -131,7 +131,7 @@ public class ViewVariableConfiguration implements IView {
             }
 
         });
-        bar.add("Edit variable", controller.getResources().getManagedImage("edit.png"), new Runnable() {
+        bar.add(Resources.getMessage("VariableConfigurationView.2"), controller.getResources().getManagedImage("edit.png"), new Runnable() {
 
             @Override
             public void run() {
@@ -149,14 +149,14 @@ public class ViewVariableConfiguration implements IView {
         // Create title bar
         ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
         folder.setLayoutData(SWTUtil.createFillGridData());
-        Composite composite = folder.createItem("Variable configuration", null);
+        Composite composite = folder.createItem(Resources.getMessage("MaskingView.3"), null);
         composite.setLayout(SWTUtil.createGridLayout(1));
         folder.setSelection(0);
 
         // Get references to buttons
-        buttonAdd = folder.getButtonItem("Add variable");
-        buttonRemove = folder.getButtonItem("Remove variable");
-        buttonEdit = folder.getButtonItem("Edit variable");
+        buttonAdd = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.0"));
+        buttonRemove = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.1"));
+        buttonEdit = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.2"));
 
         // Create table
         tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);

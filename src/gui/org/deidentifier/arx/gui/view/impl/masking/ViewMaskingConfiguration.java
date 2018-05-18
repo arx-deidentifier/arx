@@ -192,18 +192,15 @@ public class ViewMaskingConfiguration implements IView{
 				final String oldS = text.getText();
 				String newS = oldS.substring(0, e.start) + e.text + oldS.substring(e.end);
 				boolean isInt = true;
-				if (newS=="")
+				if (newS.equals(""))
 				{
-					System.out.println(((Text)e.getSource()).getText()+" better?");
 					return;
 				}
 				try{
 					Integer.parseInt(newS);
-					System.out.println(newS+" better?");
 				}catch(NumberFormatException ex){
 					isInt = false;
 				}
-				System.out.println("\""+newS+"\"");
 				if(!isInt)
 					e.doit = false;
 			}

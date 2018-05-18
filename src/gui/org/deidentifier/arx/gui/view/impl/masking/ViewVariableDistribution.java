@@ -23,6 +23,7 @@ import java.util.List;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
@@ -73,11 +74,11 @@ public class ViewVariableDistribution implements IView {
         folder.setLayoutData(SWTUtil.createFillGridData());
 
         // Plot view
-        Composite compositePlot = folder.createItem("Distribution plot", null);
+        Composite compositePlot = folder.createItem(Resources.getMessage("MaskingView.4"), null);
         compositePlot.setLayout(SWTUtil.createGridLayout(1));
 
         // Table view
-        Composite compositeTable = folder.createItem("Distribution table", null);
+        Composite compositeTable = folder.createItem(Resources.getMessage("MaskingView.5"), null);
         compositeTable.setLayout(SWTUtil.createGridLayout(1));
 
         // Select distribution plot view by default

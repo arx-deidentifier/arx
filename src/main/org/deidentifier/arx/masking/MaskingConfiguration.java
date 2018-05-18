@@ -3,8 +3,6 @@ package org.deidentifier.arx.masking;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.deidentifier.arx.masking.variable.RandomVariable;
-
 /**
  * Class containing the masking configuration, i.e. a map of attributes, MaskingTypes related configuration options
  *
@@ -60,8 +58,6 @@ public class MaskingConfiguration {
     	parameter = maskings.get(attribute);
     	if (parameter==null)
     	{
-    		//TODO: Does this occur?
-    		System.out.println("No parameter set at this point, but asked for one");
     		return -1;
     	}
     	else

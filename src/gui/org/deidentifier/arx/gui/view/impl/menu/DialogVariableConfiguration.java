@@ -24,6 +24,7 @@ import java.util.Map;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.model.ModelMasking;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IDialog;
@@ -38,6 +39,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -117,15 +119,15 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
         if (isNew) {
 
-            setTitle("Add a new random variable");
+            setTitle(Resources.getMessage("DialogVariableConfiguration.0"));
 
         } else {
 
-            setTitle("Configure an existing random variable");
+            setTitle(Resources.getMessage("DialogVariableConfiguration.1"));
 
         }
 
-        setMessage("Please configure the random variable by setting the parameters", IMessageProvider.INFORMATION);
+        setMessage(Resources.getMessage("DialogVariableConfiguration.2"), IMessageProvider.INFORMATION);
 
     }
 
@@ -136,13 +138,13 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
         // Variable name
         Label labelVariableName = new Label(composite, SWT.NONE);
-        labelVariableName.setText("Variable name");
+        labelVariableName.setText(Resources.getMessage("DialogVariableConfiguration.3"));
         textVariableName = new Text(composite, SWT.BORDER);
         textVariableName.setText(variable.getName());
 
         // Variable distribution
         Label labelDistribution = new Label(composite, SWT.NONE);
-        labelDistribution.setText("Distribution");
+        labelDistribution.setText(Resources.getMessage("DialogVariableConfiguration.4"));
         comboDistribution = new Combo(composite, SWT.READ_ONLY);
 
         // Add all available distributions to combo box
@@ -180,7 +182,11 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
         // Composite for parameters
         compositeParameter = new Composite(composite, SWT.NONE);
-        compositeParameter.setLayoutData(SWTUtil.createSpanColumnsGridData(2));
+        final GridData d = new GridData();
+    	d.grabExcessHorizontalSpace = false;
+    	d.grabExcessVerticalSpace = false;
+    	d.horizontalSpan = 2;
+        compositeParameter.setLayoutData(d);
         compositeParameter.setLayout(SWTUtil.createGridLayout(2));
 
         // Display parameters initially
@@ -231,10 +237,11 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
     }
 
-    @Override
+    @SuppressWarnings("unused")
+	@Override
     protected void createButtonsForButtonBar(Composite parent) {
 
-        Button ok = createButton(parent, Window.OK, "OK", true);
+		Button ok = createButton(parent, Window.OK, "OK", true);
         Button cancel = createButton(parent, Window.CANCEL, "Cancel", false);
 
     }
