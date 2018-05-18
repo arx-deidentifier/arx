@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -35,19 +34,20 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataSelector;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.criteria.ProfitabilityJournalistNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityJournalist;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 import org.deidentifier.arx.metric.v2.QualityMetadata;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
- * Examples of using the no-attack variant of the game-theoretic approach for 
+ * Examples of using the game-theoretic approach for 
  * performing a monetary cost/benefit analysis using journalist risk.
  *
  * @author Fabian Prasser
  */
-public class Example50 extends Example {
+public class Example52 extends Example {
 
     /**
      * Loads a dataset from disk
@@ -57,7 +57,7 @@ public class Example50 extends Example {
      */
     public static Data createData(final String dataset) throws IOException {
 
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
 
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -72,7 +72,7 @@ public class Example50 extends Example {
         };
 
         // Create definition
-        File testDir = new File("data/");
+        File testDir = new File(TestHelpers.getTestFixtureDirectory());
         File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
         for (File file : genHierFiles) {
@@ -109,25 +109,25 @@ public class Example50 extends Example {
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d), subset);
 
-        // Lower costs for the attacker
+        // Larger publisher loss
+        solve(data, ARXCostBenefitConfiguration.create()
+                                               .setAdversaryCost(4d)
+                                               .setAdversaryGain(300d)
+                                               .setPublisherLoss(600d)
+                                               .setPublisherBenefit(1200d), subset);
+
+        // Even larger publisher loss
+        solve(data, ARXCostBenefitConfiguration.create()
+                                               .setAdversaryCost(4d)
+                                               .setAdversaryGain(300d)
+                                               .setPublisherLoss(1200d)
+                                               .setPublisherBenefit(1200d), subset);
+
+        // Larger publisher loss and less adversary costs
         solve(data, ARXCostBenefitConfiguration.create()
                                                .setAdversaryCost(2d)
                                                .setAdversaryGain(300d)
-                                               .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d), subset);
-
-        // Lower costs and more gain for the attacker
-        solve(data, ARXCostBenefitConfiguration.create()
-                                               .setAdversaryCost(2d)
-                                               .setAdversaryGain(600d)
-                                               .setPublisherLoss(300d)
-                                               .setPublisherBenefit(1200d), subset);
-
-        // Even more gain for the attacker
-        solve(data, ARXCostBenefitConfiguration.create()
-                                               .setAdversaryCost(2d)
-                                               .setAdversaryGain(1200d)
-                                               .setPublisherLoss(300d)
+                                               .setPublisherLoss(600d)
                                                .setPublisherBenefit(1200d), subset);
 
     }
@@ -152,7 +152,7 @@ public class Example50 extends Example {
         MetricSDNMPublisherPayout maximizePublisherPayout = Metric.createPublisherPayoutMetric(true);
         
         // Create privacy model for the game-theoretic approach
-        ProfitabilityJournalistNoAttack profitability = new ProfitabilityJournalistNoAttack(subset);
+        ProfitabilityJournalist profitability = new ProfitabilityJournalist(subset);
         
         // Configure ARX
         arxconfig.setSuppressionLimit(1d);
@@ -176,6 +176,5 @@ public class Example50 extends Example {
             System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());
         }
         System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
- 
     }
 }

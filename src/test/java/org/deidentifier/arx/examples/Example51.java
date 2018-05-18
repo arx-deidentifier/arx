@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -33,19 +32,20 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
-import org.deidentifier.arx.criteria.ProfitabilityProsecutorNoAttack;
+import org.deidentifier.arx.criteria.ProfitabilityProsecutor;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.MetricSDNMPublisherPayout;
 import org.deidentifier.arx.metric.v2.QualityMetadata;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
- * Examples of using the no-attack variant of the game-theoretic approach for 
+ * Examples of using the game-theoretic approach for 
  * performing a monetary cost/benefit analysis using prosecutor risk.
  *
  * @author Fabian Prasser
  */
-public class Example49 extends Example {
+public class Example51 extends Example {
 
     /**
      * Loads a dataset from disk
@@ -55,7 +55,7 @@ public class Example49 extends Example {
      */
     public static Data createData(final String dataset) throws IOException {
 
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
 
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -70,7 +70,7 @@ public class Example49 extends Example {
         };
 
         // Create definition
-        File testDir = new File("data/");
+        File testDir = new File(TestHelpers.getTestFixtureDirectory());
         File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
         for (File file : genHierFiles) {
@@ -103,19 +103,34 @@ public class Example49 extends Example {
                                                .setPublisherLoss(300d)
                                                .setPublisherBenefit(1200d));
 
-        // Fewer costs
+        // Larger publisher loss
         solve(data, ARXCostBenefitConfiguration.create()
-                                               .setAdversaryCost(2d)
-                                               .setAdversaryGain(600d)
-                                               .setPublisherLoss(300d)
+                                               .setAdversaryCost(4d)
+                                               .setAdversaryGain(300d)
+                                               .setPublisherLoss(600d)
                                                .setPublisherBenefit(1200d));
 
-        // More costs, more gain
+        // Even larger publisher loss
         solve(data, ARXCostBenefitConfiguration.create()
-                                               .setAdversaryCost(1d)
-                                               .setAdversaryGain(1200d)
-                                               .setPublisherLoss(300d)
+                                               .setAdversaryCost(4d)
+                                               .setAdversaryGain(300d)
+                                               .setPublisherLoss(1200d)
                                                .setPublisherBenefit(1200d));
+
+        // Larger publisher loss and less adversary costs
+        solve(data, ARXCostBenefitConfiguration.create()
+                                               .setAdversaryCost(2d)
+                                               .setAdversaryGain(300d)
+                                               .setPublisherLoss(600d)
+                                               .setPublisherBenefit(1200d));
+        
+        // Config from PLOS|ONE paper but publisher loss and benefit changed with each other
+        solve(data, ARXCostBenefitConfiguration.create()
+                                               .setAdversaryCost(4d)
+                                               .setAdversaryGain(300d)
+                                               .setPublisherLoss(1200d)
+                                               .setPublisherBenefit(300d));
+
 
     }
 
@@ -138,7 +153,7 @@ public class Example49 extends Example {
         MetricSDNMPublisherPayout maximizePublisherPayout = Metric.createPublisherPayoutMetric(false);
         
         // Create privacy model for the game-theoretic approach
-        ProfitabilityProsecutorNoAttack profitability = new ProfitabilityProsecutorNoAttack();
+        ProfitabilityProsecutor profitability = new ProfitabilityProsecutor();
         
         // Configure ARX
         arxconfig.setSuppressionLimit(1d);
@@ -149,7 +164,7 @@ public class Example49 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXResult result = anonymizer.anonymize(data, arxconfig);
         ARXNode node = result.getGlobalOptimum();
-        DataHandle handle = result.getOutput(node, false).getView();
+        DataHandle handle = result.getOutput(node, false);
         
         // Print stuff
         System.out.println("Data: " + data.getHandle().getView().getNumRows() + " records with " + data.getDefinition().getQuasiIdentifyingAttributes().size() + " quasi-identifiers");

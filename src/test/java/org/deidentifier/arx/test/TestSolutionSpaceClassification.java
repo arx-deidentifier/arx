@@ -17,11 +17,8 @@
 
 package org.deidentifier.arx.test;
 
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice;
@@ -35,6 +32,8 @@ import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Test;
+
+import static org.junit.Assert.fail;
 
 /**
  * Tests the classification of the solution space.
@@ -53,12 +52,12 @@ public class TestSolutionSpaceClassification extends AbstractTest {
     @Test
     public void testNMEntropy() throws IllegalArgumentException, IOException {
         
-        Data data = Data.create("data/adult.csv", StandardCharsets.UTF_8, ';');
-        data.getDefinition().setAttributeType("sex", Hierarchy.create("data/adult_hierarchy_sex.csv", StandardCharsets.UTF_8, ';'));
-        data.getDefinition().setAttributeType("age", Hierarchy.create("data/adult_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
-        data.getDefinition().setAttributeType("race", Hierarchy.create("data/adult_hierarchy_race.csv", StandardCharsets.UTF_8, ';'));
-        data.getDefinition().setAttributeType("education", Hierarchy.create("data/adult_hierarchy_education.csv", StandardCharsets.UTF_8, ';'));
-        data.getDefinition().setAttributeType("marital-status", Hierarchy.create("data/adult_hierarchy_marital-status.csv", StandardCharsets.UTF_8, ';'));
+        Data data = Data.create(TestHelpers.getTestFixturePath("adult.csv"), StandardCharsets.UTF_8, ';');
+        data.getDefinition().setAttributeType("sex", Hierarchy.create(TestHelpers.getTestFixturePath("adult_hierarchy_sex.csv"), StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("age", Hierarchy.create(TestHelpers.getTestFixturePath("adult_hierarchy_age.csv"), StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("race", Hierarchy.create(TestHelpers.getTestFixturePath("adult_hierarchy_race.csv"), StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("education", Hierarchy.create(TestHelpers.getTestFixturePath("adult_hierarchy_education.csv"), StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("marital-status", Hierarchy.create(TestHelpers.getTestFixturePath("adult_hierarchy_marital-status.csv"), StandardCharsets.UTF_8, ';'));
         
         DataSelector selector = DataSelector.create(data).field("sex").equals("Male");
         DataSubset subset = DataSubset.create(data, selector);

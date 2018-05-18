@@ -25,7 +25,6 @@ import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -39,6 +38,7 @@ import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
  * This class implements an example on how to access quality statistics
@@ -56,7 +56,7 @@ public class Example54 extends Example {
     public static Data createData(final String dataset) throws IOException {
         
         // Load data
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
         
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -71,7 +71,7 @@ public class Example54 extends Example {
         };
         
         // Create definition
-        File testDir = new File("data/");
+        File testDir = new File(TestHelpers.getTestFixtureDirectory());
         File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
         for (File file : genHierFiles) {

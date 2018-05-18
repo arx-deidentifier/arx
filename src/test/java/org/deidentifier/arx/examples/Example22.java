@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -33,6 +32,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.EntropyLDiversity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
  * This class implements an example on how to use the l-diversity privacy model
@@ -51,7 +51,7 @@ public class Example22 extends Example {
      */
     public static Data createData(final String dataset) throws IOException {
 
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
 
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -66,7 +66,7 @@ public class Example22 extends Example {
         };
 
         // Create definition
-        File testDir = new File("data/");
+        File testDir = new File(TestHelpers.getTestFixtureDirectory());
         File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
         for (File file : genHierFiles) {

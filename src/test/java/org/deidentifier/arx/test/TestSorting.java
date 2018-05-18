@@ -55,44 +55,6 @@ import cern.colt.Swapper;
  * @author Fabian Prasser
  */
 public class TestSorting extends AbstractTest {
-
-    /**
-     * Loads a dataset from disk
-     * @param dataset
-     * @return
-     * @throws IOException
-     */
-    private Data createData(final String dataset) throws IOException {
-
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
-
-        // Read generalization hierarchies
-        FilenameFilter hierarchyFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                if (name.matches(dataset + "_hierarchy_(.)+.csv")) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        };
-
-        // Create definition
-        File testDir = new File("data/");
-        File[] genHierFiles = testDir.listFiles(hierarchyFilter);
-        Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
-        for (File file : genHierFiles) {
-            Matcher matcher = pattern.matcher(file.getName());
-            if (matcher.find()) {
-                CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
-                String attributeName = matcher.group(1);
-                data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
-            }
-        }
-
-        return data;
-    }
     
     /**
      * Entry point.

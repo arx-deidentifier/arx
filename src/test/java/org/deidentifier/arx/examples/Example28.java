@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Arrays;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -35,6 +34,7 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Interval;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased.Range;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
  * This class implements an example on how to use data cleansing using the DataSource functionality.
@@ -119,7 +119,7 @@ public class Example28 extends Example {
      */
     private static void exampleCSV() throws IOException {
         
-        DataSource source = DataSource.createCSVSource("data/test_dirty.csv", StandardCharsets.UTF_8, ';', true);
+        DataSource source = DataSource.createCSVSource(TestHelpers.getTestFixturePath("test_dirty.csv"), StandardCharsets.UTF_8, ';', true);
         source.addColumn("age", DataType.INTEGER, true);
         
         // Create data object
@@ -174,7 +174,7 @@ public class Example28 extends Example {
      * @throws IOException
      */
     private static void useBuilderAndAnonymize() throws IOException {
-        DataSource source = DataSource.createCSVSource("data/test_dirty.csv", StandardCharsets.UTF_8, ';', true);
+        DataSource source = DataSource.createCSVSource(TestHelpers.getTestFixturePath("test_dirty.csv"), StandardCharsets.UTF_8, ';', true);
         source.addColumn("age", DataType.INTEGER, true);
         
         // Create data object

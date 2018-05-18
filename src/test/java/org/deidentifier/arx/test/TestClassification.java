@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.test;
 
-import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -26,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXConfiguration;
@@ -39,6 +36,8 @@ import org.deidentifier.arx.aggregates.StatisticsClassification;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test for statistical classification
@@ -59,7 +58,7 @@ public class TestClassification {
 
     /**
      * Loads a dataset from disk
-     * 
+     *
      * @param dataset
      * @return
      * @throws IOException
@@ -67,7 +66,7 @@ public class TestClassification {
     private Data getData(final String dataset) throws IOException {
 
         // Load data
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
 
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -82,7 +81,7 @@ public class TestClassification {
         };
 
         // Create definition
-        File testDir = new File("data/");
+        File testDir = new File(TestHelpers.getTestFixtureDirectory());
         File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
         for (File file : genHierFiles) {

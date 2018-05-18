@@ -19,13 +19,13 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
  * This class implements an example on how to use the API by providing CSV files
@@ -44,12 +44,12 @@ public class Example2 extends Example {
      */
     public static void main(String[] args) throws IOException {
         
-        Data data = Data.create("data/test.csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("test.csv"), StandardCharsets.UTF_8, ';');
         
         // Define input files
-        data.getDefinition().setAttributeType("age", Hierarchy.create("data/test_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
-        data.getDefinition().setAttributeType("gender", Hierarchy.create("data/test_hierarchy_gender.csv", StandardCharsets.UTF_8, ';'));
-        data.getDefinition().setAttributeType("zipcode", Hierarchy.create("data/test_hierarchy_zipcode.csv", StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("age", Hierarchy.create(TestHelpers.getTestFixturePath("test_hierarchy_age.csv"), StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("gender", Hierarchy.create(TestHelpers.getTestFixturePath("test_hierarchy_gender.csv"), StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("zipcode", Hierarchy.create(TestHelpers.getTestFixturePath("test_hierarchy_zipcode.csv"), StandardCharsets.UTF_8, ';'));
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -65,7 +65,7 @@ public class Example2 extends Example {
         
         // Write results
         System.out.print(" - Writing data...");
-        result.getOutput(false).save("data/test_anonymized.csv", ';');
+        result.getOutput(false).save(TestHelpers.getTestFixturePath("test_anonymized.csv"), ';');
         System.out.println("Done!");
     }
 }

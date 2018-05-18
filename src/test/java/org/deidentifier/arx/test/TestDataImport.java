@@ -17,17 +17,14 @@
 
 package org.deidentifier.arx.test;
 
-import java.io.File;
+import cern.colt.Arrays;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.deidentifier.arx.Data;
 import org.junit.Test;
-
-import cern.colt.Arrays;
 
 /**
  * Tests for importing complex csv files
@@ -44,7 +41,7 @@ public class TestDataImport extends AbstractTest {
      */
     @Test
     public void test1() throws IllegalArgumentException, IOException {
-        Data data = Data.create(new File("data/test-import.csv"), StandardCharsets.UTF_8, ';', '\"');
+        Data data = Data.create(TestHelpers.getTestFixturePath("test-import.csv"), StandardCharsets.UTF_8, ';', '\"');
         Iterator<String[]> iter = data.getHandle().iterator();
         List<String[]> result = new ArrayList<String[]>();
         while (iter.hasNext()) {

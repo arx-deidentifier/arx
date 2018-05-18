@@ -20,10 +20,10 @@ package org.deidentifier.arx.examples;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSource;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
  * This class demonstrates the use of the data import facilities provided by the
@@ -69,7 +69,7 @@ public class Example21 extends Example {
         // The most interesting parameter is the last one, which defines
         // whether or not the file contains a header assigning a name to each
         // individual column, which can be used to address the column later on
-        DataSource source = DataSource.createCSVSource("data/test.csv", StandardCharsets.UTF_8, ';', true);
+        DataSource source = DataSource.createCSVSource(TestHelpers.getTestFixturePath("test.csv"), StandardCharsets.UTF_8, ';', true);
         
         // Add columns
         // Note that there are different means to specify a column. The first
@@ -117,7 +117,7 @@ public class Example21 extends Example {
     private static void exampleExcel() throws IOException {
         
         // Define configuration for Excel file
-        DataSource source = DataSource.createExcelSource("data/test.xls", 0, true);
+        DataSource source = DataSource.createExcelSource(TestHelpers.getTestFixturePath("test.xls"), 0, true);
         
         // Add columns
         source.addColumn(2, DataType.STRING); // zipcode (index based addressing)

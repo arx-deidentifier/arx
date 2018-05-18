@@ -131,7 +131,7 @@ public class TestAnonymizationCellSuppression {
             // Initialize test case
             int numberOfDefinitions = random.nextInt(10) + 1;
             int numberOfQisPerDefinition = random.nextInt(8) + 1;
-            TestCase tc = new TestCase("./data/adult.csv", new Risks[numberOfDefinitions]);
+            TestCase tc = new TestCase(TestHelpers.getTestFixturePath("adult.csv"), new Risks[numberOfDefinitions]);
             for (int i = 0; i < numberOfDefinitions; i++) {
                 
                 // Get random values
@@ -158,17 +158,17 @@ public class TestAnonymizationCellSuppression {
     @Test
     public void testStatic () throws IOException {
 
-        TestCase[] tests = new TestCase[] { new TestCase("./data/adult.csv",
+        TestCase[] tests = new TestCase[] { new TestCase(TestHelpers.getTestFixturePath("adult.csv"),
                                                          new Risks(0.2, 0.05, 0.05, Arrays.asList("sex", "age", "race", "marital-status")),
                                                          new Risks(0.3, 0.1, 0.1, Arrays.asList("marital-status", "education", "native-country")),
                                                          new Risks(0.2, 0.05, 0.05, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
                                                          new Risks(0.1, 0.3, 0.1, Arrays.asList("age", "race", "marital-status", "education"))),
-                                            new TestCase("./data/adult.csv",
+                                            new TestCase(TestHelpers.getTestFixturePath("adult.csv"),
                                                          new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race", "marital-status")),
                                                          new Risks(0.3, 0.1, 0, Arrays.asList("marital-status", "education", "native-country")),
                                                          new Risks(0.2, 0.05, 0, Arrays.asList("native-country", "workclass", "occupation", "salary-class")),
                                                          new Risks(0.1, 0.3, 0, Arrays.asList("age", "race", "marital-status", "education"))),
-                                            new TestCase("./data/adult.csv", new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race")),
+                                            new TestCase(TestHelpers.getTestFixturePath("adult.csv"), new Risks(0.2, 0.05, 0, Arrays.asList("sex", "age", "race")),
                                                          new Risks(0.2, 0.05, 0.2, Arrays.asList("age", "race", "marital-status")),
                                                          new Risks(0.2, 0.05, 0, Arrays.asList("race", "marital-status", "education")),
                                                          new Risks(0.3, 0.1, 0.05, Arrays.asList("marital-status", "education", "native-country")),

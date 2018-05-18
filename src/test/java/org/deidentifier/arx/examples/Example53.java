@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,33 +17,33 @@
 
 package org.deidentifier.arx.examples;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
-import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
-import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.certificate.ARXCertificate;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.io.CSVHierarchyInput;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.Metric;
-
+import org.deidentifier.arx.test.*;
 /**
- * This class implements an example on how to compare data mining performance
+ * This class implements an example on how to generate reports
  *
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-public class Example39 extends Example {
+public class Example53 extends Example {
     
     /**
      * Loads a dataset from disk
@@ -52,9 +52,8 @@ public class Example39 extends Example {
      * @throws IOException
      */
     public static Data createData(final String dataset) throws IOException {
-        
         // Load data
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
         
         // Read generalization hierarchies
         FilenameFilter hierarchyFilter = new FilenameFilter() {
@@ -69,7 +68,7 @@ public class Example39 extends Example {
         };
         
         // Create definition
-        File testDir = new File("data/");
+        File testDir = new File(TestHelpers.getTestFixtureDirectory());
         File[] genHierFiles = testDir.listFiles(hierarchyFilter);
         Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
         for (File file : genHierFiles) {
@@ -90,39 +89,31 @@ public class Example39 extends Example {
      * @param args the arguments
      * @throws ParseException
      * @throws IOException
+     * @throws NoSuchAlgorithmException 
      */
-    public static void main(String[] args) throws ParseException, IOException {
-        
-        String[] features = new String[] {
-                                           "sex",
-                                           "age",
-                                           "race",
-                                           "education",
-                                           "native-country",
-                                           "workclass",
-                                           "occupation",
-                                           "salary-class"
-        };
-        
-        String clazz = "marital-status";
+    public static void main(String[] args) throws ParseException, IOException, NoSuchAlgorithmException {
         
         Data data = createData("adult");
-        data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
-        data.getDefinition().setDataType("age", DataType.INTEGER);
-        data.getDefinition().setResponseVariable("marital-status", true);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
         config.setSuppressionLimit(1d);
-        config.setQualityModel(Metric.createClassificationMetric());
+        config.setQualityModel(Metric.createLossMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
-        System.out.println("5-anonymous dataset (logistic regression)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createLogisticRegression()));
-        System.out.println("5-anonymous dataset (naive bayes)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createNaiveBayes()));
-        System.out.println("5-anonymous dataset (random forest)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createRandomForest()));
+
+        // Create certificate
+        ARXCertificate certificate = ARXCertificate.create(data.getHandle(), data.getDefinition(),
+                                                          config, result, result.getGlobalOptimum(), 
+                                                          result.getOutput(),
+                                                          new CSVSyntax());
+        File file = File.createTempFile("arx", ".pdf");
+        certificate.save(file);
+        
+        // Open
+        if (Desktop.isDesktopSupported()) {
+            Desktop.getDesktop().open(file);
+        }
     }
 }

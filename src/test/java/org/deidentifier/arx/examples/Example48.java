@@ -19,7 +19,6 @@ package org.deidentifier.arx.examples;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -29,6 +28,7 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSource;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
  * This class implements an example of how to use ordered distance t-closeness. Implements Example 3
@@ -46,7 +46,7 @@ public class Example48 extends Example {
     public static void main(String[] args) throws IOException {
 
         // Load data
-        DataSource source = DataSource.createCSVSource("data/test2.csv", Charset.forName("UTF-8"), ';', true);
+        DataSource source = DataSource.createCSVSource(TestHelpers.getTestFixturePath("test2.csv"), Charset.forName("UTF-8"), ';', true);
         source.addColumn("ZIPCode", DataType.STRING);
         source.addColumn("Age", DataType.INTEGER);
         source.addColumn("Salary", DataType.INTEGER); // in k
@@ -54,8 +54,8 @@ public class Example48 extends Example {
         Data data = Data.create(source);
         
         // Load hierarchies
-        Hierarchy zipcode = Hierarchy.create("data/test2_hierarchy_ZIPCode.csv", Charset.forName("UTF-8"), ';');
-        Hierarchy age = Hierarchy.create("data/test2_hierarchy_Age.csv", Charset.forName("UTF-8"), ';');
+        Hierarchy zipcode = Hierarchy.create(TestHelpers.getTestFixturePath("test2_hierarchy_ZIPCode.csv"), Charset.forName("UTF-8"), ';');
+        Hierarchy age = Hierarchy.create(TestHelpers.getTestFixturePath("test2_hierarchy_Age.csv"), Charset.forName("UTF-8"), ';');
         
         // Define
         data.getDefinition().setAttributeType("ZIPCode", zipcode);

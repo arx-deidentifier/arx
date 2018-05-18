@@ -17,12 +17,9 @@
 
 package org.deidentifier.arx.test;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice;
@@ -39,6 +36,8 @@ import org.deidentifier.arx.criteria.Inclusion;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  * Tests for data handles
@@ -394,8 +393,8 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset3() throws IllegalArgumentException, IOException {
         
-        Data data = Data.create("./data/dis.csv", StandardCharsets.UTF_8, ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("./data/dis_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
+        Data data = Data.create(TestHelpers.getTestFixturePath("dis.csv"), StandardCharsets.UTF_8, ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create(TestHelpers.getTestFixturePath("dis_hierarchy_age.csv"), StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
         
@@ -427,8 +426,8 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset4() throws IllegalArgumentException, IOException {
         
-        Data data = Data.create("./data/dis.csv", StandardCharsets.UTF_8, ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("./data/dis_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
+        Data data = Data.create(TestHelpers.getTestFixturePath("dis.csv"), StandardCharsets.UTF_8, ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create(TestHelpers.getTestFixturePath("dis_hierarchy_age.csv"), StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
         
@@ -456,9 +455,9 @@ public class TestDataHandle extends AbstractTest {
     @Test
     public void testSubset5() throws IllegalArgumentException, IOException {
         
-        Data data = Data.create("./data/dis.csv", StandardCharsets.UTF_8, ';');
-        data.getDefinition().setAttributeType("age", Hierarchy.create("./data/dis_hierarchy_age.csv", StandardCharsets.UTF_8, ';'));
-        data.getDefinition().setAttributeType("gender", Hierarchy.create("./data/dis_hierarchy_gender.csv", StandardCharsets.UTF_8, ';'));
+        Data data = Data.create(TestHelpers.getTestFixturePath("dis.csv"), StandardCharsets.UTF_8, ';');
+        data.getDefinition().setAttributeType("age", Hierarchy.create(TestHelpers.getTestFixturePath("dis_hierarchy_age.csv"), StandardCharsets.UTF_8, ';'));
+        data.getDefinition().setAttributeType("gender", Hierarchy.create(TestHelpers.getTestFixturePath("dis_hierarchy_gender.csv"), StandardCharsets.UTF_8, ';'));
         data.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
         
         DataSelector selector = DataSelector.create(data).field("gender").equals("male");

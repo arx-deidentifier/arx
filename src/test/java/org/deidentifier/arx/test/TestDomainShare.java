@@ -50,12 +50,12 @@ public class TestDomainShare extends AbstractAnonymizationTest {
     @Parameters(name = "{index}:[{0}]")
     public static Collection<Object[]> cases() throws IOException {
         return Arrays.asList(new Object[][] {
-                                              /* 0 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/adult.csv", getHierarchyBuilders(), 2.3208009999997614E-4 , new int[]{0}, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(100)), "./data/adult.csv", getHierarchyBuilders(), 0.02048935740000002 , new int[]{0}, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/adult.csv", getHierarchyBuilders(), 2.3208009999997614E-4 , new int[]{0}, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(100)), "./data/adult.csv", getHierarchyBuilders(), 0.02048935740000002 , new int[]{0}, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), "./data/adult.csv", getHierarchyBuilders(), 2.3208009999997614E-4 , new int[]{0}, false) },
-                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(100)), "./data/adult.csv", getHierarchyBuilders(), 0.02048935740000002 , new int[]{0}, false) },                                                                                                                  
+                                              /* 0 */{ new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), TestHelpers.getTestFixturePath("adult.csv"), getHierarchyBuilders(), 2.3208009999997614E-4 , new int[]{0}, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(100)), TestHelpers.getTestFixturePath("adult.csv"), getHierarchyBuilders(), 0.02048935740000002 , new int[]{0}, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), TestHelpers.getTestFixturePath("adult.csv"), getHierarchyBuilders(), 2.3208009999997614E-4 , new int[]{0}, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(100)), TestHelpers.getTestFixturePath("adult.csv"), getHierarchyBuilders(), 0.02048935740000002 , new int[]{0}, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(5)), TestHelpers.getTestFixturePath("adult.csv"), getHierarchyBuilders(), 2.3208009999997614E-4 , new int[]{0}, false) },
+                                              { new ARXAnonymizationTestCase(ARXConfiguration.create(1d, Metric.createLossMetric()).addPrivacyModel(new KAnonymity(100)), TestHelpers.getTestFixturePath("adult.csv"), getHierarchyBuilders(), 0.02048935740000002 , new int[]{0}, false) },
         });
     }
     
@@ -66,7 +66,7 @@ public class TestDomainShare extends AbstractAnonymizationTest {
      */
     private static Map<String, HierarchyBuilder<?>> getHierarchyBuilders() throws IOException {
         Map<String, HierarchyBuilder<?>> map = new HashMap<String, HierarchyBuilder<?>>();
-        map.put("age", HierarchyBuilder.create(new File("data/hierarchy-age.ahs")));
+        map.put("age", HierarchyBuilder.create(new File(TestHelpers.getTestFixturePath("hierarchy-age.ahs"))));
         return map;
     }
 

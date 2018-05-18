@@ -17,9 +17,6 @@
 
 package org.deidentifier.arx.test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -27,7 +24,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -42,6 +38,9 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test for microaggregation.
@@ -100,7 +99,7 @@ public class TestMicroaggregation extends AbstractTest {
      */
     @Test
     public void testMicroaggregationAdult() throws IOException {
-        Data data = getDataObject("./data/adult.csv");
+        Data data = getDataObject(TestHelpers.getTestFixturePath("adult.csv"));
         
         data.getDefinition().setAttributeType("age", MicroAggregationFunction.createArithmeticMean());
         data.getDefinition().setDataType("age", DataType.INTEGER);

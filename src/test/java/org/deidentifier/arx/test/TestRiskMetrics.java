@@ -17,16 +17,12 @@
 
 package org.deidentifier.arx.test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
@@ -41,6 +37,9 @@ import org.deidentifier.arx.metric.Metric.AggregateFunction;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
 import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
 import org.junit.Test;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test for risk metrics.
@@ -116,7 +115,7 @@ public class TestRiskMetrics {
      */
     @Test
     public void testAverageRisk2() throws IOException {
-        Data data = getDataObject("./data/adult.csv");
+        Data data = getDataObject(TestHelpers.getTestFixturePath("adult.csv"));
         // Risk before anonymization
         double risk = data.getHandle().getRiskEstimator(ARXPopulationModel.create(data.getHandle().getNumRows(), 0.1d)).getSampleBasedReidentificationRisk().getAverageRisk();
         assertTrue("Is: " + risk, risk == 0.6465751607983555d);
@@ -168,7 +167,7 @@ public class TestRiskMetrics {
     @Test
     public void testDecisionRule2() throws IOException {
         
-        Data data = getDataObject("./data/adult.csv");
+        Data data = getDataObject(TestHelpers.getTestFixturePath("adult.csv"));
         DataHandle handle = data.getHandle();
         
         RiskModelPopulationUniqueness model = handle.getRiskEstimator(ARXPopulationModel.create(handle.getNumRows(), 0.1d)).getPopulationBasedUniquenessRisk();
@@ -231,7 +230,7 @@ public class TestRiskMetrics {
      */
     @Test
     public void testHighestIndividualRisk2() throws IOException {
-        Data data = getDataObject("./data/adult.csv");
+        Data data = getDataObject(TestHelpers.getTestFixturePath("adult.csv"));
         // Risk before anonymization
         assertTrue(data.getHandle().getRiskEstimator(ARXPopulationModel.create(data.getHandle().getNumRows(), 0.1d)).getSampleBasedReidentificationRisk().getHighestRisk() == 1.0d);
         

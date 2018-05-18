@@ -17,10 +17,18 @@
 
 package org.deidentifier.arx.test;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.Before;
 
@@ -142,5 +150,42 @@ public abstract class AbstractTest {
             list.add(transformed.next());
         }
         return list.toArray(new String[list.size()][]);
+    }
+
+    /**
+     * Loads a dataset from disk
+     * @param dataset
+     * @return
+     * @throws IOException
+     */
+    public Data createData(final String dataset) throws IOException {
+
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
+
+        // Read generalization hierarchies
+        FilenameFilter hierarchyFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                if (name.matches(dataset + "_hierarchy_(.)+.csv")) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        };
+
+        // Create definition
+        File testDir = new File(TestHelpers.getTestFixtureDirectory());
+        File[] genHierFiles = testDir.listFiles(hierarchyFilter);
+        Pattern pattern = Pattern.compile("_hierarchy_(.*?).csv");
+        for (File file : genHierFiles) {
+            Matcher matcher = pattern.matcher(file.getName());
+            if (matcher.find()) {
+                CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
+                String attributeName = matcher.group(1);
+                data.getDefinition().setAttributeType(attributeName, AttributeType.Hierarchy.create(hier.getHierarchy()));
+            }
+        }
+        return data;
     }
 }

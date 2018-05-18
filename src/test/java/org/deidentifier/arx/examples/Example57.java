@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
-
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXResult;
@@ -36,6 +35,7 @@ import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelSampleSummary;
 import org.deidentifier.arx.risk.RiskModelSampleWildcard;
+import org.deidentifier.arx.test.TestHelpers;
 
 /**
  * This class implements an example on how to analyze risks with wildcards for data transformed with cell suppression
@@ -53,7 +53,7 @@ public class Example57 extends Example {
     public static Data createData(final String dataset) throws IOException {
         
         // Load data
-        Data data = Data.create("data/" + dataset + ".csv", StandardCharsets.UTF_8, ';');
+        Data data = Data.create(TestHelpers.getTestFixturePath("" + dataset + ".csv"), StandardCharsets.UTF_8, ';');
         for (int i=0; i<data.getHandle().getNumColumns(); i++) {
             String attribute = data.getHandle().getAttributeName(i);
             data.getDefinition().setAttributeType(attribute, getHierarchy(data, attribute));
