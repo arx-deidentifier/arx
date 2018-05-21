@@ -1,0 +1,7 @@
+patient-id hierarchy apply:
+- the rows its applying are not the correct ones
+- the ordering is different! hmmm ....
+
+hierarchy builder:
+- figure out how to build the hierarchy
+- generate some random numbers
