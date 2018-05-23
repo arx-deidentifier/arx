@@ -363,7 +363,9 @@ public class CSVDataOutput {
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
-        options.apply(settings);
+        if (options != null) {
+            options.apply(settings);
+        }
         return settings;
     }
 }
