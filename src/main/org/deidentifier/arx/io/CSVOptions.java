@@ -38,7 +38,7 @@ public class CSVOptions implements Serializable { // NO_UCD
      * Creates new options
      * @param maxColumns
      */
-    CSVOptions(int maxColumns) {
+    public CSVOptions(int maxColumns) {
         this.maxColumns = maxColumns;
     }
 
