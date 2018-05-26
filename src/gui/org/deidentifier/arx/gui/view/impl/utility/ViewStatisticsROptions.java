@@ -207,10 +207,7 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 	}
 
 	private void setSuccessString() {
-		pathText.setText("R executable found. Version: " + getRVersion()); // TODO: get version. via the R terminal: "version$version.string"
-		// You can tell the version the package was compiled for by looking at the
-		// "Version:" line in its DESCRIPTION file: R/library/datasets/DESCRIPTION ->
-		// Executable in R/bin/R -> only applicable in Unix.
+		pathText.setText("R executable found. Version: " + getRVersion());
 	}
 	
 	private String getRVersion() {
@@ -245,14 +242,14 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		
 		OSType os = OS.getOS();
 		
-		Runtime processBuilder = Runtime.getRuntime();//new ProcessBuilder(pathToR, "--version");
+		Runtime processBuilder = Runtime.getRuntime();
 		Process process = null;
 		try { //TODO: test for OS X
-			if (os == OSType.WINDOWS) { //TODO: test on Linux if this if clause is necessary
+			if (os == OSType.WINDOWS) {
 				String command = "cmd /c \""+pathToR+"\" --version";
 				process = processBuilder.exec(command);	
 			} else {
-				String[] commandarray = {pathToR, "--version"};
+				String[] commandarray = { pathToR, "--version" };
 				process = processBuilder.exec(commandarray);
 			}
 		} catch (IOException e) {
