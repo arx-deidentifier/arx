@@ -253,14 +253,13 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			}
 
 			public void initializeRTable(DataHandle handle, String data) {
+				//Initialize Data Frame
 				String createcommand = createDataFrame(handle);
-
-				int numRows = handle.getNumRows();
-
 				executeR(data + " <- " + createcommand);
 
+				//Fill Data Frame with data
 				StringBuilder b = new StringBuilder();
-
+				int numRows = handle.getNumRows();
 				for (int j = 0; j < numRows; j++) {
 
 					// Progress is shown for both: first input then output initialization, should go
@@ -289,7 +288,6 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 						b.append('\n');
 					}
 				}
-
 				executeR(b.toString());
 			}
 
@@ -443,8 +441,10 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			Date javaDate = ((DataType.ARXDate) t).parse(value);
 			@SuppressWarnings("deprecation")
 			int timezoneoffset = javaDate.getTimezoneOffset();
+			//returns the timezoneoffset in minutes for the current timezone. -> /60 should return the timezoneoffset in hours.
+			System.out.println(timezoneoffset);
 			long seconds = (javaDate.getTime() - (60 * timezoneoffset * 1000)) / 1000;
-			return "as.Date(as.POSIXct(" + seconds + ", origin=\"1970-01-01\", tz=\"GMT+2\"))";
+			return "as.Date(as.POSIXct(" + seconds + ", origin=\"1970-01-01\", tz=\"GMT+"+ (timezoneoffset/60) + "\"))";
 
 		} else if (t instanceof DataType.ARXDecimal) {
 			return "as.numeric(" + value + ")";

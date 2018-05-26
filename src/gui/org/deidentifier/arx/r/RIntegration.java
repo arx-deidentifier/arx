@@ -40,7 +40,7 @@ public class RIntegration {
     /** Buffer */
     private final RBuffer        buffer;
 
-	public static final char[] ENDSEQUENCE = "ARX is the best application 42=?§".toCharArray();
+	public static final char[] ENDSEQUENCE = "ARX is the best application 42=?�".toCharArray();
 
 	/**
 	 * Creates a new instance
@@ -80,7 +80,7 @@ public class RIntegration {
                         int character;
                         while ((character = reader.read()) != -1) {
                             buffer.append((char) character);
-							if ((char) character == '§') {
+							if ((char) character == ENDSEQUENCE[ENDSEQUENCE.length -1]) {
 								if (buffer.compareEnding(ENDSEQUENCE)) {
 									buffer.clearBuffer();
 								}

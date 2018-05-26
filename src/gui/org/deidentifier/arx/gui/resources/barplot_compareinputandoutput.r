@@ -30,6 +30,6 @@ mtext("Barplots for comparison of Input and Output", outer = TRUE, side = 3, cex
 mtext("INPUT", outer = TRUE, side = 2, adj=0.9, col="tomato3")
 mtext("OUTPUT", outer = TRUE, side = 2, adj=0.65, col="yellowgreen")
 mtext("INPUT", outer = TRUE, side = 2, adj=0.4, col="tomato3")
-mtext("OUTPUT", outer = TRUE, side = 2, adj=0.1, , col="yellowgreen")
+mtext("OUTPUT", outer = TRUE, side = 2, adj=0.1, col="yellowgreen")
 
 par(old.par)

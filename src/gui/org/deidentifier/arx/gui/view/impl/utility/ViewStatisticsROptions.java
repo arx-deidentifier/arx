@@ -195,7 +195,6 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		if (path.endsWith(".r")) {
 			String command = "source(\"" + path.replace("\\", "/") + "\")"; // replace for Windows paths, R does not work otherwise
 			// communicate with RTerminal to execute command
-			System.out.println(command);
 			controller.update(new ModelEvent(ViewStatisticsROptions.this, ModelPart.R_SCRIPT, command));
 		} else {
 			System.out.println("Selected File is not ending with '.r'.");
