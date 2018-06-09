@@ -264,10 +264,14 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 
 					// Progress is shown for both: first input then output initialization, should go
 					// from 0 to 100%.
-					if (handle.equals(outputhandle))
-						this.progress = (numRows / 2) + (j / 2);
-					else
-						this.progress = j / 2;
+					if (outputhandle != null) {
+						if (handle.equals(outputhandle))
+							this.progress = (numRows / 2) + (j / 2);
+						else
+							this.progress = j / 2;	
+					} else {
+						this.progress = j;
+					}
 
 					if (stopped) {
 						stopR();
