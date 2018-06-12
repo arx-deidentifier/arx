@@ -20,8 +20,10 @@ package org.deidentifier.arx.masking.variable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
 import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.deidentifier.arx.masking.variable.DistributionType.DiscreteBinomial;
+import org.deidentifier.arx.masking.variable.DistributionType.DiscreteGeometric;
 
 /**
  * Class describing a random variable
@@ -123,6 +125,13 @@ public class RandomVariable {
             Integer number = ((DistributionParameter.Int)getParameter("number")).getValue();
             Double probability = ((DistributionParameter.Dou)getParameter("probability")).getValue();
             return new DiscreteDistribution(0, number, new BinomialDistribution(number, probability));
+
+        }
+        if (this.type instanceof DiscreteGeometric) {
+
+            Double probability = ((DistributionParameter.Dou)getParameter("probability")).getValue();
+            return new DiscreteDistribution(0, 1, new BinomialDistribution(1,probability));
+            //TODO: 1 is placeholder (not needed for Geometric), used BinomialDistribution class instead because GeometricDistribution isn't part of the old apache.math3 import used
 
         }
 
