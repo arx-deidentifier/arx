@@ -82,6 +82,10 @@ public class Main {
             // Create main window
             main = new MainWindow(display, monitor);
             
+            // Update display settings
+            Display.setAppName(Resources.getMessage("MainWindow.0"));
+            Display.setAppVersion(Resources.getVersion());
+            
             // Handler for loading a project
             if (args.length > 0 && args[0].endsWith(".deid")) { //$NON-NLS-1$
                 main.onShow(new Runnable() {

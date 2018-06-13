@@ -54,6 +54,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -574,6 +576,23 @@ public class SWTUtil {
     }
 
     /**
+     * Fixes the application menu on OSX.
+     * Inspired by https://stackoverflow.com/questions/32409679/capture-about-preferences-and-quit-menu-items
+     * @param controller
+     */
+    public static void fixOSXMenu(final Controller controller) {
+        
+        // Check if we are on mac
+        if (!isMac()) {
+            return;
+        }
+        
+        fixOSXMenuItem(Resources.getMessage("MainMenu.19"), new Listener() { public void handleEvent(Event event){controller.actionMenuFileExit();}}, SWT.ID_QUIT);
+        fixOSXMenuItem(Resources.getMessage("MainMenu.29"), new Listener() { public void handleEvent(Event event){controller.actionMenuHelpAbout();}}, SWT.ID_ABOUT);
+        fixOSXMenuItem(Resources.getMessage("MainMenu.25"), new Listener() { public void handleEvent(Event event){controller.actionMenuEditSettings();}}, SWT.ID_PREFERENCES);
+    }
+
+    /**
      * Tries to fix a bug when resizing sash forms in OSX
      * @param sash
      */
@@ -596,29 +615,6 @@ public class SWTUtil {
                     return;
                 }
             }
-        }
-    }
-
-    /**
-     * Fixes bugs on OSX when scrolling in tables
-     * @param table
-     */
-    private static void fixOSXTableBug(final Table table) {
-        if (isMac()) {
-            SelectionListener bugFixer = new SelectionListener(){
-                
-                @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    widgetSelected(arg0);
-                }
-
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    table.redraw();
-                }
-            };
-            table.getVerticalBar().addSelectionListener(bugFixer);
-            table.getHorizontalBar().addSelectionListener(bugFixer);
         }
     }
 
@@ -704,23 +700,6 @@ public class SWTUtil {
     }
     
     /**
-     * En-/disables the composite and its children.
-     *
-     * @param elem
-     * @param val
-     */
-    private static void setEnabled(final Composite elem, final boolean val) {
-        elem.setEnabled(val);
-        for (final Control c : elem.getChildren()) {
-            if (c instanceof Composite) {
-                setEnabled((Composite) c, val);
-            } else {
-                c.setEnabled(val);
-            }
-        }
-    }
-    
-    /**
      * Converts the slider value to a double.
      *
      * @param min
@@ -739,5 +718,61 @@ public class SWTUtil {
             val = max;
         }
         return val;
+    }
+    
+    /**
+     * Update menu item
+     * @param name
+     * @param listener
+     * @param id
+     */
+    private static void fixOSXMenuItem(String name, Listener listener, int id) {
+        Menu systemMenu = Display.getCurrent().getSystemMenu();
+        for (MenuItem systemItem : systemMenu.getItems()) {
+            if (systemItem.getID() == id) {
+                systemItem.addListener(SWT.Selection, listener);
+                return;
+            }
+        }
+    }
+    
+    /**
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
+     */
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            SelectionListener bugFixer = new SelectionListener(){
+                
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
+        }
+    }
+    
+    /**
+     * En-/disables the composite and its children.
+     *
+     * @param elem
+     * @param val
+     */
+    private static void setEnabled(final Composite elem, final boolean val) {
+        elem.setEnabled(val);
+        for (final Control c : elem.getChildren()) {
+            if (c instanceof Composite) {
+                setEnabled((Composite) c, val);
+            } else {
+                c.setEnabled(val);
+            }
+        }
     }
 }
