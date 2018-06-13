@@ -19,9 +19,6 @@ package org.deidentifier.arx.gui.view;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -580,7 +577,6 @@ public class SWTUtil {
 
     /**
      * Fixes the application menu on OSX.
-     * Inspired by https://stackoverflow.com/questions/32409679/capture-about-preferences-and-quit-menu-items
      * @param controller
      */
     public static void fixOSXMenu(final Controller controller) {
@@ -590,9 +586,14 @@ public class SWTUtil {
             return;
         }
         
-        fixOSXMenuItem(Resources.getMessage("MainMenu.19"), new Listener() { public void handleEvent(Event event){controller.actionMenuFileExit();}}, SWT.ID_QUIT);
-        fixOSXMenuItem(Resources.getMessage("MainMenu.29"), new Listener() { public void handleEvent(Event event){controller.actionMenuHelpAbout();}}, SWT.ID_ABOUT);
-        fixOSXMenuItem(Resources.getMessage("MainMenu.25"), new Listener() { public void handleEvent(Event event){controller.actionMenuEditSettings();}}, SWT.ID_PREFERENCES);
+        // Just disable all items in the system menu
+        // TODO: Something like this could help:
+        // https://stackoverflow.com/questions/32409679/capture-about-preferences-and-quit-menu-items
+        // However, I had trouble unregistering the existing events for the items
+        Menu systemMenu = Display.getCurrent().getSystemMenu();
+        for (MenuItem systemItem : systemMenu.getItems()) {
+        	systemItem.setEnabled(false);
+        }
     }
 
     /**
@@ -622,6 +623,29 @@ public class SWTUtil {
     }
 
     /**
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
+     */
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            SelectionListener bugFixer = new SelectionListener(){
+                
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
+        }
+    }
+
+    /**
      * Converts a boolean into a pretty string
      * @param value
      * @return
@@ -633,7 +657,7 @@ public class SWTUtil {
             return Resources.getMessage("PropertiesView.170");
         }
     }
-
+    
     /**
      * Returns a pretty string representing the given double
      * @param value
@@ -657,7 +681,7 @@ public class SWTUtil {
             return String.valueOf(value).replace('E', 'e');
         }
     }
-
+    
     /**
      * Returns a pretty string representing the given value
      * @param value
@@ -693,13 +717,30 @@ public class SWTUtil {
         }
         return String.valueOf(value);
     }
-    
+   
     /**
      * Are we running on an OSX system
      * @return
      */
     public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
+    }
+    
+    /**
+     * En-/disables the composite and its children.
+     *
+     * @param elem
+     * @param val
+     */
+    private static void setEnabled(final Composite elem, final boolean val) {
+        elem.setEnabled(val);
+        for (final Control c : elem.getChildren()) {
+            if (c instanceof Composite) {
+                setEnabled((Composite) c, val);
+            } else {
+                c.setEnabled(val);
+            }
+        }
     }
     
     /**
@@ -721,66 +762,5 @@ public class SWTUtil {
             val = max;
         }
         return val;
-    }
-    
-    /**
-     * Update menu item
-     * @param name
-     * @param listener
-     * @param id
-     */
-    private static void fixOSXMenuItem(String name, Listener listener, int id) {
-        Menu systemMenu = Display.getCurrent().getSystemMenu();
-        for (MenuItem systemItem : systemMenu.getItems()) {
-            if (systemItem.getID() == id) {
-                List<Listener> listeners = new ArrayList<Listener>(Arrays.asList(systemItem.getListeners(SWT.Selection)));
-                for (Listener _listener : listeners) {
-                    systemItem.removeListener(SWT.Selection, _listener);
-                }
-                systemItem.setText(name);
-                systemItem.addListener(SWT.Selection, listener);
-                return;
-            }
-        }
-    }
-    
-    /**
-     * Fixes bugs on OSX when scrolling in tables
-     * @param table
-     */
-    private static void fixOSXTableBug(final Table table) {
-        if (isMac()) {
-            SelectionListener bugFixer = new SelectionListener(){
-                
-                @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    widgetSelected(arg0);
-                }
-
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    table.redraw();
-                }
-            };
-            table.getVerticalBar().addSelectionListener(bugFixer);
-            table.getHorizontalBar().addSelectionListener(bugFixer);
-        }
-    }
-    
-    /**
-     * En-/disables the composite and its children.
-     *
-     * @param elem
-     * @param val
-     */
-    private static void setEnabled(final Composite elem, final boolean val) {
-        elem.setEnabled(val);
-        for (final Control c : elem.getChildren()) {
-            if (c instanceof Composite) {
-                setEnabled((Composite) c, val);
-            } else {
-                c.setEnabled(val);
-            }
-        }
     }
 }
