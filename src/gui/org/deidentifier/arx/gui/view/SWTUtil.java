@@ -19,6 +19,9 @@ package org.deidentifier.arx.gui.view;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -730,6 +733,11 @@ public class SWTUtil {
         Menu systemMenu = Display.getCurrent().getSystemMenu();
         for (MenuItem systemItem : systemMenu.getItems()) {
             if (systemItem.getID() == id) {
+                List<Listener> listeners = new ArrayList<Listener>(Arrays.asList(systemItem.getListeners(SWT.Selection)));
+                for (Listener _listener : listeners) {
+                    systemItem.removeListener(SWT.Selection, _listener);
+                }
+                systemItem.setText(name);
                 systemItem.addListener(SWT.Selection, listener);
                 return;
             }
