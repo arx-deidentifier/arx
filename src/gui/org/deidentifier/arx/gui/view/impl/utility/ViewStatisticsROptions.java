@@ -54,7 +54,7 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		 */
 		// Title
 		ComponentTitledSeparator scriptLabel = new ComponentTitledSeparator(root, SWT.NONE);
-		scriptLabel.setLayoutData(SWTUtil.createFillGridData(2));
+		scriptLabel.setLayoutData(SWTUtil.createFillHorizontallyGridData(false, 2));
 		scriptLabel.setText("Execute a script: "); //$NON-NLS-1$
 
 		// Initialize table
@@ -117,7 +117,7 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		 */
 		// Title
 		ComponentTitledSeparator pathLabel = new ComponentTitledSeparator(root, SWT.NONE);
-		pathLabel.setLayoutData(SWTUtil.createFillGridData(2));
+		pathLabel.setLayoutData(SWTUtil.createFillHorizontallyGridData(false, 2));
 		pathLabel.setText("Path to your R installation: "); //$NON-NLS-1$
 
 
@@ -186,6 +186,9 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 
 			}
 		});
+		
+		root.redraw();
+		root.layout();
 
 	}
 

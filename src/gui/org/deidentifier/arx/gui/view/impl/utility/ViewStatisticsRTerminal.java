@@ -297,7 +297,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 
 			@Override
 			public void stop() {
-				System.out.println("we got stopped :(");
+				System.out.println("we got stopped.");
 				this.stopped = true;
 			}
 		};
@@ -426,11 +426,15 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			// Get DataType of attribute -> then we know how to deliver it to R that it has
 			// the correct data type & getData
 			String value = handle.getValue(row, column);
-			if (value.equals("*")) {
-				value = "NA";
+			
+			if (value.equals(DataType.ANY_VALUE)) {
+				b.append("NA");
+			} else if (value.equals(DataType.NULL_VALUE)) {
+                b.append("NULL");
+			} else {
+			    DataType<?> dataType = handle.getDataType(columnName);
+	            b.append(convertARXToRValue(dataType, value));
 			}
-			DataType<?> dataType = handle.getDataType(columnName);
-			b.append(convertARXToRValue(dataType, value));
 
 			if (column < numCols - 1) {
 				b.append(',');
