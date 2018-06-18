@@ -625,7 +625,7 @@ public class DataManager {
                                      hierarchiesAnalyzed,
                                      generalizationLevelsMinimum,
                                      generalizationLevelsMaximum,
-                                     aggregationInformation.getSubsetInstance());
+                                     aggregationInformation.clone());
     }
 
     /**

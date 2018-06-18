@@ -157,13 +157,10 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.4"); //$NON-NLS-1$
     /** Label */
     private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
-
     /** Delay */
     private static final int    DELAY             = 1000;
-
     /** Controller */
     private final Controller    controller;
-
     /** View */
     private final Composite     root;
     /** View */
@@ -184,7 +181,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
      * @param controller
      */
     public ViewStatisticsClassificationAttributes(final Composite parent,
-                                    final Controller controller) {
+                                                  final Controller controller) {
         
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
