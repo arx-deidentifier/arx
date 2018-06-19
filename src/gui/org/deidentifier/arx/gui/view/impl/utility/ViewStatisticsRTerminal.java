@@ -240,6 +240,7 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 				// the user experiences a clear terminal to work with after the data frames are
 				// created).
 				executeR("cat(\"" + new String(RIntegration.ENDSEQUENCE) + "\")");
+				
 
 				// I suggest to keep this in the output of the console, so the user is able to
 				// check whether the import of the data from ARX to R worked as expected.
@@ -357,6 +358,9 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 	 */
 	private void executeR(String command) {
 		if (this.rIntegration != null && this.rIntegration.isAlive()) {
+			if (command.equals(new String(RIntegration.ENDSEQUENCE))) {
+				command = "cat(\"" + new String(RIntegration.ENDSEQUENCE) + "\")";
+			}
 			this.rIntegration.execute(command);
 		}
 	}
@@ -474,4 +478,5 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
 		}
 	}
+	
 }

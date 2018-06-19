@@ -40,7 +40,7 @@ public class RIntegration {
     /** Buffer */
     private final RBuffer        buffer;
 
-	public static final char[] ENDSEQUENCE = "ARX is the best application 42=?§".toCharArray();
+	public static final char[] ENDSEQUENCE = "clear()".toCharArray();
 
 	/**
 	 * Creates a new instance
