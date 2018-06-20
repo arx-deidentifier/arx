@@ -239,7 +239,8 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 				// For sync purposes so that the clearing of the console works properly (so that
 				// the user experiences a clear terminal to work with after the data frames are
 				// created).
-				executeR("cat(\"" + new String(RIntegration.ENDSEQUENCE) + "\")");
+				executeR("clear <- function(){ cat(\""+ new String(RIntegration.ENDSEQUENCE) + "\")}");
+				executeR("clear()");
 				
 
 				// I suggest to keep this in the output of the console, so the user is able to
@@ -358,9 +359,6 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 	 */
 	private void executeR(String command) {
 		if (this.rIntegration != null && this.rIntegration.isAlive()) {
-			if (command.equals(new String(RIntegration.ENDSEQUENCE))) {
-				command = "cat(\"" + new String(RIntegration.ENDSEQUENCE) + "\")";
-			}
 			this.rIntegration.execute(command);
 		}
 	}

@@ -8,11 +8,11 @@ boxplot_numerics <- function(titel, s) {
 	if (is.na(colsin)){
 		cat(paste(s," does not contain numeric columns.\n"))
 	} else if (colsin == 1) {
-		old.par <- par(mfrow=c(1,1), oma=c(0,0,2,0))
+			old.par <- par(mfrow=c(1,1), oma=c(0,0,2,0))
 	} else {
-		old.par <- par(mfrow=c(2,ceiling(colsin/2)), oma=c(0,0,2,0))
+			old.par <- par(mfrow=c(2,ceiling(colsin/2)), oma=c(0,0,2,0))
 	}
-	
+		
 	if (!is.na(colsin)){
 		
 		if (rowsin >= 1) {
@@ -29,4 +29,4 @@ boxplot_numerics <- function(titel, s) {
 	} 
 }
 
-boxplot_numerics(input, "Input")
+boxplot_numerics(output, "Output")

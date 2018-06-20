@@ -28,5 +28,3 @@ boxplot_numerics <- function(titel, s) {
 		par(old.par)
 	} 
 }
-
-boxplot_numerics(input, "Input")
