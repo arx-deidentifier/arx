@@ -87,7 +87,10 @@ public class IntervalArithmeticDouble {
      */
     public IntervalDouble abs(IntervalDouble operand) throws IntervalArithmeticException {
         if (operand.lower < 0 && operand.upper > 0) {
-            throw new IntervalArithmeticException("Undecidable sign");
+            // The sign is undecidable. Return [0, max{|lower bound|, upper bound}]
+            // as this interval must contain the absolute value of every real number contained in operand.
+            double max = Math.max(Math.abs(operand.getLowerBound()), operand.getUpperBound());
+            return createInterval(0d, max);
         }
         return apply(operand, new UnaryOperationDouble() {
             public double apply(double operand) {
