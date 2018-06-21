@@ -262,8 +262,10 @@ public class OrderedDistanceTCloseness extends TCloseness {
                 // Compute distance
                 if (sum_i.getLowerBound() < 0 && sum_i.getUpperBound() > 0) {
                     // The sign is undecidable and hence the absolute value of sum_i can not be calculated.
-                    // However, it is safe to set the lower bound to zero as this can only overestimate the actual distance.
-                    distance = ia.add(distance, ia.createInterval(0d, sum_i.getUpperBound()));
+                    // However, it is safe to use the interval [0, max{|lower bound|, upper bound}]
+                    // as this can only overestimate the actual distance.
+                    double max = Math.max(Math.abs(sum_i.getLowerBound()), sum_i.getUpperBound());
+                    distance = ia.add(distance, ia.createInterval(0d, max));
                 } else {
                     distance = ia.add(distance, ia.abs(sum_i));
                 }
