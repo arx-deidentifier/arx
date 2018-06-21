@@ -669,16 +669,21 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.RESULT, result));
             model.getClipboard().addInterestingTransformations(model);
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
+            
+            // If result has been found
             if (result.isResultAvailable()) {
+
+                // Update output
                 model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
-                
-                // Classification parameter
-                model.getSelectedFeatures().clear();
-                model.getSelectedFeatures().addAll(model.getOutputDefinition().getQuasiIdentifyingAttributes());
-                model.getSelectedClasses().clear();
-                model.getSelectedClasses().addAll(model.getOutputDefinition().getResponseVariables());
-                
+
+                // Classification parameters
+                if (model.setFeaturesAndClasses(model.getOutputDefinition())) {
+                    update(new ModelEvent(this,
+                                          ModelPart.CLASSIFICATION_CONFIGURATION,
+                                          result.getGlobalOptimum()));
+                }
+
                 // Events
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,

@@ -1052,6 +1052,14 @@ public class Model implements Serializable {
     }
     
     /**
+     * Returns the selected classes, ordered by occurrence in the dataset
+     * @return
+     */
+    public String[] getSelectedClassesAsArray() {
+        return this.getAttributesAsArray(this.getSelectedClasses());
+    }
+
+    /**
      * Returns the currently selected class value.
      * 
      * @return
@@ -1071,6 +1079,14 @@ public class Model implements Serializable {
         return this.selectedFeatures;
     }
 
+    /**
+     * Returns the selected features, ordered by occurrence in the dataset
+     * @return
+     */
+    public String[] getSelectedFeaturesAsArray() {
+        return this.getAttributesAsArray(this.getSelectedFeatures());
+    }
+    
     /**
      * Returns the selected transformation.
      *
@@ -1131,6 +1147,7 @@ public class Model implements Serializable {
         return separator;
     }
 
+    
     /**
      * Returns the according parameter.
      *
@@ -1139,7 +1156,7 @@ public class Model implements Serializable {
     public double getSnapshotSizeDataset() {
         return snapshotSizeDataset;
     }
-    
+
     /**
      * Returns the according parameter.
      *
@@ -1149,7 +1166,6 @@ public class Model implements Serializable {
         return snapshotSizeSnapshot;
     }
 
-    
     /**
      * Returns the size of the solution space for the current
      * input parameters
@@ -1332,6 +1348,8 @@ public class Model implements Serializable {
         this.heuristicSearchTimeLimit = null;
         this.optimizationStatistics = null;
         this.localRecodingModel = null;
+        this.selectedClassValue = null;
+        this.selectedAttribute = null;
     }
 
     /**
@@ -1344,7 +1362,7 @@ public class Model implements Serializable {
         pair[0] = null;
         pair[1] = null;
     }
-
+    
     /**
      * Resets the configuration of the privacy criteria.
      */
@@ -1394,7 +1412,7 @@ public class Model implements Serializable {
         this.debugEnabled = value;
         this.setModified();
     }
-
+    
     /**
      * Sets the project description.
      *
@@ -1406,6 +1424,25 @@ public class Model implements Serializable {
     }
     
     /**
+     * Updates features and classes to reflect the definition provided
+     * @param definition
+     * @return Whether an update has been performed
+     */
+    public boolean setFeaturesAndClasses(DataDefinition definition) {
+
+        // Previous
+        Set<String> features = this.getSelectedFeatures();
+        Set<String> classes = this.getSelectedClasses();
+
+        // New
+        this.setSelectedFeatures(new HashSet<String>(definition.getQuasiIdentifyingAttributes()));
+        this.setSelectedClasses(new HashSet<String>(definition.getResponseVariables()));
+        
+        // Return whether an update has been performed
+        return (!features.equals(this.getSelectedFeatures()) || !classes.equals(this.getSelectedClasses()));
+    }
+
+    /**
      * Sets the indices of equivalence classes.
      *
      * @param groups
@@ -1413,14 +1450,14 @@ public class Model implements Serializable {
     public void setGroups(int[] groups) {
         this.groups = groups;
     }
-    
+
     /**
      * @param heuristicSearchStepLimit the heuristicSearchStepLimit to set
      */
     public void setHeuristicSearchStepLimit(Integer heuristicSearchStepLimit) {
         this.heuristicSearchStepLimit = heuristicSearchStepLimit;
     }
-    
+
     /**
      * @param heuristicSearchThreshold the heuristicSearchThreshold to set
      */
@@ -1464,7 +1501,7 @@ public class Model implements Serializable {
         setModified();
         this.inputBytes = inputBytes;
     }
-
+    
     /**
      * Sets the input config.
      *
@@ -1473,7 +1510,7 @@ public class Model implements Serializable {
     public void setInputConfig(final ModelConfiguration config) {
         this.inputConfig = config;
     }
-
+    
     /**
      * Sets the project locale.
      *
@@ -1483,7 +1520,7 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
-
+    
     /**
      * Sets the according parameter.
      *
@@ -1493,7 +1530,7 @@ public class Model implements Serializable {
         this.maximalSizeForComplexOperations = numberOfRows;
         this.setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1503,7 +1540,7 @@ public class Model implements Serializable {
         this.maxNodesInViewer = maxNodesInViewer;
         setModified();
     }
-    
+
     /**
      * Sets the description of the metric.
      *
@@ -1512,7 +1549,7 @@ public class Model implements Serializable {
     public void setMetricDescription(MetricDescription description) {
         this.metricDescription = description;
     }
-    
+
     /**
      * Marks this project as modified.
      */
@@ -1556,7 +1593,7 @@ public class Model implements Serializable {
         }
         setModified();
     }
-
+    
     /**
      * Sets the current output, deserialized from a project
      *
@@ -1580,7 +1617,7 @@ public class Model implements Serializable {
             this.outputNodeAsString = null;
         }
     }
-
+    
     /**
      * Sets the output config.
      *
@@ -1589,7 +1626,7 @@ public class Model implements Serializable {
     public void setOutputConfig(final ModelConfiguration config) {
         outputConfig = config;
     }
-
+    
     /**
      * Sets the project path.
      *
@@ -1598,7 +1635,7 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-    
+
     /**
      * @param perspective the perspective to set
      */
@@ -1613,7 +1650,7 @@ public class Model implements Serializable {
         this.optimizationStatistics = optimizationStatistics;
         this.setModified();
     }
-    
+
     /**
      * Sets the query.
      *
@@ -1638,7 +1675,7 @@ public class Model implements Serializable {
         }
         setModified();
     }
-    
+
     /**
      * Sets the selected attribute.
      *
@@ -1707,7 +1744,7 @@ public class Model implements Serializable {
         this.selectedQuasiIdentifiers = set;
         this.setModified();
     }
-
+    
     /**
      * 
      *
@@ -1717,7 +1754,7 @@ public class Model implements Serializable {
         snapshotSizeDataset = snapshotSize;
         setModified();
     }
-
+    
     /**
      * Sets the according parameter.
      *
@@ -1736,7 +1773,7 @@ public class Model implements Serializable {
             this.subsetOrigin += Resources.getMessage("Model.2"); //$NON-NLS-1$
         }
     }
-    
+
     /**
      * Sets how the subset was defined.
      *
@@ -1754,7 +1791,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
         this.time = time;
     }
-
+    
     /**
      * Marks this model as unmodified.
      */
@@ -1778,7 +1815,7 @@ public class Model implements Serializable {
     public void setUseFunctionalHierarchies(boolean useFunctionalHierarchies) {
         this.useFunctionalHierarchies = useFunctionalHierarchies;
     }
-    
+
     /**
      * Sets whether list-wise deletion should be used for summary statistics
      * @param useListwiseDeletion
@@ -1786,7 +1823,7 @@ public class Model implements Serializable {
     public void setUseListwiseDeletion(boolean useListwiseDeletion) {
         this.useListwiseDeletion = useListwiseDeletion;
     }
-    
+
     /**
      * Sets the view configuration.
      *
@@ -1795,7 +1832,7 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-
+    
     /**
      * Sets visualization as enabled/disabled.
      *
@@ -1804,5 +1841,26 @@ public class Model implements Serializable {
     public void setVisualizationEnabled(boolean value){
         this.showVisualization = value;
         this.setModified();
+    }
+
+    /**
+     * Converts attributes into an array ordered by occurrence in the dataset
+     * @param set
+     * @return
+     */
+    private String[] getAttributesAsArray(Set<String> set) {
+        if (this.getInputConfig() == null || this.getInputConfig().getInput() == null ||
+            this.getInputConfig().getInput().getHandle() == null || set == null || set.isEmpty()) {
+            return new String[0];
+        }
+        List<String> result = new ArrayList<String>();
+        DataHandle handle = this.getInputConfig().getInput().getHandle();
+        for (int column = 0; column < handle.getNumColumns(); column++) {
+            String attribute = handle.getAttributeName(column);
+            if (set.contains(attribute)) {
+                result.add(attribute);
+            }
+        }
+        return result.toArray(new String[result.size()]);
     }
 }
