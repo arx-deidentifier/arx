@@ -187,6 +187,9 @@ public class DialogHelpConfig {
                               Resources.getMessage("DialogHelpConfig.69"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/utility/localrecoding.html")); //$NON-NLS-1$
         
+		entries.add(new Entry("help.utility.r", Resources.getMessage("DialogHelpConfig.71"),
+				"http://arx.deidentifier.org/help/v" + version + "/utility/r.html"));
+
         entries.add(new Entry("help.risk.overview", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.50"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/risk/overview.html")); //$NON-NLS-1$

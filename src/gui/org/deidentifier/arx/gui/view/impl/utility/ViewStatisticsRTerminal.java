@@ -17,17 +17,17 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.Date;
-import java.util.List;
-
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
+import org.deidentifier.arx.r.CommandBuffer;
 import org.deidentifier.arx.r.OS;
 import org.deidentifier.arx.r.RBuffer;
 import org.deidentifier.arx.r.RIntegration;
@@ -35,37 +35,52 @@ import org.deidentifier.arx.r.RListener;
 import org.deidentifier.arx.r.terminal.RLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Combo;
 
-public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
+public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 	/** View */
-    private Composite                      root;
-    /** Internal stuff. */
-    private AnalysisManager                manager;
-    /** Widget */
-    private Text       input;
-    /** Widget */
-    private StyledText output;
-    /** R process*/
+	private Composite root;
+	/** Internal stuff. */
+	private AnalysisManager manager;
+	/** Widget */
+	private Combo input;
+	/** Widget */
+	private StyledText output;
+	/** R process */
 	private RIntegration rIntegration;
-    
+
+	private RBuffer buffer;
+
+	private CommandBuffer commandBuffer = new CommandBuffer();
+
+	private RListener listener;
+
+	private String pathToR;
+
 	/**
 	 * Creates a new instance
+	 * 
 	 * @param parent
 	 * @param controller
 	 * @param target
 	 * @param reset
 	 */
-	public ViewStatisticsRTerminal(Composite parent, 
-			Controller controller, ModelPart target, 
-			ModelPart reset) {
-		
+	public ViewStatisticsRTerminal(Composite parent, final Controller controller, ModelPart target, ModelPart reset) {
+
 		super(parent, controller, target, reset, true);
-	    this.manager = new AnalysisManager(parent.getDisplay());
+
+		getController().addListener(ModelPart.R_SCRIPT, this);
+		getController().addListener(ModelPart.R_PATH, this);
+
+		this.manager = new AnalysisManager(parent.getDisplay());
+
+		this.pathToR = OS.getR();
 	}
 
 	@Override
@@ -73,211 +88,68 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 		return LayoutUtility.ViewUtilityType.R;
 	}
 
-	/**
-     * Sets the content of the buffer
-     * @param text
-     */
-    public void setOutput(String text) {
-        this.root.setRedraw(false);
-        this.output.setText(text);
-        this.output.setSelection(text.length());
-        this.root.setRedraw(true);
-    }
-	
-	private void appendRow(DataHandle handle, int row, StringBuilder b) {
-		int numCols = handle.getNumColumns();
-		
-		b.append("list(");
-		
-		for (int column = 0; column < numCols; column++) {
-			String columnName = handle.getAttributeName(column);
-			
-			//Get DataType of attribute -> then we know how to deliver it to R that it has the correct data type & getData
-			String value = handle.getValue(row, column);
-			if (value.equals("*")) {
-				value = "NA";
-			}
-			DataType<?> dataType = handle.getDataType(columnName);
-			b.append(convertARXToRValue(dataType, value)); 
-			
-			if (column < numCols-1) {
-				b.append(',');
-			}
-		}
-				
-		b.append(")");
-	}
-	
-	private String convertARXToRType(DataType<?> t, int numRows) {
-		//speed things up through allocating memory beforehand with numRows
-		if (t instanceof DataType.ARXDate) {
-			return "as.POSIXct(integer(" + numRows + "), origin=\"1970-01-01\")";
-			
-		} else if (t instanceof DataType.ARXDecimal) {
-			return "numeric(" + numRows + ")";
-			
-		} else if (t instanceof DataType.ARXInteger) {
-			return "integer(" + numRows + ")";
-			
-		} else if (t instanceof DataType.ARXOrderedString) {
-			List<String> levelStringList = ((DataType.ARXOrderedString) t).getElements();
-			StringBuilder levelBuilder = new StringBuilder();
-			levelBuilder.append("ordered(c(" + numRows + "), levels=c(");
-			
-			int listSize = levelStringList.size();
-			for (int i = 0; i < listSize; i++) {
-				levelBuilder.append('"');
-				levelBuilder.append(levelStringList.get(i));
-				levelBuilder.append('"');
-				if (i < listSize - 1) {
-					levelBuilder.append(',');
-				}
-			}
-			
-			levelBuilder.append("))");
-			return levelBuilder.toString();
-			
-		} else if (t instanceof DataType.ARXString) {
-			return "character(" + numRows + ")";
-			
-		} else {
-			// Type unknown
-			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
-		}
-	}
-	
-	private String convertARXToRValue(DataType<?> t, String value) {
-		if (t instanceof DataType.ARXDate) {
-			Date javaDate = ((DataType.ARXDate) t).parse(value);
-			long seconds = javaDate.getTime() / 1000;
-			return "as.POSIXct(" + seconds + ", origin=\"1970-01-01\")";
-			
-		} else if (t instanceof DataType.ARXDecimal) {
-			return "as.numeric(" + value + ")";
-			
-		} else if (t instanceof DataType.ARXInteger) {
-			return "as.integer(" + value + ")";
-			
-		} else if (t instanceof DataType.ARXOrderedString) {
-			return ("\"" + value + "\"");
-			
-		} else if (t instanceof DataType.ARXString) {
-			return ("\"" + value + "\"");
-			
-		} else {
-			// Type unknown
-			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
-		}
-	}
-	
-	private String createDataFrame(DataHandle handle) {		
-		StringBuilder b = new StringBuilder();
-		b.append("data.frame(");
-		for (int i = 0; i < handle.getNumColumns(); i++) {
-			String attributeName = handle.getAttributeName(i);
-			b.append('"'); //There have to be quotation marks because there could be hyphens which otherwise provoke an error.
-			b.append(attributeName);
-			b.append("\"=");
-			b.append(convertARXToRType(handle.getDataType(attributeName), handle.getNumColumns())); //speed things up through allocating memory beforehand with numRows
-			b.append(',');
-		}
-		b.append("stringsAsFactors=FALSE)");
-		
-		return b.toString();
-	}
-	
-	/**
-	 * Execute command
-	 * @param command
-	 */
-	private void executeR(String command) {
-	    if (this.rIntegration != null && this.rIntegration.isAlive()) {
-	        this.rIntegration.execute(command);
-	    }
-	}
-
-    @Override
-    protected ComponentStatusLabelProgressProvider getProgressProvider() {
-        return new ComponentStatusLabelProgressProvider(){
-            public int getProgress() {
-                if (manager == null) {
-                    return 0;
-                } else {
-                    return manager.getProgress();
-                }
-            }
-        };
-    }
-
-	/**
-	 * Starts R
-	 */
-	private void startR() {
-	    
-	    // Stop R
-	    this.stopR();
-
-	    // R integration
-	    final RBuffer buffer = new RBuffer(getModel().getRModel().getBufferSize());
-	    final RListener listener = new RListener(getModel().getRModel().getTicksPerSecond(), this.root.getDisplay()) {
-
-	        @Override
-	        public void bufferUpdated() {
-	            setOutput(buffer.toString());
-	        }
-
-	        @Override
-	        public void closed() {
-	            stopR();
-	        }
-	    };
-	    
-	    // Start R
-	    try {
-	        this.rIntegration = new RIntegration(OS.getR(), buffer, listener);
-	    } catch (Exception e) {
-	        this.rIntegration = null;
-	    }
-	}
-	
-	/**
-	 * Stops R
-	 */
-	private void stopR() {
-	    if (this.rIntegration != null) {
-	        this.rIntegration.shutdown();
-	        this.rIntegration = null;
-	    }
-	}
-
 	@Override
 	protected Control createControl(Composite parent) {
 		root = new Composite(parent, SWT.NONE);
-        root.setLayout(RLayout.createGridLayout(1));
-        
-        // User input
-        input = new Text(root, SWT.BORDER);
-        input.setLayoutData(RLayout.createFillHorizontallyGridData(true));
-        
-        // Listen for enter key
-        input.addTraverseListener(new TraverseListener() {
-            @Override
-            public void keyTraversed(TraverseEvent event) {
-                if (event.detail == SWT.TRAVERSE_RETURN) {
-                    if (input.getText() != null && !input.getText().isEmpty()) {
-                        String command = input.getText();
-                        input.setText("");
-                        executeR(command);
-                    }
-                }
-            }
-        });
+		root.setLayout(RLayout.createGridLayout(1));
 
-        // User output
-        output = new StyledText(root, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
-        output.setLayoutData(RLayout.createFillGridData());
-	    
+		// User input
+		input = new Combo(root, SWT.DROP_DOWN);
+		input.setLayoutData(RLayout.createFillHorizontallyGridData(true));
+		// There do not yet exist items in the buffer, so we don't set the items of the
+		// input yet.
+
+		input.addTraverseListener(new TraverseListener() { // Typed Input
+
+			@Override
+			public void keyTraversed(TraverseEvent event) {
+				if (event.detail == SWT.TRAVERSE_RETURN) {
+					uponUserSelection();
+				}
+			}
+		});
+
+		input.addSelectionListener(new SelectionListener() { // Selected previous command from list
+
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				if (event.detail == SWT.BUTTON3) { // Button3 = right click with mouse
+					uponUserSelection();
+				}
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent event) {
+			}
+		});
+
+		// User output
+		output = new StyledText(root, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
+		output.setLayoutData(RLayout.createFillGridData());
+
 		return this.root;
+	}
+
+	public void uponUserSelection() {
+		if (input.getText() != null && !input.getText().isEmpty()) {
+			String command = input.getText();
+			input.setText("");
+			executeR(command);
+			commandBuffer.add(command);
+			input.setItems((String[]) commandBuffer.getCommands());
+		}
+	}
+
+	/**
+	 * Sets the content of the buffer
+	 * 
+	 * @param text
+	 */
+	public void setOutput(String text) {
+		this.root.setRedraw(false);
+		this.output.setText(text);
+		this.output.setSelection(text.length());
+		this.root.setRedraw(true);
 	}
 
 	@Override
@@ -288,109 +160,321 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR>{
 	@Override
 	protected void doReset() {
 		root.setRedraw(false);
-        if (this.manager != null) {
-            this.manager.stop();
-        }
-        this.stopR();
-        root.setRedraw(true);
-        setStatusEmpty();
+		if (this.manager != null) {
+			this.manager.stop();
+		}
+		this.stopR();
+		root.setRedraw(true);
+		setStatusEmpty();
+	}
+
+	@Override
+	public void update(final ModelEvent event) {
+		// TODO: Make sure that the terminal is not busy, otherwise wait until it is not
+		// busy anymore.
+		super.update(event);
+		if (event.part == ModelPart.R_SCRIPT) {
+			String command = (String) event.data;
+			executeR(command);
+			commandBuffer.add(command);
+			input.setItems(commandBuffer.getCommands());
+		} else if (event.part == ModelPart.R_PATH) {
+			this.pathToR = (String) event.data;
+			triggerUpdate();
+		}
 	}
 
 	@Override
 	protected void doUpdate(AnalysisContextR context) {
-	    
-		final DataHandle handle = context.input;
-		
+
+		final DataHandle inputhandle = context.input;
+		final DataHandle outputhandle = context.output;
+
 		Analysis analysis = new Analysis() {
 
-            private boolean stopped  = false;
-            private int     progress = 0;
-            private int     total    = handle.getNumRows();
+			private boolean stopped = false;
+			private int progress = 0;
+			private int total = inputhandle.getNumRows();
 
 			@Override
 			public int getProgress() {
-				return (int)Math.round(100d * (double)progress / (double)total);
+				return (int) Math.round(100d * (double) progress / (double) total);
 			}
 
 			@Override
 			public void onError() {
-                // --> TODO: Show according message here 
+				// --> TODO: Show according message here
 				setStatusEmpty();
 			}
 
 			@Override
 			public void onFinish() {
-				
-                if (stopped || !isEnabled()) {
-                    return;
-                }                
+
+				if (stopped || !isEnabled()) {
+					return;
+				}
 				setStatusDone();
 			}
 
 			@Override
 			public void onInterrupt() {
 				if (!isEnabled()) {
-                    setStatusEmpty();
-                } else {
-                    setStatusWorking();
-                }
+					setStatusEmpty();
+				} else {
+					setStatusWorking();
+				}
 			}
 
 			@Override
 			public void run() throws InterruptedException {
+
+				long time = System.currentTimeMillis();
+
+				startR();
+
+				initializeRTable(inputhandle, "input");
+				if (outputhandle != null)
+					initializeRTable(outputhandle, "output");
+
+				// For sync purposes so that the clearing of the console works properly (so that
+				// the user experiences a clear terminal to work with after the data frames are
+				// created).
+				executeR("clear <- function(){ cat(\""+ new String(RIntegration.ENDSEQUENCE) + "\")}");
+				executeR("clear()");
 				
-                long time = System.currentTimeMillis();
-                
-                startR();
-                
-        		String createcommand = createDataFrame(handle);
-        		executeR("f <- " + createcommand);
-        		executeR("str(f)");
-        		
-        		StringBuilder b = new StringBuilder();
-        		
-        		for (int j = 0; j < handle.getNumRows(); j++) {
-        		    
-        		    this.progress = j;
-        		    
-        		    if (stopped) {
-        		        stopR();
-        		        break;
-        		    }
-        		    
-        			b.append("f[");
-        			b.append(j+1);
-        			b.append(",] <-");
-        			appendRow(handle, j, b);
-        			// System.out.println(b.toString());
-        		
-        			if (j % 100 == 0) {
-        				executeR(b.toString());				
-        				b.setLength(0); //reset the String builder so the Java Garbage Collector does not have too much work.
-        			} else {
-        				b.append('\n');
-        			}
-        		}
-        		
-        		executeR(b.toString());
-        		executeR("str(f)");
-        		
-                while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
-                    Thread.sleep(10);
-                }
+
+				// I suggest to keep this in the output of the console, so the user is able to
+				// check whether the import of the data from ARX to R worked as expected.
+				executeR("str(input)");
+				if (outputhandle != null)
+					executeR("str(output)");
+			
+				while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped) {
+					Thread.sleep(10);
+				}
+			}
+
+			public void initializeRTable(DataHandle handle, String data) {
+				//Initialize Data Frame
+				String createcommand = createDataFrame(handle);
+				executeR(data + " <- " + createcommand);
+
+				//Fill Data Frame with data
+				StringBuilder b = new StringBuilder();
+				int numRows = handle.getNumRows();
+				for (int j = 0; j < numRows; j++) {
+
+					// Progress is shown for both: first input then output initialization, should go
+					// from 0 to 100%.
+					if (outputhandle != null) {
+						if (handle.equals(outputhandle))
+							this.progress = (numRows / 2) + (j / 2);
+						else
+							this.progress = j / 2;	
+					} else {
+						this.progress = j;
+					}
+
+					if (stopped) {
+						stopR();
+						break;
+					}
+
+					b.append(data + "[");
+					b.append(j + 1);
+					b.append(",] <-");
+					appendRow(handle, j, b);
+
+					if (j % 100 == 0) {
+						executeR(b.toString());
+						// reset the String builder so the Java Garbage Collector does not have too much
+						// work:
+						b.setLength(0);
+					} else {
+						b.append('\n');
+					}
+				}
+				executeR(b.toString());
 			}
 
 			@Override
 			public void stop() {
-				System.out.println("we got stopped :(");
-                this.stopped = true;
+				System.out.println("we got stopped.");
+				this.stopped = true;
 			}
 		};
 		this.manager.start(analysis);
 	}
-	
-    @Override
+
+	@Override
 	protected boolean isRunning() {
 		return manager != null && manager.isRunning();
 	}
+
+	/**
+	 * Starts R
+	 */
+	private void startR() {
+
+		// Stop R
+		this.stopR();
+
+		// R integration
+		buffer = new RBuffer(getModel().getRModel().getBufferSize());
+		listener = new RListener(getModel().getRModel().getTicksPerSecond(), this.root.getDisplay()) {
+
+			@Override
+			public void bufferUpdated() {
+				setOutput(buffer.toString());
+			}
+
+			@Override
+			public void closed() {
+				stopR();
+			}
+		};
+
+		// Start R
+		try {
+			this.rIntegration = new RIntegration(pathToR, buffer, listener);
+		} catch (Exception e) {
+			this.rIntegration = null;
+		}
+	}
+
+	/**
+	 * Stops R
+	 */
+	private void stopR() {
+		if (this.rIntegration != null) {
+			this.rIntegration.shutdown();
+			this.rIntegration = null;
+		}
+	}
+
+	/**
+	 * Execute command
+	 * 
+	 * @param command
+	 */
+	private void executeR(String command) {
+		if (this.rIntegration != null && this.rIntegration.isAlive()) {
+			this.rIntegration.execute(command);
+		}
+	}
+
+	@Override
+	protected ComponentStatusLabelProgressProvider getProgressProvider() {
+		return new ComponentStatusLabelProgressProvider() {
+			public int getProgress() {
+				if (manager == null) {
+					return 0;
+				} else {
+					return manager.getProgress();
+				}
+			}
+		};
+	}
+
+	private String createDataFrame(DataHandle handle) {
+		StringBuilder b = new StringBuilder();
+		b.append("data.frame(");
+		for (int i = 0; i < handle.getNumColumns(); i++) {
+			String attributeName = handle.getAttributeName(i);
+			b.append('"'); // There have to be quotation marks because there could be hyphens which
+							// otherwise provoke an error.
+			b.append(attributeName);
+			b.append("\"=");
+			// speed things up through allocating memory beforehand with numRows:
+			b.append(convertARXToRType(handle.getDataType(attributeName), handle.getNumRows()));
+			b.append(',');
+		}
+		b.append("stringsAsFactors=FALSE)");
+
+		return b.toString();
+	}
+
+	private String convertARXToRType(DataType<?> t, int numRows) {
+		// speed things up through allocating memory beforehand with numRows
+		if (t instanceof DataType.ARXDate) {
+			return "rep(as.Date(NA), " + numRows + ")";
+
+		} else if (t instanceof DataType.ARXDecimal) {
+			return "rep(as.numeric(NA), " + numRows + ")";
+
+		} else if (t instanceof DataType.ARXInteger) {
+			return "rep(as.integer(NA), " + numRows + ")";
+
+		} else if (t instanceof DataType.ARXString || t instanceof DataType.ARXOrderedString) {
+			return "rep(as.character(NA), " + numRows + ")";
+
+		} /*
+			 * else if (t instanceof DataType.ARXBoolean) { //at the moment not existing
+			 * return "rep(as.logical(NA), " + numRows + ")"; }
+			 */ else {
+			// Type unknown
+			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
+		}
+	}
+
+	private void appendRow(DataHandle handle, int row, StringBuilder b) {
+		int numCols = handle.getNumColumns();
+
+		b.append("list(");
+
+		for (int column = 0; column < numCols; column++) {
+			String columnName = handle.getAttributeName(column);
+
+			// Get DataType of attribute -> then we know how to deliver it to R that it has
+			// the correct data type & getData
+			String value = handle.getValue(row, column);
+			
+			if (value.equals(DataType.ANY_VALUE)) {
+				b.append("NA");
+			} else if (value.equals(DataType.NULL_VALUE)) {
+                b.append("NULL");
+			} else {
+			    DataType<?> dataType = handle.getDataType(columnName);
+	            b.append(convertARXToRValue(dataType, value));
+			}
+
+			if (column < numCols - 1) {
+				b.append(',');
+			}
+		}
+
+		b.append(")");
+	}
+
+	private String convertARXToRValue(DataType<?> t, String value) {
+		if (t instanceof DataType.ARXDate) {
+			Date javaDate = ((DataType.ARXDate) t).parse(value);
+			@SuppressWarnings("deprecation")
+			int timezoneoffset = javaDate.getTimezoneOffset();
+			//returns the timezoneoffset in minutes for the current timezone. -> /60 should return the timezoneoffset in hours.
+			System.out.println(timezoneoffset);
+			long seconds = (javaDate.getTime() - (60 * timezoneoffset * 1000)) / 1000;
+			return "as.Date(as.POSIXct(" + seconds + ", origin=\"1970-01-01\", tz=\"GMT+"+ (timezoneoffset/60) + "\"))";
+
+		} else if (t instanceof DataType.ARXDecimal) {
+			return "as.numeric(" + value + ")";
+
+		} else if (t instanceof DataType.ARXInteger) {
+			return "as.integer(" + value + ")";
+
+		} else if (t instanceof DataType.ARXOrderedString) {
+			return ("\"" + value + "\"");
+
+		} else if (t instanceof DataType.ARXString) {
+			return ("\"" + value + "\"");
+
+		} /*
+			 * else if (t instanceof DataType.ARXBoolean) { //at the moment not existing
+			 * return "as.logical(" + value + ")"; }
+			 */else {
+			// Type unknown
+			throw new IllegalArgumentException("Unknown ARX data type, cannot convert to R");
+		}
+	}
+	
 }

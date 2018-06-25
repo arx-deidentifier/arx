@@ -74,7 +74,9 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     /** Constant */
     private static final String                         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9");             //$NON-NLS-1$
 
-    private static final String 						TAB_RTERMINAL				= "R Terminal";
+	private static final String TAB_RTERMINAL = Resources.getMessage("StatisticsView.12");
+    
+	private static final String TAB_ROPTIONS = Resources.getMessage("StatisticsView.13");
     
     /** View */
     private final ComponentTitledFolder                 folder;
@@ -138,14 +140,16 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         this.registerView(new ViewStatisticsContingencyHeatmap(folder.createItem(TAB_CONTINGENCY, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
         this.registerView(new ViewStatisticsContingencyTable(folder.createItem(TAB_CONTINGENCY_TABLE, null, true), controller, target, reset), "help.utility.contingency"); //$NON-NLS-1$
         this.registerView(new ViewStatisticsEquivalenceClassTable(folder.createItem(TAB_CLASSES_TABLE, null, true), controller, target, reset), "help.utility.classes"); //$NON-NLS-1$
-        this.registerView(new ViewStatisticsRTerminal(folder.createItem(TAB_RTERMINAL, null, true), controller, target, reset), "help.utility.r");
 
         if (target == ModelPart.INPUT) {
             this.registerView(new ViewPropertiesInput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.inputproperties"); //$NON-NLS-1$
             this.registerView(new ViewStatisticsClassificationAttributes(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false), controller), "help.utility.accuracy"); //$NON-NLS-1$
+            this.registerView(new ViewStatisticsRTerminal(folder.createItem(TAB_RTERMINAL, null, true), controller, target, reset), "help.utility.r");
         } else {
             this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.outputproperties"); //$NON-NLS-1$
             this.registerView(new ViewStatisticsClassificationConfiguration(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false, new StackLayout()), controller), "help.utility.accuracy"); //$NON-NLS-1$
+			this.registerView(new ViewStatisticsROptions(folder.createItem(TAB_ROPTIONS, null, true), controller),
+					"help.utility.r");
             this.registerView(new ViewLocalRecoding(folder.createItem(TAB_LOCAL_RECODING, null, false), controller), "help.utility.localrecoding"); //$NON-NLS-1$
         }
         
@@ -160,7 +164,8 @@ public class LayoutUtilityStatistics implements ILayout, IView {
                                                             TAB_CONTINGENCY,
                                                             TAB_CLASSES_TABLE,
                                                             TAB_PROPERTIES,
-                                                            TAB_RTERMINAL}));
+                                                            TAB_RTERMINAL,
+				TAB_ROPTIONS }));
     }
 
     /**

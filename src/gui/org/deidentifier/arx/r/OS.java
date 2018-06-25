@@ -46,8 +46,9 @@ public class OS {
 	                                               "/usr/share/R/share"};
 
 	/** Locations*/
-	private static final String[] locationsWindows = {"C:\\Program Files\\R\\R-3.3.2\\bin",
-	                                                  "C:\\Program Files\\R\\R-2.1.5.1\\bin"};
+	private static final String[] locationsWindows = {"C:\\Program Files\\R\\R-3.5.0\\bin",
+			                                          "C:\\Program Files\\R\\R-3.3.2\\bin",
+	                                                  "C:\\Program Files\\R\\R-2.1.5.1\\bin"}; //Suggestion: TODO change to version independent
 	/** Executables*/
 	private static final String[] executablesMac = {"R", "R.app"};
 	/** Executables*/
@@ -164,4 +165,17 @@ public class OS {
         }
        
     }
+
+	public static String[] getPossibleExecutables() {
+		switch (getOS()) {
+		case MAC:
+			return executablesMac;
+		case UNIX:
+			return executablesUnix;
+		case WINDOWS:
+			return executablesWindows;
+		default:
+			throw new IllegalStateException("Unknown operating system");
+		}
+	}
 }
