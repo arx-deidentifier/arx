@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>jhc</groupId>
+  <artifactId>libjhc</artifactId>
+  <versioning>
+    <release>swt</release>
+    <versions>
+      <version>swt</version>
+    </versions>
+    <lastUpdated>20180717180215</lastUpdated>
+  </versioning>
+</metadata>
