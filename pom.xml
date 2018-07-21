@@ -7,9 +7,6 @@
     <groupId>org.deidentifier.arx</groupId>
     <artifactId>arx</artifactId>
     <version>3.7.0</version>
-    <properties>
-        <maven.local.repo.path>${project.basedir}/lib</maven.local.repo.path>
-    </properties>
 
     <repositories>
         <repository>
@@ -62,8 +59,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.6.1</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -168,6 +165,11 @@
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-core</artifactId>
             <version>0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.mahout</groupId>
+            <artifactId>mahout-math</artifactId>
+            <version>0.11.1</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
