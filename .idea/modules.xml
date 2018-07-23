@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/arx.iml" filepath="$PROJECT_DIR$/.idea/arx.iml" />
+      <module fileurl="file://$PROJECT_DIR$/arx.iml" filepath="$PROJECT_DIR$/arx.iml" />
     </modules>
   </component>
 </project>
