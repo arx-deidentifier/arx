@@ -1,8 +1,6 @@
 <component name="libraryTable">
   <library name="parso">
-    <CLASSES>
-      <root url="jar://$PROJECT_DIR$/lib/parso.jar!/" />
-    </CLASSES>
+    <CLASSES />
     <JAVADOC />
     <SOURCES />
   </library>
