@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.eclipse.swt:gtk:4.2.1-gtk-linux-x86">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/swt/gtk/4.2.1-gtk-linux-x86/gtk-4.2.1-gtk-linux-x86.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/swt/gtk/4.2.1-gtk-linux-x86/gtk-4.2.1-gtk-linux-x86-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/swt/gtk/4.2.1-gtk-linux-x86/gtk-4.2.1-gtk-linux-x86-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

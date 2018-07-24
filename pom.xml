@@ -354,8 +354,8 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>cocoa</artifactId>
                     <version>4.2.1-cocoa-macosx-x86_64</version>
                 </dependency>
             </dependencies>
@@ -392,9 +392,9 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>4.2.1-win32-win32-x86_64.jar</version>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>win32_64</artifactId>
+                    <version>4.2.1-win32-win32-x86_64</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -411,9 +411,9 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>4.2.1-win32-win32-x86.jar</version>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>win32</artifactId>
+                    <version>4.2.1-win32-win32-x86</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -430,9 +430,9 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>swt-4.2.1-gtk-linux-x86.jar</version>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>gtk</artifactId>
+                    <version>4.2.1-gtk-linux-x86</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -449,9 +449,9 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>swt-4.2.1-gtk-linux-x86_64.jar</version>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>gtk_64</artifactId>
+                    <version>4.2.1-gtk-linux-x86_64</version>
                 </dependency>
             </dependencies>
         </profile>

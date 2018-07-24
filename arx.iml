@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module type="JAVA_MODULE" version="4">
-  <component name="NewModuleRootManager" inherit-compiler-output="true">
-    <exclude-output />
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/src/main" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/src/test" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/src/gui" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/src/example" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/data" type="java-test-resource" />
+      <sourceFolder url="file://$MODULE_DIR$/src/example" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/doc" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
@@ -101,6 +103,10 @@
     <orderEntry type="library" name="Maven: org.eclipse.nebula.visualization:widgets:1.0.0.201511041902" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.nebula.visualization:xygraph:1.0.0.201511041902" level="project" />
     <orderEntry type="library" name="Maven: com.github.haifengl:smile:1.3.1" level="project" />
-    <orderEntry type="library" name="Maven: org.eclipse:swt:4.2.1-cocoa-macosx-x86_64" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.swt:cocoa:4.2.1-cocoa-macosx-x86_64" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.swt:win32_64:4.2.1-win32-win32-x86_64" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.swt:win32:4.2.1-win32-win32-x86" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.swt:gtk:4.2.1-gtk-linux-x86" level="project" />
+    <orderEntry type="library" name="Maven: org.eclipse.swt:gtk_64:4.2.1-gtk-linux-x86_64" level="project" />
   </component>
 </module>
