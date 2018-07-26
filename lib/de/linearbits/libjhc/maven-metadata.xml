@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>de.linearbits</groupId>
+  <artifactId>libjhc</artifactId>
+  <versioning>
+    <release>swt</release>
+    <versions>
+      <version>swt</version>
+    </versions>
+    <lastUpdated>20180726212039</lastUpdated>
+  </versioning>
+</metadata>

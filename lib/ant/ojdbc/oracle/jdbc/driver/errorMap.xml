@@ -1,0 +1,155 @@
+<!-- Copyright (c) 2003, 2012, Oracle and/or its affiliates. 
+All rights reserved. -->
+<oraErrorSqlStateSqlExceptionMapping>
+  <error oraErrorFrom="0" sqlState="00000" sqlException="SQLEXCEPTION" comment="Successful completion" />
+  <error oraErrorFrom="1" sqlState="23000" sqlException="SQLINTEGRITYCONSTRAINTVIOLATIONEXCEPTION" comment="Constraint violation" />
+  <error oraErrorFrom="22" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="23" sqlState="61000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="28" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Your session has been killed" />
+  <error oraErrorFrom="45" sqlState="08006" sqlException="SQLEXCEPTION" comment="Your session has been killed with no replay" />
+  <error oraErrorFrom="100" sqlState="02000" sqlException="SQLEXCEPTION" comment="No data found/processed" />
+  <error oraErrorFrom="251" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="603" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="ORACLE server session terminated by fatal error" />
+  <error oraErrorFrom="911" sqlState="22019" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, invalid character" />
+  <error oraErrorFrom="1013" sqlState="72000" sqlException="SQLTIMEOUTEXCEPTION" comment="User canceled operation" />
+  <error oraErrorFrom="1025" sqlState="22023" sqlException="SQLDATAEXCEPTION" comment="Invalid parameter value" />
+  <error oraErrorFrom="1031" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="1033" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Oracle database initialization or shutdown in progress" />
+  <error oraErrorFrom="1034" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Oracle database not available" />
+  <error oraErrorFrom="1089" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Oracle database immediate shutdown in progress - no operations are permitted" />
+  <error oraErrorFrom="1090" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Oracle database shutdown in progress - connection is not permitted" />
+  <error oraErrorFrom="1092" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Oracle instance terminated. Disconnection forced" />
+  <error oraErrorFrom="1095" sqlState="02000" sqlException="SQLEXCEPTION" comment="No data found/processed" />
+  <error oraErrorFrom="1400" sqlState="23000" sqlException="SQLINTEGRITYCONSTRAINTVIOLATIONEXCEPTION" comment="Constraint violation" />
+  <error oraErrorFrom="1401" sqlState="22001" sqlException="SQLDATAEXCEPTION" comment="Inserted value too large for column" />
+  <error oraErrorFrom="1402" sqlState="44000" sqlException="SQLEXCEPTION" comment="With check option violation" />
+  <error oraErrorFrom="1403" sqlState="02000" sqlException="SQLEXCEPTION" comment="No data found/processed" />
+  <error oraErrorFrom="1405" sqlState="22002" sqlException="SQLDATAEXCEPTION" comment="Null value - no indicator" />
+  <error oraErrorFrom="1406" sqlState="22001" sqlException="SQLDATAEXCEPTION" comment="String truncated" />
+  <error oraErrorFrom="1410" sqlState="24000" sqlException="SQLEXCEPTION" comment="Invalid cursor state" />
+  <error oraErrorFrom="1411" sqlState="22022" sqlException="SQLDATAEXCEPTION" comment="Indicator overflow" />
+  <error oraErrorFrom="1422" sqlState="21000" sqlException="SQLEXCEPTION" comment="Cardinality violation" />
+  <error oraErrorFrom="1424" sqlState="22025" sqlException="SQLDATAEXCEPTION" comment="Invalid escape sequence" />
+  <error oraErrorFrom="1425" sqlState="22019" sqlException="SQLDATAEXCEPTION" comment="Invalid escape character" />
+  <error oraErrorFrom="1426" sqlState="22003" sqlException="SQLDATAEXCEPTION" comment="Numeric value out of range" />
+  <error oraErrorFrom="1427" sqlState="21000" sqlException="SQLEXCEPTION" comment="Cardinality violation" />
+  <error oraErrorFrom="1438" sqlState="22003" sqlException="SQLDATAEXCEPTION" comment="Numeric value out of range" />
+  <error oraErrorFrom="1455" sqlState="22003" sqlException="SQLDATAEXCEPTION" comment="Numeric value out of range" />
+  <error oraErrorFrom="1457" sqlState="22003" sqlException="SQLDATAEXCEPTION" comment="Numeric value out of range" />
+  <error oraErrorFrom="1476" sqlState="22012" sqlException="SQLDATAEXCEPTION" comment="Division by zero" />
+  <error oraErrorFrom="1488" sqlState="22023" sqlException="SQLDATAEXCEPTION" comment="Invalid parameter value" />
+  <!-- I am not convinced the following 821xx SQLSTATEs need to be included. They may only occur for Oracle PreCompilers. But it doesn't cost much to include them. -->
+  <error oraErrorFrom="2100" sqlState="82100" sqlException="SQLEXCEPTION" comment="Out of memory" />
+  <error oraErrorFrom="2101" sqlState="82101" sqlException="SQLEXCEPTION" comment="Inconsistent cursor cache" />
+  <error oraErrorFrom="2102" sqlState="82102" sqlException="SQLEXCEPTION" comment="Inconsistent cursor cache" />
+  <error oraErrorFrom="2103" sqlState="82103" sqlException="SQLEXCEPTION" comment="Inconsistent cursor cache" />
+  <error oraErrorFrom="2104" sqlState="82104" sqlException="SQLEXCEPTION" comment="Inconsistent cursor cache" />
+  <error oraErrorFrom="2105" sqlState="82105" sqlException="SQLEXCEPTION" comment="Inconsistent cursor cache" />
+  <error oraErrorFrom="2106" sqlState="82106" sqlException="SQLEXCEPTION" comment="Inconsistent cursor cache" />
+  <error oraErrorFrom="2107" sqlState="82107" sqlException="SQLEXCEPTION" comment="Program too old for runtime library" />
+  <error oraErrorFrom="2108" sqlState="82108" sqlException="SQLEXCEPTION" comment="Invalid descriptor passed to runtime library" />
+  <error oraErrorFrom="2109" sqlState="82109" sqlException="SQLEXCEPTION" comment="Inconsistent host cache" />
+  <error oraErrorFrom="2110" sqlState="82110" sqlException="SQLEXCEPTION" comment="Inconsistent host cache" />
+  <error oraErrorFrom="2111" sqlState="82111" sqlException="SQLEXCEPTION" comment="Heap consistency error" />
+  <error oraErrorFrom="2112" sqlState="21000" sqlException="SQLINTEGRITYCONSTRAINTVIOLATIONEXCEPTION" comment="SELECT..INTO returns too many rows" />
+  <error oraErrorFrom="2113" sqlState="82112" sqlException="SQLEXCEPTION" comment="Unable to open message file" />
+  <error oraErrorFrom="2114" sqlState="24000" sqlException="SQLEXCEPTION" comment="Attempt to close a closed cursor" />
+  <error oraErrorFrom="2115" sqlState="82113" sqlException="SQLEXCEPTION" comment="code generation internal consistency failed" />
+  <error oraErrorFrom="2116" sqlState="82114" sqlException="SQLEXCEPTION" comment="reentrant code generator gave invalid context" />
+  <error oraErrorFrom="2117" sqlState="24000" sqlException="SQLEXCEPTION" comment="Attempt to open a opened cursor" />
+  <error oraErrorFrom="2118" sqlState="24000" sqlException="SQLEXCEPTION" comment="Invalid row for WHERE CURRENT OF operation" />
+  <error oraErrorFrom="2119" sqlState="82115" sqlException="SQLEXCEPTION" comment="Invalid hstdef argument" />
+  <error oraErrorFrom="2120" sqlState="82116" sqlException="SQLEXCEPTION" comment="first and second arguments to sqlrcn both null" />
+  <error oraErrorFrom="2121" sqlState="08003" sqlException="SQLNONTRANSIENTCONNECTIONEXCEPTION" comment="Invalid host name" />
+  <error oraErrorFrom="2122" sqlState="24000" sqlException="SQLEXCEPTION" comment="Invalid open or prepare" />
+  <error oraErrorFrom="2123" sqlState="82118" sqlException="SQLEXCEPTION" comment="application context not found" />
+  <error oraErrorFrom="2124" sqlState="21002" sqlException="SQLINTEGRITYCONSTRAINTVIOLATIONEXCEPTION" comment="NULL value returned by EXEC TOOLS statement" />
+  <error oraErrorFrom="2125" sqlState="82119" sqlException="SQLEXCEPTION" comment="connect error; can't get error text" />
+  <error oraErrorFrom="2126" sqlState="07008" sqlException="SQLDATAEXCEPTION" comment="Count of array elements cannot be negative" />
+  <error oraErrorFrom="2127" sqlState="82120" sqlException="SQLEXCEPTION" comment="precompiler/SQLLIB version mismatch" />
+  <error oraErrorFrom="2129" sqlState="82121" sqlException="SQLEXCEPTION" comment="FETCHed number of bytes is odd" />
+  <error oraErrorFrom="2130" sqlState="82122" sqlException="SQLEXCEPTION" comment="EXEC TOOLS interface is not available" />
+  <error oraErrorFrom="2131" sqlState="82123" sqlException="SQLEXCEPTION" comment="runtime context in use" />
+  <error oraErrorFrom="2132" sqlState="82124" sqlException="SQLEXCEPTION" comment="unable to allocate runtime context" />
+  <error oraErrorFrom="2133" sqlState="82125" sqlException="SQLEXCEPTION" comment="unable to initialize process for use with threads" />
+  <error oraErrorFrom="2134" sqlState="82126" sqlException="SQLEXCEPTION" comment="invalid runtime context" />
+  <error oraErrorFrom="3113" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="End-of-file on communication channel" />
+  <error oraErrorFrom="3114" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Not connected to Oracle database" />
+  <error oraErrorFrom="8006" sqlState="24000" sqlException="SQLEXCEPTION" comment="Invalid cursor state" />
+  <error oraErrorFrom="12514" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Listener does not currently know of service requested in connect descriptor" />
+  <error oraErrorFrom="16456" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Switchover to standby in progress or completed" />
+
+  <!-- JDBC ORA error numbers follow -->
+
+  <error oraErrorFrom="17000" sqlState="00000" sqlException="SQLEXCEPTION" comment="JDBC driver success" />
+  <error oraErrorFrom="17002" sqlState="08006" sqlException="SQLRECOVERABLEEXCEPTION" comment="Net I/O exception" />
+  <error oraErrorFrom="17008" sqlState="08003" sqlException="SQLRECOVERABLEEXCEPTION" comment="Operation on closed connection" />
+  <error oraErrorFrom="17024" sqlState="02000" sqlException="SQLEXCEPTION" comment="No data read" />
+  <error oraErrorFrom="17079" sqlState="08000" sqlException="SQLNONTRANSIENTCONNECTIONEXCEPTION" comment="user credentials error" />
+  <error oraErrorFrom="17089" sqlState="72000" sqlException="SQLRECOVERABLEEXCEPTION" comment="Driver internal error" />
+  <error oraErrorFrom="17162" sqlState="99999" sqlException="SQLFEATURENOTSUPPORTEDEXCEPTION" comment="Unsupported holdability value" />
+  <error oraErrorFrom="17253" sqlState="00000" sqlException="SQLCLIENTINFOEXCEPTION" comment="invalid clientInfo name" />
+  <error oraErrorFrom="17410" sqlState="08000" sqlException="SQLRECOVERABLEEXCEPTION" comment="No more data to read from socket" />
+
+  <!-- JDBC ORA error numbers above -->
+
+  <error oraErrorFrom="18" oraErrorTo="21" sqlState="61000" sqlException="SQLEXCEPTION" comment="MTS server/detached process" />
+  <error oraErrorFrom="24" oraErrorTo="35" sqlState="61000" sqlException="SQLEXCEPTION" comment="MTS server/detached process" />
+  <error oraErrorFrom="50" oraErrorTo="68" sqlState="61000" sqlException="SQLEXCEPTION" comment="MTS server/detached process" />
+  <error oraErrorFrom="101" oraErrorTo="120" sqlState="62000" sqlException="SQLEXCEPTION" comment="MTS server/detached process" />
+  <error oraErrorFrom="150" oraErrorTo="159" sqlState="63000" sqlException="SQLEXCEPTION" comment="XA/two task error" />
+  <error oraErrorFrom="200" oraErrorTo="369" sqlState="64000" sqlException="SQLEXCEPTION" comment="Cntl/dbase/redo log errors" />
+  <error oraErrorFrom="370" oraErrorTo="429" sqlState="60000" sqlException="SQLEXCEPTION" comment="System error" />
+  <error oraErrorFrom="430" oraErrorTo="439" sqlState="67000" sqlException="SQLEXCEPTION" comment="Licensing error" />
+  <error oraErrorFrom="440" oraErrorTo="569" sqlState="62000" sqlException="SQLEXCEPTION" comment="MTS server/detached process" />
+  <error oraErrorFrom="570" oraErrorTo="599" sqlState="69000" sqlException="SQLEXCEPTION" comment="SQL*Connect error" />
+  <error oraErrorFrom="600" oraErrorTo="899" sqlState="60000" sqlException="SQLEXCEPTION" comment="System error" />
+  <error oraErrorFrom="900" oraErrorTo="999" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="1000" oraErrorTo="1099" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="1001" oraErrorTo="1003" sqlState="24000" sqlException="SQLEXCEPTION" comment="Invalid cursor state" />
+  <error oraErrorFrom="1100" oraErrorTo="1250" sqlState="64000" sqlException="SQLEXCEPTION" comment="Cntl/dbase/redo log error" />
+  <error oraErrorFrom="1402" oraErrorTo="1478" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="1479" oraErrorTo="1480" sqlState="22024" sqlException="SQLDATAEXCEPTION" comment="Unterminated C string" />
+  <error oraErrorFrom="1481" oraErrorTo="1489" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="1490" oraErrorTo="1493" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="1494" oraErrorTo="1499" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="1500" oraErrorTo="1699" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="1700" oraErrorTo="1799" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="1800" oraErrorTo="1899" sqlState="22008" sqlException="SQLDATAEXCEPTION" comment="Datetime field overflow" />
+  <error oraErrorFrom="2091" oraErrorTo="2092" sqlState="40000" sqlException="SQLTRANSACTIONROLLBACKEXCEPTION" comment="Transaction rollback" />
+  <error oraErrorFrom="1900" oraErrorTo="2099" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="2140" oraErrorTo="2289" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="2290" oraErrorTo="2299" sqlState="23000" sqlException="SQLINTEGRITYCONSTRAINTVIOLATIONEXCEPTION" comment="Constraint violation" />
+  <error oraErrorFrom="2376" oraErrorTo="2399" sqlState="61000" sqlException="SQLEXCEPTION" comment="MTS server/detached process" />
+  <error oraErrorFrom="2400" oraErrorTo="2419" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="2420" oraErrorTo="2424" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="2425" oraErrorTo="2449" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="2450" oraErrorTo="2499" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="2700" oraErrorTo="2899" sqlState="63000" sqlException="SQLEXCEPTION" comment="XA/two task error" />
+  <error oraErrorFrom="3000" oraErrorTo="3099" sqlState="0A000" sqlException="SQLEXCEPTION" comment="Feature not supported" />
+  <error oraErrorFrom="3100" oraErrorTo="3199" sqlState="63000" sqlException="SQLEXCEPTION" comment="XA/two task error" />
+  <error oraErrorFrom="3276" oraErrorTo="3299" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="4000" oraErrorTo="4019" sqlState="22023" sqlException="SQLDATAEXCEPTION" comment="Invalid parameter value" />
+  <error oraErrorFrom="4020" oraErrorTo="4039" sqlState="61000" sqlException="SQLEXCEPTION" comment="MTS server/detached process" />
+  <error oraErrorFrom="4040" oraErrorTo="4059" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="4060" oraErrorTo="4069" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="4070" oraErrorTo="4099" sqlState="42000" sqlException="SQLSYNTAXERROREXCEPTION" comment="Syntax error, access rule" />
+  <error oraErrorFrom="6000" oraErrorTo="6149" sqlState="66000" sqlException="SQLEXCEPTION" comment="SQL*Net driver error" />
+  <error oraErrorFrom="6200" oraErrorTo="6249" sqlState="63000" sqlException="SQLEXCEPTION" comment="XA/two task error" />
+  <error oraErrorFrom="6250" oraErrorTo="6429" sqlState="66000" sqlException="SQLEXCEPTION" comment="SQL*Net driver error" />
+  <error oraErrorFrom="6430" oraErrorTo="6449" sqlState="60000" sqlException="SQLEXCEPTION" comment="System error" />
+  <error oraErrorFrom="6511" oraErrorTo="6511" sqlState="24000" sqlException="SQLEXCEPTION" comment="Invalid cursor state" />
+  <error oraErrorFrom="6500" oraErrorTo="6599" sqlState="65000" sqlException="SQLEXCEPTION" comment="PL/SQL error" />
+  <error oraErrorFrom="6600" oraErrorTo="6999" sqlState="66000" sqlException="SQLEXCEPTION" comment="SQL*Net driver error" />
+  <error oraErrorFrom="7000" oraErrorTo="7199" sqlState="69000" sqlException="SQLEXCEPTION" comment="SQL*Connect error" />
+  <error oraErrorFrom="7200" oraErrorTo="7999" sqlState="60000" sqlException="SQLEXCEPTION" comment="System error" />
+  <error oraErrorFrom="8000" oraErrorTo="8190" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="9700" oraErrorTo="9999" sqlState="60000" sqlException="SQLEXCEPTION" comment="System error" />
+  <error oraErrorFrom="10000" oraErrorTo="10999" sqlState="90000" sqlException="SQLEXCEPTION" comment="Debugging event" />
+  <error oraErrorFrom="12000" oraErrorTo="12019" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="12100" oraErrorTo="12299" sqlState="66000" sqlException="SQLEXCEPTION" comment="SQL*Net driver error" />
+  <error oraErrorFrom="12300" oraErrorTo="12499" sqlState="72000" sqlException="SQLEXCEPTION" comment="SQL execute phase error" />
+  <error oraErrorFrom="12500" oraErrorTo="12599" sqlState="66000" sqlException="SQLEXCEPTION" comment="SQL*Net driver error" />
+  <error oraErrorFrom="17000" oraErrorTo="17499" sqlState="99999" sqlException="SQLEXCEPTION" comment="JDBC driver errors" />
+  <error oraErrorFrom="12700" oraErrorTo="21999" sqlState="72000" sqlException="SQLEXCEPTION" comment=" SQL execute phase error" />
+</oraErrorSqlStateSqlExceptionMapping>
