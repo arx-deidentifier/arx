@@ -51,7 +51,7 @@
     <orderEntry type="library" name="Maven: org.swtchart:ext:0.8.0.v20120301" level="project" />
     <orderEntry type="library" name="Maven: org.swtchart:swtchart:0.8.0.v20120301" level="project" />
     <orderEntry type="library" name="Maven: de.linearbits.swt:swtchoicesdialog:0.0.1" level="project" />
-    <orderEntry type="library" name="Maven: swtknob:swtknob:1.0.0" level="project" />
+    <orderEntry type="library" name="Maven: de.linearbits.swt:swtknob:1.0.0" level="project" />
     <orderEntry type="library" name="Maven: de.linearbits.swt:swtpreferences:0.0.1" level="project" />
     <orderEntry type="library" name="Maven: de.linearbits.swt:swtrangeslider:0.0.1" level="project" />
     <orderEntry type="library" name="Maven: de.linearbits.swt:swtsimplebrowser:0.0.1" level="project" />

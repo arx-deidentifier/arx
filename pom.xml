@@ -14,7 +14,7 @@
         </repository>
         <repository>
             <id>local-maven-repo</id>
-            <url>file:${project.basedir}/lib</url>
+            <url>file:///${project.basedir}/lib</url>
         </repository>
     </repositories>
     <build>
@@ -292,12 +292,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--@TODO - ojdbc7 unofficial repo, should upgrade if possible -->
-        <!--<dependency>-->
-        <!--<groupId>com.github.noraui</groupId>-->
-        <!--<artifactId>ojdbc7</artifactId>-->
-        <!--<version>12.1.0.2</version>-->
-        <!--</dependency>-->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
@@ -521,7 +515,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>swtknob</groupId>
+            <groupId>de.linearbits.swt</groupId>
             <artifactId>swtknob</artifactId>
             <version>1.0.0</version>
             <exclusions>
