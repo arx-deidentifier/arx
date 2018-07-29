@@ -37,3 +37,8 @@ External Libraries
 ------
 
 ARX uses external libraries. Their licenses are listed in the respective folders.
+
+Development setup
+------
+
+Currently, the main development of ARX is carried out using Eclipse as an IDE and Ant as a build tool. Support for IntelliJ IDEA and Maven is experimental.
