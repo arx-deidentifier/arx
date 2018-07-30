@@ -5,7 +5,7 @@
 
     <groupId>org.deidentifier.arx</groupId>
     <artifactId>arx</artifactId>
-    <version>3.7.0</version>
+    <version>3.7.1</version>
 
     <repositories>
         <repository>
