@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: de.linearbits:objectselector:lib">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/linearbits/objectselector/lib/objectselector-lib.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/de/linearbits/objectselector/lib/objectselector-lib-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/linearbits/objectselector/lib/objectselector-lib-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

@@ -19,7 +19,7 @@ graphical user interface. You can find further information on the project [websi
 License
 ------
 
-ARX (C) 2012-2017 Fabian Prasser, Florian Kohlmayer and Contributors.
+ARX (C) 2012 - 2018 Fabian Prasser, Florian Kohlmayer and Contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -37,3 +37,8 @@ External Libraries
 ------
 
 ARX uses external libraries. Their licenses are listed in the respective folders.
+
+Development setup
+------
+
+Currently, the main development of ARX is carried out using Eclipse as an IDE and Ant as a build tool. Support for IntelliJ IDEA and Maven is experimental.

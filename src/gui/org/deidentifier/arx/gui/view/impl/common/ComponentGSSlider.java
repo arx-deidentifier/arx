@@ -173,7 +173,7 @@ public class ComponentGSSlider {
         });
         
         // Button
-        button = new Button(sliderBase, SWT.PUSH);
+        button = new Button(sliderBase, SWT.FLAT);
         button.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
         button.setText(Resources.getMessage("ViewCodingModel.2")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {

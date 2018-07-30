@@ -227,7 +227,6 @@ public class DataManager {
         }
         
         // Change to fixed generalization scheme when using differential privacy
-        index = 0;
         for (PrivacyCriterion c : privacyModels) {
             
             // DP found
@@ -237,16 +236,17 @@ public class DataManager {
                 DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
                 
                 // For each attribute
+                index = 0;
                 for (final String attribute : header) {
                     
                     // This is a generalized quasi-identifier
                     if (qisGeneralized.contains(attribute)) {
                         this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
                         this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
-                    }
 
-                    // Next quasi-identifier
-                    index++;
+                        // Next quasi-identifier
+                        index++;
+                    }
                 }
                 break;
             }
@@ -554,7 +554,7 @@ public class DataManager {
                                      hierarchiesAnalyzed,
                                      generalizationLevelsMinimum,
                                      generalizationLevelsMaximum,
-                                     aggregationInformation.getSubsetInstance());
+                                     aggregationInformation.clone());
     }
 
     /**
