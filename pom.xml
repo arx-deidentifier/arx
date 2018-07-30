@@ -235,8 +235,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!--@TODO do we need include the rest of the jars in lib/mahout?-->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>18.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
         <dependency>
             <groupId>org.apache.mahout</groupId>
             <artifactId>mahout-core</artifactId>
@@ -651,24 +660,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <!--OSX 32 BIT no longer supported, deprecating-->
-        <!--<profile>-->
-        <!--<id>macosx-32</id>-->
-        <!--<activation>-->
-        <!--<os>-->
-        <!--<family>osx</family>-->
-        <!--<arch>x86</arch>-->
-        <!--</os>-->
-        <!--</activation>-->
-        <!--<dependencies>-->
-        <!--<dependency>-->
-        <!--<groupId>org.eclipse</groupId>-->
-        <!--<artifactId>swt</artifactId>-->
-        <!--<version>4.2.1-cocoa-macosx</version>-->
-        <!--</dependency>-->
-        <!--</dependencies>-->
-        <!--</profile>-->
-
         <!--NOTE: this build is specific for x86_64. Separate profiles may be required for arm64 or amd64 in the future -->
         <profile>
             <id>win-64</id>
