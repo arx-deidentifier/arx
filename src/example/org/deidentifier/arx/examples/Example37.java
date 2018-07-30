@@ -88,7 +88,7 @@ public class Example37 extends Example {
         ARXAnonymizer anonymizer = new ARXAnonymizer();
 
         // Create a differential privacy criterion
-        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 0.00001d,
+        EDDifferentialPrivacy criterion = new EDDifferentialPrivacy(2d, 1d,
                                                                     DataGeneralizationScheme.create(data,GeneralizationDegree.MEDIUM));
 
         ARXConfiguration config = ARXConfiguration.create();
