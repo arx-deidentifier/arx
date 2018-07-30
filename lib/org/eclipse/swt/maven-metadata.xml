@@ -3,12 +3,11 @@
   <groupId>org.eclipse</groupId>
   <artifactId>swt</artifactId>
   <versioning>
-    <release>swt-4.2.1-gtk-linux-x86_64.jar</release>
     <versions>
       <version>4.2.1-cocoa-macosx-x86_64</version>
-      <version>4.2.1-win32-win32-x86_64.jar</version>
+      <version>4.2.1-win32-win32-x86_64</version>
       <version>4.2.1-win32-win32-x86.jar</version>
-      <version>swt-4.2.1-gtk-linux-x86_64.jar</version>
+      <version>4.2.1-gtk-linux-x86_64</version>
     </versions>
     <lastUpdated>20180726204646</lastUpdated>
   </versioning>

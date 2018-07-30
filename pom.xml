@@ -9,12 +9,12 @@
 
     <repositories>
         <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-        <repository>
             <id>local-maven-repo</id>
             <url>file:///${project.basedir}/lib</url>
+        </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
     </repositories>
     <build>
@@ -672,8 +672,8 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.swt</groupId>
-                    <artifactId>win32_64</artifactId>
+                    <groupId>org.eclipse</groupId>
+                    <artifactId>swt</artifactId>
                     <version>4.2.1-win32-win32-x86_64</version>
                     <exclusions>
                         <exclusion>
@@ -697,8 +697,8 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.swt</groupId>
-                    <artifactId>win32</artifactId>
+                    <groupId>org.eclipse</groupId>
+                    <artifactId>swt</artifactId>
                     <version>4.2.1-win32-win32-x86</version>
                     <exclusions>
                         <exclusion>
@@ -722,8 +722,8 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.swt</groupId>
-                    <artifactId>gtk</artifactId>
+                    <groupId>org.eclipse</groupId>
+                    <artifactId>swt</artifactId>
                     <version>4.2.1-gtk-linux-x86</version>
                     <exclusions>
                         <exclusion>
@@ -747,8 +747,8 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.swt</groupId>
-                    <artifactId>gtk_64</artifactId>
+                    <groupId>org.eclipse</groupId>
+                    <artifactId>swt</artifactId>
                     <version>4.2.1-gtk-linux-x86_64</version>
                     <exclusions>
                         <exclusion>
