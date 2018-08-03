@@ -65,10 +65,18 @@ public class ParameterCalculation {
         this.k = calculateK(deltaInterval, epsilonInterval, beta);
     }
     
+    /**
+     * Returns k
+     * @return
+     */
     public double getBeta() {
         return beta;
     }
 
+    /**
+     * Returns beta
+     * @return
+     */
     public int getK() {
         return k;
     }
