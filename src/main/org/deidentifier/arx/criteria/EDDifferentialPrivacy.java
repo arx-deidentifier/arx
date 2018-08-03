@@ -21,16 +21,15 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 
-import org.apache.commons.math3.analysis.function.Exp;
-import org.apache.commons.math3.analysis.function.Log;
-import org.apache.commons.math3.distribution.BinomialDistribution;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.dp.ParameterCalculation;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
  * (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
@@ -53,9 +52,9 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /** Parameter */
     private final double             delta;
     /** Parameter */
-    private final int                k;
+    private int                      k;
     /** Parameter */
-    private final double             beta;
+    private double                   beta;
     /** Parameter */
     private DataSubset               subset;
     /** Parameter */
@@ -73,13 +72,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      */
     public EDDifferentialPrivacy(double epsilon, double delta, 
                                  DataGeneralizationScheme generalization) {
-        super(false, false);
-        this.epsilon = epsilon;
-        this.delta = delta;
-        this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(delta, epsilon, this.beta);
-        this.deterministic = false;
+        this(epsilon, delta, generalization, false);
     }
     
     /**
@@ -98,9 +91,9 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         this.epsilon = epsilon;
         this.delta = delta;
         this.generalization = generalization;
-        this.beta = calculateBeta(epsilon);
-        this.k = calculateK(delta, epsilon, this.beta);
-        this.deterministic = true;
+        this.beta = -1d;
+        this.k = -1;
+        this.deterministic = deterministic;
     }
     
 
@@ -114,6 +107,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      * @return
      */
     public double getBeta() {
+        if (beta < 0d) { throw new RuntimeException("This instance has not been initialized yet"); }
         return beta;
     }
     
@@ -151,12 +145,13 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
      * @return
      */
     public int getK() {
+        if (k < 0) { throw new RuntimeException("This instance has not been initialized yet"); }
         return k;
     }
 
     @Override
     public int getMinimalClassSize() {
-        return k;
+        return getK();
     }
     
     @Override
@@ -177,7 +172,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         // method in the constructor of the class DataManager. The following
         // condition should hold, when this constructor is called during 
         // de-serialization, when we must not change the subset.
-        if (subset != null && this.manager == null) {
+        if (this.subset != null && this.manager == null) {
             this.manager = manager;
             return;
         }
@@ -185,13 +180,23 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         // Needed to prevent inconsistencies. We need to call this
         // method in the constructor of the class DataManager. It will be called again, when
         // ARXConfiguration is initialized(). During the second call we must not change the subset.
-        if (subset != null && this.manager == manager) {
+        if (this.subset != null && this.manager == manager) {
             return;
+        }
+        
+        // Calculate beta and k
+        try {
+            ParameterCalculation pCalc = new ParameterCalculation(this.epsilon, this.delta);
+            this.beta = pCalc.getBeta();
+            this.k = pCalc.getK();
+        } catch (IntervalArithmeticException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
 
         // Create RNG
         Random random;
-        if (deterministic) {
+        if (this.deterministic) {
             random = new Random(0xDEADBEEF);
         } else {
             random = new SecureRandom();
@@ -201,7 +206,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         Set<Integer> subsetIndices = new HashSet<Integer>();
         int records = manager.getDataGeneralized().getDataLength();
         for (int i = 0; i < records; ++i) {
-            if (random.nextDouble() < beta) {
+            if (random.nextDouble() < this.beta) {
                 subsetIndices.add(i);
             }
         }
@@ -242,106 +247,5 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     @Override
     public String toString() {
         return "("+epsilon+","+delta+")-DP";
-    }
-
-    /**
-     * Calculates a_n
-     * @param n
-     * @param epsilon
-     * @param beta
-     * @return
-     */
-    private double calculateA(int n, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
-        return calculateBinomialSum((int) Math.floor(n * gamma) + 1, n, beta);
-    }
-    
-    /**
-     * Calculates beta_max
-     * @param epsilon
-     * @return
-     */
-    private double calculateBeta(double epsilon) {
-        return 1.0d - (new Exp()).value(-1.0d * epsilon);
-    }
-
-    /**
-     * Adds summands of the binomial distribution with probability beta
-     * @param from
-     * @param to
-     * @param beta
-     * @return
-     */
-    private double calculateBinomialSum(int from, int to, double beta) {
-        BinomialDistribution binomialDistribution = new BinomialDistribution(to, beta);
-        double sum = 0.0d;
-
-        for (int j = from; j <= to; ++j) {
-            sum += binomialDistribution.probability(j);
-        }
-
-        return sum;
-    }
-
-    /**
-     * Calculates c_n
-     * @param n
-     * @param epsilon
-     * @param beta
-     * @return
-     */
-    private double calculateC(int n, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
-        return (new Exp()).value(-1.0d * n * (gamma * (new Log()).value(gamma / beta) - (gamma - beta)));
-    }
-
-    /**
-     * Calculates delta
-     * @param k
-     * @param epsilon
-     * @param beta
-     * @return
-     */
-    private double calculateDelta(int k, double epsilon, double beta) {
-        double gamma = calculateGamma(epsilon, beta);
-        int n_m = (int) Math.ceil((double) k / gamma - 1.0d);
-
-        double delta = Double.MIN_VALUE;
-        double bound = Double.MAX_VALUE;
-
-        for (int n = n_m; delta < bound; ++n) {
-            delta = Math.max(delta, calculateA(n, epsilon, beta));
-            bound = calculateC(n, epsilon, beta);
-        }
-
-        return delta;
-    }
-
-    /**
-     * Calculates gamma
-     * @param epsilon
-     * @param beta
-     * @return
-     */
-    private double calculateGamma(double epsilon, double beta) {
-        double power = (new Exp()).value(epsilon);
-        return (power - 1.0d + beta) / power;
-    }
-
-    /**
-     * Calculates k
-     * @param delta
-     * @param epsilon
-     * @param beta
-     * @return
-     */
-    private int calculateK(double delta, double epsilon, double beta) {
-        int k = 1;
-
-        for (double delta_k = Double.MAX_VALUE; delta_k > delta; ++k) {
-            delta_k = calculateDelta(k, epsilon, beta);
-        }
-
-        return k;
     }
 }
