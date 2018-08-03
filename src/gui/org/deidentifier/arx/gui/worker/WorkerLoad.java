@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -78,17 +79,23 @@ import com.univocity.parsers.csv.CsvRoutines;
  */
 public class WorkerLoad extends Worker<Model> {
 
-	/** The vocabulary to use. */
-	private Vocabulary vocabulary = null;
-	
-	/** The zip file. */
-	private ZipFile    zipfile;
-	
-	/** The lattice. */
-	private ARXLattice lattice;
-	
-	/** The model. */
-	private Model      model;
+    /** The vocabulary to use. */
+    private Vocabulary vocabulary = null;
+
+    /** The zip file. */
+    private ZipFile    zipfile;
+
+    /** The lattice. */
+    private ARXLattice lattice;
+
+    /** The model. */
+    private Model      model;
+
+    /** The controller */
+    private Controller controller;
+
+    /** The charset */
+    private Charset    charset    = null;
 
     /**
      * Constructor.
@@ -99,6 +106,7 @@ public class WorkerLoad extends Worker<Model> {
      */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
         this.zipfile = new ZipFile(path);
+        this.controller = controller;
     }
 
     @Override
@@ -132,6 +140,31 @@ public class WorkerLoad extends Worker<Model> {
         result = model;
         arg0.worked(1);
         arg0.done();
+    }
+    
+    /**
+     * Returns the charset
+     * @return
+     */
+    private Charset getCharset() {
+        
+        // Already determined
+        if (charset != null) {
+            return charset;
+        }
+        
+        // Determine
+        if (model == null) {
+            charset = StandardCharsets.UTF_8;
+        } else if (model.getCharset() == null){
+            Charset c = controller.actionShowCharsetInputDialog();
+            charset = c == null ? StandardCharsets.UTF_8 : c;
+        } else {
+            charset = StandardCharsets.UTF_8;
+        }
+        
+        // Return
+        return charset;
     }
 
     /**
@@ -658,14 +691,11 @@ public class WorkerLoad extends Worker<Model> {
 
         final ZipEntry entry = zip.getEntry("data/input.csv"); //$NON-NLS-1$
         if (entry == null) { return; }
-
-        // TODO
-        Charset charset = Charset.defaultCharset();
         
         // Read input
         // Use project delimiter for backwards compatibility
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
-                                    charset,
+                                    getCharset(),
                                     model.getCSVSyntax().getDelimiter(), getLength(zip, entry)));
 
         // And encode
