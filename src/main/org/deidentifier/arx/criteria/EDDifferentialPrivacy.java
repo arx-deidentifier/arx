@@ -172,7 +172,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         // method in the constructor of the class DataManager. The following
         // condition should hold, when this constructor is called during 
         // de-serialization, when we must not change the subset.
-        if (this.subset != null && this.manager == null) {
+        if (subset != null && this.manager == null) {
             this.manager = manager;
             return;
         }
@@ -180,7 +180,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         // Needed to prevent inconsistencies. We need to call this
         // method in the constructor of the class DataManager. It will be called again, when
         // ARXConfiguration is initialized(). During the second call we must not change the subset.
-        if (this.subset != null && this.manager == manager) {
+        if (subset != null && this.manager == manager) {
             return;
         }
         
@@ -190,13 +190,12 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
             this.beta = pCalc.getBeta();
             this.k = pCalc.getK();
         } catch (IntervalArithmeticException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
 
         // Create RNG
         Random random;
-        if (this.deterministic) {
+        if (deterministic) {
             random = new Random(0xDEADBEEF);
         } else {
             random = new SecureRandom();
@@ -206,7 +205,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         Set<Integer> subsetIndices = new HashSet<Integer>();
         int records = manager.getDataGeneralized().getDataLength();
         for (int i = 0; i < records; ++i) {
-            if (random.nextDouble() < this.beta) {
+            if (random.nextDouble() < beta) {
                 subsetIndices.add(i);
             }
         }
