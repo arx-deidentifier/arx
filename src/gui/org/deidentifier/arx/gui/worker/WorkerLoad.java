@@ -57,6 +57,7 @@ import org.deidentifier.arx.gui.worker.io.BackwardsCompatibleObjectInputStream;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLHandler;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -65,6 +66,10 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
+
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvParserSettings;
+import com.univocity.parsers.csv.CsvRoutines;
 
 /**
  * This worker loads a project file from disk.
@@ -654,11 +659,14 @@ public class WorkerLoad extends Worker<Model> {
         final ZipEntry entry = zip.getEntry("data/input.csv"); //$NON-NLS-1$
         if (entry == null) { return; }
 
+        // TODO
+        Charset charset = Charset.defaultCharset();
+        
         // Read input
         // Use project delimiter for backwards compatibility
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
-                                    Charset.defaultCharset(),
-                                    model.getCSVSyntax().getDelimiter()));
+                                    charset,
+                                    model.getCSVSyntax().getDelimiter(), getLength(zip, entry)));
 
         // And encode
         config.getInput().getHandle();
@@ -668,6 +676,35 @@ public class WorkerLoad extends Worker<Model> {
             config.getInput().getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
             model.setVisualizationEnabled(false);
         }
+    }
+    
+    /**
+     * Returns the length of the input file, stored in the given entry
+     * @param zip
+     * @param entry
+     * @return
+     * @throws IOException 
+     */
+    private int getLength(ZipFile zip, ZipEntry entry) throws IOException {
+
+        CsvFormat format = new CsvFormat();
+        format.setDelimiter(model.getCSVSyntax().getDelimiter());
+        format.setQuote(CSVSyntax.DEFAULT_QUOTE);
+        format.setQuoteEscape(CSVSyntax.DEFAULT_ESCAPE);
+        format.setLineSeparator(CSVSyntax.DEFAULT_LINEBREAK);
+        format.setNormalizedNewline(CSVSyntax.getNormalizedLinebreak(CSVSyntax.DEFAULT_LINEBREAK));
+        format.setComment('\0');
+
+        CsvParserSettings settings = new CsvParserSettings();
+        settings.setEmptyValue("");
+        settings.setNullValue("");
+        settings.setFormat(format);
+        
+        InputStream stream = new BufferedInputStream(zip.getInputStream(entry));
+        CsvRoutines routines = new CsvRoutines(settings);
+        long records = routines.getInputDimension(stream).rowCount();
+        stream.close();
+        return (int)records;
     }
 
     /**

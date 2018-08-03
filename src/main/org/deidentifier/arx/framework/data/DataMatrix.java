@@ -393,9 +393,7 @@ public class DataMatrix implements Serializable {
      */
     public void setRow(int row, int[] data) {
         int offset = row * columns;
-        for (int i = 0; i < data.length; i++) {
-            this.array[offset++] = data[i];
-        }
+        System.arraycopy(data, 0, this.array, offset, data.length);
     }
 
     /**
