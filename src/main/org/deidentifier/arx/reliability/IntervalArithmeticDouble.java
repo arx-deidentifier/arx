@@ -632,9 +632,8 @@ public class IntervalArithmeticDouble {
     private double ceil(double value) {
         // According to the java documentation at
         // https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html
-        // all methods of the Math class with a 1 ulp error bound guarantee
-        // that the floating-point result is one of the two floating-point numbers which bracket the exact result.
-        // All methods of the Math class used in this class have an error bound of one ulp.
+        // all methods of the Math class used guarantee that the floating-point result is
+        // one of the two floating-point numbers which bracket the exact result.
         // Moreover, all basic arithmetic double operations used in this class use the IEEE 754 round to nearest mode
         // (see https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.8.1)
         // and thus provide the same error bound guarantee.
@@ -677,13 +676,12 @@ public class IntervalArithmeticDouble {
     private double floor(double value) {
         // According to the java documentation at
         // https://docs.oracle.com/javase/8/docs/api/java/lang/Math.html
-        // all methods of the Math class with a 1 ulp error bound guarantee
-        // that the floating-point result is one of the two floating-point numbers which bracket the exact result.
-        // All methods of the Math class used in this class have an error bound of one ulp.
+        // all methods of the Math class used guarantee that the floating-point result is
+        // one of the two floating-point numbers which bracket the exact result.
         // Moreover, all basic arithmetic double operations used in this class use the IEEE 754 round to nearest mode
         // (see https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.8.1)
         // and thus provide the same error bound guarantee.
-        // Hence, we can calculate a reliable lower bound by returning the next adjacent floating-point number in direction -infinity.
+        // Hence, we can calculate a reliable upper bound by returning the next adjacent floating-point number in direction -infinity.
         return Math.nextAfter(value, Double.NEGATIVE_INFINITY);
     }
     
