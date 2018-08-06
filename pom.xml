@@ -662,8 +662,8 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.swt</groupId>
-                    <artifactId>cocoa</artifactId>
+                    <groupId>org.eclipse</groupId>
+                    <artifactId>swt</artifactId>
                     <version>4.2.1-cocoa-macosx-x86_64</version>
                     <exclusions>
                         <exclusion>
