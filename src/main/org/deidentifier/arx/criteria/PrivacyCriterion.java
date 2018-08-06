@@ -149,12 +149,12 @@ public abstract class PrivacyCriterion implements Serializable{
     
     /**
      * Implement this, to enforce the criterion.
-     * @param node TODO
+     * @param transformation
      * @param entry
      *
      * @return
      */
-    public abstract boolean isAnonymous(Transformation node, HashGroupifyEntry entry);
+    public abstract boolean isAnonymous(Transformation transformation, HashGroupifyEntry entry);
 
     /**
      * Returns whether the criterion supports local recoding.
@@ -183,7 +183,6 @@ public abstract class PrivacyCriterion implements Serializable{
         }
     }
     
-
     /**
      * Returns whether the criterion is monotonic with tuple suppression.
      *
@@ -191,6 +190,28 @@ public abstract class PrivacyCriterion implements Serializable{
      */
     public boolean isMonotonicWithSuppression() {
         return this.monotonic;
+    }
+
+    /**
+     * Returns whether the model supports reliable data anonymization.
+     * Must be called after the model has been initialized.
+     * The default is <code>false</code>.
+     * @return
+     */
+    public boolean isReliableAnonymizationSupported() {
+        return false;
+    }
+    
+
+    /**
+     * Overwrite this, to reliably enforce the criterion.
+     * @param transformation 
+     * @param entry
+     *
+     * @return
+     */
+    public boolean isReliablyAnonymous(Transformation transformation, HashGroupifyEntry entry) {
+        return isAnonymous(transformation, entry);
     }
 
     /**

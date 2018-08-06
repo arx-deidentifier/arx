@@ -17,32 +17,34 @@
 package org.deidentifier.arx.common;
 
 /**
- * A very basic map using golden ratio hashing and linear probing which takes doubles as values.
+ * A very basic map using golden ratio hashing and linear probing which takes objects of an arbitrary type as values.
  * 
  * @author Fabian Prasser
+ * @author Raffael Bild
  */
-public class FastIntDoubleMap {
+public class FastIntObjectMap<T> {
 
     /** The keys. */
-    private final int[]    keys;
+    private final int[] keys;
 
     /** The values. */
-    private final double[] values;
+    private final T[]   values;
 
     /** The mask */
-    private final int      mask;
+    private final int   mask;
 
     /** The min */
-    private int            min;
+    private int         min;
 
     /** The max */
-    private int            max;
+    private int         max;
     
     /**
      * Creates a new instance
      * @param size
      */
-    public FastIntDoubleMap(int size) {
+    @SuppressWarnings("unchecked")
+    public FastIntObjectMap(int size) {
         
         // Calculate capacity needed for a set of given size
         int capacity = (int) (Math.round((double) size * 1.25d)) - 1;
@@ -55,7 +57,7 @@ public class FastIntDoubleMap {
         
         // Prepare
         this.keys = new int[capacity];
-        this.values = new double[capacity];
+        this.values = (T[])new Object[capacity];
         this.mask = keys.length - 1;
         this.min = Integer.MAX_VALUE;
         this.max = Integer.MIN_VALUE;
@@ -66,7 +68,7 @@ public class FastIntDoubleMap {
      * @param key
      * @param value
      */
-    public void put(int key, double value) {
+    public void put(int key, T value) {
 
         key++;
         this.min = Math.min(this.min, key);
@@ -85,7 +87,7 @@ public class FastIntDoubleMap {
      * @param _default
      * @return
      */
-    public double get(int key, double _default) {
+    public T get(int key, T _default) {
 
         key++;
         if (key < min || key > max) {

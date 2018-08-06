@@ -405,6 +405,20 @@ public class HashGroupify {
             }
         }
     }
+
+    /**
+     * Analyzes the current state
+     * @param transformation
+     * @param force
+     * @param reliable
+     */
+    public void stateAnalyze(Transformation transformation, boolean force, boolean reliable) {
+        if (force) {
+            analyzeAll(transformation, reliable);
+        } else {
+            analyzeWithEarlyAbort(transformation, reliable);
+        }
+    }
     
     /**
      * Analyzes the current state
@@ -412,8 +426,7 @@ public class HashGroupify {
      * @param force
      */
     public void stateAnalyze(Transformation transformation, boolean force) {
-        if (force) analyzeAll(transformation);
-        else analyzeWithEarlyAbort(transformation);
+        stateAnalyze(transformation, force, false);
     }
     
     /**
@@ -517,8 +530,9 @@ public class HashGroupify {
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
+     * @param reliable 
      */
-    private void analyzeAll(Transformation transformation) {
+    private void analyzeAll(Transformation transformation, boolean reliable) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -530,7 +544,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry, reliable);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -554,7 +568,7 @@ public class HashGroupify {
             entry = entry.nextOrdered;
         }
         
-        this.analyzeSampleBasedCriteria(transformation, false);
+        this.analyzeSampleBasedCriteria(transformation, false, reliable);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit) && dpresent;
     }
     
@@ -562,9 +576,10 @@ public class HashGroupify {
      * Analyze sample-based criteria
      * @param transformation
      * @param earlyAbort May we perform an early abort, if we reach the threshold
+     * @param reliable 
      * @return
      */
-    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort) {
+    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort, boolean reliable) {
         
         // Nothing to do
         if (this.sampleBasedCriteria.length == 0) {
@@ -580,7 +595,11 @@ public class HashGroupify {
         for (SampleBasedCriterion criterion : this.sampleBasedCriteria) {
             
             // Enforce
-            criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
+            if (reliable) {
+                criterion.enforceReliably(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
+            } else {
+                criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);   
+            }
             
             // Early abort
             this.currentNumOutliers = distribution.getNumSuppressedRecords();
@@ -593,8 +612,9 @@ public class HashGroupify {
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
+     * @param reliable 
      */
-    private void analyzeWithEarlyAbort(Transformation transformation) {
+    private void analyzeWithEarlyAbort(Transformation transformation, boolean reliable) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -619,7 +639,7 @@ public class HashGroupify {
         while (entry != null) {
             
             // Check for anonymity
-            int anonymous = isPrivacyModelFulfilled(transformation, entry);
+            int anonymous = isPrivacyModelFulfilled(transformation, entry, reliable);
             
             // Determine outliers
             if (anonymous != -1) {
@@ -653,7 +673,7 @@ public class HashGroupify {
             entry = entry.nextOrdered;
         }
         
-        this.analyzeSampleBasedCriteria(transformation, true);
+        this.analyzeSampleBasedCriteria(transformation, true, reliable);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
         
@@ -708,10 +728,11 @@ public class HashGroupify {
      * Checks whether the given entry is anonymous.
      * @param transformation
      * @param entry
+     * @param reliable
      * @return
      * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry) {
+    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry, boolean reliable) {
         
         // Check minimal group size
         if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {
@@ -721,12 +742,23 @@ public class HashGroupify {
         // Check other criteria
         // Note: The d-presence criterion must be checked first to ensure correct handling of d-presence with tuple suppression.
         // This is currently ensured by convention. See ARXConfiguration.getCriteriaAsArray();
-        for (int i = 0; i < classBasedCriteria.length; i++) {
-            if (!classBasedCriteria[i].isAnonymous(transformation, entry)) {
-                return i + 1;
+        
+        // Reliable
+        if (reliable) {
+            for (int i = 0; i < classBasedCriteria.length; i++) {
+                if (!classBasedCriteria[i].isReliablyAnonymous(transformation, entry)) {
+                    return i + 1;
+                }
             }
+            return -1;
+        } else {
+            for (int i = 0; i < classBasedCriteria.length; i++) {
+                if (!classBasedCriteria[i].isAnonymous(transformation, entry)) {
+                    return i + 1;
+                }
+            }
+            return -1;
         }
-        return -1;
     }
 
     /**

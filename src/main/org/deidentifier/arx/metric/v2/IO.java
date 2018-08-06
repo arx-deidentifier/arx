@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
+import org.apache.commons.math3.fraction.BigFraction;
+
 import com.carrotsearch.hppc.LongDoubleOpenHashMap;
+import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
 /**
  * This class implements serialization for maps
@@ -31,7 +34,7 @@ import com.carrotsearch.hppc.LongDoubleOpenHashMap;
 public class IO {
 
     /**
-     * Reads a hash map from the stream.
+     * Reads a LongDoubleOpenHashMap from the stream.
      *
      * @param stream
      * @return
@@ -56,15 +59,57 @@ public class IO {
         // Return
         return result;
     }
+    
+    /**
+     * Reads a LongObjectOpenHashMap of the type BigFraction from the stream.
+     *
+     * @param stream
+     * @return
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    public static LongObjectOpenHashMap<BigFraction> readLongBigFractionOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
+        
+        // Read
+        boolean[] allocated = (boolean[]) stream.readObject();
+        long[] keys = (long[]) stream.readObject();
+        BigFraction[] values = (BigFraction[]) stream.readObject();
+        
+        // Set
+        LongObjectOpenHashMap<BigFraction> result = new LongObjectOpenHashMap<BigFraction>();
+        for (int i=0; i<allocated.length; i++) {
+            if (allocated[i]) {
+                result.put(keys[i], values[i]);
+            }
+        }
+        
+        // Return
+        return result;
+    }
 
     /**
-     * Reads a hash map from the stream.
+     * Writes a LongDoubleOpenHashMap to the stream.
      *
      * @param stream
      * @param hashmap
      * @throws IOException
      */
     public static void writeLongDoubleOpenHashMap(ObjectOutputStream stream, LongDoubleOpenHashMap hashmap) throws IOException {
+        
+        // Write
+        stream.writeObject(hashmap.allocated);
+        stream.writeObject(hashmap.keys);
+        stream.writeObject(hashmap.values);
+    }
+    
+    /**
+     * Writes a LongObjectOpenHashMap of the type BigFraction to the stream.
+     *
+     * @param stream
+     * @param hashmap
+     * @throws IOException
+     */
+    public static void writeLongBigFractionOpenHashMap(ObjectOutputStream stream, LongObjectOpenHashMap<BigFraction> hashmap) throws IOException {
         
         // Write
         stream.writeObject(hashmap.allocated);

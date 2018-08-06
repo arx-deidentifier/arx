@@ -26,6 +26,9 @@ import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.dp.ParameterCalculation;
+import org.deidentifier.arx.dp.ParameterCalculation;
+import org.deidentifier.arx.dp.ParameterCalculationDouble;
+import org.deidentifier.arx.dp.ParameterCalculationIntervalDouble;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -58,14 +61,12 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /** Parameter */
     private DataSubset               subset;
     /** Parameter */
-    private transient DataManager    manager;
-    /** Parameter */
     private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
 
     /**
-     * Creates a new instance
+     * Creates a new instance which is data-independent iff generalization is not null
      * @param epsilon
      * @param delta
      * @param generalization
@@ -73,6 +74,15 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public EDDifferentialPrivacy(double epsilon, double delta, 
                                  DataGeneralizationScheme generalization) {
         this(epsilon, delta, generalization, false);
+    }
+    
+    /**
+     * Creates a new data-dependent instance
+     * @param epsilon
+     * @param delta
+     */
+    public EDDifferentialPrivacy(double epsilon, double delta) {
+        this(epsilon, delta, null, false);
     }
     
     /**
@@ -148,6 +158,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         if (k < 0) { throw new RuntimeException("This instance has not been initialized yet"); }
         return k;
     }
+    
+    /**
+     * Returns whether this instance is data-dependent
+     * @return
+     */
+    public boolean isDataDependent() {
+        return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
+    }
 
     @Override
     public int getMinimalClassSize() {
@@ -162,35 +188,33 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     }
 
     /**
-     * Creates a random sample based on beta
+     * Sets k and beta and creates a random sample based on beta if required
      *
      * @param manager
+     * @param config
      */
     public void initialize(DataManager manager, ARXConfiguration config){
         
-        // Needed for consistent de-serialization. We need to call this
-        // method in the constructor of the class DataManager. The following
-        // condition should hold, when this constructor is called during 
-        // de-serialization, when we must not change the subset.
-        if (subset != null && this.manager == null) {
-            this.manager = manager;
-            return;
+     // Set beta and k if required
+        if (beta < 0) {
+            double epsilonAnon = epsilon - (isDataDependent() ? config.getDPSearchBudget() : 0d);
+            ParameterCalculation pCalc = null;
+            if (config.isReliableAnonymizationEnabled()) {
+                try {
+                    pCalc = new ParameterCalculationIntervalDouble(epsilonAnon, delta);
+                } catch (IntervalArithmeticException e) {
+                    throw new RuntimeException(e);
+                }
+            } else {
+                pCalc = new ParameterCalculationDouble(epsilonAnon, delta);
+            }
+            beta = pCalc.getBeta();
+            k = pCalc.getK();
         }
         
-        // Needed to prevent inconsistencies. We need to call this
-        // method in the constructor of the class DataManager. It will be called again, when
-        // ARXConfiguration is initialized(). During the second call we must not change the subset.
-        if (subset != null && this.manager == manager) {
+        // If the subset has already been created
+        if (subset != null) {
             return;
-        }
-        
-        // Calculate beta and k
-        try {
-            ParameterCalculation pCalc = new ParameterCalculation(this.epsilon, this.delta);
-            this.beta = pCalc.getBeta();
-            this.k = pCalc.getK();
-        } catch (IntervalArithmeticException e) {
-            throw new RuntimeException(e);
         }
 
         // Create RNG
@@ -210,12 +234,11 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
             }
         }
         this.subset = DataSubset.create(records, subsetIndices);
-        this.manager = manager;
     }
 
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
-        return entry.count >= k;
+        return entry.count >= getK();
     }
 
     @Override
@@ -238,13 +261,13 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         ElementData result = new ElementData("Differential privacy");
         result.addProperty("Epsilon", epsilon);
         result.addProperty("Delta", delta);
-        result.addProperty("Uniqueness threshold (k)", k);
-        result.addProperty("Sampling probability (beta)", beta);
+        result.addProperty("Uniqueness threshold (k)", getK());
+        result.addProperty("Sampling probability (beta)", getBeta());
         return result;
     }
 
     @Override
     public String toString() {
-        return "("+epsilon+","+delta+")-DP";
+        return "(" + epsilon + "," + delta + ")-DP";
     }
 }

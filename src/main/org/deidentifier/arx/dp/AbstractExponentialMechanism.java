@@ -17,22 +17,31 @@
 package org.deidentifier.arx.dp;
 
 /**
- * Interface for calculations of parameters for differential privacy
+ * Abstract base class for implementations of the exponential mechanism
  * 
  * @author Raffael Bild
  */
-public interface ParameterCalculation {
-
+public abstract class AbstractExponentialMechanism<T,S> {
+    
     /**
-     * Returns beta
+     * Returns a random sampled value
      * @return
      */
-    public double getBeta();
-
+    public abstract T sample();
+    
     /**
-     * Returns k
-     * @return
+     * Sets the distribution to sample from.
+     * The arrays values and scores have to have the same length.
+     * @param values
+     * @param scores
      */
-    public int getK();
-
+    public void setDistribution(T[] values, S[]scores) {
+        // Check arguments
+        if (values.length == 0) {
+            throw new RuntimeException("No values supplied");
+        }
+        if (values.length != scores.length) {
+            throw new RuntimeException("Number of scores and values must be identical");
+        }
+    }
 }

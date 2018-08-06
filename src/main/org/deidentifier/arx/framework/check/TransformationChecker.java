@@ -40,6 +40,23 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class TransformationChecker {
 
+    /**
+     * The type of scores.
+     * 
+     * @author Raffael Bild
+     */
+    public static enum ScoreType {
+
+        /** Use conventional information loss. */
+        CONVENTIONAL,
+
+        /** Use score function for differential privacy. */
+        DP,
+
+        /** Use reliable score function for reliable differential privacy. */
+        DP_RELIABLE
+    }
+
     /** The config. */
     private final ARXConfigurationInternal          config;
 
@@ -148,16 +165,17 @@ public class TransformationChecker {
      * @return
      */
     public TransformationResult check(final Transformation node) {
-        return check(node, false);
+        return check(node, false, ScoreType.CONVENTIONAL);
     }
     
     /**
      * Checks the given transformation
      * @param node
      * @param forceMeasureInfoLoss
+     * @param scoreType
      * @return
      */
-    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss) {
+    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss, final ScoreType scoreType) {
         
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof TransformationResult) {
@@ -191,22 +209,36 @@ public class TransformationChecker {
         }
         
         // We are done with transforming and adding
-        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss);
+        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss, config.isReliableSearchProcessEnabled());
         if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
         
         // Compute information loss and lower bound
-        InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                metric.getInformationLoss(node, currentGroupify) : null;
-        InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
-        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+        InformationLoss<?> loss = null;
+        InformationLoss<?> bound = null;
+        
+        switch (scoreType) {
+        case DP:
+            // Evaluate score function
+            loss = metric.getScore(node, currentGroupify);
+            break;
+        case DP_RELIABLE:
+            // Evaluate reliable score function
+            loss = metric.getScoreReliable(node, currentGroupify);
+            break;
+        case CONVENTIONAL:
+            // Calculate conventional score and bound
+            InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
+                                                  metric.getInformationLoss(node, currentGroupify) : null;
+            loss = result != null ? result.getInformationLoss() : null;
+            bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+        }
         
         // Return result;
         return new TransformationResult(currentGroupify.isPrivacyModelFulfilled(),
-                                      minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
-                                      loss,
-                                      bound);
+                                        minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
+                                        loss, bound);
     }
     
     /**

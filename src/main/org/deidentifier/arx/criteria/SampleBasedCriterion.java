@@ -56,6 +56,19 @@ public abstract class SampleBasedCriterion extends PrivacyCriterion {
                                  int numMaxSuppressedOutliers);
 
     /**
+     * This method enforces the criterion on the current hash table. 
+     * Criteria can be enforced by suppressing classes in the distribution by passing a 
+     * PrivacyCondition. Criteria may abort early, if the threshold is reached 
+     * (<code>distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers</code>).
+     * This method implements a reliable variant
+     * 
+     * @param distribution
+     * @param numMaxSuppressedOutliers
+     */
+    public abstract void enforceReliably(HashGroupifyDistribution distribution, 
+                                         int numMaxSuppressedOutliers);
+
+    /**
      * Not supported by this type of criterion
      * @param entry
      *

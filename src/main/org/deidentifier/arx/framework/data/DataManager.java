@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
@@ -35,12 +36,16 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
+import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
-import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
+import org.deidentifier.arx.metric.v2.DomainShareReliable;
 import org.deidentifier.arx.metric.v2.DomainShareRedaction;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
+import org.deidentifier.arx.reliability.IntervalDouble;
 
 import cern.colt.Sorting;
 import cern.colt.function.IntComparator;
@@ -57,43 +62,46 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 public class DataManager {
 
     /** Data. */
-    private final Data                       dataAnalyzed;
+    private final Data                        dataAnalyzed;
 
     /** Data */
-    private final Data                       dataGeneralized;
+    private final Data                        dataGeneralized;
 
     /** Data. */
-    private final Data                       dataInput;
+    private final Data                        dataInput;
 
     /** The data definition */
-    private final DataDefinition             definition;
+    private final DataDefinition              definition;
 
     /** The domain shares */
-    private DomainShare[]                    shares;
+    private DomainShare[]                     shares;
+
+    /** The reliable domain shares */
+    private DomainShareReliable[]             sharesReliable;
 
     /** The original input header. */
-    private final String[]                   header;
+    private final String[]                    header;
 
     /** Hierarchies for generalized attributes */
-    private final GeneralizationHierarchy[]  hierarchiesGeneralized;
+    private final GeneralizationHierarchy[]   hierarchiesGeneralized;
 
     /** Hierarchies for analyzed attributes */
-    private final GeneralizationHierarchy[]  hierarchiesAnalyzed;
+    private final GeneralizationHierarchy[]   hierarchiesAnalyzed;
 
     /** The maximum level for each QI. */
-    private final int[]                      generalizationLevelsMinimum;
+    private final int[]                       generalizationLevelsMinimum;
 
     /** The minimum level for each QI. */
-    private final int[]                      generalizationLevelsMaximum;
+    private final int[]                       generalizationLevelsMaximum;
 
     /** Information about micro-aggregation */
-    private final DataAggregationInformation aggregationInformation;
+    private final DataAggregationInformation  aggregationInformation;
 
     /** The research subset, if any. */
-    private RowSet                           subset     = null;
+    private RowSet                            subset     = null;
 
     /** The size of the research subset. */
-    private int                              subsetSize = 0;
+    private int                               subsetSize = 0;
 
     /**
      * Creates a new data manager from pre-encoded data.
@@ -102,17 +110,15 @@ public class DataManager {
      * @param data
      * @param dictionary
      * @param definition
-     * @param privacyModels
+     * @param config
      * @param functions
-     * @param qualityModel
      */
     public DataManager(final String[] header,
                        final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
-                       final Set<PrivacyCriterion> privacyModels,
-                       final Map<String, DistributionAggregateFunction> functions,
-                       final Metric<?> qualityModel) {
+                       final ARXConfiguration config,
+                       final Map<String, DistributionAggregateFunction> functions) {
 
         // Store basic info
         this.header = header;
@@ -147,7 +153,7 @@ public class DataManager {
          * Collect non-generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsNotGeneralized = new HashSet<String>();
-        if (qualityModel.isAbleToHandleMicroaggregation()) {
+        if (config.getQualityModel().isAbleToHandleMicroaggregation()) {
             hotQIsNotGeneralized.addAll(qisNotGeneralized);
         } 
 
@@ -155,7 +161,7 @@ public class DataManager {
          * Collect generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsGeneralized = new HashSet<String>();
-        if (qualityModel.isAbleToHandleClusteredMicroaggregation()) {
+        if (config.getQualityModel().isAbleToHandleClusteredMicroaggregation()) {
             hotQIsGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
             throw new RuntimeException("Not implemented"); // TODO: SSE
         }
@@ -227,22 +233,25 @@ public class DataManager {
         }
         
         // Change to fixed generalization scheme when using differential privacy
-        for (PrivacyCriterion c : privacyModels) {
-            
+        index = 0;
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
+
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
-                // Extract scheme
-                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
-                
-                // For each attribute
-                index = 0;
-                for (final String attribute : header) {
-                    
-                    // This is a generalized quasi-identifier
-                    if (qisGeneralized.contains(attribute)) {
-                        this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
-                        this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                EDDifferentialPrivacy edpModel = (EDDifferentialPrivacy)c;
+                if (!edpModel.isDataDependent()) {
+                    // Extract scheme
+                    DataGeneralizationScheme scheme = edpModel.getGeneralizationScheme();
+
+                    // For each attribute
+                    for (final String attribute : header) {
+
+                        // This is a generalized quasi-identifier
+                        if (qisGeneralized.contains(attribute)) {
+                            this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                            this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                        }
 
                         // Next quasi-identifier
                         index++;
@@ -254,7 +263,7 @@ public class DataManager {
 
         // Build map with hierarchies for sensitive attributes
         this.hierarchiesAnalyzed = new GeneralizationHierarchy[this.dataAnalyzed.getColumns().length];
-        for (PrivacyCriterion c : privacyModels) {
+        for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c instanceof HierarchicalDistanceTCloseness) {
                 HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness) c;
                 String attribute = t.getAttribute();
@@ -267,23 +276,8 @@ public class DataManager {
         // finalize dictionary
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
-
-        // Store research subset
-        for (PrivacyCriterion c : privacyModels) {
-            if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this, null);
-            }
-            if (c.isSubsetAvailable()) {
-                DataSubset _subset = c.getDataSubset();
-                if (_subset != null) {
-                    subset = _subset.getSet();
-                    subsetSize = _subset.getArray().length;
-                    break;
-                }
-            }
-        }
     }
-
+    
     /**
      * For creating a projected instance
      * @param dataAnalyzed
@@ -330,6 +324,14 @@ public class DataManager {
         // The projected instance delegates these methods to the original data manager
         this.subset = null;
         this.subsetSize = 0;
+    }
+
+    /**
+     * Returns data configuring microaggregation
+     * @return
+     */
+    public DataAggregationInformation getAggregationInformation() {
+        return this.aggregationInformation;
     }
 
     /**
@@ -387,7 +389,7 @@ public class DataManager {
 
     /**
      * Returns the distribution of the given sensitive attribute in the original dataset. 
-     * Required for t-closeness.
+     * Required for multiple privacy models.
      * 
      * @param attribute
      * @return distribution
@@ -439,6 +441,34 @@ public class DataManager {
         
         // Return
         return this.shares;
+    }
+    
+    /**
+     * Returns the reliable domain shares for all generalized quasi-identifiers
+     * @return
+     */
+    public DomainShareReliable[] getDomainSharesReliable() {
+
+        // Build on-demand
+        if (this.sharesReliable == null) {
+            
+            // Compute domain shares
+            this.sharesReliable = new DomainShareReliable[dataGeneralized.getHeader().length];
+            for (int i=0; i<sharesReliable.length; i++) {
+                
+                // Extract info
+                String attribute = dataGeneralized.getHeader()[i];
+                String[][] hierarchy = definition.getHierarchy(attribute);
+                
+                // Create reliable materialized hierarchies
+                this.sharesReliable[i] = new DomainShareReliable(hierarchy, 
+                                                            dataGeneralized.getDictionary().getMapping()[i],
+                                                            hierarchiesGeneralized[i].getArray());
+            }
+        }
+        
+        // Return
+        return this.sharesReliable;
     }
 
     /**
@@ -492,14 +522,6 @@ public class DataManager {
     }
 
     /**
-     * Returns data configuring microaggregation
-     * @return
-     */
-    public DataAggregationInformation getAggregationInformation() {
-        return this.aggregationInformation;
-    }
-
-    /**
      * Returns the order of the given sensitive attribute in the original dataset. 
      * Required for t-closeness.
      * 
@@ -534,6 +556,55 @@ public class DataManager {
         
         // Return
         return order;
+    }
+
+    /**
+     * Returns the distribution of the attribute in the data array at the given index.
+     * @param dataMatrix
+     * @param index
+     * @param distinctValues
+     * @return
+     */
+    public IntervalDouble[] getReliableDistribution(DataMatrix dataMatrix, int index, int distinctValues) throws ReliabilityException {
+
+        try {
+            // Initialize counts: iterate over all rows or the subset
+            final int[] cardinalities = new int[distinctValues];
+            for (int i = 0; i < dataMatrix.getNumRows(); i++) {
+                if (subset == null || subset.contains(i)) {
+                    int val = dataMatrix.get(i, index);
+                    cardinalities[val] = Math.addExact(cardinalities[val], 1);
+                }
+            }
+
+            // compute distribution
+            IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+            IntervalDouble total = subset == null ? ia.createInterval(dataMatrix.getNumRows()) : ia.createInterval(subsetSize);
+            IntervalDouble[] distribution = new IntervalDouble[cardinalities.length];
+            for (int i = 0; i < distribution.length; i++) {
+                distribution[i] = ia.div(ia.createInterval(cardinalities[i]), total);
+            }
+            return distribution;
+            
+        // Handle arithmetic issues
+        } catch (ArithmeticException | IntervalArithmeticException | IndexOutOfBoundsException e) {
+            throw new ReliabilityException("Cannot calculate reliable distribution");
+        }
+    }
+
+    /**
+     * Returns the distribution of the given sensitive attribute in the original dataset. 
+     * Required for multiple privacy models.
+     * 
+     * @param attribute
+     * @return distribution
+     * @throws ReliabilityException 
+     */
+    public IntervalDouble[] getReliableDistribution(String attribute) throws ReliabilityException {
+        // Calculate and return
+        int index = dataAnalyzed.getIndexOf(attribute);
+        int distinctValues = dataAnalyzed.getDictionary().getMapping()[index].length;
+        return getReliableDistribution(dataAnalyzed.getArray(), index, distinctValues);
     }
 
     /**
@@ -682,6 +753,17 @@ public class DataManager {
         final int index = dataAnalyzed.getIndexOf(attribute);
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
+    }
+
+    /**
+     * Set a subset created by the differential privacy model
+     * @param _subset
+     */
+    public void setSubset(DataSubset _subset) {
+        if (_subset != null) {
+            subset = _subset.getSet();
+            subsetSize = _subset.getArray().length;
+        }
     }
     
     /**
