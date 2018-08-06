@@ -26,9 +26,6 @@ import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.dp.ParameterCalculation;
-import org.deidentifier.arx.dp.ParameterCalculation;
-import org.deidentifier.arx.dp.ParameterCalculationDouble;
-import org.deidentifier.arx.dp.ParameterCalculationIntervalDouble;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -199,14 +196,10 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         if (beta < 0) {
             double epsilonAnon = epsilon - (isDataDependent() ? config.getDPSearchBudget() : 0d);
             ParameterCalculation pCalc = null;
-            if (config.isReliableAnonymizationEnabled()) {
-                try {
-                    pCalc = new ParameterCalculationIntervalDouble(epsilonAnon, delta);
-                } catch (IntervalArithmeticException e) {
-                    throw new RuntimeException(e);
-                }
-            } else {
-                pCalc = new ParameterCalculationDouble(epsilonAnon, delta);
+            try {
+                pCalc = new ParameterCalculation(epsilonAnon, delta);
+            } catch (IntervalArithmeticException e) {
+                throw new RuntimeException(e);
             }
             beta = pCalc.getBeta();
             k = pCalc.getK();
