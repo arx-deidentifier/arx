@@ -89,7 +89,7 @@ public class IntervalArithmeticDouble {
         if (operand.lower < 0 && operand.upper > 0) {
             // The sign is undecidable. Return [0, max{|lower bound|, upper bound}]
             // as this interval must contain the absolute value of every real number contained in operand.
-            double max = Math.max(Math.abs(operand.getLowerBound()), operand.getUpperBound());
+            double max = Math.max(Math.abs(operand.lower), operand.upper);
             return createInterval(0d, max);
         }
         return apply(operand, new UnaryOperationDouble() {
@@ -181,7 +181,7 @@ public class IntervalArithmeticDouble {
      * @return
      */
     public int ceilLowerBoundToInt(IntervalDouble value)  throws IntervalArithmeticException {
-        double ceil = Math.ceil(value.getLowerBound());
+        double ceil = Math.ceil(value.lower);
         if (ceil > (double)Integer.MAX_VALUE || ceil < (double)Integer.MIN_VALUE) {
             throw new IntervalArithmeticException("Value does not fit into an integer: " + ceil);
         }
@@ -195,14 +195,14 @@ public class IntervalArithmeticDouble {
      */
     public int ceilToInt(IntervalDouble value)  throws IntervalArithmeticException {
         IntervalDouble ceil = ceil(value);
-        if (ceil.getLowerBound() > (double)Integer.MAX_VALUE || ceil.getLowerBound() < (double)Integer.MIN_VALUE) {
-            throw new IntervalArithmeticException("Value does not fit into an integer: " + ceil.getLowerBound());
+        if (ceil.lower > (double)Integer.MAX_VALUE || ceil.lower < (double)Integer.MIN_VALUE) {
+            throw new IntervalArithmeticException("Value does not fit into an integer: " + ceil.lower);
         }
-        if (ceil.getUpperBound() > (double)Integer.MAX_VALUE || ceil.getUpperBound() < (double)Integer.MIN_VALUE) {
-            throw new IntervalArithmeticException("Value does not fit into an integer: " + ceil.getUpperBound());
+        if (ceil.upper > (double)Integer.MAX_VALUE || ceil.upper < (double)Integer.MIN_VALUE) {
+            throw new IntervalArithmeticException("Value does not fit into an integer: " + ceil.upper);
         }
-        int lower = (int)ceil.getLowerBound();
-        int upper = (int)ceil.getUpperBound();
+        int lower = (int)ceil.lower;
+        int upper = (int)ceil.upper;
         if (lower != upper) {
             throw new IntervalArithmeticException("Ceil to integer is undecidable for: " + value);
         }
@@ -291,7 +291,7 @@ public class IntervalArithmeticDouble {
      * @return
      */
     public int floorLowerBoundToInt(IntervalDouble value)  throws IntervalArithmeticException {
-        double floor = Math.floor(value.getLowerBound());
+        double floor = Math.floor(value.lower);
         if (floor > (double)Integer.MAX_VALUE || floor < (double)Integer.MIN_VALUE) {
             throw new IntervalArithmeticException("Value does not fit into an integer: " + floor);
         }
@@ -305,14 +305,14 @@ public class IntervalArithmeticDouble {
      */
     public int floorToInt(IntervalDouble value)  throws IntervalArithmeticException {
         IntervalDouble floor = floor(value);
-        if (floor.getLowerBound() > (double)Integer.MAX_VALUE || floor.getLowerBound() < (double)Integer.MIN_VALUE) {
-            throw new IntervalArithmeticException("Value does not fit into an integer: " + floor.getLowerBound());
+        if (floor.lower > (double)Integer.MAX_VALUE || floor.lower < (double)Integer.MIN_VALUE) {
+            throw new IntervalArithmeticException("Value does not fit into an integer: " + floor.lower);
         }
-        if (floor.getUpperBound() > (double)Integer.MAX_VALUE || floor.getUpperBound() < (double)Integer.MIN_VALUE) {
-            throw new IntervalArithmeticException("Value does not fit into an integer: " + floor.getUpperBound());
+        if (floor.upper > (double)Integer.MAX_VALUE || floor.upper < (double)Integer.MIN_VALUE) {
+            throw new IntervalArithmeticException("Value does not fit into an integer: " + floor.upper);
         }
-        int lower = (int)floor.getLowerBound();
-        int upper = (int)floor.getUpperBound();
+        int lower = (int)floor.lower;
+        int upper = (int)floor.upper;
         if (lower != upper) {
             throw new IntervalArithmeticException("Floor to integer is undecidable for: " + value);
         }

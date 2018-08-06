@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.dp;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 import org.deidentifier.arx.reliability.IntervalDouble;
@@ -31,12 +34,6 @@ public class ParameterCalculation {
 
     /** Interval arithmetic system*/
     private final IntervalArithmeticDouble                    arithmetic;
-
-    /** Cache for a */
-    private ParameterCalculationSequenceCache<IntervalDouble> aCache = null;
-
-    /** Cache for c */
-    private ParameterCalculationSequenceCache<IntervalDouble> cCache = null;
 
     /** Result */
     private double                                            beta;
@@ -54,14 +51,11 @@ public class ParameterCalculation {
         
         this.arithmetic = new IntervalArithmeticDouble();
         
-        this.aCache = new ParameterCalculationSequenceCache<IntervalDouble>();
-        this.cCache = new ParameterCalculationSequenceCache<IntervalDouble>();
-        
         IntervalDouble epsilonInterval = this.arithmetic.createInterval(epsilon);
         IntervalDouble deltaInterval = this.arithmetic.createInterval(delta);
         
         IntervalDouble beta = calculateBeta(epsilonInterval);
-        this.beta = beta.getLowerBound();
+        this.beta = beta.lower;
         this.k = calculateK(deltaInterval, epsilonInterval, beta);
     }
     
@@ -92,6 +86,8 @@ public class ParameterCalculation {
      */
     private IntervalDouble calculateA(int n, IntervalDouble epsilon, IntervalDouble beta, IntervalDouble gamma) throws IntervalArithmeticException {
         
+        // This method performs the following calculation using interval arithmetic:
+        //
         // double gamma = calculateGamma(epsilon, beta);
         // return calculateBinomialSum((int) Math.floor(n * gamma) + 1, n, beta);
         
@@ -109,7 +105,10 @@ public class ParameterCalculation {
      */
     private IntervalDouble calculateBeta(IntervalDouble epsilon) throws IntervalArithmeticException {
         
+        // This method performs the following calculation using interval arithmetic:
+        //
         // return 1.0d - (new Exp()).value(-1.0d * epsilon);
+        
         return arithmetic.sub(arithmetic.ONE, arithmetic.exp(arithmetic.mult(arithmetic.MINUS_ONE, epsilon)));
     }
     
@@ -123,10 +122,12 @@ public class ParameterCalculation {
      */
     private IntervalDouble calculateBinomialSum(int from, int to, IntervalDouble beta) throws IntervalArithmeticException {
         
+        // This method performs the following calculation using interval arithmetic:
+        //
         // BinomialDistribution binomialDistribution = new BinomialDistribution(to, beta);
         // double sum = 0.0d;
         // for (int j = from; j <= to; ++j) {
-        // sum += binomialDistribution.probability(j);
+        //     sum += binomialDistribution.probability(j);
         // }
         // return sum;
         
@@ -152,17 +153,13 @@ public class ParameterCalculation {
      */
     private IntervalDouble calculateC(int n, IntervalDouble epsilon, IntervalDouble beta, IntervalDouble gamma) throws IntervalArithmeticException {
         
+        // This method performs the following calculation using interval arithmetic:
+        //
         // double gamma = calculateGamma(epsilon, beta);
         // return (new Exp()).value(-1.0d * n * (gamma * (new Log()).value(gamma / beta) - (gamma - beta)));
         
-        
-        //term1 = gamma * (new Log()).value(gamma / beta)
         IntervalDouble term1 = arithmetic.mult(gamma, arithmetic.log(arithmetic.div(gamma, beta)));
-        
-        // term2 = term1 - (gamma - beta))
         IntervalDouble term2 = arithmetic.sub(term1, arithmetic.sub(gamma, beta));
-        
-        // Return exp(-1.0d * n * term2);
         return arithmetic.exp(arithmetic.mult(arithmetic.MINUS_ONE, 
                                               arithmetic.mult(arithmetic.createInterval(n), term2)));   
     }
@@ -173,11 +170,16 @@ public class ParameterCalculation {
      * @param epsilon
      * @param beta
      * @param gamma
+     * @param aCache 
+     * @param cCache 
      * @return
      * @throws IntervalArithmeticException 
      */
-    private IntervalDouble calculateDelta(int k, IntervalDouble epsilon, IntervalDouble beta, IntervalDouble gamma) throws IntervalArithmeticException {
+    private IntervalDouble calculateDelta(int k, IntervalDouble epsilon, IntervalDouble beta, IntervalDouble gamma,
+                                          LinkedHashMap<Integer, IntervalDouble> aCache, LinkedHashMap<Integer, IntervalDouble> cCache) throws IntervalArithmeticException {
         
+        // This method performs the following calculation using interval arithmetic:
+        //
         // double gamma = calculateGamma(epsilon, beta);
         // int n_m = (int) Math.ceil((double) k / gamma - 1.0d);
 
@@ -219,6 +221,8 @@ public class ParameterCalculation {
      */
     private IntervalDouble calculateGamma(IntervalDouble epsilon, IntervalDouble beta) throws IntervalArithmeticException {
         
+         // This method performs the following calculation using interval arithmetic:
+        //
         // double power = (new Exp()).value(epsilon);
         // return (power - 1.0d + beta) / power;
         
@@ -237,6 +241,8 @@ public class ParameterCalculation {
      */
     private int calculateK(IntervalDouble delta, IntervalDouble epsilon, IntervalDouble beta) throws IntervalArithmeticException {
         
+        // This method performs the following calculation using interval arithmetic:
+        //
         // int k = 1;
         // for (double delta_k = Double.MAX_VALUE; delta_k > delta; ++k) {
         //     delta_k = calculateDelta(k, epsilon, beta);
@@ -245,11 +251,31 @@ public class ParameterCalculation {
         
         IntervalDouble gamma = calculateGamma(epsilon, beta);
         
+        // Prepare caches for values of the sequences a and c
+        
+        final int CACHE_SIZE = 1000;
+        
+        @SuppressWarnings({ "serial" })
+        LinkedHashMap<Integer, IntervalDouble> aCache = new LinkedHashMap<Integer, IntervalDouble>(CACHE_SIZE) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Integer, IntervalDouble> eldest) {
+                return size() > CACHE_SIZE;
+            }
+        };
+        
+        @SuppressWarnings({ "serial" })
+        LinkedHashMap<Integer, IntervalDouble> cCache = new LinkedHashMap<Integer, IntervalDouble>(CACHE_SIZE) {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<Integer, IntervalDouble> eldest) {
+                return size() > CACHE_SIZE;
+            }
+        };
+        
         int k = 1;
         IntervalDouble delta_k = arithmetic.createInterval(Double.MAX_VALUE);
         // Assure that delta_k is smaller than the desired value delta to guarantee privacy protection
         for (; !arithmetic.lessThan(delta_k, delta); ++k) {
-            delta_k = calculateDelta(k, epsilon, beta, gamma);
+            delta_k = calculateDelta(k, epsilon, beta, gamma, aCache, cCache);
         }
         return k;
     }

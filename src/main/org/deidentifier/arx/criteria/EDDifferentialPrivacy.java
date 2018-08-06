@@ -77,7 +77,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     
     /**
      * Creates a new instance which may be configured to produce deterministic output.
-     * Note: *never* use this in production. It is implemented for testing purposes, only.
+     * Note: *never* set deterministic to true in production. This parameterization is for testing purposes, only.
      * 
      * @param epsilon
      * @param delta

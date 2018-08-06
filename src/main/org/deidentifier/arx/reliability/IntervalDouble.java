@@ -30,9 +30,9 @@ public class IntervalDouble implements Serializable {
     private static final long serialVersionUID = 6012504736748464073L;
 
     /** Lower */
-    final double              lower;
+    public final double       lower;
     /** Upper */
-    final double              upper;
+    public final double       upper;
 
     /**
      * Creates a new instance
@@ -54,22 +54,6 @@ public class IntervalDouble implements Serializable {
     }
 
     /**
-     * Returns the guaranteed lower bound (inclusive)
-     * @return
-     */
-    public double getLowerBound() {
-        return lower;
-    }
-    
-    /**
-     * Returns the guaranteed upper bound (inclusive)
-     * @return
-     */
-    public double getUpperBound() {
-        return upper;
-    }
-
-    /**
      * Returns the range of this interval
      * @return
      */
@@ -80,6 +64,6 @@ public class IntervalDouble implements Serializable {
     
     @Override
     public String toString() {
-        return "[" + getLowerBound() + ", " + getUpperBound() + "]";
+        return "[" + this.lower + ", " + this.upper + "]";
     }
 }
