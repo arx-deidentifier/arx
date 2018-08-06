@@ -218,22 +218,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
 
         /**
-         * Returns whether reliable anonymization is enabled.
-         * @return
-         */
-        public boolean isReliableAnonymizationEnabled() {
-            return config.isReliableAnonymizationEnabled();
-        }
-
-        /**
-         * Returns whether reliable search process is enabled.
-         * @return
-         */
-        public boolean isReliableSearchProcessEnabled() {
-            return config.isReliableSearchProcessEnabled();
-        }
-
-        /**
          * Returns whether suppression is applied to the output of anonymous as 
          * well as non-anonymous transformations. If this flag is set to true, 
          * suppression will be applied to the output of non-anonymous transformations 
@@ -387,12 +371,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Cost/benefit configuration */
     private ARXCostBenefitConfiguration        costBenefitConfiguration              = ARXCostBenefitConfiguration.create();
-
-    /** Reliable anonymization */
-    private Boolean                            reliable                              = false;
-
-    /** Reliable search process */
-    private Boolean                            reliableSearchProcess                 = false;
 
     /** The privacy budget to use for the data-dependent differential privacy search algorithm */
     private Double                             dpSearchBudget                        = 0.1d;
@@ -856,29 +834,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return false;
     }
-    
-    /**
-     * Returns whether reliable anonymization is enabled
-     * @return
-     */
-    public boolean isReliableAnonymizationEnabled() {
-        if (this.reliable == null) {
-            this.reliable = false;
-        }
-        return reliable;
-    }
 
-    /**
-     * Returns whether reliable a reliable search process is enabled
-     * @return
-     */
-    public boolean isReliableSearchProcessEnabled() {
-        if (this.reliableSearchProcess == null) {
-            this.reliableSearchProcess = false;
-        }
-        return reliableSearchProcess;
-    }
-    
     /**
      * Returns whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
@@ -1074,22 +1030,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.metric = model;
     }
 
-    /**
-     * Enables/disables reliable anonymization
-     * @param value
-     */
-    public void setReliableAnonymizationEnabled(boolean value) {
-        this.reliable = value;
-    }
-
-    /**
-     * Enables/disables reliable search process. There should typically be no need to
-     * use this functionality, as it basically just increases execution times.
-     * @param value
-     */
-    public void setReliableSearchProcessEnabled(boolean value) {
-        this.reliableSearchProcess = value;
-    }
     /**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 

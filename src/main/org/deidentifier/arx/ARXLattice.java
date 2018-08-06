@@ -877,7 +877,6 @@ public class ARXLattice implements Serializable {
         }
         
         // Build lattice
-     // Build lattice
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             buildSingle(solutions, optimum, headermap);
             this.solutions = null;

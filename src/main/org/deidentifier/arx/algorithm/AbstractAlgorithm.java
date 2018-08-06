@@ -95,7 +95,6 @@ public abstract class AbstractAlgorithm {
     protected void computeUtilityForMonotonicMetrics(Transformation transformation) {
         if (checker.getConfiguration().getMonotonicityOfUtility() == Monotonicity.FULL &&
             transformation.getInformationLoss() == null) {
-
             // Independent evaluation or check
             if (checker.getMetric().isIndependent()) {
                 InformationLossWithBound<?> loss = checker.getMetric().getInformationLoss(transformation, (HashGroupify)null);

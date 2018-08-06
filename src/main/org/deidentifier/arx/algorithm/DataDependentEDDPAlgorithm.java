@@ -19,11 +19,8 @@ package org.deidentifier.arx.algorithm;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.math3.fraction.BigFraction;
-import org.deidentifier.arx.dp.AbstractExponentialMechanism;
-import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.dp.ExponentialMechanismReliable;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
@@ -45,16 +42,13 @@ import de.linearbits.jhpl.PredictiveProperty;
 public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     
     /** Property */
-    private final PredictiveProperty                    propertyChecked;
-
-    /** True iff this instance is reliable */
-    private final boolean                               reliable;
+    private final PredictiveProperty                 propertyChecked;
 
     /** Number of steps to be performed */
-    private final int                                   steps;
+    private final int                                steps;
 
     /** The expopnential mechanism */
-    private final AbstractExponentialMechanism<Long, ?> exponentialMechanism;
+    private final ExponentialMechanismReliable<Long> exponentialMechanism;
 
     /**
      * Creates a new instance
@@ -67,8 +61,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
-                                           boolean deterministic, int steps, double epsilonSearch, boolean reliable) {
-        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, steps, epsilonSearch, reliable);
+                                           boolean deterministic, int steps, double epsilonSearch) {
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, steps, epsilonSearch);
     }
 
     /**
@@ -81,32 +75,19 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @param reliable
      */
     private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
-                                       boolean deterministic, int steps, double epsilonSearch, boolean reliable) {
+                                       boolean deterministic, int steps, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.steps = steps;
-        this.reliable = reliable;
 
         double epsilonPerStep;
-        if (reliable) {
-            IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
-            try {
-                epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).lower;
-            } catch (IntervalArithmeticException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            epsilonPerStep = epsilonSearch / ((double)steps); 
-        }
-        
-
+        IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
         try {
-            this.exponentialMechanism = reliable ?
-                    new ExponentialMechanismReliable<Long>(epsilonPerStep, deterministic) :
-                    new ExponentialMechanism<Long>(epsilonPerStep, ExponentialMechanism.DEFAULT_PRECISION, deterministic);
-        } catch(IntervalArithmeticException e) {
+            epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).lower;
+            exponentialMechanism = new ExponentialMechanismReliable<Long>(epsilonPerStep, deterministic);
+        } catch (IntervalArithmeticException e) {
             throw new RuntimeException(e);
         }
     }
@@ -174,28 +155,16 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
             values[index] = value;
             index++;
         }
-        
-        if(reliable) {
-            BigFraction[] scores = new BigFraction[transformationIDToScore.size()];
 
-            int i = 0;
-            for (ILScore<?> score : transformationIDToScore.values()) {
-                scores[i] = ((ILScore<BigFraction>)score).getValue();
-                i++;
-            }
+        BigFraction[] scores = new BigFraction[transformationIDToScore.size()];
 
-            ((ExponentialMechanismReliable<Long>)exponentialMechanism).setDistribution(values, scores);
-        } else {
-            Double[] scores = new Double[transformationIDToScore.size()];
-
-            int i = 0;
-            for (ILScore<?> score : transformationIDToScore.values()) {
-                scores[i] = ((ILScore<Double>)score).getValue();
-                i++;
-            }
-
-            ((ExponentialMechanism<Long>)exponentialMechanism).setDistribution(values, scores);
+        int i = 0;
+        for (ILScore<?> score : transformationIDToScore.values()) {
+            scores[i] = ((ILScore<BigFraction>)score).getValue();
+            i++;
         }
+
+        exponentialMechanism.setDistribution(values, scores);
         
         return exponentialMechanism.sample();
     }
@@ -205,9 +174,8 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
     * @param transformation
     */
     private void assureChecked(final Transformation transformation) {
-        ScoreType scoreType = reliable ? ScoreType.DP_RELIABLE : ScoreType.DP;
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true, scoreType));
+            transformation.setChecked(checker.check(transformation, true, ScoreType.DP_RELIABLE));
         }
     }
 }
