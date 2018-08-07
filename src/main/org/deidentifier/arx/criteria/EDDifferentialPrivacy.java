@@ -261,6 +261,6 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     @Override
     public String toString() {
-        return "(" + epsilon + "," + delta + ")-DP";
+        return "("+epsilon+","+delta+")-DP";
     }
 }

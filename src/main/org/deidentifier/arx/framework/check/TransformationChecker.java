@@ -42,6 +42,7 @@ public class TransformationChecker {
 
     /**
      * The type of scores.
+     * TODO remove reliable
      * 
      * @author Raffael Bild
      */
@@ -49,9 +50,6 @@ public class TransformationChecker {
 
         /** Use conventional information loss. */
         CONVENTIONAL,
-
-        /** Use score function for differential privacy. */
-        DP,
 
         /** Use reliable score function for reliable differential privacy. */
         DP_RELIABLE
@@ -209,7 +207,7 @@ public class TransformationChecker {
         }
         
         // We are done with transforming and adding
-        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss, config.isReliableSearchProcessEnabled());
+        currentGroupify.stateAnalyze(node, forceMeasureInfoLoss);
         if (forceMeasureInfoLoss && !currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
@@ -219,10 +217,6 @@ public class TransformationChecker {
         InformationLoss<?> bound = null;
         
         switch (scoreType) {
-        case DP:
-            // Evaluate score function
-            loss = metric.getScore(node, currentGroupify);
-            break;
         case DP_RELIABLE:
             // Evaluate reliable score function
             loss = metric.getScoreReliable(node, currentGroupify);
@@ -237,8 +231,9 @@ public class TransformationChecker {
         
         // Return result;
         return new TransformationResult(currentGroupify.isPrivacyModelFulfilled(),
-                                        minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
-                                        loss, bound);
+                                      minimalClassSizeRequired ? currentGroupify.isMinimalClassSizeFulfilled() : null,
+                                      loss,
+                                      bound);
     }
     
     /**

@@ -149,12 +149,12 @@ public abstract class PrivacyCriterion implements Serializable{
     
     /**
      * Implement this, to enforce the criterion.
-     * @param transformation
+     * @param node TODO
      * @param entry
      *
      * @return
      */
-    public abstract boolean isAnonymous(Transformation transformation, HashGroupifyEntry entry);
+    public abstract boolean isAnonymous(Transformation node, HashGroupifyEntry entry);
 
     /**
      * Returns whether the criterion supports local recoding.
@@ -183,6 +183,7 @@ public abstract class PrivacyCriterion implements Serializable{
         }
     }
     
+
     /**
      * Returns whether the criterion is monotonic with tuple suppression.
      *

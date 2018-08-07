@@ -36,7 +36,7 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
  * 
  * @author Raffael Bild
  */
-public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanism<T, BigFraction> {
+public class ExponentialMechanismReliable<T> {
 
     /** The cumulative distribution scaled so that it consists of natural numbers */
     private BigInteger[]                            cumulativeDistribution;
@@ -92,7 +92,6 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         this.productCache = new HashMap<Pair<Integer,Integer>, BigInteger>();
     }
     
-    @Override
     public T sample() {
         
         // Draw a number within the range of the cumulative distribution
@@ -109,11 +108,15 @@ public class ExponentialMechanismReliable<T> extends AbstractExponentialMechanis
         throw new IllegalStateException("Must not happen");
     }
     
-    @Override
     public void setDistribution(T[] values, BigFraction[] scores) {
         
         // Check arguments
-        super.setDistribution(values, scores);
+        if (values.length == 0) {
+            throw new RuntimeException("No values supplied");
+        }
+        if (values.length != scores.length) {
+            throw new RuntimeException("Number of scores and values must be identical");
+        }
         
         // Initialize
         this.cumulativeDistribution = new BigInteger[scores.length];

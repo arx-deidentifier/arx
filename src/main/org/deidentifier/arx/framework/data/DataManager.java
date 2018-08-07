@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataSubset;
@@ -38,6 +37,7 @@ import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
+import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
@@ -110,15 +110,17 @@ public class DataManager {
      * @param data
      * @param dictionary
      * @param definition
-     * @param config
+     * @param privacyModels
      * @param functions
+     * @param qualityModel
      */
     public DataManager(final String[] header,
                        final DataMatrix data,
                        final Dictionary dictionary,
                        final DataDefinition definition,
-                       final ARXConfiguration config,
-                       final Map<String, DistributionAggregateFunction> functions) {
+                       final Set<PrivacyCriterion> privacyModels,
+                       final Map<String, DistributionAggregateFunction> functions,
+                       final Metric<?> qualityModel) {
 
         // Store basic info
         this.header = header;
@@ -153,7 +155,7 @@ public class DataManager {
          * Collect non-generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsNotGeneralized = new HashSet<String>();
-        if (config.getQualityModel().isAbleToHandleMicroaggregation()) {
+        if (qualityModel.isAbleToHandleMicroaggregation()) {
             hotQIsNotGeneralized.addAll(qisNotGeneralized);
         } 
 
@@ -161,7 +163,7 @@ public class DataManager {
          * Collect generalized aggregated QIs which are hot
          ***************************************************/
         Set<String> hotQIsGeneralized = new HashSet<String>();
-        if (config.getQualityModel().isAbleToHandleClusteredMicroaggregation()) {
+        if (qualityModel.isAbleToHandleClusteredMicroaggregation()) {
             hotQIsGeneralized.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
             throw new RuntimeException("Not implemented"); // TODO: SSE
         }
@@ -233,18 +235,19 @@ public class DataManager {
         }
         
         // Change to fixed generalization scheme when using differential privacy
-        index = 0;
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
-
+        for (PrivacyCriterion c : privacyModels) {
+            
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
                 EDDifferentialPrivacy edpModel = (EDDifferentialPrivacy)c;
                 if (!edpModel.isDataDependent()) {
+                    
                     // Extract scheme
                     DataGeneralizationScheme scheme = edpModel.getGeneralizationScheme();
 
                     // For each attribute
+                    index = 0;
                     for (final String attribute : header) {
 
                         // This is a generalized quasi-identifier
@@ -263,7 +266,7 @@ public class DataManager {
 
         // Build map with hierarchies for sensitive attributes
         this.hierarchiesAnalyzed = new GeneralizationHierarchy[this.dataAnalyzed.getColumns().length];
-        for (PrivacyCriterion c : config.getPrivacyModels()) {
+        for (PrivacyCriterion c : privacyModels) {
             if (c instanceof HierarchicalDistanceTCloseness) {
                 HierarchicalDistanceTCloseness t = (HierarchicalDistanceTCloseness) c;
                 String attribute = t.getAttribute();
@@ -277,7 +280,7 @@ public class DataManager {
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
     }
-    
+
     /**
      * For creating a projected instance
      * @param dataAnalyzed

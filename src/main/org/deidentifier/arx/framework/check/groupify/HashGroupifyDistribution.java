@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyDistribution.PrivacyCondition.State;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLossWithBound;
@@ -42,8 +41,6 @@ import org.deidentifier.arx.metric.v2.MetricMDStatic;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
-import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
-import org.deidentifier.arx.reliability.IntervalDouble;
 import org.deidentifier.arx.risk.RiskModelHistogram;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
@@ -79,15 +76,15 @@ public class HashGroupifyDistribution {
     }
 
     /** The backing map */
-    private IntIntOpenHashMap   distribution  = new IntIntOpenHashMap();
+    private IntIntOpenHashMap   distribution = new IntIntOpenHashMap();
     /** The number of suppressed tuples */
-    private int                 numSuppressed = 0;
+    private int                 numSuppressed   = 0;
     /** Entries that can be suppressed */
     private HashGroupifyEntry[] entries;
     /** Number of tuples in the data set */
-    private int                 numRecords    = 0;
+    private double              numRecords    = 0;
     /** Number of classes in the data set */
-    private int                 numClasses    = 0;
+    private double              numClasses   = 0;
 
     /**
      * Creates a new instance
@@ -181,7 +178,7 @@ public class HashGroupifyDistribution {
      * @return
      */
     public double getAverageClassSize() {
-        return (double)numRecords / (double)numClasses;
+        return numRecords / numClasses;
     }
 
     /**
@@ -190,7 +187,7 @@ public class HashGroupifyDistribution {
      * @return
      */
     public double getFractionOfRecordsInClassesOfSize(int size) {
-        return (double)distribution.get(size) * (double)size / (double)numRecords;
+        return (double)distribution.get(size) * (double)size / numRecords;
     }
 
     /**
@@ -205,7 +202,7 @@ public class HashGroupifyDistribution {
      * @return
      */
     public int getNumRecords() {
-        return this.numRecords;
+        return (int)this.numRecords;
     }
     
     /**
@@ -215,20 +212,7 @@ public class HashGroupifyDistribution {
     public int getNumSuppressedRecords() {
         return this.numSuppressed;
     }
-
-    /**
-     * Returns a reliable interval around the average class size
-     * @return
-     */
-    public IntervalDouble getReliableAverageClassSize() throws ReliabilityException {
-        
-        try {
-        IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
-        return ia.div(ia.createInterval(numRecords), ia.createInterval(numClasses));
-        } catch (Exception e) {
-            throw new ReliabilityException(e);
-        }
-    }  
+    
 
     /**
      * Suppresses entries until the condition is fulfilled

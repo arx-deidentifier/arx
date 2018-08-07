@@ -125,14 +125,14 @@ public class TransformationApplicator {
         
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
-        currentGroupify.stateAnalyze(transformation, true, config.isReliableAnonymizationEnabled());
+        currentGroupify.stateAnalyze(transformation, true);
         if (!currentGroupify.isPrivacyModelFulfilled() && !config.isSuppressionAlwaysEnabled()) {
             currentGroupify.stateResetSuppression();
         }
         
         // Determine information loss
         InformationLoss<?> loss = transformation.getInformationLoss();
-        if (config.isReliableAnonymizationEnabled() || loss == null) {
+        if (loss == null) {
             loss = metric.getInformationLoss(transformation, currentGroupify).getInformationLoss();
         }
         

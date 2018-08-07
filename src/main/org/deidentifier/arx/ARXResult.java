@@ -133,8 +133,9 @@ public class ARXResult {
                                               dataArray,
                                               dictionary,
                                               handle.getDefinition(),
-                                              config,
-                                              getAggregateFunctions(handle.getDefinition()));
+                                              config.getPrivacyModels(),
+                                              getAggregateFunctions(handle.getDefinition()),
+                                              config.getQualityModel());
 
         // Update handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
