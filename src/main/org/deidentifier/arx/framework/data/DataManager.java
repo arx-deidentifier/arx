@@ -267,21 +267,6 @@ public class DataManager {
         // finalize dictionary
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
-
-        // Store research subset
-        for (PrivacyCriterion c : privacyModels) {
-            if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this, null);
-            }
-            if (c.isSubsetAvailable()) {
-                DataSubset _subset = c.getDataSubset();
-                if (_subset != null) {
-                    subset = _subset.getSet();
-                    subsetSize = _subset.getArray().length;
-                    break;
-                }
-            }
-        }
     }
 
     /**
@@ -330,6 +315,14 @@ public class DataManager {
         // The projected instance delegates these methods to the original data manager
         this.subset = null;
         this.subsetSize = 0;
+    }
+
+    /**
+     * Returns data configuring microaggregation
+     * @return
+     */
+    public DataAggregationInformation getAggregationInformation() {
+        return this.aggregationInformation;
     }
 
     /**
@@ -387,7 +380,7 @@ public class DataManager {
 
     /**
      * Returns the distribution of the given sensitive attribute in the original dataset. 
-     * Required for t-closeness.
+     * Required for multiple privacy models.
      * 
      * @param attribute
      * @return distribution
@@ -489,14 +482,6 @@ public class DataManager {
 
     public int[] getHierarchiesMinLevels() {
         return generalizationLevelsMaximum;
-    }
-
-    /**
-     * Returns data configuring microaggregation
-     * @return
-     */
-    public DataAggregationInformation getAggregationInformation() {
-        return this.aggregationInformation;
     }
 
     /**
@@ -682,6 +667,17 @@ public class DataManager {
         final int index = dataAnalyzed.getIndexOf(attribute);
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
+    }
+
+    /**
+     * Set a subset created by the differential privacy model
+     * @param _subset
+     */
+    public void setSubset(DataSubset _subset) {
+        if (_subset != null) {
+            subset = _subset.getSet();
+            subsetSize = _subset.getArray().length;
+        }
     }
     
     /**
