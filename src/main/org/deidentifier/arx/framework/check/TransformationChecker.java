@@ -42,7 +42,6 @@ public class TransformationChecker {
 
     /**
      * The type of scores.
-     * TODO remove reliable
      * 
      * @author Raffael Bild
      */
