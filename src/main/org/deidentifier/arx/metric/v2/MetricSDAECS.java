@@ -117,7 +117,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         }
         
         // Calculate the score. Dividing by the sensitivity is not required because this score function has a sensitivity of one.
-        BigFraction score = new BigFraction((double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d));
+        BigFraction score = new BigFraction(numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d));
         return new ILScore(score);
     }
     
