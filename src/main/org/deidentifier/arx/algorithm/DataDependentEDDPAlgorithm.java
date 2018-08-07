@@ -39,7 +39,7 @@ import de.linearbits.jhpl.PredictiveProperty;
  * 
  * @author Raffael Bild
  */
-public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
+public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     
     /** Property */
     private final PredictiveProperty                 propertyChecked;
@@ -57,7 +57,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @param deterministic
      * @param steps
      * @param epsilonSearch
-     * @param reliable
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
@@ -72,7 +71,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
      * @param deterministic
      * @param steps
      * @param epsilonSearch
-     * @param reliable
      */
     private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
                                        boolean deterministic, int steps, double epsilonSearch) {
@@ -144,7 +142,22 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         trackOptimum(bestTransformation);
         return false;
     }
+    
+    /**
+    * Makes sure that the given Transformation has been checked
+    * @param transformation
+    */
+    private void assureChecked(final Transformation transformation) {
+        if (!transformation.hasProperty(propertyChecked)) {
+            transformation.setChecked(checker.check(transformation, true, ScoreType.DP_RELIABLE));
+        }
+    }
 
+    /**
+     * Executes the exponential mechanism
+     * @param transformationIDToScore
+     * @return
+     */
     private long executeExponentialMechanism(Map<Long, ILScore> transformationIDToScore) {
 
         Long[] values = new Long[transformationIDToScore.size()];
@@ -166,15 +179,5 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm{
         exponentialMechanism.setDistribution(values, scores);
         
         return exponentialMechanism.sample();
-    }
-
-    /**
-    * Makes sure that the given Transformation has been checked
-    * @param transformation
-    */
-    private void assureChecked(final Transformation transformation) {
-        if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true, ScoreType.DP_RELIABLE));
-        }
     }
 }

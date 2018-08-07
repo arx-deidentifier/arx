@@ -17,8 +17,6 @@
 
 package org.deidentifier.arx.metric.v2;
 
-import java.util.Arrays;
-
 import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
@@ -106,25 +104,24 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
-        double penaltySuppressed = 0;
-        double penaltyNotSuppressed = 0;
-        int[] transformation = node.getGeneralization();
+        int numSuppressed = 0;
+        BigFraction penaltyNotSuppressed = BigFraction.ZERO;
         
         // Sum up penalties
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
             if (m.isNotOutlier) {
-                penaltyNotSuppressed += (double)m.count * (double)m.count;
+                penaltyNotSuppressed = penaltyNotSuppressed.add(new BigFraction((double)m.count * (double)m.count));
             } else {
-                penaltySuppressed += m.count;
+                numSuppressed += m.count;
             }
-            penaltySuppressed += m.pcount - m.count;
+            numSuppressed += m.pcount - m.count;
             m = m.nextOrdered;
         }
-        penaltySuppressed *= numRows;
+        BigFraction penaltySuppressed = new BigFraction((double)numRows * (double)numSuppressed);
         
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        BigFraction score = BigFraction.MINUS_ONE.multiply(new BigFraction(penaltySuppressed + penaltyNotSuppressed));
+        BigFraction score = BigFraction.MINUS_ONE.multiply(penaltySuppressed.add(penaltyNotSuppressed));
         score = score.divide(new BigFraction(numRows).multiply((k == 1d) ? new BigFraction(5) : new BigFraction(k * k).divide(new BigFraction(k - 1d)).add(BigFraction.ONE)));
         
         // Return score

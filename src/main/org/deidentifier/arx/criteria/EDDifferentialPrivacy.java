@@ -156,22 +156,6 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         return k;
     }
     
-    /**
-     * Returns whether this instance is data-dependent
-     * @return
-     */
-    public boolean isDataDependent() {
-        return this.generalization == null;
-    }
-    
-    /**
-     * Returns whether this instance is deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
-    }
-
     @Override
     public int getMinimalClassSize() {
         return getK();
@@ -183,7 +167,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-
+    
     /**
      * Sets k and beta and creates a random sample based on beta if required
      *
@@ -232,6 +216,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= getK();
+    }
+    
+    /**
+     * Returns whether this instance is data-dependent
+     * @return
+     */
+    public boolean isDataDependent() {
+        return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
     }
 
     @Override

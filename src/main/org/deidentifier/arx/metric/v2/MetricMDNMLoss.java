@@ -382,13 +382,15 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this.shares = manager.getDomainShares();
 
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-            // Store minimal size of equivalence classes
-            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            this.k = (double)dpCriterion.getMinimalClassSize();
             // Assure that no overflow may occur during the computation of reliable scores
             if(this.tuples * (double)getDimensionsGeneralized() > (double)Long.MAX_VALUE) {
                 throw new RuntimeException("Too many records and attributes to perform reliable computations");
             }
+            
+            // Store minimal size of equivalence classes
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            this.k = (double)dpCriterion.getMinimalClassSize();
+            
             // Save reliable domain shares
             this.sharesReliable = manager.getDomainSharesReliable();
         }

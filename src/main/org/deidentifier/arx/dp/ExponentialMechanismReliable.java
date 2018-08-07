@@ -37,18 +37,18 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
  * @author Raffael Bild
  */
 public class ExponentialMechanismReliable<T> {
+    
+    /** The base having the form of a fraction n/d */
+    private BigFraction                             base;
 
     /** The cumulative distribution scaled so that it consists of natural numbers */
     private BigInteger[]                            cumulativeDistribution;
-
-    /** The random generator */
-    private Random                                  random;
-
+    
     /** The values to sample from */
     private T[]                                     values;
 
-    /** The base having the form of a fraction n/d */
-    private BigFraction                             base;
+    /** The random generator */
+    private Random                                  random;
 
     /** A cache mapping an exponent e to n^e used to increase performance */
     private Map<Integer, BigInteger>                numeratorCache;
@@ -70,7 +70,7 @@ public class ExponentialMechanismReliable<T> {
 
     /**
      * Creates a new instance which may be configured to produce deterministic output.
-     * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
+     * Note: *never* set deterministic to true in production. This parameterization is for testing purposes, only.
      * 
      * @param epsilon
      * @param deterministic
@@ -92,6 +92,10 @@ public class ExponentialMechanismReliable<T> {
         this.productCache = new HashMap<Pair<Integer,Integer>, BigInteger>();
     }
     
+    /**
+     * Returns a value drawn from the probability distribution
+     * @return
+     */
     public T sample() {
         
         // Draw a number within the range of the cumulative distribution
@@ -108,6 +112,11 @@ public class ExponentialMechanismReliable<T> {
         throw new IllegalStateException("Must not happen");
     }
     
+    /**
+     * Builds a probability distribution
+     * @param values
+     * @param scores
+     */
     public void setDistribution(T[] values, BigFraction[] scores) {
         
         // Check arguments

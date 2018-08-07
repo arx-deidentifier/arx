@@ -17,16 +17,16 @@
 package org.deidentifier.arx.common;
 
 /**
- * A very basic map using golden ratio hashing and linear probing which takes doubles as values.
+ * A very basic map using golden ratio hashing and linear probing.
  * 
  * @author Fabian Prasser
  */
 public class FastIntDoubleMap {
 
-    /** The keys. */
+    /** The entry array. */
     private final int[]    keys;
 
-    /** The values. */
+    /** The entry array. */
     private final double[] values;
 
     /** The mask */
@@ -35,7 +35,7 @@ public class FastIntDoubleMap {
     /** The min */
     private int            min;
 
-    /** The max */
+    /** The min */
     private int            max;
     
     /**

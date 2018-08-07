@@ -142,7 +142,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
-        int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
         IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
