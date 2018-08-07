@@ -40,6 +40,7 @@ import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
 import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
+import org.deidentifier.arx.metric.v2.DomainShareReliable;
 import org.deidentifier.arx.metric.v2.DomainShareRedaction;
 
 import cern.colt.Sorting;
@@ -57,43 +58,46 @@ import com.carrotsearch.hppc.IntOpenHashSet;
 public class DataManager {
 
     /** Data. */
-    private final Data                       dataAnalyzed;
+    private final Data                        dataAnalyzed;
 
     /** Data */
-    private final Data                       dataGeneralized;
+    private final Data                        dataGeneralized;
 
     /** Data. */
-    private final Data                       dataInput;
+    private final Data                        dataInput;
 
     /** The data definition */
-    private final DataDefinition             definition;
+    private final DataDefinition              definition;
 
     /** The domain shares */
-    private DomainShare[]                    shares;
+    private DomainShare[]                     shares;
+
+    /** The reliable domain shares */
+    private DomainShareReliable[]             sharesReliable;
 
     /** The original input header. */
-    private final String[]                   header;
+    private final String[]                    header;
 
     /** Hierarchies for generalized attributes */
-    private final GeneralizationHierarchy[]  hierarchiesGeneralized;
+    private final GeneralizationHierarchy[]   hierarchiesGeneralized;
 
     /** Hierarchies for analyzed attributes */
-    private final GeneralizationHierarchy[]  hierarchiesAnalyzed;
+    private final GeneralizationHierarchy[]   hierarchiesAnalyzed;
 
     /** The maximum level for each QI. */
-    private final int[]                      generalizationLevelsMinimum;
+    private final int[]                       generalizationLevelsMinimum;
 
     /** The minimum level for each QI. */
-    private final int[]                      generalizationLevelsMaximum;
+    private final int[]                       generalizationLevelsMaximum;
 
     /** Information about micro-aggregation */
-    private final DataAggregationInformation aggregationInformation;
+    private final DataAggregationInformation  aggregationInformation;
 
     /** The research subset, if any. */
-    private RowSet                           subset     = null;
+    private RowSet                            subset     = null;
 
     /** The size of the research subset. */
-    private int                              subsetSize = 0;
+    private int                               subsetSize = 0;
 
     /**
      * Creates a new data manager from pre-encoded data.
@@ -232,17 +236,21 @@ public class DataManager {
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
-                // Extract scheme
-                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
-                
-                // For each attribute
-                index = 0;
-                for (final String attribute : header) {
+                EDDifferentialPrivacy edpModel = (EDDifferentialPrivacy)c;
+                if (!edpModel.isDataDependent()) {
                     
-                    // This is a generalized quasi-identifier
-                    if (qisGeneralized.contains(attribute)) {
-                        this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
-                        this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                    // Extract scheme
+                    DataGeneralizationScheme scheme = edpModel.getGeneralizationScheme();
+
+                    // For each attribute
+                    index = 0;
+                    for (final String attribute : header) {
+
+                        // This is a generalized quasi-identifier
+                        if (qisGeneralized.contains(attribute)) {
+                            this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                            this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                        }
 
                         // Next quasi-identifier
                         index++;
@@ -267,21 +275,6 @@ public class DataManager {
         // finalize dictionary
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
-
-        // Store research subset
-        for (PrivacyCriterion c : privacyModels) {
-            if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this, null);
-            }
-            if (c.isSubsetAvailable()) {
-                DataSubset _subset = c.getDataSubset();
-                if (_subset != null) {
-                    subset = _subset.getSet();
-                    subsetSize = _subset.getArray().length;
-                    break;
-                }
-            }
-        }
     }
 
     /**
@@ -330,6 +323,14 @@ public class DataManager {
         // The projected instance delegates these methods to the original data manager
         this.subset = null;
         this.subsetSize = 0;
+    }
+
+    /**
+     * Returns data configuring microaggregation
+     * @return
+     */
+    public DataAggregationInformation getAggregationInformation() {
+        return this.aggregationInformation;
     }
 
     /**
@@ -387,7 +388,7 @@ public class DataManager {
 
     /**
      * Returns the distribution of the given sensitive attribute in the original dataset. 
-     * Required for t-closeness.
+     * Required for multiple privacy models.
      * 
      * @param attribute
      * @return distribution
@@ -440,6 +441,34 @@ public class DataManager {
         // Return
         return this.shares;
     }
+    
+    /**
+     * Returns the reliable domain shares for all generalized quasi-identifiers
+     * @return
+     */
+    public DomainShareReliable[] getDomainSharesReliable() {
+
+        // Build on-demand
+        if (this.sharesReliable == null) {
+            
+            // Compute domain shares
+            this.sharesReliable = new DomainShareReliable[dataGeneralized.getHeader().length];
+            for (int i=0; i<sharesReliable.length; i++) {
+                
+                // Extract info
+                String attribute = dataGeneralized.getHeader()[i];
+                String[][] hierarchy = definition.getHierarchy(attribute);
+                
+                // Create reliable materialized hierarchies
+                this.sharesReliable[i] = new DomainShareReliable(hierarchy, 
+                                                            dataGeneralized.getDictionary().getMapping()[i],
+                                                            hierarchiesGeneralized[i].getArray());
+            }
+        }
+        
+        // Return
+        return this.sharesReliable;
+    }
 
     /**
      * The original data header.
@@ -489,14 +518,6 @@ public class DataManager {
 
     public int[] getHierarchiesMinLevels() {
         return generalizationLevelsMaximum;
-    }
-
-    /**
-     * Returns data configuring microaggregation
-     * @return
-     */
-    public DataAggregationInformation getAggregationInformation() {
-        return this.aggregationInformation;
     }
 
     /**
@@ -682,6 +703,17 @@ public class DataManager {
         final int index = dataAnalyzed.getIndexOf(attribute);
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
+    }
+
+    /**
+     * Set a subset created by the differential privacy model
+     * @param _subset
+     */
+    public void setSubset(DataSubset _subset) {
+        if (_subset != null) {
+            subset = _subset.getSet();
+            subsetSize = _subset.getArray().length;
+        }
     }
     
     /**

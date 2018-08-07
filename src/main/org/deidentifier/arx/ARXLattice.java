@@ -33,6 +33,7 @@ import java.util.Set;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.ARXProcessStatistics.Step;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -876,8 +877,13 @@ public class ARXLattice implements Serializable {
         }
         
         // Build lattice
-        build(optimum, headermap);
-        
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            buildSingle(solutions, optimum, headermap);
+            this.solutions = null;
+        } else {
+            build(optimum, headermap);
+        }
+
         // find bottom node
         outer: for (int i = 0; i < this.levels.length; i++) {
             final ARXNode[] level = this.levels[i];
@@ -1195,6 +1201,36 @@ public class ARXLattice implements Serializable {
         }
         createRelationships(solutions, solutions.getTop().getIdentifier());
         createRelationships(solutions, solutions.getBottom().getIdentifier());
+    }
+    
+    /**
+     * Build an ARX lattice for a solution space with only one element
+     * @param solutions 
+     * @param optimum
+     * @param headermap
+     */
+    private void buildSingle(SolutionSpace solutions, final Transformation optimum, Map<String, Integer> headermap) {
+
+        // Init
+        this.size = 1;
+        
+        // Generate node
+        ARXNode node = new ARXNode(this,
+                                   solutions,
+                                   optimum,
+                                   headermap);
+        node.successors = new ARXNode[0];
+        node.predecessors = new ARXNode[0];
+        
+        // Store optimum
+        this.optimum = node;
+        
+        // Generate level arrays
+        this.levels = new ARXNode[optimum.getLevel() + 1][];
+        for (int i = 0; i < levels.length - 1; i++) {
+            this.levels[i] = new ARXNode[0];
+        }
+        this.levels[optimum.getLevel()] = new ARXNode[]{node};
     }
 
     /**

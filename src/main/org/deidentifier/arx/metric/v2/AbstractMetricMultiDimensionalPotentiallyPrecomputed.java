@@ -128,6 +128,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     public double getGeneralizationSuppressionFactor() {
         return defaultMetric.getGeneralizationSuppressionFactor();
     }
+    
+    @Override
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
+        return precomputed ?
+               precomputedMetric.getScoreReliable(node, groupify) :
+               defaultMetric.getScoreReliable(node, groupify);
+    }
 
     @Override
     public double getSuppressionFactor() {
@@ -143,6 +150,11 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     @Override
     public boolean isPrecomputed() {
         return this.precomputed;
+    }
+    
+    @Override
+    public boolean isReliableScoreFunctionSupported() {
+        return isPrecomputed() ? precomputedMetric.isReliableScoreFunctionSupported() : defaultMetric.isReliableScoreFunctionSupported();
     }
 
     /**

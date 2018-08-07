@@ -17,11 +17,15 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -31,30 +35,39 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
+import com.carrotsearch.hppc.ObjectLongOpenHashMap;
+
 /**
  * This class implements a variant of the Loss metric.
  *
  * @author Fabian Prasser
+ * @author Raffael Bild
  */
 public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     /** SUID. */
-    private static final long serialVersionUID = -573670902335136600L;
+    private static final long     serialVersionUID = -573670902335136600L;
 
     /** Total number of tuples, depends on existence of research subset. */
-    private double            tuples;
+    private double                tuples;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]     shares;
+    private DomainShare[]         shares;
+
+    /** Reliable domain shares for each dimension. */
+    private DomainShareReliable[] sharesReliable;
 
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      gFactor;
-    
+    private final double          gFactor;
+
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      gsFactor;
-    
+    private final double          gsFactor;
+
     /** We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      sFactor;
+    private final double          sFactor;
+
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private double                k;
     
     /**
      * Default constructor which treats all transformation methods equally.
@@ -63,8 +76,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this(0.5d, AggregateFunction.GEOMETRIC_MEAN);
     }
 
-    /**
-     * Default constructor which treats all transformation methods equally.
+    /** Default constructor which treats all transformation methods equally.
      *
      * @param function
      */
@@ -121,6 +133,64 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public String getName() {
         return "Loss";
     }
+
+    @Override
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        List<ObjectLongOpenHashMap<BigFraction>> dimensionSharesToCount =
+                new ArrayList<ObjectLongOpenHashMap<BigFraction>>(dimensionsGeneralized);
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+            dimensionSharesToCount.add(new ObjectLongOpenHashMap<BigFraction>());
+        }
+
+        // Calculate counts
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        long numOutliers = 0;
+        while (m != null) {
+            m.read();
+            for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+                if (m.count>0) {
+                    if (!m.isNotOutlier) {
+                        numOutliers += m.count;
+                    } else {
+                        int value = m.next();
+                        int level = transformation[dimension];
+                        BigFraction shareReliable = sharesReliable[dimension].getShare(value, level);
+                        ObjectLongOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
+                        sharesToCount.putOrAdd(shareReliable, m.count, m.count);
+                    }
+                }
+                numOutliers += m.pcount - m.count;
+            }
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        BigFraction score = new BigFraction(0);
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+            
+            ObjectLongOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
+            final boolean[] states = sharesToCount.allocated;
+            final long[] counts = sharesToCount.values;
+            final Object[] sharesReliable = sharesToCount.keys;
+            
+            for (int i=0; i<states.length; i++) {
+                if (states[i]) {
+                    score = score.add(((BigFraction)(sharesReliable[i])).multiply(counts[i]));
+                }
+            }
+        }
+        score = score.add(numOutliers);
+
+        // Divide by sensitivity and multiply with -1 so that higher values are better
+        score = score.multiply(new BigFraction(-1, dimensionsGeneralized));
+        if (k > 1) score = score.divide(new BigFraction(k - 1d));
+
+        // Return
+        return new ILScore(score);
+    }
     
     @Override
     public double getSuppressionFactor() {
@@ -134,6 +204,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+
+    @Override
+    public boolean isReliableScoreFunctionSupported() {
         return true;
     }
 
@@ -305,6 +380,20 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         
         // Save domain shares
         this.shares = manager.getDomainShares();
+
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            // Assure that no overflow may occur during the computation of reliable scores
+            if(this.tuples * (double)getDimensionsGeneralized() > (double)Long.MAX_VALUE) {
+                throw new RuntimeException("Too many records and attributes to perform reliable computations");
+            }
+            
+            // Store minimal size of equivalence classes
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            this.k = (double)dpCriterion.getMinimalClassSize();
+            
+            // Save reliable domain shares
+            this.sharesReliable = manager.getDomainSharesReliable();
+        }
         
         // Min and max
         double[] min = new double[getDimensions()];

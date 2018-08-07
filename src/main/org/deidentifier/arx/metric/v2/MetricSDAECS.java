@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -31,6 +32,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricSDAECS extends AbstractMetricSingleDimensional {
 
@@ -93,7 +95,39 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
+        
+        // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
+        
+        boolean hasSuppressed = false;
+        int numberOfNonSuppressedClasses = 0;
+        
+        HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
+        while (entry != null) {
+            if (!entry.isNotOutlier && entry.count > 0 || entry.pcount > entry.count) {
+                // The equivalence class is suppressed or contains records removed by sampling
+                hasSuppressed = true;
+            }
+            if (entry.isNotOutlier && entry.count > 0) {
+                // The equivalence class contains records which are not suppressed
+                numberOfNonSuppressedClasses++;
+            }
+            // Next group
+            entry = entry.nextOrdered;
+        }
+        
+        // Calculate the score. Dividing by the sensitivity is not required because this score function has a sensitivity of one.
+        BigFraction score = new BigFraction(numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d));
+        return new ILScore(score);
+    }
+    
+    @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isReliableScoreFunctionSupported() {
         return true;
     }
 
