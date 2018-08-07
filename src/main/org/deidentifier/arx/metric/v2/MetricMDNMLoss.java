@@ -133,40 +133,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public String getName() {
         return "Loss";
     }
-    
-    @Override
-    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
-        // Prepare
-        int[] transformation = node.getGeneralization();
-        int dimensionsGeneralized = getDimensionsGeneralized();
-
-        // Compute score
-        double score = 0d;
-        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
-        while (m != null) {
-            m.read();
-            for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                if (m.count>0) {
-                    int value = m.next();
-                    int level = transformation[dimension];
-                    double share = (double)m.count * shares[dimension].getShare(value, level);
-                    score += m.isNotOutlier ? share : m.count;
-                }
-                score += m.pcount - m.count;
-            }
-            m = m.nextOrdered;
-        }
-
-        // Divide by sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / dimensionsGeneralized;
-        if (k > 1) score /= k - 1d;
-
-        // Return
-        return new ILScoreDouble(score);
-    }
 
     @Override
-    public ILScoreBigFraction getScoreReliable(final Transformation node, final HashGroupify groupify) {
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
         // Prepare
         int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
@@ -220,7 +189,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         if (k > 1) score = score.divide(new BigFraction(k - 1d));
 
         // Return
-        return new ILScoreBigFraction(score);
+        return new ILScore(score);
     }
     
     @Override
@@ -240,11 +209,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     @Override
     public boolean isReliableScoreFunctionSupported() {
-        return true;
-    }
-
-    @Override
-    public boolean isScoreFunctionSupported() {
         return true;
     }
 

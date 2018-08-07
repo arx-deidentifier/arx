@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -94,8 +95,8 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
-
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
+        
         // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
         
         boolean hasSuppressed = false;
@@ -116,10 +117,8 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
         }
         
         // Calculate the score. Dividing by the sensitivity is not required because this score function has a sensitivity of one.
-        double score = (double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d);
-        
-        // Return
-        return new ILScoreDouble(score);
+        BigFraction score = new BigFraction((double)numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d));
+        return new ILScore(score);
     }
     
     @Override
@@ -128,7 +127,7 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    public boolean isScoreFunctionSupported() {
+    public boolean isReliableScoreFunctionSupported() {
         return true;
     }
 

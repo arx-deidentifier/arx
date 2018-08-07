@@ -553,7 +553,7 @@ public class ARXAnonymizer { // NO_UCD
                 throw new IllegalArgumentException("The privacy parameter delta must be > 0");
             }
             if (edpModel.isDataDependent()) {
-                if (!config.getQualityModel().isScoreFunctionSupported()) {
+                if (!config.getQualityModel().isReliableScoreFunctionSupported()) {
                     throw new IllegalArgumentException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
                 }
                 if (config.getDPSearchBudget() <= 0) {

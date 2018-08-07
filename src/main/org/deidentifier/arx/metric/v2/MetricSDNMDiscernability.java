@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.util.Arrays;
+
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
@@ -100,11 +103,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
-
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
+        
         // Prepare
         double penaltySuppressed = 0;
         double penaltyNotSuppressed = 0;
+        int[] transformation = node.getGeneralization();
         
         // Sum up penalties
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
@@ -120,14 +124,15 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         penaltySuppressed *= numRows;
         
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        double score = -1d * (penaltySuppressed + penaltyNotSuppressed) /
-                ((double)numRows * ((k == 1d) ? 5d : k * k / (k - 1d) + 1d));
+        BigFraction score = BigFraction.MINUS_ONE.multiply(new BigFraction(penaltySuppressed + penaltyNotSuppressed));
+        score = score.divide(new BigFraction(numRows).multiply((k == 1d) ? new BigFraction(5) : new BigFraction(k * k).divide(new BigFraction(k - 1d)).add(BigFraction.ONE)));
         
-        return new ILScoreDouble(score);
+        // Return score
+        return new ILScore(score);
     }
     
     @Override
-    public boolean isScoreFunctionSupported() {
+    public boolean isReliableScoreFunctionSupported() {
         return true;
     }
 

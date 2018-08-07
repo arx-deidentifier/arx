@@ -1,5 +1,6 @@
 package org.deidentifier.arx.metric.v2;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
@@ -9,21 +10,26 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Raffael Bild
  *
  */
-public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T> {
+public class ILScore extends InformationLoss<BigFraction> {
 
     /** SVUID. */
     private static final long serialVersionUID = -2638719458508437194L;
 
     /** Value */
-    private T                 value;
+    private BigFraction                 value;
 
     /**
      * Creates a new instance.
      *
      * @param value
      */
-    ILScore(final T value) {
+    ILScore(final BigFraction value) {
         this.value = value;
+    }
+    
+    @Override
+    public InformationLoss<BigFraction> clone() {
+        return new ILScore(getValue());
     }
 
     @Override
@@ -33,8 +39,7 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
                     other.getClass().getSimpleName() +
                     ")");
         }
-        @SuppressWarnings("unchecked")
-        T otherValue = ((InformationLoss<T>)other).getValue();
+        BigFraction otherValue = ((ILScore)other).getValue();
         return value.compareTo(otherValue) * -1;
     }
 
@@ -43,13 +48,12 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
         if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
-        @SuppressWarnings("unchecked")
-        T otherValue = ((InformationLoss<T>)obj).getValue();
+        BigFraction otherValue = ((ILScore)obj).getValue();
         return this.value.equals(otherValue);
     }
     
     @Override
-    public T getValue() {
+    public BigFraction getValue() {
         return value;
     }
 
@@ -71,6 +75,14 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
             this.value = convert(other).value;
         }
     }
+    
+    @Override
+    public double relativeTo(InformationLoss<?> min, InformationLoss<?> max) {
+        BigFraction _min = convert(min).getValue();
+        BigFraction _max = convert(max).getValue();
+        if (_max.subtract(_min).equals(new BigFraction(0))) return 0d;
+        else return (getValue().subtract(_min)).divide(_max.subtract(_min)).doubleValue();
+    }
 
     @Override
     public String toString() {
@@ -83,15 +95,14 @@ public abstract class ILScore<T extends Comparable<T>> extends InformationLoss<T
      * @param other
      * @return
      */
-    @SuppressWarnings("unchecked")
-    protected ILScore<T> convert(InformationLoss<?> other) {
+    protected ILScore convert(InformationLoss<?> other) {
         if (other == null) return null;
         if (!other.getClass().equals(this.getClass())) {
             throw new IllegalArgumentException("Incompatible class (" +
                                                other.getClass().getSimpleName() +
                                                ")");
         } else {
-            return (ILScore<T>) other;
+            return (ILScore)other;
         }
     }
 

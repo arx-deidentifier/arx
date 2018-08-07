@@ -35,7 +35,6 @@ import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
-import org.deidentifier.arx.exceptions.ReliabilityException;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.metric.Metric;
 import org.deidentifier.arx.metric.v2.DomainShare;
@@ -43,9 +42,6 @@ import org.deidentifier.arx.metric.v2.DomainShareInterval;
 import org.deidentifier.arx.metric.v2.DomainShareMaterialized;
 import org.deidentifier.arx.metric.v2.DomainShareReliable;
 import org.deidentifier.arx.metric.v2.DomainShareRedaction;
-import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
-import org.deidentifier.arx.reliability.IntervalArithmeticException;
-import org.deidentifier.arx.reliability.IntervalDouble;
 
 import cern.colt.Sorting;
 import cern.colt.function.IntComparator;

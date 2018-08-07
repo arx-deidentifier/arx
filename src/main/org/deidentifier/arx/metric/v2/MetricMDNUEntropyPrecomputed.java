@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
@@ -138,9 +139,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
-    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
-
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
+        
         // Prepare
+        int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
         IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
@@ -148,7 +150,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
 
         // Compute score
-        double score = 0d;
+        BigFraction score = BigFraction.ZERO;
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
         while (m != null) {
             m.read();
@@ -160,10 +162,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
                     nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
                 } else {
                     // The attribute value has been suppressed because of record suppression or because of generalization
-                    score += (double)m.count * (double)rows;
+                    score = score.add(new BigFraction((double)m.count * (double)rows));
                 }
                 // Add values for records which have been suppressed by sampling
-                score += (double)(m.pcount - m.count) * (double)rows;
+                score = score.add(new BigFraction((double)(m.pcount - m.count) * (double)rows));
             }
             m = m.nextOrdered;
         }
@@ -173,17 +175,17 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
             final int [] counts = nonSuppressedValueToCount[dimension].values;
             for (int i=0; i<states.length; i++) {
                 if (states[i]) {
-                    score += (double)counts[i] * (double)counts[i];
+                    score = score.add(new BigFraction((double)counts[i] * (double)counts[i]));
                 }
             }
         }
 
         // Adjust sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / ((double)rows * (double)dimensionsGeneralized);
-        score /= (k==1) ? 5d : (double)(k * k / (k - 1d) + 1d);
+        score = score.multiply(BigFraction.MINUS_ONE.divide(new BigFraction(((double)rows * (double)dimensionsGeneralized))));
+        score = score.divide((k==1) ? new BigFraction(5) : new BigFraction(k * k).divide(new BigFraction(k - 1d)).add(BigFraction.ONE));
         
-        // Return
-        return new ILScoreDouble(score);
+        // Return score
+        return new ILScore(score);
     }
     
     @Override
@@ -197,7 +199,7 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
-    public boolean isScoreFunctionSupported() {
+    public boolean isReliableScoreFunctionSupported() {
         return true;
     }
 

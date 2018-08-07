@@ -130,10 +130,10 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
         return precomputed ?
-               precomputedMetric.getScore(node, groupify) :
-               defaultMetric.getScore(node, groupify);
+               precomputedMetric.getScoreReliable(node, groupify) :
+               defaultMetric.getScoreReliable(node, groupify);
     }
 
     @Override
@@ -153,8 +153,8 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    public boolean isScoreFunctionSupported() {
-        return isPrecomputed() ? precomputedMetric.isScoreFunctionSupported() : defaultMetric.isScoreFunctionSupported();
+    public boolean isReliableScoreFunctionSupported() {
+        return isPrecomputed() ? precomputedMetric.isReliableScoreFunctionSupported() : defaultMetric.isReliableScoreFunctionSupported();
     }
 
     /**

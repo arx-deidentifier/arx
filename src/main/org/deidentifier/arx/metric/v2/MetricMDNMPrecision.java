@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
@@ -124,8 +125,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    public ILScoreDouble getScore(final Transformation node, final HashGroupify groupify) {
-
+    public ILScore getScoreReliable(final Transformation node, final HashGroupify groupify) {
         // Prepare
         int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
@@ -147,18 +147,18 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         }
         
         // Calculate score
-        double score = 0d;
+        BigFraction score = new BigFraction(0);
         for (int i = 0; i<dimensionsGeneralized; i++) {
-            double value = heights[i] == 0 ? 0 : (double) transformation[i] / (double) heights[i];
-            score += ((double)unsuppressedTuples * value) + (double)suppressedTuples;
+            BigFraction value = heights[i] == 0 ? BigFraction.ZERO : new BigFraction(transformation[i]).divide(new BigFraction(heights[i]));
+            score = score.add(new BigFraction(unsuppressedTuples).multiply(value).add(new BigFraction(suppressedTuples)));
         }
         
         // Divide by sensitivity and multiply with -1 so that higher values are better
-        score *= -1d / getDimensionsGeneralized();
-        if (k > 1) score /= k - 1d;
+        score = score.multiply(BigFraction.MINUS_ONE.divide(new BigFraction(getDimensionsGeneralized())));
+        if (k > 1) score = score.divide(new BigFraction(k - 1d));
         
-        // Return
-        return new ILScoreDouble(score);
+        // Return score
+        return new ILScore(score);
     }
 
     @Override
@@ -172,7 +172,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    public boolean isScoreFunctionSupported() {
+    public boolean isReliableScoreFunctionSupported() {
         return true;
     }
 
