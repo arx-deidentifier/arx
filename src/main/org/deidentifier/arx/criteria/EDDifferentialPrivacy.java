@@ -61,7 +61,12 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
-    /** Indicates if this instance was already initialized */ 
+    /**
+     * Indicates if this instance was already initialized. An instance is initialized when it is used to anonymize a dataset.
+     * When this model is used more than once, a new subset needs to be drawn before each use (i.e. when "initialized==true").
+     * The field is transient, because we need to preserve the subset, when the model is loaded from a project file
+     * (indicated by "initialized==false").
+     */
     private transient boolean        initialized = false;
 
     /**
@@ -165,7 +170,9 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public void initialize(DataManager manager, ARXConfiguration config){
         
         if (config != null) {
-            // This method was already called within the DataManager class.
+            // Because this is the only privacy model that dynamically
+            // constructs a subset, we need to call this method twice.
+            // This is the second call and can be ignored.
             return;
         }
         
@@ -181,19 +188,13 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
             k = pCalc.getK();
         }
         
-        // Perform random sampling iff the subset is null
-        // or if this method has already been called.
-        // Otherwise, we know that this instance was just de-serialized
-        // and that no subsequent call of anonymize() has occured.
+        // Perform random sampling iff the model is used for the first time (subset == null)
+        // or when it used again (initialized == true). We don't perform random sampling when
+        // the model has been de-serialized (subset will be != null and initialized will be false).
         if (subset == null || initialized) {
 
             // Create RNG
-            Random random;
-            if (deterministic) {
-                random = new Random(0xDEADBEEF);
-            } else {
-                random = new SecureRandom();
-            }
+            Random random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
 
             // Create a data subset via sampling based on beta
             Set<Integer> subsetIndices = new HashSet<Integer>();
@@ -235,8 +236,14 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         ElementData result = new ElementData("Differential privacy");
         result.addProperty("Epsilon", epsilon);
         result.addProperty("Delta", delta);
-        result.addProperty("Uniqueness threshold (k)", getK());
-        result.addProperty("Sampling probability (beta)", getBeta());
+        
+        try {
+            result.addProperty("Uniqueness threshold (k)", getK());
+            result.addProperty("Sampling probability (beta)", getBeta());
+        } catch (Exception e) {
+            // No harm is done if these properties can not be set
+        }
+        
         return result;
     }
 
