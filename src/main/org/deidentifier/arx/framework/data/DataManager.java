@@ -318,14 +318,6 @@ public class DataManager {
     }
 
     /**
-     * Returns data configuring microaggregation
-     * @return
-     */
-    public DataAggregationInformation getAggregationInformation() {
-        return this.aggregationInformation;
-    }
-
-    /**
      * Returns the input data that will be analyzed.
      * 
      * @return the data
@@ -380,7 +372,7 @@ public class DataManager {
 
     /**
      * Returns the distribution of the given sensitive attribute in the original dataset. 
-     * Required for multiple privacy models.
+     * Required for t-closeness.
      * 
      * @param attribute
      * @return distribution
@@ -482,6 +474,14 @@ public class DataManager {
 
     public int[] getHierarchiesMinLevels() {
         return generalizationLevelsMaximum;
+    }
+
+    /**
+     * Returns data configuring microaggregation
+     * @return
+     */
+    public DataAggregationInformation getAggregationInformation() {
+        return this.aggregationInformation;
     }
 
     /**

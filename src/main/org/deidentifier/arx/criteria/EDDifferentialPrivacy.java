@@ -209,14 +209,6 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     }
     
     /**
-     * Returns whether this instance is data-dependent
-     * @return
-     */
-    public boolean isDataDependent() {
-        return this.generalization == null;
-    }
-    
-    /**
      * Returns whether this instance is deterministic
      * @return
      */
