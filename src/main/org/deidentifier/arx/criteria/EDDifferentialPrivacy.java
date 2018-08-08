@@ -61,8 +61,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
-    /** Indicates if the method enforceInitialization() was already called */ 
-    private transient boolean        wasAlreadyInitialized = false;
+    /** Indicates if this instance was already initialized */ 
+    private transient boolean        initialized = false;
 
     /**
      * Creates a new instance
@@ -163,10 +163,11 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     
     @Override
     public void initialize(DataManager manager, ARXConfiguration config){
-        // Empty by design
-    }
-
-    public void enforceInitialization(int numRecords) {
+        
+        if (config != null) {
+            // This method was already called within the DataManager class.
+            return;
+        }
         
         // Set beta and k if required
         if (beta < 0) {
@@ -184,9 +185,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         // or if this method has already been called.
         // Otherwise, we know that this instance was just de-serialized
         // and that no subsequent call of anonymize() has occured.
-        if (subset == null || wasAlreadyInitialized) {
-
-            System.out.println("Perform sampling");
+        if (subset == null || initialized) {
 
             // Create RNG
             Random random;
@@ -198,6 +197,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
             // Create a data subset via sampling based on beta
             Set<Integer> subsetIndices = new HashSet<Integer>();
+            int numRecords = manager.getDataGeneralized().getDataLength();
             for (int i = 0; i < numRecords; ++i) {
                 if (random.nextDouble() < beta) {
                     subsetIndices.add(i);
@@ -207,7 +207,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
         }
         
-        wasAlreadyInitialized = true;
+        initialized = true;
     }
 
     @Override

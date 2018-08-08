@@ -233,11 +233,8 @@ public class DataManager {
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
-                // Cast
-                EDDifferentialPrivacy eddp = (EDDifferentialPrivacy)c;
-                
                 // Extract scheme
-                DataGeneralizationScheme scheme = eddp.getGeneralizationScheme();
+                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
                 
                 // For each attribute
                 index = 0;
@@ -252,10 +249,6 @@ public class DataManager {
                         index++;
                     }
                 }
-                
-                // Enforce initialization
-                eddp.enforceInitialization(data.getNumRows());
-                
                 break;
             }
         }
@@ -278,6 +271,9 @@ public class DataManager {
 
         // Store research subset
         for (PrivacyCriterion c : privacyModels) {
+            if (c instanceof EDDifferentialPrivacy) {
+                ((EDDifferentialPrivacy) c).initialize(this, null);
+            }
             if (c.isSubsetAvailable()) {
                 DataSubset _subset = c.getDataSubset();
                 if (_subset != null) {
