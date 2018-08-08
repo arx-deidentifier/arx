@@ -227,7 +227,6 @@ public class DataManager {
         }
         
         // Change to fixed generalization scheme when using differential privacy
-        // and assure that the model is initialized so that the subset is set
         for (PrivacyCriterion c : privacyModels) {
             
             // DP found
