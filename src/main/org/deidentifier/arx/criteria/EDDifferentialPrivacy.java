@@ -27,6 +27,7 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.dp.ParameterCalculation;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
@@ -60,6 +61,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
+    /** Indicates if the method enforceInitialization() was already called */ 
+    private transient boolean        wasAlreadyInitialized = false;
 
     /**
      * Creates a new instance
@@ -157,16 +160,13 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
+    
+    @Override
+    public void initialize(DataManager manager, ARXConfiguration config){
+        // Empty by design
+    }
 
-    /**
-     * Sets k and beta and creates a random sample based on beta if required
-     * NOTE: This method is used instead of overwriting initialize() in order to
-     * assure proper initialization of both newly created an de-serialized instances
-     * while minimizing invasiveness in other code areas
-     *
-     * @param numRecords
-     */
-    public void enforceInitialization(int numRecords){
+    public void enforceInitialization(int numRecords) {
         
         // Set beta and k if required
         if (beta < 0) {
@@ -180,27 +180,34 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
             k = pCalc.getK();
         }
         
-        // If the subset has already been created
-        if (subset != null) {
-            return;
-        }
+        // Perform random sampling iff the subset is null
+        // or if this method has already been called.
+        // Otherwise, we know that this instance was just de-serialized
+        // and that no subsequent call of anonymize() has occured.
+        if (subset == null || wasAlreadyInitialized) {
 
-        // Create RNG
-        Random random;
-        if (deterministic) {
-            random = new Random(0xDEADBEEF);
-        } else {
-            random = new SecureRandom();
-        }
+            System.out.println("Perform sampling");
 
-        // Create a data subset via sampling based on beta
-        Set<Integer> subsetIndices = new HashSet<Integer>();
-        for (int i = 0; i < numRecords; ++i) {
-            if (random.nextDouble() < beta) {
-                subsetIndices.add(i);
+            // Create RNG
+            Random random;
+            if (deterministic) {
+                random = new Random(0xDEADBEEF);
+            } else {
+                random = new SecureRandom();
             }
+
+            // Create a data subset via sampling based on beta
+            Set<Integer> subsetIndices = new HashSet<Integer>();
+            for (int i = 0; i < numRecords; ++i) {
+                if (random.nextDouble() < beta) {
+                    subsetIndices.add(i);
+                }
+            }
+            this.subset = DataSubset.create(numRecords, subsetIndices);
+
         }
-        this.subset = DataSubset.create(numRecords, subsetIndices);
+        
+        wasAlreadyInitialized = true;
     }
 
     @Override
