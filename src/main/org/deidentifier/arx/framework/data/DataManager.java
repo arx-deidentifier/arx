@@ -688,17 +688,6 @@ public class DataManager {
         final DataMatrix data = dataAnalyzed.getArray();
         return getTree(data, index, hierarchiesAnalyzed[index].map);
     }
-
-    /**
-     * Set a subset created by the differential privacy model
-     * @param _subset
-     */
-    public void setSubset(DataSubset _subset) {
-        if (_subset != null) {
-            subset = _subset.getSet();
-            subsetSize = _subset.getArray().length;
-        }
-    }
     
     /**
      * Simple returns the set of all columns
