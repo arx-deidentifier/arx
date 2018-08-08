@@ -227,13 +227,17 @@ public class DataManager {
         }
         
         // Change to fixed generalization scheme when using differential privacy
+        // and assure that the model is initialized so that the subset is set
         for (PrivacyCriterion c : privacyModels) {
             
             // DP found
             if (c instanceof EDDifferentialPrivacy) {
                 
+                // Cast
+                EDDifferentialPrivacy eddp = (EDDifferentialPrivacy)c;
+                
                 // Extract scheme
-                DataGeneralizationScheme scheme = ((EDDifferentialPrivacy)c).getGeneralizationScheme();
+                DataGeneralizationScheme scheme = eddp.getGeneralizationScheme();
                 
                 // For each attribute
                 index = 0;
@@ -248,6 +252,10 @@ public class DataManager {
                         index++;
                     }
                 }
+                
+                // Enforce initialization
+                eddp.enforceInitialization(data.getNumRows());
+                
                 break;
             }
         }
@@ -267,6 +275,18 @@ public class DataManager {
         // finalize dictionary
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
+
+        // Store research subset
+        for (PrivacyCriterion c : privacyModels) {
+            if (c.isSubsetAvailable()) {
+                DataSubset _subset = c.getDataSubset();
+                if (_subset != null) {
+                    subset = _subset.getSet();
+                    subsetSize = _subset.getArray().length;
+                    break;
+                }
+            }
+        }
     }
 
     /**

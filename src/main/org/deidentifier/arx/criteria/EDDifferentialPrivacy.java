@@ -27,7 +27,6 @@ import org.deidentifier.arx.DataSubset;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.dp.ParameterCalculation;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
@@ -161,11 +160,13 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
     /**
      * Sets k and beta and creates a random sample based on beta if required
+     * NOTE: This method is used instead of overwriting initialize() in order to
+     * assure proper initialization of both newly created an de-serialized instances
+     * while minimizing invasiveness in other code areas
      *
-     * @param manager
-     * @param config
+     * @param numRecords
      */
-    public void initialize(DataManager manager, ARXConfiguration config){
+    public void enforceInitialization(int numRecords){
         
         // Set beta and k if required
         if (beta < 0) {
@@ -194,26 +195,17 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
 
         // Create a data subset via sampling based on beta
         Set<Integer> subsetIndices = new HashSet<Integer>();
-        int records = manager.getDataGeneralized().getDataLength();
-        for (int i = 0; i < records; ++i) {
+        for (int i = 0; i < numRecords; ++i) {
             if (random.nextDouble() < beta) {
                 subsetIndices.add(i);
             }
         }
-        this.subset = DataSubset.create(records, subsetIndices);
+        this.subset = DataSubset.create(numRecords, subsetIndices);
     }
 
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= getK();
-    }
-    
-    /**
-     * Returns whether this instance is deterministic
-     * @return
-     */
-    public boolean isDeterministic() {
-        return deterministic;
     }
 
     @Override

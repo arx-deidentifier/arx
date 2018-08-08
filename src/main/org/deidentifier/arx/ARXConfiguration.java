@@ -1260,18 +1260,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.requirements |= ARXConfiguration.REQUIREMENT_DISTRIBUTION;
         }
 
-        // Initialize: DP (TODO: Ugly, but needed)
-        if (this.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-            EDDifferentialPrivacy dp = (EDDifferentialPrivacy)this.getPrivacyModel(EDDifferentialPrivacy.class);
-            dp.initialize(manager, this);
-            manager.setSubset(dp.getDataSubset());
-        }
-
-        // Initialize: rest
+        // Initialize
         for (PrivacyCriterion c : criteria) {
-            if (!(c instanceof EDDifferentialPrivacy)) {
-                c.initialize(manager, this);
-            }
+            c.initialize(manager, this);
         }
         
         // Calculate number of records in output data
