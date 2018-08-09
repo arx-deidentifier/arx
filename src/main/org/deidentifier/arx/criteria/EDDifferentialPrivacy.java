@@ -58,11 +58,16 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     /** Parameter */
     private DataSubset               subset;
     /** Parameter */
-    private transient DataManager    manager;
-    /** Parameter */
     private transient boolean        deterministic    = false;
     /** Parameter */
     private DataGeneralizationScheme generalization;
+    /**
+     * Indicates if this instance was already initialized. An instance is initialized when it is used to anonymize a dataset.
+     * When this model is used more than once, a new subset needs to be drawn before each use (i.e. when "initialized==true").
+     * The field is transient, because we need to preserve the subset, when the model is loaded from a project file
+     * (indicated by "initialized==false").
+     */
+    private transient boolean        initialized = false;
 
     /**
      * Creates a new instance
@@ -160,62 +165,55 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         return ARXConfiguration.REQUIREMENT_COUNTER |
                ARXConfiguration.REQUIREMENT_SECONDARY_COUNTER;
     }
-
-    /**
-     * Creates a random sample based on beta
-     *
-     * @param manager
-     */
+    
+    @Override
     public void initialize(DataManager manager, ARXConfiguration config){
         
-        // Needed for consistent de-serialization. We need to call this
-        // method in the constructor of the class DataManager. The following
-        // condition should hold, when this constructor is called during 
-        // de-serialization, when we must not change the subset.
-        if (subset != null && this.manager == null) {
-            this.manager = manager;
+        if (config != null) {
+            // Because this is the only privacy model that dynamically
+            // constructs a subset, we need to call this method twice.
+            // This is the second call and can be ignored.
             return;
         }
         
-        // Needed to prevent inconsistencies. We need to call this
-        // method in the constructor of the class DataManager. It will be called again, when
-        // ARXConfiguration is initialized(). During the second call we must not change the subset.
-        if (subset != null && this.manager == manager) {
-            return;
-        }
-        
-        // Calculate beta and k
-        try {
-            ParameterCalculation pCalc = new ParameterCalculation(this.epsilon, this.delta);
-            this.beta = pCalc.getBeta();
-            this.k = pCalc.getK();
-        } catch (IntervalArithmeticException e) {
-            throw new RuntimeException(e);
-        }
-
-        // Create RNG
-        Random random;
-        if (deterministic) {
-            random = new Random(0xDEADBEEF);
-        } else {
-            random = new SecureRandom();
-        }
-
-        // Create a data subset via sampling based on beta
-        Set<Integer> subsetIndices = new HashSet<Integer>();
-        int records = manager.getDataGeneralized().getDataLength();
-        for (int i = 0; i < records; ++i) {
-            if (random.nextDouble() < beta) {
-                subsetIndices.add(i);
+        // Set beta and k if required
+        if (beta < 0) {
+            ParameterCalculation pCalc = null;
+            try {
+                pCalc = new ParameterCalculation(epsilon, delta);
+            } catch (IntervalArithmeticException e) {
+                throw new RuntimeException(e);
             }
+            beta = pCalc.getBeta();
+            k = pCalc.getK();
         }
-        this.subset = DataSubset.create(records, subsetIndices);
-        this.manager = manager;
+        
+        // Perform random sampling iff the model is used for the first time (subset == null)
+        // or when it used again (initialized == true). We don't perform random sampling when
+        // the model has been de-serialized (subset will be != null and initialized will be false).
+        if (subset == null || initialized) {
+
+            // Create RNG
+            Random random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
+
+            // Create a data subset via sampling based on beta
+            Set<Integer> subsetIndices = new HashSet<Integer>();
+            int numRecords = manager.getDataGeneralized().getDataLength();
+            for (int i = 0; i < numRecords; ++i) {
+                if (random.nextDouble() < beta) {
+                    subsetIndices.add(i);
+                }
+            }
+            this.subset = DataSubset.create(numRecords, subsetIndices);
+
+        }
+        
+        initialized = true;
     }
 
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
-        return entry.count >= k;
+        return entry.count >= getK();
     }
 
     @Override
@@ -238,8 +236,14 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         ElementData result = new ElementData("Differential privacy");
         result.addProperty("Epsilon", epsilon);
         result.addProperty("Delta", delta);
-        result.addProperty("Uniqueness threshold (k)", k);
-        result.addProperty("Sampling probability (beta)", beta);
+        
+        try {
+            result.addProperty("Uniqueness threshold (k)", getK());
+            result.addProperty("Sampling probability (beta)", getBeta());
+        } catch (Exception e) {
+            // No harm is done if these properties can not be set
+        }
+        
         return result;
     }
 
