@@ -47,7 +47,7 @@ public class MaskingConfiguration {
     	AttributeParameters parameter;
     	parameter = maskings.get(attribute);
     	if (parameter==null)
-    		return MaskingType.NONE;
+    		return MaskingType.SUPPRESSED;
     	else
     		return parameter.getMaskingType();
 

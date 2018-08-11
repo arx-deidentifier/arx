@@ -388,7 +388,7 @@ public class ViewAttributeConfiguration implements IView {
                 Attribute attribute = ((Attribute)element);
                 MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute.getName());
                 if (maskingType == null) {
-                	return "None";
+                	return "Suppressed";
                 }
 
                 return maskingType.getLabel();
@@ -450,9 +450,9 @@ public class ViewAttributeConfiguration implements IView {
         // Remove MaskingType data when Attribute Type gets changed to something other than "Identifying"
         else if (event.part == ModelPart.ATTRIBUTE_TYPE)
         {
-        	AttributeType typeChangedTo = model.getInputDefinition().getAttributeType((String)event.data);
-            if (typeChangedTo != AttributeType.IDENTIFYING_ATTRIBUTE)
-            	MaskingConfiguration.removeMasking((String)event.data);
+        	//AttributeType typeChangedTo = model.getInputDefinition().getAttributeType((String)event.data);
+            //if (typeChangedTo != AttributeType.IDENTIFYING_ATTRIBUTE)
+            //	MaskingConfiguration.removeMasking((String)event.data);
         	controller.update(new ModelEvent(this, ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED, ((AttributeContentProvider)tableViewer.getContentProvider()).getElements(model)));
         }
         

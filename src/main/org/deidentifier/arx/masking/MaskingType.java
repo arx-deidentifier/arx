@@ -275,12 +275,12 @@ public class MaskingType implements Serializable {
 		return type;
 	}
 	
-	private static final int MSK_TYPE_NONE = 0;
+	private static final int MSK_TYPE_SUPPRESSED = 0;
 	private static final int MSK_TYPE_PS = 1;
 	private static final int MSK_TYPE_NA = 2;
 	private static final int MSK_TYPE_RS = 3;
 	private static final int MSK_TYPE_RG = 4;
-	public static final MaskingType NONE = new MaskingType(MSK_TYPE_NONE);
+	public static final MaskingType SUPPRESSED = new MaskingType(MSK_TYPE_SUPPRESSED);
     public static final MaskingType PSEUDONYMIZATION_MASKING = new MaskingType(MSK_TYPE_PS);
     public static final MaskingType NOISE_ADDITION_MASKING = new MaskingType(MSK_TYPE_NA);	
     public static final MaskingType RANDOM_SHUFFLING_MASKING = new MaskingType(MSK_TYPE_RS);
@@ -294,7 +294,7 @@ public class MaskingType implements Serializable {
 	    	case (MSK_TYPE_NA): return Resources.getMessage("MaskingConfigurationView.2");
 	    	case (MSK_TYPE_RS): return Resources.getMessage("MaskingConfigurationView.3");
 	    	case (MSK_TYPE_RG): return Resources.getMessage("MaskingConfigurationView.4");
-	    	default: return "None";
+	    	default: return "Suppressed";
     	}
     }
 

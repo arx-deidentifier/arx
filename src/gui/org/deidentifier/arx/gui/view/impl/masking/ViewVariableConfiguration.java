@@ -107,7 +107,7 @@ public class ViewVariableConfiguration implements IView {
                 	{
                 		MaskingConfiguration.removeMasking(entry.getKey());
                 		deletedIndex = value;
-                		break;
+                		break;	//TODO: this only removes the first masking using the deleted distribution, remove break if multiple maskings can use the same distribution
                 	}
                 }
                 //Update the indices after an attribute has been removed 

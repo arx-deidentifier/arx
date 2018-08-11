@@ -70,7 +70,7 @@ public class LayoutAttributeSettings implements ILayout {
                         attributeTransformationView.actionUpdateAttributeTypes(AttributeType.INSENSITIVE_ATTRIBUTE);
                     }
                 });
-        bar.add(Resources.getMessage("AttributeDefinitionView.13"), //$NON-NLS-1$
+        bar.add(Resources.getMessage("AttributeDefinitionView.14"), //$NON-NLS-1$
                 controller.getResources().getImage(AttributeType.SENSITIVE_ATTRIBUTE), // $NON-NLS-1$
                 new Runnable() {
                     @Override

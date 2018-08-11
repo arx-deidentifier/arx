@@ -71,7 +71,7 @@ public class ViewMaskingConfiguration implements IView{
     
     /** Resource */
     private static final MaskingType[] COMBO1_TYPES  = new MaskingType[] {
-    													MaskingType.NONE,
+    													MaskingType.SUPPRESSED,
     													MaskingType.PSEUDONYMIZATION_MASKING,
     													MaskingType.NOISE_ADDITION_MASKING,
     													MaskingType.RANDOM_SHUFFLING_MASKING,
@@ -79,7 +79,7 @@ public class ViewMaskingConfiguration implements IView{
     
     /** Resource */
     private static final String[]        COMBO1_MASKINGTYPES = new String[] {
-    													"None", //$NON-NLS-1$
+    													"Suppressed", //$NON-NLS-1$
                                                         Resources.getMessage("MaskingConfigurationView.1"), //$NON-NLS-1$
                                                         Resources.getMessage("MaskingConfigurationView.2"), //$NON-NLS-1$
                                                         Resources.getMessage("MaskingConfigurationView.3"), //$NON-NLS-1$
@@ -180,7 +180,9 @@ public class ViewMaskingConfiguration implements IView{
         Composite compositeEmpty2 = new Composite(second, SWT.NONE);
         compositeEmpty2.setLayout(compositeLabelMinLayout);
         Composite compositetf= new Composite(second, SWT.NONE);
+        final int maxLength = 20;
         final Text textField = new Text(compositetf, SWT.SINGLE | SWT.BORDER);
+        textField.setText("15");
         textField.setLayoutData(SWTUtil.createFillGridData());
         compositetf.setLayout(compositeLabelMinLayout);
         textField.addVerifyListener(new VerifyListener() {
@@ -196,8 +198,15 @@ public class ViewMaskingConfiguration implements IView{
 				{
 					return;
 				}
-				try{
-					Integer.parseInt(newS);
+				try{	//parses the string entered into a number, and sets 20 as maximum string length
+					int l = Integer.parseInt(newS);
+					if (l>maxLength) {
+						l = maxLength;
+						textField.setText(Integer.toString(l));
+						e.doit=false;
+					}
+					//TODO: use stringlength l here and apply it to pseudonymization
+					System.out.println(l);
 				}catch(NumberFormatException ex){
 					isInt = false;
 				}
@@ -273,10 +282,10 @@ public class ViewMaskingConfiguration implements IView{
      * Masking type changed
      */
     private void actionMaskingTypeChanged(String attribute, MaskingType maskingType) {
-    	if (maskingType!=null)
+    	if (maskingType!=null) //|| maskingType!= MaskingType.SUPPRESSED)
     		MaskingConfiguration.addMasking(attribute, maskingType);
-    	else
-    		MaskingConfiguration.removeMasking(attribute);
+    	//else
+    	//	MaskingConfiguration.removeMasking(attribute);
         controller.update(new ModelEvent(this,ModelPart.MASKING_ATTRIBUTE_CHANGED,null));
     }
     
