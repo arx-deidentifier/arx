@@ -29,14 +29,14 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.masking.variable.Distribution;
 import org.deidentifier.arx.masking.variable.RandomVariable;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.TableViewerColumn;
+//import org.eclipse.jface.viewers.ArrayContentProvider;
+//import org.eclipse.jface.viewers.ColumnLabelProvider;
+//import org.eclipse.jface.viewers.TableViewer;
+//import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
+//import org.eclipse.swt.widgets.Table;
+//import org.eclipse.swt.widgets.TableColumn;
 import org.swtchart.Chart;
 import org.swtchart.ISeries;
 import org.swtchart.ISeries.SeriesType;
@@ -54,7 +54,7 @@ public class ViewVariableDistribution implements IView {
     private Controller controller;
 
     private Chart chart;
-    private TableViewer tableViewer;
+//    private TableViewer tableViewer;
 
     public ViewVariableDistribution(final Composite parent, final Controller controller) {
 
@@ -78,15 +78,15 @@ public class ViewVariableDistribution implements IView {
         compositePlot.setLayout(SWTUtil.createGridLayout(1));
 
         // Table view
-        Composite compositeTable = folder.createItem(Resources.getMessage("MaskingView.5"), null);
-        compositeTable.setLayout(SWTUtil.createGridLayout(1));
+//        Composite compositeTable = folder.createItem(Resources.getMessage("MaskingView.5"), null);
+//        compositeTable.setLayout(SWTUtil.createGridLayout(1));
 
         // Select distribution plot view by default
         folder.setSelection(0);
 
         // Create sub-views
         buildPlot(compositePlot);
-        buildTable(compositeTable);
+//        buildTable(compositeTable);
 
     }
 
@@ -98,54 +98,54 @@ public class ViewVariableDistribution implements IView {
 
     }
 
-    private void buildTable(Composite composite) {
-
-        // Create table
-        tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER);
-        tableViewer.setContentProvider(new ArrayContentProvider());
-
-        Table table = tableViewer.getTable();
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-        table.setLayoutData(SWTUtil.createFillGridData());
-
-        // Column containing X values
-        TableViewerColumn tableViewerColumnX = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnX.setLabelProvider(new ColumnLabelProvider() {
-
-            @Override
-            public String getText(Object element) {
-
-                return Double.toString(((double[])element)[0]);
-
-            }
-
-        });
-
-        TableColumn columnX = tableViewerColumnX.getColumn();
-        columnX.setToolTipText("X values");
-        columnX.setText("X");
-        columnX.setWidth(100);
-
-        // Column containing Y values
-        TableViewerColumn tableViewerColumnY = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnY.setLabelProvider(new ColumnLabelProvider() {
-
-            @Override
-            public String getText(Object element) {
-
-                return Double.toString(((double[])element)[1]);
-
-            }
-
-        });
-
-        TableColumn columnY = tableViewerColumnY.getColumn();
-        columnY.setToolTipText("P(X=x) values");
-        columnY.setText("P(X=x)");
-        columnY.setWidth(100);
-
-    }
+//    private void buildTable(Composite composite) {
+//
+//        // Create table
+//        tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER);
+//        tableViewer.setContentProvider(new ArrayContentProvider());
+//
+//        Table table = tableViewer.getTable();
+//        table.setHeaderVisible(true);
+//        table.setLinesVisible(true);
+//        table.setLayoutData(SWTUtil.createFillGridData());
+//
+//        // Column containing X values
+//        TableViewerColumn tableViewerColumnX = new TableViewerColumn(tableViewer, SWT.NONE);
+//        tableViewerColumnX.setLabelProvider(new ColumnLabelProvider() {
+//
+//            @Override
+//            public String getText(Object element) {
+//
+//                return Double.toString(((double[])element)[0]);
+//
+//            }
+//
+//        });
+//
+//        TableColumn columnX = tableViewerColumnX.getColumn();
+//        columnX.setToolTipText("X values");
+//        columnX.setText("X");
+//        columnX.setWidth(100);
+//
+//        // Column containing Y values
+//        TableViewerColumn tableViewerColumnY = new TableViewerColumn(tableViewer, SWT.NONE);
+//        tableViewerColumnY.setLabelProvider(new ColumnLabelProvider() {
+//
+//            @Override
+//            public String getText(Object element) {
+//
+//                return Double.toString(((double[])element)[1]);
+//
+//            }
+//
+//        });
+//
+//        TableColumn columnY = tableViewerColumnY.getColumn();
+//        columnY.setToolTipText("P(X=x) values");
+//        columnY.setText("P(X=x)");
+//        columnY.setWidth(100);
+//
+//    }
 
     @Override
     public void dispose() {
@@ -161,7 +161,8 @@ public class ViewVariableDistribution implements IView {
     public void update(ModelEvent event) {
 
         // Update chart
-        Distribution<Integer> result = ((RandomVariable)event.data).getDistribution();
+    	RandomVariable data = (RandomVariable)event.data;
+        Distribution<Integer> result = data.getDistribution();
         ISeriesSet seriesSet = chart.getSeriesSet();
         ISeries series = seriesSet.createSeries(SeriesType.BAR, "values");
         double[] xSeries = getXSeries(result);
@@ -170,13 +171,13 @@ public class ViewVariableDistribution implements IView {
         series.setYSeries(ySeries);
         chart.getAxisSet().adjustRange();
         chart.getLegend().setVisible(false);
-        chart.getTitle().setText("Probability mass function");
+        chart.getTitle().setText(data.getName());
         chart.getAxisSet().getYAxis(0).getTitle().setText("P(X=x)");
         chart.getAxisSet().getXAxis(0).getTitle().setText("X");
         chart.redraw();
 
         // Update table
-        tableViewer.setInput(getXY(xSeries, ySeries));
+//        tableViewer.setInput(getXY(xSeries, ySeries));
 
     }
 

@@ -120,13 +120,29 @@ public class ViewVariableConfiguration implements IView {
                 		entry.getValue().setDistribution(value-1);
                 	}
                 }
-            	controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
+                //selects the first item in the table, after deletion
+                if (tableViewer.getTable().getItemCount()>1)
+                {
+                	if (tableViewer.getTable().getSelectionIndex()>0)
+                    	tableViewer.getTable().setSelection(0);
+                	else 
+                		tableViewer.getTable().setSelection(1);
+                }
+
+                // Update button status
+                updateButtons();
+            	
+                controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
                 
                 // Remove from controller
                 controller.getModel().getMaskingModel().removeRandomVariable((variable));
 
-                // Send notification about update
-                controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_CHANGED, variable));
+                // update VariableDistribution View Selection
+                controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_SELECTED, (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
+                
+                // update VariableConfiguration View List
+                controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_CHANGED, (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
+                
 
             }
 
@@ -268,19 +284,19 @@ public class ViewVariableConfiguration implements IView {
         columnProbability.setText("P");
         columnProbability.setWidth(50);
 
-        // Column displaying mean
-        TableViewerColumn tableViewerColumnMean = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnMean.setLabelProvider(new ColumnLabelProvider() {
-
-            @Override
-            public String getText(Object element) {
-
-                return getParameterValue(((RandomVariable) element).getParameter("mean"));
-
-            }
-
-        });
-
+//        // Column displaying mean
+//        TableViewerColumn tableViewerColumnMean = new TableViewerColumn(tableViewer, SWT.NONE);
+//        tableViewerColumnMean.setLabelProvider(new ColumnLabelProvider() {
+//
+//            @Override
+//            public String getText(Object element) {
+//
+//                return getParameterValue(((RandomVariable) element).getParameter("mean"));
+//
+//            }
+//
+//        });
+//
 //        TableColumn columnMean = tableViewerColumnMean.getColumn();
 //        columnMean.setToolTipText("Mean");
 //        columnMean.setText("μ");
