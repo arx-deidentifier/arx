@@ -73,13 +73,13 @@ public class IO {
         // Read
         boolean[] allocated = (boolean[]) stream.readObject();
         long[] keys = (long[]) stream.readObject();
-        BigFraction[] values = (BigFraction[]) stream.readObject();
+        Object[] values = (Object[]) stream.readObject();
         
         // Set
         LongObjectOpenHashMap<BigFraction> result = new LongObjectOpenHashMap<BigFraction>();
         for (int i=0; i<allocated.length; i++) {
             if (allocated[i]) {
-                result.put(keys[i], values[i]);
+                result.put(keys[i], (BigFraction)values[i]);
             }
         }
         
