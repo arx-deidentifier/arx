@@ -277,7 +277,7 @@ public class DataManager {
         // Store research subset
         for (PrivacyCriterion c : config.getPrivacyModels()) {
             if (c instanceof EDDifferentialPrivacy) {
-                ((EDDifferentialPrivacy) c).initialize(this, null);
+                ((EDDifferentialPrivacy) c).initialize(this, config);
             }
             if (c.isSubsetAvailable()) {
                 DataSubset _subset = c.getDataSubset();

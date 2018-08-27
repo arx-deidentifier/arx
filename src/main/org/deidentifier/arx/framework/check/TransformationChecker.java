@@ -221,7 +221,7 @@ public class TransformationChecker {
             loss = metric.getScore(node, currentGroupify);
             break;
         case CONVENTIONAL:
-            // Calculate conventional score and bound
+            // Calculate conventional information loss and bound
             InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
                                                   metric.getInformationLoss(node, currentGroupify) : null;
             loss = result != null ? result.getInformationLoss() : null;
