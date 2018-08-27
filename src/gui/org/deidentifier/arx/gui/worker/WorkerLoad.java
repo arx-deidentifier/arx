@@ -120,6 +120,7 @@ public class WorkerLoad extends Worker<Model> {
             zip.close();
             arg0.worked(1);
         } catch (final Exception e) {
+            e.printStackTrace();
             error = e;
             arg0.done();
             return;
