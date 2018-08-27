@@ -70,7 +70,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private transient boolean        initialized = false;
 
     /**
-     * Creates a new instance
+     * Creates a new instance which is data-independent iff generalization is not null
      * @param epsilon
      * @param delta
      * @param generalization
@@ -78,6 +78,15 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public EDDifferentialPrivacy(double epsilon, double delta, 
                                  DataGeneralizationScheme generalization) {
         this(epsilon, delta, generalization, false);
+    }
+    
+    /**
+     * Creates a new data-dependent instance
+     * @param epsilon
+     * @param delta
+     */
+    public EDDifferentialPrivacy(double epsilon, double delta) {
+        this(epsilon, delta, null, false);
     }
     
     /**
@@ -108,7 +117,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     }
 
     /**
-     * Returns the k parameter of (k,b)-SDGS
+     * Returns the beta parameter of (k,b)-SDGS
      * @return
      */
     public double getBeta() {
@@ -169,18 +178,12 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     @Override
     public void initialize(DataManager manager, ARXConfiguration config){
         
-        if (config != null) {
-            // Because this is the only privacy model that dynamically
-            // constructs a subset, we need to call this method twice.
-            // This is the second call and can be ignored.
-            return;
-        }
-        
         // Set beta and k if required
         if (beta < 0) {
+            double epsilonAnon = epsilon - (isDataDependent() ? config.getDPSearchBudget() : 0d);
             ParameterCalculation pCalc = null;
             try {
-                pCalc = new ParameterCalculation(epsilon, delta);
+                pCalc = new ParameterCalculation(epsilonAnon, delta);
             } catch (IntervalArithmeticException e) {
                 throw new RuntimeException(e);
             }
@@ -192,6 +195,8 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         // or when it used again (initialized == true). We don't perform random sampling when
         // the model has been de-serialized (subset will be != null and initialized will be false).
         if (subset == null || initialized) {
+            
+            System.out.println("Perform sampling");
 
             // Create RNG
             Random random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
@@ -214,6 +219,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= getK();
+    }
+    
+    /**
+     * Returns whether this instance is data-dependent
+     * @return
+     */
+    public boolean isDataDependent() {
+        return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
     }
 
     @Override

@@ -614,9 +614,8 @@ public class ARXAnonymizer { // NO_UCD
                                                     dataArray,
                                                     dictionary,
                                                     definition,
-                                                    config.getPrivacyModels(),
                                                     getAggregateFunctions(definition),
-                                                    config.getQualityModel());
+                                                    config);
         return manager;
     }
 

@@ -372,6 +372,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Cost/benefit configuration */
     private ARXCostBenefitConfiguration        costBenefitConfiguration              = ARXCostBenefitConfiguration.create();
 
+    /** The privacy budget to use for the data-dependent differential privacy search algorithm */
+    private Double                             dpSearchBudget                        = 0.1d;
+
+    /** Number of steps to use for the data-dependent differential privacy search algorithm */
+    private Integer                            dpSearchStepNumber                    = 100;
+    
     /** Number of output records */
     private int                                numOutputRecords                      = 0;
 
@@ -502,6 +508,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
+        result.dpSearchBudget = this.dpSearchBudget;
+        result.dpSearchStepNumber = this.dpSearchStepNumber;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -550,6 +558,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.costBenefitConfiguration = ARXCostBenefitConfiguration.create();
         }
         return this.costBenefitConfiguration;
+    }
+    
+    /**
+     * Returns the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @return
+     */
+    public double getDPSearchBudget() {
+        if (this.dpSearchBudget == null) {
+            this.dpSearchBudget = 0.1d;
+        }
+        return this.dpSearchBudget;
+    }
+    
+    /**
+     * Returns the number of steps to use for the data-dependent
+     * differential privacy search algorithm. The default is 100.
+     * @return
+     */
+    public int getDPSearchStepNumber() {
+        if (this.dpSearchStepNumber == null) {
+            this.dpSearchStepNumber = 100;
+        }
+        return this.dpSearchStepNumber;
     }
     
     /**
@@ -907,6 +939,26 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.costBenefitConfiguration = config;
         return this;
     }
+    
+    /**
+     * Sets the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @param budget
+     */
+    public void setDPSearchBudget(double budget) {
+        if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.dpSearchBudget = budget;
+    }
+    
+    /**
+     * Sets the number of steps to use for the data-dependent
+     * differential privacy search algorithm. The default is 100.
+     * @param numberOfSteps
+     */
+    public void setDPSearchStepNumber(int numberOfSteps) {
+        if (numberOfSteps < 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
+        this.dpSearchStepNumber = numberOfSteps;
+    }
 
     /**
      * Sets whether ARX will use a heuristic search strategy. The default is false.
@@ -1262,7 +1314,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         // Initialize
         for (PrivacyCriterion c : criteria) {
-            c.initialize(manager, this);
+            // Differential Privacy has already been initialized by the DataManager
+            if (!(c instanceof EDDifferentialPrivacy)) {
+                c.initialize(manager, this);
+            }
         }
         
         // Calculate number of records in output data
