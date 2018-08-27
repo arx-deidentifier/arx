@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -136,7 +137,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     */
     private void assureChecked(final Transformation transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true));
+            transformation.setChecked(checker.check(transformation, true, ScoreType.CONVENTIONAL));
             trackOptimum(transformation);
             checkCount++;
             double progressSteps = (double)checkCount / (double)checkLimit;

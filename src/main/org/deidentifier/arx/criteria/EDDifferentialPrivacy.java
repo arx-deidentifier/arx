@@ -195,8 +195,6 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         // or when it used again (initialized == true). We don't perform random sampling when
         // the model has been de-serialized (subset will be != null and initialized will be false).
         if (subset == null || initialized) {
-            
-            System.out.println("Perform sampling");
 
             // Create RNG
             Random random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
