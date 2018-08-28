@@ -102,7 +102,7 @@ public abstract class AbstractAlgorithm {
                 transformation.setInformationLoss(loss.getInformationLoss());
                 transformation.setLowerBound(loss.getLowerBound());
             } else {
-                transformation.setChecked(checker.check(transformation, true, ScoreType.CONVENTIONAL));
+                transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             }
         }
     }

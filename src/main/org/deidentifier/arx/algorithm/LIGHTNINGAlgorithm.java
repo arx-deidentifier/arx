@@ -137,7 +137,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     */
     private void assureChecked(final Transformation transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true, ScoreType.CONVENTIONAL));
+            transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             trackOptimum(transformation);
             checkCount++;
             double progressSteps = (double)checkCount / (double)checkLimit;

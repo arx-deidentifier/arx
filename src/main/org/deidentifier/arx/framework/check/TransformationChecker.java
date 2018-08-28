@@ -48,7 +48,7 @@ public class TransformationChecker {
     public static enum ScoreType {
 
         /** Use conventional information loss. */
-        CONVENTIONAL,
+        INFORMATION_LOSS,
 
         /** Use score function for differential privacy. */
         DP_SCORE
@@ -162,7 +162,7 @@ public class TransformationChecker {
      * @return
      */
     public TransformationResult check(final Transformation node) {
-        return check(node, false, ScoreType.CONVENTIONAL);
+        return check(node, false, ScoreType.INFORMATION_LOSS);
     }
     
     /**
@@ -220,7 +220,7 @@ public class TransformationChecker {
             // Evaluate score function
             loss = metric.getScore(node, currentGroupify);
             break;
-        case CONVENTIONAL:
+        case INFORMATION_LOSS:
             // Calculate conventional information loss and bound
             InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
                                                   metric.getInformationLoss(node, currentGroupify) : null;
