@@ -376,7 +376,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Double                             dpSearchBudget                        = 0.1d;
 
     /** Number of steps to use for the data-dependent differential privacy search algorithm */
-    private Integer                            dpSearchStepNumber                    = 100;
+    private Integer                            dpSearchStepNumber                    = 300;
     
     /** Number of output records */
     private int                                numOutputRecords                      = 0;
@@ -574,12 +574,12 @@ public class ARXConfiguration implements Serializable, Cloneable {
     
     /**
      * Returns the number of steps to use for the data-dependent
-     * differential privacy search algorithm. The default is 100.
+     * differential privacy search algorithm. The default is 300.
      * @return
      */
     public int getDPSearchStepNumber() {
         if (this.dpSearchStepNumber == null) {
-            this.dpSearchStepNumber = 100;
+            this.dpSearchStepNumber = 300;
         }
         return this.dpSearchStepNumber;
     }
@@ -952,7 +952,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     
     /**
      * Sets the number of steps to use for the data-dependent
-     * differential privacy search algorithm. The default is 100.
+     * differential privacy search algorithm. The default is 300.
      * @param numberOfSteps
      */
     public void setDPSearchStepNumber(int numberOfSteps) {

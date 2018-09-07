@@ -549,8 +549,8 @@ public class ARXAnonymizer { // NO_UCD
             if (edpModel.getEpsilon() <= 0d) {
                 throw new IllegalArgumentException("The privacy budget must be > 0");
             }
-            if (edpModel.getDelta() <= 0d) {
-                throw new IllegalArgumentException("The privacy parameter delta must be > 0");
+            if (edpModel.getDelta() <= 0d || edpModel.getDelta() >= 1) {
+                throw new IllegalArgumentException("The privacy parameter delta must be in (0,1)");
             }
             if (edpModel.isDataDependent()) {
                 if (!config.getQualityModel().isScoreFunctionSupported()) {

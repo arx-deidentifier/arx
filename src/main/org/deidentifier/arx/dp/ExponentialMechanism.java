@@ -29,7 +29,7 @@ import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
- * An implementation of the reliable exponential mechanism.
+ * An implementation of the reliable variant of the exponential mechanism.
  * This implementation assumes that all score values have been divided by the sensitivity of the respective score function.
  * 
  * Note: This implementations uses internal caches which may grow up to the size of distinct values
@@ -37,7 +37,7 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
  * 
  * @author Raffael Bild
  */
-public class ExponentialMechanismReliable<T> {
+public class ExponentialMechanism<T> {
     
     /** The base having the form of a fraction n/d */
     private BigFraction                             base;
@@ -65,7 +65,7 @@ public class ExponentialMechanismReliable<T> {
      * @param epsilon
      * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanismReliable(double epsilon) throws IntervalArithmeticException {
+    public ExponentialMechanism(double epsilon) throws IntervalArithmeticException {
         this(epsilon, false);
     }
 
@@ -77,7 +77,7 @@ public class ExponentialMechanismReliable<T> {
      * @param deterministic
      * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanismReliable(double epsilon, boolean deterministic) throws IntervalArithmeticException {
+    public ExponentialMechanism(double epsilon, boolean deterministic) throws IntervalArithmeticException {
 
         // Calculate the base, depending on epsilon
         IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
@@ -211,8 +211,10 @@ public class ExponentialMechanismReliable<T> {
         // Extract the whole number part of the fraction 
         int result = fraction.intValue();
 
-        // Correct direction of rounding if necessary
-        if (result < 0 && result != fraction.intValue()) {
+        // Extracting the whole number part effectively rounds towards zero, and not downwards.
+        // Hence, when fraction is negative and not an integer number, it has been rounded upwards.
+        // This is corrected by subtracting one.
+        if (fraction.compareTo(BigFraction.ZERO) < 0 && !fraction.equals(new BigFraction(result))) {
             result -= 1;
         }
 
@@ -230,7 +232,7 @@ public class ExponentialMechanismReliable<T> {
 
         // Check the argument
         if (limit.compareTo(BigInteger.ONE) == -1) {
-            throw new IllegalArgumentException("limit has to be greater than or equal to one");
+            throw new IllegalArgumentException("Limit has to be greater than or equal to one");
         }
 
         // Compute a random value

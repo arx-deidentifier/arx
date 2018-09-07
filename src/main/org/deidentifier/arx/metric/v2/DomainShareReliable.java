@@ -99,7 +99,7 @@ public class DomainShareReliable implements Serializable {
                 if (stored != NOT_AVAILABLE) {
 
                     // If same share, simply continue
-                    if (stored == share) {
+                    if (stored.equals(share)) {
                         continue;
                     }
 

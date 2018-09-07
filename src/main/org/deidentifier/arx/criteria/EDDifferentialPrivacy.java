@@ -29,14 +29,13 @@ import org.deidentifier.arx.dp.ParameterCalculation;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
- * (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
- * 
- * Ninghui Li, Wahbeh H. Qardaji, Dong Su:
- * On sampling, anonymization, and differential privacy or, k-anonymization meets differential privacy. 
- * Proceedings of ASIACCS 2012. pp. 32-33
+ * (e,d)-Differential Privacy implemented with SafePub as proposed in:
+ * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+ * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
  * 
  * @author Raffael Bild
  * @author Fabian Prasser
@@ -180,7 +179,17 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
         
         // Set beta and k if required
         if (beta < 0) {
-            double epsilonAnon = epsilon - (isDataDependent() ? config.getDPSearchBudget() : 0d);
+            
+            double epsilonAnon = epsilon;
+            if (isDataDependent()) {
+                try {
+                    IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+                    epsilonAnon = ia.sub(ia.createInterval(epsilon), ia.createInterval(config.getDPSearchBudget())).lower;
+                } catch (IntervalArithmeticException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            
             ParameterCalculation pCalc = null;
             try {
                 pCalc = new ParameterCalculation(epsilonAnon, delta);

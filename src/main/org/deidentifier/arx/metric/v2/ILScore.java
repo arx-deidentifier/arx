@@ -21,8 +21,9 @@ import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
- * This class implements a score value in the form of an information loss,
- * with appropriate comparison semantics (i.e. higher score values are better).
+ * This class implements information loss using score values for data-independent
+ * differential privacy with appropriate comparison semantics
+ * (i.e. higher score values are better).
  * 
  * @author Raffael Bild
  *
@@ -51,18 +52,12 @@ public class ILScore extends InformationLoss<BigFraction> {
 
     @Override
     public int compareTo(InformationLoss<?> other) {
-        if (!other.getClass().equals(this.getClass())) {
-            throw new IllegalArgumentException("Incompatible class (" +
-                    other.getClass().getSimpleName() +
-                    ")");
-        }
         BigFraction otherValue = ((ILScore)other).getValue();
         return value.compareTo(otherValue) * -1;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         BigFraction otherValue = ((ILScore)obj).getValue();
@@ -114,13 +109,7 @@ public class ILScore extends InformationLoss<BigFraction> {
      */
     protected ILScore convert(InformationLoss<?> other) {
         if (other == null) return null;
-        if (!other.getClass().equals(this.getClass())) {
-            throw new IllegalArgumentException("Incompatible class (" +
-                                               other.getClass().getSimpleName() +
-                                               ")");
-        } else {
-            return (ILScore)other;
-        }
+        return (ILScore)other;
     }
 
     @Override

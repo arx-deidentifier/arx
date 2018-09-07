@@ -19,9 +19,10 @@ package org.deidentifier.arx.algorithm;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.math3.fraction.BigFraction;
-import org.deidentifier.arx.dp.ExponentialMechanismReliable;
+import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
@@ -35,20 +36,22 @@ import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
- * This class implements the search algorithm used with data-dependent differential privacy
+ * This class implements the search algorithm used with data-dependent differential privacy as proposed in:
+ * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+ * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
  * 
  * @author Raffael Bild
  */
 public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     
     /** Property */
-    private final PredictiveProperty                 propertyChecked;
+    private final PredictiveProperty         propertyChecked;
 
     /** Number of steps to be performed */
-    private final int                                steps;
+    private final int                        steps;
 
     /** The expopnential mechanism */
-    private final ExponentialMechanismReliable<Long> exponentialMechanism;
+    private final ExponentialMechanism<Long> exponentialMechanism;
 
     /**
      * Creates a new instance
@@ -84,7 +87,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
         try {
             epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).lower;
-            exponentialMechanism = new ExponentialMechanismReliable<Long>(epsilonPerStep, deterministic);
+            exponentialMechanism = new ExponentialMechanism<Long>(epsilonPerStep, deterministic);
         } catch (IntervalArithmeticException e) {
             throw new RuntimeException(e);
         }
@@ -159,25 +162,23 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @return
      */
     private long executeExponentialMechanism(Map<Long, ILScore> transformationIDToScore) {
+        
+        // Convert the map into arrays of the types required by the exponential mechanism
 
         Long[] values = new Long[transformationIDToScore.size()];
+        BigFraction[] scores = new BigFraction[values.length];
         
-        int index = 0;
-        for (Long value : transformationIDToScore.keySet()) {
-            values[index] = value;
-            index++;
-        }
-
-        BigFraction[] scores = new BigFraction[transformationIDToScore.size()];
-
         int i = 0;
-        for (ILScore score : transformationIDToScore.values()) {
-            scores[i] = score.getValue();
+        for (Entry<Long, ILScore> entry : transformationIDToScore.entrySet()) {
+            values[i] = entry.getKey();
+            scores[i] = entry.getValue().getValue();
             i++;
         }
 
+        // Set the probability distribution
         exponentialMechanism.setDistribution(values, scores);
         
+        // Select and return a value
         return exponentialMechanism.sample();
     }
 }
