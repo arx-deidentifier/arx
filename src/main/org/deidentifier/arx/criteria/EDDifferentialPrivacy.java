@@ -34,8 +34,15 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
  * (e,d)-Differential Privacy implemented with SafePub as proposed in:
+ * 
  * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
  * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+ * 
+ * SafePub, in turn, is a practical implementation of (k,b)-SDGS which was originally proposed in:
+ * 
+ * Ninghui Li, Wahbeh H. Qardaji, Dong Su:
+ * On sampling, anonymization, and differential privacy or, k-anonymization meets differential privacy. 
+ * Proceedings of ASIACCS 2012. pp. 32-33
  * 
  * @author Raffael Bild
  * @author Fabian Prasser
