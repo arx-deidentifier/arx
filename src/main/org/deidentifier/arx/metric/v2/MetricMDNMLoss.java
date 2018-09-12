@@ -389,7 +389,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
             k = dpCriterion.getMinimalClassSize();
             
             // Save reliable domain shares
-            this.sharesReliable = manager.getDomainSharesReliable();
+            sharesReliable = manager.getDomainSharesReliable();
         }
         
         // Min and max
