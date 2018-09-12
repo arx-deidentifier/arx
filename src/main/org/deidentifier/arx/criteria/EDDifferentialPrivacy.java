@@ -29,10 +29,16 @@ import org.deidentifier.arx.dp.ParameterCalculation;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
- * (e,d)-Differential Privacy implemented with (k,b)-SDGS as proposed in:
+ * (e,d)-Differential Privacy implemented with SafePub as proposed in:
+ * 
+ * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+ * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+ * 
+ * SafePub, in turn, is a practical implementation of (k,b)-SDGS which was originally proposed in:
  * 
  * Ninghui Li, Wahbeh H. Qardaji, Dong Su:
  * On sampling, anonymization, and differential privacy or, k-anonymization meets differential privacy. 
@@ -70,7 +76,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     private transient boolean        initialized = false;
 
     /**
-     * Creates a new instance
+     * Creates a new instance which is data-independent iff generalization is not null
      * @param epsilon
      * @param delta
      * @param generalization
@@ -78,6 +84,15 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public EDDifferentialPrivacy(double epsilon, double delta, 
                                  DataGeneralizationScheme generalization) {
         this(epsilon, delta, generalization, false);
+    }
+    
+    /**
+     * Creates a new data-dependent instance
+     * @param epsilon
+     * @param delta
+     */
+    public EDDifferentialPrivacy(double epsilon, double delta) {
+        this(epsilon, delta, null, false);
     }
     
     /**
@@ -108,7 +123,7 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     }
 
     /**
-     * Returns the k parameter of (k,b)-SDGS
+     * Returns the beta parameter of (k,b)-SDGS
      * @return
      */
     public double getBeta() {
@@ -169,18 +184,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     @Override
     public void initialize(DataManager manager, ARXConfiguration config){
         
-        if (config != null) {
-            // Because this is the only privacy model that dynamically
-            // constructs a subset, we need to call this method twice.
-            // This is the second call and can be ignored.
-            return;
-        }
-        
         // Set beta and k if required
         if (beta < 0) {
+            
+            double epsilonAnon = epsilon;
+            if (isDataDependent()) {
+                try {
+                    IntervalArithmeticDouble ia = new IntervalArithmeticDouble();
+                    epsilonAnon = ia.sub(ia.createInterval(epsilon), ia.createInterval(config.getDPSearchBudget())).lower;
+                } catch (IntervalArithmeticException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            
             ParameterCalculation pCalc = null;
             try {
-                pCalc = new ParameterCalculation(epsilon, delta);
+                pCalc = new ParameterCalculation(epsilonAnon, delta);
             } catch (IntervalArithmeticException e) {
                 throw new RuntimeException(e);
             }
@@ -214,6 +233,22 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     @Override
     public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
         return entry.count >= getK();
+    }
+    
+    /**
+     * Returns whether this instance is data-dependent
+     * @return
+     */
+    public boolean isDataDependent() {
+        return this.generalization == null;
+    }
+    
+    /**
+     * Returns whether this instance is deterministic
+     * @return
+     */
+    public boolean isDeterministic() {
+        return deterministic;
     }
 
     @Override
