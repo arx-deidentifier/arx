@@ -50,8 +50,11 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     /** Number of steps to be performed */
     private final int                        steps;
 
-    /** The expopnential mechanism */
-    private final ExponentialMechanism<Long> exponentialMechanism;
+    /** Privacy budget to use for each execution of the exponential mechanism */
+    private final double                     epsilonPerStep;
+
+    /** True iff this algorithm should be performed in a deterministic manner */
+    private final boolean                    deterministic;
 
     /**
      * Creates a new instance
@@ -82,12 +85,11 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.steps = steps;
+        this.deterministic = deterministic;
 
-        double epsilonPerStep;
         IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
         try {
-            epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).lower;
-            exponentialMechanism = new ExponentialMechanism<Long>(epsilonPerStep, deterministic);
+            this.epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).lower;
         } catch (IntervalArithmeticException e) {
             throw new RuntimeException(e);
         }
@@ -95,6 +97,15 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     
     @Override
     public boolean traverse() {
+        
+        // Create a new local ExponentialMechanism instance in order to reduce memory consumption caused
+        // by internal caches used by this class
+        ExponentialMechanism<Long> exponentialMechanism;
+        try {
+            exponentialMechanism = new ExponentialMechanism<Long>(epsilonPerStep, deterministic);
+        } catch (IntervalArithmeticException e) {
+            throw new RuntimeException(e);
+        }
         
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
@@ -128,7 +139,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
             transformationIDToScore.remove(pivot.getIdentifier());
             
             // Select the next pivot element from the set of candidates using the exponential mechanism
-            long id = executeExponentialMechanism(transformationIDToScore);
+            long id = executeExponentialMechanism(transformationIDToScore, exponentialMechanism);
             pivot = solutionSpace.getTransformation(id);
             score = transformationIDToScore.get(id);
             
@@ -159,9 +170,10 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     /**
      * Executes the exponential mechanism
      * @param transformationIDToScore
+     * @param exponentialMechanism 
      * @return
      */
-    private long executeExponentialMechanism(Map<Long, ILScore> transformationIDToScore) {
+    private long executeExponentialMechanism(Map<Long, ILScore> transformationIDToScore, ExponentialMechanism<Long> exponentialMechanism) {
         
         // Convert the map into arrays of the types required by the exponential mechanism
 
