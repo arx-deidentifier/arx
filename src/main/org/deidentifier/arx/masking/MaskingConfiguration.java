@@ -58,7 +58,7 @@ public class MaskingConfiguration {
     	parameter = maskings.get(attribute);
     	if (parameter==null)
     	{
-    		return -1;
+    		return 0;	//0 equals "Identity" Distribution
     	}
     	else
     		return parameter.getDistributionIndex();

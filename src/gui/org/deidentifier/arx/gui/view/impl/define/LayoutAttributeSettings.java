@@ -70,14 +70,6 @@ public class LayoutAttributeSettings implements ILayout {
                         attributeTransformationView.actionUpdateAttributeTypes(AttributeType.INSENSITIVE_ATTRIBUTE);
                     }
                 });
-        bar.add(Resources.getMessage("AttributeDefinitionView.14"), //$NON-NLS-1$
-                controller.getResources().getImage(AttributeType.SENSITIVE_ATTRIBUTE), // $NON-NLS-1$
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        attributeTransformationView.actionUpdateAttributeTypes(AttributeType.SENSITIVE_ATTRIBUTE);
-                    }
-                });
 
         // Create the tab folder
         ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, "id-1");

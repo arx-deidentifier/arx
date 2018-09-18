@@ -13,7 +13,7 @@ public class AttributeParameters{
 	
 	private int stringLength=-1;
 	
-	private int selectedDistributionIndex=-1;
+	private int selectedDistributionIndex=0;	//0 as default value represensts the "Identity" Distribution
 	
 	public AttributeParameters(MaskingType maskingType)
 	{

@@ -41,6 +41,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -82,9 +83,11 @@ public class ViewVariableConfiguration implements IView {
 
             @Override
             public void run() {
-
                 // Open dialog to configure new variable
-                new DialogVariableConfiguration(controller).open();
+            	DialogVariableConfiguration config = new DialogVariableConfiguration(controller);
+            	config.setBlockOnOpen(true);
+            	if (config.open()==Window.OK)
+            		tableViewer.getTable().select(tableViewer.getTable().getItemCount()-1);
 
             }
 
@@ -103,10 +106,10 @@ public class ViewVariableConfiguration implements IView {
                 for (Entry<String,AttributeParameters> entry : entries.entrySet())
                 {
                 	int value = entry.getValue().getDistributionIndex();
-                	if (tableViewer.getTable().getSelectionIndex() == value) 
+                	if (tableViewer.getTable().getSelectionIndex() == value-1) 
                 	{
                 		MaskingConfiguration.removeMasking(entry.getKey());
-                		deletedIndex = value;
+                		deletedIndex = value-1;
                 		break;	//TODO: this only removes the first masking using the deleted distribution, remove break if multiple maskings can use the same distribution
                 	}
                 }
@@ -115,7 +118,7 @@ public class ViewVariableConfiguration implements IView {
                 for (Entry<String,AttributeParameters> entry : entries.entrySet())
                 {
                 	int value = entry.getValue().getDistributionIndex();
-                	if (deletedIndex>=0 && deletedIndex<entries.size()-1 && value>deletedIndex)
+                	if (deletedIndex>=0 && deletedIndex<entries.size()-1 && value-1>deletedIndex) //Compared to Value-1 due to "Identity" being index 0
                 	{
                 		entry.getValue().setDistribution(value-1);
                 	}

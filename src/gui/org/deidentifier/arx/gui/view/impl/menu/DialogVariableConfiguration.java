@@ -37,9 +37,11 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -76,6 +78,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
     private Text textVariableName;
     private Combo comboDistribution;
     private Composite compositeParameter;
+    private GridLayout compositeLabelMinLayout;
 
 
     // Constructor for editing an existing random variable
@@ -126,26 +129,52 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
             setTitle(Resources.getMessage("DialogVariableConfiguration.1"));
 
         }
-
         setMessage(Resources.getMessage("DialogVariableConfiguration.2"), IMessageProvider.INFORMATION);
-
+        textVariableName.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+				if (textVariableName.getText().equals(""))
+					setErrorMessage(Resources.getMessage("DialogVariableConfiguration.5"));
+				else
+					setErrorMessage(null);
+			}
+		});
     }
 
     @Override
     protected Control createDialogArea(Composite composite) {
-
+    	
         composite.setLayout(SWTUtil.createGridLayout(2));
+    	compositeLabelMinLayout = new GridLayout();
+        compositeLabelMinLayout.numColumns = 1;
+        compositeLabelMinLayout.marginLeft = 0;
+        compositeLabelMinLayout.marginRight = 0;
+        compositeLabelMinLayout.marginWidth = 0;
+        compositeLabelMinLayout.marginHeight = 0;
+        
+        Composite compositeGeneral = new Composite(composite, SWT.NONE);
+        compositeGeneral.setLayoutData(SWTUtil.createFillHorizontallyGridData(true,2));
+        final GridLayout typeInputGridLayout = new GridLayout();
+        typeInputGridLayout.numColumns = 2;
+        typeInputGridLayout.makeColumnsEqualWidth = true; 
+        compositeGeneral.setLayout(typeInputGridLayout);
 
         // Variable name
-        Label labelVariableName = new Label(composite, SWT.NONE);
+        Composite compositeString = new Composite(compositeGeneral, SWT.NONE);
+        compositeString.setLayout(compositeLabelMinLayout);
+        Label labelVariableName = new Label(compositeString, SWT.NONE);
         labelVariableName.setText(Resources.getMessage("DialogVariableConfiguration.3"));
-        textVariableName = new Text(composite, SWT.BORDER);
+        textVariableName = new Text(compositeGeneral, SWT.BORDER);
+        textVariableName.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         textVariableName.setText(variable.getName());
 
         // Variable distribution
-        Label labelDistribution = new Label(composite, SWT.NONE);
+        Composite compositeString2 = new Composite(compositeGeneral, SWT.NONE);
+        compositeString2.setLayout(compositeLabelMinLayout);
+        Label labelDistribution = new Label(compositeString2, SWT.NONE);
         labelDistribution.setText(Resources.getMessage("DialogVariableConfiguration.4"));
-        comboDistribution = new Combo(composite, SWT.READ_ONLY);
+        comboDistribution = new Combo(compositeGeneral, SWT.READ_ONLY);
+        comboDistribution.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 
         // Add all available distributions to combo box
         List<DistributionTypeDescription> distributions = DistributionType.list();
@@ -182,12 +211,8 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
         // Composite for parameters
         compositeParameter = new Composite(composite, SWT.NONE);
-        final GridData d = new GridData();
-    	d.grabExcessHorizontalSpace = false;
-    	d.grabExcessVerticalSpace = false;
-    	d.horizontalSpan = 2;
-        compositeParameter.setLayoutData(d);
-        compositeParameter.setLayout(SWTUtil.createGridLayout(2));
+        compositeParameter.setLayoutData(SWTUtil.createFillHorizontallyGridData(true,2));
+        compositeParameter.setLayout(typeInputGridLayout);
 
         // Display parameters initially
         updateParameters();
@@ -228,13 +253,42 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
     private void createText(DistributionParameter<?> parameter) {
 
         // Create label
-        Label label = new Label(compositeParameter, SWT.NONE);
+        Composite compositeString = new Composite(compositeParameter, SWT.NONE);
+        compositeString.setLayout(compositeLabelMinLayout);
+        Label label = new Label(compositeString, SWT.NONE);
         label.setText(parameterLabels.get(parameter.getName()));
 
         // Create text
         ParameterText text = new ParameterText(parameter, compositeParameter, SWT.BORDER);
+        text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         text.setText(String.valueOf(parameter.getInitial()));
-
+        text.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent arg0) {
+			    try {
+			    	if (parameter.getType().equals(Integer.class))
+			    	{
+			    		int value = Integer.parseInt(text.getText());
+						if (value>(int)parameter.getMax() || value < (int)parameter.getMin())
+							setErrorMessage(Resources.getMessage("DialogVariableConfiguration.6"));
+						else
+							setErrorMessage(null);
+			    	}
+			    	else if (parameter.getType().equals(Double.class))
+			    	{
+			    		Double value = Double.parseDouble(text.getText());
+						if (value>(double)parameter.getMax() || value < (double)parameter.getMin())
+							setErrorMessage(Resources.getMessage("DialogVariableConfiguration.6"));
+						else
+							setErrorMessage(null);
+			    	}
+			    	else
+			    		setErrorMessage("Unknown parameter type");
+			    } catch (Exception e) {
+			    	setErrorMessage("Parameter "+parameter.getName()+" has to be of type "+parameter.getType().getSimpleName());
+			    }
+			}
+		});
     }
 
     @SuppressWarnings("unused")
@@ -243,9 +297,16 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
 		Button ok = createButton(parent, Window.OK, "OK", true);
         Button cancel = createButton(parent, Window.CANCEL, "Cancel", false);
-
+		if (textVariableName.getText().equals(""))
+			setErrorMessage(Resources.getMessage("DialogVariableConfiguration.5"));
     }
-
+    @Override
+    public void setErrorMessage(String newErrorMessage) {
+        Button okButton = getButton(Window.OK);
+        if (okButton != null) 
+            okButton.setEnabled(newErrorMessage == null);
+        super.setErrorMessage(newErrorMessage);
+    }
     @Override
     protected void okPressed() {
 
