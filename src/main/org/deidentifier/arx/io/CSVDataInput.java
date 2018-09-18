@@ -454,9 +454,10 @@ public class CSVDataInput {
         return new Iterator<String[]>() {
 
             // Next tuple
-            boolean   initialized = false;
-            CsvParser parser      = null;
-            String[]  next        = null;
+            boolean   initialized   = false;
+            boolean   parsedHeaders = false;
+            CsvParser parser        = null;
+            String[]  next          = null;
 
             @Override
             public boolean hasNext() {
@@ -479,7 +480,7 @@ public class CSVDataInput {
                 next = parser.parseNext();
                 
                 // Replace each non matching value with the special NULL string
-                if (cleansing) {
+                if (cleansing && parsedHeaders) {
 
                     if (result.length != datatypes.length) {
                         throw new IllegalArgumentException("More columns available in CSV file than data types specified");
@@ -491,6 +492,7 @@ public class CSVDataInput {
                         }
                     }
                 }
+                parsedHeaders = true;
                 return result;
             }
 
