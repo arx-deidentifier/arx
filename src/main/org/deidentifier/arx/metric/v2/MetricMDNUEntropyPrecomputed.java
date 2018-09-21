@@ -83,9 +83,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     /** Num rows */
     private double        rows;
 
-    /** Minimal size of equivalence classes enforced by the differential privacy model */
-    private long          k;
-
     /** The root values of all generalization hierarchies or -1 if no single root value exists */
     private int[]         rootValues;
 
@@ -396,11 +393,6 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
         
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-            
-            // Store minimal size of equivalence classes
-            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            k = dpCriterion.getMinimalClassSize();
-            
             // Store root values of generalization hierarchies or null if no single root value exists
             rootValues = new int[hierarchies.length];
             for (int i = 0; i < hierarchies.length; i++) {

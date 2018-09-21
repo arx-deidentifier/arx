@@ -23,7 +23,6 @@ import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -55,9 +54,6 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
     /** Hierarchy heights. */
     private int[]             heights;
-    
-    /** Minimal size of equivalence classes enforced by the differential privacy model */
-    private int               k;
 
     /**
      * Creates a new instance.
@@ -325,12 +321,6 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         this.heights = new int[hierarchies.length];
         for (int j = 0; j < heights.length; j++) {
             heights[j] = hierarchies[j].getArray()[0].length - 1;
-        }
-        
-        // Store minimal size of equivalence classes
-        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            k = dpCriterion.getMinimalClassSize();
         }
     }
 }

@@ -53,7 +53,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     /** Privacy budget to use for each execution of the exponential mechanism */
     private final double                     epsilonPerStep;
 
-    /** True iff this algorithm should be performed in a deterministic manner */
+    /** True iff this algorithm should be executed in a deterministic manner */
     private final boolean                    deterministic;
 
     /**

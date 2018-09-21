@@ -65,9 +65,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     /** We must override this for backward compatibility. Remove, when re-implemented. */
     private final double          sFactor;
-
-    /** Minimal size of equivalence classes enforced by the differential privacy model */
-    private int                   k;
     
     /**
      * Default constructor which treats all transformation methods equally.
@@ -383,11 +380,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         this.shares = manager.getDomainShares();
 
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-            
-            // Store minimal size of equivalence classes
-            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            k = dpCriterion.getMinimalClassSize();
-            
             // Save reliable domain shares
             sharesReliable = manager.getDomainSharesReliable();
         }
