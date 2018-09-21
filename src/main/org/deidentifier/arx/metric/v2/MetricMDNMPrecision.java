@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
@@ -41,6 +42,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
@@ -117,6 +119,43 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                        this.getAggregateFunction()                  // aggregate function
                                        );
     }
+    
+    @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        
+        int suppressedTuples = 0;
+        int unsuppressedTuples = 0;
+        
+        // For each group
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            
+            // Calculate number of affected records
+            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
+            suppressedTuples += m.isNotOutlier ? 0 : m.count;
+            suppressedTuples += m.pcount - m.count;
+
+            // Next group
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        BigFraction score = new BigFraction(0);
+        for (int i = 0; i<dimensionsGeneralized; i++) {
+            BigFraction value = heights[i] == 0 ? BigFraction.ZERO : new BigFraction(transformation[i]).divide(new BigFraction(heights[i]));
+            score = score.add(new BigFraction(unsuppressedTuples).multiply(value).add(new BigFraction(suppressedTuples)));
+        }
+        
+        // Divide by sensitivity and multiply with -1 so that higher values are better
+        score = score.multiply(BigFraction.MINUS_ONE.divide(new BigFraction(getDimensionsGeneralized())));
+        if (k > 1) score = score.divide(new BigFraction(k - 1));
+        
+        // Return score
+        return new ILScore(score);
+    }
 
     @Override
     public boolean isAbleToHandleMicroaggregation() {
@@ -125,6 +164,11 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
