@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.io.CSVDataInput;
 import org.deidentifier.arx.io.CSVOptions;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -285,7 +284,7 @@ public abstract class Data { // NO_UCD
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+    public static Data create(final File file, final Charset charset, final CSVSyntax config, final DataType<?>[] datatypes) throws IOException {
         return new IterableData(new CSVDataInput(file, charset, config, datatypes).iterator());
     }
     /**
@@ -387,7 +386,7 @@ public abstract class Data { // NO_UCD
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+    public static Data create(final InputStream stream, final Charset charset, final CSVSyntax config, final DataType<?>[] datatypes) throws IOException {
         return new IterableData(new CSVDataInput(stream, charset, config, datatypes).iterator());
     }
 
@@ -541,7 +540,7 @@ public abstract class Data { // NO_UCD
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+    public static Data create(final String path, final Charset charset, final CSVSyntax config, final DataType<?>[] datatypes) throws IOException {
         return new IterableData(new CSVDataInput(path, charset, config, datatypes).iterator());
     }
 
