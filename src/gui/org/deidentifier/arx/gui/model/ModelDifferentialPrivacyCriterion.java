@@ -26,7 +26,6 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 
 /**
  * This class implements a model for the (e,d)-DP criterion.
- * TODO Insgesamt ist mir unklar, wie im Model zwischen der alten data-independent und der neuen data-dependent Implementierung unterschieden wird.
  *
  * @author Fabian Prasser
  */
@@ -45,9 +44,9 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     private Double                   searchBudget     = 0.1d;
 
     /** Search steps */
-    private Integer                  searchSteps      = 100;
+    private Integer                  searchSteps      = 300;
 
-    /** Generalization scheme */
+    /** Generalization scheme to be used or null in the case of data-dependent differential privacy */
     private DataGeneralizationScheme generalization   = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
 
     /**
@@ -130,7 +129,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      */
     public int getSearchSteps() {
         if (searchSteps == null) {
-            searchSteps = 100;
+            searchSteps = 300;
         }
         return searchSteps;
     }
