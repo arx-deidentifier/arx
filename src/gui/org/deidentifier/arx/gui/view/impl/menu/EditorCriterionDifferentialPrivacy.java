@@ -160,7 +160,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 13;
+        groupInputGridLayout.numColumns = 11;
         group.setLayout(groupInputGridLayout);
         
 
