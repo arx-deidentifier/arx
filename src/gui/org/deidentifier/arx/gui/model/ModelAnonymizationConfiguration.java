@@ -19,6 +19,8 @@ package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
+
 /**
  * Anonymization configuration
  * 
@@ -65,9 +67,13 @@ public class ModelAnonymizationConfiguration implements Serializable {
     /**
      * Search step limit for SearchType.STEP_LIMIT
      * 
-     * @return the heuristicSearchStepLimit
+     * @return the heuristicSearchStepLimit or the number of steps to use for data-dependent differential privacy
      */
     public int getHeuristicSearchStepLimit() {
+        EDDifferentialPrivacy edp = model.getInputConfig().getCriterion(EDDifferentialPrivacy.class);
+        if (edp != null && edp.isDataDependent()) {
+            return model.getDPSearchStepNumber();
+        }
         return model.getHeuristicSearchStepLimit();
     }
     /**
@@ -107,10 +113,15 @@ public class ModelAnonymizationConfiguration implements Serializable {
     }
     
     /**
-     * @param heuristicSearchStepLimit the heuristicSearchStepLimit to set
+     * @param heuristicSearchStepLimit the heuristicSearchStepLimit or the number of steps to use for data-dependent differential privacy
      */
     public void setHeuristicSearchStepLimit(int heuristicSearchStepLimit) {
-        this.model.setHeuristicSearchStepLimit(heuristicSearchStepLimit);
+        EDDifferentialPrivacy edp = model.getInputConfig().getCriterion(EDDifferentialPrivacy.class);
+        if (edp != null && edp.isDataDependent()) {
+            this.model.setDPSearchStepNumber(heuristicSearchStepLimit);
+        } else {
+            this.model.setHeuristicSearchStepLimit(heuristicSearchStepLimit);
+        }
     }
     
     /**

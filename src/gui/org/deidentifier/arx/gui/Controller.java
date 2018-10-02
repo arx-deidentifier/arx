@@ -57,7 +57,6 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeDescription;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
@@ -598,11 +597,9 @@ public class Controller implements IView {
         }
         
         // Open configuration dialog
-        if (!model.getInputConfig().containsCriterion(EDDifferentialPrivacy.class)) {
-            ModelAnonymizationConfiguration configuration = this.actionShowLocalAnonymizationDialog();
-            if (configuration == null) {
-                return;
-            }
+        ModelAnonymizationConfiguration configuration = this.actionShowLocalAnonymizationDialog();
+        if (configuration == null) {
+            return;
         }
         
         // Reset

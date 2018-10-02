@@ -61,9 +61,6 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     private Knob<Double>          knobSearchBudget;
 
     /** View */
-    private Knob<Integer>         knobSearchSteps;
-
-    /** View */
     private Combo                 comboGeneralization;
 
     /** View */
@@ -74,9 +71,6 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     
     /** View */
     private Text                  labelSearchBudget;
-
-    /** View */
-    private Text                  labelSearchSteps;
 
     /**
      * Some epsilon values mentioned in "Practicing Differential Privacy in Health Care: A Review"
@@ -166,7 +160,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 14;
+        groupInputGridLayout.numColumns = 13;
         group.setLayout(groupInputGridLayout);
         
 
@@ -219,14 +213,10 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                 if (index == comboGeneralization.getItemCount()-1) {
                     model.setGeneralization(null);
                     knobSearchBudget.setEnabled(true);
-                    knobSearchSteps.setEnabled(true);
                     labelSearchBudget.setEnabled(true);
-                    labelSearchSteps.setEnabled(true);
                 } else {
                     knobSearchBudget.setEnabled(false);
-                    knobSearchSteps.setEnabled(false);
                     labelSearchBudget.setEnabled(false);
-                    labelSearchSteps.setEnabled(false);
                     if (index == comboGeneralization.getItemCount()-2) {
 
                         DialogGeneralizationSelection dialog = new DialogGeneralizationSelection(comboGeneralization.getShell(),
@@ -267,23 +257,6 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         knobSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
         labelSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
 
-        // Create search steps slider
-        final Label sLabel = new Label(group, SWT.NONE);
-        sLabel.setText(Resources.getMessage("CriterionDefinitionView.96")); //$NON-NLS-1$
-
-        labelSearchSteps = createLabel(group);
-        knobSearchSteps = createKnobInteger(group, 0, 10000);
-        updateLabel(labelSearchSteps, knobSearchSteps.getValue());
-        knobSearchSteps.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.setSearchSteps(knobSearchSteps.getValue());
-                updateLabel(labelSearchSteps, model.getSearchSteps());
-            }
-        });
-        knobSearchSteps.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
-        labelSearchSteps.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
-
         return group;
     }
     
@@ -305,11 +278,9 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         updateLabel(labelEpsilon, model.getEpsilon());
         updateLabel(labelDelta, model.getDelta());
         updateLabel(labelSearchBudget, model.getSearchBudget());
-        updateLabel(labelSearchSteps, model.getSearchSteps());
         knobDelta.setValue(model.getDelta());
         knobEpsilon.setValue(model.getEpsilon());
         knobSearchBudget.setValue(model.getSearchBudget());
-        knobSearchSteps.setValue(model.getSearchSteps());
         if (!_default) {
             if (model.getGeneralization() == null) {
                 comboGeneralization.select(comboGeneralization.getItemCount() - 1);
@@ -321,9 +292,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                     comboGeneralization.select(comboGeneralization.getItemCount() - 2);
                 }
             }
-            knobSearchSteps.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
             knobSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
-            labelSearchSteps.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
             labelSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
         }
     }

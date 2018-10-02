@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
@@ -60,6 +61,10 @@ public class DialogAnonymization extends TitleAreaDialog {
     /** Model */
     private boolean                         optimalSearchAvailable;
     /** Model */
+    private boolean                         heuristicSearchStepLimitAvailable;
+    /** Model */
+    private boolean                         heuristicSearchTimeLimitAvailable;
+    /** Model */
     private boolean                         localRecodingAvailable;
 
     /** View */
@@ -89,8 +94,17 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.configuration = model.getAnonymizationConfiguration();
         this.configurationValid = true;
         
-        // Determine if optimal search is available
-        this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
+        // Determine available search options
+        EDDifferentialPrivacy edp = model.getInputConfig().getCriterion(EDDifferentialPrivacy.class);
+        if (edp != null) {
+            this.optimalSearchAvailable = false;
+            this.heuristicSearchStepLimitAvailable = edp.isDataDependent();
+            this.heuristicSearchTimeLimitAvailable = false;
+        } else {
+            this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
+            this.heuristicSearchStepLimitAvailable = true;
+            this.heuristicSearchTimeLimitAvailable = true;
+        }
         
         // Determine if local recoding is available
         this.localRecodingAvailable = true;
@@ -352,13 +366,28 @@ public class DialogAnonymization extends TitleAreaDialog {
         // Prepare radio buttons
         if (this.optimalSearchAvailable) {
             radio11.setEnabled(true);
+            radio11.setSelection(true);
+            radio12.setSelection(false);
+            radio13.setSelection(false);
         } else {
             radio11.setEnabled(false);
-            if (configuration.getSearchType() == SearchType.OPTIMAL) {
+            radio11.setSelection(false);
+            if (!this.heuristicSearchStepLimitAvailable) {
+                radio12.setEnabled(false);
+                radio12.setSelection(false);
+                this.txtHeuristicSearchStepLimit.setEnabled(false);
+            } else if (configuration.getSearchType() == SearchType.OPTIMAL) {
                 radio12.setSelection(true);
                 configuration.setSearchType(SearchType.STEP_LIMIT);
             }
-            createMessage(group1, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
+            if (!this.heuristicSearchTimeLimitAvailable) {
+                radio13.setEnabled(false);
+                radio13.setSelection(false);
+                this.txtHeuristicSearchTimeLimit.setEnabled(false);
+                createMessage(group1, Resources.getMessage("DialogAnonymization.15")); //$NON-NLS-1$
+            } else {
+                createMessage(group1, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
+            }
         }
 
         // Lower group
