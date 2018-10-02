@@ -250,6 +250,21 @@ public class EDDifferentialPrivacy extends ImplicitPrivacyCriterion {
     public boolean isDeterministic() {
         return deterministic;
     }
+    
+    @Override
+    public boolean isHeuristicSearchSupported() {
+        return isDataDependent();
+    }
+    
+    @Override
+    public boolean isHeuristicSearchWithTimeLimitSupported() {
+        return false;
+    }
+    
+    @Override
+    public boolean isOptimalSearchSupported() {
+        return false;
+    }
 
     @Override
     public boolean isLocalRecodingSupported() {

@@ -17,7 +17,6 @@
 
 package org.deidentifier.arx.gui.view.impl.menu;
 
-import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
@@ -95,23 +94,22 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.configurationValid = true;
         
         // Determine available search options
-        EDDifferentialPrivacy edp = model.getInputConfig().getCriterion(EDDifferentialPrivacy.class);
-        if (edp != null) {
-            this.optimalSearchAvailable = false;
-            this.heuristicSearchStepLimitAvailable = edp.isDataDependent();
-            this.heuristicSearchTimeLimitAvailable = false;
-        } else {
-            this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
-            this.heuristicSearchStepLimitAvailable = true;
-            this.heuristicSearchTimeLimitAvailable = true;
-        }
-        
-        // Determine if local recoding is available
         this.localRecodingAvailable = true;
+        this.heuristicSearchStepLimitAvailable = true;
+        this.heuristicSearchTimeLimitAvailable = true;
+        this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
         for (PrivacyCriterion c : model.getInputConfig().getCriteria()) {
             if (!c.isLocalRecodingSupported()) {
                 this.localRecodingAvailable = false;
-                break;
+            }
+            if (!c.isOptimalSearchSupported()) {
+                this.optimalSearchAvailable = false;
+            }
+            if (!c.isHeuristicSearchSupported()) {
+                this.heuristicSearchStepLimitAvailable = false;
+            }
+            if (!c.isHeuristicSearchWithTimeLimitSupported()) {
+                this.heuristicSearchTimeLimitAvailable = false;
             }
         }
     }

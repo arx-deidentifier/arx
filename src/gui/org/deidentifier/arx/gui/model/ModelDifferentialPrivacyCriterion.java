@@ -43,9 +43,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     /** Search budget */
     private Double                   searchBudget     = 0.1d;
 
-    /** Search steps */
-    private Integer                  searchSteps      = 300;
-
     /** Generalization scheme to be used or null in the case of data-dependent differential privacy */
     private DataGeneralizationScheme generalization   = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
 
@@ -72,7 +69,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         result.epsilon = this.epsilon;
         result.delta = this.delta;
         result.searchBudget = this.searchBudget;
-        result.searchSteps = this.searchSteps;
         result.generalization = (this.generalization == null) ? null : this.generalization.clone();
         result.setEnabled(this.isEnabled());
         return result;
@@ -123,17 +119,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         return searchBudget;
     }
 
-    /**
-     * Getter
-     * @return
-     */
-    public int getSearchSteps() {
-        if (searchSteps == null) {
-            searchSteps = 300;
-        }
-        return searchSteps;
-    }
-
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelDifferentialPrivacyCriterion)) {
@@ -143,7 +128,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         this.epsilon = other.epsilon;
         this.delta = other.delta;
         this.searchBudget = other.searchBudget;
-        this.searchSteps = other.searchSteps;
         if (!_default) {
             this.generalization = (other.generalization == null) ? null : other.generalization.clone();
         }
@@ -174,14 +158,6 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      */
     public void setGeneralization(DataGeneralizationScheme generalization) {
         this.generalization = generalization;
-    }
-    
-    /**
-     * Setter
-     * @param searchSteps
-     */
-    public void setSearchSteps(int searchSteps) {
-        this.searchSteps = searchSteps;
     }
 
     /**
