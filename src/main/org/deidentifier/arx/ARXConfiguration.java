@@ -943,7 +943,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Sets wether the search step limit should limit the number of expansions
+     * Sets whether the search step limit should limit the number of expansions
      * when used with differential privacy or the number of checks.
      * @param dpHeuristicLimitExpansions
      */
