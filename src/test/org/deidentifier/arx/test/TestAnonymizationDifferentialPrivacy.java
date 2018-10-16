@@ -118,7 +118,8 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
         ARXConfiguration result = ARXConfiguration.create(1d, metric);
         result.addPrivacyModel(new EDDifferentialPrivacy(epsilon, delta, null, true));
         result.setDPSearchBudget(searchBudget);
-        result.setDPSearchStepNumber(steps);
+        result.setDPHeuristicLimitExpansions(true);
+        result.setHeuristicSearchStepLimit(steps);
         return result;
     }
     

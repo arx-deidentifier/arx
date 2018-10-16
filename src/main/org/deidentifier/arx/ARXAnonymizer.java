@@ -562,9 +562,6 @@ public class ARXAnonymizer { // NO_UCD
                 if (config.getDPSearchBudget() >= edpModel.getEpsilon()) {
                     throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
                 }
-                if (config.getDPSearchStepNumber() < 0) {
-                    throw new IllegalArgumentException("The the number of steps to use for the differentially private search algorithm must be >= 0");
-                }
             }
         }
         
@@ -612,7 +609,8 @@ public class ARXAnonymizer { // NO_UCD
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getDPSearchStepNumber(), config.getDPSearchBudget());
+                                                         config.getHeuristicSearchStepLimit(), config.isDPHeuristicLimitExpansions(),
+                                                         config.getDPSearchBudget());
             }
         }
 

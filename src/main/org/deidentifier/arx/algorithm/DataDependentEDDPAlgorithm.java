@@ -47,7 +47,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     /** Property */
     private final PredictiveProperty         propertyChecked;
 
-    /** Number of steps to be performed */
+    /** Number of expansions to be performed */
     private final int                        steps;
 
     /** Privacy budget to use for each execution of the exponential mechanism */
@@ -61,13 +61,14 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param deterministic
-     * @param steps
+     * @param heuristicSteps
+     * @param dpHeuristicLimitExpansions 
      * @param epsilonSearch
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
-                                           boolean deterministic, int steps, double epsilonSearch) {
-        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, steps, epsilonSearch);
+                                           boolean deterministic, int heuristicSteps, boolean dpHeuristicLimitExpansions, double epsilonSearch) {
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, heuristicSteps, dpHeuristicLimitExpansions, epsilonSearch);
     }
 
     /**
@@ -75,23 +76,37 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param space
      * @param checker
      * @param deterministic
-     * @param steps
+     * @param heuristicSteps
+     * @param dpHeuristicLimitExpansions 
      * @param epsilonSearch
      */
     private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
-                                       boolean deterministic, int steps, double epsilonSearch) {
+                                       boolean deterministic, int heuristicSteps, boolean dpHeuristicLimitExpansions, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
-        this.steps = steps;
         this.deterministic = deterministic;
-
-        IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
-        try {
-            this.epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(steps)).lower;
-        } catch (IntervalArithmeticException e) {
-            throw new RuntimeException(e);
+        
+        if (dpHeuristicLimitExpansions) {
+            this.steps = heuristicSteps;
+        } else {
+            // Calculate a number of expansions such that the resulting
+            // number of checks cannot exceed the specified limit
+            int numQIs = this.solutionSpace.getTop().getGeneralization().length;
+            this.steps = heuristicSteps / numQIs;
+        }
+        
+        if (this.steps == 0) {
+            // Avoid division by zero
+            this.epsilonPerStep = 0d;
+        } else {
+            IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
+            try {
+                this.epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(this.steps)).lower;
+            } catch (IntervalArithmeticException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
     

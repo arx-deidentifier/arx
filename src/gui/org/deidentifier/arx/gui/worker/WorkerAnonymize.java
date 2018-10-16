@@ -86,7 +86,6 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
                 config.setHeuristicSearchEnabled(true);
                 config.setHeuristicSearchStepLimit(model.getHeuristicSearchTimeLimit());
             }
-            config.setDPSearchStepNumber(model.getDPSearchStepNumber());
             
             // Overwrite user-defined settings to prepare local recoding
             if (transformationType == TransformationType.LOCAL) {

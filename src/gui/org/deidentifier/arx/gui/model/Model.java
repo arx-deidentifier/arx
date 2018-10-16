@@ -284,9 +284,6 @@ public class Model implements Serializable {
 
     /** Heuristic search threshold */
     private Integer                                       heuristicSearchStepLimit;
-    
-    /** Number of steps to use for the data-dependent differential privacy search algorithm */
-    private Integer                                       dpSearchStepNumber;
 
     /** General anonymization configuration. Proxy for some fields for backwards compatibility */
     private ModelAnonymizationConfiguration               anonymizationConfiguration;
@@ -679,16 +676,6 @@ public class Model implements Serializable {
             return this.heuristicSearchStepLimit = 1000;
         }
         return heuristicSearchStepLimit;
-    }
-    
-    /**
-     * @return the dpSearchStepNumber
-     */
-    public Integer getDPSearchStepNumber() {
-        if (this.dpSearchStepNumber == null) {
-            this.dpSearchStepNumber = 300;
-        }
-        return this.dpSearchStepNumber;
     }
 
     /**
@@ -1356,7 +1343,6 @@ public class Model implements Serializable {
         this.classificationModel = new ModelClassification();
         this.anonymizationConfiguration = null;
         this.heuristicSearchStepLimit = null;
-        this.dpSearchStepNumber = null;
         this.heuristicSearchThreshold = null;
         this.heuristicSearchTimeLimit = null;
         this.optimizationStatistics = null;
@@ -1469,13 +1455,6 @@ public class Model implements Serializable {
      */
     public void setHeuristicSearchStepLimit(Integer heuristicSearchStepLimit) {
         this.heuristicSearchStepLimit = heuristicSearchStepLimit;
-    }
-    
-    /**
-     * @param dpSearchStepNumber the dpSearchStepNumber to set
-     */
-    public void setDPSearchStepNumber(Integer dpSearchStepNumber) {
-        this.dpSearchStepNumber = dpSearchStepNumber;
     }
 
     /**

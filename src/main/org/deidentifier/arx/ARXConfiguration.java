@@ -354,6 +354,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Internal variant of the class providing a broader interface. */
     private transient ARXConfigurationInternal accessibleInstance                    = null;
 
+    /** True if the search step limit should limit the number of expansions when used with differential privacy,
+     *  false if it should limit the number of checks. */
+    private Boolean                            dpHeuristicLimitExpansions            = false;
+
     /** Are we performing optimal anonymization for sample-based criteria? */
     private boolean                            heuristicSearchForSampleBasedCriteria = false;
 
@@ -375,9 +379,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** The privacy budget to use for the data-dependent differential privacy search algorithm */
     private Double                             dpSearchBudget                        = 0.1d;
 
-    /** Number of steps to use for the data-dependent differential privacy search algorithm */
-    private Integer                            dpSearchStepNumber                    = 300;
-    
     /** Number of output records */
     private int                                numOutputRecords                      = 0;
 
@@ -509,7 +510,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         result.dpSearchBudget = this.dpSearchBudget;
-        result.dpSearchStepNumber = this.dpSearchStepNumber;
+        result.dpHeuristicLimitExpansions = this.dpHeuristicLimitExpansions;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -570,18 +571,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
             this.dpSearchBudget = 0.1d;
         }
         return this.dpSearchBudget;
-    }
-    
-    /**
-     * Returns the number of steps to use for the data-dependent
-     * differential privacy search algorithm. The default is 300.
-     * @return
-     */
-    public int getDPSearchStepNumber() {
-        if (this.dpSearchStepNumber == null) {
-            this.dpSearchStepNumber = 300;
-        }
-        return this.dpSearchStepNumber;
     }
     
     /**
@@ -805,6 +794,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Returns true if the search step limit should limit the number of expansions when used with differential privacy
+     * and false if it should limit the number of checks.
+     * @return
+     */
+    public boolean isDPHeuristicLimitExpansions() {
+        // Ensure backwards compatibility
+        if (this.dpHeuristicLimitExpansions == null) {
+            this.dpHeuristicLimitExpansions = false;
+        }
+        return this.dpHeuristicLimitExpansions;
+    }
+    
+    /**
      * Returns whether ARX will use a heuristic search strategy. The default is false.
      * @return
      */
@@ -941,6 +943,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Sets wether the search step limit should limit the number of expansions
+     * when used with differential privacy or the number of checks.
+     * @param dpHeuristicLimitExpansions
+     */
+    public void setDPHeuristicLimitExpansions(boolean dpHeuristicLimitExpansions) {
+        this.dpHeuristicLimitExpansions = dpHeuristicLimitExpansions;
+    }
+    
+    /**
      * Sets the privacy budget to use for the data-dependent
      * differential privacy search algorithm. The default is 0.1.
      * @param budget
@@ -948,16 +959,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setDPSearchBudget(double budget) {
         if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.dpSearchBudget = budget;
-    }
-    
-    /**
-     * Sets the number of steps to use for the data-dependent
-     * differential privacy search algorithm. The default is 300.
-     * @param numberOfSteps
-     */
-    public void setDPSearchStepNumber(int numberOfSteps) {
-        if (numberOfSteps < 0) { throw new IllegalArgumentException("Parameter must be >= 0"); }
-        this.dpSearchStepNumber = numberOfSteps;
     }
 
     /**
