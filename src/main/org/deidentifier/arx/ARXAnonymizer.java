@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration.SearchStepSemantics;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
@@ -563,7 +564,7 @@ public class ARXAnonymizer { // NO_UCD
                     throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
                 }
                 int numQIs = handle.getDefinition().getQuasiIdentifyingAttributes().size();
-                if (config.getHeuristicExpansionLimit(numQIs) == Integer.MAX_VALUE) {
+                if (config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs) == Integer.MAX_VALUE) {
                     throw new IllegalArgumentException("The number of heuristic search steps has to be limited when using data-dependent differential privacy");
                 }
             }
@@ -615,12 +616,13 @@ public class ARXAnonymizer { // NO_UCD
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getHeuristicExpansionLimit(numQIs), config.getDPSearchBudget());
+                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs), config.getDPSearchBudget());
             }
         }
 
         if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicCheckLimit(numQIs));
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
+                                             config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());

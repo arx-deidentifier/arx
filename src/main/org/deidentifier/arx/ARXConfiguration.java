@@ -585,56 +585,30 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * The heuristic search algorithm will terminate after the returned number of transformations
-     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
-     * @param numQIs
+     * The heuristic search algorithm will terminate after the returned number of steps.
+     * The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * @param requestedSemantics the semantics of the number of search steps to be returned
+     * @param numQIs the number of QIs
      * @return
      */
-    public int getHeuristicCheckLimit(int numQIs) {
+    public int getHeuristicSearchStepLimit(SearchStepSemantics requestedSemantics, int numQIs) {
         
         if (this.heuristicSearchStepLimit == null) {
             this.heuristicSearchStepLimit = Integer.MAX_VALUE;
         }
         
-        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE) {
+        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE || requestedSemantics == this.searchStepSemantics) {
             return this.heuristicSearchStepLimit;
         }
         
-        switch (searchStepSemantics) {
-        case CHECKS:
-            return this.heuristicSearchStepLimit;
-        case EXPANSIONS:
-            return this.heuristicSearchStepLimit * numQIs;
-        default:
-            throw new RuntimeException("The search step semantic " + searchStepSemantics + " is not supported");
-        }
-    }
-    
-    /**
-     * The heuristic search algorithm will terminate after the returned number of expansions
-     * have been performed. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
-     * @param numQIs
-     * @return
-     */
-    public int getHeuristicExpansionLimit(int numQIs) {
-        
-        if (this.heuristicSearchStepLimit == null) {
-            this.heuristicSearchStepLimit = Integer.MAX_VALUE;
-        }
-        
-        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE) {
-            return this.heuristicSearchStepLimit;
-        }
-        
-        switch (searchStepSemantics) {
-        case CHECKS:
+        if (this.searchStepSemantics == SearchStepSemantics.CHECKS) {
+            // Convert the limit of checks which has been set to the requested limit of expansions
             return this.heuristicSearchStepLimit / numQIs;
-        case EXPANSIONS:
-            return this.heuristicSearchStepLimit;
-        default:
-            throw new RuntimeException("The search step semantic " + searchStepSemantics + " is not supported");
+        } else {
+            // Convert the limit of expansions which has been set to the requested limit of checks
+            return this.heuristicSearchStepLimit * numQIs;
         }
-    }
+     }
     
     /**
      * The semantics of heuristic search steps.
