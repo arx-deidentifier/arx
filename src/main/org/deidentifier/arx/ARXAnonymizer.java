@@ -605,17 +605,18 @@ public class ARXAnonymizer { // NO_UCD
                                            final SolutionSpace solutionSpace,
                                            final TransformationChecker checker) {
 
+        int numQIs = manager.getHierarchies().length;
+        
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getHeuristicSearchStepLimit(), config.getHeuristicSearchStepSemantics(),
-                                                         config.getDPSearchBudget());
+                                                         config.getHeuristicExpansionLimit(numQIs), config.getDPSearchBudget());
             }
         }
 
         if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicCheckLimit(numQIs));
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());

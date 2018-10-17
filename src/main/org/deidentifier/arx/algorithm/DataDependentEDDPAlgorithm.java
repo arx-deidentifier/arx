@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.fraction.BigFraction;
-import org.deidentifier.arx.ARXConfiguration.SearchStepSemantics;
 import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
@@ -49,7 +48,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     private final PredictiveProperty         propertyChecked;
 
     /** Number of expansions to be performed */
-    private final int                        steps;
+    private final int                        expansionLimit;
 
     /** Privacy budget to use for each execution of the exponential mechanism */
     private final double                     epsilonPerStep;
@@ -62,14 +61,13 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param deterministic
-     * @param heuristicSteps
-     * @param searchStepSemantics 
+     * @param expansionLimit
      * @param epsilonSearch
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker, boolean deterministic,
-                                           int heuristicSteps, SearchStepSemantics searchStepSemantics, double epsilonSearch) {
-        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, heuristicSteps, searchStepSemantics, epsilonSearch);
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
+                                           boolean deterministic, int expansionLimit, double epsilonSearch) {
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, expansionLimit, epsilonSearch);
     }
 
     /**
@@ -77,39 +75,25 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param space
      * @param checker
      * @param deterministic
-     * @param heuristicSteps
-     * @param searchStepSemantics 
+     * @param expansionLimit
      * @param epsilonSearch
      */
-    private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker, boolean deterministic,
-                                       int heuristicSteps, SearchStepSemantics searchStepSemantics, double epsilonSearch) {
+    private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
+                                       boolean deterministic, int expansionLimit, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.deterministic = deterministic;
+        this.expansionLimit = expansionLimit;
         
-        switch (searchStepSemantics) {
-        case CHECKS:
-            // Calculate a number of expansions such that the resulting
-            // number of checks cannot exceed the specified limit
-            int numQIs = this.solutionSpace.getTop().getGeneralization().length;
-            this.steps = heuristicSteps / numQIs;
-            break;
-        case EXPANSIONS:
-            this.steps = heuristicSteps;
-            break;
-        default:
-            throw new RuntimeException("The search step semantic " + searchStepSemantics + " is not supported for differentially private search processes");
-        }
-        
-        if (this.steps == 0) {
+        if (this.expansionLimit == 0) {
             // Avoid division by zero
             this.epsilonPerStep = 0d;
         } else {
             IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
             try {
-                this.epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(this.steps)).lower;
+                this.epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(this.expansionLimit)).lower;
             } catch (IntervalArithmeticException e) {
                 throw new RuntimeException(e);
             }
@@ -144,7 +128,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         transformationIDToScore.put(pivot.getIdentifier(), score);
         
         // For each step
-        for (int step = 1; step <= steps; ++step) {
+        for (int step = 1; step <= expansionLimit; ++step) {
             
             // Add predecessors of the current pivot element to the set of candidates
             LongArrayList list = pivot.getPredecessors();
@@ -170,7 +154,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
                 bestScore = score;
             }
             
-            progress((double)step / (double)steps);
+            progress((double)step / (double)expansionLimit);
         }
         
         // Track optimum

@@ -316,7 +316,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * The semantics of heuristic search steps in differentially private search processes.
+     * The semantics of heuristic search steps.
      */
     public static enum SearchStepSemantics {
         
@@ -378,7 +378,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** The heuristic algorithm will terminate after the given time limit */
     private Integer                            heuristicSearchTimeLimit              = 30000;
 
-    /** The heuristic algorithm will terminate after the given time limit */
+    /** The heuristic algorithm will terminate after the given number of search steps */
     private Integer                            heuristicSearchStepLimit              = Integer.MAX_VALUE;
 
     /** Cost/benefit configuration */
@@ -390,7 +390,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Number of output records */
     private int                                numOutputRecords                      = 0;
     
-    /** Semantics of heuristic search steps in differentially private search processes. */
+    /** Semantics of heuristic search steps */
     private SearchStepSemantics                searchStepSemantics                   = SearchStepSemantics.CHECKS;
 
     /**
@@ -587,17 +587,47 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /**
      * The heuristic search algorithm will terminate after the returned number of transformations
      * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * @param numQIs
      * @return
      */
-    public int getHeuristicSearchStepLimit() {
+    public int getHeuristicCheckLimit(int numQIs) {
         if (this.heuristicSearchStepLimit == null) {
             this.heuristicSearchStepLimit = Integer.MAX_VALUE;
         }
-        return this.heuristicSearchStepLimit;
+        
+        switch (searchStepSemantics) {
+        case CHECKS:
+            return this.heuristicSearchStepLimit;
+        case EXPANSIONS:
+            return this.heuristicSearchStepLimit * numQIs;
+        default:
+            throw new RuntimeException("The search step semantic " + searchStepSemantics + " is not supported");
+        }
     }
     
     /**
-     * The semantics of heuristic search steps in differentially private search processes.
+     * The heuristic search algorithm will terminate after the returned number of expansions
+     * have been performed. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * @param numQIs
+     * @return
+     */
+    public int getHeuristicExpansionLimit(int numQIs) {
+        if (this.heuristicSearchStepLimit == null) {
+            this.heuristicSearchStepLimit = Integer.MAX_VALUE;
+        }
+        
+        switch (searchStepSemantics) {
+        case CHECKS:
+            return this.heuristicSearchStepLimit / numQIs;
+        case EXPANSIONS:
+            return this.heuristicSearchStepLimit;
+        default:
+            throw new RuntimeException("The search step semantic " + searchStepSemantics + " is not supported");
+        }
+    }
+    
+    /**
+     * The semantics of heuristic search steps.
      * The default is <code>SearchStepSemantics.CHECKS</code>.
      * @return
      */
@@ -982,7 +1012,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Sets the semantics of heuristic search steps in differentially private search processes.
+     * Sets the semantics of heuristic search steps.
+     * If the semantic <code>EXPANSIONS</code> is set, then the limit of the number of heuristic checks
+     * will be calculated by multiplying the heuristic search step limit with the number of QIs.
      * @param searchStepSemantics
      */
     public void setHeuristicSearchStepSemantics(SearchStepSemantics searchStepSemantics) {
