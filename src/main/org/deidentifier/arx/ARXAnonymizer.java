@@ -609,7 +609,7 @@ public class ARXAnonymizer { // NO_UCD
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getHeuristicSearchStepLimit(), config.isDPHeuristicLimitExpansions(),
+                                                         config.getHeuristicSearchStepLimit(), config.getHeuristicSearchStepSemantics(),
                                                          config.getDPSearchBudget());
             }
         }

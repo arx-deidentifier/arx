@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.math3.fraction.BigFraction;
+import org.deidentifier.arx.ARXConfiguration.SearchStepSemantics;
 import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
@@ -62,13 +63,13 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param checker
      * @param deterministic
      * @param heuristicSteps
-     * @param dpHeuristicLimitExpansions 
+     * @param searchStepSemantics 
      * @param epsilonSearch
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
-                                           boolean deterministic, int heuristicSteps, boolean dpHeuristicLimitExpansions, double epsilonSearch) {
-        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, heuristicSteps, dpHeuristicLimitExpansions, epsilonSearch);
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker, boolean deterministic,
+                                           int heuristicSteps, SearchStepSemantics searchStepSemantics, double epsilonSearch) {
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, heuristicSteps, searchStepSemantics, epsilonSearch);
     }
 
     /**
@@ -77,24 +78,29 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param checker
      * @param deterministic
      * @param heuristicSteps
-     * @param dpHeuristicLimitExpansions 
+     * @param searchStepSemantics 
      * @param epsilonSearch
      */
-    private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
-                                       boolean deterministic, int heuristicSteps, boolean dpHeuristicLimitExpansions, double epsilonSearch) {
+    private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker, boolean deterministic,
+                                       int heuristicSteps, SearchStepSemantics searchStepSemantics, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.deterministic = deterministic;
         
-        if (dpHeuristicLimitExpansions) {
-            this.steps = heuristicSteps;
-        } else {
+        switch (searchStepSemantics) {
+        case CHECKS:
             // Calculate a number of expansions such that the resulting
             // number of checks cannot exceed the specified limit
             int numQIs = this.solutionSpace.getTop().getGeneralization().length;
             this.steps = heuristicSteps / numQIs;
+            break;
+        case EXPANSIONS:
+            this.steps = heuristicSteps;
+            break;
+        default:
+            throw new RuntimeException("The search step semantic " + searchStepSemantics + " is not supported for differentially private search processes");
         }
         
         if (this.steps == 0) {

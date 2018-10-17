@@ -22,6 +22,7 @@ import java.util.Collection;
 
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.SearchStepSemantics;
 import org.deidentifier.arx.DataGeneralizationScheme;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
@@ -118,7 +119,7 @@ public class TestAnonymizationDifferentialPrivacy extends AbstractAnonymizationT
         ARXConfiguration result = ARXConfiguration.create(1d, metric);
         result.addPrivacyModel(new EDDifferentialPrivacy(epsilon, delta, null, true));
         result.setDPSearchBudget(searchBudget);
-        result.setDPHeuristicLimitExpansions(true);
+        result.setHeuristicSearchStepSemantics(SearchStepSemantics.EXPANSIONS);
         result.setHeuristicSearchStepLimit(steps);
         return result;
     }
