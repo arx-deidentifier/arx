@@ -591,8 +591,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     public int getHeuristicCheckLimit(int numQIs) {
+        
         if (this.heuristicSearchStepLimit == null) {
             this.heuristicSearchStepLimit = Integer.MAX_VALUE;
+        }
+        
+        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE) {
+            return this.heuristicSearchStepLimit;
         }
         
         switch (searchStepSemantics) {
@@ -612,8 +617,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
      * @return
      */
     public int getHeuristicExpansionLimit(int numQIs) {
+        
         if (this.heuristicSearchStepLimit == null) {
             this.heuristicSearchStepLimit = Integer.MAX_VALUE;
+        }
+        
+        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE) {
+            return this.heuristicSearchStepLimit;
         }
         
         switch (searchStepSemantics) {

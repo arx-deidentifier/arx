@@ -562,6 +562,10 @@ public class ARXAnonymizer { // NO_UCD
                 if (config.getDPSearchBudget() >= edpModel.getEpsilon()) {
                     throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
                 }
+                int numQIs = handle.getDefinition().getQuasiIdentifyingAttributes().size();
+                if (config.getHeuristicExpansionLimit(numQIs) == Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("The number of heuristic search steps has to be limited when using data-dependent differential privacy");
+                }
             }
         }
         
