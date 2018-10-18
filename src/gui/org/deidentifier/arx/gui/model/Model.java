@@ -433,6 +433,7 @@ public class Model implements Serializable {
         if (this.differentialPrivacyModel != null &&
             this.differentialPrivacyModel.isEnabled()) {
             config.addCriterion(this.differentialPrivacyModel.getCriterion(this));
+            config.getConfig().setDPSearchBudget(this.differentialPrivacyModel.getSearchBudget());
         }
 
         if (this.kAnonymityModel != null &&
