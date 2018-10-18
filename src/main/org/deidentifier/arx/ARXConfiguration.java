@@ -601,12 +601,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return this.heuristicSearchStepLimit;
         }
         
-        if (this.searchStepSemantics == SearchStepSemantics.CHECKS) {
-            // Convert the limit of checks which has been set to the requested limit of expansions
-            return this.heuristicSearchStepLimit / numQIs;
-        } else {
+        switch (requestedSemantics) {
+        case CHECKS:
             // Convert the limit of expansions which has been set to the requested limit of checks
             return this.heuristicSearchStepLimit * numQIs;
+        case EXPANSIONS:
+            // Convert the limit of checks which has been set to the requested limit of expansions
+            return this.heuristicSearchStepLimit / numQIs;
+        default:
+            throw new RuntimeException("The search step semantic " + requestedSemantics + " is not supported");
         }
      }
     
