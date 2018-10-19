@@ -104,7 +104,7 @@
         <mkdir dir="build/test" />
         <mkdir dir="build/junitReports" />
 
-        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
@@ -287,7 +287,7 @@
     </target>
 
     <target name="compile" depends="prepare" description="compile the source ">
-        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib/ant" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib/ant" source="1.7" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />

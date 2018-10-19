@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import com.univocity.parsers.csv.CsvFormat;
@@ -178,6 +179,22 @@ public class CSVDataOutput {
         close = false;
     }
 
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param charset to use
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak, Charset charset) throws IOException {
+        this(new OutputStreamWriter(stream, charset), delimiter, quote, escape, linebreak);
+        close = false;
+    }
+    
     /**
      * Instantiate.
      *
