@@ -555,7 +555,7 @@ public class ARXAnonymizer { // NO_UCD
             }
             if (edpModel.isDataDependent()) {
                 if (!config.getQualityModel().isScoreFunctionSupported()) {
-                    throw new IllegalArgumentException("Data-dependent differential privacy for the quality model " + config.getQualityModel().getName() + " is not yet implemented");
+                    throw new IllegalArgumentException("Data-dependent differential privacy for the quality model '" + config.getQualityModel().getName() + "' is not yet implemented");
                 }
                 if (config.getDPSearchBudget() <= 0) {
                     throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be > 0");

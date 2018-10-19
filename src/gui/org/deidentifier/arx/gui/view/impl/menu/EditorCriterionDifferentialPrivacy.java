@@ -218,11 +218,16 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                     knobSearchBudget.setEnabled(false);
                     labelSearchBudget.setEnabled(false);
                     if (index == comboGeneralization.getItemCount()-2) {
+                        
+                        DataGeneralizationScheme selectedScheme = model.getGeneralization();
+                        if (selectedScheme == null) {
+                            selectedScheme = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
+                        }
 
                         DialogGeneralizationSelection dialog = new DialogGeneralizationSelection(comboGeneralization.getShell(),
                                                                                                  controller,
                                                                                                  arxmodel,
-                                                                                                 model.getGeneralization());
+                                                                                                 selectedScheme);
                         dialog.create();
                         if (dialog.open() == Window.OK) {
                             DataGeneralizationScheme generalization = DataGeneralizationScheme.create();

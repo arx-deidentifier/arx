@@ -1415,8 +1415,8 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
-        throw new RuntimeException("Data-dependent differential privacy for the quality model "
-            + getName() + " is not yet implemented");
+        throw new RuntimeException("Data-dependent differential privacy for the quality model '"
+            + getName() + "' is not yet implemented");
     }
     
     /**
