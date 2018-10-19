@@ -56,6 +56,9 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
 
     /** View */
     private Knob<Double>          knobEpsilon;
+    
+    /** View */
+    private Knob<Double>          knobSearchBudget;
 
     /** View */
     private Combo                 comboGeneralization;
@@ -65,6 +68,9 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
 
     /** View */
     private Text                  labelDelta;
+    
+    /** View */
+    private Text                  labelSearchBudget;
 
     /**
      * Some epsilon values mentioned in "Practicing Differential Privacy in Health Care: A Review"
@@ -128,6 +134,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
             result.add(label);
         }
         result.add("Custom...");
+        result.add("Data-dependent search");
         return result.toArray(new String[result.size()]);
     }
 
@@ -153,7 +160,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         final Composite group = new Composite(parent, SWT.NONE);
         group.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 8;
+        groupInputGridLayout.numColumns = 11;
         group.setLayout(groupInputGridLayout);
         
 
@@ -204,26 +211,51 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
             public void widgetSelected(final SelectionEvent arg0) {
                 int index = comboGeneralization.getSelectionIndex();
                 if (index == comboGeneralization.getItemCount()-1) {
-                    
-                    DialogGeneralizationSelection dialog = new DialogGeneralizationSelection(comboGeneralization.getShell(),
-                                                                                             controller,
-                                                                                             arxmodel,
-                                                                                             model.getGeneralization());
-                    dialog.create();
-                    if (dialog.open() == Window.OK) {
-                        DataGeneralizationScheme generalization = DataGeneralizationScheme.create();
-                        Map<String, Integer> scheme = dialog.getSelection();
-                        for (Entry<String, Integer> entry : scheme.entrySet()){
-                            generalization.generalize(entry.getKey(), entry.getValue());
-                        }
-                        model.setGeneralization(generalization);
-                    } 
-                    
-                } else if (index != -1) {
-                    model.setGeneralization(DataGeneralizationScheme.create(getGeneralizationDegree(index)));
+                    model.setGeneralization(null);
+                    knobSearchBudget.setEnabled(true);
+                    labelSearchBudget.setEnabled(true);
+                } else {
+                    knobSearchBudget.setEnabled(false);
+                    labelSearchBudget.setEnabled(false);
+                    if (index == comboGeneralization.getItemCount()-2) {
+
+                        DialogGeneralizationSelection dialog = new DialogGeneralizationSelection(comboGeneralization.getShell(),
+                                                                                                 controller,
+                                                                                                 arxmodel,
+                                                                                                 model.getGeneralization());
+                        dialog.create();
+                        if (dialog.open() == Window.OK) {
+                            DataGeneralizationScheme generalization = DataGeneralizationScheme.create();
+                            Map<String, Integer> scheme = dialog.getSelection();
+                            for (Entry<String, Integer> entry : scheme.entrySet()){
+                                generalization.generalize(entry.getKey(), entry.getValue());
+                            }
+                            model.setGeneralization(generalization);
+                        } 
+
+                    } else if (index != -1) {
+                        model.setGeneralization(DataGeneralizationScheme.create(getGeneralizationDegree(index)));
+                    }
                 }
             }
         });
+        
+        // Create search budget slider
+        final Label bLabel = new Label(group, SWT.NONE);
+        bLabel.setText(Resources.getMessage("CriterionDefinitionView.95")); //$NON-NLS-1$
+
+        labelSearchBudget = createLabel(group);
+        knobSearchBudget = createKnobDouble(group, 0.01d, 2d);
+        updateLabel(labelSearchBudget, knobSearchBudget.getValue()); //$NON-NLS-1$
+        knobSearchBudget.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.setSearchBudget(knobSearchBudget.getValue());
+                updateLabel(labelSearchBudget, model.getSearchBudget());
+            }
+        });
+        knobSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
+        labelSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
 
         return group;
     }
@@ -245,15 +277,23 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         
         updateLabel(labelEpsilon, model.getEpsilon());
         updateLabel(labelDelta, model.getDelta());
+        updateLabel(labelSearchBudget, model.getSearchBudget());
         knobDelta.setValue(model.getDelta());
         knobEpsilon.setValue(model.getEpsilon());
+        knobSearchBudget.setValue(model.getSearchBudget());
         if (!_default) {
-            int index = getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree());
-            if (index != -1) {
-                comboGeneralization.select(index);
-            } else {
+            if (model.getGeneralization() == null) {
                 comboGeneralization.select(comboGeneralization.getItemCount() - 1);
+            } else {
+                int index = getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree());
+                if (index != -1) {
+                    comboGeneralization.select(index);
+                } else {
+                    comboGeneralization.select(comboGeneralization.getItemCount() - 2);
+                }
             }
+            knobSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
+            labelSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
         }
     }
 }

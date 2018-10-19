@@ -74,26 +74,59 @@ public class DataHandleInput extends DataHandle {
 
         // Init dictionary
         this.dictionary = new Dictionary(header.length);
+        
+        // Optimized code-path, if the number of records is known
+        if (data.getLength() != null && data.getLength() > 0) {
+            
+            // Records
+            int records = data.getLength();
 
-        // Encode data
-        List<int[]> vals = new ArrayList<int[]>();
-        while (iterator.hasNext()) {
-
-            // Process a tuple
-            String[] strings = iterator.next();
-            int[] tuple = new int[header.length];
-            for (int i = 0; i < header.length; i++) {
-                String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
-                value = (value != null) ? value : DataType.NULL_VALUE;
-                tuple[i] = dictionary.register(i, value);
+            // Build array
+            this.data = new DataMatrix(records, header.length);
+            
+            // Encode data on the fly
+            int row = 0;
+            while (iterator.hasNext()) {
+    
+                // Check
+                if (row == records) {
+                    throw new IllegalArgumentException("Number of records exceeds estimate"); 
+                }
+                
+                // Process a tuple
+                String[] strings = iterator.next();
+                int[] tuple = new int[header.length];
+                for (int i = 0; i < header.length; i++) {
+                    String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
+                    value = (value != null) ? value : DataType.NULL_VALUE;
+                    tuple[i] = dictionary.register(i, value);
+                }
+                this.data.setRow(row, tuple);
+                row++;
             }
-            vals.add(tuple);
-        }
 
-        // Build array
-        this.data = new DataMatrix(vals.size(), header.length);
-        for (int row = 0; row < vals.size(); row++) {
-            this.data.setRow(row, vals.get(row));
+        } else { 
+    
+            // Encode data
+            List<int[]> vals = new ArrayList<int[]>();
+            while (iterator.hasNext()) {
+    
+                // Process a tuple
+                String[] strings = iterator.next();
+                int[] tuple = new int[header.length];
+                for (int i = 0; i < header.length; i++) {
+                    String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
+                    value = (value != null) ? value : DataType.NULL_VALUE;
+                    tuple[i] = dictionary.register(i, value);
+                }
+                vals.add(tuple);
+            }
+    
+            // Build array
+            this.data = new DataMatrix(vals.size(), header.length);
+            for (int row = 0; row < vals.size(); row++) {
+                this.data.setRow(row, vals.get(row));
+            }
         }
 
         // finalize dictionary

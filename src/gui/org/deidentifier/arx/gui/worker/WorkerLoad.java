@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -57,6 +58,7 @@ import org.deidentifier.arx.gui.worker.io.BackwardsCompatibleObjectInputStream;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLHandler;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -66,6 +68,10 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvParserSettings;
+import com.univocity.parsers.csv.CsvRoutines;
+
 /**
  * This worker loads a project file from disk.
  *
@@ -73,17 +79,23 @@ import org.xml.sax.helpers.XMLReaderFactory;
  */
 public class WorkerLoad extends Worker<Model> {
 
-	/** The vocabulary to use. */
-	private Vocabulary vocabulary = null;
-	
-	/** The zip file. */
-	private ZipFile    zipfile;
-	
-	/** The lattice. */
-	private ARXLattice lattice;
-	
-	/** The model. */
-	private Model      model;
+    /** The vocabulary to use. */
+    private Vocabulary vocabulary = null;
+
+    /** The zip file. */
+    private ZipFile    zipfile;
+
+    /** The lattice. */
+    private ARXLattice lattice;
+
+    /** The model. */
+    private Model      model;
+
+    /** The controller */
+    private Controller controller;
+
+    /** The charset */
+    private Charset    charset    = null;
 
     /**
      * Constructor.
@@ -94,6 +106,7 @@ public class WorkerLoad extends Worker<Model> {
      */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
         this.zipfile = new ZipFile(path);
+        this.controller = controller;
     }
 
     @Override
@@ -127,6 +140,31 @@ public class WorkerLoad extends Worker<Model> {
         result = model;
         arg0.worked(1);
         arg0.done();
+    }
+    
+    /**
+     * Returns the charset
+     * @return
+     */
+    private Charset getCharset() {
+        
+        // Already determined
+        if (charset != null) {
+            return charset;
+        }
+        
+        // Determine
+        if (model == null) {
+            charset = StandardCharsets.UTF_8;
+        } else if (model.getCharset() == null){
+            Charset c = controller.actionShowCharsetInputDialog();
+            charset = c == null ? StandardCharsets.UTF_8 : c;
+        } else {
+            charset = StandardCharsets.UTF_8;
+        }
+        
+        // Return
+        return charset;
     }
 
     /**
@@ -653,12 +691,12 @@ public class WorkerLoad extends Worker<Model> {
 
         final ZipEntry entry = zip.getEntry("data/input.csv"); //$NON-NLS-1$
         if (entry == null) { return; }
-
+        
         // Read input
         // Use project delimiter for backwards compatibility
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
-                                    Charset.defaultCharset(),
-                                    model.getCSVSyntax().getDelimiter()));
+                                    getCharset(),
+                                    model.getCSVSyntax().getDelimiter(), getLength(zip, entry)));
 
         // And encode
         config.getInput().getHandle();
@@ -668,6 +706,35 @@ public class WorkerLoad extends Worker<Model> {
             config.getInput().getHandle().getNumRows() > model.getMaximalSizeForComplexOperations()) {
             model.setVisualizationEnabled(false);
         }
+    }
+    
+    /**
+     * Returns the length of the input file, stored in the given entry
+     * @param zip
+     * @param entry
+     * @return
+     * @throws IOException 
+     */
+    private int getLength(ZipFile zip, ZipEntry entry) throws IOException {
+
+        CsvFormat format = new CsvFormat();
+        format.setDelimiter(model.getCSVSyntax().getDelimiter());
+        format.setQuote(CSVSyntax.DEFAULT_QUOTE);
+        format.setQuoteEscape(CSVSyntax.DEFAULT_ESCAPE);
+        format.setLineSeparator(CSVSyntax.DEFAULT_LINEBREAK);
+        format.setNormalizedNewline(CSVSyntax.getNormalizedLinebreak(CSVSyntax.DEFAULT_LINEBREAK));
+        format.setComment('\0');
+
+        CsvParserSettings settings = new CsvParserSettings();
+        settings.setEmptyValue("");
+        settings.setNullValue("");
+        settings.setFormat(format);
+        
+        InputStream stream = new BufferedInputStream(zip.getInputStream(entry));
+        CsvRoutines routines = new CsvRoutines(settings);
+        long records = routines.getInputDimension(stream).rowCount();
+        stream.close();
+        return (int)records;
     }
 
     /**

@@ -153,6 +153,9 @@ public class Model implements Serializable {
     /** The audit trail */
     private List<ModelAuditTrailEntry>                    auditTrail                      = new ArrayList<ModelAuditTrailEntry>();
 
+    /** Standard charset since ARX > 3.7.1. Older projects will have the value <code>null</code>*/
+    private String                                        charset                         = "UTF-8";
+    
     /* *****************************************
      * DEBUGGING
      ******************************************/
@@ -433,6 +436,7 @@ public class Model implements Serializable {
         if (this.differentialPrivacyModel != null &&
             this.differentialPrivacyModel.isEnabled()) {
             config.addCriterion(this.differentialPrivacyModel.getCriterion(this));
+            config.getConfig().setDPSearchBudget(this.differentialPrivacyModel.getSearchBudget());
         }
 
         if (this.kAnonymityModel != null &&
@@ -576,6 +580,14 @@ public class Model implements Serializable {
     }
 
     /**
+     * Return charset. Returns <code>null</code> for projects with unknown charset, "UTF-8" else.
+     * @return
+     */
+    public String getCharset() {
+        return this.charset;
+    }
+
+    /**
      * Returns the classification model
      * @return
      */
@@ -609,7 +621,7 @@ public class Model implements Serializable {
         }
         return csvSyntax;
     }
-
+    
     /**
      * Returns the d-disclosure privacy model.
      *
@@ -626,7 +638,7 @@ public class Model implements Serializable {
         }
         return dDisclosurePrivacyModel;
     }
-    
+
     /**
      * Returns the project description.
      *
@@ -647,7 +659,7 @@ public class Model implements Serializable {
         }
         return differentialPrivacyModel;
     }
-
+    
     /**
      * Returns the d-presence model.
      *
@@ -656,7 +668,7 @@ public class Model implements Serializable {
     public ModelDPresenceCriterion getDPresenceModel() {
         return dPresenceModel;
     }
-    
+
     /**
      * Returns a list of indices of all equivalence classes.
      *
@@ -696,7 +708,7 @@ public class Model implements Serializable {
         }
         return heuristicSearchTimeLimit;
     }
-
+    
     /**
      * Returns the according parameter.
      *
@@ -705,7 +717,7 @@ public class Model implements Serializable {
     public int getHistorySize() {
         return historySize;
     }
-    
+
     /**
      * Returns an upper bound on the number of nodes that will initially
      * be displayed in the lattice viewer.
@@ -752,7 +764,7 @@ public class Model implements Serializable {
     public ARXPopulationModel getInputPopulationModel() {
         return getRiskModel().getPopulationModel();
     }
-
+    
     /**
      * Returns the k-anonymity model.
      *
@@ -761,7 +773,7 @@ public class Model implements Serializable {
     public ModelKAnonymityCriterion getKAnonymityModel() {
         return kAnonymityModel;
     }
-    
+
     /**
      * Returns the k-map model.
      *
@@ -773,7 +785,7 @@ public class Model implements Serializable {
         }
         return kMapModel;
     }
-
+    
     /**
      * Returns the l-diversity model.
      *
@@ -785,7 +797,7 @@ public class Model implements Serializable {
             }
         return lDiversityModel;
     }
-    
+
     /**
      * Returns the project locale.
      *
@@ -862,7 +874,7 @@ public class Model implements Serializable {
         }
         return this.metricDescription;
     }
-
+    
     /**
      * Returns the name of this project.
      *
@@ -880,7 +892,7 @@ public class Model implements Serializable {
     public ModelNodeFilter getNodeFilter() {
         return nodeFilter;
     }
-    
+
     /**
      * Returns a string representation of the current optimum.
      *
@@ -946,7 +958,7 @@ public class Model implements Serializable {
         }
         return null;
     }
-
+    
     /**
      * Returns the currently applied transformation.
      *
@@ -1402,6 +1414,14 @@ public class Model implements Serializable {
     }
     
     /**
+     * Sets the charset
+     * @param charset
+     */
+    public void setCharset(String charset) {
+        this.charset = charset;
+    }
+    
+    /**
      * Enables debugging.
      *
      * @param value
@@ -1420,7 +1440,7 @@ public class Model implements Serializable {
         this.description = description;
         setModified();
     }
-    
+
     /**
      * Updates features and classes to reflect the definition provided
      * @param definition
@@ -1489,7 +1509,7 @@ public class Model implements Serializable {
         initialNodesInViewer = val;
         setModified();
     }
-
+    
     /**
      * Sets the size of the input in bytes.
      *
@@ -1518,7 +1538,7 @@ public class Model implements Serializable {
         this.locale = locale;
         this.setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1574,7 +1594,7 @@ public class Model implements Serializable {
         nodeFilter = filter;
         setModified();
     }
-
+    
     /**
      * Sets the current output.
      *
@@ -1624,7 +1644,7 @@ public class Model implements Serializable {
     public void setOutputConfig(final ModelConfiguration config) {
         outputConfig = config;
     }
-    
+
     /**
      * Sets the project path.
      *
@@ -1633,14 +1653,14 @@ public class Model implements Serializable {
     public void setPath(final String path) {
         this.path = path;
     }
-
+    
     /**
      * @param perspective the perspective to set
      */
     public void setPerspective(Perspective perspective) {
         this.perspective = perspective;
     }
-    
+
     /**
      * @param optimizationStatistics the optimizationStatistics to set
      */
@@ -1733,7 +1753,7 @@ public class Model implements Serializable {
         selectedNode = node;
         setModified();
     }
-
+    
     /**
      * Sets a set of quasi identifiers selected for risk analysis
      * @param set
@@ -1752,7 +1772,7 @@ public class Model implements Serializable {
         snapshotSizeDataset = snapshotSize;
         setModified();
     }
-    
+
     /**
      * Sets the according parameter.
      *
@@ -1771,7 +1791,7 @@ public class Model implements Serializable {
             this.subsetOrigin += Resources.getMessage("Model.2"); //$NON-NLS-1$
         }
     }
-
+    
     /**
      * Sets how the subset was defined.
      *
@@ -1789,7 +1809,7 @@ public class Model implements Serializable {
     public void setTime(final long time) {
         this.time = time;
     }
-    
+
     /**
      * Marks this model as unmodified.
      */
@@ -1821,7 +1841,7 @@ public class Model implements Serializable {
     public void setUseListwiseDeletion(boolean useListwiseDeletion) {
         this.useListwiseDeletion = useListwiseDeletion;
     }
-
+    
     /**
      * Sets the view configuration.
      *
@@ -1830,7 +1850,7 @@ public class Model implements Serializable {
     public void setViewConfig(ModelViewConfig viewConfig) {
         this.viewConfig = viewConfig;
     }
-    
+
     /**
      * Sets visualization as enabled/disabled.
      *

@@ -10,7 +10,10 @@
 .idea/workspace.xml
 .idea/usage.statistics.xml
 .idea/tasks.xml
+.idea/uiDesigner.xml
+.idea/build
 target
 .classpath
 .project
 /build
+.DS_Store
