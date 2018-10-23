@@ -169,7 +169,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         lLabel.setText(Resources.getMessage("CriterionDefinitionView.93")); //$NON-NLS-1$
 
         labelDelta = createLabel(group);
-        knobDelta = createKnobDouble(group, 0.00000000001d, 0.001d);
+        knobDelta = createKnobDouble(group, 0.00000000001d, 0.00001d);
         updateLabel(labelDelta, knobDelta.getValue());
         knobDelta.addSelectionListener(new SelectionAdapter() {
             @Override
