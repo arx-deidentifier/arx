@@ -248,10 +248,10 @@ public class DataManager {
                         if (qisGeneralized.contains(attribute)) {
                             this.generalizationLevelsMaximum[index] = scheme.getGeneralizationLevel(attribute, definition);
                             this.generalizationLevelsMinimum[index] = scheme.getGeneralizationLevel(attribute, definition);
+                            
+                            // Next quasi-identifier
+                            index++;
                         }
-
-                        // Next quasi-identifier
-                        index++;
                     }
                 }
                 break;
