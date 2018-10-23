@@ -49,6 +49,8 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
+import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
+import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
  * This class implements a large portion of the model used by the GUI.
@@ -435,8 +437,20 @@ public class Model implements Serializable {
 
         if (this.differentialPrivacyModel != null &&
             this.differentialPrivacyModel.isEnabled()) {
+            
             config.addCriterion(this.differentialPrivacyModel.getCriterion(this));
-            config.getConfig().setDPSearchBudget(this.differentialPrivacyModel.getSearchBudget());
+            
+            IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
+            double dpSearchBudget = 0d;
+            double epsilon = this.differentialPrivacyModel.getEpsilon();
+            double epsilonGeneralization = this.differentialPrivacyModel.getEpsilonGeneralization();
+            try {
+                dpSearchBudget = arithmetic.div(arithmetic.mult(arithmetic.createInterval(epsilon), arithmetic.createInterval(epsilonGeneralization)),
+                                                arithmetic.createInterval(100)).lower;
+            } catch (IntervalArithmeticException e) {
+                throw new RuntimeException(e);
+            }
+            config.getConfig().setDPSearchBudget(dpSearchBudget);
         }
 
         if (this.kAnonymityModel != null &&
