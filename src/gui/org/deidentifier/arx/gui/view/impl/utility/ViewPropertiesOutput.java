@@ -256,8 +256,10 @@ public class ViewPropertiesOutput extends ViewProperties {
             // Print score
             if (node.getHighestScore().getValue().equals( node.getLowestScore().getValue())) {
                 
+                System.out.println(node.getLowestScore().toString());
                 final String infoloss = node.getLowestScore().toString() +
                                         " [" + SWTUtil.getPrettyString(asRelativeValue(node.getLowestScore(), result)) + "%]"; //$NON-NLS-1$ //$NON-NLS-2$
+                System.out.println(infoloss);
                 Property score = new Property(Resources.getMessage("PropertiesView.46"), new String[] { infoloss }); //$NON-NLS-1$
     
                 // Print metadata
