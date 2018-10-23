@@ -235,7 +235,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         zLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
 
         labelEpsilon = createLabel(group);
-        knobEpsilon = createKnobDouble(group, 0.01d, 20d);
+        knobEpsilon = createKnobDouble(group, 0.01d, 2d);
         updateLabel(labelEpsilon, knobEpsilon.getValue()); //$NON-NLS-1$
         knobEpsilon.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -250,7 +250,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         bLabel.setText(Resources.getMessage("CriterionDefinitionView.95")); //$NON-NLS-1$
 
         labelEpsilonGeneralization = createLabel(group);
-        knobEpsilonGeneralization = createKnobDouble(group, 0.01d, 99.99d);
+        knobEpsilonGeneralization = createKnobDouble(group, 0.01d, 95d);
         updateLabel(labelEpsilonGeneralization, knobEpsilonGeneralization.getValue()); //$NON-NLS-1$
         knobEpsilonGeneralization.addSelectionListener(new SelectionAdapter() {
             @Override
