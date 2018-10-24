@@ -32,19 +32,19 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /** SVUID */
-    private static final long        serialVersionUID = 1803345324372136700L;
+    private static final long        serialVersionUID              = 1803345324372136700L;
+    
+    /** Delta */
+    private double                   delta                         = 0.000001d;
 
     /** Epsilon */
-    private double                   epsilon          = 2d;
+    private double                   epsilon                       = 2d;
 
-    /** Delta */
-    private double                   delta            = 0.000001d;
-    
-    /** Search budget */
-    private Double                   searchBudget     = 0.1d;
+    /** Fraction of epsilon to use for automatic generalization */
+    private Double                   epsilonGeneralizationFraction = 0.1d;
 
     /** Generalization scheme to be used or null in the case of data-dependent differential privacy */
-    private DataGeneralizationScheme generalization   = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
+    private DataGeneralizationScheme generalization                = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
 
     /**
      * Creates a new instance
@@ -68,7 +68,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         ModelDifferentialPrivacyCriterion result = new ModelDifferentialPrivacyCriterion();
         result.epsilon = this.epsilon;
         result.delta = this.delta;
-        result.searchBudget = this.searchBudget;
+        result.epsilonGeneralizationFraction = this.epsilonGeneralizationFraction;
         result.generalization = (this.generalization == null) ? null : this.generalization.clone();
         result.setEnabled(this.isEnabled());
         return result;
@@ -112,11 +112,11 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      * Getter
      * @return
      */
-    public double getSearchBudget() {
-        if (searchBudget == null) {
-            searchBudget = 0.1d;
+    public double getEpsilonGeneralizationFraction() {
+        if (epsilonGeneralizationFraction == null) {
+            epsilonGeneralizationFraction = 0.1d;
         }
-        return searchBudget;
+        return epsilonGeneralizationFraction;
     }
 
     @Override
@@ -127,7 +127,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         ModelDifferentialPrivacyCriterion other = (ModelDifferentialPrivacyCriterion)criterion;
         this.epsilon = other.epsilon;
         this.delta = other.delta;
-        this.searchBudget = other.searchBudget;
+        this.epsilonGeneralizationFraction = other.epsilonGeneralizationFraction;
         if (!_default) {
             this.generalization = (other.generalization == null) ? null : other.generalization.clone();
         }
@@ -162,10 +162,10 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /**
      * Setter
-     * @param searchBudget
+     * @param epsilonGeneralizationFraction
      */
-    public void setSearchBudget(double searchBudget) {
-        this.searchBudget = searchBudget;
+    public void setEpsilonGeneralizationFraction(double epsilonGeneralizationFraction) {
+        this.epsilonGeneralizationFraction = epsilonGeneralizationFraction;
     }
 
     @Override

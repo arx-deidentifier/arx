@@ -98,7 +98,7 @@ public class ILScore extends InformationLoss<BigFraction> {
 
     @Override
     public String toString() {
-        return String.valueOf(this.value);
+        return String.valueOf(this.value.doubleValue());
     }
 
     /**

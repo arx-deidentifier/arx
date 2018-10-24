@@ -198,7 +198,7 @@ public class DialogAnonymization extends TitleAreaDialog {
        } catch (Exception e) {
            return null;
        }
-       if (value > 0d) {
+       if (value > 0d && value < Integer.MAX_VALUE) {
            return value;
        } else {
            return null;

@@ -436,7 +436,9 @@ public class Model implements Serializable {
         if (this.differentialPrivacyModel != null &&
             this.differentialPrivacyModel.isEnabled()) {
             config.addCriterion(this.differentialPrivacyModel.getCriterion(this));
-            config.getConfig().setDPSearchBudget(this.differentialPrivacyModel.getSearchBudget());
+            // Convert the fraction of epsilon to use for automatic generalization to the absolute budget required by the config
+            double dpSearchBudget = this.differentialPrivacyModel.getEpsilon() * this.differentialPrivacyModel.getEpsilonGeneralizationFraction();
+            config.getConfig().setDPSearchBudget(dpSearchBudget);
         }
 
         if (this.kAnonymityModel != null &&

@@ -58,7 +58,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     private Knob<Double>          knobEpsilon;
     
     /** View */
-    private Knob<Double>          knobSearchBudget;
+    private Knob<Double>          knobEpsilonGeneralization;
 
     /** View */
     private Combo                 comboGeneralization;
@@ -70,7 +70,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     private Text                  labelDelta;
     
     /** View */
-    private Text                  labelSearchBudget;
+    private Text                  labelEpsilonGeneralization;
 
     /**
      * Some epsilon values mentioned in "Practicing Differential Privacy in Health Care: A Review"
@@ -134,7 +134,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
             result.add(label);
         }
         result.add("Custom...");
-        result.add("Data-dependent search");
+        result.add("Automatic");
         return result.toArray(new String[result.size()]);
     }
 
@@ -163,21 +163,6 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         groupInputGridLayout.numColumns = 11;
         group.setLayout(groupInputGridLayout);
         
-
-        // Create epsilon slider
-        final Label zLabel = new Label(group, SWT.NONE);
-        zLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
-
-        labelEpsilon = createLabel(group);
-        knobEpsilon = createKnobDouble(group, 0.01d, 2d);
-        updateLabel(labelEpsilon, knobEpsilon.getValue()); //$NON-NLS-1$
-        knobEpsilon.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.setEpsilon(knobEpsilon.getValue());
-                updateLabel(labelEpsilon, model.getEpsilon());
-            }
-        });
 
         // Create delta slider
         final Label lLabel = new Label(group, SWT.NONE);
@@ -212,17 +197,22 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                 int index = comboGeneralization.getSelectionIndex();
                 if (index == comboGeneralization.getItemCount()-1) {
                     model.setGeneralization(null);
-                    knobSearchBudget.setEnabled(true);
-                    labelSearchBudget.setEnabled(true);
+                    knobEpsilonGeneralization.setEnabled(true);
+                    labelEpsilonGeneralization.setEnabled(true);
                 } else {
-                    knobSearchBudget.setEnabled(false);
-                    labelSearchBudget.setEnabled(false);
+                    knobEpsilonGeneralization.setEnabled(false);
+                    labelEpsilonGeneralization.setEnabled(false);
                     if (index == comboGeneralization.getItemCount()-2) {
+                        
+                        DataGeneralizationScheme selectedScheme = model.getGeneralization();
+                        if (selectedScheme == null) {
+                            selectedScheme = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
+                        }
 
                         DialogGeneralizationSelection dialog = new DialogGeneralizationSelection(comboGeneralization.getShell(),
                                                                                                  controller,
                                                                                                  arxmodel,
-                                                                                                 model.getGeneralization());
+                                                                                                 selectedScheme);
                         dialog.create();
                         if (dialog.open() == Window.OK) {
                             DataGeneralizationScheme generalization = DataGeneralizationScheme.create();
@@ -240,22 +230,37 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
             }
         });
         
-        // Create search budget slider
+        // Create epsilon slider
+        final Label zLabel = new Label(group, SWT.NONE);
+        zLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
+
+        labelEpsilon = createLabel(group);
+        knobEpsilon = createKnobDouble(group, 0.01d, 2d);
+        updateLabel(labelEpsilon, knobEpsilon.getValue()); //$NON-NLS-1$
+        knobEpsilon.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.setEpsilon(knobEpsilon.getValue());
+                updateLabel(labelEpsilon, model.getEpsilon());
+            }
+        });
+        
+        // Create generalization budget slider
         final Label bLabel = new Label(group, SWT.NONE);
         bLabel.setText(Resources.getMessage("CriterionDefinitionView.95")); //$NON-NLS-1$
 
-        labelSearchBudget = createLabel(group);
-        knobSearchBudget = createKnobDouble(group, 0.01d, 2d);
-        updateLabel(labelSearchBudget, knobSearchBudget.getValue()); //$NON-NLS-1$
-        knobSearchBudget.addSelectionListener(new SelectionAdapter() {
+        labelEpsilonGeneralization = createLabel(group);
+        knobEpsilonGeneralization = createKnobDouble(group, 0.01d, 95d);
+        updateLabel(labelEpsilonGeneralization, knobEpsilonGeneralization.getValue()); //$NON-NLS-1$
+        knobEpsilonGeneralization.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setSearchBudget(knobSearchBudget.getValue());
-                updateLabel(labelSearchBudget, model.getSearchBudget());
+                model.setEpsilonGeneralizationFraction(knobEpsilonGeneralization.getValue() / 100d);
+                updateLabel(labelEpsilonGeneralization, knobEpsilonGeneralization.getValue());
             }
         });
-        knobSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
-        labelSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
+        knobEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
+        labelEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
 
         return group;
     }
@@ -277,10 +282,10 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         
         updateLabel(labelEpsilon, model.getEpsilon());
         updateLabel(labelDelta, model.getDelta());
-        updateLabel(labelSearchBudget, model.getSearchBudget());
+        updateLabel(labelEpsilonGeneralization, model.getEpsilonGeneralizationFraction() * 100d);
         knobDelta.setValue(model.getDelta());
         knobEpsilon.setValue(model.getEpsilon());
-        knobSearchBudget.setValue(model.getSearchBudget());
+        knobEpsilonGeneralization.setValue(model.getEpsilonGeneralizationFraction() * 100d);
         if (!_default) {
             if (model.getGeneralization() == null) {
                 comboGeneralization.select(comboGeneralization.getItemCount() - 1);
@@ -292,8 +297,8 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                     comboGeneralization.select(comboGeneralization.getItemCount() - 2);
                 }
             }
-            knobSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
-            labelSearchBudget.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
+            knobEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
+            labelEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
         }
     }
 }
