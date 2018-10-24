@@ -255,8 +255,8 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         knobEpsilonGeneralization.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.setEpsilonGeneralization(knobEpsilonGeneralization.getValue());
-                updateLabel(labelEpsilonGeneralization, model.getEpsilonGeneralization());
+                model.setEpsilonGeneralizationFraction(knobEpsilonGeneralization.getValue() / 100d);
+                updateLabel(labelEpsilonGeneralization, knobEpsilonGeneralization.getValue());
             }
         });
         knobEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
@@ -282,10 +282,10 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         
         updateLabel(labelEpsilon, model.getEpsilon());
         updateLabel(labelDelta, model.getDelta());
-        updateLabel(labelEpsilonGeneralization, model.getEpsilonGeneralization());
+        updateLabel(labelEpsilonGeneralization, model.getEpsilonGeneralizationFraction() * 100d);
         knobDelta.setValue(model.getDelta());
         knobEpsilon.setValue(model.getEpsilon());
-        knobEpsilonGeneralization.setValue(model.getEpsilonGeneralization());
+        knobEpsilonGeneralization.setValue(model.getEpsilonGeneralizationFraction() * 100d);
         if (!_default) {
             if (model.getGeneralization() == null) {
                 comboGeneralization.select(comboGeneralization.getItemCount() - 1);
