@@ -18,12 +18,17 @@
 package org.deidentifier.arx.metric.v2;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -45,6 +50,34 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     /** SVUID. */
     private static final long serialVersionUID                = -7940144844158472876L;
+    
+    /** Record wrapper */
+    class RecordWrapper {
+
+        /** Field*/
+        private final int[] tuple;
+        /** Field*/
+        private final int hash;
+
+        /**
+         * Constructor
+         * @param tuple
+         */
+        public RecordWrapper(int[] tuple) {
+            this.tuple = tuple;
+            this.hash = Arrays.hashCode(tuple);
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return Arrays.equals(this.tuple, ((RecordWrapper)other).tuple);
+        }
+
+        @Override
+        public int hashCode() {
+            return hash;
+        }
+    }
 
     /** Indices of response variables in distributions */
     private int[]             responseVariablesNonQI          = null;
@@ -65,6 +98,12 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     private double            penaltyMaxScale;
     
     
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private int               k;
+
+    /** The root values of all generalization hierarchies or -1 if no single root value exists */
+    private int[]             rootValues;
+
     /**
      * Creates a new instance.
      */
@@ -128,9 +167,85 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     public double getPenaltySuppressed() {
         return penaltySuppressed;
     }
+    
+    @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Prepare
+        Map<RecordWrapper, Map<RecordWrapper, Integer>> featuresToClassToCount = new HashMap<>();
+
+        // Setup data structures
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            m.read();
+            
+            if (!m.isNotOutlier) {
+                m = m.nextOrdered;
+                continue;
+            }
+            
+            int[] features = new int[rootValues.length - responseVariablesQI.length];
+            int featuresIndex = 0;
+            int[] responseValues = new int[responseVariablesQI.length];
+            int responseIndex = 0;
+            boolean featuresSuppressed = true;
+            
+            for (int i=0; i<rootValues.length; ++i) {
+                int value = m.next();
+                if (responseIndex < responseVariablesQI.length && i == responseVariablesQI[responseIndex]) {
+                    responseValues[responseIndex] = value;
+                    responseIndex++;
+                } else {
+                    features[featuresIndex] = value;
+                    featuresIndex++;
+                    if(rootValues[i] == -1 || value != rootValues[i]) {
+                        featuresSuppressed = false;
+                    }
+                }
+            }
+            
+            if (featuresSuppressed) {
+                m = m.nextOrdered;
+                continue;
+            }
+
+            RecordWrapper featuresWrapped = new RecordWrapper(features);
+            RecordWrapper responseValuesWrapped = new RecordWrapper(responseValues);
+
+            Map<RecordWrapper, Integer> classToCount = featuresToClassToCount.get(featuresWrapped);
+            if (classToCount == null) {
+                classToCount = new HashMap<>();
+                classToCount.put(responseValuesWrapped, m.count);
+            } else {
+                int classCount = classToCount.containsKey(responseValuesWrapped) ? classToCount.get(responseValuesWrapped) + m.count : m.count;
+                classToCount.put(responseValuesWrapped, classCount);
+            }
+            featuresToClassToCount.put(featuresWrapped, classToCount);
+            
+            m = m.nextOrdered;
+        }
+
+        // Calculate score
+        int score = 0;
+        for (Map<RecordWrapper, Integer> classToCount : featuresToClassToCount.values()) {
+            int maxCount = 0;
+            for (int count : classToCount.values()) {
+                maxCount = Math.max(maxCount, count);
+            }
+            score += maxCount;
+        }
+
+        // Return
+        return new ILScore(new BigFraction(score, k));
+    }
 
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
@@ -379,6 +494,27 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
                 }
             }
             i++;
+        }
+        
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            // Store minimal size of equivalence classes
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            k = dpCriterion.getMinimalClassSize(); // TODO set k in super constructor since also MetricSDNMDiscernability uses it
+            
+            // Store root values of generalization hierarchies or -1 if no single root value exists
+            rootValues = new int[hierarchies.length];
+            for (int j = 0; j < hierarchies.length; j++) {
+                int rootValue = -1;
+                for (int[] row : hierarchies[j].getArray()) {
+                    if (rootValue == -1) {
+                        rootValue = row[row.length-1];
+                    } else if (row[row.length-1] != rootValue) {
+                        rootValue = -1;
+                        break;
+                    }
+                }
+                rootValues[j] = rootValue;
+            }
         }
     }
 }

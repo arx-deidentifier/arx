@@ -88,6 +88,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         /** Random test variable */
         public String                           sensitiveAttribute;
         /** Random test variable */
+        public String                           responseAttribute;
+        /** Random test variable */
         public String                           optimalInformationLoss;
         /** Random test variable */
         public int[]                            optimalTransformation;
@@ -116,7 +118,26 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                                         final double optimalInformationLoss,
                                         final int[] optimalTransformation,
                                         final boolean practical) {
-            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null);
+            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null, "");
+        }
+        
+        /**
+         * Creates a new instance.
+         *
+         * @param config
+         * @param dataset
+         * @param optimalInformationLoss
+         * @param optimalTransformation
+         * @param practical
+         * @param responseAttribute
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical,
+                                        final String responseAttribute) {
+            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, null, responseAttribute);
         }
         
         /**
@@ -135,7 +156,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                                         final int[] optimalTransformation,
                                         final boolean practical,
                                         int[] statistics) {
-            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics);
+            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics, "");
         }
         
         /**
@@ -154,7 +175,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                                         final double optimalInformationLoss,
                                         final int[] optimalTransformation,
                                         final boolean practical) {
-            this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null);
+            this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null, "");
         }
         
         /**
@@ -167,6 +188,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
          * @param optimalTransformation
          * @param practical
          * @param statistics
+         * @param responseAttribute
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
                                         final String sensitiveAttribute,
@@ -174,7 +196,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                                         final double optimalInformationLoss,
                                         final int[] optimalTransformation,
                                         final boolean practical,
-                                        int[] statistics) {
+                                        int[] statistics,
+                                        String responseAttribute) {
             this.config = config;
             this.sensitiveAttribute = sensitiveAttribute;
             this.dataset = dataset;
@@ -182,6 +205,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             this.optimalTransformation = optimalTransformation;
             this.practical = practical;
             this.statistics = statistics;
+            this.responseAttribute = responseAttribute;
         }
         
         /**
@@ -262,7 +286,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                                         double informationLoss,
                                         int[] transformation,
                                         boolean practicalMonotonicity) {
-            this(config, dataset, informationLoss, transformation, practicalMonotonicity);
+            this(config, dataset, informationLoss, transformation, practicalMonotonicity, "");
             this.builders = hierarchyBuilders;
         }
 
@@ -329,6 +353,12 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 
                 final CSVHierarchyInput hier = new CSVHierarchyInput(file, StandardCharsets.UTF_8, ';');
                 final String attributeName = matcher.group(1);
+                
+                if (attributeName.equalsIgnoreCase(testCase.responseAttribute)) {
+                    data.getDefinition().setResponseVariable(attributeName, true);
+                    data.getDefinition().setMinimumGeneralization(attributeName, 0);
+                    data.getDefinition().setMaximumGeneralization(attributeName, 0);
+                }
                 
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
                     data.getDefinition().setAttributeType(attributeName, Hierarchy.create(hier.getHierarchy()));
