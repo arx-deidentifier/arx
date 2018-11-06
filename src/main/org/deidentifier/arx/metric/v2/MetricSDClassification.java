@@ -179,19 +179,19 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             // Obtain scale between 1 (in case the target value is not generalized) and 0 (in case the target variable is generalized to the highest level)
             BigFraction scale = BigFraction.ONE.subtract(new BigFraction(node.getGeneralization()[index], this.responseVariablesQIMaxGeneralization[i]));
             
-            // Multiply the score for this QI by scale in order to punish high degrees of generalization.
+            // Multiply the score for this QI by scale in order to penalize high degrees of generalization.
             // This can only reduce the effects of the addition or removal of one record and hence
             // result in at most too conservative privacy guarantees.
             scoreQI = scoreQI.multiply(scale);
             
             // Add to the overall score value
-            score.add(scoreQI);
+            score = score.add(scoreQI);
             
             i++;
         }
         
         // Divide by sensitivity and return
-        return new ILScore(score.divide(sensitivity));
+        return new ILScore(score.divide(this.sensitivity));
     }
 
     @Override
@@ -217,6 +217,50 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     @Override
     public String toString() {
         return "Classification accuracy";
+    }
+    
+    /**
+     * Returns statistics about a distribution
+     * @param distribution
+     * @return an array containing the following three frequencies (in this order):
+     *         - the total number of attribute values
+     *         - the frequency of the most frequent attribute value
+     *         - the frequency of the second most frequent attribute value
+     */
+    private int[] analyzeDistribution(Distribution distribution) {
+        
+        // Find frequencies of most frequent and second most frequent attribute values
+        
+        int[] result = new int[] {0,-1,-1}; 
+        
+        // For each bucket
+        int[] buckets = distribution.getBuckets();
+        for (int i = 0; i < buckets.length; i += 2) {
+            
+            // bucket not empty
+            if (buckets[i] != -1) { 
+            
+                // Get frequency
+                int frequency = buckets[i + 1];
+                result[0] += frequency;
+                boolean largerThanTop1 = frequency > result[1];
+                boolean largerThanTop2 = frequency > result[2];
+                
+                // Step 1: If frequency is > top1 
+                //         --> top1 is moved down to top2
+                result[2] = largerThanTop1 ? result[1] : result[2];
+
+                // Step 2: If frequency is > top1 
+                //         --> top1 is set to new frequency
+                result[1] = largerThanTop1 ? frequency : result[1];
+                
+                // Step 3: If frequency is > top2 but not > top1
+                //         --> top2 is set to new frequency
+                result[2] = largerThanTop2 && !largerThanTop1 ? frequency : result[2];
+            }
+        }
+        
+        return result;
     }
     
     /**
@@ -278,42 +322,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             double penalty = penaltyNoMajorityResponse * (1d - scaleFactor) + penaltyMaxScale * scaleFactor;
             return count * (penalty / penaltyMax);
         }
-    }
-
-    private int[] analyzeDistribution(Distribution distribution) {
-        
-        // Find frequencies of most frequent and second most frequent attribute values
-        
-        int[] result = new int[] {0,-1,-1}; 
-        
-        // For each bucket
-        int[] buckets = distribution.getBuckets();
-        for (int i = 0; i < buckets.length; i += 2) {
-            
-            // bucket not empty
-            if (buckets[i] != -1) { 
-            
-                // Get frequency
-                int frequency = buckets[i + 1];
-                result[0] += frequency;
-                boolean largerThanTop1 = frequency > result[1];
-                boolean largerThanTop2 = frequency > result[2];
-                
-                // Step 1: If frequency is > top1 
-                //         --> top1 is moved down to top2
-                result[2] = largerThanTop1 ? result[1] : result[2];
-
-                // Step 2: If frequency is > top1 
-                //         --> top1 is set to new frequency
-                result[1] = largerThanTop1 ? frequency : result[1];
-                
-                // Step 3: If frequency is > top2 but not > top1
-                //         --> top2 is set to new frequency
-                result[2] = largerThanTop2 && !largerThanTop1 ? frequency : result[2];
-            }
-        }
-        
-        return result;
     }
     
     /**
