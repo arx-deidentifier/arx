@@ -461,7 +461,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             
             // For each level
             for (int level = 0; level < levels; level++) {
-
+                
                 // Special case
                 if (distinct0 == 1) {
                     this.responseVariablesQIScaleFactors[i][level] = 0d;

@@ -356,8 +356,6 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
                 
                 if (attributeName.equalsIgnoreCase(testCase.responseAttribute)) {
                     data.getDefinition().setResponseVariable(attributeName, true);
-                    data.getDefinition().setMinimumGeneralization(attributeName, 0);
-                    data.getDefinition().setMaximumGeneralization(attributeName, 0);
                 }
                 
                 if (!attributeName.equalsIgnoreCase(testCase.sensitiveAttribute)) {
