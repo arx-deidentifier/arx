@@ -43,6 +43,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Johanna Eicher
+ * @author Raffael Bild
  */
 public class MetricSDClassification extends AbstractMetricSingleDimensional {
 

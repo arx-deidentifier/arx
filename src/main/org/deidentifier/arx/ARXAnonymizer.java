@@ -467,12 +467,6 @@ public class ARXAnonymizer { // NO_UCD
                 }
             }
             if (!found) {
-                if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
                 throw new IllegalArgumentException("No privacy model specified for sensitive attribute: '" + attr + "'");
             }
         }
