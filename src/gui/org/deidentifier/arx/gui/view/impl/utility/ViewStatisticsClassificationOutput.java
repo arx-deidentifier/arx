@@ -53,6 +53,8 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
                 Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
                 // Relative accuracy
                 Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
+                // Brier skill score
+                Resources.getMessage("ViewStatisticsClassificationInput.30"), //$NON-NLS-1$
         };
     }
     
@@ -81,6 +83,7 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
         } else {
             list.add((result.getAccuracy() - result.getZeroRAccuracy()) / (result.getOriginalAccuracy() - result.getZeroRAccuracy()));
         }
+        list.add(result.getBrierSkillScore());
         return list;
     }
 
