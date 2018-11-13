@@ -43,6 +43,20 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
     }
 
     @Override
+    protected String[] getColumnHeadersForAUCTable() {
+        return new String[] {
+                // Baseline AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.14"), //$NON-NLS-1$
+                // AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.24"), //$NON-NLS-1$
+                // Original AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.23"), //$NON-NLS-1$
+                // Relative AUC
+                Resources.getMessage("ViewStatisticsClassificationInput.2"), //$NON-NLS-1$
+        };
+    }
+    
+    @Override
     protected String[] getColumnHeadersForPerformanceForOverallPerformanceTable() {
         return new String[] {
                 // Baseline accuracy
@@ -59,19 +73,11 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
     }
     
     @Override
-    protected String[] getColumnHeadersForAUCTable() {
-        return new String[] {
-                // Baseline AUC
-                Resources.getMessage("ViewStatisticsClassificationInput.14"), //$NON-NLS-1$
-                // AUC
-                Resources.getMessage("ViewStatisticsClassificationInput.24"), //$NON-NLS-1$
-                // Original AUC
-                Resources.getMessage("ViewStatisticsClassificationInput.23"), //$NON-NLS-1$
-                // Relative AUC
-                Resources.getMessage("ViewStatisticsClassificationInput.2"), //$NON-NLS-1$
-        };
+    protected boolean[] getColumnTypesForPerformanceForOverallPerformanceTable() {
+        return new boolean[] {true, true, true, true, false};
     }
-    
+
+
     @Override
     protected List<Double> getColumnValuesForOverallPerformanceTable(StatisticsClassification result) {
         List<Double> list = new ArrayList<Double>();
