@@ -56,8 +56,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     private int[]             responseVariablesQI                  = null;
     /** Scale factors for QI target variables */
     private double[][]        responseVariablesQIScaleFactors      = null;
-    /** Maximal generalization level for QI target variables */
-    private int[]             responseVariablesQIMaxGeneralization = null;
 
     /** Penalty */
     private double            penaltySuppressed                    = 1d;
@@ -148,7 +146,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         while (m != null) {
             if (m.count > 0 && m.isNotOutlier) {
                 for (int index : this.responseVariablesNonQI) {
-                    score = score.add(BigInteger.valueOf(analyzeDistribution(m.distributions[index])[1]));
+                    score = score.add(BigInteger.valueOf(getStatistics(m.distributions[index])[1]));
                 }
             }
             m = m.nextOrdered;
@@ -173,12 +171,13 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             // Sum up weights
             MetaHashGroupifyEntry e = mhg.getFirstEntry();
             while (e != null) {
-                scoreQI = scoreQI.add(BigInteger.valueOf(analyzeDistribution(e.distribution)[1]));
+                scoreQI = scoreQI.add(BigInteger.valueOf(getStatistics(e.distribution)[1]));
                 e = e.nextOrdered;
             }
             
             // Obtain scale between 1 (in case the target value is not generalized) and 0 (in case the target variable is generalized to the highest level)
-            BigFraction scale = BigFraction.ONE.subtract(new BigFraction(node.getGeneralization()[index], this.responseVariablesQIMaxGeneralization[i]));
+            int maxLevel = this.responseVariablesQIScaleFactors[i].length - 1;
+            BigFraction scale = BigFraction.ONE.subtract(new BigFraction(node.getGeneralization()[index], maxLevel));
             
             // Multiply the score for this QI by scale in order to penalize high degrees of generalization.
             // This can only reduce the effects of the addition or removal of one record and hence
@@ -220,49 +219,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         return "Classification accuracy";
     }
     
-    /**
-     * Returns statistics about a distribution
-     * @param distribution
-     * @return an array containing the following three frequencies (in this order):
-     *         - the total number of attribute values
-     *         - the frequency of the most frequent attribute value
-     *         - the frequency of the second most frequent attribute value
-     */
-    private int[] analyzeDistribution(Distribution distribution) {
-        
-        // Find frequencies of most frequent and second most frequent attribute values
-        
-        int[] result = new int[] {0,-1,-1}; 
-        
-        // For each bucket
-        int[] buckets = distribution.getBuckets();
-        for (int i = 0; i < buckets.length; i += 2) {
-            
-            // bucket not empty
-            if (buckets[i] != -1) { 
-            
-                // Get frequency
-                int frequency = buckets[i + 1];
-                result[0] += frequency;
-                boolean largerThanTop1 = frequency > result[1];
-                boolean largerThanTop2 = frequency > result[2];
-                
-                // Step 1: If frequency is > top1 
-                //         --> top1 is moved down to top2
-                result[2] = largerThanTop1 ? result[1] : result[2];
 
-                // Step 2: If frequency is > top1 
-                //         --> top1 is set to new frequency
-                result[1] = largerThanTop1 ? frequency : result[1];
-                
-                // Step 3: If frequency is > top2 but not > top1
-                //         --> top2 is set to new frequency
-                result[2] = largerThanTop2 && !largerThanTop1 ? frequency : result[2];
-            }
-        }
-        
-        return result;
-    }
     
     /**
      * Returns sorted indices of response variables in the given data
@@ -300,11 +257,11 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      */
     private double getPenaltyDistribution(Distribution distribution, double scaleFactor) {
         
-        int[] result = analyzeDistribution(distribution);
+        int[] statistics = getStatistics(distribution);
 
-        int count = result[0];
-        int top1 = result[1];
-        int top2 = result[2];
+        int count = statistics[0];
+        int top1 = statistics[1];
+        int top2 = statistics[2];
         
         if (scaleFactor == 1d) {
             return count * (penaltyMaxScale / penaltyMax);
@@ -334,6 +291,50 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
         // According penalty for all records and response variables in this class
         return count * (penaltySuppressed / penaltyMax);
+    }
+    
+    /**
+     * Returns statistics about a distribution
+     * @param distribution
+     * @return an array containing the following three frequencies (in this order):
+     *         - the total number of attribute values
+     *         - the frequency of the most frequent attribute value
+     *         - the frequency of the second most frequent attribute value
+     */
+    private int[] getStatistics(Distribution distribution) {
+        
+        // Find frequencies of most frequent and second most frequent attribute values
+        
+        int[] statistics = new int[] {0,-1,-1}; 
+        
+        // For each bucket
+        int[] buckets = distribution.getBuckets();
+        for (int i = 0; i < buckets.length; i += 2) {
+            
+            // bucket not empty
+            if (buckets[i] != -1) { 
+            
+                // Get frequency
+                int frequency = buckets[i + 1];
+                statistics[0] += frequency;
+                boolean largerThanTop1 = frequency > statistics[1];
+                boolean largerThanTop2 = frequency > statistics[2];
+                
+                // Step 1: If frequency is > top1 
+                //         --> top1 is moved down to top2
+                statistics[2] = largerThanTop1 ? statistics[1] : statistics[2];
+
+                // Step 2: If frequency is > top1 
+                //         --> top1 is set to new frequency
+                statistics[1] = largerThanTop1 ? frequency : statistics[1];
+                
+                // Step 3: If frequency is > top2 but not > top1
+                //         --> top2 is set to new frequency
+                statistics[2] = largerThanTop2 && !largerThanTop1 ? frequency : statistics[2];
+            }
+        }
+        
+        return statistics;
     }
 
     @Override
@@ -447,7 +448,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         
         // Calculate scale factors
         this.responseVariablesQIScaleFactors = new double[this.responseVariablesQI.length][];
-        this.responseVariablesQIMaxGeneralization = new int[this.responseVariablesQI.length];
         int i = 0;
         for (int index : responseVariablesQI) {
             
@@ -456,9 +456,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             int distinct0 = hierarchy.getDistinctValues(0).length;
             int levels = hierarchy.getLevels();
             this.responseVariablesQIScaleFactors[i] = new double[levels];
-            
-            // Obtain maximal generalization level
-            this.responseVariablesQIMaxGeneralization[i] = levels - 1;
             
             // For each level
             for (int level = 0; level < levels; level++) {
