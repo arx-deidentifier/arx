@@ -175,7 +175,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
                 e = e.nextOrdered;
             }
             
-            // Obtain scale between 1 (in case the target value is not generalized) and 0 (in case the target variable is generalized to the highest level)
+            // Obtain scale between 1 (in case the target variable is not generalized) and 0 (in case the target variable is generalized to the highest level)
             int maxLevel = this.responseVariablesQIScaleFactors[i].length - 1;
             BigFraction scale = BigFraction.ONE.subtract(new BigFraction(node.getGeneralization()[index], maxLevel));
             
@@ -218,8 +218,6 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     public String toString() {
         return "Classification accuracy";
     }
-    
-
     
     /**
      * Returns sorted indices of response variables in the given data
