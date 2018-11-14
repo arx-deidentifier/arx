@@ -420,6 +420,11 @@ public class ViewAttributeTransformation implements IView {
             controller.update(new ModelEvent(this,
                                              ModelPart.ATTRIBUTE_TYPE,
                                              attribute));
+            
+            // Update Masking Type when changing away from Identifying
+            controller.update(new ModelEvent(this,
+                    						ModelPart.MASKING_ATTRIBUTE_CHANGED,
+                    						null));
         }
     }
     

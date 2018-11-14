@@ -121,6 +121,16 @@ public class ModelEvent {
         /** COST/BENEFIT MODEL*/
         COST_BENEFIT_MODEL,
         
+        //TODO Consolidate Maskin events?
+        MASKING_VARIABLE_SELECTED,
+        MASKING_VARIABLE_CHANGED,	//Added, removed, changed
+        
+        MASKING_ATTRIBUTE_CHANGED,
+        
+        /** Used to share a list of Identifying attributes 
+         * to remove corresponding masking type if the attribute isn't Identifying anymore*/
+        IDENTIFYING_ATTRIBUTES_CHANGED,
+        
         /** SELECTED_CLASS_VALUE */
         SELECTED_CLASS_VALUE,
 
