@@ -18,11 +18,10 @@
 package org.deidentifier.arx.masking.variable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.math3.distribution.GeometricDistribution;
 import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.apache.commons.math3.distribution.GeometricDistribution;
 import org.deidentifier.arx.masking.variable.DistributionType.DiscreteBinomial;
 import org.deidentifier.arx.masking.variable.DistributionType.DiscreteGeometric;
 
@@ -33,111 +32,128 @@ import org.deidentifier.arx.masking.variable.DistributionType.DiscreteGeometric;
  */
 public class RandomVariable {
 
-    private String name;
+    /** Name */
+    private String                         name;
 
-    private DistributionType type;
-
+    /** List of parameters */
     private List<DistributionParameter<?>> parameters = new ArrayList<>();
 
+    /** Distribution type */
+    private DistributionType               type;
+
+    /**
+     * Creates an instance.
+     * @param name
+     */
     public RandomVariable(String name) {
-
         this.name = name;
-
     }
 
+    /**
+     * Creates an instance.
+     * 
+     * @param name
+     * @param type
+     */
     public RandomVariable(String name, DistributionType type) {
-
         this.name = name;
         this.type = type;
-
     }
 
-    public void setName(String name) {
-
-        this.name = name;
-
-    }
-
-    public String getName() {
-
-        return this.name;
-
-    }
-
-    public void setDistributionType(DistributionType type) {
-
-        this.type = type;
-
-    }
-
-    public DistributionType getDistributionType() {
-
-        return this.type;
-
-    }
-
+    /**
+     * Adds a parameter.
+     * @param parameter
+     */
     public void addParameter(DistributionParameter<?> parameter) {
-
         parameters.add(parameter);
-
-    }
-
-    public DistributionParameter<?> getParameter(String name) {
-
-        for (DistributionParameter<?> parameter : this.parameters) {
-
-            if (parameter.getName().equals(name)) {
-
-                return parameter;
-
-            }
-
-        }
-
-        return null;
-
-    }
-
-    public void removeParameter(DistributionParameter<?> parameter) {
-
-        parameters.remove(parameter);
-
-    }
-
-    public void removeParameter(String parameterName) {
-
-        for (DistributionParameter<?> parameter : parameters) {
-
-            if (parameter.getName().equals(parameterName)) {
-
-                removeParameter(parameter);
-                return;
-
-            }
-
-        }
-
     }
 
     // TODO: Check for null, update distribution if parameters are updated, etc.
+    /**
+     * Returns the distribution
+     * @return
+     */
     public Distribution<Integer> getDistribution() {
 
         if (this.type instanceof DiscreteBinomial) {
-
-            Integer number = ((DistributionParameter.Int)getParameter("number")).getValue();
-            Double probability = ((DistributionParameter.Dou)getParameter("probability")).getValue();
+            Integer number = ((DistributionParameter.IntegerParameter) getParameter("number")).getValue();
+            Double probability = ((DistributionParameter.DoubleParameter) getParameter("probability")).getValue();
             return new DiscreteDistribution(0, number, new BinomialDistribution(number, probability));
-
         }
         if (this.type instanceof DiscreteGeometric) {
-
-            Double probability = ((DistributionParameter.Dou)getParameter("probability")).getValue();
-            return new DiscreteDistribution(0, (int)(5/probability), new GeometricDistribution(probability));
-
+            Double probability = ((DistributionParameter.DoubleParameter) getParameter("probability")).getValue();
+            return new DiscreteDistribution(0, (int) (5 / probability), new GeometricDistribution(probability));
         }
-
         return null;
+    }
 
+    /**
+     * Returns the distribution type.
+     * @return
+     */
+    public DistributionType getDistributionType() {
+        return this.type;
+    }
+
+    /**
+     * Returns the name.
+     * @return
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
+     * Returns the distribution parameter with this name.
+     * @param name
+     * @return
+     */
+    public DistributionParameter<?> getParameter(String name) {
+
+        for (DistributionParameter<?> parameter : this.parameters) {
+            if (parameter.getName().equals(name)) {
+                return parameter;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes this parameter.
+     * @param parameter
+     */
+    public void removeParameter(DistributionParameter<?> parameter) {
+        parameters.remove(parameter);
+    }
+
+    /**
+     * Removes the paramter with this name.
+     * @param parameterName
+     */
+    public void removeParameter(String parameterName) {
+
+        for (DistributionParameter<?> parameter : parameters) {
+            if (parameter.getName().equals(parameterName)) {
+                removeParameter(parameter);
+                return;
+            }
+        }
+    }
+
+    /**
+     * Sets the distribution.
+     * @param type
+     */
+    public void setDistributionType(DistributionType type) {
+        this.type = type;
+    }
+
+    /**
+     * Sets the name
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

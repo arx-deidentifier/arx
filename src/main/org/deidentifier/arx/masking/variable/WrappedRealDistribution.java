@@ -32,64 +32,88 @@ import org.apache.commons.math3.distribution.AbstractRealDistribution;
  */
 public class WrappedRealDistribution extends AbstractIntegerDistribution {
 
-    private static final long serialVersionUID = -4186523316916292945L;
+    /** SVUID */
+    private static final long              serialVersionUID = -4186523316916292945L;
 
+    /** Distribution */
     private final AbstractRealDistribution distribution;
 
-    @SuppressWarnings("deprecation")
+    /**
+     * Creates an instance.
+     * @param distribution
+     */
     public WrappedRealDistribution(AbstractRealDistribution distribution) {
-
         this.distribution = distribution;
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.commons.math3.distribution.IntegerDistribution#cumulativeProbability(int)
+     */
     @Override
     public double cumulativeProbability(int arg0) {
-
         return this.distribution.cumulativeProbability(arg0);
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.commons.math3.distribution.IntegerDistribution#getNumericalMean()
+     */
     @Override
     public double getNumericalMean() {
-
         return this.distribution.getNumericalMean();
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.commons.math3.distribution.IntegerDistribution#getNumericalVariance()
+     */
     @Override
     public double getNumericalVariance() {
-
         return this.distribution.getNumericalVariance();
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.commons.math3.distribution.IntegerDistribution#getSupportLowerBound()
+     */
     @Override
     public int getSupportLowerBound() {
-
         return (int) Math.floor(this.distribution.getSupportLowerBound());
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.commons.math3.distribution.IntegerDistribution#getSupportUpperBound()
+     */
     @Override
     public int getSupportUpperBound() {
-
         return (int) Math.ceil(this.distribution.getSupportUpperBound());
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.commons.math3.distribution.IntegerDistribution#isSupportConnected()
+     */
     @Override
     public boolean isSupportConnected() {
-
         return this.distribution.isSupportConnected();
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.apache.commons.math3.distribution.IntegerDistribution#probability(int)
+     */
     @Override
     public double probability(int arg0) {
-
         return (this.distribution.cumulativeProbability(arg0 + 1 - Double.MIN_VALUE) - this.distribution.cumulativeProbability(arg0 - Double.MIN_VALUE));
-
     }
 
 }

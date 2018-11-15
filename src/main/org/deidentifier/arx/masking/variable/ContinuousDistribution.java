@@ -28,46 +28,69 @@ import org.apache.commons.math3.distribution.AbstractRealDistribution;
  */
 public class ContinuousDistribution extends Distribution<Double> {
 
-    private double min;
-    private double max;
+    /** Distribution */
     private AbstractRealDistribution distribution;
 
+    /** Maximum */
+    private double                   max;
 
+    /** Minimum */
+    private double                   min;
+
+    /**
+     * Creates an instance.
+     * 
+     * @param min
+     * @param max
+     * @param distribution
+     */
+    public ContinuousDistribution(double min, double max, AbstractRealDistribution distribution) {
+        this(min, max, 0d, distribution);
+    }
+
+    /**
+     * Creates an instance.
+     * 
+     * @param min
+     * @param max
+     * @param yLimit
+     * @param distribution
+     */
     public ContinuousDistribution(double min, double max, double yLimit, AbstractRealDistribution distribution) {
-
         super(yLimit);
-
         this.min = min;
         this.max = max;
         this.distribution = distribution;
-
     }
 
-    public ContinuousDistribution(double min, double max, AbstractRealDistribution distribution) {
-
-        this(min, max, 0d, distribution);
-
-    }
-
-    @Override
-    public Double getMinimum() {
-
-        return min;
-
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.masking.variable.Distribution#getMaximum()
+     */
     @Override
     public Double getMaximum() {
-
         return max;
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.masking.variable.Distribution#getMinimum()
+     */
+    @Override
+    public Double getMinimum() {
+        return min;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.masking.variable.Distribution#getValue(java.lang.Object)
+     */
     @Override
     public double getValue(Double value) {
-
         return distribution.density(value);
-
     }
 
 }

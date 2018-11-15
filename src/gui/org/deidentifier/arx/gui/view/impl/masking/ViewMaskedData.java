@@ -29,7 +29,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelRiskBasedCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.impl.common.ViewData;	//temp import
+import org.deidentifier.arx.gui.view.impl.common.ViewData;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.MenuItem;
  * @author Peter Bock
  */
 public class ViewMaskedData extends ViewData {
- 
+
     /**
      * 
      * Creates a new (non-editable) data view.
@@ -56,12 +56,10 @@ public class ViewMaskedData extends ViewData {
      * @param parent
      * @param controller
      */
-    public ViewMaskedData(final Composite parent,
-                         final Controller controller,
-                         final String helpid) {
-        this (parent, controller, helpid, false);
+    public ViewMaskedData(final Composite parent, final Controller controller, final String helpid) {
+        this(parent, controller, helpid, false);
     }
-    
+
     /**
      * 
      * Creates a new data view.
@@ -70,20 +68,17 @@ public class ViewMaskedData extends ViewData {
      * @param controller
      * @param editable
      */
-    public ViewMaskedData(final Composite parent,
-                         final Controller controller,
-                         final String helpid,
-                         final boolean editable) {
-        
+    public ViewMaskedData(final Composite parent, final Controller controller, final String helpid, final boolean editable) {
+
         super(parent, controller, helpid, Resources.getMessage("MaskingView.0")); //$NON-NLS-1$
-        
+
         // Register
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
         controller.addListener(ModelPart.RESPONSE_VARIABLES, this);
-        
+
         // Make editable
         if (editable) {
             final Menu menu = new Menu(parent.getShell());
@@ -95,42 +90,42 @@ public class ViewMaskedData extends ViewData {
                     controller.actionMenuEditFindReplace();
                 }
             });
-            MenuItem item2 = new MenuItem(menu,SWT.NONE);
-            item2.setText(Resources.getMessage("PropertiesView.34"));
+            MenuItem item2 = new MenuItem(menu, SWT.NONE);
+            item2.setText(Resources.getMessage("PropertiesView.34")); //$NON-NLS-1$
             item2.addSelectionListener(new SelectionAdapter() {
-            	 @Override
-            	 public void widgetSelected(final SelectionEvent arg0) {
-            		 actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.INSENSITIVE_ATTRIBUTE);
-            		 refreshHeader();
-            	 }
+                @Override
+                public void widgetSelected(final SelectionEvent arg0) {
+                    actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.INSENSITIVE_ATTRIBUTE);
+                    refreshHeader();
+                }
             });
-            MenuItem item3 = new MenuItem(menu,SWT.NONE);
-            item3.setText(Resources.getMessage("PropertiesView.27"));
+            MenuItem item3 = new MenuItem(menu, SWT.NONE);
+            item3.setText(Resources.getMessage("PropertiesView.27")); //$NON-NLS-1$
             item3.addSelectionListener(new SelectionAdapter() {
-           	 	@Override
-           	 	public void widgetSelected(final SelectionEvent arg0) {
-           	 		actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.SENSITIVE_ATTRIBUTE);
-           	 		refreshHeader();
-           	 	}
-           });
-            MenuItem item4 = new MenuItem(menu,SWT.NONE);
-            item4.setText(Resources.getMessage("PropertiesView.20"));
+                @Override
+                public void widgetSelected(final SelectionEvent arg0) {
+                    actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.SENSITIVE_ATTRIBUTE);
+                    refreshHeader();
+                }
+            });
+            MenuItem item4 = new MenuItem(menu, SWT.NONE);
+            item4.setText(Resources.getMessage("PropertiesView.20")); //$NON-NLS-1$
             item4.addSelectionListener(new SelectionAdapter() {
-           	 	@Override
-           	 	public void widgetSelected(final SelectionEvent arg0) {
-           	 		actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
-           	 		refreshHeader();
-           	 	}
-           });
-            MenuItem item5 = new MenuItem(menu,SWT.NONE);
-            item5.setText(Resources.getMessage("PropertiesView.13"));
+                @Override
+                public void widgetSelected(final SelectionEvent arg0) {
+                    actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+                    refreshHeader();
+                }
+            });
+            MenuItem item5 = new MenuItem(menu, SWT.NONE);
+            item5.setText(Resources.getMessage("PropertiesView.13")); //$NON-NLS-1$
             item5.addSelectionListener(new SelectionAdapter() {
-           	 	@Override
-           	 	public void widgetSelected(final SelectionEvent arg0) {
-           	 		actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.IDENTIFYING_ATTRIBUTE);
-           	 		refreshHeader();
-           	 	}
-           });
+                @Override
+                public void widgetSelected(final SelectionEvent arg0) {
+                    actionAttributeTypeChanged(model.getSelectedAttribute(), AttributeType.IDENTIFYING_ATTRIBUTE);
+                    refreshHeader();
+                }
+            });
 
             table.addMouseListener(new MouseAdapter() {
 
@@ -143,7 +138,7 @@ public class ViewMaskedData extends ViewData {
                         menu.setEnabled(true);
                     } else {
                         menu.setEnabled(false);
-                    } 
+                    }
                     if (arg0.button == 3 && menu.isEnabled()) {
                         Point display = table.toDisplay(arg0.x, arg0.y);
                         menu.setLocation(display.x, display.y);
@@ -153,15 +148,17 @@ public class ViewMaskedData extends ViewData {
             });
         }
     }
-    
-    public void refreshHeader()
-    {
-    	// Obtain data definition
+
+    /**
+     * Refresh header
+     */
+    public void refreshHeader() {
+        // Obtain data definition
         DataDefinition definition = getDefinition();
 
         // Update the table
         DataHandle handle = getHandle();
-        
+
         // Update the attribute types
         table.getHeaderImages().clear();
         for (int i = 0; i < handle.getNumColumns(); i++) {
@@ -172,10 +169,15 @@ public class ViewMaskedData extends ViewData {
         table.redraw();
         this.enableSorting();
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(final ModelEvent event) {
-        
+
         super.update(event);
 
         if (event.part == ModelPart.INPUT) {
@@ -184,16 +186,16 @@ public class ViewMaskedData extends ViewData {
             if (event.data == null) {
                 reset();
                 return;
-            } 
-            
+            }
+
             // Obtain data definition
             DataDefinition definition = getDefinition();
-            
+
             // Check
             if (definition == null) {
                 reset();
                 return;
-            } 
+            }
 
             // Update the table
             DataHandle handle = getHandle();
@@ -202,33 +204,33 @@ public class ViewMaskedData extends ViewData {
             if (handle == null) {
                 reset();
                 return;
-            } 
+            }
 
             // Use input subset
             table.setResearchSubset(model.getInputConfig().getResearchSubset());
             table.setGroups(null);
             table.setData(handle);
-            
+
             // Update the attribute types
             table.getHeaderImages().clear();
             for (int i = 0; i < handle.getNumColumns(); i++) {
                 updateHeaderImage(i, handle.getAttributeName(i), definition);
             }
-            
+
             // Redraw
             table.setEnabled(true);
             table.redraw();
             this.enableSorting();
 
         } else if (event.part == ModelPart.RESEARCH_SUBSET) {
-            
+
             // Update research subset
-            table.setResearchSubset((RowSet)event.data);
+            table.setResearchSubset((RowSet) event.data);
             table.redraw();
-            
+
         } else if (event.part == ModelPart.ATTRIBUTE_VALUE) {
             table.redraw();
-            
+
         } else if (event.part == ModelPart.SELECTED_VIEW_CONFIG || event.part == ModelPart.RESULT) {
 
             // Update the table
@@ -239,29 +241,29 @@ public class ViewMaskedData extends ViewData {
                 reset();
                 return;
             }
-            
+
             table.setData(handle);
             table.setGroups(null);
             table.setResearchSubset(model.getInputConfig().getResearchSubset());
             table.redraw();
-            
+
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.RESPONSE_VARIABLES) {
-            
-            if (model != null){
-                
-            DataHandle handle = getHandle();
-   
+
+            if (model != null) {
+
+                DataHandle handle = getHandle();
+
                 if (handle != null) {
-    
+
                     final String attr = (String) event.data;
-    
+
                     // Obtain data definition
                     DataDefinition definition = getDefinition();
-    
+
                     // Update the attribute types
                     final int index = handle.getColumnIndexOf(attr);
                     updateHeaderImage(index, attr, definition);
-    
+
                     // Redraw
                     table.setEnabled(true);
                     table.redraw();
@@ -269,14 +271,20 @@ public class ViewMaskedData extends ViewData {
             }
         }
     }
-    
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionCellSelected(org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent)
+     */
     @Override
     protected void actionCellSelected(CellSelectionEvent arg1) {
 
-    	super.actionCellSelected(arg1);
-    	
-        if (model == null) return;
-        
+        super.actionCellSelected(arg1);
+
+        if (model == null)
+            return;
+
         int column = arg1.getColumnPosition();
         int row = arg1.getRowPosition();
         if (column == 0 && row >= 0) {
@@ -294,35 +302,52 @@ public class ViewMaskedData extends ViewData {
             } else {
                 subset.add(row);
             }
-            
+
             // Fire event
             model.setSubsetManual();
-            controller.update(new ModelEvent(this,  ModelPart.RESEARCH_SUBSET, subset));
+            controller.update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset));
         }
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#actionSort()
+     */
     @Override
-    protected void actionSort(){
+    protected void actionSort() {
         controller.actionDataSort(true);
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getDefinition()
+     */
     @Override
     protected DataDefinition getDefinition() {
-        if (model == null) return null;
-        else return model.getInputDefinition();
+        if (model == null)
+            return null;
+        else
+            return model.getInputDefinition();
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.impl.common.ViewData#getHandle()
+     */
     @Override
     protected DataHandle getHandle() {
-        if (model != null){
-            
+        if (model != null) {
+
             Data data = model.getInputConfig().getInput();
             if (data == null) {
                 return null;
             }
             DataHandle handle = data.getHandle();
-            
-            if (model.getViewConfig().isSubset() && 
+
+            if (model.getViewConfig().isSubset() &&
                 model.getOutputConfig() != null &&
                 model.getOutputConfig().getConfig() != null) {
                 handle = handle.getView();
@@ -332,6 +357,13 @@ public class ViewMaskedData extends ViewData {
             return null;
         }
     }
+
+    /**
+     * Action when attribute type has changed.
+     * 
+     * @param attribute
+     * @param type
+     */
     private void actionAttributeTypeChanged(String attribute, AttributeType type) {
         if ((model != null) && (model.getInputConfig().getInput() != null)) {
             final DataDefinition definition = model.getInputDefinition();
@@ -383,23 +415,16 @@ public class ViewMaskedData extends ViewData {
 
             }
 
-
             // Update criteria
             if (criteriaDisabled) {
-                controller.update(new ModelEvent(this,
-                                                 ModelPart.CRITERION_DEFINITION,
-                                                 null));
+                controller.update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, null));
             }
 
             // Update the views
-            controller.update(new ModelEvent(this,
-                                             ModelPart.ATTRIBUTE_TYPE,
-                                             attribute));
-            
+            controller.update(new ModelEvent(this, ModelPart.ATTRIBUTE_TYPE, attribute));
+
             // Update Masking Type
-            controller.update(new ModelEvent(this,
-                    ModelPart.MASKING_ATTRIBUTE_CHANGED,
-                    null));
+            controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
         }
     }
 }

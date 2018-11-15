@@ -28,39 +28,57 @@ import org.apache.commons.math3.distribution.AbstractIntegerDistribution;
  */
 public class DiscreteDistribution extends Distribution<Integer> {
 
-    private int min;
-    private int max;
+    /** Distribution */
     private AbstractIntegerDistribution distribution;
 
+    /** Maximum */
+    private int                         max;
+
+    /** Minimum */
+    private int                         min;
+
+    /**
+     * Creates an instance.
+     * 
+     * @param min
+     * @param max
+     * @param distribution
+     */
     public DiscreteDistribution(int min, int max, AbstractIntegerDistribution distribution) {
-
         super(0d);
-
         this.min = min;
         this.max = max;
         this.distribution = distribution;
-
     }
 
-    @Override
-    public Integer getMinimum() {
-
-        return min;
-
-    }
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.masking.variable.Distribution#getMaximum()
+     */
     @Override
     public Integer getMaximum() {
-
         return max;
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.masking.variable.Distribution#getMinimum()
+     */
+    @Override
+    public Integer getMinimum() {
+        return min;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.masking.variable.Distribution#getValue(java.lang.Object)
+     */
     @Override
     public double getValue(Integer value) {
-
         return distribution.probability(value);
-
     }
 
 }

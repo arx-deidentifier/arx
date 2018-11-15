@@ -26,24 +26,44 @@ package org.deidentifier.arx.masking.variable;
  */
 public abstract class Distribution<T> {
 
+    /** Limit for y */
     private final double yLimit;
 
+    /**
+     * Creates an instance.
+     * 
+     * @param yLimit
+     */
     public Distribution(double yLimit) {
-
         this.yLimit = yLimit;
-
     }
 
-    public abstract T getMinimum();
+    /**
+     * Creates an instance.
+     * 
+     * @return
+     */
+    public double getLimitY() {
+        return yLimit;
+    }
 
+    /**
+     * Returns the maximum.
+     * @return
+     */
     public abstract T getMaximum();
 
+    /**
+     * Returns the minimum.
+     * @return
+     */
+    public abstract T getMinimum();
+
+    /**
+     * Returns the value.
+     * @param value
+     * @return
+     */
     public abstract double getValue(T value);
-
-    public double getLimitY() {
-
-        return yLimit;
-
-    }
 
 }

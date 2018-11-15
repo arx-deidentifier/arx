@@ -61,37 +61,53 @@ public class ViewAttributeConfiguration implements IView {
      *
      * @author Karol Babioch
      */
-    public class Attribute {	//changed to public, to use class in viewMaskingConfiguration
-        
-    	private String name;
+    public class Attribute {
+
+        /** Attribute name */
+        private String      name;
+
+        /** Attribute type */
         private DataType<?> type;
 
-
+        /**
+         * Creates an instance.
+         * 
+         * @param name
+         * @param type
+         */
         public Attribute(String name, DataType<?> type) {
-
             this.name = name;
             this.type = type;
-
         }
 
+        /**
+         * Tests equality on the attribute name.
+         * 
+         * @param attribute
+         * @return
+         */
+        public boolean equals(String attribute) {
+            if (name.equals(attribute)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        /**
+         * Returns the name.
+         * @return
+         */
         public String getName() {
-
             return name;
-
         }
 
+        /**
+         * Returns the data type.
+         * @return
+         */
         public DataType<?> getType() {
-
             return type;
-
-        }
-        
-        public boolean equals(String attribute)
-        {
-        	if (name.equals(attribute))
-        		return true;
-        	else
-        		return false;
         }
 
     }
@@ -106,26 +122,32 @@ public class ViewAttributeConfiguration implements IView {
      */
     private class AttributeContentProvider implements IStructuredContentProvider {
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+         */
         @Override
         public void dispose() {
-
+            // Nothing to do
         }
 
-        @Override
-        public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
-
-        }
-
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+         */
         @Override
         public Object[] getElements(Object inputData) {
 
-            Model model = (Model)inputData;
+            Model model = (Model) inputData;
             List<Attribute> list = new ArrayList<Attribute>();
 
             try {
 
                 DataHandle data = model.getInputConfig().getInput().getHandle();
 
+                // For each column
                 for (int i = 0; i < data.getNumColumns(); i++) {
 
                     String attributeName = data.getAttributeName(i);
@@ -133,159 +155,44 @@ public class ViewAttributeConfiguration implements IView {
 
                     // Skip if attribute is not identifying
                     if (attributeType != AttributeType.IDENTIFYING_ATTRIBUTE) {
-
                         continue;
-
                     }
 
                     DataType<?> dataType = model.getInputDefinition().getDataType(attributeName);
                     list.add(new Attribute(attributeName, dataType));
-
                 }
 
             } catch (NullPointerException e) {
-
                 // Silently catch NullPointerExceptions here (when model is not yet defined, etc.)
-
             }
 
             return list.toArray();
+        }
 
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+            // Nothing to do
         }
 
     }
 
-    /**
-     * Editor class for changing the masking type
-     *
-     * @TODO Change it in the same way as ImportWizardPageColumn to fix platform specific issues?
-     *
-     * @author Karol Babioch
-     */
-/*
-    private class MaskingEditingSupport extends EditingSupport {
+    /** Controller */
+    private Controller  controller;
 
-        private String[] items;
-
-        public MaskingEditingSupport(TableViewer viewer) {
-
-            super(viewer);
-
-        }
-
-        @Override
-        protected boolean canEdit(Object element) {
-
-            for (MaskingTypeDescription description : MaskingType.list()) {
-
-                for (DataType<?> datatype : description.getSupportedDataTypes()) {
-
-                    if (datatype.getClass() == ((Attribute)element).getType().getClass()) {
-
-                        return true;
-
-                    }
-
-                }
-
-            }
-
-            return false;
-
-        }
-
-        @Override
-        protected CellEditor getCellEditor(Object element) {
-
-            List<String> items = new ArrayList<>();
-
-            items.add("None");
-
-            for (MaskingTypeDescription description : MaskingType.list()) {
-
-                for (DataType<?> datatype : description.getSupportedDataTypes()) {
-
-                    if (datatype.getClass() == ((Attribute)element).getType().getClass()) {
-
-                        items.add(description.getLabel());
-
-                    }
-
-                }
-
-            }
-
-            this.items = items.toArray(new String[items.size()]);
-
-            return new ComboBoxCellEditor(((TableViewer) this.getViewer()).getTable(), this.items, SWT.READ_ONLY);
-
-        }
-
-        @Override
-        protected Object getValue(Object element) {
-
-            MaskingConfiguration maskingConfiguration = controller.getModel().getMaskingModel().getMaskingConfiguration();
-            String attributeName = ((Attribute)element).getName();
-            Masking masking = maskingConfiguration.getMasking(attributeName);
-
-            // Check whether attribute is masked
-            if (masking != null) {
-
-                // Iterate over available items
-                for (int i = 0; i < items.length; i++) {
-
-                    if (items[i].equals(masking.getMaskingType().getDescription().getLabel())) {
-
-                        return i;
-
-                    }
-
-                }
-
-            }
-
-            // Preselect first element (None) by default
-            return 0;
-
-        }
-
-        @Override
-        protected void setValue(Object element, Object value) {
-
-            MaskingConfiguration maskingConfiguration = controller.getModel().getMaskingModel().getMaskingConfiguration();
-            String attributeName = ((Attribute)element).getName();
-            int item = (int)value;
-
-            if (item == 0) {
-
-                maskingConfiguration.removeMasking(attributeName);
-
-            } else {
-
-                for (MaskingTypeDescription description : MaskingType.list()) {
-
-                    if (description.getLabel().equals(this.items[item])) {
-
-                        maskingConfiguration.addMasking(attributeName, new Masking(description.newInstance()));
-
-                    }
-
-                }
-
-            }
-
-            // Send update event
-            controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
-
-        }
-
-    }
-*/
-    private Controller controller;
-
+    /** Table viewer */
     private TableViewer tableViewer;
 
-
+    /**
+     * Creates an instance.
+     * 
+     * @param parent
+     * @param controller
+     */
     public ViewAttributeConfiguration(final Composite parent, final Controller controller) {
 
         this.controller = controller;
@@ -304,7 +211,11 @@ public class ViewAttributeConfiguration implements IView {
 
     }
 
-
+    /**
+     * Build.
+     * 
+     * @param parent
+     */
     private void build(Composite parent) {
 
         // Title bar
@@ -312,10 +223,9 @@ public class ViewAttributeConfiguration implements IView {
         folder.setLayoutData(SWTUtil.createFillGridData());
 
         // First tab
-        Composite composite = folder.createItem(Resources.getMessage("MaskingView.1"), null);
+        Composite composite = folder.createItem(Resources.getMessage("MaskingView.1"), null); //$NON-NLS-1$
         composite.setLayout(SWTUtil.createGridLayout(1));
         folder.setSelection(0);
-
 
         // Create table
         tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
@@ -330,7 +240,7 @@ public class ViewAttributeConfiguration implements IView {
             @Override
             public void widgetSelected(SelectionEvent event) {
 
-                Attribute attribute = (Attribute) ((IStructuredSelection)tableViewer.getSelection()).getFirstElement();
+                Attribute attribute = (Attribute) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
                 controller.getModel().setSelectedAttribute(attribute.getName());
 
                 // Send notification
@@ -346,18 +256,15 @@ public class ViewAttributeConfiguration implements IView {
 
             @Override
             public String getText(Object element) {
-
-                return ((Attribute)element).getName();
-
+                return ((Attribute) element).getName();
             }
 
         });
 
         TableColumn columnName = tableViewerColumnName.getColumn();
-        columnName.setToolTipText("Name of the attribute");
-        columnName.setText("Attribute");
+        columnName.setToolTipText(Resources.getMessage("MaskingView.6")); //$NON-NLS-1$
+        columnName.setText(Resources.getMessage("MaskingView.7")); //$NON-NLS-1$
         columnName.setWidth(100);
-
 
         // Column containing attribute data type
         TableViewerColumn tableViewerColumnDataType = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -365,18 +272,15 @@ public class ViewAttributeConfiguration implements IView {
 
             @Override
             public String getText(Object element) {
-
-                return ((Attribute)element).getType().getDescription().getLabel();
-
+                return ((Attribute) element).getType().getDescription().getLabel();
             }
 
         });
 
         TableColumn columnDataType = tableViewerColumnDataType.getColumn();
-        columnDataType.setToolTipText("Data type of the attribute");
-        columnDataType.setText("Data type");
+        columnDataType.setToolTipText(Resources.getMessage("MaskingView.8")); //$NON-NLS-1$
+        columnDataType.setText(Resources.getMessage("MaskingView.9")); //$NON-NLS-1$
         columnDataType.setWidth(100);
-
 
         // Column containing masking operation
         TableViewerColumn tableViewerColumnMasking = new TableViewerColumn(tableViewer, SWT.NONE);
@@ -385,46 +289,53 @@ public class ViewAttributeConfiguration implements IView {
             @Override
             public String getText(Object element) {
 
-                Attribute attribute = ((Attribute)element);
+                Attribute attribute = ((Attribute) element);
                 MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute.getName());
                 if (maskingType == null) {
-                	return "Suppressed";
+                    return Resources.getMessage("MaskingView.10"); //$NON-NLS-1$
                 }
-
                 return maskingType.getLabel();
-
             }
 
         });
-//		tableViewerColumnMasking.setEditingSupport(new MaskingEditingSupport(tableViewer));
 
         TableColumn columnMasking = tableViewerColumnMasking.getColumn();
-        columnMasking.setToolTipText("Masking operation for attribute");
-        columnMasking.setText("Masking type");
+        columnMasking.setToolTipText(Resources.getMessage("MaskingView.11")); //$NON-NLS-1$
+        columnMasking.setText(Resources.getMessage("MaskingView.12")); //$NON-NLS-1$
         columnMasking.setWidth(150);
 
     }
 
-
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
     @Override
     public void dispose() {
-
         controller.removeListener(this);
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
     @Override
     public void reset() {
-
         tableViewer.getTable().clearAll();
-
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
     @Override
     public void update(ModelEvent event) {
 
         // Disable redrawing, so changes won't be noticed by the user and appear to be atomic
-    	Model model = controller.getModel();
+        Model model = controller.getModel();
         tableViewer.getTable().setRedraw(false);
 
         // Remove all data
@@ -435,27 +346,21 @@ public class ViewAttributeConfiguration implements IView {
 
         // Highlights the currently active (highlighted) attribute
         if (event.part == ModelPart.SELECTED_ATTRIBUTE || event.part == ModelPart.MASKING_ATTRIBUTE_CHANGED) {
-            Object[] currentlyIdentifying = ((AttributeContentProvider)tableViewer.getContentProvider()).getElements(model);
+            Object[] currentlyIdentifying = ((AttributeContentProvider) tableViewer.getContentProvider()).getElements(model);
             String selectedAttribute = model.getSelectedAttribute();
-	        for (int i = 0; i< currentlyIdentifying.length; i++)
-	        {
-	        	if (((Attribute)currentlyIdentifying[i]).equals(selectedAttribute))
-	        	{
-	        		tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(i)),true);
-	        		break;
-	        	}
-	        	
-	        }
+            for (int i = 0; i < currentlyIdentifying.length; i++) {
+                if (((Attribute) currentlyIdentifying[i]).equals(selectedAttribute)) {
+                    tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(i)), true);
+                    break;
+                }
+
+            }
         }
         // Remove MaskingType data when Attribute Type gets changed to something other than "Identifying"
-        else if (event.part == ModelPart.ATTRIBUTE_TYPE)
-        {
-        	//AttributeType typeChangedTo = model.getInputDefinition().getAttributeType((String)event.data);
-            //if (typeChangedTo != AttributeType.IDENTIFYING_ATTRIBUTE)
-            //	MaskingConfiguration.removeMasking((String)event.data);
-        	controller.update(new ModelEvent(this, ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED, ((AttributeContentProvider)tableViewer.getContentProvider()).getElements(model)));
+        else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+            controller.update(new ModelEvent(this, ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED, ((AttributeContentProvider) tableViewer.getContentProvider()).getElements(model)));
         }
-        
+
         // Reenable redrawing
         tableViewer.getTable().setRedraw(true);
 
