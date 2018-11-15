@@ -119,6 +119,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
     /** Model */
     private boolean                            isOutput;
     /** Model */
+    private boolean[]                          columnInOverviewIsBarchart;
+    /** Model */
     private Map<String, Map<String, ROCCurve>> rocCurves;
     /** Model */
     private Map<String, Map<String, ROCCurve>> originalRocCurves;
@@ -199,13 +201,18 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         // Columns
         String[] columns = getColumnHeadersForPerformanceForOverallPerformanceTable();
         String width = String.valueOf(Math.round(100d / ((double) columns.length + 2) * 100d) / 100d) + "%"; //$NON-NLS-1$
+        
+        this.columnInOverviewIsBarchart = getColumnTypesForPerformanceForOverallPerformanceTable();
         // Column for target
         DynamicTableColumn c = new DynamicTableColumn(performanceTableOverview, SWT.LEFT);
         c.setWidth(width, "100px"); //$NON-NLS-1$
         c.setText(Resources.getMessage("ViewStatisticsClassificationInput.0")); //$NON-NLS-1$
-        for (String column : columns) {
+        for (int i = 0; i < columns.length; i++) {
+            String column = columns[i];
             c = new DynamicTableColumn(performanceTableOverview, SWT.LEFT);
-            SWTUtil.createColumnWithBarCharts(performanceTableOverview, c);
+            if (columnInOverviewIsBarchart[i]) {
+                SWTUtil.createColumnWithBarCharts(performanceTableOverview, c);
+            }
             c.setWidth(width, "100px"); //$NON-NLS-1$ 
             c.setText(column);
         }
@@ -1037,7 +1044,11 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                     TableItem item = new TableItem(performanceTableOverview, SWT.NONE);
                     item.setText(0, targetVariables[i]);
                     for (int j = 0; j < values.get(i).size(); j++) {
-                        item.setData(String.valueOf(1 + j), values.get(i).get(j));
+                        if (columnInOverviewIsBarchart[j]) {
+                            item.setData(String.valueOf(j + 1), values.get(i).get(j));
+                        } else {
+                            item.setText(j + 1, SWTUtil.getPrettyString(values.get(i).get(j)));
+                        }
                     }
                 }
 
@@ -1138,6 +1149,12 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
      * @return
      */
     protected abstract String[] getColumnHeadersForPerformanceForOverallPerformanceTable();
+
+    /**
+     * Returns all column types, true for display as a barchart
+     * @return
+     */
+    protected abstract boolean[] getColumnTypesForPerformanceForOverallPerformanceTable();
     
     /**
      * Returns all values for one row of the overall performance table
