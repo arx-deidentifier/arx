@@ -213,6 +213,9 @@ public class Model implements Serializable {
 
     /** The current risk model. */
     private ModelRisk                                     riskModel                       = null;
+    
+    /** The current masking model. */
+    private ModelMasking                                  maskingModel                    = null;
 
     /* *****************************************
      * PRIVACY CRITERIA
@@ -808,6 +811,17 @@ public class Model implements Serializable {
             this.localRecodingModel = new ModelLocalRecoding();
         }
         return localRecodingModel;
+    }
+    
+    /**
+     * Returns the model for masking.
+     * @return
+     */
+    public ModelMasking getMaskingModel() {
+        if (maskingModel == null) {
+            maskingModel = new ModelMasking();
+        }
+        return maskingModel;
     }
 
     /**
@@ -1802,16 +1816,5 @@ public class Model implements Serializable {
     public void setVisualizationEnabled(boolean value){
         this.showVisualization = value;
         this.setModified();
-    }
-    
-    private ModelMasking maskingModel = null;
-    
-    public ModelMasking getMaskingModel()
-    {
-    	if (maskingModel == null)
-    	{
-    		maskingModel = new ModelMasking();
-    	}
-    	return maskingModel;
     }
 }
