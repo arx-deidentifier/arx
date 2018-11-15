@@ -31,34 +31,46 @@ import org.deidentifier.arx.masking.variable.RandomVariable;
  */
 public class ModelMasking implements Serializable {
 
-    private static final long serialVersionUID = 2058280257707159023L;
+    /** SVUID */
+    private static final long    serialVersionUID     = 2058280257707159023L;
 
-    private List<RandomVariable> randomVariables = new ArrayList<>();
-
+    /** Masking configuration */
     private MaskingConfiguration maskingConfiguration = new MaskingConfiguration();
 
-    public MaskingConfiguration getMaskingConfiguration() {
+    /** List of random variables */
+    private List<RandomVariable> randomVariables      = new ArrayList<>();
 
-        return maskingConfiguration;
-
-    }
-
+    /**
+     * Adds a random variable.
+     * 
+     * @param randomVariable
+     */
     public void addRandomVariable(RandomVariable randomVariable) {
-
         randomVariables.add(randomVariable);
-
     }
 
-    public void removeRandomVariable(RandomVariable randomVariable) {
-
-        randomVariables.remove(randomVariable);
-
+    /**
+     * Returns the masking configuration.
+     * @return
+     */
+    public MaskingConfiguration getMaskingConfiguration() {
+        return maskingConfiguration;
     }
 
+    /**
+     * Returns the list of random variables.
+     * @return
+     */
     public List<RandomVariable> getRandomVariables() {
-
         return randomVariables;
+    }
 
+    /**
+     * Removes a random variable.
+     * @param randomVariable
+     */
+    public void removeRandomVariable(RandomVariable randomVariable) {
+        randomVariables.remove(randomVariable);
     }
 
 }
