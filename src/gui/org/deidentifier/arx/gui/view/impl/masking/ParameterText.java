@@ -21,6 +21,7 @@ import org.deidentifier.arx.masking.variable.DistributionParameter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+// TODO Drop this class and find another solution.
 public class ParameterText extends Text {
 
     // Allow subclassing
@@ -43,11 +44,11 @@ public class ParameterText extends Text {
 
         if (parameter.getType().equals(Integer.class)) {
 
-            ((DistributionParameter.Int)parameter).setValue(Integer.valueOf(getText()));
+            ((DistributionParameter.IntegerParameter) parameter).setValue(Integer.valueOf(getText()));
 
         } else if (parameter.getType().equals(Double.class)) {
 
-            ((DistributionParameter.Dou)parameter).setValue(Double.valueOf(getText()));
+            ((DistributionParameter.DoubleParameter) parameter).setValue(Double.valueOf(getText()));
 
         }
 
