@@ -339,7 +339,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
         }
 
         // Send notification about update
-        controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_CHANGED, variable));
+        controller.update(new ModelEvent(this, ModelPart.RANDOM_VARIABLE, variable));
 
         // Dispose dialog, etc.
         super.okPressed();

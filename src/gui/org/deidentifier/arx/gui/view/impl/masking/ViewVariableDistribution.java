@@ -56,10 +56,7 @@ public class ViewVariableDistribution implements IView {
     public ViewVariableDistribution(final Composite parent, final Controller controller) {
 
         this.controller = controller;
-
-        this.controller.addListener(ModelPart.MASKING_VARIABLE_SELECTED, this);
-        this.controller.addListener(ModelPart.MASKING_VARIABLE_CHANGED, this);
-
+        this.controller.addListener(ModelPart.RANDOM_VARIABLE, this);
         build(parent);
 
     }
@@ -162,22 +159,25 @@ public class ViewVariableDistribution implements IView {
     @Override
     public void update(ModelEvent event) {
 
-        // Update chart
-        RandomVariable data = (RandomVariable) event.data;
-        Distribution<Integer> result = data.getDistribution();
-        ISeriesSet seriesSet = chart.getSeriesSet();
-        ISeries series = seriesSet.createSeries(SeriesType.BAR, "values");
-        double[] xSeries = getXSeries(result);
-        series.setXSeries(xSeries);
-        double[] ySeries = getYSeries(xSeries, result);
-        series.setYSeries(ySeries);
-        chart.getAxisSet().adjustRange();
-        chart.getLegend().setVisible(false);
-        chart.getTitle().setText(data.getName());
-        chart.getAxisSet().getYAxis(0).getTitle().setText(Resources.getMessage("VariableDistributionView.0")); //$NON-NLS-1$
-        chart.getAxisSet().getXAxis(0).getTitle().setText(Resources.getMessage("VariableDistributionView.1")); //$NON-NLS-1$
-        chart.redraw();
+        if (event.part == ModelPart.RANDOM_VARIABLE) {
 
+            // Update chart
+            RandomVariable data = (RandomVariable) event.data;
+            Distribution<Integer> result = data.getDistribution();
+            ISeriesSet seriesSet = chart.getSeriesSet();
+            ISeries series = seriesSet.createSeries(SeriesType.BAR, "values");
+            double[] xSeries = getXSeries(result);
+            series.setXSeries(xSeries);
+            double[] ySeries = getYSeries(xSeries, result);
+            series.setYSeries(ySeries);
+            chart.getAxisSet().adjustRange();
+            chart.getLegend().setVisible(false);
+            chart.getTitle().setText(data.getName());
+            chart.getAxisSet().getYAxis(0).getTitle().setText(Resources.getMessage("VariableDistributionView.0")); //$NON-NLS-1$
+            chart.getAxisSet().getXAxis(0).getTitle().setText(Resources.getMessage("VariableDistributionView.1")); //$NON-NLS-1$
+            chart.redraw();
+
+        }
     }
 
 }

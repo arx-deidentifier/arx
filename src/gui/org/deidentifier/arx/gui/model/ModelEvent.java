@@ -121,18 +121,11 @@ public class ModelEvent {
         /** COST/BENEFIT MODEL*/
         COST_BENEFIT_MODEL,
         
-        /** MASKING_VARIABLE_SELECTED */
-        MASKING_VARIABLE_SELECTED,
+        /** RANDOM_VARIABLE */
+        RANDOM_VARIABLE,
         
-        /** MASKING_VARIABLE_CHANGED */
-        MASKING_VARIABLE_CHANGED,
-        
-        /** MASKING_ATTRIBUTE_CHANGED */
-        MASKING_ATTRIBUTE_CHANGED,
-        
-        /** Used to share a list of Identifying attributes 
-         * to remove corresponding masking type if the attribute isn't Identifying anymore*/
-        IDENTIFYING_ATTRIBUTES_CHANGED,
+        /** MASKING_CONFIGURATION */
+        MASKING_CONFIGURATION,
         
         /** SELECTED_CLASS_VALUE */
         SELECTED_CLASS_VALUE,

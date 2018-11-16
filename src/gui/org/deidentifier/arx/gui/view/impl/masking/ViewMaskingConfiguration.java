@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.masking;
 
 import java.util.List;
+import java.util.Set;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
@@ -28,7 +29,6 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentMultiStack;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
-import org.deidentifier.arx.gui.view.impl.masking.ViewAttributeConfiguration.Attribute;
 import org.deidentifier.arx.masking.MaskingConfiguration;
 import org.deidentifier.arx.masking.MaskingType;
 import org.deidentifier.arx.masking.variable.RandomVariable;
@@ -82,9 +82,6 @@ public class ViewMaskingConfiguration implements IView {
     /** Controller */
     private final Controller           controller;
 
-    /** Identifying attributes */
-    private Object[]                   identifyingAttributes;
-
     /** Model */
     private Model                      model;
 
@@ -116,11 +113,8 @@ public class ViewMaskingConfiguration implements IView {
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
 
-        // Get notified whenever the masking for an attribute is changed
-        this.controller.addListener(ModelPart.MASKING_ATTRIBUTE_CHANGED, this);
         // Listens to whenever the list of distributions changes
-        this.controller.addListener(ModelPart.MASKING_VARIABLE_CHANGED, this);
-        this.controller.addListener(ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED, this);
+        this.controller.addListener(ModelPart.RANDOM_VARIABLE, this);
 
         // Group
         Composite innerGroup = new Composite(composite, SWT.NULL);
@@ -145,8 +139,9 @@ public class ViewMaskingConfiguration implements IView {
             public void widgetSelected(final SelectionEvent arg0) {
                 if ((cmbMasking.getSelectionIndex() != -1) && (attribute != null)) {
                     boolean identified = false;
-                    for (int i = 0; i < identifyingAttributes.length; i++) {
-                        if (((Attribute) identifyingAttributes[i]).equals(attribute)) {
+                    Set<String> identifyingAttributes = controller.getModel().getInputDefinition().getIdentifyingAttributes();
+                    for (String att : identifyingAttributes) {
+                        if (att.equals(attribute)) {
                             MaskingType maskingType = COMBO1_TYPES[cmbMasking.getSelectionIndex()];
                             actionMaskingTypeChanged(attribute, maskingType);
                             refreshLayers(cmbMasking.getSelectionIndex());
@@ -232,7 +227,7 @@ public class ViewMaskingConfiguration implements IView {
         cmbDistribution = new Combo(compositecmb, SWT.READ_ONLY);
         compositecmb.setLayout(compositeLabelMinLayout);
         cmbDistribution.setLayoutData(SWTUtil.createFillGridData());
-        cmbDistribution.setItems(new String[] { "Identity" });
+        cmbDistribution.setItems(new String[] { Resources.getMessage("MaskingConfigurationView.11") }); //$NON-NLS-1$ }
         cmbDistribution.select(0);
         cmbDistribution.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -269,7 +264,8 @@ public class ViewMaskingConfiguration implements IView {
                 cmbDistribution.select(0);
             }
         }
-        controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
+
+        controller.update(new ModelEvent(this, ModelPart.MASKING_CONFIGURATION, null));
     }
 
     /*
@@ -323,19 +319,16 @@ public class ViewMaskingConfiguration implements IView {
                 attribute = model.getSelectedAttribute();
                 updateMaskingType();
             }
-        } else if (event.part == ModelPart.MASKING_ATTRIBUTE_CHANGED) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
             updateMaskingType();
+            // TODO disable/hide masking configuration when no attribute is selected in the
+            // attribute configuration table (currently selected attribute is not identifying)
         } else if (event.part == ModelPart.MODEL) {
             model = (Model) event.data;
             attribute = model.getSelectedAttribute();
         }
-
-        else if (event.part == ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED) {
-            identifyingAttributes = (Object[]) event.data;
-            updateMaskingType();
-        }
         // gets called whenever a distribution is added/deleted, refreshes ComboButton and selects appropriate distribution
-        else if (event.part == ModelPart.MASKING_VARIABLE_CHANGED) {
+        else if (event.part == ModelPart.RANDOM_VARIABLE) {
             List<RandomVariable> variables = controller.getModel().getMaskingModel().getRandomVariables();
             distributionItems = new String[variables.size() + 1];
             distributionItems[0] = Resources.getMessage("MaskingConfigurationView.11"); //$NON-NLS-1$

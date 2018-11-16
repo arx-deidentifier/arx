@@ -83,7 +83,7 @@ public class ViewVariableConfiguration implements IView {
         this.controller = controller;
         build(parent);
 
-        controller.addListener(ModelPart.MASKING_VARIABLE_CHANGED, this);
+        controller.addListener(ModelPart.RANDOM_VARIABLE, this);
 
     }
 
@@ -148,16 +148,11 @@ public class ViewVariableConfiguration implements IView {
                 // Update button status
                 updateButtons();
 
-                controller.update(new ModelEvent(this, ModelPart.MASKING_ATTRIBUTE_CHANGED, null));
-
                 // Remove from controller
                 controller.getModel().getMaskingModel().removeRandomVariable((variable));
 
-                // update VariableDistribution View Selection
-                controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_SELECTED, (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
-
                 // update VariableConfiguration View List
-                controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_CHANGED, (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
+                controller.update(new ModelEvent(this, ModelPart.RANDOM_VARIABLE, (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
 
             }
 
@@ -215,13 +210,8 @@ public class ViewVariableConfiguration implements IView {
             @Override
             public void widgetSelected(SelectionEvent event) {
 
-                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-
                 // Update button status
                 updateButtons();
-
-                // Send notification
-                controller.update(new ModelEvent(this, ModelPart.MASKING_VARIABLE_SELECTED, variable));
 
             }
 
@@ -334,26 +324,30 @@ public class ViewVariableConfiguration implements IView {
     @Override
     public void update(ModelEvent event) {
 
-        // Disable redrawing, so changes won't be noticed by the user and appear to be atomic
-        tableViewer.getTable().setRedraw(false);
+        if (event.part == ModelPart.RANDOM_VARIABLE) {
 
-        // Save selection
-        ISelection selection = tableViewer.getSelection();
+            // Disable redrawing, so changes won't be noticed by the user and appear to be atomic
+            tableViewer.getTable().setRedraw(false);
 
-        // Remove all data
-        tableViewer.getTable().removeAll();
+            // Save selection
+            ISelection selection = tableViewer.getSelection();
 
-        // Apply new data
-        tableViewer.setInput(controller.getModel().getMaskingModel().getRandomVariables());
+            // Remove all data
+            tableViewer.getTable().removeAll();
 
-        // Restore selection
-        tableViewer.setSelection(selection, true);
+            // Apply new data
+            tableViewer.setInput(controller.getModel().getMaskingModel().getRandomVariables());
 
-        // Reenable redrawing
-        tableViewer.getTable().setRedraw(true);
+            // Restore selection
+            tableViewer.setSelection(selection, true);
 
-        // Set default status for buttons
-        updateButtons();
+            // Reenable redrawing
+            tableViewer.getTable().setRedraw(true);
+
+            // Set default status for buttons
+            updateButtons();
+
+        }
 
     }
 

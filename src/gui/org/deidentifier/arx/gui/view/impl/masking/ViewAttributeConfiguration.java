@@ -205,9 +205,7 @@ public class ViewAttributeConfiguration implements IView {
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
         this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-
-        // Get notified whenever the masking for an attribute is changed
-        this.controller.addListener(ModelPart.MASKING_ATTRIBUTE_CHANGED, this);
+        this.controller.addListener(ModelPart.MASKING_CONFIGURATION, this);
 
     }
 
@@ -345,7 +343,7 @@ public class ViewAttributeConfiguration implements IView {
         tableViewer.setInput(model);
 
         // Highlights the currently active (highlighted) attribute
-        if (event.part == ModelPart.SELECTED_ATTRIBUTE || event.part == ModelPart.MASKING_ATTRIBUTE_CHANGED) {
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             Object[] currentlyIdentifying = ((AttributeContentProvider) tableViewer.getContentProvider()).getElements(model);
             String selectedAttribute = model.getSelectedAttribute();
             for (int i = 0; i < currentlyIdentifying.length; i++) {
@@ -355,10 +353,6 @@ public class ViewAttributeConfiguration implements IView {
                 }
 
             }
-        }
-        // Remove MaskingType data when Attribute Type gets changed to something other than "Identifying"
-        else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            controller.update(new ModelEvent(this, ModelPart.IDENTIFYING_ATTRIBUTES_CHANGED, ((AttributeContentProvider) tableViewer.getContentProvider()).getElements(model)));
         }
 
         // Reenable redrawing
