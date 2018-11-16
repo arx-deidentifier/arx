@@ -121,6 +121,12 @@ public class ModelEvent {
         /** COST/BENEFIT MODEL*/
         COST_BENEFIT_MODEL,
         
+        /** RANDOM_VARIABLE */
+        RANDOM_VARIABLE,
+        
+        /** MASKING_CONFIGURATION */
+        MASKING_CONFIGURATION,
+        
         /** SELECTED_CLASS_VALUE */
         SELECTED_CLASS_VALUE,
 

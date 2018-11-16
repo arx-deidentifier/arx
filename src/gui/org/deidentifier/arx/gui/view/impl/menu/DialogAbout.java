@@ -58,7 +58,7 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                Resources.getMessage("AboutDialog.21") + Resources.getVersion(); //$NON-NLS-1$
     
     /**  Contributors */
-    private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" + //$NON-NLS-1$
+    private static final String CONTRIBUTORS = "Karol Babioch (data import wizard, data masking)\n" + //$NON-NLS-1$
                                                "Ledian Xhani (hierarchy editor)\n" + //$NON-NLS-1$
                                                "Ljubomir Dshevlekov (hierarchy editor)\n" +  //$NON-NLS-1$
                                                "Michael Schneider (risk analysis)\n" + //$NON-NLS-1$
@@ -71,7 +71,9 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
                                                "James Gaupp (game-theoretic privacy)\n" + //$NON-NLS-1$
                                                "Annika Saken (certificates)\n" + //$NON-NLS-1$
                                                "Martin Waltl (summary statistics, GUI improvements)\n" + //$NON-NLS-1$
-                                               "Philip Offtermatt (performance improvements)"; //$NON-NLS-1$
+                                               "Philip Offtermatt (performance improvements)" + //$NON-NLS-1$
+                                               "Sandro Schaeffler (data masking)" + //$NON-NLS-1$
+                                               "Peter Bock (data masking)"; //$NON-NLS-1$
     
     /**  Icon */
     private Image image;
