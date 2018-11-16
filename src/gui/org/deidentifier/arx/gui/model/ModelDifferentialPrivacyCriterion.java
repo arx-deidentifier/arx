@@ -18,7 +18,6 @@
 package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.DataGeneralizationScheme;
-import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -44,7 +43,7 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
     private Double                   epsilonGeneralizationFraction = 0.1d;
 
     /** Generalization scheme to be used or null in the case of data-dependent differential privacy */
-    private DataGeneralizationScheme generalization                = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
+    private DataGeneralizationScheme generalization                = null;
 
     /**
      * Creates a new instance

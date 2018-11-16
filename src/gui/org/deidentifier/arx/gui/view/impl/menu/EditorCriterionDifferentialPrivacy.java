@@ -115,36 +115,41 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
     }
 
     /**
-     * Returns a generalization degree
-     * @return
+     * Returns the generalization degree associated with an index of a generalization option
+     * @param index
+     * @return the generalization degree or null if index is not associated with a fixed generalization degree
      */
     private GeneralizationDegree getGeneralizationDegree(int index) {
-        return GeneralizationDegree.values()[index];
+        if (index >= 1 && index <= GeneralizationDegree.values().length) {
+            return GeneralizationDegree.values()[index-1];
+        }
+        return null;
     }
     
     /**
-     * Returns a set of all generalization degrees
+     * Returns an array of all generalization options
      * @return
      */
-    private String[] getGeneralizationDegrees() {
+    private String[] getGeneralizationOptions() {
         List<String> result = new ArrayList<String>();
+        result.add("Automatic");
         for (GeneralizationDegree degree : GeneralizationDegree.values()) {
             String label = degree.toString().replace("_", "-").toLowerCase();
             label = label.substring(0,1).toUpperCase() + label.substring(1);
             result.add(label);
         }
         result.add("Custom...");
-        result.add("Automatic");
         return result.toArray(new String[result.size()]);
     }
 
     /**
-     * Returns the according index
+     * Returns the index of the generalization option corresponding to a generalization degree
+     * or -1 in case generalization is not a fixed generalization degree
      * @param generalization
      * @return
      */
     private int getIndexOfGeneralizationDegree(GeneralizationDegree generalization) {
-        int index = 0;
+        int index = 1;
         for (GeneralizationDegree degree : GeneralizationDegree.values()) {
             if (degree == generalization) {
                 return index;
@@ -153,6 +158,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         }
         return -1;
     }
+    
     @Override
     protected Composite build(Composite parent) {
 
@@ -188,21 +194,21 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         d31.verticalAlignment = SWT.CENTER;
         d31.horizontalSpan = 1;
         comboGeneralization.setLayoutData(d31);
-        comboGeneralization.setItems(getGeneralizationDegrees());
+        comboGeneralization.setItems(getGeneralizationOptions());
         comboGeneralization.select(0);
 
         comboGeneralization.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 int index = comboGeneralization.getSelectionIndex();
-                if (index == comboGeneralization.getItemCount()-1) {
+                if (index == 0) {
                     model.setGeneralization(null);
                     knobEpsilonGeneralization.setEnabled(true);
                     labelEpsilonGeneralization.setEnabled(true);
                 } else {
                     knobEpsilonGeneralization.setEnabled(false);
                     labelEpsilonGeneralization.setEnabled(false);
-                    if (index == comboGeneralization.getItemCount()-2) {
+                    if (index == comboGeneralization.getItemCount()-1) {
                         
                         DataGeneralizationScheme selectedScheme = model.getGeneralization();
                         if (selectedScheme == null) {
@@ -288,17 +294,17 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         knobEpsilonGeneralization.setValue(model.getEpsilonGeneralizationFraction() * 100d);
         if (!_default) {
             if (model.getGeneralization() == null) {
-                comboGeneralization.select(comboGeneralization.getItemCount() - 1);
+                comboGeneralization.select(0);
             } else {
                 int index = getIndexOfGeneralizationDegree(model.getGeneralization().getGeneralizationDegree());
                 if (index != -1) {
                     comboGeneralization.select(index);
                 } else {
-                    comboGeneralization.select(comboGeneralization.getItemCount() - 2);
+                    comboGeneralization.select(comboGeneralization.getItemCount() - 1);
                 }
             }
-            knobEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
-            labelEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == comboGeneralization.getItemCount()-1);
+            knobEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == 0);
+            labelEpsilonGeneralization.setEnabled(comboGeneralization.getSelectionIndex() == 0);
         }
     }
 }
