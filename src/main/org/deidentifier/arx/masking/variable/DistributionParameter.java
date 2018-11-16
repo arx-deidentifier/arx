@@ -21,8 +21,10 @@ package org.deidentifier.arx.masking.variable;
 /**
  * Set of classes representing all available masking parameters.
  * 
- * @author ??? TODO add author
- *
+ * @author Karol Babioch
+ * @author Sandro Schaeffler
+ * @author Peter Bock
+ * 
  * @param <T>
  */
 abstract public class DistributionParameter<T> {

@@ -22,8 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Set of classes representing all available distribution types.
  * 
- * @author ??? TODO add author
+ * @author Karol Babioch
+ * @author Sandro Schaeffler
+ * @author Peter Bock
  *
  */
 abstract public class DistributionType implements Serializable {
