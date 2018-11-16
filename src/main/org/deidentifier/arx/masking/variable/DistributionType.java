@@ -36,10 +36,16 @@ abstract public class DistributionType implements Serializable {
      */
     public static class DiscreteBinomial extends DistributionType {
 
+        /** Description */
         public static final DistributionTypeDescription description      = new DistributionTypeDescription("Binomial distribution (discrete)") {
 
+                                                                             /** SVUID */
                                                                              private static final long serialVersionUID = 6235972585466197027L;
 
+                                                                             /*
+                                                                              * (non-Javadoc)
+                                                                              * @see org.deidentifier.arx.masking.variable.DistributionType.DistributionTypeDescription#getParameters()
+                                                                              */
                                                                              @Override
                                                                              public List<DistributionParameter<?>> getParameters() {
 
@@ -90,10 +96,16 @@ abstract public class DistributionType implements Serializable {
      */
     public static class DiscreteGeometric extends DistributionType {
 
+        /** Description */
         public static final DistributionTypeDescription description      = new DistributionTypeDescription("Geometric distribution (discrete)") {
 
+                                                                             /** SVUID */
                                                                              private static final long serialVersionUID = 6235972585466197027L;
 
+                                                                             /*
+                                                                              * (non-Javadoc)
+                                                                              * @see org.deidentifier.arx.masking.variable.DistributionType.DistributionTypeDescription#getParameters()
+                                                                              */
                                                                              @Override
                                                                              public List<DistributionParameter<?>> getParameters() {
 

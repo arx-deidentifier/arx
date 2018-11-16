@@ -38,13 +38,22 @@ abstract public class MaskingParameter<T> implements Serializable {
         /** Description */
         public static final ParameterDescription<Boolean> description      = new ParameterDescription<Boolean>(Boolean.class, "Boolean") {
 
+                                                                               /** SVUID */
                                                                                private static final long serialVersionUID = 7248402123389578028L;
 
+                                                                               /*
+                                                                                * (non-Javadoc)
+                                                                                * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance()
+                                                                                */
                                                                                @Override
                                                                                public MaskingParameter<Boolean> newInstance() {
                                                                                    return BOOLEAN;
                                                                                }
 
+                                                                               /*
+                                                                                * (non-Javadoc)
+                                                                                * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance(java.lang.String)
+                                                                                */
                                                                                @Override
                                                                                public MaskingParameter<Boolean> newInstance(String name) {
                                                                                    return createBoolean(name);
@@ -152,13 +161,22 @@ abstract public class MaskingParameter<T> implements Serializable {
         /** Description */
         public static final ParameterDescription<Double> description      = new ParameterDescription<Double>(Double.class, "Double") {
 
+                                                                              /** SVUID */
                                                                               private static final long serialVersionUID = -4811531702128826389L;
 
+                                                                              /*
+                                                                               * (non-Javadoc)
+                                                                               * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance()
+                                                                               */
                                                                               @Override
                                                                               public MaskingParameter<Double> newInstance() {
                                                                                   return DOUBLE;
                                                                               }
 
+                                                                              /*
+                                                                               * (non-Javadoc)
+                                                                               * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance(java.lang.String)
+                                                                               */
                                                                               @Override
                                                                               public MaskingParameter<Double> newInstance(String name) {
                                                                                   return createDouble(name);
@@ -207,13 +225,22 @@ abstract public class MaskingParameter<T> implements Serializable {
         /** Description */
         public static final ParameterDescription<Integer> description      = new ParameterDescription<Integer>(Integer.class, "Integer") {
 
+                                                                               /** SVUID */
                                                                                private static final long serialVersionUID = -2152324531271195806L;
 
+                                                                               /*
+                                                                                * (non-Javadoc)
+                                                                                * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance()
+                                                                                */
                                                                                @Override
                                                                                public MaskingParameter<Integer> newInstance() {
                                                                                    return INTEGER;
                                                                                }
 
+                                                                               /*
+                                                                                * (non-Javadoc)
+                                                                                * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance(java.lang.String)
+                                                                                */
                                                                                @Override
                                                                                public MaskingParameter<Integer> newInstance(String name) {
                                                                                    return createInteger(name);
@@ -262,13 +289,22 @@ abstract public class MaskingParameter<T> implements Serializable {
         /** Description */
         public static final ParameterDescription<String> description      = new ParameterDescription<String>(String.class, "String") {
 
+                                                                              /** SVUID */
                                                                               private static final long serialVersionUID = -4475658340010476250L;
 
+                                                                              /*
+                                                                               * (non-Javadoc)
+                                                                               * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance()
+                                                                               */
                                                                               @Override
                                                                               public MaskingParameter<String> newInstance() {
                                                                                   return STRING;
                                                                               }
 
+                                                                              /*
+                                                                               * (non-Javadoc)
+                                                                               * @see org.deidentifier.arx.masking.MaskingParameter.ParameterDescription#newInstance(java.lang.String)
+                                                                               */
                                                                               @Override
                                                                               public MaskingParameter<String> newInstance(String name) {
                                                                                   return createString(name);
