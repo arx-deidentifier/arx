@@ -21,15 +21,27 @@ import org.deidentifier.arx.masking.variable.DistributionParameter;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+/**
+ * Class representing a text with a parameter.
+ * 
+ * @author Karol Babioch
+ * @author Sandro Schaeffler
+ * @author Peter Bock
+ *
+ */
 // TODO Drop this class and find another solution.
 public class ParameterText extends Text {
 
-    // Allow subclassing
-    @Override
-    protected void checkSubclass() { }
-
+    /** The paramter */
     private DistributionParameter<?> parameter;
 
+    /**
+     * Creates an instance.
+     * 
+     * @param parameter
+     * @param composite
+     * @param style
+     */
     public ParameterText(DistributionParameter<?> parameter, Composite composite, int style) {
 
         super(composite, style);
@@ -40,20 +52,31 @@ public class ParameterText extends Text {
 
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.swt.widgets.Widget#checkSubclass()
+     */
+    @Override
+    protected void checkSubclass() {
+        // Nothing to do
+    }
+
+    /**
+     * Returns the parameter.
+     * @return
+     */
     public DistributionParameter<?> getParameter() {
 
+        // Integer
         if (parameter.getType().equals(Integer.class)) {
-
             ((DistributionParameter.IntegerParameter) parameter).setValue(Integer.valueOf(getText()));
-
-        } else if (parameter.getType().equals(Double.class)) {
-
-            ((DistributionParameter.DoubleParameter) parameter).setValue(Double.valueOf(getText()));
-
         }
-
+        // Double
+        else if (parameter.getType().equals(Double.class)) {
+            ((DistributionParameter.DoubleParameter) parameter).setValue(Double.valueOf(getText()));
+        }
         return parameter;
-
     }
 
 }
