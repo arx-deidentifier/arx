@@ -129,7 +129,7 @@ public class MaskingType implements Serializable {
         case (MSK_TYPE_RG):
             return Resources.getMessage("MaskingConfigurationView.4"); //$NON-NLS-1$
         default:
-            return Resources.getMessage("MaskingConfigurationView.11"); //$NON-NLS-1$
+            return Resources.getMessage("MaskingConfigurationView.10"); //$NON-NLS-1$
         }
     }
 
