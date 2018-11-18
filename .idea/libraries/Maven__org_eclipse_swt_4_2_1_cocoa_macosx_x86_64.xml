@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.eclipse:swt:4.2.1-cocoa-macosx-x86_64">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/swt/4.2.1-cocoa-macosx-x86_64/swt-4.2.1-cocoa-macosx-x86_64.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/swt/4.2.1-cocoa-macosx-x86_64/swt-4.2.1-cocoa-macosx-x86_64-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/swt/4.2.1-cocoa-macosx-x86_64/swt-4.2.1-cocoa-macosx-x86_64-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

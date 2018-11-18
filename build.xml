@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.7.0" />
+    <property name="arx.version" value="3.7.1" />
 
     <!-- add extra parameter to javadoc generation if Java 1.8 is used -->
     <condition property="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" else="-notimestamp">
@@ -12,7 +12,7 @@
     </condition>
 
     <!-- defines the to be included libraries -->
-    <fileset id="lib.jars" dir="lib">
+    <fileset id="lib.jars" dir="lib/ant">
         <or>
             <filename name="**/colt-1.2.0.jar" />
             <filename name="**/commons-lang-2.6.jar" />
@@ -44,7 +44,7 @@
         </or>
     </fileset>
 
-    <fileset id="gui.jars" dir="lib">
+    <fileset id="gui.jars" dir="lib/ant">
         <or>
             <filename name="**/org.eclipse.draw2d_3.8.1.201301141834.jar" />
             <filename name="**/org.eclipse.core.commands_3.6.2.v20130123-162658.jar" />
@@ -73,7 +73,7 @@
         </or>
     </fileset>
 
-    <fileset id="test.jars" dir="lib">
+    <fileset id="test.jars" dir="lib/ant">
         <or>
             <filename name="**/junit-4.11.jar" />
             <filename name="**/hamcrest-core-1.3.jar" />
@@ -104,12 +104,12 @@
         <mkdir dir="build/test" />
         <mkdir dir="build/junitReports" />
 
-        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
                 <fileset refid="test.jars" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
             </classpath>
         </javac>
 
@@ -140,9 +140,9 @@
                 <fileset refid="lib.jars" />
                 <fileset refid="test.jars" />
                 <path path="build/test" />
-                <path path="lib/log4j/log4j-1.2.17.jar" />
-                <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/ant/log4j/log4j-1.2.17.jar" />
+                <path path="lib/ant/sqlite/sqlite-jdbc-3.7.2.jar" />
+                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
             </classpath>
             <batchtest todir="build/junitReports">
                 <fileset dir="src/test/">
@@ -177,9 +177,9 @@
                 <fileset refid="lib.jars" />
                 <fileset refid="test.jars" />
                 <path path="build/test" />
-                <path path="lib/log4j/log4j-1.2.17.jar" />
-                <path path="lib/sqlite/sqlite-jdbc-3.7.2.jar" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/ant/log4j/log4j-1.2.17.jar" />
+                <path path="lib/ant/sqlite/sqlite-jdbc-3.7.2.jar" />
+                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
             </classpath>
             <batchtest todir="build/junitReports" fork="yes">
                 <fileset dir="src/test/" includes="**/Test*.java" />
@@ -198,7 +198,7 @@
     </target>
 
     <target name="end-clean">
-        <delete dir="build/lib" failonerror="true" />
+        <delete dir="build/lib/ant" failonerror="true" />
         <delete dir="build/gui" failonerror="true" />
         <delete dir="build/extLibs" failonerror="true" />
         <delete dir="build" failonerror="true" />
@@ -207,7 +207,7 @@
     <target name="prepare" depends="clean">
         <mkdir dir="build" />
         <mkdir dir="build/extLibs" />
-        <mkdir dir="build/lib" />
+        <mkdir dir="build/lib/ant" />
         <mkdir dir="build/gui" />
         <mkdir dir="jars" />
     </target>
@@ -268,7 +268,7 @@
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
                 <path path="src/main" />
             </classpath>
 
@@ -287,7 +287,7 @@
     </target>
 
     <target name="compile" depends="prepare" description="compile the source ">
-        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib/ant" source="1.7" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
@@ -297,7 +297,7 @@
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
-                <path path="lib/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
                 <path path="src/main" />
             </classpath>
         </javac>
@@ -346,7 +346,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/ant/swt/swt-4.2.1-win32-win32-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -355,7 +355,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-win32-win32-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/ant/swt/swt-4.2.1-win32-win32-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -367,7 +367,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -376,7 +376,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-gtk-linux-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/ant/swt/swt-4.2.1-gtk-linux-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -388,7 +388,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/ant/swt/swt-4.2.1-cocoa-macosx.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -397,7 +397,7 @@
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/swt/swt-4.2.1-cocoa-macosx-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <zipfileset src="lib/ant/swt/swt-4.2.1-cocoa-macosx-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -415,12 +415,12 @@
             <fileset dir="src/example" defaultexcludes="no" />
         </jar>
         <jar destfile="jars/libarx-${arx.version}.jar">
-            <fileset dir="build/lib" defaultexcludes="no" />
+            <fileset dir="build/lib/ant" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
         </jar>
         <jar destfile="jars/libarx-${arx.version}-min.jar">
-            <fileset dir="build/lib" defaultexcludes="no" />
-            <zipfileset src="lib/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+            <fileset dir="build/lib/ant" defaultexcludes="no" />
+            <zipfileset src="lib/ant/objectselector/objectselector-0.1-lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
         </jar>
     </target>
 

@@ -320,6 +320,9 @@ public abstract class DataHandle {
         double distinct = this.getDistinctValues(column).length;
         List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
         DataTypeDescription<U> description = DataType.list(clazz);
+        if (description == null) {
+            return result;
+        }
         if (description.hasFormat()) {
             for (String format : description.getExampleFormats()) {
                 DataType<U> type = description.newInstance(format, locale);

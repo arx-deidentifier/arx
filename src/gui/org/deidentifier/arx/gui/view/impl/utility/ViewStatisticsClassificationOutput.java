@@ -43,20 +43,6 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
     }
 
     @Override
-    protected String[] getColumnHeadersForPerformanceForOverallPerformanceTable() {
-        return new String[] {
-                // Baseline accuracy
-                Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
-                // Accuracy
-                Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
-                // Original accuracy
-                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
-                // Relative accuracy
-                Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
-        };
-    }
-    
-    @Override
     protected String[] getColumnHeadersForAUCTable() {
         return new String[] {
                 // Baseline AUC
@@ -71,6 +57,28 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
     }
     
     @Override
+    protected String[] getColumnHeadersForPerformanceForOverallPerformanceTable() {
+        return new String[] {
+                // Baseline accuracy
+                Resources.getMessage("ViewStatisticsClassificationInput.3"), //$NON-NLS-1$
+                // Accuracy
+                Resources.getMessage("ViewStatisticsClassificationInput.1"), //$NON-NLS-1$
+                // Original accuracy
+                Resources.getMessage("ViewStatisticsClassificationInput.9"), //$NON-NLS-1$
+                // Relative accuracy
+                Resources.getMessage("ViewStatisticsClassificationInput.13"), //$NON-NLS-1$
+                // Brier skill score
+                Resources.getMessage("ViewStatisticsClassificationInput.30"), //$NON-NLS-1$
+        };
+    }
+    
+    @Override
+    protected boolean[] getColumnTypesForPerformanceForOverallPerformanceTable() {
+        return new boolean[] {true, true, true, true, false};
+    }
+
+
+    @Override
     protected List<Double> getColumnValuesForOverallPerformanceTable(StatisticsClassification result) {
         List<Double> list = new ArrayList<Double>();
         list.add(result.getZeroRAccuracy());
@@ -81,6 +89,7 @@ public class ViewStatisticsClassificationOutput  extends ViewStatisticsClassific
         } else {
             list.add((result.getAccuracy() - result.getZeroRAccuracy()) / (result.getOriginalAccuracy() - result.getZeroRAccuracy()));
         }
+        list.add(result.getBrierSkillScore());
         return list;
     }
 
