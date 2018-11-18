@@ -214,7 +214,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         }
 
         // Check visibility
-        if (!this.status.isVisible()){
+        if (!this.status.isVisible() || this.status.isStopped()) {
             return;
         }
 

@@ -66,6 +66,10 @@ public class Main {
         }
         
         try {
+        	
+            // Update display settings
+            Display.setAppName(Resources.getMessage("MainWindow.0"));
+            Display.setAppVersion(Resources.getVersion());
             
             // Display
             if (display == null) {
@@ -81,7 +85,7 @@ public class Main {
             
             // Create main window
             main = new MainWindow(display, monitor);
-            
+
             // Handler for loading a project
             if (args.length > 0 && args[0].endsWith(".deid")) { //$NON-NLS-1$
                 main.onShow(new Runnable() {
@@ -94,6 +98,7 @@ public class Main {
             // Show window
             main.show();
             
+            // Check for updates
             new Update(main.getShell());
             
             // Main event loop

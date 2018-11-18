@@ -54,6 +54,8 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -574,6 +576,27 @@ public class SWTUtil {
     }
 
     /**
+     * Fixes the application menu on OSX.
+     * @param controller
+     */
+    public static void fixOSXMenu(final Controller controller) {
+        
+        // Check if we are on mac
+        if (!isMac()) {
+            return;
+        }
+        
+        // Just disable all items in the system menu
+        // TODO: Something like this could help:
+        // https://stackoverflow.com/questions/32409679/capture-about-preferences-and-quit-menu-items
+        // However, I had trouble unregistering the existing events for the items
+        Menu systemMenu = Display.getCurrent().getSystemMenu();
+        for (MenuItem systemItem : systemMenu.getItems()) {
+        	systemItem.setEnabled(false);
+        }
+    }
+
+    /**
      * Tries to fix a bug when resizing sash forms in OSX
      * @param sash
      */
@@ -634,7 +657,7 @@ public class SWTUtil {
             return Resources.getMessage("PropertiesView.170");
         }
     }
-
+    
     /**
      * Returns a pretty string representing the given double
      * @param value
@@ -658,7 +681,7 @@ public class SWTUtil {
             return String.valueOf(value).replace('E', 'e');
         }
     }
-
+    
     /**
      * Returns a pretty string representing the given value
      * @param value
@@ -694,7 +717,7 @@ public class SWTUtil {
         }
         return String.valueOf(value);
     }
-    
+   
     /**
      * Are we running on an OSX system
      * @return

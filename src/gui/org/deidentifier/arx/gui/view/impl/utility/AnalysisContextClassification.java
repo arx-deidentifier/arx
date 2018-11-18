@@ -63,6 +63,8 @@ public class AnalysisContextClassification implements AnalysisContextVisualizati
     public boolean isValid(){
         if (this.handle == null) return false;
         else if (this.model == null) return false;
+        else if (this.model.getSelectedClasses().isEmpty()) return false;
+        else if (this.model.getSelectedFeatures().isEmpty()) return false;
         else return true;
     }
 }

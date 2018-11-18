@@ -57,6 +57,7 @@ public class WorkerImport extends Worker<Data> {
 
         final ImportAdapter adapter;
         try {
+            config.setOptimizedLoading(true);
             adapter = ImportAdapter.create(config);
         } catch (final Exception e) {
             close(config);

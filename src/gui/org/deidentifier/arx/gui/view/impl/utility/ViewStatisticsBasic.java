@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public interface ViewStatisticsBasic extends IView{
+public interface ViewStatisticsBasic extends IView {
 
     /**
      * Returns the parent composite
