@@ -239,7 +239,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
      * Creates a text for this parameter.
      * @param parameter
      */
-    private void createText(DistributionParameter<?> parameter) {
+    private void createText(final DistributionParameter<?> parameter) {
 
         // Create label
         Composite compositeString = new Composite(compositeParameter, SWT.NONE);
@@ -247,9 +247,8 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
         Label label = new Label(compositeString, SWT.NONE);
         label.setText(parameterLabels.get(parameter.getName()));
 
-        // TODO Replace ParameterText
         // Create text
-        ParameterText text = new ParameterText(parameter, compositeParameter, SWT.BORDER);
+        final ParameterText text = new ParameterText(parameter, compositeParameter, SWT.BORDER);
         text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         text.setText(String.valueOf(parameter.getInitial()));
         text.addModifyListener(new ModifyListener() {
@@ -258,13 +257,13 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
                 try {
                     if (parameter.getType().equals(Integer.class)) {
                         int value = Integer.parseInt(text.getText());
-                        if (value > (int) parameter.getMax() || value < (int) parameter.getMin())
+                        if (value > (Integer) parameter.getMax() || value < (Integer) parameter.getMin())
                             setErrorMessage(Resources.getMessage("DialogVariableConfiguration.6")); //$NON-NLS-1$
                         else
                             setErrorMessage(null);
                     } else if (parameter.getType().equals(Double.class)) {
                         Double value = Double.parseDouble(text.getText());
-                        if (value > (double) parameter.getMax() || value < (double) parameter.getMin())
+                        if (value > (Double) parameter.getMax() || value < (Double) parameter.getMin())
                             setErrorMessage(Resources.getMessage("DialogVariableConfiguration.6")); //$NON-NLS-1$
                         else
                             setErrorMessage(null);
