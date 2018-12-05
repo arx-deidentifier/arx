@@ -40,6 +40,20 @@ import org.deidentifier.arx.metric.Metric;
  */
 public class TransformationChecker {
 
+    /**
+     * The type of scores.
+     * 
+     * @author Raffael Bild
+     */
+    public static enum ScoreType {
+
+        /** Use conventional information loss. */
+        INFORMATION_LOSS,
+
+        /** Use score function for differential privacy. */
+        DP_SCORE
+    }
+
     /** The config. */
     private final ARXConfigurationInternal          config;
 
@@ -148,16 +162,17 @@ public class TransformationChecker {
      * @return
      */
     public TransformationResult check(final Transformation node) {
-        return check(node, false);
+        return check(node, false, ScoreType.INFORMATION_LOSS);
     }
     
     /**
      * Checks the given transformation
      * @param node
      * @param forceMeasureInfoLoss
+     * @param scoreType
      * @return
      */
-    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss) {
+    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss, final ScoreType scoreType) {
         
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof TransformationResult) {
@@ -197,10 +212,24 @@ public class TransformationChecker {
         }
         
         // Compute information loss and lower bound
-        InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
-                metric.getInformationLoss(node, currentGroupify) : null;
-        InformationLoss<?> loss = result != null ? result.getInformationLoss() : null;
-        InformationLoss<?> bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+        InformationLoss<?> loss = null;
+        InformationLoss<?> bound = null;
+        
+        switch (scoreType) {
+        case DP_SCORE:
+            // Evaluate score function
+            loss = metric.getScore(node, currentGroupify);
+            break;
+        case INFORMATION_LOSS:
+            // Calculate conventional information loss and bound
+            InformationLossWithBound<?> result = (currentGroupify.isPrivacyModelFulfilled() || forceMeasureInfoLoss) ?
+                                                  metric.getInformationLoss(node, currentGroupify) : null;
+            loss = result != null ? result.getInformationLoss() : null;
+            bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+            break;
+        default:
+            throw new RuntimeException("The score type " + scoreType + " is not supported");
+        }
         
         // Return result;
         return new TransformationResult(currentGroupify.isPrivacyModelFulfilled(),

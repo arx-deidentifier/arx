@@ -24,8 +24,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.MaskingFunction;
+import org.deidentifier.arx.ARXConfiguration.SearchStepSemantics;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
@@ -566,6 +568,28 @@ public class ARXAnonymizer { // NO_UCD
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
             }
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.getEpsilon() <= 0d) {
+                throw new IllegalArgumentException("The privacy budget must be > 0");
+            }
+            if (edpModel.getDelta() <= 0d || edpModel.getDelta() >= 1) {
+                throw new IllegalArgumentException("The privacy parameter delta must be in (0,1)");
+            }
+            if (edpModel.isDataDependent()) {
+                if (!config.getQualityModel().isScoreFunctionSupported()) {
+                    throw new IllegalArgumentException("Data-dependent differential privacy for the quality model '" + config.getQualityModel().getName() + "' is not yet implemented");
+                }
+                if (config.getDPSearchBudget() <= 0) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be > 0");
+                }
+                if (config.getDPSearchBudget() >= edpModel.getEpsilon()) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
+                }
+                int numQIs = handle.getDefinition().getQuasiIdentifyingAttributes().size();
+                if (config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs) == Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("The number of heuristic search steps has to be limited when using data-dependent differential privacy");
+                }
+            }
         }
         
         // Perform sanity checks
@@ -607,9 +631,20 @@ public class ARXAnonymizer { // NO_UCD
                                            final DataManager manager,
                                            final SolutionSpace solutionSpace,
                                            final TransformationChecker checker) {
+
+        int numQIs = manager.getHierarchies().length;
         
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent()) {
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
+                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs), config.getDPSearchBudget());
+            }
+        }
+
         if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
+                                             config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
@@ -636,9 +671,8 @@ public class ARXAnonymizer { // NO_UCD
                                                     dataArray,
                                                     dictionary,
                                                     definition,
-                                                    config.getPrivacyModels(),
                                                     getAggregateFunctions(definition),
-                                                    config.getQualityModel());
+                                                    config);
         return manager;
     }
 
