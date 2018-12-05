@@ -17,13 +17,16 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.Distribution;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -40,31 +43,34 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Johanna Eicher
+ * @author Raffael Bild
  */
 public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
     /** SVUID. */
-    private static final long serialVersionUID                = -7940144844158472876L;
+    private static final long serialVersionUID                     = -7940144844158472876L;
 
     /** Indices of response variables in distributions */
-    private int[]             responseVariablesNonQI          = null;
+    private int[]             responseVariablesNonQI               = null;
     /** Indices of response variables in quasi-identifiers */
-    private int[]             responseVariablesQI             = null;
+    private int[]             responseVariablesQI                  = null;
     /** Scale factors for QI target variables */
-    private double[][]        responseVariablesQIScaleFactors = null;
+    private double[][]        responseVariablesQIScaleFactors      = null;
 
     /** Penalty */
-    private double            penaltySuppressed               = 1d;
+    private double            penaltySuppressed                    = 1d;
     /** Penalty */
-    private double            penaltyInfrequentResponse       = 1d;
+    private double            penaltyInfrequentResponse            = 1d;
     /** Penalty */
-    private double            penaltyNoMajorityResponse       = 1d;
+    private double            penaltyNoMajorityResponse            = 1d;
     /** Maximal penality */
     private double            penaltyMax;
     /** Maximal penality */
     private double            penaltyMaxScale;
-    
-    
+
+    /** Sensitivity of the score function */
+    private BigInteger        sensitivity                          = null;
+
     /**
      * Creates a new instance.
      */
@@ -128,9 +134,83 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     public double getPenaltySuppressed() {
         return penaltySuppressed;
     }
+    
+    @Override
+    /**
+     * Implements an extended version of the score function described in Section 5.5 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (sensitivity == null) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
+        // Prepare
+        BigFraction score = BigFraction.ZERO;
+        
+        // Sum up weights for non-QI target variables
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            if (m.count > 0 && m.isNotOutlier) {
+                for (int index : this.responseVariablesNonQI) {
+                    score = score.add(BigInteger.valueOf(getStatistics(m.distributions[index])[1]));
+                }
+            }
+            m = m.nextOrdered;
+        }
+        
+        // Sum up scores for QI target variables
+        int i = 0;
+        for (int index : this.responseVariablesQI) {
+            
+            BigFraction scoreQI = BigFraction.ZERO;
+            
+            // Group equivalence classes
+            MetaHashGroupify mhg = new MetaHashGroupify(groupify, index);
+            m = groupify.getFirstEquivalenceClass();
+            while (m != null) {
+                if (m.count > 0 && m.isNotOutlier) {
+                    mhg.add(m);
+                }
+                m = m.nextOrdered;
+            }
+            
+            // Sum up weights
+            MetaHashGroupifyEntry e = mhg.getFirstEntry();
+            while (e != null) {
+                scoreQI = scoreQI.add(BigInteger.valueOf(getStatistics(e.distribution)[1]));
+                e = e.nextOrdered;
+            }
+            
+            // Obtain scale between 1 (in case the target variable is not generalized) and 0 (in case the target variable is generalized to the highest level)
+            int maxLevel = this.responseVariablesQIScaleFactors[i].length - 1;
+            BigFraction scale = BigFraction.ONE.subtract(new BigFraction(node.getGeneralization()[index], maxLevel));
+            
+            // Multiply the score for this QI by scale in order to penalize high degrees of generalization.
+            // This can only reduce the effects of the addition or removal of one record and hence
+            // result in at most too conservative privacy guarantees.
+            scoreQI = scoreQI.multiply(scale);
+            
+            // Add to the overall score value
+            score = score.add(scoreQI);
+            
+            i++;
+        }
+        
+        // Divide by sensitivity and return
+        return new ILScore(score.divide(this.sensitivity));
+    }
 
     @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
@@ -185,37 +265,11 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      */
     private double getPenaltyDistribution(Distribution distribution, double scaleFactor) {
         
-        // Find frequencies of most frequent and second most frequent attribute values
-        int top1 = -1;
-        int top2 = -1;
-        int count = 0;
-        
-        // For each bucket
-        int[] buckets = distribution.getBuckets();
-        for (int i = 0; i < buckets.length; i += 2) {
-            
-            // bucket not empty
-            if (buckets[i] != -1) { 
-            
-                // Get frequency
-                int frequency = buckets[i + 1];
-                count += frequency;
-                boolean largerThanTop1 = frequency > top1;
-                boolean largerThanTop2 = frequency > top2;
-                
-                // Step 1: If frequency is > top1 
-                //         --> top1 is moved down to top2
-                top2 = largerThanTop1 ? top1 : top2;
+        int[] statistics = getStatistics(distribution);
 
-                // Step 2: If frequency is > top1 
-                //         --> top1 is set to new frequency
-                top1 = largerThanTop1 ? frequency : top1;
-                
-                // Step 3: If frequency is > top2 but not > top1
-                //         --> top2 is set to new frequency
-                top2 = largerThanTop2 && !largerThanTop1 ? frequency : top2;
-            }
-        }
+        int count = statistics[0];
+        int top1 = statistics[1];
+        int top2 = statistics[2];
         
         if (scaleFactor == 1d) {
             return count * (penaltyMaxScale / penaltyMax);
@@ -245,6 +299,50 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
 
         // According penalty for all records and response variables in this class
         return count * (penaltySuppressed / penaltyMax);
+    }
+    
+    /**
+     * Returns statistics about a distribution
+     * @param distribution
+     * @return an array containing the following three frequencies (in this order):
+     *         - the total number of attribute values
+     *         - the frequency of the most frequent attribute value
+     *         - the frequency of the second most frequent attribute value
+     */
+    private int[] getStatistics(Distribution distribution) {
+        
+        // Find frequencies of most frequent and second most frequent attribute values
+        
+        int[] statistics = new int[] {0,-1,-1}; 
+        
+        // For each bucket
+        int[] buckets = distribution.getBuckets();
+        for (int i = 0; i < buckets.length; i += 2) {
+            
+            // bucket not empty
+            if (buckets[i] != -1) { 
+            
+                // Get frequency
+                int frequency = buckets[i + 1];
+                statistics[0] += frequency;
+                boolean largerThanTop1 = frequency > statistics[1];
+                boolean largerThanTop2 = frequency > statistics[2];
+                
+                // Step 1: If frequency is > top1 
+                //         --> top1 is moved down to top2
+                statistics[2] = largerThanTop1 ? statistics[1] : statistics[2];
+
+                // Step 2: If frequency is > top1 
+                //         --> top1 is set to new frequency
+                statistics[1] = largerThanTop1 ? frequency : statistics[1];
+                
+                // Step 3: If frequency is > top2 but not > top1
+                //         --> top2 is set to new frequency
+                statistics[2] = largerThanTop2 && !largerThanTop1 ? frequency : statistics[2];
+            }
+        }
+        
+        return statistics;
     }
 
     @Override
@@ -379,6 +477,14 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
                 }
             }
             i++;
+        }
+        
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            // The overall sensitivity is the sum of the sensitivity k for each response variable
+            int k = dpCriterion.getMinimalClassSize();
+            long numResponseVariables = (long)this.responseVariablesNonQI.length + (long)this.responseVariablesQI.length;
+            this.sensitivity = BigInteger.valueOf(k).multiply(BigInteger.valueOf(numResponseVariables));
         }
     }
 }
