@@ -144,6 +144,10 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
      */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
         
+        if (sensitivity == null) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
         // Prepare
         BigFraction score = BigFraction.ZERO;
         

@@ -143,6 +143,10 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
      */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
         
+        if (k < 0) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
         // Prepare
         int dimensionsGeneralized = getDimensionsGeneralized();
         IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];

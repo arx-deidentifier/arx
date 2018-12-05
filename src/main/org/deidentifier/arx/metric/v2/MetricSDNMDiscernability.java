@@ -44,10 +44,10 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     private static final long serialVersionUID = -8573084860566655278L;
 
     /** Total number of rows. */
-    private Long              numRows          = null;
+    private long              numRows          = -1;
 
     /** Minimal size of equivalence classes enforced by the differential privacy model */
-    private Long              k                = null;
+    private long              k                = -1;
 
     /**
      * Creates a new instance.
@@ -108,6 +108,10 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
      * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
      */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (k < 0 || numRows < 0) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
         
         // Prepare
         int numSuppressed = 0;
