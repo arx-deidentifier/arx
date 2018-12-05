@@ -681,7 +681,7 @@ public class IntervalArithmeticDouble {
         // Moreover, all basic arithmetic double operations used in this class use the IEEE 754 round to nearest mode
         // (see https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-2.html#jvms-2.8.1)
         // and thus provide the same error bound guarantee.
-        // Hence, we can calculate a reliable upper bound by returning the next adjacent floating-point number in direction -infinity.
+        // Hence, we can calculate a reliable lower bound by returning the next adjacent floating-point number in direction -infinity.
         return Math.nextAfter(value, Double.NEGATIVE_INFINITY);
     }
     

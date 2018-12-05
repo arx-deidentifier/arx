@@ -136,7 +136,17 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    /**
+     * Implements an extended version of the score function described in Section 5.5 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (sensitivity == null) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
         
         // Prepare
         BigFraction score = BigFraction.ZERO;

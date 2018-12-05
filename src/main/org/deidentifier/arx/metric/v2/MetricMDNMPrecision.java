@@ -121,7 +121,18 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    /**
+     * Implements the score function described in Section 5.1 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (k < 0) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
         // Prepare
         int[] transformation = node.getGeneralization();
         int dimensionsGeneralized = getDimensionsGeneralized();
