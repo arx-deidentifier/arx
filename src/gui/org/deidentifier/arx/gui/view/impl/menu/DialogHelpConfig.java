@@ -67,10 +67,30 @@ public class DialogHelpConfig {
         
         final String version = Resources.getVersion();
         
+        entries.add(new Entry("id.overview.1", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-5"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/overview.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id.overview.2", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-4"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/privacy.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id.overview.3", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-3"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/transformation.html")); //$NON-NLS-1$
+        
+        entries.add(new Entry("id.overview.4", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-2"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/methods/utility.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("id.anonymization", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-6"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/anonymization.html")); //$NON-NLS-1$
+        
         entries.add(new Entry("id-70", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.0"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives.html")); //$NON-NLS-1$
-        
+
         entries.add(new Entry("id-71", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.2"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives_configuration.html")); //$NON-NLS-1$
@@ -86,22 +106,14 @@ public class DialogHelpConfig {
         entries.add(new Entry("id-74", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.5"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/perspectives_risk.html")); //$NON-NLS-1$
-        
-        entries.add(new Entry("id-75", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.6"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/help/v" + version + "/perspectives_import.html")); //$NON-NLS-1$
 
-        entries.add(new Entry("help.overview.settings", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.-1"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/help/v" + version + "/global_settings.html")); //$NON-NLS-1$
+        entries.add(new Entry("id-3", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.7"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/configuration/overview.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-140", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.1"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/configuration/inputdata.html")); //$NON-NLS-1$
-        
-        entries.add(new Entry("id-3", //$NON-NLS-1$
-                              Resources.getMessage("DialogHelpConfig.7"), //$NON-NLS-1$
-                              "http://arx.deidentifier.org/help/v" + version + "/configuration/overview.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-1", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.10"), //$NON-NLS-1$
@@ -122,6 +134,10 @@ public class DialogHelpConfig {
         entries.add(new Entry("id-40", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.22"), //$NON-NLS-1$
                               "http://arx.deidentifier.org/help/v" + version + "/configuration/research_subset.html")); //$NON-NLS-1$
+
+        entries.add(new Entry("help.overview.settings", //$NON-NLS-1$
+                              Resources.getMessage("DialogHelpConfig.-1"), //$NON-NLS-1$
+                              "http://arx.deidentifier.org/help/v" + version + "/global_settings.html")); //$NON-NLS-1$
         
         entries.add(new Entry("id-4", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.25"), //$NON-NLS-1$

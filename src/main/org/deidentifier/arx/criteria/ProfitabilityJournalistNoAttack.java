@@ -39,7 +39,7 @@ public class ProfitabilityJournalistNoAttack extends ProfitabilityProsecutorNoAt
     private static final long serialVersionUID = 1073520003237793563L;
 
     /** The data subset */
-    private final DataSubset        subset;
+    private final DataSubset  subset;
 
     /**
      * Creates a new instance

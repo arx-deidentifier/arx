@@ -915,7 +915,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionApplySelectedTransformation(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getResult() != null && model.getSelectedNode() != null;
+                return model != null && model.getResult() != null && model.getSelectedNode() != null && !model.getProcessStatistics().isLocalTransformation();
             }
         });
         

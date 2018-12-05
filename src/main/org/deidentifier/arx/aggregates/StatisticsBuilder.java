@@ -616,7 +616,7 @@ public class StatisticsBuilder {
             averageEquivalenceClassSizeIncludingOutliers += element.getCount();
             numberOfTuples += element.getCount();
             
-            if (!element.getElement().isOutlier()) {
+            if (!element.getElement().isSuppressed()) {
                 
                 maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
                 minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);
@@ -762,6 +762,20 @@ public class StatisticsBuilder {
      */
     public StatisticsQuality getQualityStatistics(DataHandle output) {
 
+        // Build and return
+        return getQualityStatistics(output, new HashSet<String>());
+    }
+    
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @param qis
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output, Set<String> qis) {
+
         // Reset stop flag
         interrupt.value = false;
         progress.value = 0;
@@ -777,7 +791,18 @@ public class StatisticsBuilder {
         }
 
         // Build and return
-        return new StatisticsQuality(input.getHandle(), output, config, interrupt, progress);
+        return new StatisticsQuality(input.getHandle(), output, config, interrupt, progress, qis);
+    }
+
+    /**
+     * Returns data quality according to various models.
+     * @param qis
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics(Set<String> qis) {
+        
+        // Build and return
+        return getQualityStatistics(this.handle.getHandle(), qis);
     }
     
     /**

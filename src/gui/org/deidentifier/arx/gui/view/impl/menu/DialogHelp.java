@@ -160,6 +160,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
         
         // Browser
         browser = new HTMLBrowser(base, SWT.BORDER | SWT.DOUBLE_BUFFERED);
+        browser.getStyle().setClickableLinks(false);
         browser.setLayoutData(SWTUtil.createFillGridData());
 
         // Listeners
@@ -196,7 +197,7 @@ public class DialogHelp extends TitleAreaDialog implements IDialog {
     
     @Override
     protected Point getInitialSize() {
-        return new Point(930,600);
+        return new Point(1000,600);
     }
 
     /**

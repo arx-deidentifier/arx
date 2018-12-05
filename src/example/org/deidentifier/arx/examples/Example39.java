@@ -97,7 +97,6 @@ public class Example39 extends Example {
                                            "sex",
                                            "age",
                                            "race",
-                                           "marital-status",
                                            "education",
                                            "native-country",
                                            "workclass",
@@ -110,12 +109,13 @@ public class Example39 extends Example {
         Data data = createData("adult");
         data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setDataType("age", DataType.INTEGER);
+        data.getDefinition().setResponseVariable("marital-status", true);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
         config.setSuppressionLimit(1d);
-        config.setQualityModel(Metric.createLossMetric());
+        config.setQualityModel(Metric.createClassificationMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
         System.out.println("5-anonymous dataset (logistic regression)");
@@ -124,7 +124,5 @@ public class Example39 extends Example {
         System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createNaiveBayes()));
         System.out.println("5-anonymous dataset (random forest)");
         System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createRandomForest()));
-        System.out.println("5-anonymous dataset (SVM)");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createSVM()));
     }
 }

@@ -440,6 +440,7 @@ public class DataDefinition implements Cloneable{
      * @param attribute
      */
     public void resetAttributeType(String attribute) {
+        checkLocked();
         this.attributeTypes.remove(attribute);
     }
 
@@ -448,6 +449,7 @@ public class DataDefinition implements Cloneable{
      * @param attribute
      */
     public void resetHierarchy(String attribute) {
+        checkLocked();
         this.hierarchies.remove(attribute);
     }
 
@@ -456,6 +458,7 @@ public class DataDefinition implements Cloneable{
      * @param attribute
      */
     public void resetHierarchyBuilder(String attribute) {
+        checkLocked();
         this.builders.remove(attribute);
     }
     
@@ -464,6 +467,7 @@ public class DataDefinition implements Cloneable{
      * @param attribute
      */
     public void resetMaximumGeneralization(String attribute) {
+        checkLocked();
         this.minGeneralization.remove(attribute);
     }
 
@@ -472,6 +476,7 @@ public class DataDefinition implements Cloneable{
      * @param attribute
      */
     public void resetMicroAggregationFunction(String attribute) {
+        checkLocked();
         this.functions.remove(attribute);
     }
     
@@ -480,6 +485,7 @@ public class DataDefinition implements Cloneable{
      * @param attribute
      */
     public void resetMinimumGeneralization(String attribute) {
+        checkLocked();
         this.maxGeneralization.remove(attribute);
     }
 
@@ -498,7 +504,7 @@ public class DataDefinition implements Cloneable{
         if (type instanceof Hierarchy) {
             this.hierarchies.put(attribute, (Hierarchy)type);
         } else if (type instanceof MicroAggregationFunction) {
-            this.functions.put(attribute, (MicroAggregationFunction)type);
+            setMicroAggregationFunction(attribute, (MicroAggregationFunction)type);
         }
     }
 
@@ -537,6 +543,7 @@ public class DataDefinition implements Cloneable{
      * @param hierarchy
      */
     public void setHierarchy(String attribute, Hierarchy hierarchy) {
+        checkLocked();
         this.hierarchies.put(attribute, hierarchy);
     }
 
@@ -546,6 +553,7 @@ public class DataDefinition implements Cloneable{
      * @param builder
      */
     public void setHierarchy(String attribute, HierarchyBuilder<?> builder) {
+        checkLocked();
         this.builders.put(attribute, builder);
     }
 
@@ -580,6 +588,7 @@ public class DataDefinition implements Cloneable{
      *                          be used for clustering attribute values before aggregation.
      */
     public void setMicroAggregationFunction(String attribute, MicroAggregationFunction function, boolean performClustering) {
+        checkLocked();
         this.functions.put(attribute, function);
         if (this.clustering == null) {
             this.clustering = new HashMap<>();
@@ -609,6 +618,7 @@ public class DataDefinition implements Cloneable{
         if (this.response == null) {
             this.response = new HashMap<>();
         }
+        checkLocked();
         this.response.put(attribute,  value);
     }
 

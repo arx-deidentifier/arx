@@ -7,9 +7,13 @@
 /junit_test_hierarchy_age.csv
 /jars
 /test.ahs
-.idea
+.idea/workspace.xml
+.idea/usage.statistics.xml
+.idea/tasks.xml
+.idea/uiDesigner.xml
+.idea/build
 target
-arx.iml
 .classpath
 .project
 /build
+.DS_Store

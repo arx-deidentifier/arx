@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import com.univocity.parsers.csv.CsvFormat;
@@ -182,6 +183,22 @@ public class CSVDataOutput {
      * Instantiate.
      *
      * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param charset to use
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak, Charset charset) throws IOException {
+        this(new OutputStreamWriter(stream, charset), delimiter, quote, escape, linebreak);
+        close = false;
+    }
+    
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
      * @param config the config
      * @throws IOException Signals that an I/O exception has occurred.
      */
@@ -262,6 +279,18 @@ public class CSVDataOutput {
     }
 
     /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param config the config
+     * @param options the options
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+
+    public CSVDataOutput(String filename, final CSVSyntax config, final CSVOptions options) throws IOException {
+        this(new FileWriter(new File(filename)), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), options);
+    }
+    /**
      * Instantiates a new CSV data output.
      *
      * @param writer the writer
@@ -272,9 +301,23 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final Writer writer, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
+        this(writer, delimiter, quote, escape, linebreak, null);
+    }
+    
+    /**
+     * Instantiates a new CSV data output.
+     *
+     * @param writer the writer
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final Writer writer, final char delimiter, final char quote, final char escape, final char[] linebreak, CSVOptions options) throws IOException {
         this.writer = writer;
         close = true;
-        settings = createSettings(delimiter, quote, escape, linebreak);
+        settings = createSettings(delimiter, quote, escape, linebreak, options);
     }
 
     /**
@@ -322,9 +365,10 @@ public class CSVDataOutput {
      * @param quote the quote
      * @param escape the escape
      * @param linebreak the linebreak
+     * @param options the options
      * @return the csv writer settings
      */
-    private CsvWriterSettings createSettings(final char delimiter, final char quote, final char escape, final char[] linebreak) {
+    private CsvWriterSettings createSettings(final char delimiter, final char quote, final char escape, final char[] linebreak, final CSVOptions options) {
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
         format.setQuote(quote);
@@ -336,6 +380,9 @@ public class CSVDataOutput {
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
+        if (options != null) {
+            options.apply(settings);
+        }
         return settings;
     }
 }

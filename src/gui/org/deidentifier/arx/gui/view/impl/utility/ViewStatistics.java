@@ -219,8 +219,6 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         
         // Update
         if (event.part == target ||
-            event.part == ModelPart.SELECTED_ATTRIBUTE ||
-            event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.SELECTED_VIEW_CONFIG ||
             event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION ||
             (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.ANALYSIS)) {
@@ -241,7 +239,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         }
 
         // Check visibility
-        if (!this.status.isVisible()){
+        if (!this.status.isVisible() || this.status.isStopped()) {
             return;
         }
 
@@ -356,7 +354,15 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @return
      */
     protected abstract boolean isRunning();           
-    
+
+    /**
+     * Returns whether the view displays an empty result
+     * @return
+     */
+    protected boolean isEmpty() {
+       return this.status.isEmpty();
+    }
+
     /**
      * Status update.
      */

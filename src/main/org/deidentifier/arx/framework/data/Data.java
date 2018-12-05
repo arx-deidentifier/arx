@@ -143,7 +143,7 @@ public class Data implements Cloneable, Serializable {
 
     @Override
     public Data clone(){
-        return new Data(data.clone(), header, columns, dictionary);
+        return new Data(data != null ? data.clone() : null, header, columns, dictionary);
     }
 
     /**

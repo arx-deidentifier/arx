@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.eclipse.nebula.visualization:xygraph:1.0.0.201511041902">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/nebula/visualization/xygraph/1.0.0.201511041902/xygraph-1.0.0.201511041902.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/nebula/visualization/xygraph/1.0.0.201511041902/xygraph-1.0.0.201511041902-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/eclipse/nebula/visualization/xygraph/1.0.0.201511041902/xygraph-1.0.0.201511041902-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

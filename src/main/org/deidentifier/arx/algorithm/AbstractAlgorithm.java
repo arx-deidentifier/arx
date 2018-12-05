@@ -20,6 +20,7 @@ package org.deidentifier.arx.algorithm;
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -86,9 +87,8 @@ public abstract class AbstractAlgorithm {
     public abstract boolean traverse();
 
     /**
-     * Determine information loss of the given node if it can be
-     * used for estimating minimum and maximum information
-     * loss for tagged nodes.
+     * Determine information loss implied by the given transformation if it can be
+     * used for estimating minimum and maximum information loss for tagged nodes.
      *
      * @param transformation
      */
@@ -102,7 +102,7 @@ public abstract class AbstractAlgorithm {
                 transformation.setInformationLoss(loss.getInformationLoss());
                 transformation.setLowerBound(loss.getLowerBound());
             } else {
-                transformation.setChecked(checker.check(transformation, true));
+                transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             }
         }
     }

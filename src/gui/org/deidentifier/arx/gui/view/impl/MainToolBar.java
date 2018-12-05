@@ -424,7 +424,7 @@ public class MainToolBar extends AbstractMenu {
         if (stats.isSolutationAvailable()) {
             
             // Global transformation scheme
-            if (stats.getNumberOfSteps() == 1) {
+            if (!stats.isLocalTransformation()) {
                 sb.append(Resources.getMessage("MainToolBar.36")) //$NON-NLS-1$
                 .append(Resources.getMessage("MainToolBar.39")) //$NON-NLS-1$
                 .append(stats.getStep(0).isOptimal() ? SWTUtil.getPrettyString(true) : Resources.getMessage("MainToolBar.72"))

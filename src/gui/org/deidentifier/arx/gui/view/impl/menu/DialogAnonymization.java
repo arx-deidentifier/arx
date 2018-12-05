@@ -60,6 +60,10 @@ public class DialogAnonymization extends TitleAreaDialog {
     /** Model */
     private boolean                         optimalSearchAvailable;
     /** Model */
+    private boolean                         heuristicSearchStepLimitAvailable;
+    /** Model */
+    private boolean                         heuristicSearchTimeLimitAvailable;
+    /** Model */
     private boolean                         localRecodingAvailable;
 
     /** View */
@@ -89,15 +93,23 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.configuration = model.getAnonymizationConfiguration();
         this.configurationValid = true;
         
-        // Determine if optimal search is available
-        this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
-        
-        // Determine if local recoding is available
+        // Determine available search options
         this.localRecodingAvailable = true;
+        this.heuristicSearchStepLimitAvailable = true;
+        this.heuristicSearchTimeLimitAvailable = true;
+        this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
         for (PrivacyCriterion c : model.getInputConfig().getCriteria()) {
             if (!c.isLocalRecodingSupported()) {
                 this.localRecodingAvailable = false;
-                break;
+            }
+            if (!c.isOptimalSearchSupported()) {
+                this.optimalSearchAvailable = false;
+            }
+            if (!c.isHeuristicSearchSupported()) {
+                this.heuristicSearchStepLimitAvailable = false;
+            }
+            if (!c.isHeuristicSearchWithTimeLimitSupported()) {
+                this.heuristicSearchTimeLimitAvailable = false;
             }
         }
     }
@@ -186,7 +198,7 @@ public class DialogAnonymization extends TitleAreaDialog {
        } catch (Exception e) {
            return null;
        }
-       if (value > 0d) {
+       if (value > 0d && value < Integer.MAX_VALUE) {
            return value;
        } else {
            return null;
@@ -352,13 +364,28 @@ public class DialogAnonymization extends TitleAreaDialog {
         // Prepare radio buttons
         if (this.optimalSearchAvailable) {
             radio11.setEnabled(true);
+            radio11.setSelection(true);
+            radio12.setSelection(false);
+            radio13.setSelection(false);
         } else {
             radio11.setEnabled(false);
-            if (configuration.getSearchType() == SearchType.OPTIMAL) {
+            radio11.setSelection(false);
+            if (!this.heuristicSearchStepLimitAvailable) {
+                radio12.setEnabled(false);
+                radio12.setSelection(false);
+                this.txtHeuristicSearchStepLimit.setEnabled(false);
+            } else if (configuration.getSearchType() == SearchType.OPTIMAL) {
                 radio12.setSelection(true);
                 configuration.setSearchType(SearchType.STEP_LIMIT);
             }
-            createMessage(group1, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
+            if (!this.heuristicSearchTimeLimitAvailable) {
+                radio13.setEnabled(false);
+                radio13.setSelection(false);
+                this.txtHeuristicSearchTimeLimit.setEnabled(false);
+                createMessage(group1, Resources.getMessage("DialogAnonymization.15")); //$NON-NLS-1$
+            } else {
+                createMessage(group1, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
+            }
         }
 
         // Lower group
