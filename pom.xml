@@ -152,7 +152,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
-            <version>3.1.1</version>
+            <version>3.6.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -330,34 +330,21 @@
             <groupId>org.apache.poi</groupId>
             <artifactId>poi</artifactId>
             <version>3.10-FINAL</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>3.10-FINAL</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml-schemas</artifactId>
             <version>3.10-FINAL</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>2.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -662,8 +649,8 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse.swt</groupId>
-                    <artifactId>cocoa</artifactId>
+                    <groupId>org.eclipse</groupId>
+                    <artifactId>swt</artifactId>
                     <version>4.2.1-cocoa-macosx-x86_64</version>
                     <exclusions>
                         <exclusion>

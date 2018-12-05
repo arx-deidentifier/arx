@@ -16,7 +16,7 @@
         <or>
             <filename name="**/colt-1.2.0.jar" />
             <filename name="**/commons-lang-2.6.jar" />
-            <filename name="**/commons-math3-3.1.1.jar" />
+            <filename name="**/commons-math3-3.6.1.jar" />
             <filename name="**/objectselector-0.1-lib.jar" />
             <filename name="**/commons-io-2.4.jar" />
             <filename name="**/commons-codec-1.5.jar" />
@@ -104,7 +104,7 @@
         <mkdir dir="build/test" />
         <mkdir dir="build/junitReports" />
 
-        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
@@ -287,7 +287,7 @@
     </target>
 
     <target name="compile" depends="prepare" description="compile the source ">
-        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib/ant" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib/ant" source="1.7" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />

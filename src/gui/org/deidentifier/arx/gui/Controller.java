@@ -1607,11 +1607,17 @@ public class Controller implements IView {
 
     /**
      * Shows an input dialog for selecting a charset.
-     * @param shell
      * @return
      */
-    public Charset actionShowCharsetInputDialog(final Shell shell) {
-        return main.showCharsetInputDialog(shell);
+    public Charset actionShowCharsetInputDialog() {
+        final Charset[] result = new Charset[1];
+        main.getShell().getDisplay().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                result[0] = main.showCharsetInputDialog(main.getShell());
+            }
+        });
+        return result[0];
     }
     
     /**

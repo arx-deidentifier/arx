@@ -17,10 +17,16 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
@@ -30,11 +36,18 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     
     /** SVUID. */
     private static final long serialVersionUID = -8573084860566655278L;
+
+    /** Total number of rows. */
+    private long              numRows          = -1;
+
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    private long              k                = -1;
 
     /**
      * Creates a new instance.
@@ -85,6 +98,50 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
                                        0.0d,                       // precomputation threshold
                                        AggregateFunction.SUM       // aggregate function
                                        );
+    }
+    
+    @Override
+    /**
+     * Implements the score function described in Section 5.2 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (k < 0 || numRows < 0) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
+        // Prepare
+        int numSuppressed = 0;
+        BigFraction penaltyNotSuppressed = BigFraction.ZERO;
+        
+        // Sum up penalties. The casts to long are required to avoid integer overflows
+        // when large numbers are being multiplied.
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            if (m.isNotOutlier) {
+                penaltyNotSuppressed = penaltyNotSuppressed.add(new BigFraction((long)m.count * (long)m.count));
+            } else {
+                numSuppressed += m.count;
+            }
+            numSuppressed += m.pcount - m.count;
+            m = m.nextOrdered;
+        }
+        BigFraction penaltySuppressed = new BigFraction(numRows * (long)numSuppressed);
+        
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        BigFraction score = BigFraction.MINUS_ONE.multiply(penaltySuppressed.add(penaltyNotSuppressed));
+        score = score.divide(new BigFraction(numRows).multiply((k == 1) ? new BigFraction(5) : new BigFraction(k * k).divide(new BigFraction(k - 1)).add(BigFraction.ONE)));
+        
+        // Return score
+        return new ILScore(score);
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return true;
     }
 
     @Override
@@ -138,6 +195,23 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
             m = m.nextOrdered;
         }
         return new ILSingleDimensional(lowerBound);
+    }
+    
+    @Override
+    protected void initializeInternal(final DataManager manager,
+                                      final DataDefinition definition, 
+                                      final Data input, 
+                                      final GeneralizationHierarchy[] hierarchies, 
+                                      final ARXConfiguration config) {
+        
+        super.initializeInternal(manager, definition, input, hierarchies, config);
+
+        // Store minimal size of equivalence classes and total number of rows
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            numRows = input.getDataLength();
+            k = dpCriterion.getMinimalClassSize();
+        }
     }
 }
 
