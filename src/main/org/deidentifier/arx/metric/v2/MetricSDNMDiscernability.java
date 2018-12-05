@@ -209,8 +209,8 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         // Store minimal size of equivalence classes and total number of rows
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            numRows = (long)input.getDataLength();
-            k = (long)dpCriterion.getMinimalClassSize();
+            numRows = input.getDataLength();
+            k = dpCriterion.getMinimalClassSize();
         }
     }
 }
