@@ -25,7 +25,10 @@ import org.deidentifier.arx.reliability.IntervalArithmeticException;
 import org.deidentifier.arx.reliability.IntervalDouble;
 
 /**
- * Implements parameter calculation for differential privacy
+ * Implements the parameter calculation for differential privacy as proposed in:
+ * 
+ * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+ * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
  * 
  * @author Raffael Bild
  * @author Fabian Prasser

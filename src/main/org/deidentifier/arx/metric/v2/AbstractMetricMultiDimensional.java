@@ -66,7 +66,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     private DataAggregationInformation aggregation;
 
     /** Minimal size of equivalence classes enforced by the differential privacy model */
-    protected int                      k;
+    protected Integer                  k                = null;
 
     /**
      * Creates a new instance.

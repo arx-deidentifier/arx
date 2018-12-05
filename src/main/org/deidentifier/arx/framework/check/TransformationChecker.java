@@ -226,6 +226,9 @@ public class TransformationChecker {
                                                   metric.getInformationLoss(node, currentGroupify) : null;
             loss = result != null ? result.getInformationLoss() : null;
             bound = result != null ? result.getLowerBound() : metric.getLowerBound(node, currentGroupify);
+            break;
+        default:
+            throw new RuntimeException("The score type " + scoreType + " is not supported");
         }
         
         // Return result;

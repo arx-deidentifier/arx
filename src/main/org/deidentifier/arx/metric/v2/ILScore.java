@@ -34,7 +34,7 @@ public class ILScore extends InformationLoss<BigFraction> {
     private static final long serialVersionUID = -2638719458508437194L;
 
     /** Value */
-    private BigFraction       value;
+    private BigFraction       value            = null;
 
     /**
      * Creates a new instance.

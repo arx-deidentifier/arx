@@ -42,12 +42,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     
     /** SVUID. */
     private static final long serialVersionUID = -8573084860566655278L;
-    
+
     /** Total number of rows. */
-    private long              numRows;
-    
+    private Long              numRows          = null;
+
     /** Minimal size of equivalence classes enforced by the differential privacy model */
-    private long              k;
+    private Long              k                = null;
 
     /**
      * Creates a new instance.
@@ -101,6 +101,12 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    /**
+     * Implements the score function described in Section 5.2 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
@@ -199,8 +205,8 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
         // Store minimal size of equivalence classes and total number of rows
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            numRows = input.getDataLength();
-            k = dpCriterion.getMinimalClassSize();
+            numRows = (long)input.getDataLength();
+            k = (long)dpCriterion.getMinimalClassSize();
         }
     }
 }

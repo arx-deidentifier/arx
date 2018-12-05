@@ -95,6 +95,12 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    /**
+     * Implements the score function described in Section 5.4 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
         
         // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class

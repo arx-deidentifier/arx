@@ -135,6 +135,12 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
+    /**
+     * Implements the score function described in Section 5.3 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
     public ILScore getScore(final Transformation node, final HashGroupify groupify) {
         
         // Prepare
