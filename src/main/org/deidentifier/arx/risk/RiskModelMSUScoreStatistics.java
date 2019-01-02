@@ -45,6 +45,10 @@ public class RiskModelMSUScoreStatistics {
     private final double[]       scoresSUDA;
     /** Distribution of sizes of keys */
     private final double[]       scoresDIS;
+    /** Score */
+    private final double         maxScore;
+    /** Score */
+    private final double         averageScore;
     /** Attributes */
     private final String[]       attributes;
 
@@ -91,19 +95,21 @@ public class RiskModelMSUScoreStatistics {
         SUDA2 suda2 = new SUDA2(handle.getDataArray(columns).getArray());
         suda2.setProgressListener(new SUDA2ListenerProgress() {
             @Override
-            public void update(double progress) {
-                RiskModelMSUScoreStatistics.this.progress.value = 10 + (int)(progress * 90d);
-            }
-            @Override
             public void tick() {
                 checkInterrupt();
+            }
+            @Override
+            public void update(double progress) {
+                RiskModelMSUScoreStatistics.this.progress.value = 10 + (int)(progress * 90d);
             }
             
         });
         SUDA2StatisticsScores result = suda2.getStatisticsScores(maxKeyLength, sdcMicroScore);
         this.maxKeyLength = result.getMaxKeyLengthConsidered();
-        this.scoresSUDA = result.getSUDAScores();
-        this.scoresDIS = result.getDISScores(samplingFraction);
+        this.maxScore = result.getHighestScore();
+        this.averageScore = result.getAverageScore();
+        this.scoresSUDA = getDistribution(result.getSUDAScores(), 0d, maxScore, 10);
+        this.scoresDIS = getDistribution(result.getDISScores(samplingFraction), 0d, 1d, 10);
     }
     
     /**
@@ -115,17 +121,35 @@ public class RiskModelMSUScoreStatistics {
     }
 
     /**
-     * @return the scoresSUDA
+     * @return the averageScore
      */
-    public double[] getScoresSUDA() {
+    public double getAverageScore() {
+        return averageScore;
+    }
+
+    /**
+     * Returns the distribution of DIS scores in 10 buckets, ranging from 0 to 1.
+     * Each bucket contains a percentage in [0, 100]
+     * @return the scores
+     */
+    public double[] getDistributionOfScoresDIS() {
+        return scoresDIS;
+    }
+
+    /**
+     * Returns the distribution of SUDA scores in 10 buckets, ranging from 0 to highest score.
+     * Each bucket contains a percentage in [0, 100]
+     * @return the scores
+     */
+    public double[] getDistributionOfScoresSUDA() {
         return scoresSUDA;
     }
 
     /**
-     * @return the scoresDIS
+     * @return the maxScore
      */
-    public double[] getScoresDIS() {
-        return scoresDIS;
+    public double getHighestScore() {
+        return maxScore;
     }
 
     /**
@@ -135,14 +159,14 @@ public class RiskModelMSUScoreStatistics {
     public int getMaxKeyLengthConsidered() {
         return maxKeyLength;
     }
-    
+
     /**
      * Checks for interrupts
      */
     private void checkInterrupt() {
         if (stop.value) { throw new ComputationInterruptedException(); }
     }
-
+    
     /**
      * Returns the column array
      * @param handle
@@ -176,5 +200,27 @@ public class RiskModelMSUScoreStatistics {
         }
         Arrays.sort(result);
         return result;
+    }
+
+    /**
+     * Returns a distribution of array values into buckets ranging from min to max
+     * @param values
+     * @param min
+     * @param max
+     * @param numBuckets
+     * @return
+     */
+    private double[] getDistribution(double[] values, double min, double max, int numBuckets) {
+        double[] buckets = new double[numBuckets];
+        for (double value : values) {
+            int bucket = (int)Math.floor(((value - min) / (max - min)) * (double)numBuckets);
+            bucket = bucket > buckets.length - 1 ? buckets.length - 1 : bucket;
+            buckets[bucket]++;
+            checkInterrupt();
+        }
+        for (int i=0; i<buckets.length; i++) {
+            buckets[i] /= (double)values.length;
+        }
+        return buckets;
     }
 }
