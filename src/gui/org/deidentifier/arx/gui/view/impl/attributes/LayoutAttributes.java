@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.attributes;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -30,39 +30,39 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This class layouts the risk analysis view.
+ * This class layouts the attributes analysis view.
  *
  * @author Fabian Prasser
  */
-public class LayoutRisks implements ILayout {
+public class LayoutAttributes implements ILayout {
 
     /** Constant */
-    private static final int          WEIGHT_TOP    = 75;
+    private static final int               WEIGHT_TOP    = 75;
     /** Constant */
-    private static final int          WEIGHT_BOTTOM = 25;
+    private static final int               WEIGHT_BOTTOM = 25;
     /** Constant */
-    private static final int          WEIGHT_LEFT   = 50;
+    private static final int               WEIGHT_LEFT   = 50;
     /** Constant */
-    private static final int          WEIGHT_RIGHT  = 50;
+    private static final int               WEIGHT_RIGHT  = 50;
 
     /** View */
-    private final Composite           centerLeft;
+    private final Composite                centerLeft;
     /** View */
-    private final Composite           centerRight;
+    private final Composite                centerRight;
     /** View */
-    private final Composite           bottomLeft;
+    private final Composite                bottomLeft;
     /** View */
-    private final Composite           bottomRight;
+    private final Composite                bottomRight;
     /** View */
-    private final SashForm            centerSash;
+    private final SashForm                 centerSash;
     /** View */
-    private final LayoutRisksAbstract layoutBottomLeft;
+    private final LayoutAttributesAbstract layoutBottomLeft;
     /** View */
-    private final LayoutRisksAbstract layoutBottomRight;
+    private final LayoutAttributesAbstract layoutBottomRight;
     /** View */
-    private final LayoutRisksTop      layoutTopLeft;
+    private final LayoutAttributesTop      layoutTopLeft;
     /** View */
-    private final LayoutRisksTop      layoutTopRight;
+    private final LayoutAttributesTop      layoutTopRight;
 
     /**
      * Creates a new instance.
@@ -70,7 +70,7 @@ public class LayoutRisks implements ILayout {
      * @param parent
      * @param controller
      */
-    public LayoutRisks(final Composite parent, final Controller controller) {
+    public LayoutAttributes(final Composite parent, final Controller controller) {
 
         // Create the SashForm with HORIZONTAL
         centerSash = new SashForm(parent, SWT.VERTICAL);
@@ -91,11 +91,11 @@ public class LayoutRisks implements ILayout {
         centerRight.setLayout(new FillLayout());
 
         // Create views
-        layoutTopLeft = new LayoutRisksTop(centerLeft,
+        layoutTopLeft = new LayoutAttributesTop(centerLeft,
                                           controller,
                                           ModelPart.INPUT,
                                           null);
-        layoutTopRight = new LayoutRisksTop(centerRight,
+        layoutTopRight = new LayoutAttributesTop(centerRight,
                                            controller,
                                            ModelPart.OUTPUT,
                                            ModelPart.INPUT);
@@ -113,11 +113,11 @@ public class LayoutRisks implements ILayout {
         bottomRight.setLayout(new FillLayout());
 
         // Create views
-        layoutBottomLeft = new LayoutRisksBottom(bottomLeft,
+        layoutBottomLeft = new LayoutAttributesBottom(bottomLeft,
                                           controller,
                                           ModelPart.INPUT,
                                           null);
-        layoutBottomRight = new LayoutRisksBottom(bottomRight,
+        layoutBottomRight = new LayoutAttributesBottom(bottomRight,
                                            controller,
                                            ModelPart.OUTPUT,
                                            ModelPart.INPUT);
@@ -129,13 +129,7 @@ public class LayoutRisks implements ILayout {
                 // Synchronize left and right side
                 layoutBottomRight.setSelectionIdex(layoutBottomLeft.getSelectionIndex());
                 
-                // Synchronize "Re-identification risks"
-                if (layoutBottomLeft.getSelectionIndex() == 0) {
-                    layoutTopLeft.setSelectionIdex(2);
-                    layoutTopRight.setSelectionIdex(2);
-                }
-                
-                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTES_VISUALIZATION, null));
             }
         });
         layoutBottomRight.addSelectionListener(new SelectionAdapter() {
@@ -144,14 +138,14 @@ public class LayoutRisks implements ILayout {
                 
                 // Synchronize left and right side
                 layoutBottomLeft.setSelectionIdex(layoutBottomRight.getSelectionIndex());
-                
-                // Synchronize "Re-identification risks"
+
+                // Synchronize "Quasi-identifiers"
                 if (layoutBottomRight.getSelectionIndex() == 0) {
-                    layoutTopLeft.setSelectionIdex(2);
-                    layoutTopRight.setSelectionIdex(2);
+                    layoutTopLeft.setSelectionIdex(0);
+                    layoutTopRight.setSelectionIdex(0);
                 }
                 
-                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTES_VISUALIZATION, null));
             }
         });
         
@@ -162,13 +156,12 @@ public class LayoutRisks implements ILayout {
                 // Synchronize left and right
                 layoutTopRight.setSelectionIdex(layoutTopLeft.getSelectionIndex());
 
-                // Synchronize "Re-identification risks"
-                if (layoutTopLeft.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(0);
+                // Synchronize "Quasi-identifiers"
+                if (layoutTopLeft.getSelectionIndex() == 0) {
                     layoutBottomRight.setSelectionIdex(0);
                 }
                 
-                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTES_VISUALIZATION, null));
             }
         });
         layoutTopRight.addSelectionListener(new SelectionAdapter() {
@@ -178,13 +171,12 @@ public class LayoutRisks implements ILayout {
                 // Synchronize left and right
                 layoutTopLeft.setSelectionIdex(layoutTopRight.getSelectionIndex());
 
-                // Synchronize "Re-identification risks"
-                if (layoutTopRight.getSelectionIndex() == 2) {
-                    layoutBottomLeft.setSelectionIdex(0);
+                // Synchronize "Quasi-identifiers"
+                if (layoutTopRight.getSelectionIndex() == 0) {
                     layoutBottomRight.setSelectionIdex(0);
                 }
                 
-                controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTES_VISUALIZATION, null));
             }
         });
 

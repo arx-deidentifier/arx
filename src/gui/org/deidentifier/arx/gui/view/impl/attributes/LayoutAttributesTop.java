@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.risk;
-
+package org.deidentifier.arx.gui.view.impl.attributes;
 
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -24,11 +23,11 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Layouts the risk analysis perspective.
+ * Layouts the attributes analysis perspective.
  *
  * @author Fabian Prasser
  */
-public class LayoutRisksBottom extends LayoutRisksAbstract {
+public class LayoutAttributesTop extends LayoutAttributesAbstract {
 
     /**
      * Creates a new instance.
@@ -38,14 +37,15 @@ public class LayoutRisksBottom extends LayoutRisksAbstract {
      * @param target
      * @param reset
      */
-    public LayoutRisksBottom(final Composite parent,
-                            final Controller controller,
-                            final ModelPart target,
-                            final ModelPart reset) {
+    public LayoutAttributesTop(final Composite parent,
+                          final Controller controller,
+                          final ModelPart target,
+                          final ModelPart reset) {
+
+        super(parent, controller, target == ModelPart.INPUT, true);
         
-        super(parent, controller, target == ModelPart.INPUT, false);
-        registerView(0, new ViewRisksReIdentificationTable(createTab(Resources.getMessage("RiskAnalysis.5"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(1, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.24"), "help.risk.uniques"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(0, new ViewAttributesQuasiIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.15"), "help.risk.quasiidentifiers"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(1, new ViewAttributesColumnContributions(createTab(Resources.getMessage("RiskAnalysisMSU.7"), "help.risk.msucontribution"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         setSelectionIdex(0);
     }
 }

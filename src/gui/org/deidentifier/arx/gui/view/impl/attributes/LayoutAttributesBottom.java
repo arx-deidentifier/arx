@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.attributes;
 
 
 import org.deidentifier.arx.gui.Controller;
@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Composite;
  *
  * @author Fabian Prasser
  */
-public class LayoutRisksBottom extends LayoutRisksAbstract {
+public class LayoutAttributesBottom extends LayoutAttributesAbstract {
 
     /**
      * Creates a new instance.
@@ -38,14 +38,18 @@ public class LayoutRisksBottom extends LayoutRisksAbstract {
      * @param target
      * @param reset
      */
-    public LayoutRisksBottom(final Composite parent,
+    public LayoutAttributesBottom(final Composite parent,
                             final Controller controller,
                             final ModelPart target,
                             final ModelPart reset) {
         
         super(parent, controller, target == ModelPart.INPUT, false);
-        registerView(0, new ViewRisksReIdentificationTable(createTab(Resources.getMessage("RiskAnalysis.5"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(1, new ViewRisksPopulationUniques(createTab(Resources.getMessage("RiskAnalysis.24"), "help.risk.uniques"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+
+        if (target == ModelPart.INPUT) {
+            new ViewAttributesHIPAAIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.26"), "help.risk.hipaa"), controller, target, reset); //$NON-NLS-1$ //$NON-NLS-2$
+        } else {
+            new ViewAttributesQuasiIdentifiers(createTab(Resources.getMessage("RiskAnalysis.23"), "help.risk.quasiidentifiers"), controller); //$NON-NLS-1$ //$NON-NLS-2$
+        } 
         setSelectionIdex(0);
     }
 }

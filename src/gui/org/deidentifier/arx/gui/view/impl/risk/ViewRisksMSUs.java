@@ -16,24 +16,19 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
-import java.util.Arrays;
-
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
-import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelMSU;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
@@ -42,15 +37,12 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.swtchart.Chart;
 import org.swtchart.IAxis;
@@ -62,9 +54,6 @@ import org.swtchart.ISeriesSet;
 import org.swtchart.ITitle;
 import org.swtchart.Range;
 
-import de.linearbits.swt.table.DynamicTable;
-import de.linearbits.swt.table.DynamicTableColumn;
-
 /**
  * This view displays statistics about MSUs.
  *
@@ -73,19 +62,9 @@ import de.linearbits.swt.table.DynamicTableColumn;
 public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
     /** Label */
-    private static final String LABEL_ATTRIBUTE         = Resources.getMessage("RiskAnalysisMSU.1");
-    /** Label */
-    private static final String LABEL_CONTRIBUTION      = Resources.getMessage("RiskAnalysisMSU.2");
-    /** Label */
-    private static final String LABEL_AVERAGE_SIZE      = Resources.getMessage("RiskAnalysisMSU.3");
-    /** Label */
     private static final String LABEL_SIZE              = Resources.getMessage("RiskAnalysisMSU.4");
     /** Label */
     private static final String LABEL_FRACTION          = Resources.getMessage("RiskAnalysisMSU.5");
-    /** Label */
-    private static final String LABEL_DISTRIBUTION      = Resources.getMessage("RiskAnalysisMSU.6");
-    /** Label */
-    private static final String LABEL_COLUMN_PROPERTIES = Resources.getMessage("RiskAnalysisMSU.7");
     /** Label */
     private static final String LABEL_NO_MSUS_FOUND     = Resources.getMessage("RiskAnalysisMSU.8");
 
@@ -96,25 +75,13 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     private Chart               chart;
 
     /** View */
-    private Composite           rootChart;
-
-    /** View */
-    private Composite           rootTable;
-
-    /** View */
     private Composite           root;
 
     /** View */
-    private SashForm            sash;
+    private Text                numKeys;
 
     /** View */
-    private DynamicTable        tableAttributes;
-
-    /** View */
-    private Text               numKeys;
-
-    /** View */
-    private Text               avgKeySize;
+    private Text                avgKeySize;
 
     /** Internal stuff. */
     private AnalysisManager     manager;
@@ -145,47 +112,6 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         }
     }
     
-    /**
-     * Clears the given table
-     * @param table
-     */
-    private void clearTable(DynamicTable table) {
-        if (table == null) {
-            return;
-        }
-        for( TableItem i : table.getItems()) {
-            i.dispose();
-        }
-    }
-
-    /**
-     * Creates a new table
-     * @param root
-     * @param title
-     * @return
-     */
-    private DynamicTable createTable(Composite root, String[] columns, String[] bars) {
-        DynamicTable table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.FULL_SELECTION);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-        table.setMenu(new ClipboardHandlerTable(table).getMenu());
-        String width = String.valueOf((int) (100d / (double) columns.length)) + "%"; //$NON-NLS-1$
-        for (String column : columns) {
-            DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-            if (Arrays.asList(bars).contains(column)) {
-                SWTUtil.createColumnWithBarCharts(table, c);
-            }
-            c.setWidth(width, "100px"); //$NON-NLS-1$
-            c.setText(column);
-        }
-        for (final TableColumn col : table.getColumns()) {
-            col.pack();
-        }
-        table.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        SWTUtil.createGenericTooltip(table);
-        return table;
-    }
-
     /**
      * Creates the chart
      * @param parent 
@@ -267,7 +193,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
         // Tool tip
         final StringBuilder builder = new StringBuilder();
-        rootChart.addListener(SWT.MouseMove, new Listener() {
+        root.addListener(SWT.MouseMove, new Listener() {
             @Override
             public void handleEvent(Event event) {
                 if (chart != null) {
@@ -291,7 +217,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                                         builder.append(LABEL_FRACTION).append(": "); //$NON-NLS-1$
                                         builder.append(SWTUtil.getPrettyString(data[0].getYSeries()[x]));
                                         builder.append(")"); //$NON-NLS-1$
-                                        rootChart.setToolTipText(builder.toString());
+                                        root.setToolTipText(builder.toString());
                                         return;
                                     }
                                 }
@@ -332,53 +258,30 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
         // Root
         this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
-        
-        // Sash
-        this.sash = new SashForm(this.root, SWT.VERTICAL);
-
-        // Chart
-        this.rootChart = new Composite(sash, SWT.NONE);
-        this.rootChart.setLayout(SWTUtil.createGridLayout(1));
-        ComponentTitledSeparator separator1 = new ComponentTitledSeparator(rootChart, SWT.NONE);
-        separator1.setText(LABEL_DISTRIBUTION);
-        separator1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.root.setLayout(SWTUtil.createGridLayout(1));
         
         // Stats
-        Composite stats = new Composite(rootChart, SWT.NONE);
+        Composite stats = new Composite(root, SWT.NONE);
         stats.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         stats.setLayout(SWTUtil.createGridLayout(4, false));
         Label lbl1 = new Label(stats, SWT.NONE);
         lbl1.setText("Number of keys:");
-        lbl1.setLayoutData(SWTUtil.createGridData());
         numKeys = new Text(stats, SWT.BORDER);
         numKeys.setText("");
-        numKeys.setLayoutData(SWTUtil.createFillGridData());
+        numKeys.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         numKeys.setEditable(false);
         Label lbl3 = new Label(stats, SWT.NONE);
         lbl3.setText("Average size:");
-        lbl3.setLayoutData(SWTUtil.createGridData());
         avgKeySize = new Text(stats, SWT.BORDER);
         avgKeySize.setText("");
-        avgKeySize.setLayoutData(SWTUtil.createFillGridData());
+        avgKeySize.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         avgKeySize.setEditable(false);
         
         // Chart
-        this.chart = this.createChart(rootChart);
+        this.chart = this.createChart(root);
         this.updateCategories();
 
-        // Table
-        this.rootTable = new Composite(sash, SWT.NONE);
-        this.rootTable.setLayout(SWTUtil.createGridLayout(1));
-        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(rootTable, SWT.NONE);
-        separator2.setText(LABEL_COLUMN_PROPERTIES);
-        separator2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        this.tableAttributes = createTable(rootTable, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
-        this.tableAttributes.setLayoutData(SWTUtil.createFillGridData());
-        
-        // Configure & return
-        sash.setWeights(new int[] {2, 2});
-        this.root.layout();
+        // Done
         return this.root;
     }
 
@@ -396,7 +299,6 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         if (this.chart.getSeriesSet().getSeries(LABEL_SIZE) != null) {
             this.chart.getSeriesSet().deleteSeries(LABEL_SIZE);
         }
-        this.clearTable(tableAttributes);
         numKeys.setText("");
         avgKeySize.setText("");
         numKeys.setToolTipText("");
@@ -423,9 +325,6 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
             private boolean  stopped = false;
             private double[] msuSizeDistribution;
-            private double[] columnContribution;
-            private double[] columnAverageKeySize;
-            private String[] attributes;
             private long     numKeys;
             private double   avgKeySize;
             
@@ -489,25 +388,6 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                     chart.update();
                 }
 
-                // Clear table
-                clearTable(tableAttributes);
-
-                // Create entries for table
-                for (int i=0; i<columnContribution.length; i++) {
-                    TableItem item = new TableItem(tableAttributes, SWT.NONE);
-                    item.setText(0, attributes[i]);
-                    if (Double.isNaN(columnContribution[i])) {
-                        item.setText(1, LABEL_NO_MSUS_FOUND);
-                    } else {
-                        item.setData("1", columnContribution[i]); //$NON-NLS-1$                
-                    }
-                    if (Double.isNaN(columnAverageKeySize[i])) {
-                        item.setText(2, LABEL_NO_MSUS_FOUND);
-                    } else {
-                        item.setText(2, SWTUtil.getPrettyString(columnAverageKeySize[i]));                    
-                    }
-                }
-                
                 // Stats
                 ViewRisksMSUs.this.numKeys.setText(numKeys != 0 ? SWTUtil.getPrettyString(numKeys) : LABEL_NO_MSUS_FOUND);
                 ViewRisksMSUs.this.numKeys.setToolTipText(numKeys != 0 ? String.valueOf(numKeys) : LABEL_NO_MSUS_FOUND);
@@ -540,9 +420,6 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
 
                 // Create array
                 msuSizeDistribution = model.getKeySizeDistribution();
-                columnContribution = model.getColumnKeyContributions();
-                columnAverageKeySize = model.getColumnAverageKeySize();
-                attributes = model.getAttributes();
                 numKeys = model.getNumKeys();
                 avgKeySize = model.getAverageKeySize();
               
@@ -577,7 +454,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
     
     @Override
     protected ViewRiskType getViewType() {
-        return ViewRiskType.CLASSES_TABLE;
+        return ViewRiskType.KEY_SIZE;
     }
     
     /**

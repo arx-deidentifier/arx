@@ -66,7 +66,8 @@ public class Model implements Serializable {
         CONFIGURATION,
         EXPLORATION,
         ANALYSIS,
-        RISK
+        RISK,
+        ATTRIBUTES
     }
 
     /** SVUID. */
@@ -216,6 +217,9 @@ public class Model implements Serializable {
 
     /** The current risk model. */
     private ModelRisk                                     riskModel                       = null;
+
+    /** The current attributes model. */
+    private ModelAttributes                               attributesModel                 = null;
 
     /* *****************************************
      * PRIVACY CRITERIA
@@ -1060,6 +1064,17 @@ public class Model implements Serializable {
             this.riskModel = new ModelRisk();
         }
         return riskModel;
+    }
+
+    /**
+     * Returns the risk model for attributes
+     * @return the risk model for attributes
+     */
+    public ModelAttributes getAttributesModel() {
+        if (this.attributesModel == null) {
+            this.attributesModel = new ModelAttributes();
+        }
+        return attributesModel;
     }
 
     /**

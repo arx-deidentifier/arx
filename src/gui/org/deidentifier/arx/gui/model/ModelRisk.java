@@ -52,8 +52,7 @@ public class ModelRisk implements Serializable {
         CLASSES_PLOT,
         CLASSES_TABLE,
         CELL_BASED,
-        ATTRIBUTES,
-        HIPAA_ATTRIBUTES,
+        KEY_SIZE,
         UNIQUES_DANKAR,
         UNIQUES_ALL,
         OVERVIEW
@@ -92,6 +91,7 @@ public class ModelRisk implements Serializable {
     }
 
     /**
+     * Fits better into ModelAttributes, but remains here for compatibility purposes
      * @return the maxQiSize
      */
     public int getMaxQiSize() {
@@ -206,6 +206,7 @@ public class ModelRisk implements Serializable {
     }
     
     /**
+     * Fits better into ModelAttributes, but remains here for compatibility purposes
      * @param maxQiSize the maxQiSize to set
      */
     public void setMaxQiSize(int maxQiSize) {

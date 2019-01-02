@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.attributes;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,9 +26,9 @@ import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
+import org.deidentifier.arx.gui.model.ModelAttributes.ViewAttributesType;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.view.def.IAnalysis;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
@@ -42,12 +42,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * This is a base class for displaying risk estimates.
+ * This is a base class for displaying analyses of attributes.
  *
  * @author Fabian Prasser
  * @param <T>
  */
-public abstract class ViewRisks<T extends AnalysisContextVisualization> implements IView, IAnalysis {
+public abstract class ViewAttributes<T extends AnalysisContextVisualization> implements IView, IAnalysis {
 
     /** Our users are patient. */
     public static final int       MINIMAL_WORKING_TIME = 500;
@@ -84,7 +84,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param target
      * @param reset
      */
-    public ViewRisks( final Composite parent,
+    public ViewAttributes( final Composite parent,
                       final Controller controller,
                       final ModelPart target,
                       final ModelPart reset) {
@@ -93,7 +93,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_PERSPECTIVE, this);
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
-        controller.addListener(ModelPart.SELECTED_RISK_VISUALIZATION, this);
+        controller.addListener(ModelPart.SELECTED_ATTRIBUTES_VISUALIZATION, this);
         
         controller.addListener(target, this);
         if (reset != null) {
@@ -192,8 +192,8 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
 
         // Update
         if (event.part == target ||
-            event.part == ModelPart.SELECTED_RISK_VISUALIZATION ||
-            (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.RISK)) {
+            event.part == ModelPart.SELECTED_ATTRIBUTES_VISUALIZATION ||
+            (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.ATTRIBUTES)) {
             this.update();
             return;
         }
@@ -272,7 +272,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param context
      * @return
      */
-    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context) {
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextAttributes context) {
         
         AnalysisContext analysisContext = context.context;
         if (analysisContext.getData() == null || analysisContext.getData().definition == null) {
@@ -291,7 +291,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param classes
      * @return
      */
-    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context, 
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextAttributes context, 
                                                           ARXPopulationModel population, 
                                                           RiskModelHistogram classes) {
 
@@ -308,7 +308,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param identifiers
      * @return
      */
-    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextRisk context,
+    protected RiskEstimateBuilderInterruptible getBuilder(AnalysisContextAttributes context,
                                                           Set<String> identifiers) {
         
         AnalysisContext analysisContext = context.context;
@@ -338,7 +338,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * @param context
      * @return
      */
-    protected String getQuasiIdentifiers(AnalysisContextRisk context) {
+    protected String getQuasiIdentifiers(AnalysisContextAttributes context) {
         AnalysisContext analysisContext = context.context;
         List<String> list = new ArrayList<String>();
         list.addAll(analysisContext.getData().definition.getQuasiIdentifyingAttributes());
@@ -357,7 +357,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
      * Returns the according type of view
      * @return
      */
-    protected abstract ViewRiskType getViewType();
+    protected abstract ViewAttributesType getViewType();
     
     /**
      * Is this an input data oriented control

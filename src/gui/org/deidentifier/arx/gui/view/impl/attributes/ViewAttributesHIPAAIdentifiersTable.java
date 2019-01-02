@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.attributes;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelAttributes.ViewAttributesType;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
@@ -45,14 +45,14 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
-    
+public class ViewAttributesHIPAAIdentifiersTable extends ViewAttributes<AnalysisContextAttributes> {
+
     /** View */
-    private Composite root;
-    
+    private Composite       root;
+
     /** View */
-    private DynamicTable table;
-    
+    private DynamicTable    table;
+
     /** Internal stuff. */
     private AnalysisManager manager;
     
@@ -64,7 +64,7 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
      * @param target
      * @param reset
      */
-    public ViewRisksHIPAAIdentifiersTable(final Composite parent,
+    public ViewAttributesHIPAAIdentifiersTable(final Composite parent,
                                     final Controller controller,
                                     final ModelPart target,
                                     final ModelPart reset) {
@@ -149,8 +149,8 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
     }
     
     @Override
-    protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
-        return new AnalysisContextRisk(context);
+    protected AnalysisContextAttributes createViewConfig(AnalysisContext context) {
+        return new AnalysisContextAttributes(context);
     }
     
     @Override
@@ -167,7 +167,7 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
     }
     
     @Override
-    protected void doUpdate(final AnalysisContextRisk context) {
+    protected void doUpdate(final AnalysisContextAttributes context) {
         
         // Enable/disable
         final RiskEstimateBuilderInterruptible builder = getBuilder(context);
@@ -273,8 +273,8 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
     }
     
     @Override
-    protected ViewRiskType getViewType() {
-        return ViewRiskType.HIPAA_ATTRIBUTES;
+    protected ViewAttributesType getViewType() {
+        return ViewAttributesType.HIPAA_ATTRIBUTES;
     }
     
     /**

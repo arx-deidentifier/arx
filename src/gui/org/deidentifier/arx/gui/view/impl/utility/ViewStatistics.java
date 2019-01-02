@@ -22,6 +22,7 @@ import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.Model.Perspective;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.view.def.IAnalysis;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatus;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
@@ -37,7 +38,7 @@ import org.eclipse.swt.widgets.Control;
  * @author Fabian Prasser
  * @param <T>
  */
-public abstract class ViewStatistics<T extends AnalysisContextVisualization> implements IView {
+public abstract class ViewStatistics<T extends AnalysisContextVisualization> implements IView, IAnalysis {
 
     /** Our users are patient. */
     public static final int       MINIMAL_WORKING_TIME = 500;
@@ -149,18 +150,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         status.setEmpty();
     }
 
-    /**
-     * Stops all computations
-     */
+    @Override
     public void triggerStop() {
         this.viewContext = null;
         this.doReset();
         this.setStatusEmpty();
     }
 
-    /**
-     * Triggers an update
-     */
+    @Override
     public void triggerUpdate() {
         this.viewContext = null;
         this.update();

@@ -51,6 +51,7 @@ import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IValidator;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.deidentifier.arx.gui.view.impl.attributes.LayoutAttributes;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.gui.view.impl.define.LayoutDefinition;
 import org.deidentifier.arx.gui.view.impl.explore.LayoutExplore;
@@ -175,6 +176,9 @@ public class MainWindow implements IView {
         Composite item4 = root.createItem(Resources.getMessage("MainWindow.4"), controller.getResources().getManagedImage("perspective_risk.png")); //$NON-NLS-1$ //$NON-NLS-2$
         helpids.put(item4, "help.risk.overview"); //$NON-NLS-1$
         new LayoutRisks(item4, controller);
+        Composite item5 = root.createItem(Resources.getMessage("MainWindow.21"), controller.getResources().getManagedImage("perspective_attributes.png")); //$NON-NLS-1$ //$NON-NLS-2$
+        helpids.put(item5, "help.attributes.overview"); //$NON-NLS-1$
+        new LayoutAttributes(item5, controller);
 
         // Hack to update visualizations
         root.addSelectionListener(new SelectionAdapter(){
@@ -192,6 +196,9 @@ public class MainWindow implements IView {
                         break;
                     case 3: 
                         controller.getModel().setPerspective(Perspective.RISK);
+                        break;
+                    case 4: 
+                        controller.getModel().setPerspective(Perspective.ATTRIBUTES);
                         break;
                 }
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_UTILITY_VISUALIZATION, null));
@@ -1134,6 +1141,17 @@ public class MainWindow implements IView {
                 controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
             }
             public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.RISK; }
+        });
+        
+        items.add(new MainMenuItem(Resources.getMessage("MainWindow.21"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("perspective_attributes.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { 
+                root.setSelection(4);
+                controller.getModel().setPerspective(Perspective.ATTRIBUTES);
+                controller.update(new ModelEvent(controller, ModelPart.SELECTED_PERSPECTIVE, controller.getModel().getPerspective()));
+            }
+            public boolean isEnabled(Model model) { return model != null && model.getPerspective() != Perspective.ATTRIBUTES; }
         });
 
         items.add(new MainMenuSeparator());

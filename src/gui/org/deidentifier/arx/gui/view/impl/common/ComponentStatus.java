@@ -22,7 +22,7 @@ import java.io.InputStream;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.risk.ViewRisks;
+import org.deidentifier.arx.gui.view.def.IAnalysis;
 import org.deidentifier.arx.gui.view.impl.utility.ViewStatistics;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.swt.SWT;
@@ -60,11 +60,8 @@ public class ComponentStatus {
     private final Control           child;
 
     /** View */
-    private final ViewStatistics<?> view1;
-
-    /** View */
-    private final ViewRisks<?>      view2;
-
+    private final IAnalysis         view;
+    
     /** Status */
     private boolean                 stopped = false;
 
@@ -73,20 +70,19 @@ public class ComponentStatus {
      * @param controller
      * @param parent
      * @param control
-     * @param viewRisks
+     * @param view
      * @param progressProvider
      */
     public ComponentStatus(Controller controller,
                            Composite parent,
                            Control child,
-                           ViewRisks<?> view,
+                           IAnalysis view,
                            ComponentStatusLabelProgressProvider progressProvider) {
 
         this.child = child;
         this.parent = parent;
         this.controller = controller;
-        this.view1 = null;
-        this.view2 = view;
+        this.view = view;
         
         if (parent.getLayout() == null ||
             !(parent.getLayout() instanceof StackLayout)) {
@@ -114,39 +110,6 @@ public class ComponentStatus {
         this(controller, parent, child, view, null);
     }
     
-    /**
-     * Creates a new instance.
-     *
-     * @param controller
-     * @param parent
-     * @param child
-     * @param view
-     * @param provider
-     */
-    public ComponentStatus(Controller controller, 
-                           Composite parent, 
-                           Control child,
-                           ViewStatistics<?> view,
-                           ComponentStatusLabelProgressProvider progressProvider){
-        
-        this.child = child;
-        this.parent = parent;
-        this.controller = controller;
-        this.view1 = view;
-        this.view2 = null;
-        
-        if (parent.getLayout() == null ||
-            !(parent.getLayout() instanceof StackLayout)) {
-            throw new RuntimeException("Parent must have a StackLayout"); //$NON-NLS-1$
-        }
-        
-        this.layout = (StackLayout)parent.getLayout();
-        this.working = getWorkingComposite(parent, progressProvider);
-        this.empty = getEmptyComposite(parent);
-        this.layout.topControl = child;
-        this.parent.layout(true);
-    }
-
     /**
      * Returns whether the current status is "empty"
      * @return
@@ -215,11 +178,8 @@ public class ComponentStatus {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 stopped = false;
-                if (view1 != null) {
-                    view1.triggerUpdate();
-                }
-                if (view2 != null) {
-                    view2.triggerUpdate();
+                if (view != null) {
+                    view.triggerUpdate();
                 }
             }
         });
@@ -263,11 +223,8 @@ public class ComponentStatus {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
                 stopped = true;
-                if (view1 != null) {
-                    view1.triggerStop();
-                }
-                if (view2 != null) {
-                    view2.triggerStop();
+                if (view != null) {
+                    view.triggerStop();
                 }
             }
         });

@@ -14,14 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.attributes;
 
 import java.util.List;
 
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.model.ModelAttributes.ViewAttributesType;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
@@ -43,15 +43,15 @@ import de.linearbits.swt.table.DynamicTable;
 import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
- * This view displays basic risk estimates.
+ * This view displays basic risk analyses of attributes.
  *
  * @author Fabian Prasser
  * @author Maximilian Zitzmann
  */
-public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewAttributesQuasiIdentifiersTable extends ViewAttributes<AnalysisContextAttributes> {
 
     /** View */
-    private DynamicTable table;
+    private DynamicTable          table;
 
     /** Internal stuff. */
     private final AnalysisManager manager;
@@ -64,7 +64,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
      * @param target
      * @param reset
      */
-    public ViewRisksQuasiIdentifiersTable(final Composite parent,
+    public ViewAttributesQuasiIdentifiersTable(final Composite parent,
                                           final Controller controller,
                                           final ModelPart target,
                                           final ModelPart reset) {
@@ -140,8 +140,8 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
     }
 
     @Override
-    protected AnalysisContextRisk createViewConfig(AnalysisContext context) {
-        return new AnalysisContextRisk(context);
+    protected AnalysisContextAttributes createViewConfig(AnalysisContext context) {
+        return new AnalysisContextAttributes(context);
     }
 
     @Override
@@ -158,7 +158,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
     }
 
     @Override
-    protected void doUpdate(final AnalysisContextRisk context) {
+    protected void doUpdate(final AnalysisContextAttributes context) {
         
         // Enable/disable
         final RiskEstimateBuilderInterruptible builder = getBuilder(context, context.context.getModel().getSelectedQuasiIdentifiers());
@@ -273,8 +273,8 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
     }
 
     @Override
-    protected ViewRiskType getViewType() {
-        return ViewRiskType.ATTRIBUTES;
+    protected ViewAttributesType getViewType() {
+        return ViewAttributesType.ATTRIBUTES;
     }
 
     /**

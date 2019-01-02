@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.gui.view.impl.risk;
+package org.deidentifier.arx.gui.view.impl.attributes;
 
 
 import java.util.HashSet;
@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.TableItem;
  * 
  * @author Fabian Prasser
  */
-public class ViewRisksQuasiIdentifiers implements IView {
+public class ViewAttributesQuasiIdentifiers implements IView {
 
     /** Controller */
     private final Controller controller;
@@ -67,7 +67,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
      * @param parent
      * @param controller
      */
-    public ViewRisksQuasiIdentifiers(final Composite parent,
+    public ViewAttributesQuasiIdentifiers(final Composite parent,
                                     final Controller controller) {
 
         controller.addListener(ModelPart.INPUT, this);
@@ -153,7 +153,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
             
             if (selection.size() <= model.getRiskModel().getMaxQiSize()) {
                 model.setSelectedQuasiIdentifiers(selection);
-                controller.update(new ModelEvent(ViewRisksQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
+                controller.update(new ModelEvent(ViewAttributesQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
                 label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.3") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
                 label.setForeground(GUIHelper.COLOR_BLACK);
             } else {
