@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -173,7 +173,7 @@ public class ComponentGSSlider {
         });
         
         // Button
-        button = new Button(sliderBase, SWT.PUSH);
+        button = new Button(sliderBase, SWT.FLAT);
         button.setLayoutData(GridDataFactory.fillDefaults().grab(false, false).align(SWT.LEFT, SWT.CENTER).create());
         button.setText(Resources.getMessage("ViewCodingModel.2")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {

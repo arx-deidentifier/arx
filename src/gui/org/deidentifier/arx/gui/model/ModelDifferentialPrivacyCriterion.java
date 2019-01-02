@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@
 package org.deidentifier.arx.gui.model;
 
 import org.deidentifier.arx.DataGeneralizationScheme;
-import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -32,16 +31,19 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
 
     /** SVUID */
-    private static final long        serialVersionUID = 1803345324372136700L;
+    private static final long        serialVersionUID              = 1803345324372136700L;
+    
+    /** Delta */
+    private double                   delta                         = 0.000001d;
 
     /** Epsilon */
-    private double                   epsilon          = 2d;
+    private double                   epsilon                       = 2d;
 
-    /** Delta */
-    private double                   delta            = 0.000001d;
+    /** Fraction of epsilon to use for automatic generalization */
+    private Double                   epsilonGeneralizationFraction = 0.1d;
 
-    /** Generalization scheme */
-    private DataGeneralizationScheme generalization   = DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM);
+    /** Generalization scheme to be used or null in the case of data-dependent differential privacy */
+    private DataGeneralizationScheme generalization                = null;
 
     /**
      * Creates a new instance
@@ -65,7 +67,8 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         ModelDifferentialPrivacyCriterion result = new ModelDifferentialPrivacyCriterion();
         result.epsilon = this.epsilon;
         result.delta = this.delta;
-        result.generalization = this.generalization.clone();
+        result.epsilonGeneralizationFraction = this.epsilonGeneralizationFraction;
+        result.generalization = (this.generalization == null) ? null : this.generalization.clone();
         result.setEnabled(this.isEnabled());
         return result;
     }
@@ -104,6 +107,17 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         return "(" + '\u03B5' + ", " + '\u03B4' + ")" + Resources.getMessage("ModelCriterion.3"); //$NON-NLS-1$
     }
 
+    /**
+     * Getter
+     * @return
+     */
+    public double getEpsilonGeneralizationFraction() {
+        if (epsilonGeneralizationFraction == null) {
+            epsilonGeneralizationFraction = 0.1d;
+        }
+        return epsilonGeneralizationFraction;
+    }
+
     @Override
     public void parse(ModelCriterion criterion, boolean _default) {
         if (!(criterion instanceof ModelDifferentialPrivacyCriterion)) {
@@ -112,8 +126,9 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
         ModelDifferentialPrivacyCriterion other = (ModelDifferentialPrivacyCriterion)criterion;
         this.epsilon = other.epsilon;
         this.delta = other.delta;
+        this.epsilonGeneralizationFraction = other.epsilonGeneralizationFraction;
         if (!_default) {
-            this.generalization = other.generalization.clone();
+            this.generalization = (other.generalization == null) ? null : other.generalization.clone();
         }
         if (!_default) {
             this.setEnabled(other.isEnabled());
@@ -142,6 +157,14 @@ public class ModelDifferentialPrivacyCriterion extends ModelImplicitCriterion{
      */
     public void setGeneralization(DataGeneralizationScheme generalization) {
         this.generalization = generalization;
+    }
+
+    /**
+     * Setter
+     * @param epsilonGeneralizationFraction
+     */
+    public void setEpsilonGeneralizationFraction(double epsilonGeneralizationFraction) {
+        this.epsilonGeneralizationFraction = epsilonGeneralizationFraction;
     }
 
     @Override

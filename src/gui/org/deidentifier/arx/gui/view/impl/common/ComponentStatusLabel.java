@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,7 +82,7 @@ public class ComponentStatusLabel extends Canvas {
     private String                               text;
 
     /** Field */
-    private Image                                        image;
+    private Image                                image;
 
     /** Field */
     private String                               appToolTipText;
@@ -129,7 +129,7 @@ public class ComponentStatusLabel extends Canvas {
     }
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param parent
      * @param style
@@ -165,6 +165,7 @@ public class ComponentStatusLabel extends Canvas {
 
     }
 
+    @Override
     public Point computeSize(int wHint, int hHint, boolean changed) {
         checkWidget();
         Point e = getTotalSize(image, text);
@@ -187,55 +188,50 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
-     *
+     * Returns the alignment
      * @return
      */
     public int getAlignment() {
-        // checkWidget();
         return align;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getBottomMargin() {
-        // checkWidget();
         return bottomMargin;
     }
 
     /**
-     * 
+     * Returns the image
      *
      * @return
      */
     public Image getImage() {
-        // checkWidget();
         return image;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getLeftMargin() {
-        // checkWidget();
         return leftMargin;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getRightMargin() {
-        // checkWidget();
         return rightMargin;
     }
 
+    @Override
     public int getStyle() {
         int style = super.getStyle();
         switch (align) {
@@ -253,32 +249,31 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Returns the text
      *
      * @return
      */
     public String getText() {
-        // checkWidget();
         return text;
     }
 
+    @Override
     public String getToolTipText() {
         checkWidget();
         return appToolTipText;
     }
 
     /**
-     * 
+     * Returns a margin
      *
      * @return
      */
     public int getTopMargin() {
-        // checkWidget();
         return topMargin;
     }
 
     /**
-     * 
+     * Sets the alignment
      *
      * @param align
      */
@@ -293,6 +288,7 @@ public class ComponentStatusLabel extends Canvas {
         }
     }
 
+    @Override
     public void setBackground(Color color) {
         super.setBackground(color);
         // Are these settings the same as before?
@@ -309,87 +305,9 @@ public class ComponentStatusLabel extends Canvas {
         gradientPercents = null;
         redraw();
     }
-
+    
     /**
-     * 
-     *
-     * @param colors
-     * @param percents
-     */
-    public void setBackground(Color[] colors, int[] percents) {
-        setBackground(colors, percents, false);
-    }
-
-    /**
-     * 
-     *
-     * @param colors
-     * @param percents
-     * @param vertical
-     */
-    public void setBackground(Color[] colors, int[] percents, boolean vertical) {
-        checkWidget();
-        if (colors != null) {
-            if (percents == null || percents.length != colors.length - 1) {
-                SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-            }
-            if (getDisplay().getDepth() < 15) {
-                // Don't use gradients on low color displays
-                colors = new Color[] { colors[colors.length - 1] };
-                percents = new int[] {};
-            }
-            for (int i = 0; i < percents.length; i++) {
-                if (percents[i] < 0 || percents[i] > 100) {
-                    SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-                }
-                if (i > 0 && percents[i] < percents[i - 1]) {
-                    SWT.error(SWT.ERROR_INVALID_ARGUMENT);
-                }
-            }
-        }
-
-        // Are these settings the same as before?
-        final Color background = getBackground();
-        if (backgroundImage == null) {
-            if ((gradientColors != null) && (colors != null) && (gradientColors.length == colors.length)) {
-                boolean same = false;
-                for (int i = 0; i < gradientColors.length; i++) {
-                    same = (gradientColors[i] == colors[i]) ||
-                           ((gradientColors[i] == null) && (colors[i] == background)) ||
-                           ((gradientColors[i] == background) && (colors[i] == null));
-                    if (!same) break;
-                }
-                if (same) {
-                    for (int i = 0; i < gradientPercents.length; i++) {
-                        same = gradientPercents[i] == percents[i];
-                        if (!same) break;
-                    }
-                }
-                if (same && this.gradientVertical == vertical) return;
-            }
-        } else {
-            backgroundImage = null;
-        }
-        // Store the new settings
-        if (colors == null) {
-            gradientColors = null;
-            gradientPercents = null;
-            gradientVertical = false;
-        } else {
-            gradientColors = new Color[colors.length];
-            for (int i = 0; i < colors.length; ++i)
-                gradientColors[i] = (colors[i] != null) ? colors[i] : background;
-            gradientPercents = new int[percents.length];
-            for (int i = 0; i < percents.length; ++i)
-                gradientPercents[i] = percents[i];
-            gradientVertical = vertical;
-        }
-        // Refresh with the new settings
-        redraw();
-    }
-
-    /**
-     * 
+     * Sets an image 
      *
      * @param image
      */
@@ -406,7 +324,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param bottomMargin
      */
@@ -417,13 +335,14 @@ public class ComponentStatusLabel extends Canvas {
         redraw();
     }
 
+    @Override
     public void setFont(Font font) {
         super.setFont(font);
         redraw();
     }
 
     /**
-     * 
+     * Sets the GIF
      *
      * @param inputStream
      */
@@ -454,7 +373,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets the GIF
      *
      * @param path
      */
@@ -468,7 +387,7 @@ public class ComponentStatusLabel extends Canvas {
     }
     
     /**
-     * 
+     * Sets the image
      *
      * @param image
      */
@@ -486,7 +405,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param leftMargin
      */
@@ -494,23 +413,6 @@ public class ComponentStatusLabel extends Canvas {
         checkWidget();
         if (this.leftMargin == leftMargin || leftMargin < 0) return;
         this.leftMargin = leftMargin;
-        redraw();
-    }
-
-    /**
-     * 
-     *
-     * @param leftMargin
-     * @param topMargin
-     * @param rightMargin
-     * @param bottomMargin
-     */
-    public void setMargins(int leftMargin, int topMargin, int rightMargin, int bottomMargin) {
-        checkWidget();
-        this.leftMargin = Math.max(0, leftMargin);
-        this.topMargin = Math.max(0, topMargin);
-        this.rightMargin = Math.max(0, rightMargin);
-        this.bottomMargin = Math.max(0, bottomMargin);
         redraw();
     }
 
@@ -523,7 +425,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param rightMargin
      */
@@ -535,7 +437,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Sets the text
      *
      * @param text
      */
@@ -548,13 +450,14 @@ public class ComponentStatusLabel extends Canvas {
         }
     }
 
+    @Override
     public void setToolTipText(String string) {
         super.setToolTipText(string);
         appToolTipText = super.getToolTipText();
     }
 
     /**
-     * 
+     * Sets a margin
      *
      * @param topMargin
      */
@@ -575,7 +478,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Drawing method 
      *
      * @param gc
      * @param x
@@ -596,7 +499,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Calculate size
      *
      * @param image
      * @param text
@@ -626,7 +529,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Initialize accessibility
      */
     private void initAccessible() {
         Accessible accessible = getAccessible();
@@ -675,7 +578,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Drawing method
      *
      * @param gc
      * @param r
@@ -703,7 +606,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Split string
      *
      * @param text
      * @return
@@ -728,7 +631,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Shorten text
      *
      * @param gc
      * @param t
@@ -768,7 +671,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * Find mnemonic
      *
      * @param string
      * @return
@@ -788,7 +691,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * On dispose handler
      *
      * @param event
      */
@@ -811,7 +714,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * On mnemonic handler 
      *
      * @param event
      */
@@ -839,7 +742,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
-     * 
+     * On paint handler
      *
      * @param event
      */
@@ -1024,6 +927,7 @@ public class ComponentStatusLabel extends Canvas {
     }
 
     /**
+     * Validate offset
      * 
      * @param layout
      * @param offset

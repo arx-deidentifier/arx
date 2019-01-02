@@ -19,7 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyMatrix;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyArray;
 import org.deidentifier.arx.risk.msu.SUDA2;
 import org.deidentifier.arx.risk.msu.SUDA2Listener;
 
@@ -52,11 +52,11 @@ public class MinimumKeySize extends MatrixBasedCriterion {
     }
 
     @Override
-    public void enforce(final HashGroupifyMatrix matrix, int numMaxSuppressedOutliers) {
-        new SUDA2(matrix.getMatrix().getMatrix()).findKeys(minKeySize - 1, new SUDA2Listener() {
+    public void enforce(final HashGroupifyArray array, int numMaxSuppressedOutliers) {
+        new SUDA2(array.getArray().getArray()).findKeys(minKeySize - 1, new SUDA2Listener() {
             @Override
             public void msuFound(int row, int size) {
-                matrix.suppress(row);
+                array.suppress(row);
             }
         });
     }

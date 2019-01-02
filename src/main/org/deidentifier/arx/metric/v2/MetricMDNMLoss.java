@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,15 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
@@ -31,30 +35,36 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+
 /**
  * This class implements a variant of the Loss metric.
  *
  * @author Fabian Prasser
+ * @author Raffael Bild
  */
 public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
 
     /** SUID. */
-    private static final long serialVersionUID = -573670902335136600L;
+    private static final long     serialVersionUID = -573670902335136600L;
 
     /** Total number of tuples, depends on existence of research subset. */
-    private double            tuples;
+    private double                tuples;
 
     /** Domain shares for each dimension. */
-    private DomainShare[]     shares;
+    private DomainShare[]         shares;
 
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      gFactor;
-    
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      gsFactor;
-    
-    /** TODO: We must override this for backward compatibility. Remove, when re-implemented. */
-    private final double      sFactor;
+    /** Reliable domain shares for each dimension. */
+    private DomainShareReliable[] sharesReliable;
+
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
+    private final double          gFactor;
+
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
+    private final double          gsFactor;
+
+    /** We must override this for backward compatibility. Remove, when re-implemented. */
+    private final double          sFactor;
     
     /**
      * Default constructor which treats all transformation methods equally.
@@ -108,13 +118,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationFactor() {
         return gFactor;
     }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getGeneralizationSuppressionFactor() {
         return gsFactor;
     }
@@ -123,9 +131,77 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     public String getName() {
         return "Loss";
     }
+
+    @Override
+    /**
+     * Implements the score function described in Section 5.1 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (k < 0) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        List<ObjectIntOpenHashMap<BigFraction>> dimensionSharesToCount =
+                new ArrayList<ObjectIntOpenHashMap<BigFraction>>(dimensionsGeneralized);
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+            dimensionSharesToCount.add(new ObjectIntOpenHashMap<BigFraction>());
+        }
+
+        // Calculate counts. During these computations, no overflows can occur
+        // since a dataset can not contain more than Integer.MAX_VALUE records.
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        int numOutliers = 0;
+        while (m != null) {
+            m.read();
+            for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+                if (m.count>0) {
+                    if (!m.isNotOutlier) {
+                        numOutliers += m.count;
+                    } else {
+                        int value = m.next();
+                        int level = transformation[dimension];
+                        BigFraction shareReliable = sharesReliable[dimension].getShare(value, level);
+                        ObjectIntOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
+                        sharesToCount.putOrAdd(shareReliable, m.count, m.count);
+                    }
+                }
+                numOutliers += m.pcount - m.count;
+            }
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        BigFraction score = new BigFraction(numOutliers);
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
+            
+            ObjectIntOpenHashMap<BigFraction> sharesToCount = dimensionSharesToCount.get(dimension);
+            final boolean[] states = sharesToCount.allocated;
+            final int[] counts = sharesToCount.values;
+            final Object[] sharesReliable = sharesToCount.keys;
+            
+            for (int i=0; i<states.length; i++) {
+                if (states[i]) {
+                    score = score.add(((BigFraction)(sharesReliable[i])).multiply(counts[i]));
+                }
+            }
+        }
+
+        // Divide by sensitivity and multiply with -1 so that higher values are better
+        score = score.multiply(new BigFraction(-1, dimensionsGeneralized));
+        if (k > 1) score = score.divide(new BigFraction(k - 1));
+
+        // Return
+        return new ILScore(score);
+    }
     
     @Override
-    // TODO: We must override this for backward compatibility. Remove, when re-implemented.
     public double getSuppressionFactor() {
         return sFactor;
     }
@@ -146,10 +222,15 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
+    public boolean isScoreFunctionSupported() {
+        return true;
+    }
+
+    @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Loss");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
@@ -167,8 +248,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
+        DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
         
         int[] transformation = node.getGeneralization();
         double[] result = new double[dimensions];
@@ -178,8 +259,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
+                m.read();
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     result[dimension] += m.isNotOutlier ? share * gFactor :
@@ -188,8 +270,8 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
                 }
                 for (int dimension=0; dimension<dimensionsAggregated; dimension++){
                     
-                    double share = (double)m.count * super.getError(microaggregationFunctions[dimension],
-                                                                    m.distributions[microaggregationStart + dimension]);
+                    double share = (double) m.count *
+                                   microaggregationFunctions[dimension].getInformationLoss(m.distributions[microaggregationIndices[dimension]]);
                     result[dimensionsGeneralized + dimension] += m.isNotOutlier ? share * gFactor :
                                          (sFactor == 1d ? m.count : share + sFactor * ((double)m.count - share));
                     // Note: we ignore a bound for microaggregation, as we cannot compute it
@@ -214,7 +296,6 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         // Return information loss and lower bound
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result),
                                                super.createInformationLoss(bound));
-        
     }
     
     @Override
@@ -224,23 +305,24 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
+        DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
         
         double[] result = new double[dimensions];
         int[] transformation = node.getGeneralization();
 
         // Compute
+        entry.read();
         for (int dimension = 0; dimension < dimensionsGeneralized; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.next();
             int level = transformation[dimension];
             result[dimension] = (double) entry.count * shares[dimension].getShare(value, level);
         }
 
         // Compute
         for (int dimension=0; dimension<dimensionsAggregated; dimension++){
-            result[dimensionsGeneralized + dimension] = (double)entry.count * super.getError(microaggregationFunctions[dimension],
-                                                                                             entry.distributions[microaggregationStart + dimension]); 
+            result[dimensionsGeneralized + dimension] = (double) entry.count *
+                    microaggregationFunctions[dimension].getInformationLoss(entry.distributions[microaggregationIndices[dimension]]);
         }
         
         // Return
@@ -265,8 +347,9 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         HashGroupifyEntry m = g.getFirstEquivalenceClass();
         while (m != null) {
             if (m.count>0) {
+                m.read();
                 for (int dimension=0; dimension<dimensionsGeneralized; dimension++){
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = (double)m.count * shares[dimension].getShare(value, level);
                     bound[dimension] += share * gFactor;
@@ -311,6 +394,11 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
         
         // Save domain shares
         this.shares = manager.getDomainShares();
+
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            // Save reliable domain shares
+            sharesReliable = manager.getDomainSharesReliable();
+        }
         
         // Min and max
         double[] min = new double[getDimensions()];

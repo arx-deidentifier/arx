@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,9 +247,12 @@ public class ViewTiles extends ViewSolutionSpace {
             public void run() {
                 SWTUtil.enable(tiles);
                 tiles.setRedraw(true);
+                
+                final ARXLattice l = getModel().getProcessStatistics().isLocalTransformation() ? 
+                                     getModel().getProcessStatistics().getLattice() : lattice;
 
                 List<ARXNode> list = new ArrayList<ARXNode>();
-                for (final ARXNode[] level : lattice.getLevels()) {
+                for (final ARXNode[] level : l.getLevels()) {
                     for (final ARXNode node : level) {
                         list.add(node);
                     }
@@ -272,7 +275,9 @@ public class ViewTiles extends ViewSolutionSpace {
     @Override
     protected void eventFilterChanged(ARXResult result, ModelNodeFilter filter) {
         if (getModel() != null && result != null) {
-            updateFilter(result.getLattice(), filter);
+            ARXLattice lattice = getModel().getProcessStatistics().isLocalTransformation() ?
+                                 getModel().getProcessStatistics().getLattice() : result.getLattice();
+            updateFilter(lattice, filter);
         } else {
             reset();
         }

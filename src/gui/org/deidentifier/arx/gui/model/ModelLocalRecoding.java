@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,25 +33,26 @@ public class ModelLocalRecoding implements Serializable {
      */
     public static enum LocalRecodingMode {
         SINGLE_PASS,
+        ITERATIVE,
         MULTI_PASS,
         FIXPOINT,
         FIXPOINT_ADAPTIVE
     }
 
     /** SVUID. */
-    private static final long serialVersionUID = -5333464333997155970L;
+    private static final long serialVersionUID       = -5333464333997155970L;
 
     /** GS-Factor */
-    private double            gsFactor         = 0.05d;
+    private double            gsFactor               = 0.05d;
 
     /** The number of iterations to perform */
-    private int               numIterations    = 10;
+    private int               numIterations          = 100;
 
     /** Is the GS-Factor adaptive */
-    private double            adaptionFactor   = 0.05d;
+    private double            adaptionFactor         = 0.05d;
 
     /** The type of recoding to perform */
-    private LocalRecodingMode mode             = LocalRecodingMode.FIXPOINT_ADAPTIVE;
+    private LocalRecodingMode mode                   = LocalRecodingMode.ITERATIVE;
 
     /**
      * Getter
@@ -108,7 +109,7 @@ public class ModelLocalRecoding implements Serializable {
     public void setMode(LocalRecodingMode mode) {
         this.mode = mode;
     }
-
+    
     /**
      * Setter
      * @param numIterations

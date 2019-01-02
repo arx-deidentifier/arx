@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,7 +30,6 @@ import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -56,9 +55,6 @@ public class DialogComboSelection extends Dialog {
 
     /** The input validator, or <code>null</code> if none. */
     private IInputValidator validator;
-
-    /** Ok button widget. */
-    private Button          okButton;
 
     /** Choices for combo widget. */
     private String[]        choices;
@@ -159,10 +155,12 @@ public class DialogComboSelection extends Dialog {
 
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        // create OK and Cancel buttons by default
-        okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+        
+        // Create OK and Cancel buttons by default
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
         createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-        // do this here because setting the text will set enablement on the ok button
+        
+        // Do this here because setting the text will set enablement on the ok button
         combo.setFocus();
         if (value != null) {
             combo.setText(value);
@@ -203,24 +201,6 @@ public class DialogComboSelection extends Dialog {
         return composite;
     }
 
-    /**
-     * Returns the combo.
-     * 
-     * @return the combo
-     */
-    protected Combo getCombo() {
-        return combo;
-    }
-
-    /**
-     * Returns the ok button.
-     * 
-     * @return the ok button
-     */
-    protected Button getOkButton() {
-        return okButton;
-    }
-
     @Override
     protected ShellListener getShellListener() {
         return new ShellAdapter() {
@@ -229,15 +209,6 @@ public class DialogComboSelection extends Dialog {
                 setReturnCode(Window.CANCEL);
             }
         };
-    }
-
-    /**
-     * Returns the validator.
-     * 
-     * @return the validator
-     */
-    protected IInputValidator getValidator() {
-        return validator;
     }
 
     /**

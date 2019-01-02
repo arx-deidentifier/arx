@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -245,16 +245,6 @@ public class History {
     }
     
     /**
-     * 
-     *
-     * @return
-     */
-    public int size() {
-        return cache.size();
-
-    }
-
-    /**
      * Stores a snapshot in the buffer.
      *
      * @param transformation The transformation
@@ -292,11 +282,11 @@ public class History {
         // Create the snapshot
         final int[] data = createSnapshot(groupify);
 
-
-        // assign snapshot and keep reference for cache
+        // Assign snapshot and keep reference for cache
         nodeToSnapshot.put(transformation.getIdentifier(), data);
         cache.append(new MRUCacheEntryMetadata(transformation));
 
+        // Success
         return true;
     }
 

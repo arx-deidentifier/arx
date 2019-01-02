@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,36 +32,62 @@ import org.deidentifier.arx.ARXLattice.Anonymity;
  * @author Fabian Prasser
  */
 public class XMLWriter {
-	
-	/** The current prefix for indentation. */
-	private StringBuilder prefix = new StringBuilder();
-	
-	/** A backing string builder. */
-	private StringBuilder sBuilder = null;
-	
-	/** A backing file builder. */
-	private FileBuilder fBuilder = null;
-	
-	/** The current stack of nested elements. */
-	private Stack<String> elements = new Stack<String>();
 
-	/**
+    /** The current prefix for indentation. */
+    private StringBuilder prefix   = new StringBuilder();
+
+    /** A backing string builder. */
+    private StringBuilder sBuilder = null;
+
+    /** A backing file builder. */
+    private FileBuilder   fBuilder = null;
+
+    /** The current stack of nested elements. */
+    private Stack<String> elements = new Stack<String>();
+
+    /** Compact builder */
+    private boolean       compact  = false;
+
+    /**
      * Creates a new writer backed by a StringBuilder.
      *
      * @throws IOException
      */
-	public XMLWriter() throws IOException{
+    public XMLWriter() throws IOException{
+        this(false);
+    }
+    
+    /**
+     * Creates a new writer backed by the given FileBuilder.
+     *
+     * @param builder
+     * @throws IOException
+     */
+    public XMLWriter(FileBuilder builder) throws IOException{
+        this(builder, false);
+    }
+
+	/**
+     * Creates a new writer backed by a StringBuilder.
+     *
+     * @param compact
+     * @throws IOException
+     */
+	public XMLWriter(boolean compact) throws IOException{
 		this.sBuilder = new StringBuilder();
+		this.compact = compact;
 	}
 	
 	/**
      * Creates a new writer backed by the given FileBuilder.
      *
      * @param builder
+     * @param compact
      * @throws IOException
      */
-	public XMLWriter(FileBuilder builder) throws IOException{
+	public XMLWriter(FileBuilder builder, boolean compact) throws IOException{
 		this.fBuilder = builder;
+		this.compact = compact;
 	}
 	
 	/**
@@ -72,11 +98,16 @@ public class XMLWriter {
      */
 	public void indent(String element) throws IOException{
 		elements.push(element);
-		this.append(prefix.toString());
+		if (!compact) {
+		    this.append(prefix.toString());
+		}
 		this.append("<"); //$NON-NLS-1$
 		this.append(element);
-		this.append(">\n"); //$NON-NLS-1$
-		this.prefix.append("\t"); //$NON-NLS-1$
+		this.append(">"); //$NON-NLS-1$
+		if (!compact) {
+		    this.append("\n"); //$NON-NLS-1$
+		    this.prefix.append("\t"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -89,7 +120,9 @@ public class XMLWriter {
      */
 	public void indent(String element, String attribute, int value) throws IOException{
 		elements.push(element);
-		this.append(prefix.toString());
+		if (!compact) {
+		    this.append(prefix.toString());
+		}
 		this.append("<"); //$NON-NLS-1$
 		this.append(element);
 		this.append(" "); //$NON-NLS-1$
@@ -97,8 +130,11 @@ public class XMLWriter {
 		this.append("=\""); //$NON-NLS-1$
 		this.append(String.valueOf(value));
 		this.append("\""); //$NON-NLS-1$
-		this.append(">\n"); //$NON-NLS-1$
-		this.prefix.append("\t"); //$NON-NLS-1$
+		this.append(">"); //$NON-NLS-1$
+        if (!compact) {
+            this.append("\n"); //$NON-NLS-1$
+            this.prefix.append("\t"); //$NON-NLS-1$
+        }
 	}
 
 	/**
@@ -116,12 +152,17 @@ public class XMLWriter {
      * @throws IOException
      */
 	public void unindent() throws IOException{
-		this.prefix.setLength(this.prefix.length()-1);
 		String element = elements.pop();
-		this.append(prefix.toString());
+		if (!compact) {
+		    this.prefix.setLength(this.prefix.length()-1);
+		    this.append(prefix.toString());
+		}
 		this.append("</"); //$NON-NLS-1$
 		this.append(element);
-		this.append(">\n"); //$NON-NLS-1$
+		this.append(">"); //$NON-NLS-1$
+		if (!compact) {
+		    this.append("\n"); //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -227,14 +268,19 @@ public class XMLWriter {
      * @throws IOException
      */
 	public void write(String attribute, String value) throws IOException{
-		this.append(prefix.toString());
+	    if (!compact) {
+	        this.append(prefix.toString());
+	    }
 		this.append("<"); //$NON-NLS-1$
 		this.append(attribute);
 		this.append(">"); //$NON-NLS-1$
 		this.append(StringEscapeUtils.escapeXml(value));
 		this.append("</"); //$NON-NLS-1$
 		this.append(attribute);
-		this.append(">\n"); //$NON-NLS-1$
+        this.append(">"); //$NON-NLS-1$
+		if (!compact) {
+		    this.append("\n"); //$NON-NLS-1$
+		}
 	}
 
 	/**

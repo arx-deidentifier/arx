@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -435,29 +435,10 @@ class DataRegistry {
     /**
      * Update the registry.
      *
-     * @param inputSubset
-     */
-    protected void updateInputSubset(DataHandleSubset inputSubset){
-        this.inputSubset = inputSubset;
-    }
-
-    /**
-     * Update the registry.
-     *
      * @param node
      * @param output
      */
     protected void updateOutput(ARXNode node, DataHandleOutput output){
         this.output.put(node, output);
-    }
-
-    /**
-     * Update the registry.
-     *
-     * @param node
-     * @param outputSubset
-     */
-    protected void updateOutputSubset(ARXNode node, DataHandleSubset outputSubset){
-        this.outputSubset.put(node, outputSubset);
     }
 }

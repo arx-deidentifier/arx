@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -128,6 +128,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     public double getGeneralizationSuppressionFactor() {
         return defaultMetric.getGeneralizationSuppressionFactor();
     }
+    
+    @Override
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        return precomputed ?
+               precomputedMetric.getScore(node, groupify) :
+               defaultMetric.getScore(node, groupify);
+    }
 
     @Override
     public double getSuppressionFactor() {
@@ -143,6 +150,11 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     @Override
     public boolean isPrecomputed() {
         return this.precomputed;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return isPrecomputed() ? precomputedMetric.isScoreFunctionSupported() : defaultMetric.isScoreFunctionSupported();
     }
 
     /**

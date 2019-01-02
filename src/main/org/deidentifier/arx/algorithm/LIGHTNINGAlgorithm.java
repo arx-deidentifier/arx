@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,12 @@ package org.deidentifier.arx.algorithm;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.metric.InformationLoss;
 
 import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
@@ -42,48 +44,61 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
      * @param solutionSpace
      * @param checker
      * @param timeLimit
+     * @param checkLimit 
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace,
-                                           NodeChecker checker,
-                                           int timeLimit) {
-        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit);
+    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker, int timeLimit, int checkLimit) {
+        return new LIGHTNINGAlgorithm(solutionSpace, checker, timeLimit, checkLimit);
     }
+
     /** Property */
     private final PredictiveProperty propertyChecked;
     /** Property */
     private final PredictiveProperty propertyExpanded;
+    /** Property */
+    private final PredictiveProperty propertyInsufficientUtility;
+
     /** The number indicating how often a depth-first-search will be performed */
     private final int                stepping;
     /** Time limit */
     private final int                timeLimit;
-
     /** The start time */
     private long                     timeStart;
+    /** The number of checks */
+    private int                      checkCount;
+    /** The number of checks */
+    private final int                checkLimit;
     
     /**
     * Constructor
     * @param space
     * @param checker
     * @param timeLimit
+    * @param checkLimit
     */
-    private LIGHTNINGAlgorithm(SolutionSpace space, NodeChecker checker, int timeLimit) {
+    private LIGHTNINGAlgorithm(SolutionSpace space, TransformationChecker checker, int timeLimit, int checkLimit) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         int stepping = space.getTop().getLevel();
         this.stepping = stepping > 0 ? stepping : 1;
         this.propertyChecked = space.getPropertyChecked();
         this.propertyExpanded = space.getPropertyExpanded();
+        this.propertyInsufficientUtility = space.getPropertyInsufficientUtility();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.timeLimit = timeLimit;
+        this.checkLimit = checkLimit;
         if (timeLimit <= 0) { 
             throw new IllegalArgumentException("Invalid time limit. Must be greater than zero."); 
+        }
+        if (checkLimit <= 0) { 
+            throw new IllegalArgumentException("Invalid step limit. Must be greater than zero."); 
         }
     }
 
     @Override
-    public void traverse() {
+    public boolean traverse() {
         timeStart = System.currentTimeMillis();
+        checkCount = 0;
         PriorityQueue<Long> queue = new PriorityQueue<Long>(stepping, new Comparator<Long>() {
             @Override
             public int compare(Long arg0, Long arg1) {
@@ -105,11 +120,15 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
                 } else {
                     expand(queue, next);
                 }
-                if (getTime() > timeLimit) {
-                    return;
+                if (mustStop()) {
+                    break;
                 }
             }
         }
+        
+
+        // Return whether the optimum has been found
+        return !this.mustStop() && (this.getGlobalOptimum() != null);
     }
     
     /**
@@ -118,9 +137,12 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     */
     private void assureChecked(final Transformation transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
-            transformation.setChecked(checker.check(transformation, true));
+            transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             trackOptimum(transformation);
-            progress((double)(System.currentTimeMillis() - timeStart) / (double)timeLimit);
+            checkCount++;
+            double progressSteps = (double)checkCount / (double)checkLimit;
+            double progressTime = (double)(System.currentTimeMillis() - timeStart) / (double)timeLimit;
+            progress(Math.max(progressSteps, progressTime));
         }
     }
 
@@ -130,15 +152,16 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param transformation
     */
     private void dfs(PriorityQueue<Long> queue, Transformation transformation) {
-        if (getTime() > timeLimit) {
+        if (mustStop()) {
             return;
         }
         Transformation next = expand(queue, transformation);
         if (next != null) {
-            queue.remove(next);
+            queue.remove(next.getIdentifier());
             dfs(queue, next);
         }
     }
+    
     /**
     * Returns the successor with minimal information loss, if any, null otherwise.
     * @param queue
@@ -146,20 +169,20 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @return
     */
     private Transformation expand(PriorityQueue<Long> queue, Transformation transformation) {
+        
         Transformation result = null;
-
         LongArrayList list = transformation.getSuccessors();
         for (int i = 0; i < list.size(); i++) {
             long id = list.getQuick(i);
             Transformation successor = solutionSpace.getTransformation(id);
-            if (!successor.hasProperty(propertyExpanded)) {
+            if (!successor.hasProperty(propertyExpanded) && !successor.hasProperty(propertyInsufficientUtility)) {
                 assureChecked(successor);
                 queue.add(successor.getIdentifier());
                 if (result == null || successor.getInformationLoss().compareTo(result.getInformationLoss()) < 0) {
                     result = successor;
                 }
             }
-            if (getTime() > timeLimit) {
+            if (mustStop()) {
                 return null;
             }
         }
@@ -168,11 +191,12 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     }
     
     /**
-     * Returns the current execution time
+     * Returns whether we have exceeded the allowed number of steps or time.
      * @return
      */
-    private int getTime() {
-        return (int)(System.currentTimeMillis() - timeStart);
+    private boolean mustStop() {
+        return ((int)(System.currentTimeMillis() - timeStart) > timeLimit) ||
+               (checkCount >= checkLimit);
     }
 
     /**
@@ -181,18 +205,26 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @return
     */
     private boolean prune(Transformation transformation) {
-        // Depending on monotony of metric we choose to compare either IL or monotonic subset with the global optimum
-        boolean prune = false;
-        if (getGlobalOptimum() != null) {
+        
+        // Already expanded
+        if (transformation.hasProperty(propertyExpanded) ||
+            transformation.hasProperty(propertyInsufficientUtility)){
+            return true;
+        }
+        
+        // If a current optimum has been discovered
+        Transformation optimum = getGlobalOptimum();
+        if (optimum != null) {
             
-            // A Transformation (and it's direct and indirect successors, respectively) can be pruned if
-            // the information loss is monotonic and the nodes's IL is greater or equal than the IL of the
-            // global maximum (regardless of the anonymity criterion's monotonicity)
-            // TODO: We could use this for predictive tagging as well!
-            if (checker.getMetric().isMonotonic(checker.getConfiguration().getMaxOutliers())) {
-                prune = transformation.getLowerBound().compareTo(getGlobalOptimum().getInformationLoss()) >= 0;
+            // We can compare lower bounds on quality
+            InformationLoss<?> bound = transformation.getLowerBound();
+            if (bound != null && bound.compareTo(optimum.getInformationLoss()) >= 0) {
+                transformation.setProperty(propertyInsufficientUtility);
+                return true;
             }
         }
-        return (prune || transformation.hasProperty(propertyExpanded));
+        
+        // We have to process this transformation
+        return false;
     }
 }

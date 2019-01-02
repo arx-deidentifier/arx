@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,9 +17,7 @@
  */
 
 /**
- * This package provides algorithms which traverse the generalization lattice.
- * An abstract base class can be utilized to implement novel algorithms within
- * the anonymization framework.
+ * This package provides implementations of search algorithms
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

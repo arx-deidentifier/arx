@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,10 +21,10 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXCostBenefitConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -71,15 +71,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     private QualityMetadata<Double>     maximalPayout;
 
     /**
-     * Creates a new instance. Default constructor which treats all transformation methods equally.
-     * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
-     *                                the prosecutor model will be assumed, otherwise
-     */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel) {
-       this(journalistAttackerModel, 0.5d);
-    }
-    
-    /**
      * Creates a new instance
      * @param journalistAttackerModel If set to true, the journalist attacker model will be assumed, 
      *                                the prosecutor model will be assumed, otherwise
@@ -90,7 +81,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
      *            generalization. The values in between can be used for
      *            balancing both methods.
      */
-    public MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
+    protected MetricSDNMPublisherPayout(boolean journalistAttackerModel, double gsFactor) {
         super(false, false, false, gsFactor);
         this.journalistAttackerModel = journalistAttackerModel;
     }
@@ -169,7 +160,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Publisher payout");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         result.addProperty("Attacker model", (journalistAttackerModel ? "Journalist" : "Prosecutor"));
@@ -211,11 +202,11 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         double bound = 0;
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
+        DataAggregationInformation aggregation = super.getAggregationInformation();
+        
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         double maxPayout = this.config.getPublisherBenefit();
         double payout = 0d;
-        DistributionAggregateFunction[] microaggregationFunctions = super.getMicroaggregationFunctions();
-        int microaggregationStartIndex = super.getMicroaggregationStartIndex();
         
         // Compute
         while (entry != null) {
@@ -224,9 +215,9 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
                 double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation,
                                                                                                               entry,
                                                                                                               shares,
-                                                                                                              microaggregationFunctions,
-                                                                                                              microaggregationStartIndex,
+                                                                                                              aggregation,
                                                                                                               maxIL);
+                
                 double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
                 double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
                 real += !entry.isNotOutlier ? (sFactor * entry.count * maxPayout) : 
@@ -250,16 +241,14 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         // Prepare
         double gFactor = super.getGeneralizationFactor();
         double sFactor = super.getSuppressionFactor();
-        DistributionAggregateFunction[] microaggregationFunctions = super.getMicroaggregationFunctions();
-        int microaggregationStartIndex = super.getMicroaggregationStartIndex();
+        DataAggregationInformation aggregation = super.getAggregationInformation();
         
         // Compute
         double adversarySuccessProbability = this.getSuccessProbability(entry);
         double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation,
                                                                                                       entry,
                                                                                                       shares,
-                                                                                                      microaggregationFunctions,
-                                                                                                      microaggregationStartIndex,
+                                                                                                      aggregation,
                                                                                                       maxIL);
         double maxPayout = this.config.getPublisherBenefit();
         double realPayout = modelRisk.getExpectedPublisherPayout(informationLoss, adversarySuccessProbability);
@@ -288,7 +277,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         while (entry != null) {
             if (entry.count > 0) {
-                double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, null, 0, maxIL);
+                double informationLoss = MetricSDNMEntropyBasedInformationLoss.getEntropyBasedInformationLoss(transformation, entry, shares, null, maxIL);
                 double boundPayout = modelRisk.getExpectedPublisherPayout(informationLoss, 0d);
                 bound += gFactor * entry.count * (maxPayout - boundPayout);
             }
@@ -315,6 +304,6 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
         this.maximalPayout = new QualityMetadata<Double>(MAXIMAL_PAYOUT, super.getNumRecords(config, input) * this.config.getPublisherBenefit());
                 
         // Calculate MaxIL
-        this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, super.getMicroaggregationDomainSizes());
+        this.maxIL = MetricSDNMEntropyBasedInformationLoss.getMaximalEntropyBasedInformationLoss(this.shares, super.getAggregationInformation());
     }
 }

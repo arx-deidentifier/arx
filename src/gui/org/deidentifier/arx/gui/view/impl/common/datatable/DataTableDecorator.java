@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,17 +62,6 @@ public class DataTableDecorator extends CellPainterWrapper {
      * there should be no border rendered by default.
      */
     private final BorderStyle  defaultBorderStyle;
-
-    /**
-     * Creates a new LabelLineBorderDecorator wrapping the given interior
-     * painter and no default border style.
-     * 
-     * @param interiorPainter
-     *            The painter to be wrapped by this decorator.
-     */
-    public DataTableDecorator(ICellPainter interiorPainter) {
-        this(interiorPainter, null);
-    }
 
     /**
      * Creates a new LabelLineBorderDecorator wrapping the given interior

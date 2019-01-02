@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,11 +19,15 @@ package org.deidentifier.arx.aggregates;
 
 import java.text.ParseException;
 import java.util.Map;
+import java.util.Set;
 
+import org.deidentifier.arx.ARXClassificationConfiguration;
+import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
+import org.deidentifier.arx.exceptions.UnexpectedErrorException;
 
 
 /**
@@ -32,7 +36,7 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
  * 
  * @author Fabian Prasser
  */
-public class StatisticsBuilderInterruptible {
+public class StatisticsBuilderInterruptible { // NO_UCD
 
     /** The backing builder. */
     private StatisticsBuilder builder;
@@ -54,14 +58,16 @@ public class StatisticsBuilderInterruptible {
      * @throws ParseException
      */
     public StatisticsClassification getClassificationPerformance(String clazz,
-                                                                 ARXLogisticRegressionConfiguration config) throws InterruptedException {
+                                                                 ARXClassificationConfiguration<?> config) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(clazz, config);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
+                throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -75,18 +81,45 @@ public class StatisticsBuilderInterruptible {
      */
     public StatisticsClassification getClassificationPerformance(String[] features,
                                                                  String clazz,
-                                                                 ARXLogisticRegressionConfiguration config) throws InterruptedException {
+                                                                 ARXClassificationConfiguration<?> config) throws InterruptedException {
         try {
             return builder.getClassificationPerformance(features, clazz, config);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
+                throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
 
+    /**
+     * Creates a new set of statistics for the given classification task
+     * @param features - The feature attributes
+     * @param clazz - The class attributes
+     * @param config - The configuration
+     * @param scaling - Feature scaling
+     * @throws ParseException
+     */
+    public StatisticsClassification getClassificationPerformance(String[] features,
+                                                                 String clazz,
+                                                                 ARXClassificationConfiguration<?> config,
+                                                                 ARXFeatureScaling scaling) throws InterruptedException {
+        try {
+            return builder.getClassificationPerformance(features, clazz, config, scaling);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+    
     /**
      * Returns a contingency table for the given columns.
      *
@@ -116,8 +149,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -148,8 +180,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -172,8 +203,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -212,8 +242,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -250,8 +279,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -276,8 +304,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -296,8 +323,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -320,8 +346,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -345,8 +370,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -370,8 +394,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -390,8 +413,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -413,8 +435,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -437,8 +458,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " +
-                                               e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -460,7 +480,7 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -473,6 +493,81 @@ public class StatisticsBuilderInterruptible {
      */
     public int getProgress() {
         return builder.getProgress();
+    }
+
+    /**
+     * Returns data quality according to various models.
+     * 
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics() throws InterruptedException {
+        try {
+            return builder.getQualityStatistics();
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @return
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output) throws InterruptedException {
+        try {
+            return builder.getQualityStatistics(output);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @param qis
+     * @return
+     * @throws InterruptedException 
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output, Set<String> qis) throws InterruptedException {
+        try {
+            return builder.getQualityStatistics(output, qis);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
+     * Returns data quality according to various models.
+     * @param qis
+     * @return
+     * @throws InterruptedException 
+     */
+    public StatisticsQuality getQualityStatistics(Set<String> qis) throws InterruptedException {
+        try {
+            return builder.getQualityStatistics(qis);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
     }
 
     /**
@@ -489,11 +584,10 @@ public class StatisticsBuilderInterruptible {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
-
     /**
      * Interrupts all computations.
      */

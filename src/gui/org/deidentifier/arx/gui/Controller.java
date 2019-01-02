@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,8 +40,10 @@ import java.util.Random;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -57,12 +59,13 @@ import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.aggregates.HierarchyBuilder;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration;
 import org.deidentifier.arx.gui.model.ModelAuditTrailEntry;
+import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelCriterion;
 import org.deidentifier.arx.gui.model.ModelDDisclosurePrivacyCriterion;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
-import org.deidentifier.arx.gui.model.ModelBLikenessCriterion;
 import org.deidentifier.arx.gui.model.ModelExplicitCriterion;
 import org.deidentifier.arx.gui.model.ModelLDiversityCriterion;
 import org.deidentifier.arx.gui.model.ModelNodeFilter;
@@ -73,10 +76,10 @@ import org.deidentifier.arx.gui.model.ModelViewConfig.Mode;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
+import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProject;
 import org.deidentifier.arx.gui.view.impl.menu.DialogProperties;
 import org.deidentifier.arx.gui.view.impl.menu.DialogQueryResult;
-import org.deidentifier.arx.gui.view.impl.menu.DialogOpenHierarchy;
 import org.deidentifier.arx.gui.view.impl.wizard.ARXWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardResult;
@@ -567,9 +570,8 @@ public class Controller implements IView {
 
     /**
      * Starts the anonymization.
-     * @param heuristicSearch 
      */
-    public void actionMenuEditAnonymize(boolean heuristicSearch) {
+    public void actionMenuEditAnonymize() {
 
         if (model == null) {
             main.showInfoDialog(main.getShell(),
@@ -591,37 +593,28 @@ public class Controller implements IView {
             return;
         }
 
-        // Query for execution time
-        int timeLimit = 0;
-        if (heuristicSearch) {
-            String output = this.actionShowInputDialog(main.getShell(), 
-                                                       Resources.getMessage("Controller.38"),  //$NON-NLS-1$
-                                                       Resources.getMessage("Controller.79") + //$NON-NLS-1$
-                                                       Resources.getMessage("Controller.80"), "0.5", //$NON-NLS-1$ //$NON-NLS-2$
-                                                       new IInputValidator(){
-                                                        public String isValid(String arg0) {
-                                                            // TODO: Ugly hack
-                                                            try { 
-                                                                double val = Double.parseDouble(arg0); 
-                                                                return val>0d ? null : Resources.getMessage("Controller.98");  //$NON-NLS-1$
-                                                            } catch (Exception e) {
-                                                                return Resources.getMessage("Controller.99"); //$NON-NLS-1$
-                                                            }
-                                                        }
-            });
-            if (output == null) {
-                return;
-            }
-            timeLimit = Double.valueOf(Double.valueOf(output) * 1000d).intValue();
+        try {
+            model.createConfig(); // This must be performed before opening the dialog
+        } catch (Exception e) {
+            main.showInfoDialog(main.getShell(),
+                                Resources.getMessage("Controller.5"), //$NON-NLS-1$
+                                Resources.getMessage("Controller.14") + e.getMessage()); //$NON-NLS-1$
+            return;
         }
-
+        
+        // Open configuration dialog
+        ModelAnonymizationConfiguration configuration = this.actionShowLocalAnonymizationDialog();
+        if (configuration == null) {
+            return;
+        }
+        
         // Reset
         actionMenuEditReset();
         
         // Run the worker
-        final WorkerAnonymize worker = new WorkerAnonymize(model, timeLimit);
+        final WorkerAnonymize worker = new WorkerAnonymize(model);
         main.showProgressDialog(Resources.getMessage("Controller.12"), worker); //$NON-NLS-1$
-
+        
         // Show errors
         if (worker.getError() != null) {
             
@@ -660,16 +653,21 @@ public class Controller implements IView {
         if (worker.getResult() != null) {
 
             // Retrieve optimal result
-            final ARXResult result = worker.getResult();
+            Pair<Pair<ARXResult, DataHandle>, ARXProcessStatistics> allResults = worker.getResult();
+            Pair<ARXResult, DataHandle> workerResult = allResults.getFirst();
+            final ARXResult result = workerResult.getFirst();
             model.createClonedConfig();
             model.setResult(result);
             model.getClipboard().clearClipboard();
-            
+            model.setProcessStatistics(allResults.getSecond());
 
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
                                                          model.getInitialNodesInViewer());
-            filter.initialize(result);
+            filter.initialize(result, allResults.getSecond().isLocalTransformation());
+            if (allResults.getSecond().isLocalTransformation()) {
+                filter.reset(workerResult.getSecond(), workerResult.getSecond() == null ? null : workerResult.getSecond().getDefinition());
+            }
             model.setNodeFilter(filter);
             
             // Update model
@@ -677,20 +675,32 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.RESULT, result));
             model.getClipboard().addInterestingTransformations(model);
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
+            
+            // If result has been found
             if (result.isResultAvailable()) {
-                model.setOutput(result.getOutput(false), result.getGlobalOptimum());
+
+                // Update output
+                model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
+
+                // Classification parameters
+                if (model.setFeaturesAndClasses(model.getOutputDefinition())) {
+                    update(new ModelEvent(this,
+                                          ModelPart.CLASSIFICATION_CONFIGURATION,
+                                          result.getGlobalOptimum()));
+                }
+
+                // Events
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
-                                      result.getOutput(false)));
+                                      workerResult.getSecond()));
                 update(new ModelEvent(this,
                                       ModelPart.SELECTED_NODE,
                                       result.getGlobalOptimum()));
 
                 // Do not sort if dataset is too large
                 if (model.getMaximalSizeForComplexOperations() == 0 ||
-                    model.getInputConfig().getInput().getHandle().getNumRows() <=
-                    model.getMaximalSizeForComplexOperations()) {
+                    model.getInputConfig().getInput().getHandle().getNumRows() <= model.getMaximalSizeForComplexOperations()) {
                     this.model.getViewConfig().setSubset(true);
                     this.model.getViewConfig().setMode(Mode.GROUPED);
                     this.updateViewConfig(true);
@@ -844,6 +854,45 @@ public class Controller implements IView {
     }
 
     /**
+     * Initializes the hierarchy for the currently selected attribute with a scheme
+     * for attribute suppression.
+     */
+    public void actionMenuEditCreateAttributeSuppressionHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] array;
+        try {
+            array = new String[values.length][2];
+            for (int i = 0; i < values.length; i++) {
+
+                String value = values[i];
+                String coded = "*"; //$NON-NLS-1$
+                array[i] = new String[] {value, coded};
+            }
+        } catch (Exception e) {
+            this.actionShowInfoDialog(main.getShell(), Resources.getMessage("Controller.159"), Resources.getMessage("Controller.153")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+    }
+    /**
      * Find and replace action
      */
     public void actionMenuEditFindReplace() {
@@ -958,6 +1007,7 @@ public class Controller implements IView {
         model.setOutput(null, null);
         model.setSelectedNode(null);
         model.getClipboard().clearClipboard();
+        model.setProcessStatistics(null);
 
         update(new ModelEvent(this, ModelPart.SELECTED_VIEW_CONFIG, null));
         update(new ModelEvent(this, ModelPart.RESULT, null));
@@ -1010,7 +1060,7 @@ public class Controller implements IView {
         }
 
         // Check node
-        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+        if (model.getOutputTransformation().getAnonymity() != Anonymity.ANONYMOUS) {
             if (!main.showQuestionDialog(main.getShell(),
                                          Resources.getMessage("Controller.34"), //$NON-NLS-1$
                                          Resources.getMessage("Controller.156"))) //$NON-NLS-1$
@@ -1035,7 +1085,7 @@ public class Controller implements IView {
                                                                            model.getOutputDefinition(),
                                                                            model.getOutputConfig().getConfig(),
                                                                            model.getResult(),
-                                                                           model.getOutputNode(),
+                                                                           model.getOutputTransformation(),
                                                                            model.getOutput(),
                                                                            model);
 
@@ -1124,7 +1174,7 @@ public class Controller implements IView {
         }
 
         // Check node
-        if (model.getOutputNode().getAnonymity() != Anonymity.ANONYMOUS) {
+        if (model.getOutputTransformation().getAnonymity() != Anonymity.ANONYMOUS) {
             if (!main.showQuestionDialog(main.getShell(),
                                          Resources.getMessage("Controller.34"), //$NON-NLS-1$
                                          Resources.getMessage("Controller.35"))) //$NON-NLS-1$
@@ -1529,7 +1579,7 @@ public class Controller implements IView {
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
                               model.getInputConfig().getResearchSubset()));
-
+        
         // Update view config
         if (model.getOutput() != null) {
             update(new ModelEvent(this,
@@ -1541,7 +1591,13 @@ public class Controller implements IView {
         if (tempSelectedNode != null) {
             this.model.setSelectedNode(tempSelectedNode);
             this.update(new ModelEvent(this, ModelPart.SELECTED_NODE, model.getSelectedNode()));
-            this.actionApplySelectedTransformation();
+            
+            // Backwards compatibility
+            if (model.getOutput() == null) {
+                this.actionApplySelectedTransformation();
+            } else {
+                this.update(new ModelEvent(this, ModelPart.OUTPUT, model.getOutput()));
+            }
         }
 
         // We just loaded the model, so there are no changes
@@ -1557,11 +1613,26 @@ public class Controller implements IView {
 
     /**
      * Shows an input dialog for selecting a charset.
-     * @param shell
      * @return
      */
-    public Charset actionShowCharsetInputDialog(final Shell shell) {
-        return main.showCharsetInputDialog(shell);
+    public Charset actionShowCharsetInputDialog() {
+        final Charset[] result = new Charset[1];
+        main.getShell().getDisplay().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                result[0] = main.showCharsetInputDialog(main.getShell());
+            }
+        });
+        return result[0];
+    }
+    
+    /**
+     * Shows a dialog for configuring classifiers
+     * @param config 
+     * @return 
+     */
+    public ARXClassificationConfiguration<?> actionShowClassificationConfigurationDialog(ARXClassificationConfiguration<?> config) {
+        return main.showClassificationConfigurationDialog(config);
     }
 
     /**
@@ -1670,6 +1741,15 @@ public class Controller implements IView {
     }
 
     /**
+     * Shows a dialog for configuration of local anonymization.
+     * @return Returns the parameters selected by the user. Returns a pair. 
+     *         First: max. time per iteration. Second: min. records per iteration.
+     */
+    public ModelAnonymizationConfiguration actionShowLocalAnonymizationDialog() {
+        return main.showLocalAnonymizationDialog(model);
+    }
+
+    /**
      * Shows a dialog for selecting multiple elements
      * @param shell
      * @param title
@@ -1724,7 +1804,6 @@ public class Controller implements IView {
                                          final Worker<?> worker) {
         main.showProgressDialog(text, worker);
     }
-
     /**
      * Shows a question dialog.
      *
@@ -1738,6 +1817,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
+    
     /**
      * Shows a question dialog.
      *
@@ -1749,7 +1829,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(this.main.getShell(), header, text);
     }
-    
+
     /**
      * Internal method for showing a "save file" dialog.
      *
@@ -1851,7 +1931,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-
+    
     /**
      * Creates a subset via random sampling
      */
@@ -1899,7 +1979,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.133")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-    
+
     /**
      * Registers a listener at the controller.
      *

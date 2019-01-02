@@ -340,7 +340,8 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         // Chart
         this.rootChart = new Composite(sash, SWT.NONE);
         this.rootChart.setLayout(SWTUtil.createGridLayout(1));
-        ComponentTitledSeparator separator1 = new ComponentTitledSeparator(rootChart, LABEL_DISTRIBUTION);
+        ComponentTitledSeparator separator1 = new ComponentTitledSeparator(rootChart, SWT.NONE);
+        separator1.setText(LABEL_DISTRIBUTION);
         separator1.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         // Stats
@@ -369,7 +370,8 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
         // Table
         this.rootTable = new Composite(sash, SWT.NONE);
         this.rootTable.setLayout(SWTUtil.createGridLayout(1));
-        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(rootTable, LABEL_COLUMN_PROPERTIES);
+        ComponentTitledSeparator separator2 = new ComponentTitledSeparator(rootTable, SWT.NONE);
+        separator2.setText(LABEL_COLUMN_PROPERTIES);
         separator2.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         this.tableAttributes = createTable(rootTable, new String[]{LABEL_ATTRIBUTE, LABEL_CONTRIBUTION, LABEL_AVERAGE_SIZE}, new String[]{LABEL_CONTRIBUTION});
         this.tableAttributes.setLayoutData(SWTUtil.createFillGridData());

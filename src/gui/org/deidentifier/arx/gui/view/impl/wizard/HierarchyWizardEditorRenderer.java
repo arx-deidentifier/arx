@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,9 +52,6 @@ public class HierarchyWizardEditorRenderer<T> {
         
         /** Var. */
         public Rectangle rectangle2;
-        
-        /** Var. */
-        public int       depth;
         
         /** Var. */
         public boolean   enabled;
@@ -418,7 +415,6 @@ public class HierarchyWizardEditorRenderer<T> {
                 List<HierarchyWizardGroupingGroup<T>> list = modelGroups.get(i);
                 HierarchyWizardGroupingGroup<T> group = list.get(j % list.size());
                 RenderedGroup<T> element = new RenderedGroup<T>();
-                element.depth = i + 1;
                 element.enabled = j < list.size();
                 
                 if (layout.isPretty() && showIntervals){
@@ -508,7 +504,6 @@ public class HierarchyWizardEditorRenderer<T> {
                     int factor = i / modelIntervals.size();
                     element.offset = dtype.multiply(width, factor);
                 }
-                element.depth = 0;
                 element.enabled = i < modelIntervals.size();
                 T min = interval.min;
                 T max = interval.max;

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,25 +64,6 @@ public abstract class EditorString implements IEditor<String> {
         this.createControl(composite);
     }
     
-    /**
-     * Creates a new instance
-     *
-     * @param category
-     * @param label
-     * @param ok
-     * @param multi
-     */
-    public EditorString(final String category,
-                        final String label,
-                        final Button ok,
-                        final boolean multi) {
-        
-        this.category = category;
-        this.label = label;
-        this.multi = multi;
-        this.ok = ok;
-    }
-
     @Override
     public void createControl(final Composite parent) {
         

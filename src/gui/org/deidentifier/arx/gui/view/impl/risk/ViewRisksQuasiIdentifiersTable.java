@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -110,8 +110,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
         Composite root = new Composite(parent, SWT.NONE);
         root.setLayout(new FillLayout());
 
-        table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER |
-                SWT.V_SCROLL | SWT.FULL_SELECTION);
+        table = SWTUtil.createTableDynamic(root, SWT.SINGLE | SWT.BORDER | SWT.V_SCROLL | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
@@ -219,6 +218,7 @@ public class ViewRisksQuasiIdentifiersTable extends ViewRisks<AnalysisContextRis
                 // Enable drawing and redraw
                 table.setRedraw(true);
                 table.redraw();
+                table.getParent().pack();
 
                 // Update status
                 if (risks.getAttributeRisks().length == 0) {

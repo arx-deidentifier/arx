@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import de.linearbits.objectselector.datatypes.DataType;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class DataSelector {
+public class DataSelector { // NO_UCD
     
     /**
      * An accessor for data elements.

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,66 +22,57 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
 
 /**
+ * Configuration for component data table
  * 
  * @author Fabian Prasser
- *
  */
 public class CTConfiguration {
 
-    /**  TODO */
+    /** Field */
     public static final int COLUMN_HEADER_LAYOUT_DEFAULT    = 0;
     
-    /**  TODO */
+    /** Field */
     public static final int COLUMN_HEADER_LAYOUT_FILL_EQUAL = 1;
     
-    /**  TODO */
+    /** Field */
     public static final int COLUMN_HEADER_LAYOUT_FILL  = 2;
 
-    /**  TODO */
+    /** Field */
     public static final int ROW_HEADER_LAYOUT_DEFAULT       = 0;
     
-    /**  TODO */
+    /** Field */
     public static final int ROW_HEADER_LAYOUT_FILL          = 1;
 
-    /**  TODO */
+    /** Field */
     public static final int STYLE_TABLE                     = 1;
     
-    /**  TODO */
+    /** Field */
     public static final int STYLE_GRID                      = 2;
 
-    /**  TODO */
+    /** Field */
     private final int       style;
     
-    /**  TODO */
+    /** Field */
     private int             horizontalAlignment             = SWT.CENTER;
     
-    /**  TODO */
+    /** Field */
     private int             columnHeaderLayout              = CTConfiguration.COLUMN_HEADER_LAYOUT_DEFAULT;
     
-    /**  TODO */
+    /** Field */
     private int             rowHeaderLayout                 = CTConfiguration.ROW_HEADER_LAYOUT_DEFAULT;
     
-    /**  TODO */
+    /** Field */
     private boolean         rowSelectionEnabled             = false;
     
-    /**  TODO */
+    /** Field */
     private boolean         columnSelectionEnabled          = true;
     
-    /**  TODO */
+    /** Field */
     private boolean         cellSelectionEnabled            = true;
     
-    /**  TODO */
+    /** Field */
     private Font            font;
 
-    /**
-     * Creates a new table.
-     * @param parent
-     */
-    public CTConfiguration(Control parent){
-        this.font = parent.getFont();
-        this.style = STYLE_TABLE;
-    }
-    
     /**
      * Creates a new grid or table.
      * @param parent

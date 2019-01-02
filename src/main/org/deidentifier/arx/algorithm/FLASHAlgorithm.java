@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ package org.deidentifier.arx.algorithm;
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.algorithm.FLASHPhaseConfiguration.PhaseAnonymityProperty;
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.DependentAction;
 import org.deidentifier.arx.framework.lattice.DependentAction.NodeActionConstant;
@@ -45,7 +45,7 @@ public class FLASHAlgorithm {
      * @return
      */
     public static AbstractAlgorithm create(final SolutionSpace solutionSpace,
-                                           final NodeChecker checker,
+                                           final TransformationChecker checker,
                                            final FLASHStrategy strategy) {
 
         // Init
@@ -107,7 +107,7 @@ public class FLASHAlgorithm {
      * @return
      */
     private static AbstractAlgorithm createFullFull(final SolutionSpace solutionSpace,
-                                                    final NodeChecker checker,
+                                                    final TransformationChecker checker,
                                                     final FLASHStrategy strategy) {
 
         // We focus on the anonymity property
@@ -162,7 +162,7 @@ public class FLASHAlgorithm {
      * @return
      */
     private static AbstractAlgorithm createFullNone(final SolutionSpace solutionSpace,
-                                                    final NodeChecker checker,
+                                                    final TransformationChecker checker,
                                                     final FLASHStrategy strategy) {
 
         /* *******************************
@@ -276,7 +276,7 @@ public class FLASHAlgorithm {
      * @return
      */
     private static AbstractAlgorithm createNoneFull(final SolutionSpace solutionSpace,
-                                                    final NodeChecker checker,
+                                                    final TransformationChecker checker,
                                                     final FLASHStrategy strategy) {
 
         // We focus on the anonymity property
@@ -332,7 +332,7 @@ public class FLASHAlgorithm {
      * @return
      */
     private static AbstractAlgorithm createNoneNone(final SolutionSpace solutionSpace,
-                                                    NodeChecker checker,
+                                                    TransformationChecker checker,
                                                     FLASHStrategy strategy) {
 
         // We focus on the anonymity property
@@ -374,7 +374,7 @@ public class FLASHAlgorithm {
      * @return
      */
     private static AbstractAlgorithm createPartialFull(final SolutionSpace solutionSpace,
-                                                       final NodeChecker checker,
+                                                       final TransformationChecker checker,
                                                        final FLASHStrategy strategy) {
         /* *******************************
          * BINARY PHASE
@@ -491,7 +491,7 @@ public class FLASHAlgorithm {
      * @return
      */
     private static AbstractAlgorithm createPartialNone(final SolutionSpace solutionSpace,
-                                                       final NodeChecker checker,
+                                                       final TransformationChecker checker,
                                                        final FLASHStrategy strategy) {
         /* *******************************
          * BINARY PHASE

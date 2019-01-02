@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.certificate.elements.ElementData;
@@ -41,6 +42,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
@@ -93,14 +95,6 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     protected MetricMDNMPrecision(boolean monotonicWithGeneralization, boolean monotonicWithSuppression, boolean independent, double gsFactor, AggregateFunction function){
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor, function);
     }
-    
-    /**
-     * Creates a new instance.
-     * @param gsFactor
-     */
-    protected MetricMDNMPrecision(double gsFactor) {
-        super(true, false, false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
-    }
 
     /**
      * Creates a new instance.
@@ -125,6 +119,54 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
                                        this.getAggregateFunction()                  // aggregate function
                                        );
     }
+    
+    @Override
+    /**
+     * Implements the score function described in Section 5.1 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (k < 0) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
+        // Prepare
+        int[] transformation = node.getGeneralization();
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        
+        int suppressedTuples = 0;
+        int unsuppressedTuples = 0;
+        
+        // For each group
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            
+            // Calculate number of affected records
+            unsuppressedTuples += m.isNotOutlier ? m.count : 0;
+            suppressedTuples += m.isNotOutlier ? 0 : m.count;
+            suppressedTuples += m.pcount - m.count;
+
+            // Next group
+            m = m.nextOrdered;
+        }
+        
+        // Calculate score
+        BigFraction score = new BigFraction(0);
+        for (int i = 0; i<dimensionsGeneralized; i++) {
+            BigFraction value = heights[i] == 0 ? BigFraction.ZERO : new BigFraction(transformation[i]).divide(new BigFraction(heights[i]));
+            score = score.add(new BigFraction(unsuppressedTuples).multiply(value).add(new BigFraction(suppressedTuples)));
+        }
+        
+        // Divide by sensitivity and multiply with -1 so that higher values are better
+        score = score.multiply(BigFraction.MINUS_ONE.divide(new BigFraction(getDimensionsGeneralized())));
+        if (k > 1) score = score.divide(new BigFraction(k - 1));
+        
+        // Return score
+        return new ILScore(score);
+    }
 
     @Override
     public boolean isAbleToHandleMicroaggregation() {
@@ -135,12 +177,17 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     public boolean isGSFactorSupported() {
         return true;
     }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return true;
+    }
 
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Precision");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
@@ -158,8 +205,8 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
         int dimensions = getDimensions();
         int dimensionsGeneralized = getDimensionsGeneralized();
         int dimensionsAggregated = getDimensionsAggregated();
-        int microaggregationStart = getMicroaggregationStartIndex();
-        DistributionAggregateFunction[] microaggregationFunctions = getMicroaggregationFunctions();
+        int[] microaggregationIndices = getAggregationIndicesNonGeneralized();
+        DistributionAggregateFunction[] microaggregationFunctions = getAggregationFunctionsNonGeneralized();
         
         int[] transformation = node.getGeneralization();
         double[] result = new double[dimensions];
@@ -180,8 +227,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
 
             // Calculate avg. error
             for (int i = 0; i < dimensionsAggregated; i++) {
-                double share = (double) m.count * super.getError(microaggregationFunctions[i],
-                                                                 m.distributions[microaggregationStart + i]);  
+                double share = (double) m.count * microaggregationFunctions[i].getInformationLoss(m.distributions[microaggregationIndices[i]]);
                 result[dimensionsGeneralized + i] += m.isNotOutlier ? share * gFactor : 
                                                                       (sFactor == 1d ? m.count : share + sFactor * ((double) m.count - share));
             }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@ package org.deidentifier.arx.algorithm;
 
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
-import org.deidentifier.arx.framework.check.NodeChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -35,19 +36,19 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 public abstract class AbstractAlgorithm {
 
     /** The optimal transformation. */
-    private Transformation     globalOptimum          = null;
+    private Transformation          globalOptimum          = null;
 
     /** The optimal information loss. */
-    private InformationLoss<?> optimalInformationLoss = null;
+    private InformationLoss<?>      optimalInformationLoss = null;
 
     /** The listener */
-    private ARXListener      listener               = null;
+    private ARXListener             listener               = null;
 
     /** A node checker. */
-    protected NodeChecker      checker                = null;
+    protected TransformationChecker checker                = null;
 
     /** The lattice. */
-    protected SolutionSpace    solutionSpace          = null;
+    protected SolutionSpace         solutionSpace          = null;
 
     /**
      * Walks the lattice.
@@ -56,7 +57,7 @@ public abstract class AbstractAlgorithm {
      * @param checker The checker
      */
     protected AbstractAlgorithm(final SolutionSpace  solutionSpace,
-                                final NodeChecker checker) {
+                                final TransformationChecker checker) {
         this.checker = checker;
         this.solutionSpace = solutionSpace;
     }
@@ -80,13 +81,14 @@ public abstract class AbstractAlgorithm {
     
     /**
      * Implement this method in order to provide a new algorithm.
+     * 
+     * @return Whether the result is optimal
      */
-    public abstract void traverse();
+    public abstract boolean traverse();
 
     /**
-     * Determine information loss of the given node if it can be
-     * used for estimating minimum and maximum information
-     * loss for tagged nodes.
+     * Determine information loss implied by the given transformation if it can be
+     * used for estimating minimum and maximum information loss for tagged nodes.
      *
      * @param transformation
      */
@@ -100,7 +102,7 @@ public abstract class AbstractAlgorithm {
                 transformation.setInformationLoss(loss.getInformationLoss());
                 transformation.setLowerBound(loss.getLowerBound());
             } else {
-                transformation.setChecked(checker.check(transformation, true));
+                transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             }
         }
     }

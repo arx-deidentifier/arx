@@ -88,7 +88,7 @@ public class RiskModelMSU {
         checkInterrupt();
         
         // Do something
-        SUDA2 suda2 = new SUDA2(handle.getDataMatrix(columns).getMatrix());
+        SUDA2 suda2 = new SUDA2(handle.getDataArray(columns).getArray());
         suda2.setProgressListener(new SUDA2ProgressListener() {
             @Override
             public void update(double progress) {

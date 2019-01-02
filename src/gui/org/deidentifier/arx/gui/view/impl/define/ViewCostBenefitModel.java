@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -182,7 +182,7 @@ public class ViewCostBenefitModel implements IView {
         text.setEditable(false);
         
         // Button
-        Button btn1 = new Button(root, SWT.PUSH);
+        Button btn1 = new Button(root, SWT.FLAT);
         btn1.setText(Resources.getMessage("ViewCostBenefitModel.0")); //$NON-NLS-1$
         btn1.addSelectionListener(new SelectionAdapter() {
             @Override

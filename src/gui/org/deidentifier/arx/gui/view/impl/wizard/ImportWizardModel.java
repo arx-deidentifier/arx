@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,8 +39,6 @@ import org.deidentifier.arx.io.ImportColumnJDBC;
  * and/or retrieve data. It is mainly used to exchange data between multiple
  * wizard pages.
  * 
- * TODO Change to more elegant implementation (i.e. general key value storage)
- * 
  * @author Karol Babioch
  * @author Fabian Prasser
  */
@@ -53,13 +51,13 @@ public class ImportWizardModel {
      */
     public enum SourceType {
         
-        /**  TODO */
+        /**  Constant */
         CSV,
         
-        /**  TODO */
+        /**  Constant */
         JDBC,
         
-        /**  TODO */
+        /**  Constant */
         EXCEL
     }
 
@@ -280,39 +278,6 @@ public class ImportWizardModel {
     public List<String[]> getPreviewData() {
 
         return previewData;
-    }
-
-    /**
-     * Returns a list of strings containing the data for the given column
-     * 
-     * This will only return the {@link #previewData} for the given column
-     * rather than all of the preview data.
-     * 
-     * @param column
-     *            Column the preview data should be returned for
-     * 
-     * @return Data for the given column
-     * 
-     * @see {@link #getPreviewData()}
-     */
-    public List<String> getPreviewData(ImportWizardModelColumn column) {
-
-        List<String> result = new ArrayList<String>();
-        int index = wizardColumns.indexOf(column);
-
-        if (index != -1) {
-            for (String[] s : getPreviewData()) {
-                if (column.getColumn() instanceof ImportColumnIndexed) {
-                    result.add(s[((ImportColumnIndexed) column.getColumn()).getIndex()]);
-                } else if (column.getColumn() instanceof ImportColumnJDBC){
-                    result.add(s[((ImportColumnJDBC) column.getColumn()).getIndex()]);
-                }
-            }
-        } else {
-            throw new IllegalArgumentException(Resources.getMessage("ImportWizardModel.1")); //$NON-NLS-1$
-        }
-
-        return result;
     }
 
     /**

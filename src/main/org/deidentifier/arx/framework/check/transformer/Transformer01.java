@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -34,57 +35,49 @@ public class Transformer01 extends AbstractTransformer {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param otherValues
+     * @param dataAnalyzed
+     * @param dataAnalyzedNumberOfColumns
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
-    public Transformer01(final int[][] data,
+    public Transformer01(final DataMatrix data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final int[][] otherValues,
+                         final DataMatrix dataAnalyzed,
+                         final int dataAnalyzedNumberOfColumns,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfigurationInternal config) {
-        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, hierarchies, dataAnalyzed, dataAnalyzedNumberOfColumns, dictionarySensValue, dictionarySensFreq, config);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkAll()
-     */
+
     @Override
     protected void processAll() {
         for (int i = startIndex; i < stopIndex; i++) {
 
             // Transform
-            intuple = data[i];
-            outtuple = buffer[i];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            buffer.setRow(i);
+            data.setRow(i);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
 
             // Call
-            delegate.callAll(outtuple, i);
+            delegate.callAll(i, i);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkGroupify ()
-     */
     @Override
     protected void processGroupify() {
 
         while (element != null) {
 
-            intuple = data[element.representative];
-            outtuple = buffer[element.representative];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+            // Transform
+            buffer.setRow(element.representative);
+            data.setRow(element.representative);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
 
             // Call
-            delegate.callGroupify(outtuple, element);
+            delegate.callGroupify(element.representative, element);
 
             // Next element
             element = element.nextOrdered;
@@ -92,12 +85,6 @@ public class Transformer01 extends AbstractTransformer {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkSnapshot ()
-     */
     @Override
     protected void processSnapshot() {
 
@@ -105,12 +92,14 @@ public class Transformer01 extends AbstractTransformer {
         stopIndex *= ssStepWidth;
 
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
-            intuple = data[snapshot[i]];
-            outtuple = buffer[snapshot[i]];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
+
+            // Transform
+            buffer.setRow(snapshot[i]);
+            data.setRow(snapshot[i]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
 
             // Call
-            delegate.callSnapshot(outtuple, snapshot, i);
+            delegate.callSnapshot(snapshot[i], snapshot, i);
         }
     }
 }

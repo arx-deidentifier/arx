@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,20 @@ import org.deidentifier.arx.examples.Example41;
 import org.deidentifier.arx.examples.Example42;
 import org.deidentifier.arx.examples.Example43;
 import org.deidentifier.arx.examples.Example44;
+import org.deidentifier.arx.examples.Example45;
+import org.deidentifier.arx.examples.Example46;
+import org.deidentifier.arx.examples.Example47;
+import org.deidentifier.arx.examples.Example48;
+import org.deidentifier.arx.examples.Example49;
 import org.deidentifier.arx.examples.Example5;
+import org.deidentifier.arx.examples.Example50;
+import org.deidentifier.arx.examples.Example51;
+import org.deidentifier.arx.examples.Example52;
+import org.deidentifier.arx.examples.Example53;
+import org.deidentifier.arx.examples.Example54;
+import org.deidentifier.arx.examples.Example55;
+import org.deidentifier.arx.examples.Example56;
+import org.deidentifier.arx.examples.Example57;
 import org.deidentifier.arx.examples.Example6;
 import org.deidentifier.arx.examples.Example7;
 import org.deidentifier.arx.examples.Example8;
@@ -563,6 +576,175 @@ public class TestExamples {
     public void testExample44() {
         try {
             Example44.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample45() {
+        try {
+            Example45.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample46() {
+        try {
+            Example46.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample47() {
+        try {
+            Example47.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample48() {
+        try {
+            Example48.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample49() {
+        try {
+            Example49.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample50() {
+        try {
+            Example50.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample51() {
+        try {
+            Example51.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample52() {
+        try {
+            Example52.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample53() {
+        try {
+            Example53.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample54() {
+        try {
+            Example54.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample55() {
+        try {
+            Example55.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample56() {
+        try {
+            Example56.main(null);
+        } catch (final Exception e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    /**
+     * Perform unit test based on the example
+     */
+    @Test
+    public void testExample57() {
+        try {
+            Example57.main(null);
         } catch (final Exception e) {
             e.printStackTrace();
             Assert.fail();

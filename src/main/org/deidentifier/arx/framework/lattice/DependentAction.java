@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,39 +24,6 @@ package org.deidentifier.arx.framework.lattice;
  * @author Florian Kohlmayer
  */
 public abstract class DependentAction {
-
-    /**
-     * A action that depends on properties of transformations
-     *
-     * @author Fabian Prasser
-     * @author Florian Kohlmayer
-     */
-    public static abstract class NodeActionAND extends DependentAction {
-
-        /** Other */
-        private final DependentAction action;
-
-        /** 
-         * Creates a new instance
-         * @param trigger
-         */
-        public NodeActionAND(DependentAction trigger) {
-            this.action = trigger;
-        }
-
-        @Override
-        public boolean appliesTo(Transformation transformation) {
-            return action.appliesTo(transformation) && additionalConditionAppliesTo(transformation);
-        }
-        
-        /**
-         * The additional condition to implement.
-         *
-         * @param transformation
-         * @return
-         */
-        protected abstract boolean additionalConditionAppliesTo(Transformation transformation);
-    }
 
     /**
      * A trigger for nodes.
@@ -108,39 +75,6 @@ public abstract class DependentAction {
         }
     }
 
-    /**
-     * A trigger for nodes.
-     *
-     * @author Fabian Prasser
-     * @author Florian Kohlmayer
-     */
-    public static abstract class NodeActionOR extends DependentAction {
-
-        /** Other */
-        private final DependentAction action;
-
-        /**
-         * Creates a new instance
-         * @param action
-         */
-        public NodeActionOR(DependentAction action) {
-            this.action = action;
-        }
-
-        @Override
-        public boolean appliesTo(Transformation transformation) {
-            return action.appliesTo(transformation) || additionalConditionAppliesTo(transformation);
-        }
-        
-        /**
-         * The additional condition to implement.
-         *
-         * @param transformation
-         * @return
-         */
-        protected abstract boolean additionalConditionAppliesTo(Transformation transformation);
-    }
-    
     /**
      * Implements the action to be performed.
      *

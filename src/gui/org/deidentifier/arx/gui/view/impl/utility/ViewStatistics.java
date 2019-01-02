@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -118,11 +118,13 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         if (provider == null) {
             this.status = new ComponentStatus(controller,
                                               parent, 
-                                              control);
+                                              control,
+                                              this);
         } else {
             this.status = new ComponentStatus(controller,
                                               parent,                                                  
-                                              control,                                             
+                                              control,            
+                                              this,
                                               getProgressProvider());
         }
         
@@ -147,6 +149,23 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         status.setEmpty();
     }
 
+    /**
+     * Stops all computations
+     */
+    public void triggerStop() {
+        this.viewContext = null;
+        this.doReset();
+        this.setStatusEmpty();
+    }
+
+    /**
+     * Triggers an update
+     */
+    public void triggerUpdate() {
+        this.viewContext = null;
+        this.update();
+    }
+    
     @Override
     public void update(final ModelEvent event) {
 
@@ -200,8 +219,6 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         
         // Update
         if (event.part == target ||
-            event.part == ModelPart.SELECTED_ATTRIBUTE ||
-            event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.SELECTED_VIEW_CONFIG ||
             event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION ||
             (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.ANALYSIS)) {
@@ -216,14 +233,13 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
 
         // Disable the view
         if (model != null && !model.isVisualizationEnabled()) {
-            this.doReset();
-            this.setStatusEmpty();
+            this.triggerStop();
             this.enabled = false;
             return;
         }
 
         // Check visibility
-        if (!this.status.isVisible()){
+        if (!this.status.isVisible() || this.status.isStopped()) {
             return;
         }
 
@@ -277,14 +293,14 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * Implement this to reset.
      */
     protected abstract void doReset();
-
+    
     /**
      * Implement this to update.
      *
      * @param context
      */
     protected abstract void doUpdate(T context);
-    
+
     /**
      * Returns the controller
      * @return
@@ -292,7 +308,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected Controller getController() {
         return this.controller;
     }
-
+    
     /**
      * Returns the model
      * @return
@@ -300,7 +316,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected Model getModel() {
         return this.model;
     }
-    
+
     /**
      * Returns the parent composite
      */
@@ -308,7 +324,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         return this.parent;
                 
     }
-
+    
     /**
      * Overwrite this to return a progress provider
      * @return
@@ -316,7 +332,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected ComponentStatusLabelProgressProvider getProgressProvider() {
         return null;
     }
-    
+
     /**
      * Returns the target
      * @return
@@ -330,21 +346,29 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @return
      */
     protected boolean isEnabled() {
-        return enabled;
+        return viewContext != null && enabled;
     }
 
     /**
      * Is a job running
      * @return
      */
-    protected abstract boolean isRunning();
+    protected abstract boolean isRunning();           
+
+    /**
+     * Returns whether the view displays an empty result
+     * @return
+     */
+    protected boolean isEmpty() {
+       return this.status.isEmpty();
+    }
 
     /**
      * Status update.
      */
     protected void setStatusDone(){
         this.status.setDone();
-    }           
+    }
     
     /**
      * Status empty.
@@ -352,19 +376,11 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
     protected void setStatusEmpty(){
         this.status.setEmpty();
     }
-    
+
     /**
      * Status working.
      */
     protected void setStatusWorking(){
         this.status.setWorking();
-    }
-
-    /**
-     * Triggers an update
-     */
-    protected void triggerUpdate() {
-        this.viewContext = null;
-        this.update();
     }
 }

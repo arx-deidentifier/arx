@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class StatisticsSummary<T> {
      * @author Fabian Prasser
      *
      */
-    static final class StatisticsSummaryOrdinal {
+    static final class StatisticsSummaryOrdinal<T> {
 
         /** Var */
         private final Comparator<String> comparator;
@@ -59,7 +59,7 @@ public class StatisticsSummary<T> {
         /** Var */
         private int                      numberOfMeasures;
         /** Var */
-        private DataType<?>              type;
+        private DataType<T>              type;
 
         /**
          * Constructor
@@ -74,7 +74,7 @@ public class StatisticsSummary<T> {
          * Constructor
          * @param type
          */
-        StatisticsSummaryOrdinal(final DataType<?> type) {
+        StatisticsSummaryOrdinal(final DataType<T> type) {
             this.type = type;
             this.comparator = new Comparator<String>() {
                 @Override
@@ -96,13 +96,6 @@ public class StatisticsSummary<T> {
             this.values.add(value);
         }
         
-        /**
-         * Clears the data
-         */
-        public void clear() {
-            this.values.clear();
-        }
-
         /**
          * Returns a summary
          * @return
@@ -169,7 +162,7 @@ public class StatisticsSummary<T> {
         /**
          * Analyzes the data
          */
-        <T> void analyze() {
+        void analyze() {
             Collections.sort(values, comparator);
             
             if (values.size() == 0) {
@@ -187,7 +180,6 @@ public class StatisticsSummary<T> {
                 if (values.size() % 2 == 1) {
                     median = values.get(values.size() / 2);
                 } else if (type != null && type instanceof DataTypeWithRatioScale<?>) {
-                    @SuppressWarnings("unchecked")
                     DataType<T> dType = (DataType<T>)type;
                     @SuppressWarnings("unchecked")
                     DataTypeWithRatioScale<T> rType = (DataTypeWithRatioScale<T>)dType;
@@ -205,7 +197,7 @@ public class StatisticsSummary<T> {
                 }
                 numberOfMeasures = values.size();
                 
-                // determine distinct number of measures
+                // Determine distinct number of measures
                 Set<String> distinct = new HashSet<String>();
                 distinct.addAll(values);
                 distinctNumberOfValues = distinct.size();
@@ -223,6 +215,14 @@ public class StatisticsSummary<T> {
                         count = nCount;
                     }
                     index = nIndex;
+                }
+                
+                // Convert to correct output format
+                if (type != null) {
+                    min = type.format(type.parse(min));
+                    max = type.format(type.parse(max));
+                    mode = type.format(type.parse(mode));
+                    median = type.format(type.parse(median));
                 }
             }
             

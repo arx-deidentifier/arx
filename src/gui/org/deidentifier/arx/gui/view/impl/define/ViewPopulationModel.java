@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,7 +150,7 @@ public class ViewPopulationModel implements IView {
         text.setEditable(false);
         
         // Button for updating
-        Button btn1 = new Button(parent, SWT.PUSH);
+        Button btn1 = new Button(parent, SWT.FLAT);
         btn1.setText(Resources.getMessage("ViewPopulationModel.0")); //$NON-NLS-1$
         btn1.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -206,7 +206,7 @@ public class ViewPopulationModel implements IView {
         text2.setEditable(false);
 
         // Button for updating
-        Button btn2 = new Button(parent, SWT.PUSH);
+        Button btn2 = new Button(parent, SWT.FLAT);
         btn2.setText(Resources.getMessage("ViewPopulationModel.8")); //$NON-NLS-1$
         btn2.addSelectionListener(new SelectionAdapter() {
             @Override

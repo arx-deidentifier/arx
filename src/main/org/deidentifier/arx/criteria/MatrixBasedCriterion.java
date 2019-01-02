@@ -18,7 +18,7 @@
 package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
-import org.deidentifier.arx.framework.check.groupify.HashGroupifyMatrix;
+import org.deidentifier.arx.framework.check.groupify.HashGroupifyArray;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
@@ -51,7 +51,7 @@ public abstract class MatrixBasedCriterion extends PrivacyCriterion {
      * @param matrix
      * @param numMaxSuppressedOutliers
      */
-    public abstract void enforce(HashGroupifyMatrix matrix, 
+    public abstract void enforce(HashGroupifyArray matrix, 
                                  int numMaxSuppressedOutliers);
 
     /**

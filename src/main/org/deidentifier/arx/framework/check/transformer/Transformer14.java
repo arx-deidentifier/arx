@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -34,92 +35,79 @@ public class Transformer14 extends AbstractTransformer {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param otherValues
+     * @param dataAnalyzed
+     * @param dataAnalyzedNumberOfColumns
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
-    public Transformer14(final int[][] data,
+    public Transformer14(final DataMatrix data,
                          final GeneralizationHierarchy[] hierarchies,
-                         final int[][] otherValues,
+                         final DataMatrix dataAnalyzed,
+                         final int dataAnalyzedNumberOfColumns,
                          final IntArrayDictionary dictionarySensValue,
                          final IntArrayDictionary dictionarySensFreq,
                          final ARXConfigurationInternal config) {
-        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, hierarchies, dataAnalyzed, dataAnalyzedNumberOfColumns, dictionarySensValue, dictionarySensFreq, config);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkAll()
-     */
     @Override
     protected void processAll() {
         for (int i = startIndex; i < stopIndex; i++) {
-            intuple = data[i];
-            outtuple = buffer[i];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
+
+            // Transform
+            buffer.setRow(i);
+            data.setRow(i);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
+            buffer.setValueAtColumn(column4, hierarchy4[data.getValueAtColumn(column4)][level4]);
+            buffer.setValueAtColumn(column5, hierarchy5[data.getValueAtColumn(column5)][level5]);
+            buffer.setValueAtColumn(column6, hierarchy6[data.getValueAtColumn(column6)][level6]);
+            buffer.setValueAtColumn(column7, hierarchy7[data.getValueAtColumn(column7)][level7]);
+            buffer.setValueAtColumn(column8, hierarchy8[data.getValueAtColumn(column8)][level8]);
+            buffer.setValueAtColumn(column9, hierarchy9[data.getValueAtColumn(column9)][level9]);
+            buffer.setValueAtColumn(column10, hierarchy10[data.getValueAtColumn(column10)][level10]);
+            buffer.setValueAtColumn(column11, hierarchy11[data.getValueAtColumn(column11)][level11]);
+            buffer.setValueAtColumn(column12, hierarchy12[data.getValueAtColumn(column12)][level12]);
+            buffer.setValueAtColumn(column13, hierarchy13[data.getValueAtColumn(column13)][level13]);
 
             // Call
-            delegate.callAll(outtuple, i);
+            delegate.callAll(i, i);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkGroupify ()
-     */
     @Override
     protected void processGroupify() {
         while (element != null) {
 
-            intuple = data[element.representative];
-            outtuple = buffer[element.representative];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
+            // Transform
+            buffer.setRow(element.representative);
+            data.setRow(element.representative);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
+            buffer.setValueAtColumn(column4, hierarchy4[data.getValueAtColumn(column4)][level4]);
+            buffer.setValueAtColumn(column5, hierarchy5[data.getValueAtColumn(column5)][level5]);
+            buffer.setValueAtColumn(column6, hierarchy6[data.getValueAtColumn(column6)][level6]);
+            buffer.setValueAtColumn(column7, hierarchy7[data.getValueAtColumn(column7)][level7]);
+            buffer.setValueAtColumn(column8, hierarchy8[data.getValueAtColumn(column8)][level8]);
+            buffer.setValueAtColumn(column9, hierarchy9[data.getValueAtColumn(column9)][level9]);
+            buffer.setValueAtColumn(column10, hierarchy10[data.getValueAtColumn(column10)][level10]);
+            buffer.setValueAtColumn(column11, hierarchy11[data.getValueAtColumn(column11)][level11]);
+            buffer.setValueAtColumn(column12, hierarchy12[data.getValueAtColumn(column12)][level12]);
+            buffer.setValueAtColumn(column13, hierarchy13[data.getValueAtColumn(column13)][level13]);
 
             // Call
-            delegate.callGroupify(outtuple, element);
+            delegate.callGroupify(element.representative, element);
 
             // Next element
             element = element.nextOrdered;
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkSnapshot ()
-     */
     @Override
     protected void processSnapshot() {
 
@@ -127,25 +115,27 @@ public class Transformer14 extends AbstractTransformer {
         stopIndex *= ssStepWidth;
 
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
-            intuple = data[snapshot[i]];
-            outtuple = buffer[snapshot[i]];
-            outtuple[outindex0] = idindex0[intuple[index0]][generalizationindex0];
-            outtuple[outindex1] = idindex1[intuple[index1]][generalizationindex1];
-            outtuple[outindex2] = idindex2[intuple[index2]][generalizationindex2];
-            outtuple[outindex3] = idindex3[intuple[index3]][generalizationindex3];
-            outtuple[outindex4] = idindex4[intuple[index4]][generalizationindex4];
-            outtuple[outindex5] = idindex5[intuple[index5]][generalizationindex5];
-            outtuple[outindex6] = idindex6[intuple[index6]][generalizationindex6];
-            outtuple[outindex7] = idindex7[intuple[index7]][generalizationindex7];
-            outtuple[outindex8] = idindex8[intuple[index8]][generalizationindex8];
-            outtuple[outindex9] = idindex9[intuple[index9]][generalizationindex9];
-            outtuple[outindex10] = idindex10[intuple[index10]][generalizationindex10];
-            outtuple[outindex11] = idindex11[intuple[index11]][generalizationindex11];
-            outtuple[outindex12] = idindex12[intuple[index12]][generalizationindex12];
-            outtuple[outindex13] = idindex13[intuple[index13]][generalizationindex13];
+
+            // Transform
+            buffer.setRow(snapshot[i]);
+            data.setRow(snapshot[i]);
+            buffer.setValueAtColumn(column0, hierarchy0[data.getValueAtColumn(column0)][level0]);
+            buffer.setValueAtColumn(column1, hierarchy1[data.getValueAtColumn(column1)][level1]);
+            buffer.setValueAtColumn(column2, hierarchy2[data.getValueAtColumn(column2)][level2]);
+            buffer.setValueAtColumn(column3, hierarchy3[data.getValueAtColumn(column3)][level3]);
+            buffer.setValueAtColumn(column4, hierarchy4[data.getValueAtColumn(column4)][level4]);
+            buffer.setValueAtColumn(column5, hierarchy5[data.getValueAtColumn(column5)][level5]);
+            buffer.setValueAtColumn(column6, hierarchy6[data.getValueAtColumn(column6)][level6]);
+            buffer.setValueAtColumn(column7, hierarchy7[data.getValueAtColumn(column7)][level7]);
+            buffer.setValueAtColumn(column8, hierarchy8[data.getValueAtColumn(column8)][level8]);
+            buffer.setValueAtColumn(column9, hierarchy9[data.getValueAtColumn(column9)][level9]);
+            buffer.setValueAtColumn(column10, hierarchy10[data.getValueAtColumn(column10)][level10]);
+            buffer.setValueAtColumn(column11, hierarchy11[data.getValueAtColumn(column11)][level11]);
+            buffer.setValueAtColumn(column12, hierarchy12[data.getValueAtColumn(column12)][level12]);
+            buffer.setValueAtColumn(column13, hierarchy13[data.getValueAtColumn(column13)][level13]);
 
             // Call
-            delegate.callSnapshot(outtuple, snapshot, i);
+            delegate.callSnapshot(snapshot[i], snapshot, i);
         }
     }
 }

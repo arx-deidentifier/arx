@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -203,13 +203,6 @@ public class ComponentFilterTable {
     }
 
     /**
-     * Disposes this widget.
-     */
-    public void dispose() {
-        this.table.dispose();
-    }
-
-    /**
      * Returns the entries.
      * 
      * @return
@@ -267,15 +260,6 @@ public class ComponentFilterTable {
             Boolean b = map.get(property);
             return b == null ? false : b;
         }
-    }
-
-    /**
-     * Removes a selection listener.
-     * 
-     * @param listener
-     */
-    public void removeSelectionListener(SelectionListener listener) {
-        this.listeners.remove(listener);
     }
 
     /**

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,10 @@
  */
 package org.deidentifier.arx.exceptions;
 
-
 /**
- * This exception is raised, if the method that was called has left something in an
- * invalid state that may breach privacy. To ensure privacy, you must roll-back the operation that you performed.
+ * This exception is raised if the method that was called has left output data in an
+ * inconsistent state that may breach privacy. To ensure privacy you must roll-back 
+ * the operation that has been performed.
  *
  * @author Fabian Prasser
  */
@@ -34,13 +34,6 @@ public class RollbackRequiredException extends Exception {
     public RollbackRequiredException() {
         // Empty by design
     }
-    /**
-     * Constructor
-     * @param message
-     */
-    public RollbackRequiredException(String message) {
-        super(message);
-    }
     
     /** 
      * Constructor
@@ -49,13 +42,5 @@ public class RollbackRequiredException extends Exception {
      */
     public RollbackRequiredException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /** 
-     * Constructor
-     * @param cause
-     */
-    public RollbackRequiredException(Throwable cause) {
-        super(cause);
     }
 }

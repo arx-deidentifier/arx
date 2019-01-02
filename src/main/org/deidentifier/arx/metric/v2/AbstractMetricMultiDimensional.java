@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,9 +21,10 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
-import org.deidentifier.arx.framework.check.distribution.Distribution;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataAggregationInformation;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.metric.InformationLoss;
@@ -38,40 +39,34 @@ import org.deidentifier.arx.metric.Metric;
 public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMultiDimensional> {
 
     /** SVUID. */
-    private static final long               serialVersionUID = 3909752748519119689L;
+    private static final long          serialVersionUID = 3909752748519119689L;
 
     /** The weights. */
-    private double[]                        weights;
+    private double[]                   weights;
 
     /** Number of dimensions. */
-    private int                             dimensions;
+    private int                        dimensions;
 
     /** Number of dimensions with generalization */
-    private int                             dimensionsGeneralized;
+    private int                        dimensionsGeneralized;
 
     /** Number of dimensions with aggregation */
-    private int                             dimensionsAggregated;
+    private int                        dimensionsAggregated;
 
     /** Min. */
-    private double[]                        min;
+    private double[]                   min;
 
     /** Max. */
-    private double[]                        max;
+    private double[]                   max;
 
     /** The aggregate function. */
-    private AggregateFunction               function;
+    private AggregateFunction          function;
 
     /** The microaggregation functions. */
-    private DistributionAggregateFunction[] microaggregationFunctions;
+    private DataAggregationInformation aggregation;
 
-    /** The start index of the attributes with microaggregation in the data array */
-    private int                             microaggregationStartIndex;
-
-    /** Should the mean squared error be used */
-    private boolean                         microaggregationUseMeanSquaredError;
-
-    /** Header of the microaggregated data subset */
-    private String[]                        microaggregationHeader;
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    protected int                      k                = -1;
 
     /**
      * Creates a new instance.
@@ -88,6 +83,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, 0.5d);
         this.function = function;
     }
+    
     /**
      * Creates a new instance.
      *
@@ -105,7 +101,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         super(monotonicWithGeneralization, monotonicWithSuppression, independent, gsFactor);
         this.function = function;
     }
-    
+
     @Override
     public InformationLoss<?> createMaxInformationLoss() {
         if (max == null) {
@@ -114,7 +110,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             return createInformationLoss(max);
         }
     }
-    
     @Override
     public InformationLoss<?> createMinInformationLoss() {
         if (min == null) {
@@ -152,38 +147,63 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             throw new IllegalStateException("Unknown aggregate function: "+function);
         }
     }
-  
+    
     /**
-     * Helper method for creating information loss.
-     *
-     * @param values
-     * @param bound
+     * Returns relevant aggregation functions
      * @return
      */
-    protected ILMultiDimensionalWithBound createInformationLossWithBound(double[] values,
-                                                                         double[] bound){
-        return new ILMultiDimensionalWithBound(createInformationLoss(values),
-                                               createInformationLoss(bound));
+    protected DistributionAggregateFunction[] getAggregationFunctionsGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsGeneralizedFunctions();
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Helper method for creating information loss.
-     *
-     * @param values
+     * Returns relevant aggregation functions
      * @return
      */
-    protected ILMultiDimensionalWithBound createInformationLossWithoutBound(double[] values){
-        return new ILMultiDimensionalWithBound(createInformationLoss(values));
+    protected DistributionAggregateFunction[] getAggregationFunctionsNonGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsNotGeneralizedFunctions();
+        } else {
+            return null;
+        }
     }
 
     /**
-     * Returns the aggregate functions used for microaggregation
+     * Returns the indicies of aggregated variables
      * @return
      */
-    protected DistributionAggregateFunction[] getAggregateFunctions() {
-        return this.microaggregationFunctions;
+    protected int[] getAggregationIndicesGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsGeneralized();
+        } else {
+            return null;
+        }
     }
     
+    /**
+     * Returns the indicies of aggregated variables
+     * @return
+     */
+    protected int[] getAggregationIndicesNonGeneralized() {
+        if (aggregation != null) {
+            return aggregation.getHotQIsNotGeneralized();
+        } else {
+            return null;
+        }
+    }
+  
+    /**
+     * Needed for microaggregation
+     * @return
+     */
+    protected DataAggregationInformation getAggregationInformation() {
+        return this.aggregation;
+    }
+
     /**
      * Returns the number of dimensions.
      *
@@ -212,36 +232,6 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
     }
 
     /**
-     * Returns the error induced by aggregating values in the distribution
-     * @param function
-     * @param distribution
-     * @return
-     */
-    protected double getError(DistributionAggregateFunction function, Distribution distribution) {
-        if (this.microaggregationUseMeanSquaredError) {
-            return function.getError(distribution);
-        } else {
-            return function.getInformationLoss(distribution);
-        }
-    }
-    
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    protected DistributionAggregateFunction[] getMicroaggregationFunctions() {
-        return microaggregationFunctions;
-    }
-    
-    /**
-     * Needed for microaggregation
-     * @return
-     */
-    protected int getMicroaggregationStartIndex() {
-        return microaggregationStartIndex;
-    }
-
-    /**
      * For backwards compatibility only.
      *
      * @param dimensions
@@ -259,18 +249,10 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
                                       final GeneralizationHierarchy[] hierarchies, 
                                       final ARXConfiguration config) {
 
-        // Handle microaggregation
-        this.microaggregationFunctions = manager.getMicroaggregationFunctions();
-        this.microaggregationStartIndex = manager.getMicroaggregationStartIndex();
-        this.microaggregationHeader = manager.getMicroaggregationHeader();
-        this.microaggregationUseMeanSquaredError = config.isUtilityBasedMicroaggregationUseMeanSquaredError();
-        if (!config.isUtilityBasedMicroaggregation() || !isAbleToHandleMicroaggregation()) {
-            this.microaggregationFunctions = new DistributionAggregateFunction[0];
-        }
-        
-        // Initialize dimensions
+        // Initialize
+        this.aggregation = manager.getAggregationInformation();
         this.dimensionsGeneralized = hierarchies.length;
-        this.dimensionsAggregated = this.microaggregationFunctions.length;
+        this.dimensionsAggregated = this.aggregation.getHotQIsNotGeneralized().length;
         this.dimensions = this.dimensionsGeneralized + this.dimensionsAggregated;
         
         // Initialize weights
@@ -283,7 +265,7 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
             maximum = Math.max(maximum, weight);
         }
         for (int i = 0; i < this.dimensionsAggregated; i++) {
-            String attribute = this.microaggregationHeader[i];
+            String attribute = this.aggregation.getHeader()[this.aggregation.getHotQIsNotGeneralized()[i]];
             double weight = config.getAttributeWeight(attribute);
             this.weights[this.dimensionsGeneralized + i] = weight;
             maximum = Math.max(maximum, weight);
@@ -304,6 +286,12 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         Arrays.fill(min, 0d);
         this.max = new double[this.dimensions];
         Arrays.fill(max, Double.MAX_VALUE);
+        
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            // Store minimal size of equivalence classes
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            this.k = dpCriterion.getMinimalClassSize();
+        }
     }
 
     /**

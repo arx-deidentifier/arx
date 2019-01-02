@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,21 +54,6 @@ public abstract class EditorSelection implements IEditor<String> {
         this.label = null;
         this.elems = elems;
         this.createControl(composite);
-    }
-
-    /**
-     * 
-     *
-     * @param category
-     * @param label
-     * @param elems
-     */
-    public EditorSelection(final String category,
-                           final String label,
-                           final String[] elems) {
-        this.category = category;
-        this.label = label;
-        this.elems = elems;
     }
 
     @Override

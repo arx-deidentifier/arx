@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,8 +103,8 @@ public class ModelEvent {
         /**  EXPAND */
         EXPAND,
 
-        /**  SELECTED_FEATURES_OR_CLASSES */
-        SELECTED_FEATURES_OR_CLASSES,
+        /**  CLASSIFICATION_CONFIGURATION */
+        CLASSIFICATION_CONFIGURATION,
         
         /** RISK THRESHOLDS*/
         RISK_THRESHOLD_MAIN,
@@ -119,7 +119,13 @@ public class ModelEvent {
         ATTRIBUTE_WEIGHT,
         
         /** COST/BENEFIT MODEL*/
-        COST_BENEFIT_MODEL
+        COST_BENEFIT_MODEL,
+        
+        /** SELECTED_CLASS_VALUE */
+        SELECTED_CLASS_VALUE,
+
+        /** RESPONSE VARIABLES */
+        RESPONSE_VARIABLES
     }
 
     /** The part of the model that has changed. */

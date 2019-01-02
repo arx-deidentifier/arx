@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,34 +34,24 @@ public class HIPAAIdentifierMatch {
      * @author Florian Kohlmayer
      */
     public enum HIPAAIdentifier {
-                                 NAME('A'),
-                                 GEOGRAPHIC_SUBDIVISION('B'),
-                                 DATE('C'),
-                                 TELEPHONE_NUMBER('D'),
-                                 FAX_NUMBER('E'),
-                                 EMAIL_ADDRESS('F'),
-                                 SOCIAL_SECURITY_NUMBER('G'),
-                                 MEDICAL_RECORD_NUMBER('H'),
-                                 HEALTH_PLAN_BENEFICIARY_NUMBER('I'),
-                                 ACCOUNT_NUMBER('J'),
-                                 CERTIFICATE_NUMBER('K'),
-                                 VEHICLE_IDENTIFIER('L'),
-                                 DEVICE_IDENTIFIER('M'),
-                                 URL('N'),
-                                 IP('O'),
-                                 BIOMETRIC_IDENTIFIER('P'),
-                                 PHOTOGRAPH('Q'),
-                                 OTHER('R');
-                                 
-        private final char category;
-        
-        HIPAAIdentifier(char category) {
-            this.category = category;
-        }
-        
-        int getCategory() {
-            return category;
-        }
+        NAME,
+        GEOGRAPHIC_SUBDIVISION,
+        DATE,
+        TELEPHONE_NUMBER,
+        FAX_NUMBER,
+        EMAIL_ADDRESS,
+        SOCIAL_SECURITY_NUMBER,
+        MEDICAL_RECORD_NUMBER,
+        HEALTH_PLAN_BENEFICIARY_NUMBER,
+        ACCOUNT_NUMBER,
+        CERTIFICATE_NUMBER,
+        VEHICLE_IDENTIFIER,
+        DEVICE_IDENTIFIER,
+        URL,
+        IP,
+        BIOMETRIC_IDENTIFIER,
+        PHOTOGRAPH,
+        OTHER;
     }
     
     /**
@@ -70,19 +60,20 @@ public class HIPAAIdentifierMatch {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
-    public enum MatchType {ATTRIBUTE_NAME,
-                           ATTRIBUTE_VALUE
+    public enum MatchType {
+        ATTRIBUTE_NAME,
+        ATTRIBUTE_VALUE
     }
     
-    /** TODO */
+    /** Field */
     private final String          column;
-    /** TODO */
+    /** Field */
     private final HIPAAIdentifier identifier;
-    /** TODO */
+    /** Field */
     private final MatchType       matchType;
-    /** TODO */
+    /** Field */
     private final String          value;
-    /** TODO */
+    /** Field */
     private final String          instance;
     
     /**

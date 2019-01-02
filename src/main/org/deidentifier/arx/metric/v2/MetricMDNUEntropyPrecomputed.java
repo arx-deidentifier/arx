@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +19,22 @@ package org.deidentifier.arx.metric.v2;
 
 import java.util.Arrays;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataManager;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
+
+import com.carrotsearch.hppc.IntIntOpenHashMap;
 
 /**
  * This class provides an efficient implementation of the non-uniform entropy
@@ -37,7 +42,10 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * array that maps identifiers to their frequency for all quasi-identifiers and
  * generalization levels. It further reduces the overhead induced by subsequent
  * calls by caching the results for previous columns and generalization levels.
- * TODO: Add reference
+ * See:<br>
+ * A. De Waal and L. Willenborg: 
+ * "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -74,6 +82,9 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
 
     /** Num rows */
     private double        rows;
+
+    /** The root values of all generalization hierarchies or -1 if no single root value exists */
+    private int[]         rootValues;
 
     /**
      * Precomputed.
@@ -124,6 +135,66 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     }
     
     @Override
+    /**
+     * Implements the score function described in Section 5.3 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        if (k < 0) {
+            throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
+        }
+        
+        // Prepare
+        int dimensionsGeneralized = getDimensionsGeneralized();
+        IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+            nonSuppressedValueToCount[dimension] = new IntIntOpenHashMap();
+        }
+
+        // Compute score. The casts to long are required to avoid integer overflows
+        // when large numbers are being multiplied.
+        BigFraction score = BigFraction.ZERO;
+        HashGroupifyEntry m = groupify.getFirstEquivalenceClass();
+        while (m != null) {
+            m.read();
+            for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+                int value = m.next();
+                // Process values of records which have not been suppressed by sampling
+                if (m.isNotOutlier && (rootValues[dimension] == -1 || value != rootValues[dimension])) {
+                    // The attribute value has neither been suppressed because of record suppression nor because of generalization
+                    nonSuppressedValueToCount[dimension].putOrAdd(value, m.count, m.count);
+                } else {
+                    // The attribute value has been suppressed because of record suppression or because of generalization
+                    score = score.add(new BigFraction((long)m.count * (long)rows));
+                }
+                // Add values for records which have been suppressed by sampling
+                score = score.add(new BigFraction((long)(m.pcount - m.count) * (long)rows));
+            }
+            m = m.nextOrdered;
+        }
+        // Add values for all attribute values which were not suppressed
+        for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
+            final boolean [] states = nonSuppressedValueToCount[dimension].allocated;
+            final int [] counts = nonSuppressedValueToCount[dimension].values;
+            for (int i=0; i<states.length; i++) {
+                if (states[i]) {
+                    score = score.add(new BigFraction((long)counts[i] * (long)counts[i]));
+                }
+            }
+        }
+
+        // Adjust sensitivity and multiply with -1 so that higher values are better
+        score = score.multiply(BigFraction.MINUS_ONE.divide(new BigFraction(((long)rows * (long)dimensionsGeneralized))));
+        score = score.divide((k == 1) ? new BigFraction(5) : new BigFraction(k * k).divide(new BigFraction(k - 1)).add(BigFraction.ONE));
+        
+        // Return score
+        return new ILScore(score);
+    }
+    
+    @Override
     public boolean isGSFactorSupported() {
         return true;
     }
@@ -132,12 +203,17 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
     public boolean isPrecomputed() {
         return true;
     }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return true;
+    }
 
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Non-uniform entropy");
         result.addProperty("Aggregate function", super.getAggregateFunction().toString());
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;
@@ -311,8 +387,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
         
         // Create reference to the hierarchies
-        final int[][] data = input.getArray();
-        this.hierarchies = new int[data[0].length][][];
+        final DataMatrix data = input.getArray();
+        this.hierarchies = new int[data.getNumColumns()][][];
         for (int i = 0; i < hierarchies.length; i++) {
             this.hierarchies[i] = hierarchies[i].getArray();
         }
@@ -324,6 +400,23 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         double[] max = new double[hierarchies.length];
         for (int i=0; i<max.length; i++) {
             max[i] = (input.getDataLength() * log2(input.getDataLength())) * Math.max(gFactor, sFactor);
+        }
+        
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            // Store root values of generalization hierarchies or null if no single root value exists
+            rootValues = new int[hierarchies.length];
+            for (int i = 0; i < hierarchies.length; i++) {
+                int rootValue = -1;
+                for (int[] row : hierarchies[i].getArray()) {
+                    if (rootValue == -1) {
+                        rootValue = row[row.length-1];
+                    } else if (row[row.length-1] != rootValue) {
+                        rootValue = -1;
+                        break;
+                    }
+                }
+                rootValues[i] = rootValue;
+            }
         }
         
         super.setMax(max);

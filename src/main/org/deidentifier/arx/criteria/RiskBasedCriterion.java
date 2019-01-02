@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,8 +45,8 @@ public abstract class RiskBasedCriterion extends SampleBasedCriterion{
                               double riskThreshold){
         super(monotonicWithSuppression, monotonicWithGeneralization);
         this.threshold = riskThreshold;
-        if (this.threshold < 0d || this.threshold >= 1d) {
-            throw new IllegalArgumentException("Threshold out of range. Must be in [0, 1[");
+        if (this.threshold < 0d || this.threshold > 1d) {
+            throw new IllegalArgumentException("Threshold out of range. Must be in [0, 1]");
         }
     }
     

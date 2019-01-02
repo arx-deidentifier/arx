@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.transformer;
 
 import org.deidentifier.arx.ARXConfiguration.ARXConfigurationInternal;
 import org.deidentifier.arx.framework.check.distribution.IntArrayDictionary;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -34,89 +35,90 @@ public class TransformerAll extends AbstractTransformer {
      *
      * @param data the data
      * @param hierarchies the hierarchies
-     * @param otherValues
+     * @param dataAnalyzed
+     * @param dataAnalyzedNumberOfColumns
      * @param dictionarySensValue
      * @param dictionarySensFreq
      * @param config
      */
-    public TransformerAll(final int[][] data,
+    public TransformerAll(final DataMatrix data,
                           final GeneralizationHierarchy[] hierarchies,
-                          final int[][] otherValues,
+                          final DataMatrix dataAnalyzed,
+                          final int dataAnalyzedNumberOfColumns,
                           final IntArrayDictionary dictionarySensValue,
                           final IntArrayDictionary dictionarySensFreq,
                           final ARXConfigurationInternal config) {
-        super(data, hierarchies, otherValues, dictionarySensValue, dictionarySensFreq, config);
+        super(data, hierarchies, dataAnalyzed, dataAnalyzedNumberOfColumns, dictionarySensValue, dictionarySensFreq, config);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkAll()
-     */
     @Override
     protected void processAll() {
-        final int dimensions = data[0].length;
+        
+        int[][][] mHierarchies = new int[dimensions][][];
+        for (int i = 0; i < dimensions; i++) {
+            mHierarchies[i] = hierarchies[i].getArray();
+        }
+        
         for (int i = startIndex; i < stopIndex; i++) {
-            intuple = data[i];
-            outtuple = buffer[i];
+
+            // Transform
+            buffer.setRow(i);
+            data.setRow(i);
             for (int d = 0; d < dimensions; d++) {
-                final int state = generalization[d];
-                outtuple[d] = map[d][intuple[d]][state];
+                buffer.setValueAtColumn(d, mHierarchies[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
-            delegate.callAll(outtuple, i);
+            delegate.callAll(i, i);
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkGroupify ()
-     */
     @Override
     protected void processGroupify() {
+
+        int[][][] mHierarchies = new int[dimensions][][];
+        for (int i = 0; i < dimensions; i++) {
+            mHierarchies[i] = hierarchies[i].getArray();
+        }
+        
         while (element != null) {
 
-            intuple = data[element.representative];
-            outtuple = buffer[element.representative];
+            // Transform
+            buffer.setRow(element.representative);
+            data.setRow(element.representative);
+
             for (int d = 0; d < dimensions; d++) {
-                final int state = generalization[d];
-                outtuple[d] = map[d][intuple[d]][state];
+                buffer.setValueAtColumn(d, mHierarchies[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
-            delegate.callGroupify(outtuple, element);
+            delegate.callGroupify(element.representative, element);
 
             // Next element
             element = element.nextOrdered;
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.ARX.framework.check.transformer.AbstractTransformer
-     * #walkSnapshot ()
-     */
     @Override
     protected void processSnapshot() {
 
+        int[][][] mHierarchies = new int[dimensions][][];
+        for (int i = 0; i < dimensions; i++) {
+            mHierarchies[i] = hierarchies[i].getArray();
+        }
+        
         startIndex *= ssStepWidth;
         stopIndex *= ssStepWidth;
 
         for (int i = startIndex; i < stopIndex; i += ssStepWidth) {
-            intuple = data[snapshot[i]];
-            outtuple = buffer[snapshot[i]];
+            buffer.setRow(snapshot[i]);
+            data.setRow(snapshot[i]);
             for (int d = 0; d < dimensions; d++) {
-                final int state = generalization[d];
-                outtuple[d] = map[d][intuple[d]][state];
+                buffer.setValueAtColumn(d, mHierarchies[d][data.getValueAtColumn(d)][generalization[d]]);
             }
 
             // Call
-            delegate.callSnapshot(outtuple, snapshot, i);
+            delegate.callSnapshot(snapshot[i], snapshot, i);
         }
     }
 }

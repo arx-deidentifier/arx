@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -277,11 +277,12 @@ public class ComponentRiskThresholds {
      * @param span
      */
     private void createSeparator(Composite root, String text, int span) {
-        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, text);
+        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
         GridData data = SWTUtil.createFillHorizontallyGridData(true,  span);
         data.horizontalIndent = 0;
         data.verticalIndent = 0;
         separator.setLayoutData(data);
+        separator.setText(text);
     }
 
     /**

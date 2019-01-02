@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,16 +18,19 @@
 package org.deidentifier.arx.gui.worker;
 
 import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -35,12 +38,14 @@ import java.util.zip.Deflater;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.DataHandleOutput;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.criteria.PrivacyCriterion;
@@ -53,6 +58,7 @@ import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLWriter;
 import org.deidentifier.arx.io.CSVDataOutput;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -90,10 +96,11 @@ public class WorkerSave extends Worker<Model> {
     public void run(final IProgressMonitor arg0) throws InvocationTargetException,
                                                         InterruptedException {
 
-        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 10); //$NON-NLS-1$
-
+        arg0.beginTask(Resources.getMessage("WorkerSave.0"), 8); //$NON-NLS-1$
+        File temp = null;
         try {
-            final FileOutputStream f = new FileOutputStream(path);
+            temp = File.createTempFile("arx", "deid");
+            final FileOutputStream f = new FileOutputStream(temp);
             final ZipOutputStream zip = new ZipOutputStream(new BufferedOutputStream(f));
             zip.setLevel(Deflater.BEST_SPEED);
             model.createConfig(); 
@@ -103,11 +110,7 @@ public class WorkerSave extends Worker<Model> {
             arg0.worked(1);
             writeInput(model, zip);
             arg0.worked(1);
-            writeInputSubset(model, zip);
-            arg0.worked(1);
             writeOutput(model, zip);
-            arg0.worked(1);
-            writeOutputSubset(model, zip);
             arg0.worked(1);
             writeConfiguration(model, zip);
             arg0.worked(1);
@@ -118,13 +121,15 @@ public class WorkerSave extends Worker<Model> {
             writeFilter(model, zip);
             zip.close();
             arg0.worked(1);
+            FileUtils.copyFile(temp, new File(path));
+            FileUtils.deleteQuietly(temp);
         } catch (final Exception e) {
             error = e;
             arg0.done();
+            FileUtils.deleteQuietly(temp);
             return;
         }
 
-        arg0.worked(100);
         arg0.done();
     }
 
@@ -163,7 +168,7 @@ public class WorkerSave extends Worker<Model> {
 
         // Write directly because of size
         final FileBuilder b = new FileBuilder(new OutputStreamWriter(zip));
-        final XMLWriter writer = new XMLWriter(b);
+        final XMLWriter writer = new XMLWriter(b, true);
         
         writer.write(vocabulary.getHeader());
 
@@ -283,7 +288,7 @@ public class WorkerSave extends Worker<Model> {
         writer.unindent();
         
         writer.write(vocabulary.getPracticalMonotonicity(), config.isPracticalMonotonicity());
-        writer.write(vocabulary.getRelativeMaxOutliers(), config.getAllowedOutliers());
+        writer.write(vocabulary.getRelativeMaxOutliers(), config.getSuppressionLimit());
         writer.write(vocabulary.getMetric(), config.getMetric().toString());
 
         // Write weights
@@ -339,6 +344,15 @@ public class WorkerSave extends Worker<Model> {
                 if (format != null){
                     writer.write(vocabulary.getFormat(), format);
                 }
+                Locale locale = ((DataTypeWithFormat)dt).getLocale();
+                if (locale != null){
+                    writer.write(vocabulary.getLocale(), locale.getLanguage().toUpperCase());
+                }
+            }
+            
+            // Response variables
+            if (definition.isResponseVariable(attr)) {
+                writer.write(vocabulary.getResponseVariable(), "true"); //$NON-NLS-1$
             }
             
             // Do we have a hierarchy
@@ -535,32 +549,24 @@ public class WorkerSave extends Worker<Model> {
         if (model.getInputConfig().getInput() != null) {
             if (model.getInputConfig().getInput().getHandle() != null) {
                 zip.putNextEntry(new ZipEntry("data/input.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
+                
+                // Write UTF-8 only
+                final CSVDataOutput out = new CSVDataOutput(zip,
+                                                            model.getCSVSyntax().getDelimiter(),
+                                                            CSVSyntax.DEFAULT_QUOTE,
+                                                            CSVSyntax.DEFAULT_ESCAPE,
+                                                            CSVSyntax.DEFAULT_LINEBREAK,
+                                                            StandardCharsets.UTF_8);
+                
+                // Write
                 out.write(model.getInputConfig()
                                .getInput()
                                .getHandle()
                                .iterator());
+                
             }
         }
     }
-
-    /**
-     * Writes the input subset to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-    private void writeInputSubset(final Model model, final ZipOutputStream zip) throws IOException {
-        if (model.getInputConfig().getInput() != null) {
-            if (model.getInputConfig().getInput().getHandle() != null) {
-                zip.putNextEntry(new ZipEntry("data/input_subset.csv")); //$NON-NLS-1$
-                final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-                out.write(model.getInputConfig().getInput().getHandle().getView().iterator());
-            }
-        }
-    }
-    
 
     /**
      * Writes the lattice to the file.
@@ -626,7 +632,7 @@ public class WorkerSave extends Worker<Model> {
         // Return mapping
         return map;
     }
-    
+
     /**
      * Writes the meta data to the file.
      *
@@ -647,7 +653,7 @@ public class WorkerSave extends Worker<Model> {
         w.flush();
 
     }
-
+    
     /**
      * Writes the project to the file.
      *
@@ -656,6 +662,10 @@ public class WorkerSave extends Worker<Model> {
      * @throws IOException
      */
     private void writeModel(final Model model, final ZipOutputStream zip) throws IOException {
+        
+        // Backwards compatibility
+        model.setCharset("UTF-8");
+        
         zip.putNextEntry(new ZipEntry("project.dat")); //$NON-NLS-1$
         final ObjectOutputStream oos = new ObjectOutputStream(zip);
         oos.writeObject(model);
@@ -667,21 +677,6 @@ public class WorkerSave extends Worker<Model> {
         w.flush();
     }
 
-	/**
-     * Writes the output to the file.
-     *
-     * @param model
-     * @param zip
-     * @throws IOException
-     */
-	private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
-		if (model.getOutput() != null) {
-			zip.putNextEntry(new ZipEntry("data/output.csv")); //$NON-NLS-1$
-			final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-			out.write(model.getOutput().iterator());
-		}
-	}
-
     /**
      * Writes the output to the file.
      *
@@ -689,11 +684,10 @@ public class WorkerSave extends Worker<Model> {
      * @param zip
      * @throws IOException
      */
-    private void writeOutputSubset(final Model model, final ZipOutputStream zip) throws IOException {
+    private void writeOutput(final Model model, final ZipOutputStream zip) throws IOException {
         if (model.getOutput() != null) {
-            zip.putNextEntry(new ZipEntry("data/output_subset.csv")); //$NON-NLS-1$
-            final CSVDataOutput out = new CSVDataOutput(zip, model.getCSVSyntax().getDelimiter());
-            out.write(model.getOutput().getView().iterator());
+            zip.putNextEntry(new ZipEntry("data/output.dat")); //$NON-NLS-1$
+            ((DataHandleOutput) model.getOutput()).write(zip);
         }
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -196,7 +196,7 @@ abstract class HIPAAMatcherAttributeValue {
      * Pattern which matches IBAN account numbers
      * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
-    static class HIPAAMatcherIBAN extends HIPAAMatcherString {
+    static class HIPAAMatcherIBAN extends HIPAAMatcherString { // NO_UCD
         HIPAAMatcherIBAN() {
             super("[a-zA-Z]{2}[0-9]{2}[a-zA-Z0-9]{4}[0-9]{7}([a-zA-Z0-9]?){0,16}");
         }
@@ -329,7 +329,7 @@ abstract class HIPAAMatcherAttributeValue {
      * Pattern which matches names a vehicle identification number
      * @author Florian Kohlmayer, Fabian Prasser, David Gassmann
      */
-    static class HIPAAMatcherVIN extends HIPAAMatcherString {
+    static class HIPAAMatcherVIN extends HIPAAMatcherString { // NO_UCD
         HIPAAMatcherVIN() {
             super("[0-9A-Z]{17}");
         }

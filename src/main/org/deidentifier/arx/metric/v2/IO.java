@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,44 +21,20 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import org.apache.commons.math3.fraction.BigFraction;
+
 import com.carrotsearch.hppc.LongDoubleOpenHashMap;
+import com.carrotsearch.hppc.LongObjectOpenHashMap;
 
 /**
+ * This class implements serialization for maps
  * 
+ * @author Fabian Prasser
  */
 public class IO {
 
     /**
-     * Reads a hash map from the stream.
-     *
-     * @param stream
-     * @return
-     * @throws ClassNotFoundException
-     * @throws IOException
-     */
-    public static IntIntOpenHashMap readIntIntOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
-        
-        // Read
-        boolean[] allocated = (boolean[]) stream.readObject();
-        int[] keys = (int[]) stream.readObject();
-        int[] values = (int[]) stream.readObject();
-        
-        // Set
-        IntIntOpenHashMap result = new IntIntOpenHashMap();
-        for (int i=0; i<allocated.length; i++) {
-            if (allocated[i]) {
-                result.put(keys[i], values[i]);
-            }
-        }
-        
-        // Return
-        return result;
-    }
-    
-
-    /**
-     * Reads a hash map from the stream.
+     * Reads a LongDoubleOpenHashMap from the stream.
      *
      * @param stream
      * @return
@@ -83,15 +59,42 @@ public class IO {
         // Return
         return result;
     }
+    
+    /**
+     * Reads a LongObjectOpenHashMap of the type BigFraction from the stream.
+     *
+     * @param stream
+     * @return
+     * @throws ClassNotFoundException
+     * @throws IOException
+     */
+    public static LongObjectOpenHashMap<BigFraction> readLongBigFractionOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
+        
+        // Read
+        boolean[] allocated = (boolean[]) stream.readObject();
+        long[] keys = (long[]) stream.readObject();
+        Object[] values = (Object[]) stream.readObject();
+        
+        // Set
+        LongObjectOpenHashMap<BigFraction> result = new LongObjectOpenHashMap<BigFraction>();
+        for (int i=0; i<allocated.length; i++) {
+            if (allocated[i]) {
+                result.put(keys[i], (BigFraction)values[i]);
+            }
+        }
+        
+        // Return
+        return result;
+    }
 
     /**
-     * Reads a hash map from the stream.
+     * Writes a LongDoubleOpenHashMap to the stream.
      *
      * @param stream
      * @param hashmap
      * @throws IOException
      */
-    public static void writeIntIntOpenHashMap(ObjectOutputStream stream, IntIntOpenHashMap hashmap) throws IOException {
+    public static void writeLongDoubleOpenHashMap(ObjectOutputStream stream, LongDoubleOpenHashMap hashmap) throws IOException {
         
         // Write
         stream.writeObject(hashmap.allocated);
@@ -99,15 +102,14 @@ public class IO {
         stream.writeObject(hashmap.values);
     }
     
-
     /**
-     * Reads a hash map from the stream.
+     * Writes a LongObjectOpenHashMap of the type BigFraction to the stream.
      *
      * @param stream
      * @param hashmap
      * @throws IOException
      */
-    public static void writeLongDoubleOpenHashMap(ObjectOutputStream stream, LongDoubleOpenHashMap hashmap) throws IOException {
+    public static void writeLongBigFractionOpenHashMap(ObjectOutputStream stream, LongObjectOpenHashMap<BigFraction> hashmap) throws IOException {
         
         // Write
         stream.writeObject(hashmap.allocated);

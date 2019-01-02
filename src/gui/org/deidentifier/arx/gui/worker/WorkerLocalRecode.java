@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ package org.deidentifier.arx.gui.worker;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.resources.Resources;
@@ -45,28 +44,14 @@ public class WorkerLocalRecode extends Worker<DataHandle> {
     }
 
     @Override
-    public void run(final IProgressMonitor arg0) throws InvocationTargetException, InterruptedException {
+    public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
         
         if (model == null || model.getResult() == null || model.getOutput() == null) {
             return;
         }
         
-        ARXListener listener = new ARXListener() {
-            int previous = 0;
-            public void progress(final double progress) {
-                if (arg0.isCanceled()) { 
-                    throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); //$NON-NLS-1$ 
-                } 
-                int current = (int)(Math.round(progress * 100d));
-                if (current != previous) {
-                    arg0.worked(current - previous);
-                    previous = current;
-                }
-            }
-        };
-
         try {
-            arg0.beginTask(Resources.getMessage("WorkerLocalRecode.0"), 100); //$NON-NLS-1$
+            monitor.beginTask(Resources.getMessage("WorkerLocalRecode.0"), 100); //$NON-NLS-1$
             
             switch (model.getLocalRecodingModel().getMode()) {
             case FIXPOINT:
@@ -74,29 +59,35 @@ public class WorkerLocalRecode extends Worker<DataHandle> {
                                                     model.getLocalRecodingModel().getGsFactor(), 
                                                     Integer.MAX_VALUE,
                                                     0d,
-                                                    listener);
+                                                    new ProgressListener(monitor));
                 break;
             case FIXPOINT_ADAPTIVE:
                 model.getResult().optimizeIterative(model.getOutput(), 
                                                     model.getLocalRecodingModel().getGsFactor(), 
                                                     Integer.MAX_VALUE,
                                                     model.getLocalRecodingModel().getAdaptionFactor(),
-                                                    listener);
+                                                    new ProgressListener(monitor));
                 break;
             case MULTI_PASS:
                 model.getResult().optimizeIterative(model.getOutput(), 
                                                     model.getLocalRecodingModel().getGsFactor(), 
                                                     model.getLocalRecodingModel().getNumIterations(),
                                                     0d,
-                                                    listener);
+                                                    new ProgressListener(monitor));
+                break;
+            case ITERATIVE:
+                model.getResult().optimizeIterativeFast(model.getOutput(),
+                                                        1d / (double)model.getLocalRecodingModel().getNumIterations(),
+                                                        model.getLocalRecodingModel().getGsFactor(), 
+                                                        new ProgressListener(monitor));
                 break;
             case SINGLE_PASS:
-                model.getResult().optimize(model.getOutput(), model.getLocalRecodingModel().getGsFactor(), listener);
+                model.getResult().optimize(model.getOutput(), model.getLocalRecodingModel().getGsFactor(), new ProgressListener(monitor));
                 break;
             }
         } catch (final Exception e) {
             error = e;
         }
-        arg0.done();
+        monitor.done();
     }
 }

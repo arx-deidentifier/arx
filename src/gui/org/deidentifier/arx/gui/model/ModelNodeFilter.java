@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,21 @@ package org.deidentifier.arx.gui.model;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
-import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.gui.resources.Resources;
 
 /**
  * This class implements a filter for a generalization lattice.
@@ -96,7 +102,6 @@ public class ModelNodeFilter implements Serializable {
         this.maxNumNodesInitial = maxNumNodesInitial;
         this.minInformationLoss = minInformationLoss;
         this.maxInformationLoss = maxInformationLoss;
-
     }
 
     /**
@@ -242,16 +247,19 @@ public class ModelNodeFilter implements Serializable {
      * Creates a node filter for the given result.
      *
      * @param result
+     * @param localTransformation 
      */
-    public void initialize(final ARXResult result) {
+    public void initialize(final ARXResult result, boolean localTransformation) {
         disallowAll();
+        if (localTransformation) {
+            return;
+        }
         if (result.isResultAvailable()) {
-
+            
             // Allow specializations and generalizations of optimum
             allowAnonymous();
             final double min = 0d;
             final double max = 1d;
-            
             
             allowInformationLoss(min, max);
             final int[] optimum = result.getGlobalOptimum().getTransformation();
@@ -403,18 +411,6 @@ public class ModelNodeFilter implements Serializable {
     }
 
     /**
-     * Returns whether the given generalization is allowed.
-     *
-     * @param dimension
-     * @param level
-     * @return
-     */
-    public boolean
-            isAllowedGeneralization(final int dimension, final int level) {
-        return generalizations[dimension].contains(level);
-    }
-
-    /**
      * Returns setting.
      *
      * @return
@@ -432,6 +428,43 @@ public class ModelNodeFilter implements Serializable {
         return anonymity.contains(Anonymity.PROBABLY_ANONYMOUS) ||
         	   anonymity.contains(Anonymity.PROBABLY_NOT_ANONYMOUS) ||
                anonymity.contains(Anonymity.UNKNOWN);
+    }
+
+    /**
+     * Resets the filter to display everything
+     * @param handle
+     * @param definition
+     */
+    public void reset(final DataHandle handle, final DataDefinition definition) {
+        
+        if (handle == null || definition == null) {
+            return;
+        }
+
+        List<String> attributes = new ArrayList<String>();
+        attributes.addAll(definition.getQuasiIdentifiersWithGeneralization());
+        attributes.addAll(definition.getQuasiIdentifiersWithClusteringAndMicroaggregation());
+        Collections.sort(attributes, new Comparator<String>(){
+            public int compare(String arg0, String arg1) {
+                return handle.getColumnIndexOf(arg0)- handle.getColumnIndexOf(arg1);
+            }
+        });
+        
+
+        int dimension=0;
+        for (String attribute : attributes) {
+            int attributeMin = definition.getMinimumGeneralization(attribute);
+            int attributeMax = definition.getMaximumGeneralization(attribute);
+            for (int i=attributeMin; i<=attributeMax; i++){
+                this.allowGeneralization(dimension, i);
+            }
+            dimension++;
+        }
+
+        this.allowAllInformationLoss();
+        this.allowAnonymous();
+        this.allowNonAnonymous();
+        this.allowUnknown();
     }
 
     /**
@@ -475,6 +508,7 @@ public class ModelNodeFilter implements Serializable {
             }
         }
     }
+    
 
     /**
      * Counts the number of visible nodes.
@@ -495,7 +529,6 @@ public class ModelNodeFilter implements Serializable {
         }
         return visible.size();
     }
-    
 
     /**
      * 

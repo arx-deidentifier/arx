@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,6 +66,10 @@ public class Main {
         }
         
         try {
+        	
+            // Update display settings
+            Display.setAppName(Resources.getMessage("MainWindow.0"));
+            Display.setAppVersion(Resources.getVersion());
             
             // Display
             if (display == null) {
@@ -81,7 +85,7 @@ public class Main {
             
             // Create main window
             main = new MainWindow(display, monitor);
-            
+
             // Handler for loading a project
             if (args.length > 0 && args[0].endsWith(".deid")) { //$NON-NLS-1$
                 main.onShow(new Runnable() {
@@ -94,6 +98,7 @@ public class Main {
             // Show window
             main.show();
             
+            // Check for updates
             new Update(main.getShell());
             
             // Main event loop

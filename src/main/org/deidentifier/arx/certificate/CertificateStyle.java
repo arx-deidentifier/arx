@@ -25,7 +25,7 @@ import rst.pdfbox.layout.text.BaseFont;
  * Style information for a PDF document
  * @author Fabian Prasser
  */
-public class CertificateStyle {
+public class CertificateStyle { // NO_UCD
     
     /**
      * Enum for list styles

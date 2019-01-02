@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -104,7 +104,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
             builder.append("TestCase{\n");
             builder.append(" - Dataset: ").append(dataset).append("\n");
             builder.append(" - Sensitive: ").append(sensitiveAttribute).append("\n");
-            builder.append(" - Suppression: ").append(config.getMaxOutliers()).append("\n");
+            builder.append(" - Suppression: ").append(config.getSuppressionLimit()).append("\n");
             builder.append(" - Metric: ").append(config.getQualityModel().toString()).append("\n");
             builder.append(" - Criteria:\n");
             for (PrivacyCriterion c : config.getPrivacyModels()) {
@@ -116,7 +116,7 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
         
         @Override
         public String toString() {
-            return config.getPrivacyModels() + "-" + config.getMaxOutliers() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
+            return config.getPrivacyModels() + "-" + config.getSuppressionLimit() + "-" + config.getQualityModel() + "-" + dataset + "-PM:" +
                    config.isPracticalMonotonicity();
         }
     }

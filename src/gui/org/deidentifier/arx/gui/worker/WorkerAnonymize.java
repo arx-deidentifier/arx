@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,17 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.deidentifier.arx.gui.worker;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXListener;
+import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.gui.model.Model;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.SearchType;
+import org.deidentifier.arx.gui.model.ModelAnonymizationConfiguration.TransformationType;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.metric.MetricConfiguration;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
@@ -32,51 +36,41 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  * @author Fabian Prasser
  */
-public class WorkerAnonymize extends Worker<ARXResult> {
+public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, ARXProcessStatistics>> {
 
     /** The model. */
-    private final Model model;
+    private final Model              model;
 
     /** Heuristic flag */
-    private final int   timeLimit;
+    private final SearchType         searchType;
+
+    /** Heuristic flag */
+    private final TransformationType transformationType;
 
     /**
      * Creates a new instance.
      *
      * @param model
-     * @param heuristicSearch 
+     * @param searchType 
+     * @param transformationType
      */
-    public WorkerAnonymize(final Model model, int timeLimit) {
+    public WorkerAnonymize(final Model model) {
         this.model = model;
-        this.timeLimit = timeLimit;
+        this.searchType = model.getAnonymizationConfiguration().getSearchType();
+        this.transformationType = model.getAnonymizationConfiguration().getTransformationType();
     }
 
     @Override
-    public void run(final IProgressMonitor arg0) throws InvocationTargetException,
-                                                        InterruptedException {
+    public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
 
         // Initialize anonymizer
         final ARXAnonymizer anonymizer = model.createAnonymizer();
-
-        // Update the progress bar
-        anonymizer.setListener(new ARXListener() {
-            int previous = 0;
-            public void progress(final double progress) {
-                if (arg0.isCanceled()) { 
-                    throw new RuntimeException(Resources.getMessage("WorkerAnonymize.1")); //$NON-NLS-1$ 
-                } 
-                int current = (int)(Math.round(progress * 100d));
-                if (current != previous) {
-                    arg0.worked(current - previous);
-                    previous = current;
-                }
-            }
-        });
 
         // Remember user-defined settings
         ARXConfiguration config = model.getInputConfig().getConfig();
         boolean heuristicSearchEnabled = config.isHeuristicSearchEnabled();
         int heuristicSearchTimeLimit = config.getHeuristicSearchTimeLimit();
+        double suppressionLimit = config.getSuppressionLimit();
         
         // Perform all tasks
         try {
@@ -84,32 +78,65 @@ public class WorkerAnonymize extends Worker<ARXResult> {
             // Release
             model.getInputConfig().getInput().getHandle().release();
             
-            // Temporarily overwrite user-defined settings
-            if (timeLimit > 0) {
+            // Set properties for the heuristic search
+            if (searchType == SearchType.STEP_LIMIT) {
                 config.setHeuristicSearchEnabled(true);
-                config.setHeuristicSearchTimeLimit(timeLimit);
+                config.setHeuristicSearchStepLimit(model.getHeuristicSearchStepLimit());
+            } else if (searchType == SearchType.TIME_LIMIT) {
+                config.setHeuristicSearchEnabled(true);
+                config.setHeuristicSearchStepLimit(model.getHeuristicSearchTimeLimit());
             }
             
+            // Overwrite user-defined settings to prepare local recoding
+            if (transformationType == TransformationType.LOCAL) {
+                MetricConfiguration metricConfig = config.getQualityModel().getConfiguration();
+                metricConfig.setGsFactor(0d);
+                config.setQualityModel(config.getQualityModel().getDescription().createInstance(metricConfig));
+                config.setSuppressionLimit(1d - (1d / (double)model.getLocalRecodingModel().getNumIterations()));
+            }
+            
+            // Prepare progress tracking
+            monitor.beginTask(Resources.getMessage("WorkerAnonymize.0"), 100); //$NON-NLS-1$
+            anonymizer.setListener(new ProgressListener(monitor));
+            
             // Anonymize
-            arg0.beginTask(Resources.getMessage("WorkerAnonymize.0"), 110); //$NON-NLS-1$
-        	result = anonymizer.anonymize(model.getInputConfig().getInput(), config);
+        	ARXResult result = anonymizer.anonymize(model.getInputConfig().getInput(), config);
 
             // Apply optimal transformation, if any
+            DataHandle output = null;
             if (result.isResultAvailable()) {
-                result.getOutput(false);
+                output = result.getOutput(false);
             }
+            ARXProcessStatistics statistics = result.getProcessStatistics();
             model.setAnonymizer(anonymizer);
             model.setTime(result.getTime());
-            arg0.worked(10);
-            arg0.done();
+            monitor.worked(10);
+            
+            // Local recoding
+            if (output != null && transformationType == TransformationType.LOCAL) {
+                monitor.beginTask(Resources.getMessage("WorkerAnonymize.4"), 100); //$NON-NLS-1$
+                statistics = statistics.merge(result.optimizeIterativeFast(output, (1d / (double)model.getLocalRecodingModel().getNumIterations()), new ProgressListener(monitor)));
+            }
+            
+            // Store results
+            this.result = new Pair<>(new Pair<>(result, output), statistics);
+            
+            // Now we are really done
+            monitor.done();
+            
         } catch (final Exception e) {
+            
+            // Handle errors
             error = e;
-            arg0.done();
+            monitor.done();
             return;
+            
         } finally {
+            
             // Reset to user-defined settings
             config.setHeuristicSearchEnabled(heuristicSearchEnabled);
             config.setHeuristicSearchTimeLimit(heuristicSearchTimeLimit);
+            config.setSuppressionLimit(suppressionLimit);
         }
     }
 }

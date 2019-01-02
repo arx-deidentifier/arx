@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -115,23 +115,6 @@ public class HierarchyWizard<T> extends ARXWizard<HierarchyWizardResult<T>> {
 
     /** Var. */
     private HierarchyWizardPageType<T>      pageType;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param controller
-     * @param attribute
-     * @param datatype
-     * @param locale
-     * @param items
-     */
-    public HierarchyWizard(final Controller controller,
-                           final String attribute,
-                           final DataType<T> datatype,
-                           final Locale locale,
-                           final String[] items) {
-        this(controller, attribute, null, datatype, locale, items);
-    }
     
     /**
      * Creates a new instance.

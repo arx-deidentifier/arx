@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Ambiguity");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         return result;
     }
     
@@ -125,8 +125,9 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
                 double classResult = 1d;
                 double classBound = 1d;
                 // Compute
+                m.read();
                 for (int dimension = 0; dimension < transformation.length; dimension++) {
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = shares[dimension].getShare(value, level);
                     classResult *= (m.isNotOutlier ? share : 1d) * shares[dimension].getDomainSize();
@@ -152,8 +153,9 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
         double result = 1d;
 
         // Compute
+        entry.read();
         for (int dimension = 0; dimension < transformation.length; dimension++) {
-            int value = entry.key[dimension];
+            int value = entry.next();
             int level = transformation[dimension];
             result *= shares[dimension].getShare(value, level) * shares[dimension].getDomainSize();
         }
@@ -183,8 +185,9 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
             if (m.count>0) {
                 double classResult = 1d;
                 // Compute
+                m.read();
                 for (int dimension = 0; dimension < transformation.length; dimension++) {
-                    int value = m.key[dimension];
+                    int value = m.next();
                     int level = transformation[dimension];
                     double share = shares[dimension].getShare(value, level);
                     classResult *= share * shares[dimension].getDomainSize();

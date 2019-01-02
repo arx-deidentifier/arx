@@ -5,7 +5,7 @@ ARX is a comprehensive open source software for de-identifying sensitive persona
 It has been designed from the ground up to provide high scalability, ease of use and a 
 tight integration of the many different aspects relevant to data anonymization. Its highlights include:
 
- * Risk-based anonymization using different statistical models
+ * Utility-focused anonymization using different statistical models
  * Syntactic privacy models, such as k-anonymity, ℓ-diversity, t-closeness and δ-presence
  * Semantic privacy models, such as (ɛ, δ)-differential privacy
  * Methods for optimizing the profitability of data publishing based on monetary cost-benefit analyses
@@ -19,7 +19,7 @@ graphical user interface. You can find further information on the project [websi
 License
 ------
 
-ARX (C) 2012-2017 Fabian Prasser, Florian Kohlmayer and Contributors.
+ARX (C) 2012 - 2018 Fabian Prasser and Contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
@@ -37,3 +37,8 @@ External Libraries
 ------
 
 ARX uses external libraries. Their licenses are listed in the respective folders.
+
+Development setup
+------
+
+Currently, the main development of ARX is carried out using Eclipse as an IDE and Ant as a build tool. Support for IntelliJ IDEA and Maven is experimental.

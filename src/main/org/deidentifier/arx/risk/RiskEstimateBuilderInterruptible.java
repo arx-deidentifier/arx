@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -159,13 +159,64 @@ public class RiskEstimateBuilderInterruptible {
     
     /**
      * Returns a risk summary
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
      * @return
      * @throws InterruptedException 
      */
     public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold) throws InterruptedException {
         try {
             return parent.getSampleBasedRiskSummary(threshold);
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
+     * Returns a risk summary
+     *
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
+     * @param suppressed
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelSampleSummary getSampleBasedRiskSummary(double threshold, String suppressed) throws InterruptedException {
+        try {
+            return parent.getSampleBasedRiskSummary(threshold, suppressed);
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
+     * Returns a risk summary, using wildcard matching. "*" will be interpreted as a wildcard
+     *
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelSampleWildcard getSampleBasedRiskSummaryWildcard(double threshold) throws InterruptedException {
+        try {
+            return parent.getSampleBasedRiskSummaryWildcard(threshold);
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
+     * Returns a risk summary, using wildcard matching
+     *
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
+     * @param wildcard String to interpret as a wildcard
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelSampleWildcard getSampleBasedRiskSummaryWildcard(double threshold, String wildcard) throws InterruptedException {
+        try {
+            return parent.getSampleBasedRiskSummaryWildcard(threshold, wildcard);
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }

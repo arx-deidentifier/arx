@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -112,16 +111,6 @@ public class ComponentTable implements IComponent {
     /** Listeners. */
     private List<SelectionListener> selectionListeners = new ArrayList<SelectionListener>();
 
-    /**
-     * Creates a new instance.
-     *
-     * @param parent
-     * @param style
-     */
-    public ComponentTable(Composite parent, int style) {
-        this(parent, style, new CTConfiguration(parent));
-    }
-    
     /**
      * Creates a new instance.
      *
@@ -236,16 +225,6 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * Adds a selection listener.
-     *
-     * @param e
-     * @return
-     */
-    public boolean addSelectionListener(SelectionListener e) {
-        return selectionListeners.add(e);
-    }
-
-    /**
      * Clears the table.
      */
     public void clear() {
@@ -302,25 +281,6 @@ public class ComponentTable implements IComponent {
             this.dataProviderBody.getRowCount() == 0) {
             this.selectedRow = null;
         }
-    }
-    
-    /**
-     * Removes a listener.
-     *
-     * @param arg0
-     */
-    public void removeMouseListener(MouseListener arg0) {
-        table.removeMouseListener(arg0);
-    }
-
-    /**
-     * Removes a selection listener.
-     *
-     * @param index
-     * @return
-     */
-    public SelectionListener removeSelectionListener(int index) {
-        return selectionListeners.remove(index);
     }
     
     /**
@@ -404,29 +364,6 @@ public class ComponentTable implements IComponent {
         this.setData(createBodyDataProvider(data));
     }
 
-    
-    /**
-     * Updates the underlying table.
-     *
-     * @param data
-     * @param columns
-     */
-    public void setData(String[][] data, String[] columns) {
-        IDataProvider body = createBodyDataProvider(data);
-        setData(body, createRowHeaderDataProvider(body.getRowCount()), createColumnHeaderDataProvider(columns));
-    }
-
-    /**
-     * Updates the underlying table.
-     *
-     * @param data
-     * @param rows
-     * @param columns
-     */
-    public void setData(String[][] data, String[] rows, String[] columns) {
-        setData(createBodyDataProvider(data), rows, columns);
-    }
-
     /**
      * Updates the selection.
      *
@@ -439,17 +376,6 @@ public class ComponentTable implements IComponent {
                                                    row, 
                                                    false,
                                                    false));
-    }
-
-    /**
-     * To display coordinates.
-     *
-     * @param x
-     * @param y
-     * @return
-     */
-    public Point toDisplay(int x, int y) {
-        return table.toDisplay(x, y);
     }
 
     /**

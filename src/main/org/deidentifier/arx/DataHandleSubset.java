@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,9 +45,9 @@ public class DataHandleSubset extends DataHandle {
      */
     public DataHandleSubset(DataHandle source, DataSubset subset) {
         this.source = source;
-        this.dataTypes = source.dataTypes;
+        this.columnToDataType = source.columnToDataType;
         this.definition = source.definition;
-        this.header = source.header;
+        this.setHeader(source.header);
         this.subset = subset;
     }
 
@@ -106,6 +106,11 @@ public class DataHandleSubset extends DataHandle {
     public DataHandle getView(){
         checkRegistry();
         return this;
+    }
+
+    @Override
+    protected int getValueIdentifier(int column, String value) {
+        return source.getValueIdentifier(column, value);
     }
 
     @Override
@@ -170,14 +175,14 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected DataMatrix getDataMatrix(int[] columns, int[] rows) {
-        return source.getDataMatrix(columns, this.subset.getArray());
+    protected DataArray getDataArray(int[] columns, int[] rows) {
+        return source.getDataArray(columns, this.subset.getArray());
     }    
 
     @Override
-    protected DataType<?>[][] getDataTypeArray() {
-        return source.dataTypes;
-    }
+    protected DataType<?>[] getColumnToDataType() {
+        return source.columnToDataType;
+    }    
 
     @Override
     protected String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler handler) {
@@ -207,6 +212,11 @@ public class DataHandleSubset extends DataHandle {
     @Override
     protected int internalCompare(int row1, int row2, int[] columns, boolean ascending) {
         return source.internalCompare(this.subset.getArray()[row1], this.subset.getArray()[row2], columns, ascending);
+    }
+
+    @Override
+    protected int internalGetEncodedValue(int row, int col, boolean ignoreSuppression) {
+        return source.internalGetEncodedValue(this.subset.getArray()[row], col, ignoreSuppression);
     }
 
     @Override

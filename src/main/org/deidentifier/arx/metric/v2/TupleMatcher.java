@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
 /**
@@ -33,28 +34,22 @@ public class TupleMatcher implements Serializable {
     /** SVUID*/
     private static final long serialVersionUID = -5081573765755187296L;
     
-    /** Data*/
-    private final int[][][] hierarchies;
-    /** Data*/
-    private final int[][] data;
-    /** Data*/
-    private final int[] tuple;
+    /** Data */
+    private final int[][][]   hierarchies;
+    /** Data */
+    private final int[]       tuple;
 
     /**
      * Creates a new instance
-     * @param hierarchies
      * @param input
      */
-    TupleMatcher(GeneralizationHierarchy[] hierarchies, int[][] input) {
+    TupleMatcher(GeneralizationHierarchy[] hierarchies) {
         
         // Store hierarchies
-        this.hierarchies = new int[input[0].length][][];
+        this.hierarchies = new int[hierarchies.length][][];
         for (int dimension = 0; dimension < this.hierarchies.length; dimension++) {
             this.hierarchies[dimension] = hierarchies[dimension].getArray();
         }
-        
-        // Store data
-        this.data = input;
         
         // Create tuple
         this.tuple = new int[this.hierarchies.length];
@@ -70,9 +65,10 @@ public class TupleMatcher implements Serializable {
     HashGroupifyEntry getEntry(int row, int[] generalization, HashGroupify groupify) {
         
         // Transform the tuple
-        int[] inputtuple = data[row];
+        DataMatrix data = groupify.getInputData();
+        data.iterator(row);
         for (int dimension = 0; dimension < tuple.length; dimension++) {
-            tuple[dimension] = hierarchies[dimension][inputtuple[dimension]][generalization[dimension]];
+            tuple[dimension] = hierarchies[dimension][data.iterator_next()][generalization[dimension]];
         }
         
         // Return

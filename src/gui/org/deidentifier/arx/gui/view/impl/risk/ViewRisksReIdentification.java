@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,11 +171,10 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         separatordata.verticalIndent = 0;
 
         // Prosecutor
-        ComponentTitledSeparator separator = new ComponentTitledSeparator(root,
-                                                                          MESSAGE_CAPTION1,
-                                                                          controller.getResources()
-                                                                                    .getManagedImage("prosecutor.png")); //$NON-NLS-1$
+        ComponentTitledSeparator separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
+        separator.setText(MESSAGE_CAPTION1);
+        separator.setImage(controller.getResources().getManagedImage("prosecutor.png")); //$NON-NLS-1$
         
         prosecutor1 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL1, MESSAGE_SHORT1);
         prosecutor2 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL2, MESSAGE_SHORT2);
@@ -185,11 +184,10 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         prosecutor3.setLayoutData(SWTUtil.createFillGridData());
         
         // Journalist
-        separator = new ComponentTitledSeparator(root,
-                                                 MESSAGE_CAPTION2,
-                                                 controller.getResources()
-                                                           .getManagedImage("journalist.png")); //$NON-NLS-1$
+        separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
+        separator.setText(MESSAGE_CAPTION2);
+        separator.setImage(controller.getResources().getManagedImage("journalist.png")); //$NON-NLS-1$
         
         journalist1 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL1, MESSAGE_SHORT1);
         journalist2 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL2, MESSAGE_SHORT2);
@@ -199,11 +197,10 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         journalist3.setLayoutData(SWTUtil.createFillGridData());
 
         // Marketer
-        separator = new ComponentTitledSeparator(root,
-                                                 MESSAGE_CAPTION3,
-                                                 controller.getResources()
-                                                           .getManagedImage("marketer.png")); //$NON-NLS-1$
+        separator = new ComponentTitledSeparator(root, SWT.NONE);
         separator.setLayoutData(separatordata);
+        separator.setText(MESSAGE_CAPTION3);
+        separator.setImage(controller.getResources().getManagedImage("marketer.png")); //$NON-NLS-1$
         
         marketer1 = new ComponentRiskMonitor(root, controller, MESSAGE_LABEL3, MESSAGE_SHORT3);
         marketer1.setLayoutData(SWTUtil.createFillGridData());

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
@@ -31,6 +32,7 @@ import org.deidentifier.arx.metric.MetricConfiguration;
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
+ * @author Raffael Bild
  */
 public class MetricSDAECS extends AbstractMetricSingleDimensional {
 
@@ -93,14 +95,52 @@ public class MetricSDAECS extends AbstractMetricSingleDimensional {
     }
     
     @Override
+    /**
+     * Implements the score function described in Section 5.4 of the article
+     * 
+     * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
+     * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        
+        // Calculate the number of all equivalence classes, regarding all suppressed records to belong to one class
+        
+        boolean hasSuppressed = false;
+        int numberOfNonSuppressedClasses = 0;
+        
+        HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
+        while (entry != null) {
+            if (!entry.isNotOutlier && entry.count > 0 || entry.pcount > entry.count) {
+                // The equivalence class is suppressed or contains records removed by sampling
+                hasSuppressed = true;
+            }
+            if (entry.isNotOutlier && entry.count > 0) {
+                // The equivalence class contains records which are not suppressed
+                numberOfNonSuppressedClasses++;
+            }
+            // Next group
+            entry = entry.nextOrdered;
+        }
+        
+        // Calculate the score. Dividing by the sensitivity is not required because this score function has a sensitivity of one.
+        BigFraction score = new BigFraction(numberOfNonSuppressedClasses + (hasSuppressed ? 1d : 0d));
+        return new ILScore(score);
+    }
+    
+    @Override
     public boolean isGSFactorSupported() {
+        return true;
+    }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
         return true;
     }
 
     @Override
     public ElementData render(ARXConfiguration config) {
         ElementData result = new ElementData("Average equivalence class size");
-        result.addProperty("Monotonic", this.isMonotonic(config.getMaxOutliers()));
+        result.addProperty("Monotonic", this.isMonotonic(config.getSuppressionLimit()));
         result.addProperty("Generalization factor", this.getGeneralizationFactor());
         result.addProperty("Suppression factor", this.getSuppressionFactor());
         return result;

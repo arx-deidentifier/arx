@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ import java.util.List;
 
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean;
-import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeneralization;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionGeometricMean;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionInterval;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMedian;
@@ -47,7 +46,7 @@ import org.deidentifier.arx.io.IOUtil;
  * @author Fabian Prasser
  * @author Florian Kohlmayer
  */
-public class AttributeType implements Serializable, Cloneable {
+public class AttributeType implements Serializable, Cloneable { // NO_UCD
     
     /**
      * This class implements a generalization hierarchy.
@@ -55,7 +54,7 @@ public class AttributeType implements Serializable, Cloneable {
      * @author Fabian Prasser
      * @author Florian Kohlmayer
      */
-    public static abstract class Hierarchy extends AttributeType implements Serializable {
+    public static abstract class Hierarchy extends AttributeType implements Serializable { // NO_UCD
 
         /**
          * The default implementation of a generalization hierarchy. It allows
@@ -669,25 +668,6 @@ public class AttributeType implements Serializable, Cloneable {
         }
         
         /**
-         * Creates a microaggregation function using generalization. Ignores missing data.
-         * @return
-         */
-        public static MicroAggregationFunction createGeneralization() {
-            return createGeneralization(true);
-        }
-        
-        /**
-         * Creates a microaggregation function using generalization.
-         * 
-         * @param ignoreMissingData Should the function ignore missing data. Default is true.
-         * @return
-         */
-        public static MicroAggregationFunction createGeneralization(boolean ignoreMissingData) {
-            return new MicroAggregationFunction(new DistributionAggregateFunctionGeneralization(ignoreMissingData),
-                                                DataScale.NOMINAL, "Generalization");
-        }
-
-        /**
          * Creates a microaggregation function returning the geometric mean. Ignores missing data.
          * @return
          */
@@ -834,7 +814,7 @@ public class AttributeType implements Serializable, Cloneable {
      * This class describes a microaggregation function
      * @author Fabian Prasser
      */
-    public abstract static class MicroAggregationFunctionDescription implements Serializable {
+    public abstract static class MicroAggregationFunctionDescription implements Serializable { // NO_UCD
 
         /** SVUID*/
         private static final long serialVersionUID = -6608355532280843693L;
@@ -880,12 +860,6 @@ public class AttributeType implements Serializable, Cloneable {
 
     /** SVUID. */
     private static final long   serialVersionUID            = -7358540408016873823L;
-
-    /** The shift. */
-    protected static final int  SHIFT                       = 30;
-
-    /** The mask. */
-    protected static final int  MASK                        = 0x3fffffff;
 
     /** Constant for type QI. */
     protected static final int  ATTR_TYPE_QI                = 0;
@@ -945,12 +919,6 @@ public class AttributeType implements Serializable, Cloneable {
                     /** SVUID*/ private static final long serialVersionUID = 1803670665142101922L;
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMode(ignoreMissingData);
-                    }
-                },
-                new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Generalization") {
-                    /** SVUID*/ private static final long serialVersionUID = 8001475078517380349L;
-                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
-                        return MicroAggregationFunction.createGeneralization(ignoreMissingData);
                     }
                 }
         });

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,6 +73,24 @@ public class __MetricV2 {
      */
     public static Metric<ILSingleDimensional> createAmbiguityMetric() {
         return new MetricSDNMAmbiguity();
+    }
+    
+    /**
+     * Creates an instance of the classification metric.
+     * 
+     * @param gsFactor
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric(double gsFactor) {
+        return new MetricSDClassification(gsFactor);
+    }
+
+    /**
+     * Creates an instance of the classification metric.
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric() {
+        return new MetricSDClassification();
     }
     
     /**
@@ -440,7 +458,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic) {
         return createPrecisionMetric(monotonic, AggregateFunction.ARITHMETIC_MEAN);
     }
-    
+
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -475,7 +493,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(boolean monotonic, double gsFactor) {
         return createPrecisionMetric(monotonic, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
     }
-
+    
     /**
      * Creates an instance of the precision metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -513,8 +531,7 @@ public class __MetricV2 {
         result.initialize(heights, cells);
         return result;
     }
-
-
+    
     /**
      * Creates an instance of the non-monotonic precision metric.
      * The default aggregate function, which is the arithmetic mean, will be used.
@@ -532,7 +549,6 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecisionMetric(double gsFactor) {
         return createPrecisionMetric(false, gsFactor, AggregateFunction.ARITHMETIC_MEAN);
     }
-
 
     /**
      * Creates an instance of the non-monotonic precision metric.
@@ -581,6 +597,7 @@ public class __MetricV2 {
         return createPrecomputedEntropyMetric(threshold, monotonic, AggregateFunction.SUM);
     }
 
+
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -599,6 +616,7 @@ public class __MetricV2 {
             return new MetricMDNUNMEntropyPotentiallyPrecomputed(threshold, 0.5d, function);
         }
     }
+
 
     /**
      * Creates a potentially precomputed instance of the non-uniform entropy metric. The default aggregate function,
@@ -666,7 +684,6 @@ public class __MetricV2 {
         return createPrecomputedEntropyMetric(threshold, false, gsFactor, AggregateFunction.SUM);
     }
 
-
     /**
      * Creates a potentially precomputed instance of the loss metric which treats generalization
      * and suppression equally.
@@ -714,7 +731,6 @@ public class __MetricV2 {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, AggregateFunction.GEOMETRIC_MEAN);
     }
 
-    
     /**
      * Creates a potentially precomputed instance of the loss metric with factors for weighting generalization and suppression.
      * This metric will respect attribute weights defined in the configuration.
@@ -735,6 +751,7 @@ public class __MetricV2 {
         return new MetricMDNMLossPotentiallyPrecomputed(threshold, gsFactor, function);
     }
 
+
     /**
      * Creates a potentially precomputed instance of the normalized entropy metric.
      * The default aggregate function, which is the sum function, will be used.
@@ -749,7 +766,6 @@ public class __MetricV2 {
         return new MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed(threshold);
     }
 
-
     /**
      * Creates a potentially precomputed instance of the normalized entropy metric.
      * This metric will respect attribute weights defined in the configuration.
@@ -763,7 +779,7 @@ public class __MetricV2 {
     public static Metric<AbstractILMultiDimensional> createPrecomputedNormalizedEntropyMetric(double threshold, AggregateFunction function) {
         return new MetricMDNUNMNormalizedEntropyPotentiallyPrecomputed(threshold, function);
     }
-    
+
     /**
      * Creates an instance of the model for maximizing publisher benefit in the game-theoretic privacy
      * model based on a cost/benefit analysis.
@@ -783,7 +799,7 @@ public class __MetricV2 {
                                                                          double gsFactor) {
         return new MetricSDNMPublisherPayout(journalistAttackerModel, gsFactor);
     }
-    
+
     /**
      * Creates an instance of a metric with statically defined information loss. 
      * The default aggregate function, which is the sum-function, will be used for comparing results.

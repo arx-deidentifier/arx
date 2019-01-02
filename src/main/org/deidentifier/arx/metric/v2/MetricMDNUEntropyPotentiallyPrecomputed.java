@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,7 +24,10 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 
 /**
  * This class provides an implementation of the non-uniform entropy
- * metric. TODO: Add reference
+ * metric. See:<br>
+ * A. De Waal and L. Willenborg: 
+ * "Information loss through global recoding and local suppression" 
+ * Netherlands Off Stat, vol. 14, pp. 17–20, 1999.
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -33,18 +36,6 @@ public class MetricMDNUEntropyPotentiallyPrecomputed extends AbstractMetricMulti
 
     /** SVUID. */
     private static final long serialVersionUID = 7044684079235440871L;
-
-    /**
-     * Creates a new instance. The precomputed variant will be used if 
-     * #distinctValues / #rows <= threshold for all quasi-identifiers.
-     * 
-     * @param threshold
-     */
-    protected MetricMDNUEntropyPotentiallyPrecomputed(double threshold) {
-        super(new MetricMDNUEntropy(),
-              new MetricMDNUEntropyPrecomputed(),
-              threshold);
-    }
 
     /**
      * Creates a new instance. The precomputed variant will be used if 

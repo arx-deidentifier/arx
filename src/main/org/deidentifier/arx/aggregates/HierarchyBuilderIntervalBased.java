@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
  * @author Fabian Prasser
  * @param <T>
  */
-public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> {
+public class HierarchyBuilderIntervalBased<T> extends HierarchyBuilderGroupingBased<T> { // NO_UCD
     
     /**
      * This class represents an node.

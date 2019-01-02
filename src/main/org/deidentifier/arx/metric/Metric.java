@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,6 +36,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
+import org.deidentifier.arx.metric.v2.ILScore;
 import org.deidentifier.arx.metric.v2.ILSingleDimensional;
 import org.deidentifier.arx.metric.v2.MetricMDHeight;
 import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
@@ -53,6 +54,7 @@ import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPotentiallyPr
 import org.deidentifier.arx.metric.v2.MetricMDNUNMNormalizedEntropyPrecomputed;
 import org.deidentifier.arx.metric.v2.MetricMDPrecision;
 import org.deidentifier.arx.metric.v2.MetricSDAECS;
+import org.deidentifier.arx.metric.v2.MetricSDClassification;
 import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMAmbiguity;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
@@ -150,6 +152,25 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public static Metric<ILSingleDimensional> createAmbiguityMetric() {
         return __MetricV2.createAmbiguityMetric();
+    }
+   
+    /**
+     * Creates an instance of the classification metric.
+     * 
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric() {
+        return __MetricV2.createClassificationMetric();
+    }
+
+    /**
+     * Creates an instance of the classification metric.
+     * 
+     * @param gsFactor
+     * @return
+     */
+    public static Metric<ILSingleDimensional> createClassificationMetric(double gsFactor) {
+        return __MetricV2.createClassificationMetric(gsFactor);
     }
 
     /**
@@ -787,7 +808,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                                                         double gsFactor) {
         return __MetricV2.createPublisherBenefitMetric(journalistAttackerModel, gsFactor);
     }
-    
+
     /**
      * Creates an instance of a metric with statically defined information loss. 
      * The default aggregate function, which is the sum-function, will be used for comparing results.
@@ -1107,7 +1128,29 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
                                      @Override
                                      public boolean isInstance(Metric<?> metric) {
                                          return (metric instanceof MetricSDNMEntropyBasedInformationLoss);
-                                     } 
+                                     }
+               },
+               new MetricDescription("Classification accuracy",
+                                     false, // monotonic variant supported
+                                     false, // attribute weights supported
+                                     true, // configurable coding model supported
+                                     false, // pre-computation supported
+                                     false, // aggregate function supported
+                                     false) { // attacker model supported
+                   
+                   
+                                     /** SVUID */
+                                     private static final long serialVersionUID = 6211930528963931179L;
+                                     
+                                     @Override
+                                     public Metric<?> createInstance(MetricConfiguration config) {
+                                         return createClassificationMetric(config.getGsFactor());
+                                     }
+                                     
+                                     @Override
+                                     public boolean isInstance(Metric<?> metric) {
+                                         return (metric instanceof MetricSDClassification);
+                                     }
                }
         });
     }
@@ -1364,6 +1407,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Calculates the score.
+     * Note: All score functions are expected to return a score value divided by the sensitivity of the score function.
+     * 
+     * @param node
+     * @param groupify
+     * @return
+     */
+    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+        throw new RuntimeException("Data-dependent differential privacy for the quality model '"
+            + getName() + "' is not yet implemented");
+    }
+    
+    /**
      * Returns the factor used to weight suppressed values.
      *
      * @return
@@ -1384,11 +1440,20 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final void initialize(final DataManager manager, final DataDefinition definition, final Data input, final GeneralizationHierarchy[] hierarchies, final ARXConfiguration config) {
         initializeInternal(manager, definition, input, hierarchies, config);
     }
+
     /**
      * Returns whether this metric handles microaggregation
      * @return
      */
     public boolean isAbleToHandleMicroaggregation() {
+        return false;
+    }
+
+    /**
+     * Returns whether this metric handles clustering and microaggregation
+     * @return
+     */
+    public boolean isAbleToHandleClusteredMicroaggregation() {
         return false;
     }
 
@@ -1459,7 +1524,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public final boolean isMonotonicWithSuppression() {
         return monotonic;
     }
-    
+
     /**
      * Returns true if the metric is multi-dimensional.
      *
@@ -1476,7 +1541,15 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     public boolean isPrecomputed() {
         return false;
     }
-
+    
+    /**
+     * Returns whether the metric provides a score function
+     * @return
+     */
+    public boolean isScoreFunctionSupported() {
+        return false;
+    }
+    
     /**
      * Returns true if the metric is weighted.
      *

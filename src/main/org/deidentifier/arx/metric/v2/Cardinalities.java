@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.Serializable;
 
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 
@@ -48,21 +49,21 @@ public class Cardinalities implements Serializable {
      */
     public Cardinalities(Data data, RowSet subset, GeneralizationHierarchy[] hierarchies){
 
-        int[][] array = data.getArray();
+        DataMatrix array = data.getArray();
         Dictionary dictionary = data.getDictionary();
         
         // Initialize counts
-        cardinalities = new int[array[0].length][][];
+        cardinalities = new int[array.getNumColumns()][][];
         for (int i = 0; i < cardinalities.length; i++) {
             cardinalities[i] = new int[dictionary.getMapping()[i].length][hierarchies[i].getArray()[0].length];
         }
 
         // Compute counts
-        for (int i = 0; i < array.length; i++) { 
+        for (int i = 0; i < array.getNumRows(); i++) { 
             if (subset == null || subset.contains(i)) {
-                final int[] row = array[i];
-                for (int column = 0; column < row.length; column++) {
-                    cardinalities[column][row[column]][0]++;
+                array.setRow(i);
+                for (int column = 0; column < array.getNumColumns(); column++) {
+                    cardinalities[column][array.getValueAtColumn(column)][0]++;
                 }
             }
         }

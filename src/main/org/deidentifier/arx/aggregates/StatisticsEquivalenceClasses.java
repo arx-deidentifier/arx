@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,16 +57,16 @@ public class StatisticsEquivalenceClasses {
      * @param numberOfTuples
      * @param numberOfOutlyingTuples
      */
-    public StatisticsEquivalenceClasses(double averageEquivalenceClassSize,
-                                        double averageEquivalenceClassSizeIncludingOutliers,
-                                        int maximalEquivalenceClassSize,
-                                        int maximalEquivalenceClassSizeIncludingOutliers,
-                                        int minimalEquivalenceClassSize,
-                                        int minimalEquivalenceClassSizeIncludingOutliers,
-                                        int numberOfEquivalenceClasses,
-                                        int numberOfEquivalenceClassesIncludingOutliers,
-                                        int numberOfTuples,
-                                        int numberOfOutlyingTuples) {
+    StatisticsEquivalenceClasses(double averageEquivalenceClassSize,
+                                 double averageEquivalenceClassSizeIncludingOutliers,
+                                 int maximalEquivalenceClassSize,
+                                 int maximalEquivalenceClassSizeIncludingOutliers,
+                                 int minimalEquivalenceClassSize,
+                                 int minimalEquivalenceClassSizeIncludingOutliers,
+                                 int numberOfEquivalenceClasses,
+                                 int numberOfEquivalenceClassesIncludingOutliers,
+                                 int numberOfTuples,
+                                 int numberOfOutlyingTuples) {
         this.averageEquivalenceClassSize = averageEquivalenceClassSize;
         this.averageEquivalenceClassSizeIncludingOutliers = averageEquivalenceClassSizeIncludingOutliers;
         this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;

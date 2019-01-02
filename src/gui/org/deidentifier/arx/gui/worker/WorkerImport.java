@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * Copyright 2014 Karol Babioch <karol@babioch.de>
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,6 +57,7 @@ public class WorkerImport extends Worker<Data> {
 
         final ImportAdapter adapter;
         try {
+            config.setOptimizedLoading(true);
             adapter = ImportAdapter.create(config);
         } catch (final Exception e) {
             close(config);

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,12 @@ import org.deidentifier.arx.framework.check.groupify.HashTableUtil;
  */
 public class Distribution {
 
+    /** The load factor. */
+    private final static float LOADFACTOR       = 0.75f;
+
+    /** The initial default capacity of the hash table. */
+    private static final int   DEFAULT_CAPACITY = 8;    // power of two
+
     /** The size. */
     private int                size;
 
@@ -38,12 +44,6 @@ public class Distribution {
 
     /** The elements. Even index contains value, odd index contains frequency */
     private int[]              elements;
-
-    /** The loadfactor. */
-    private final static float LOADFACTOR       = 0.75f;
-
-    /** The initial default capacity of the hashtable. */
-    private static final int   DEFAULT_CAPACITY = 8;    // power of two
 
     /**
      * Default constructor.
@@ -88,6 +88,36 @@ public class Distribution {
      */
     public final void add(final int element) {
         this.add(element, 1);
+    }
+
+    /**
+     * Adds an element with the given frequency.
+     *
+     * @param element
+     * @param value
+     */
+    public void add(final int element, final int value) {
+
+        final int mask = (elements.length - 1);
+        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at home bucket
+        while (true) {
+            if (elements[index] == -1) { // empty bucket, not found
+
+                elements[index] = element;
+                elements[index + 1] = value;
+                size++;
+
+                if (size > threshold) {
+                    rehash();
+                }
+                break;
+            } else if (elements[index] == element) { // element found
+                elements[index + 1] += value;
+                break;
+            }
+            index = (index + 2) & mask; // next bucket
+        }
+
     }
 
     /**
@@ -180,36 +210,6 @@ public class Distribution {
         }
         builder.append("]");
         return builder.toString();
-    }
-
-    /**
-     * Adds an element with the given frequency.
-     *
-     * @param element
-     * @param value
-     */
-    private void add(final int element, final int value) {
-
-        final int mask = (elements.length - 1);
-        int index = (element & ((elements.length >> 1) - 1)) << 1; // start at home bucket
-        while (true) {
-            if (elements[index] == -1) { // empty bucket, not found
-
-                elements[index] = element;
-                elements[index + 1] = value;
-                size++;
-
-                if (size > threshold) {
-                    rehash();
-                }
-                break;
-            } else if (elements[index] == element) { // element found
-                elements[index + 1] += value;
-                break;
-            }
-            index = (index + 2) & mask; // next bucket
-        }
-
     }
 
     /**

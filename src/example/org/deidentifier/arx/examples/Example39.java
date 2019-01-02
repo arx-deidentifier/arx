@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,8 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.ARXLogisticRegressionConfiguration;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -97,7 +97,6 @@ public class Example39 extends Example {
                                            "sex",
                                            "age",
                                            "race",
-                                           "marital-status",
                                            "education",
                                            "native-country",
                                            "workclass",
@@ -110,19 +109,20 @@ public class Example39 extends Example {
         Data data = createData("adult");
         data.getDefinition().setAttributeType("marital-status", AttributeType.INSENSITIVE_ATTRIBUTE);
         data.getDefinition().setDataType("age", DataType.INTEGER);
-        
-        System.out.println("Input dataset");
-        System.out.println(data.getHandle().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
+        data.getDefinition().setResponseVariable("marital-status", true);
         
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(5));
-        config.setMaxOutliers(1d);
-        config.setQualityModel(Metric.createLossMetric());
+        config.setSuppressionLimit(1d);
+        config.setQualityModel(Metric.createClassificationMetric());
         
         ARXResult result = anonymizer.anonymize(data, config);
-        System.out.println("5-anonymous dataset");
-        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXLogisticRegressionConfiguration.create()));
-        
+        System.out.println("5-anonymous dataset (logistic regression)");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createLogisticRegression()));
+        System.out.println("5-anonymous dataset (naive bayes)");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createNaiveBayes()));
+        System.out.println("5-anonymous dataset (random forest)");
+        System.out.println(result.getOutput().getStatistics().getClassificationPerformance(features, clazz, ARXClassificationConfiguration.createRandomForest()));
     }
 }

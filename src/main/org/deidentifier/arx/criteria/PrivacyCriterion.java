@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2017 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -145,6 +145,30 @@ public abstract class PrivacyCriterion implements Serializable{
      */
     public void initialize(DataManager manager, ARXConfiguration config){
         // Empty by design
+    }
+    
+    /**
+     * Returns whether the criterion supports heuristic search strategies.
+     * @return
+     */
+    public boolean isHeuristicSearchSupported() {
+        return true;
+    }
+    
+    /**
+     * Returns whether the criterion supports heuristic search strategies with time limits.
+     * @return
+     */
+    public boolean isHeuristicSearchWithTimeLimitSupported() {
+        return true;
+    }
+    
+    /**
+     * Returns whether the criterion supports optimal search strategies.
+     * @return
+     */
+    public boolean isOptimalSearchSupported() {
+        return true;
     }
     
     /**
