@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.gui.view.impl.risk;
 
+import java.util.Arrays;
+
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
@@ -55,7 +57,7 @@ import org.swtchart.ITitle;
 import org.swtchart.Range;
 
 /**
- * This view displays results of a data intrusion simulation based on SUDA
+ * This view displays estimates of confidence from a data intrusion simulation based on SUDA
  *
  * @author Fabian Prasser
  */
@@ -89,12 +91,13 @@ public class ViewRisksMSUIntrusionSimulation extends ViewRisks<AnalysisContextRi
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
     }
     
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.POPULATION_MODEL) {
             triggerUpdate();
         }
     }
@@ -205,6 +208,30 @@ public class ViewRisksMSUIntrusionSimulation extends ViewRisks<AnalysisContextRi
         }
     }
 
+    /**
+     * Insert item to back
+     * @param array
+     * @param value
+     * @return
+     */
+    private double[] insertToBack(double[] array, double value) {
+        double[] result = Arrays.copyOf(array, array.length + 1);
+        result[result.length - 1] = value;
+        return result;
+    }
+
+    /**
+     *Insert item to back
+     * @param array
+     * @param value
+     * @return
+     */
+    private String[] insertToBack(String[] array, String value) {
+        String[] result = Arrays.copyOf(array, array.length + 1);
+        result[result.length - 1] = value;
+        return result;
+    }
+
     @Override
     protected Control createControl(Composite parent) {
         this.root = new Composite(parent, SWT.NONE);
@@ -281,6 +308,7 @@ public class ViewRisksMSUIntrusionSimulation extends ViewRisks<AnalysisContextRi
             
             private boolean  stopped = false;
             private double[] scores;
+            private double[] cumulative;
             private String[] labels;
 
             @Override
@@ -302,20 +330,31 @@ public class ViewRisksMSUIntrusionSimulation extends ViewRisks<AnalysisContextRi
 
                 // Update chart
                 chart.setRedraw(false);
+                
 
                 ISeriesSet seriesSet = chart.getSeriesSet();
 
-                ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewRisksMSUIntrusionSimulation.1")); //$NON-NLS-1$
+                ILineSeries series1 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewRisksMSUIntrusionSimulation.2")); //$NON-NLS-1$
                 series1.getLabel().setVisible(false);
                 series1.getLabel().setFont(chart.getFont());
                 series1.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-                series1.setYSeries(scores);
+                series1.setYSeries(cumulative);
                 series1.setAntialias(SWT.ON);
                 series1.setSymbolType(PlotSymbolType.NONE);
                 series1.enableStep(true);
                 series1.enableArea(true);
                 
-                seriesSet.bringToFront(Resources.getMessage("ViewRisksMSUIntrusionSimulation.1")); //$NON-NLS-1$
+                ILineSeries series2 = (ILineSeries) seriesSet.createSeries(SeriesType.LINE, Resources.getMessage("ViewRisksMSUIntrusionSimulation.1")); //$NON-NLS-1$
+                series2.getLabel().setVisible(false);
+                series2.getLabel().setFont(chart.getFont());
+                series2.setLineColor(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+                series2.setYSeries(scores);
+                series2.setSymbolType(PlotSymbolType.NONE);
+                series2.enableStep(true);
+                series2.enableArea(true);
+
+                seriesSet.bringToFront(Resources.getMessage("ViewRisksMSUIntrusionSimulation.2")); //$NON-NLS-1$
+                
                 chart.getLegend().setVisible(true);
                 chart.getLegend().setPosition(SWT.TOP);
 
@@ -325,16 +364,16 @@ public class ViewRisksMSUIntrusionSimulation extends ViewRisks<AnalysisContextRi
                 yAxis.setRange(new Range(0d, 100d));
 
                 IAxis xAxis = axisSet.getXAxis(0);
-                xAxis.setCategorySeries(labels);
                 xAxis.getTick().setTickLabelAngle(45);
                 xAxis.getTick().setTickMarkStepHint(300);
+                xAxis.enableCategory(true);
+                xAxis.setCategorySeries(labels);
                 xAxis.adjustRange();
                 updateCategories();
 
                 chart.updateLayout();
                 chart.update();
                 chart.setRedraw(true);
-                
                 setStatusDone();
             }
 
@@ -357,15 +396,21 @@ public class ViewRisksMSUIntrusionSimulation extends ViewRisks<AnalysisContextRi
                 RiskModelMSUScoreStatistics model = builder.getMSUScoreStatistics(controller.getModel().getRiskModel().getMaxKeySize(),
                                                                                   controller.getModel().getRiskModel().isSdcMicroScores());
 
-                // Create array
-                scores = model.getDistributionOfScoresDIS();
+                scores = model.getDistributionOfScoresDIS().clone();
+                cumulative = model.getCumulativeDistributionOfScoresDIS().clone();
                 labels = new String[scores.length];
                 for (int i = 0; i < scores.length; i++) {
                     scores[i] *= 100d;
+                    cumulative[i] *= 100d;
                     labels[i] = "]" + String.valueOf(SWTUtil.getPrettyString(model.getDistributionOfScoresDISLowerThresholds()[i] * 100d)) + //$NON-NLS-1$
                                 ", " + String.valueOf(SWTUtil.getPrettyString(model.getDistributionOfScoresDISUpperThresholds()[i] * 100d)) + "]"; //$NON-NLS-1$ $NON-NLS-2$
                 }
                 
+                // TODO: Ugly hack
+                scores = insertToBack(scores, scores[scores.length-1]);
+                cumulative = insertToBack(cumulative, cumulative[cumulative.length-1]);
+                labels = insertToBack(labels, " "); //$NON-NLS-1$
+
                 // Our users are patient
                 while (System.currentTimeMillis() - time < MINIMAL_WORKING_TIME && !stopped){
                     Thread.sleep(10);

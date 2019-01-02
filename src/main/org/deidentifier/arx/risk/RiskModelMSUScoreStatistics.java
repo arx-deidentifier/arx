@@ -35,6 +35,63 @@ import de.linearbits.suda2.SUDA2StatisticsScores;
  * @author Fabian Prasser
  */
 public class RiskModelMSUScoreStatistics {
+    
+
+    /** Thresholds */
+    private static final double[] thresholdsLow           = new double[] {  0d,
+                                                                            0.00000001d,
+                                                                            0.0000001d,
+                                                                            0.000001d,
+                                                                            0.00001d,
+                                                                            0.0001d,
+                                                                            0.001d,
+                                                                            0.01d,
+                                                                            0.02d,
+                                                                            0.03d,
+                                                                            0.04d,
+                                                                            0.05d,
+                                                                            0.06d,
+                                                                            0.07d,
+                                                                            0.08d,
+                                                                            0.09d,
+                                                                            0.1d,
+                                                                            0.125d,
+                                                                            0.143d,
+                                                                            0.167d,
+                                                                            0.2d,
+                                                                            0.25d,
+                                                                            0.334d,
+                                                                            0.5d};
+    /** Thresholds */
+    private static final double[] thresholdsHigh          = new double[] {  0.00000001d,
+                                                                            0.0000001d,
+                                                                            0.000001d,
+                                                                            0.00001d,
+                                                                            0.0001d,
+                                                                            0.001d,
+                                                                            0.01d,
+                                                                            0.02d,
+                                                                            0.03d,
+                                                                            0.04d,
+                                                                            0.05d,
+                                                                            0.06d,
+                                                                            0.07d,
+                                                                            0.08d,
+                                                                            0.09d,
+                                                                            0.1d,
+                                                                            0.125d,
+                                                                            0.143d,
+                                                                            0.167d,
+                                                                            0.2d,
+                                                                            0.25d,
+                                                                            0.334d,
+                                                                            0.5d,
+                                                                            1d };
+
+    /** Risks */
+    private final double[]        recordsAtRisk           = new double[thresholdsLow.length];
+    /** Cumulative risks */
+    private final double[]        recordsAtCumulativeRisk = new double[thresholdsLow.length];
 
     /** Progress stuff */
     private final WrappedInteger progress;
@@ -42,10 +99,8 @@ public class RiskModelMSUScoreStatistics {
     private final WrappedBoolean stop;
     /** Maximal size of keys considered */
     private final int            maxKeyLength;
-    /** Contributions of each column */
+    /** SUDA Scores */
     private final double[]       scoresSUDA;
-    /** Distribution of sizes of keys */
-    private final double[]       scoresDIS;
     /** Score */
     private final double         maxScore;
     /** Score */
@@ -106,13 +161,37 @@ public class RiskModelMSUScoreStatistics {
             
         });
 
+        // Calculate
         SUDA2StatisticsScores result = suda2.getStatisticsScores(maxKeyLength, sdcMicroScore);
         double samplingFraction = (double)result.getSUDAScores().length / (double)population.getPopulationSize();
         this.maxKeyLength = result.getMaxKeyLengthConsidered();
         this.maxScore = result.getHighestScore();
         this.averageScore = result.getAverageScore();
         this.scoresSUDA = getDistribution(result.getSUDAScores(), 0d, maxScore, 10);
-        this.scoresDIS = getDistribution(result.getDISScores(samplingFraction), 0d, 1d, 10);
+        double[] scoresDIS = result.getDISScores(samplingFraction);
+        
+        // Compute distribution
+        for (double score : scoresDIS) {
+            int index = Arrays.binarySearch(thresholdsHigh, score);
+            if (index < 0) {
+                index = -index - 1;
+            }
+            this.recordsAtRisk[index] ++;
+            checkInterrupt();
+        }
+        
+        // Cumulative
+        double cumulativeRisk = 0;
+        for (int i=0; i<thresholdsHigh.length; i++) {
+            cumulativeRisk += this.recordsAtRisk[i];
+            this.recordsAtCumulativeRisk[i] = cumulativeRisk;
+        }
+        
+        // Normalize
+        for (int i=0; i<thresholdsHigh.length; i++) {
+            this.recordsAtRisk[i] /= (double)scoresDIS.length;
+            this.recordsAtCumulativeRisk[i] /= (double)scoresDIS.length;
+        }
     }
     
     /**
@@ -135,7 +214,15 @@ public class RiskModelMSUScoreStatistics {
      * @return the scores
      */
     public double[] getDistributionOfScoresDIS() {
-        return scoresDIS;
+        return recordsAtRisk;
+    }
+
+    /**
+     * Returns the cumulative distribution of DIS scores in 10 buckets, ranging from 0 to 1.
+     * @return the scores
+     */
+    public double[] getCumulativeDistributionOfScoresDIS() {
+        return recordsAtCumulativeRisk;
     }
 
     /**
@@ -143,7 +230,7 @@ public class RiskModelMSUScoreStatistics {
      * @return
      */
     public double[] getDistributionOfScoresDISLowerThresholds() {
-        return new double[]{0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d};
+        return thresholdsLow;
     }
 
     /**
@@ -151,11 +238,11 @@ public class RiskModelMSUScoreStatistics {
      * @return
      */
     public double[] getDistributionOfScoresDISUpperThresholds() {
-        return new double[]{0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1d};
+        return thresholdsHigh;
     }
 
     /**
-     * Returns the distribution of SUDA scores in 10 buckets, ranging from 0 to highest score.
+     * Returns the distribution of SUDA scores in 100 buckets, ranging from 0 to highest score.
      * @return the scores
      */
     public double[] getDistributionOfScoresSUDA() {

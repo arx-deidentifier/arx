@@ -81,12 +81,13 @@ public class ViewAttributesMSUColumnContributions extends ViewAttributes<Analysi
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.POPULATION_MODEL, this);
     }
     
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.POPULATION_MODEL) {
             triggerUpdate();
         }
     }
