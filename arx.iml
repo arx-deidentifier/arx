@@ -50,6 +50,7 @@
     <orderEntry type="library" name="Maven: org.eclipse:jface:3.8.102" level="project" />
     <orderEntry type="library" name="Maven: de.linearbits:libjhc:swt" level="project" />
     <orderEntry type="library" name="Maven: de.linearbits:jhpl:0.0.1" level="project" />
+    <orderEntry type="library" name="Maven: de.linearbits:suda2:0.0.1" level="project" />
     <orderEntry type="library" name="Maven: jtds:jtds:1.3.1" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.nebula.widgets.nattable:core:1.1.0" level="project" />
     <orderEntry type="library" name="Maven: de.linearbits:newtonraphson:0.0.1" level="project" />

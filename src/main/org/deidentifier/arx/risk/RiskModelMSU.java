@@ -24,9 +24,10 @@ import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
-import org.deidentifier.arx.risk.msu.SUDA2;
-import org.deidentifier.arx.risk.msu.SUDA2ProgressListener;
-import org.deidentifier.arx.risk.msu.SUDA2Statistics;
+
+import de.linearbits.suda2.SUDA2;
+import de.linearbits.suda2.SUDA2ListenerProgress;
+import de.linearbits.suda2.SUDA2Statistics;
 
 /**
  * A risk model based on MSUs in the data set
@@ -89,14 +90,18 @@ public class RiskModelMSU {
         
         // Do something
         SUDA2 suda2 = new SUDA2(handle.getDataArray(columns).getArray());
-        suda2.setProgressListener(new SUDA2ProgressListener() {
+        suda2.setProgressListener(new SUDA2ListenerProgress() {
             @Override
             public void update(double progress) {
                 RiskModelMSU.this.progress.value = 10 + (int)(progress * 90d);
             }
+            @Override
+            public void tick() {
+                checkInterrupt();
+            }
+            
         });
-        suda2.setStopFlag(stop);
-        SUDA2Statistics result = suda2.getStatistics(maxKeyLength);
+        SUDA2Statistics result = suda2.getKeyStatistics(maxKeyLength);
         this.maxKeyLength = result.getMaxKeyLength();
         this.numKeys = result.getNumKeys();
         this.columnContributions = result.getColumnKeyContributions();
