@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
@@ -59,7 +60,7 @@ public class RiskModelMSUScoreStatistics {
      * @param stop 
      * @param progress 
      * @param maxKeyLength
-     * @param samplingFraction
+     * @param population
      * @param sdcMicroScore
      */
     RiskModelMSUScoreStatistics(DataHandleInternal handle, 
@@ -67,7 +68,7 @@ public class RiskModelMSUScoreStatistics {
                  WrappedInteger progress, 
                  WrappedBoolean stop,
                  int maxKeyLength,
-                 double samplingFraction,
+                 ARXPopulationModel population,
                  boolean sdcMicroScore) {
 
         // Store
@@ -104,7 +105,9 @@ public class RiskModelMSUScoreStatistics {
             }
             
         });
+
         SUDA2StatisticsScores result = suda2.getStatisticsScores(maxKeyLength, sdcMicroScore);
+        double samplingFraction = (double)result.getSUDAScores().length / (double)population.getPopulationSize();
         this.maxKeyLength = result.getMaxKeyLengthConsidered();
         this.maxScore = result.getHighestScore();
         this.averageScore = result.getAverageScore();
@@ -129,7 +132,6 @@ public class RiskModelMSUScoreStatistics {
 
     /**
      * Returns the distribution of DIS scores in 10 buckets, ranging from 0 to 1.
-     * Each bucket contains a percentage in [0, 100]
      * @return the scores
      */
     public double[] getDistributionOfScoresDIS() {
@@ -137,8 +139,23 @@ public class RiskModelMSUScoreStatistics {
     }
 
     /**
+     * Returns lower thresholds for the buckets
+     * @return
+     */
+    public double[] getDistributionOfScoresDISLowerThresholds() {
+        return new double[]{0d, 0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d};
+    }
+
+    /**
+     * Returns upper thresholds for the buckets
+     * @return
+     */
+    public double[] getDistributionOfScoresDISUpperThresholds() {
+        return new double[]{0.1d, 0.2d, 0.3d, 0.4d, 0.5d, 0.6d, 0.7d, 0.8d, 0.9d, 1d};
+    }
+
+    /**
      * Returns the distribution of SUDA scores in 10 buckets, ranging from 0 to highest score.
-     * Each bucket contains a percentage in [0, 100]
      * @return the scores
      */
     public double[] getDistributionOfScoresSUDA() {
@@ -151,7 +168,7 @@ public class RiskModelMSUScoreStatistics {
     public double getHighestScore() {
         return maxScore;
     }
-
+    
     /**
      * Returns the maximal length of keys searched for
      * @return
@@ -166,7 +183,7 @@ public class RiskModelMSUScoreStatistics {
     private void checkInterrupt() {
         if (stop.value) { throw new ComputationInterruptedException(); }
     }
-    
+
     /**
      * Returns the column array
      * @param handle

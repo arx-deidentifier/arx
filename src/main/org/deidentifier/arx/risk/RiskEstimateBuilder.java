@@ -259,20 +259,19 @@ public class RiskEstimateBuilder {
      * Returns score statistics, mimics sdcMicro
      * @return
      */
-    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction) {
-        return getMSUScoreStatistics(samplingFraction, 0, true);
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics() {
+        return getMSUScoreStatistics(0, true);
     }
 
     /**
      * Returns score statistics
-     * @param samplingFraction
      * @param maxK The maximal size of an MSU considered
      * @param sdcMicroScores Mimic sdcMicro or follow original definition by Elliot
      * @return
      */
-    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction, int maxK, boolean sdcMicroScores) {
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics(int maxK, boolean sdcMicroScores) {
         progress.value = 0;
-        return new RiskModelMSUScoreStatistics(this.handle, this.identifiers, progress, stop, maxK, samplingFraction, sdcMicroScores);
+        return new RiskModelMSUScoreStatistics(this.handle, this.identifiers, progress, stop, maxK, population, sdcMicroScores);
     }
 
     /**

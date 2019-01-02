@@ -137,13 +137,12 @@ public class RiskEstimateBuilderInterruptible {
 
     /**
      * Returns a model of the MSUs in this data set
-     * @param samplingFraction
      * @return
      * @throws InterruptedException 
      */
-    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction) throws InterruptedException {
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics() throws InterruptedException {
         try {
-            return parent.getMSUScoreStatistics(samplingFraction);
+            return parent.getMSUScoreStatistics();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
@@ -151,15 +150,14 @@ public class RiskEstimateBuilderInterruptible {
 
     /**
      * Returns a model of the MSUs in this data set
-     * @param samplingFraction
      * @param maxK The maximal size of an MSU considered
      * @param sdcMicroScores Mimic sdcMicro or use definition by Elliot
      * @return
      * @throws InterruptedException 
      */
-    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction, int maxK, boolean sdcMicroScores) throws InterruptedException {
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics(int maxK, boolean sdcMicroScores) throws InterruptedException {
         try {
-            return parent.getMSUScoreStatistics(samplingFraction, maxK, sdcMicroScores);
+            return parent.getMSUScoreStatistics(maxK, sdcMicroScores);
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }

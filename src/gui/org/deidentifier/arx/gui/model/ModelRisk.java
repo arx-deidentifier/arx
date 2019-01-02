@@ -55,7 +55,8 @@ public class ModelRisk implements Serializable {
         KEY_SIZE,
         UNIQUES_DANKAR,
         UNIQUES_ALL,
-        OVERVIEW
+        OVERVIEW,
+        INTRUSION_SIMULATION
     }
 
     /** SVUID */

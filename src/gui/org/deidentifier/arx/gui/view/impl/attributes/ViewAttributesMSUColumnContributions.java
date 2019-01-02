@@ -45,7 +45,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewAttributesColumnContributions extends ViewAttributes<AnalysisContextAttributes> {
+public class ViewAttributesMSUColumnContributions extends ViewAttributes<AnalysisContextAttributes> {
 
     /** Label */
     private static final String LABEL_ATTRIBUTE         = Resources.getMessage("RiskAnalysisMSU.1");
@@ -73,7 +73,7 @@ public class ViewAttributesColumnContributions extends ViewAttributes<AnalysisCo
      * @param target
      * @param reset
      */
-    public ViewAttributesColumnContributions(final Composite parent,
+    public ViewAttributesMSUColumnContributions(final Composite parent,
                          final Controller controller,
                          final ModelPart target,
                          final ModelPart reset) {

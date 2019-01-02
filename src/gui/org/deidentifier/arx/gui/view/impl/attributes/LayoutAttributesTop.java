@@ -45,7 +45,7 @@ public class LayoutAttributesTop extends LayoutAttributesAbstract {
         super(parent, controller, target == ModelPart.INPUT, true);
         
         registerView(0, new ViewAttributesQuasiIdentifiersTable(createTab(Resources.getMessage("RiskAnalysis.15"), "help.risk.quasiidentifiers"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(1, new ViewAttributesColumnContributions(createTab(Resources.getMessage("RiskAnalysisMSU.7"), "help.risk.msucontribution"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(1, new ViewAttributesMSUColumnContributions(createTab(Resources.getMessage("RiskAnalysisMSU.7"), "help.risk.msucontribution"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         setSelectionIdex(0);
     }
 }
