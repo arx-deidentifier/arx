@@ -85,9 +85,9 @@ public class RiskEstimateBuilderInterruptible {
      * @return
      * @throws InterruptedException 
      */
-    public RiskModelMSU getMSUStatistics() throws InterruptedException {
+    public RiskModelMSUKeyStatistics getMSUKeyStatistics() throws InterruptedException {
         try {
-            return parent.getMSUStatistics();
+            return parent.getMSUKeyStatistics();
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
@@ -99,14 +99,71 @@ public class RiskEstimateBuilderInterruptible {
      * @return
      * @throws InterruptedException 
      */
-    public RiskModelMSU getMSUStatistics(int maxK) throws InterruptedException {
+    public RiskModelMSUKeyStatistics getMSUKeyStatistics(int maxK) throws InterruptedException {
         try {
-            return parent.getMSUStatistics(maxK);
+            return parent.getMSUKeyStatistics(maxK);
         } catch (ComputationInterruptedException e) {
             throw new InterruptedException("Computation interrupted");
         }
     }
-  
+
+    /**
+     * Returns a model of the MSUs in this data set
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelMSUColumnStatistics getMSUColumnStatistics() throws InterruptedException {
+        try {
+            return parent.getMSUColumnStatistics();
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
+     * Returns a model of the MSUs in this data set
+     * @param maxK The maximal size of an MSU considered
+     * @param sdcMicroScores Mimic sdcMicro or use definition by Elliot
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelMSUColumnStatistics getMSUColumnStatistics(int maxK, boolean sdcMicroScores) throws InterruptedException {
+        try {
+            return parent.getMSUColumnStatistics(maxK, sdcMicroScores);
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
+     * Returns a model of the MSUs in this data set
+     * @param samplingFraction
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction) throws InterruptedException {
+        try {
+            return parent.getMSUScoreStatistics(samplingFraction);
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
+
+    /**
+     * Returns a model of the MSUs in this data set
+     * @param samplingFraction
+     * @param maxK The maximal size of an MSU considered
+     * @param sdcMicroScores Mimic sdcMicro or use definition by Elliot
+     * @return
+     * @throws InterruptedException 
+     */
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction, int maxK, boolean sdcMicroScores) throws InterruptedException {
+        try {
+            return parent.getMSUScoreStatistics(samplingFraction, maxK, sdcMicroScores);
+        } catch (ComputationInterruptedException e) {
+            throw new InterruptedException("Computation interrupted");
+        }
+    }
     /**
      * Returns a class providing population-based uniqueness estimates
      * 

@@ -30,7 +30,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelMSU;
+import org.deidentifier.arx.risk.RiskModelMSUColumnStatistics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -246,7 +246,8 @@ public class ViewAttributesColumnContributions extends ViewAttributes<AnalysisCo
                 long time = System.currentTimeMillis();
 
                 // Perform work
-                RiskModelMSU model = builder.getMSUStatistics();
+                RiskModelMSUColumnStatistics model = builder.getMSUColumnStatistics(controller.getModel().getRiskModel().getMaxKeySize(),
+                                                                                    controller.getModel().getRiskModel().isSdcMicroScores());
 
                 // Create array
                 columnContribution = model.getColumnKeyContributions();

@@ -47,7 +47,7 @@ public class LayoutRisksTop extends LayoutRisksAbstract {
         registerView(0, new ViewRisksRiskDistributionPlot(createTab(Resources.getMessage("RiskAnalysis.4"), "help.risk.classsizes"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         registerView(1, new ViewRisksRiskDistributionTable(createTab(Resources.getMessage("RiskAnalysis.0"), "help.risk.classsizes"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         registerView(2, new ViewRisksReIdentification(createTab(Resources.getMessage("RiskAnalysis.32"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(3, new ViewRisksMSUs(createTab(Resources.getMessage("RiskAnalysis.45"), "help.risk.msu"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(3, new ViewRisksMSUKeyStatistics(createTab(Resources.getMessage("RiskAnalysis.45"), "help.risk.msu"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         
         setSelectionIdex(0);
     }

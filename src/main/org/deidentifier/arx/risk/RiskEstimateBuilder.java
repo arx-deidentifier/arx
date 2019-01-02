@@ -219,12 +219,30 @@ public class RiskEstimateBuilder {
     }
     
     /**
-     * Returns a model of the MSUs in this data set
+     * Returns column statistics, mimics sdcMicro
      * @return
      */
-    public RiskModelMSU getMSUStatistics() {
+    public RiskModelMSUColumnStatistics getMSUColumnStatistics() {
+        return getMSUColumnStatistics(0, true);
+    }
+
+    /**
+     * Returns column statistics
+     * @param maxK The maximal size of an MSU considered
+     * @param sdcMicroScores Mimic sdcMicro or follow original definition by Elliot
+     * @return
+     */
+    public RiskModelMSUColumnStatistics getMSUColumnStatistics(int maxK, boolean sdcMicroScores) {
         progress.value = 0;
-        return new RiskModelMSU(this.handle, this.identifiers, progress, stop, 0);
+        return new RiskModelMSUColumnStatistics(this.handle, this.identifiers, progress, stop, maxK, sdcMicroScores);
+    }
+    
+    /**
+     * Returns a model of the MSUs in this data set. Mimics sdcMicro when calculating scores
+     * @return
+     */
+    public RiskModelMSUKeyStatistics getMSUKeyStatistics() {
+        return this.getMSUKeyStatistics(0);
     }
 
     /**
@@ -232,9 +250,29 @@ public class RiskEstimateBuilder {
      * @param maxK The maximal size of an MSU considered
      * @return
      */
-    public RiskModelMSU getMSUStatistics(int maxK) {
+    public RiskModelMSUKeyStatistics getMSUKeyStatistics(int maxK) {
         progress.value = 0;
-        return new RiskModelMSU(this.handle, this.identifiers, progress, stop, maxK);
+        return new RiskModelMSUKeyStatistics(this.handle, this.identifiers, progress, stop, maxK);
+    }
+
+    /**
+     * Returns score statistics, mimics sdcMicro
+     * @return
+     */
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction) {
+        return getMSUScoreStatistics(samplingFraction, 0, true);
+    }
+
+    /**
+     * Returns score statistics
+     * @param samplingFraction
+     * @param maxK The maximal size of an MSU considered
+     * @param sdcMicroScores Mimic sdcMicro or follow original definition by Elliot
+     * @return
+     */
+    public RiskModelMSUScoreStatistics getMSUScoreStatistics(double samplingFraction, int maxK, boolean sdcMicroScores) {
+        progress.value = 0;
+        return new RiskModelMSUScoreStatistics(this.handle, this.identifiers, progress, stop, maxK, samplingFraction, sdcMicroScores);
     }
 
     /**

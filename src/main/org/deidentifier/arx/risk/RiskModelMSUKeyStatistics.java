@@ -27,13 +27,13 @@ import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
 import de.linearbits.suda2.SUDA2;
 import de.linearbits.suda2.SUDA2ListenerProgress;
-import de.linearbits.suda2.SUDA2Statistics;
+import de.linearbits.suda2.SUDA2StatisticsKeys;
 
 /**
- * A risk model based on MSUs in the data set
+ * A risk model based on MSUs in the data set, returning key statistics
  * @author Fabian Prasser
  */
-public class RiskModelMSU {
+public class RiskModelMSUKeyStatistics {
 
     /** Progress stuff */
     private final WrappedInteger progress;
@@ -45,10 +45,6 @@ public class RiskModelMSU {
     private final long           numKeys;
     /** The average size of keys */
     private final double         averageKeySize;
-    /** Contributions of each column */
-    private final double[]       columnContributions;
-    /** Distribution of sizes of keys */
-    private final double[]       columnAverageKeySize;
     /** Contributions of each column */
     private final double[]       sizeDistribution;
     /** Attributes */
@@ -62,7 +58,7 @@ public class RiskModelMSU {
      * @param progress 
      * @param maxKeyLength
      */
-    RiskModelMSU(DataHandleInternal handle, 
+    RiskModelMSUKeyStatistics(DataHandleInternal handle, 
                  Set<String> identifiers, 
                  WrappedInteger progress, 
                  WrappedBoolean stop,
@@ -71,6 +67,7 @@ public class RiskModelMSU {
         // Store
         this.stop = stop;
         this.progress = progress;
+        maxKeyLength = maxKeyLength < 0 ? 0 : maxKeyLength;
         
         // Add all attributes, if none were specified
         if (identifiers == null || identifiers.isEmpty()) {
@@ -93,7 +90,7 @@ public class RiskModelMSU {
         suda2.setProgressListener(new SUDA2ListenerProgress() {
             @Override
             public void update(double progress) {
-                RiskModelMSU.this.progress.value = 10 + (int)(progress * 90d);
+                RiskModelMSUKeyStatistics.this.progress.value = 10 + (int)(progress * 90d);
             }
             @Override
             public void tick() {
@@ -101,12 +98,10 @@ public class RiskModelMSU {
             }
             
         });
-        SUDA2Statistics result = suda2.getKeyStatistics(maxKeyLength);
-        this.maxKeyLength = result.getMaxKeyLength();
+        SUDA2StatisticsKeys result = suda2.getStatisticsKeys(maxKeyLength);
+        this.maxKeyLength = result.getMaxKeyLengthConsidered();
         this.numKeys = result.getNumKeys();
-        this.columnContributions = result.getColumnKeyContributions();
         this.sizeDistribution = result.getKeySizeDistribution();
-        this.columnAverageKeySize = result.getColumnAverageKeySize();
         this.averageKeySize = result.getAverageKeySize();
     }
     
@@ -127,23 +122,6 @@ public class RiskModelMSU {
     }
 
     /**
-     * Returns the average key size per column
-     * @return 
-     */
-    public double[] getColumnAverageKeySize() {
-        return columnAverageKeySize;
-    }
-
-    /**
-     * Returns the contribution of each columns to the total SUDA score.
-     * Calculated as described in: IHSN - STATISTICAL DISCLOSURE CONTROL FOR MICRODATA: A PRACTICE GUIDE
-     * @return the columnKeyContributions
-     */
-    public double[] getColumnKeyContributions() {
-        return columnContributions;
-    }
-
-    /**
      * Returns the distribution of sizes of keys found
      * @return
      */
@@ -155,7 +133,7 @@ public class RiskModelMSU {
      * Returns the maximal length of keys searched for
      * @return
      */
-    public int getMaxKeyLength() {
+    public int getMaxKeyLengthConsidered() {
         return maxKeyLength;
     }
     

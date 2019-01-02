@@ -27,7 +27,7 @@ import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
-import org.deidentifier.arx.risk.RiskModelMSU;
+import org.deidentifier.arx.risk.RiskModelMSUKeyStatistics;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -59,7 +59,7 @@ import org.swtchart.Range;
  *
  * @author Fabian Prasser
  */
-public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksMSUKeyStatistics extends ViewRisks<AnalysisContextRisk> {
 
     /** Label */
     private static final String LABEL_SIZE              = Resources.getMessage("RiskAnalysisMSU.4");
@@ -94,7 +94,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
      * @param target
      * @param reset
      */
-    public ViewRisksMSUs(final Composite parent,
+    public ViewRisksMSUKeyStatistics(final Composite parent,
                          final Controller controller,
                          final ModelPart target,
                          final ModelPart reset) {
@@ -389,10 +389,10 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 }
 
                 // Stats
-                ViewRisksMSUs.this.numKeys.setText(numKeys != 0 ? SWTUtil.getPrettyString(numKeys) : LABEL_NO_MSUS_FOUND);
-                ViewRisksMSUs.this.numKeys.setToolTipText(numKeys != 0 ? String.valueOf(numKeys) : LABEL_NO_MSUS_FOUND);
-                ViewRisksMSUs.this.avgKeySize.setText(numKeys != 0 ? SWTUtil.getPrettyString(avgKeySize) : LABEL_NO_MSUS_FOUND);
-                ViewRisksMSUs.this.avgKeySize.setToolTipText(numKeys != 0 ? String.valueOf(avgKeySize) : LABEL_NO_MSUS_FOUND);
+                ViewRisksMSUKeyStatistics.this.numKeys.setText(numKeys != 0 ? SWTUtil.getPrettyString(numKeys) : LABEL_NO_MSUS_FOUND);
+                ViewRisksMSUKeyStatistics.this.numKeys.setToolTipText(numKeys != 0 ? String.valueOf(numKeys) : LABEL_NO_MSUS_FOUND);
+                ViewRisksMSUKeyStatistics.this.avgKeySize.setText(numKeys != 0 ? SWTUtil.getPrettyString(avgKeySize) : LABEL_NO_MSUS_FOUND);
+                ViewRisksMSUKeyStatistics.this.avgKeySize.setToolTipText(numKeys != 0 ? String.valueOf(avgKeySize) : LABEL_NO_MSUS_FOUND);
                 
                 // Enable
                 root.layout();
@@ -416,7 +416,7 @@ public class ViewRisksMSUs extends ViewRisks<AnalysisContextRisk> {
                 long time = System.currentTimeMillis();
 
                 // Perform work
-                RiskModelMSU model = builder.getMSUStatistics();
+                RiskModelMSUKeyStatistics model = builder.getMSUKeyStatistics(controller.getModel().getRiskModel().getMaxKeySize());
 
                 // Create array
                 msuSizeDistribution = model.getKeySizeDistribution();
