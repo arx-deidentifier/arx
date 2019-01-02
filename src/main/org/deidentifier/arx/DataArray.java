@@ -53,7 +53,7 @@ public class DataArray {
             for (int j=0; j<row.length; j++) {
                 row[j] = entry.next();
             }
-            this.array[i] = row;
+            array[i] = row;
         }
         if (array == null || array.length == 0) {
             this.rows = 0;
