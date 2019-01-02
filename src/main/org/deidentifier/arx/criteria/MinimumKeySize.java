@@ -19,6 +19,7 @@ package org.deidentifier.arx.criteria;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.certificate.elements.ElementData;
+import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyArray;
 
 import de.linearbits.suda2.SUDA2;
@@ -53,13 +54,16 @@ public class MinimumKeySize extends MatrixBasedCriterion {
     }
 
     @Override
-    public void enforce(final HashGroupifyArray array, int numMaxSuppressedOutliers) {
+    public boolean enforce(final HashGroupifyArray array, int numMaxSuppressedOutliers) {
+        final WrappedBoolean modified = new WrappedBoolean();
+        modified.value = false;
         new SUDA2(array.getArray().getArray()).getKeys(minKeySize - 1, new SUDA2ListenerKey() {
             @Override
             public void keyFound(int row, int size) {
-                array.suppress(row);
+                modified.value = modified.value | array.suppress(row);
             }
         });
+        return modified.value;
     }
     
     /**

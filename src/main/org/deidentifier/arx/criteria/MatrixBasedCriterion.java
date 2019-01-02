@@ -43,16 +43,17 @@ public abstract class MatrixBasedCriterion extends PrivacyCriterion {
     }
     
     /**
-     * This method enforces the model on the given matrix. 
+     * This method enforces the model on the given array. 
      * Risk thresholds can be enforced by suppressing classes.
      * Models may abort early, if the threshold is reached 
      * (<code>distribution.getNumOfSuppressedTuples() > numMaxSuppressedOutliers</code>).
      * 
-     * @param matrix
+     * @param array
      * @param numMaxSuppressedOutliers
+     * @return Whether the array has been modified
      */
-    public abstract void enforce(HashGroupifyArray matrix, 
-                                 int numMaxSuppressedOutliers);
+    public abstract boolean enforce(HashGroupifyArray array, 
+                                    int numMaxSuppressedOutliers);
 
     /**
      * Not supported by this type of criterion

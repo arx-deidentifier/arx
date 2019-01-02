@@ -48,17 +48,20 @@ public class HashGroupifyArray {
         
         // Initialize
         while(entry != null) {
-            switch (entry.count) {
-            case 0: /* Nothing to do*/ break;
-            case 1: /* Add once*/
-                entries.add(entry);
-                break;
-            default: /* Add twice*/
-                entries.add(entry);
-                entries.add(entry);
-                break; 
+            if (entry.isNotOutlier) {
+                switch (entry.count) {
+                case 0: /* Nothing to do*/ break;
+                case 1: /* Add once*/
+                    entries.add(entry);
+                    break;
+                default: /* Add twice*/
+                    entries.add(entry);
+                    entries.add(entry);
+                    break; 
+                }
+            } else {
+                this.numSuppressedRecords += entry.count;
             }
-            this.numSuppressedRecords += !entry.isNotOutlier ? entry.count : 0;
             entry = entry.nextOrdered;
         }
         
@@ -86,10 +89,13 @@ public class HashGroupifyArray {
     /**
      * Suppresses the entry at the given index
      * @param index
+     * @return Whether the entry needed to be suppressed (because it wasn't before)
      */
-    public void suppress(int index) {
+    public boolean suppress(int index) {
         HashGroupifyEntry entry = entries[index];
-        this.numSuppressedRecords += entry.isNotOutlier ? entry.count : 0; 
+        this.numSuppressedRecords += entry.isNotOutlier ? entry.count : 0;
+        boolean suppressed = entry.isNotOutlier;
         entry.isNotOutlier = false;
+        return suppressed;
     }
 }

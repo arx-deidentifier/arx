@@ -609,19 +609,23 @@ public class HashGroupify {
             return;
         }
         
-        // Build a distribution
-        HashGroupifyArray matrix = new HashGroupifyArray(this.hashTableFirstEntry);
-        
         // For each criterion
         for (MatrixBasedCriterion criterion : this.matrixBasedCriteria) {
-            
-            // Enforce
-            criterion.enforce(matrix, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
-            
-            // Early abort
-            this.currentNumOutliers = matrix.getNumSuppressedRecords();
-            if (earlyAbort && currentNumOutliers > suppressionLimit) {
-                return;
+
+            // Build an array that can be modified
+            HashGroupifyArray array = new HashGroupifyArray(this.hashTableFirstEntry);
+                
+            // Enforce: repeat until there are no more modifications
+            while (criterion.enforce(array, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE)) {
+                
+                // Early abort
+                this.currentNumOutliers = array.getNumSuppressedRecords();
+                if (earlyAbort && currentNumOutliers > suppressionLimit) {
+                    return;
+                }
+                
+                // Rebuild the array for the next iteration
+                array = new HashGroupifyArray(this.hashTableFirstEntry);
             }
         }
     }
