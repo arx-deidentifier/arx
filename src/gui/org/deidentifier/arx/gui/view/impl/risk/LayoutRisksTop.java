@@ -43,13 +43,10 @@ public class LayoutRisksTop extends LayoutRisksAbstract {
                           final ModelPart reset) {
 
         super(parent, controller, target == ModelPart.INPUT, true);
-        
-        registerView(0, new ViewRisksRiskDistributionPlot(createTab(Resources.getMessage("RiskAnalysis.4"), "help.risk.classsizes"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(1, new ViewRisksRiskDistributionTable(createTab(Resources.getMessage("RiskAnalysis.0"), "help.risk.classsizes"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(2, new ViewRisksReIdentification(createTab(Resources.getMessage("RiskAnalysis.32"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(3, new ViewRisksMSUKeyStatistics(createTab(Resources.getMessage("RiskAnalysis.45"), "help.risk.msu.keys"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        registerView(4, new ViewRisksMSUIntrusionSimulation(createTab(Resources.getMessage("RiskAnalysis.46"), "help.risk.msu.dis"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
-        
+        registerView(0, new ViewRisksRiskDistribution(createTab(Resources.getMessage("RiskAnalysis.4"), "help.risk.classsizes"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(1, new ViewRisksAttackerModels(createTab(Resources.getMessage("RiskAnalysis.32"), "help.risk.reidentification"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(2, new ViewRisksMSUKeyStatistics(createTab(Resources.getMessage("RiskAnalysis.45"), "help.risk.msu.keys"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
+        registerView(3, new ViewRisksMSUIntrusionSimulation(createTab(Resources.getMessage("RiskAnalysis.46"), "help.risk.msu.dis"), controller, target, reset)); //$NON-NLS-1$ //$NON-NLS-2$
         setSelectionIdex(0);
     }
 }

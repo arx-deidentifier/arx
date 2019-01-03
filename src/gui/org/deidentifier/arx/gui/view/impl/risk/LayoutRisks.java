@@ -22,6 +22,7 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
+import org.deidentifier.arx.gui.view.impl.common.ComponentRiskProfile;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -99,6 +100,12 @@ public class LayoutRisks implements ILayout {
                                            controller,
                                            ModelPart.OUTPUT,
                                            ModelPart.INPUT);
+        
+        // Synchronize profiles
+        ComponentRiskProfile profile1 = ((ViewRisksRiskDistribution)layoutTopLeft.getViewForSelectionIndex(0)).getRiskProfile();
+        ComponentRiskProfile profile2 = ((ViewRisksRiskDistribution)layoutTopRight.getViewForSelectionIndex(0)).getRiskProfile();
+        profile1.setOtherProfile(profile2);
+        profile2.setOtherProfile(profile1);
 
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
@@ -131,8 +138,8 @@ public class LayoutRisks implements ILayout {
                 
                 // Synchronize "Re-identification risks"
                 if (layoutBottomLeft.getSelectionIndex() == 0) {
-                    layoutTopLeft.setSelectionIdex(2);
-                    layoutTopRight.setSelectionIdex(2);
+                    layoutTopLeft.setSelectionIdex(1);
+                    layoutTopRight.setSelectionIdex(1);
                 }
                 
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
@@ -147,8 +154,8 @@ public class LayoutRisks implements ILayout {
                 
                 // Synchronize "Re-identification risks"
                 if (layoutBottomRight.getSelectionIndex() == 0) {
-                    layoutTopLeft.setSelectionIdex(2);
-                    layoutTopRight.setSelectionIdex(2);
+                    layoutTopLeft.setSelectionIdex(1);
+                    layoutTopRight.setSelectionIdex(1);
                 }
                 
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
@@ -163,7 +170,7 @@ public class LayoutRisks implements ILayout {
                 layoutTopRight.setSelectionIdex(layoutTopLeft.getSelectionIndex());
 
                 // Synchronize "Re-identification risks"
-                if (layoutTopLeft.getSelectionIndex() == 2) {
+                if (layoutTopLeft.getSelectionIndex() == 1) {
                     layoutBottomLeft.setSelectionIdex(0);
                     layoutBottomRight.setSelectionIdex(0);
                 }
@@ -179,7 +186,7 @@ public class LayoutRisks implements ILayout {
                 layoutTopLeft.setSelectionIdex(layoutTopRight.getSelectionIndex());
 
                 // Synchronize "Re-identification risks"
-                if (layoutTopRight.getSelectionIndex() == 2) {
+                if (layoutTopRight.getSelectionIndex() == 1) {
                     layoutBottomLeft.setSelectionIdex(0);
                     layoutBottomRight.setSelectionIdex(0);
                 }
