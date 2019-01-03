@@ -20,6 +20,7 @@ package org.deidentifier.arx.gui.view.impl.risk;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -167,6 +168,21 @@ public class LayoutRisksAbstract implements ILayout, IView {
      */
     public ViewRisks<?> getViewForSelectionIndex(final int index) {
         return this.views.get(index);
+    }
+
+    /**
+     * Returns the according view type
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <U> U getViewForType(final Class<U> clazz) {
+        for (ViewRisks<?> view : this.views.values()) {
+            if (view.getClass().equals(clazz)) {
+                return (U)view;
+            }
+        }
+        return null;
     }
     
     @Override

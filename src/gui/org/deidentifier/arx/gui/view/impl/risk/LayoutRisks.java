@@ -102,8 +102,8 @@ public class LayoutRisks implements ILayout {
                                            ModelPart.INPUT);
         
         // Synchronize profiles
-        ComponentRiskProfile profile1 = ((ViewRisksRiskDistribution)layoutTopLeft.getViewForSelectionIndex(0)).getRiskProfile();
-        ComponentRiskProfile profile2 = ((ViewRisksRiskDistribution)layoutTopRight.getViewForSelectionIndex(0)).getRiskProfile();
+        ComponentRiskProfile profile1 = layoutTopLeft.getViewForType(ViewRisksRiskDistribution.class).getRiskProfile();
+        ComponentRiskProfile profile2 = layoutTopLeft.getViewForType(ViewRisksRiskDistribution.class).getRiskProfile();
         profile1.setOtherProfile(profile2);
         profile2.setOtherProfile(profile1);
 
