@@ -20,7 +20,6 @@ package org.deidentifier.arx.gui.view.impl.risk;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
