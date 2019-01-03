@@ -103,13 +103,13 @@ public class LayoutRisks implements ILayout {
         
         // Synchronize profiles
         ComponentRiskProfile profile1 = layoutTopLeft.getViewForType(ViewRisksRiskDistribution.class).getRiskProfile();
-        ComponentRiskProfile profile2 = layoutTopLeft.getViewForType(ViewRisksRiskDistribution.class).getRiskProfile();
+        ComponentRiskProfile profile2 = layoutTopRight.getViewForType(ViewRisksRiskDistribution.class).getRiskProfile();
         profile1.setOtherProfile(profile2);
         profile2.setOtherProfile(profile1);
 
         // Synchronize profiles
         profile1 = layoutTopLeft.getViewForType(ViewRisksMSUIntrusionSimulation.class).getRiskProfile();
-        profile2 = layoutTopLeft.getViewForType(ViewRisksMSUIntrusionSimulation.class).getRiskProfile();
+        profile2 = layoutTopRight.getViewForType(ViewRisksMSUIntrusionSimulation.class).getRiskProfile();
         profile1.setOtherProfile(profile2);
         profile2.setOtherProfile(profile1);
         
