@@ -107,6 +107,12 @@ public class LayoutRisks implements ILayout {
         profile1.setOtherProfile(profile2);
         profile2.setOtherProfile(profile1);
 
+        // Synchronize profiles
+        profile1 = layoutTopLeft.getViewForType(ViewRisksMSUIntrusionSimulation.class).getRiskProfile();
+        profile2 = layoutTopLeft.getViewForType(ViewRisksMSUIntrusionSimulation.class).getRiskProfile();
+        profile1.setOtherProfile(profile2);
+        profile2.setOtherProfile(profile1);
+        
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
         compositeBottom.setLayout(new FillLayout());
