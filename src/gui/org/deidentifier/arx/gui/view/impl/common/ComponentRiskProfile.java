@@ -192,6 +192,14 @@ public class ComponentRiskProfile {
         root.setLayout(new FillLayout());
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar();
 
+        // Add update button
+        bar.add(Resources.getMessage("ViewRiskProfile.4"), controller.getResources().getManagedImage("toggle_log_scale.png"), new Runnable(){ //$NON-NLS-1$ //$NON-NLS-2$ 
+            public void run() {
+                toggleLogScale();
+            }
+        });
+        
+
         this.folder = new ComponentTitledFolder(root, null, bar, null, true, false);
         
         // Table
@@ -375,6 +383,19 @@ public class ComponentRiskProfile {
         SWTUtil.createGenericTooltip(table);
     }
 
+    /**
+     * Toggles the log scale setting
+     * @param enable
+     */
+    private void toggleLogScale() {
+        if (chart != null) {
+            IAxis[] axes = chart.getAxisSet().getXAxes();
+            if (axes != null && axes.length > 0 && axes[0] != null) {
+                this.enableLogScale(!axes[0].isLogScaleEnabled());
+            }
+        }
+    }
+    
     /**
      * Enables log scale
      * @param enable
