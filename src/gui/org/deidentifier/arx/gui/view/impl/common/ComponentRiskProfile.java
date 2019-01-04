@@ -578,7 +578,7 @@ public class ComponentRiskProfile {
         // Enable log scale, synchronize with other
         if (other != null && other.chart != null && other.chart.getAxisSet() != null) {
             if (other.chart.getAxisSet().getXAxes() != null && other.chart.getAxisSet().getXAxes().length > 0) {
-                axisSet.getXAxis(0).enableLogScale(other.chart.getAxisSet().getXAxes()[0].isLogScaleEnabled());
+                enableLogScale(other.chart.getAxisSet().getXAxes()[0].isLogScaleEnabled());
             }
         }
 
