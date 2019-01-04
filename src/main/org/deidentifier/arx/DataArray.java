@@ -23,9 +23,13 @@ import java.util.List;
 import org.deidentifier.arx.framework.check.groupify.HashGroupifyEntry;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataMatrix;
+import org.deidentifier.arx.framework.data.Dictionary;
+
+import com.carrotsearch.hppc.IntOpenHashSet;
 
 /**
- * A simple data array that can be constructed from input data, output data and projected data
+ * A simple data array that can be constructed from input data, output data and projected data.
+ * For example used to feed data into the SUDA2 algorithm
  * TODO: Should probably be replaced by DataMatrix
  * 
  * @author Fabian Prasser
@@ -125,27 +129,48 @@ public class DataArray {
     /**
      * Creates a data array for input data
      * @param data
+     * @param dictionary
      * @param columns
      * @param rows Can be null
      */
-    DataArray(DataMatrix data, int[] columns, int[] rows) {
+    DataArray(DataMatrix data, Dictionary dictionary, int[] columns, int[] rows) {
         
         // Prepare
         this.columns = columns.length;
         this.rows = rows != null ? rows.length : data.getNumRows();
-        this.array = new int[this.rows][];
+        List<int[]> result = new ArrayList<>();
+        
+        // Extract ids for anyValues
+        IntOpenHashSet[] anyValues = new IntOpenHashSet[columns.length];
+        for (int column = 0; column < columns.length; column++) {
+            anyValues[column] = new IntOpenHashSet();
+            String[] mapping = dictionary.getMapping()[column];
+            for (int index = 0; index < mapping.length; index++) {
+                if (mapping[index].equals(DataType.ANY_VALUE)) {
+                    anyValues[column].add(index);
+                }
+            }
+        }
         
         // Extract
         if (rows != null) {
-            int index = 0;
             for (int row : rows) {
-                this.array[index++] = getRow(data, row, columns);
+                int[] record = getRow(data, anyValues, row, columns);
+                if (record != null) {
+                    result.add(record);
+                }
             }
         } else {
             for (int row = 0; row < data.getNumRows(); row++) {
-                this.array[row] = getRow(data, row, columns);
+                int[] record = getRow(data, anyValues, row, columns);
+                if (record != null) {
+                    result.add(record);
+                }
             }
         }
+        
+        // Store
+        this.array = result.toArray(new int[result.size()][]);
     }
 
     /**
@@ -220,17 +245,21 @@ public class DataArray {
     /**
      * Extracts a subset of the columns
      * @param data
+     * @param anyValues 
      * @param row
      * @param columns
      * @return
      */
-    private int[] getRow(DataMatrix data, int row, int[] columns) {
+    private int[] getRow(DataMatrix data, IntOpenHashSet[] anyValues, int row, int[] columns) {
         int[] result = new int[columns.length];
         int index = 0;
         data.setRow(row);
+        boolean suppressed = true;
         for (int column : columns) {
-            result[index++] = data.getValueAtColumn(column);
+            int id = data.getValueAtColumn(column);
+            result[index++] = id;
+            suppressed = suppressed && anyValues[column].contains(id);
         }
-        return result;
+        return suppressed ? null : result;
     }
 }

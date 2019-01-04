@@ -235,7 +235,7 @@ public class DataHandleInput extends DataHandle {
     @Override
     protected DataArray getDataArray(int[] columns, int[] rows) {
         checkRegistry();
-        return new DataArray(this.data, columns, rows);
+        return new DataArray(this.data, this.dictionary, columns, rows);
     }
 
     @Override
