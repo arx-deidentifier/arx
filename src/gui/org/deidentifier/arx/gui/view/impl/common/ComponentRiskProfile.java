@@ -574,6 +574,13 @@ public class ComponentRiskProfile {
         IAxisSet axisSet = chart.getAxisSet();
         axisSet.getYAxis(0).setRange(new Range(0d, 100d));
         axisSet.getXAxis(0).adjustRange();
+        
+        // Enable log scale, synchronize with other
+        if (other != null && other.chart != null && other.chart.getAxisSet() != null) {
+            if (other.chart.getAxisSet().getXAxes() != null && other.chart.getAxisSet().getXAxes().length > 0) {
+                axisSet.getXAxis(0).enableLogScale(other.chart.getAxisSet().getXAxes()[0].isLogScaleEnabled());
+            }
+        }
 
         // Layout
         chart.updateLayout();
