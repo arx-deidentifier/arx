@@ -60,7 +60,7 @@ public class DataMatrix implements Serializable {
             this.rows = rows;
             int cells = Math.multiplyExact(rows, columns);
             this.array = new int[cells];
-        } catch (Exception e) {
+        } catch (ArithmeticException e) {
             throw new IllegalArgumentException("Not more then 2^31-1 cells supported");
         }
     }
