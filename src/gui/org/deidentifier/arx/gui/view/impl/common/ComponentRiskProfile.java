@@ -111,17 +111,19 @@ public class ComponentRiskProfile {
             return result;
         }
     }
+    
     /**
      * Checks a given series
      * @param values
      */
     private static void checkSeries(double[] values) {
         for (double value : values) {
-            if (value <0d || value>1d) {
-                throw new IllegalArgumentException("Values must be in range [0, 1]");
+            if (value < 0d) {
+                throw new IllegalArgumentException("Values must be >= 0 but is " + value);
             }
         }
     }
+    
     /**
      * Insert item to back
      * @param array
