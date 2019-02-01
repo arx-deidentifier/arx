@@ -21,7 +21,7 @@ public class Example59 {
 		for (int i=0;i<rows;i++) {
 			
 			for(int j=0;j<columns;j++) {
-				tuple[j] = dictionary.register(j, Integer.toString(j+1) + "_ColumnCIAO_" + Integer.toString(i+1)+"row");
+				tuple[j] = dictionary.register(j, Integer.toString(j+1) + "_ColumnStringTest_" + Integer.toString(i+1)+"row");
 			}
 			data.setRow(i, tuple);
 		}
