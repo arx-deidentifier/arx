@@ -91,6 +91,70 @@ public abstract class DataMaskingFunction implements Serializable {
             return new String(buffer);
         }
     }
+    
+    public static class PermutationFunctionColumns extends DataMaskingFunction {
+    	
+        /** SVUID */
+		private static final long serialVersionUID = 1470074649699937850L;
+    	
+    	public PermutationFunctionColumns (boolean ignoreMissingData) {
+            super(ignoreMissingData, false);
+        }
+
+		@Override
+		public void apply(DataColumn column) {
+			
+			FisherYatesKnuthYao(column);
+			
+		}
+
+		@Override
+		public DataMaskingFunction clone() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		
+		private void FisherYatesKnuthYao(DataColumn column) {
+			
+			int j = 0;
+			int lengthColumn = column.getNumRows()-1;
+			
+			for(int i = lengthColumn; i>=2; i--) {
+				j = KnuthYao(i)+1;
+				swap(column, i, j);
+			}
+		}
+		
+		private int KnuthYao(int n) {
+			
+			Random rand = new SecureRandom();
+			// 0 to 1 inclusive.
+			int randBit = 0;
+			
+			int u = 1;
+			int x = 0;
+			int d = 0;
+			
+			while (true) {
+				while (u < n) {
+					randBit = rand.nextInt(2);
+					u = 2*u;
+					x = 2*x + randBit;
+				}
+				d = u-n;
+				if (x >= d) return x - d;
+				else u = d;
+			}
+		}
+		
+		private void swap(DataColumn column, int i, int j) {
+			String tmp = column.get(i);
+			column.set(i, column.get(j));
+			column.set(j, tmp);
+		}
+    	
+    }
 
     /** SVUID */
     private static final long serialVersionUID = -5605460206017591293L;
