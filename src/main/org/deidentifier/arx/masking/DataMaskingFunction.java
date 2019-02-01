@@ -92,41 +92,56 @@ public abstract class DataMaskingFunction implements Serializable {
         }
     }
     
+    /**
+     * Generates a Random Permutation Columns
+     * 
+     * @author giupardeb
+     * 
+     * implementation of Fisher-Yates Knuth-Yao algorithm is based on the paper:
+     * 
+     * Axel Bacher, Olivier Bodini, Hsien-Kuei Hwang, and Tsung-Hsi Tsai.
+     * Generating random permutations by coin-tossing: classical algorithms, new analysis and modern implementation
+     */
+    
     public static class PermutationFunctionColumns extends DataMaskingFunction {
     	
         /** SVUID */
-		private static final long serialVersionUID = 1470074649699937850L;
-    	
+    	private static final long serialVersionUID = 1470074649699937850L;
+		
+		/**
+         * Creates a new instance
+         * @param ignoreMissingData
+         */
     	public PermutationFunctionColumns (boolean ignoreMissingData) {
-            super(ignoreMissingData, false);
-        }
+    		super(ignoreMissingData, false);
+    	}
 
 		@Override
 		public void apply(DataColumn column) {
-			
-			FisherYatesKnuthYao(column);
-			
+			fisherYatesKnuthYao(column);
 		}
 
 		@Override
 		public DataMaskingFunction clone() {
-			// TODO Auto-generated method stub
-			return null;
+			return new PermutationFunctionColumns(super.isIgnoreMissingData());
 		}
 		
-		
-		private void FisherYatesKnuthYao(DataColumn column) {
+		/**
+		 * implementation of Fisher-Yates Knuth-Yao algorithm
+		 * @param column
+		 */
+		private void fisherYatesKnuthYao(DataColumn column) {
 			
 			int j = 0;
 			int lengthColumn = column.getNumRows()-1;
 			
 			for(int i = lengthColumn; i>=2; i--) {
-				j = KnuthYao(i)+1;
+				j = knuthYao(i)+1;
 				swap(column, i, j);
 			}
 		}
 		
-		private int KnuthYao(int n) {
+		private int knuthYao(int n) {
 			
 			Random rand = new SecureRandom();
 			// 0 to 1 inclusive.
@@ -142,12 +157,18 @@ public abstract class DataMaskingFunction implements Serializable {
 					u = 2*u;
 					x = 2*x + randBit;
 				}
-				d = u-n;
+				d = u - n;
 				if (x >= d) return x - d;
 				else u = d;
 			}
 		}
 		
+		/**
+         * swapping rows
+         * @param column
+         * @param i
+         * @param j
+         */
 		private void swap(DataColumn column, int i, int j) {
 			String tmp = column.get(i);
 			column.set(i, column.get(j));
