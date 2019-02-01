@@ -93,41 +93,44 @@ public abstract class DataMaskingFunction implements Serializable {
     }
     
     /**
-     * Generates a Random Permutation Columns
+     * Generates a random permutation column's rows
      * 
      * @author giupardeb
      * 
-     * implementation of Fisher-Yates Knuth-Yao algorithm is based on the paper:
-     * 
-     * Axel Bacher, Olivier Bodini, Hsien-Kuei Hwang, and Tsung-Hsi Tsai.
-     * Generating random permutations by coin-tossing: classical algorithms, new analysis and modern implementation
      */
     
     public static class PermutationFunctionColumns extends DataMaskingFunction {
     	
         /** SVUID */
     	private static final long serialVersionUID = 1470074649699937850L;
+    	
+    	private final String typePermutation;
 		
 		/**
          * Creates a new instance
          * @param ignoreMissingData
          */
-    	public PermutationFunctionColumns (boolean ignoreMissingData) {
+    	public PermutationFunctionColumns (boolean ignoreMissingData, String typePermutation) {
     		super(ignoreMissingData, false);
+    		this.typePermutation = typePermutation;
     	}
 
 		@Override
 		public void apply(DataColumn column) {
-			fisherYatesKnuthYao(column);
+			if(typePermutation.equalsIgnoreCase("FYKY"))
+				fisherYatesKnuthYao(column);
 		}
 
 		@Override
 		public DataMaskingFunction clone() {
-			return new PermutationFunctionColumns(super.isIgnoreMissingData());
+			return new PermutationFunctionColumns(super.isIgnoreMissingData(), typePermutation);
 		}
 		
 		/**
-		 * implementation of Fisher-Yates Knuth-Yao algorithm
+		 * Implementation of Fisher-Yates Knuth-Yao algorithm is based on the paper:
+		 * Axel Bacher, Olivier Bodini, Hsien-Kuei Hwang, and Tsung-Hsi Tsai.
+		 * Generating random permutations by coin-tossing: classical algorithms, new analysis and modern implementation
+		 * 
 		 * @param column
 		 */
 		private void fisherYatesKnuthYao(DataColumn column) {
@@ -141,6 +144,12 @@ public abstract class DataMaskingFunction implements Serializable {
 			}
 		}
 		
+		/**
+		 * Implementation knuth Yao function
+		 * 
+		 * @param n
+		 * @return
+		 */
 		private int knuthYao(int n) {
 			
 			Random rand = new SecureRandom();

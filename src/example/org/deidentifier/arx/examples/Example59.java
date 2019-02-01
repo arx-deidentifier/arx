@@ -1,44 +1,86 @@
 package org.deidentifier.arx.examples;
 
-import org.deidentifier.arx.framework.data.DataColumn;
-import org.deidentifier.arx.framework.data.DataMatrix;
-import org.deidentifier.arx.framework.data.Dictionary;
-import org.deidentifier.arx.masking.DataMaskingFunction.PermutationFunctionColumns;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
 
-public class Example59 {
-	
-	public static void main (String[] args) {
-		int rows = 1000;
-		int columns = 2;
-		
-		DataMatrix data = new DataMatrix(rows, columns);
-		String[] header = new String[]{"column1","column2"};
-		int column = 0;
-		Dictionary dictionary = new Dictionary(rows);
+import org.deidentifier.arx.ARXAnonymizer;
+import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
+import org.deidentifier.arx.Data;
+import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.MaskingFunction;
+import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.Data.DefaultData;
+import org.deidentifier.arx.criteria.KAnonymity;
 
-		int[] tuple = new int[columns];
+/**
+ * This class implements an example of permutation function on columns
+ * 
+ * @author giupardeb
+ *
+ */
+public class Example59 extends Example {
+	/**
+	 * Entry point.
+	 * 
+	 * @param args the arguments
+	 * @throws IOException
+	 */
+	public static void main (String[] args) throws IOException {
 		
-		for (int i=0;i<rows;i++) {
-			
-			for(int j=0;j<columns;j++) {
-				tuple[j] = dictionary.register(j, Integer.toString(j+1) + "_ColumnStringTest_" + Integer.toString(i+1)+"row");
-			}
-			data.setRow(i, tuple);
-		}
-		
-		
-		dictionary.finalizeAll();
-		DataColumn c = new DataColumn(data, header, column, dictionary);
-		
-		PermutationFunctionColumns pfc = new PermutationFunctionColumns(true);
-		for (int i=0; i<c.getNumRows();i++) {
-			System.out.println(c.get(i));
-		}
-		System.out.println();
-		pfc.apply(c);
-		
-		for (int i=0; i<c.getNumRows();i++) {
-			System.out.println(c.get(i));
-		}
+		// Define data
+        DefaultData data = Data.create();
+        data.add("id","Name", "Surname");
+        data.add("1","Gerek", "Macourek");
+        data.add("2","Nadia", "Stare");
+        data.add("3","Bobby", "Spera");
+        data.add("4","Carly", "Avrahamof");
+        data.add("5","Morgan", "MacCaughey");
+        data.add("6","Leilah", "Yapp");
+        data.add("7","Alida", "Stud");
+        data.add("8","Shannon", "Diwell");
+        data.add("9","Kaitlin", "Farmar");
+        data.add("10","Angela", "Pinkett");
+        
+        
+        DefaultHierarchy id = Hierarchy.create();
+        id.add("1", "*");
+        id.add("2", "*");
+        id.add("3", "*");
+        id.add("4", "*");
+        id.add("5", "*");
+        id.add("6", "*");
+        id.add("7", "*");
+        id.add("8", "*");
+        id.add("9", "*");
+        id.add("10", "*");
+        
+        data.getDefinition().setAttributeType("id", id);
+        data.getDefinition().setAttributeType("Name", AttributeType.IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setMaskingFunction("Name", MaskingFunction.createPermutationFunctionColumns(true, "FYKY"));
+        data.getDefinition().setAttributeType("Surname", AttributeType.IDENTIFYING_ATTRIBUTE);
+        data.getDefinition().setMaskingFunction("Surname", MaskingFunction.createPermutationFunctionColumns(true, "FYKY"));
+        
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+        ARXConfiguration config = ARXConfiguration.create();
+        config.addPrivacyModel(new KAnonymity(3));
+        config.setSuppressionLimit(0d);
+        
+        ARXResult result = anonymizer.anonymize(data,config);
+        
+        // Print info
+        printResult(result, data);
+        
+        
+        // Process results
+        System.out.println(" - Transformed data:");
+        Iterator<String[]> transformed = result.getOutput(false).iterator();
+        while (transformed.hasNext()) {
+            System.out.print("   ");
+            System.out.println(Arrays.toString(transformed.next()));
+        }
 	}
 }
