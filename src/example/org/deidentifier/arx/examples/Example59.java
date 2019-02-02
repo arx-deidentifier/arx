@@ -1,3 +1,20 @@
+/*
+ * ARX: Powerful Data Anonymization
+ * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
@@ -10,10 +27,11 @@ import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.AttributeType.Hierarchy;
-import org.deidentifier.arx.AttributeType.MaskingFunction;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.AttributeType.MaskingFunction;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.KAnonymity;
+import org.deidentifier.arx.masking.DataMaskingFunction.PermutationFunctionColumns.PermutationType;
 
 /**
  * This class implements an example of permutation function on columns
@@ -44,7 +62,6 @@ public class Example59 extends Example {
         data.add("9","Kaitlin", "Farmar");
         data.add("10","Angela", "Pinkett");
         
-        
         DefaultHierarchy id = Hierarchy.create();
         id.add("1", "*");
         id.add("2", "*");
@@ -56,12 +73,12 @@ public class Example59 extends Example {
         id.add("8", "*");
         id.add("9", "*");
         id.add("10", "*");
-        
+
         data.getDefinition().setAttributeType("id", id);
         data.getDefinition().setAttributeType("Name", AttributeType.IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setMaskingFunction("Name", MaskingFunction.createPermutationFunctionColumns(true, "FYKY"));
+        data.getDefinition().setMaskingFunction("Name", MaskingFunction.createPermutationFunctionColumns(true, PermutationType.FYKY));
         data.getDefinition().setAttributeType("Surname", AttributeType.IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setMaskingFunction("Surname", MaskingFunction.createPermutationFunctionColumns(true, "FYKY"));
+        data.getDefinition().setMaskingFunction("Surname", MaskingFunction.createPermutationFunctionColumns(true, PermutationType.FYKY));
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();

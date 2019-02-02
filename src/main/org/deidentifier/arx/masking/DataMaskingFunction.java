@@ -104,21 +104,36 @@ public abstract class DataMaskingFunction implements Serializable {
         /** SVUID */
     	private static final long serialVersionUID = 1470074649699937850L;
     	
-    	private final String typePermutation;
+    	private final PermutationType typePermutation;
+    	
+    	/**
+    	 * create a type enum to define permutation type
+    	 * 
+    	 * @author giupardeb
+    	 *
+    	 */
+    	public enum PermutationType {
+    		FYKY
+    	}
 		
-		/**
-         * Creates a new instance
-         * @param ignoreMissingData
-         */
-    	public PermutationFunctionColumns (boolean ignoreMissingData, String typePermutation) {
+    	/**
+    	 * Creates a new instance
+    	 * 
+    	 * @param ignoreMissingData
+    	 * @param typePermutation
+    	 */
+    	public PermutationFunctionColumns (boolean ignoreMissingData, PermutationType typePermutation) {
     		super(ignoreMissingData, false);
     		this.typePermutation = typePermutation;
     	}
 
 		@Override
 		public void apply(DataColumn column) {
-			if(typePermutation.equalsIgnoreCase("FYKY"))
+			switch(typePermutation) {
+			case FYKY:
 				fisherYatesKnuthYao(column);
+			break;
+			}	
 		}
 
 		@Override
