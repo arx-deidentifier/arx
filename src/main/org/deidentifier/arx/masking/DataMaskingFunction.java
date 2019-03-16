@@ -167,17 +167,16 @@ public abstract class DataMaskingFunction implements Serializable {
 		private ArrayList<String> rs(int lengthColumn, ArrayList<String> column) {
 			
 			Random rand = new SecureRandom();
-			if(lengthColumn <= 1) {
+			if(lengthColumn <= 1)
 				return column;
-			}
+			
 			if(lengthColumn == 2) {
 				if(rand.nextInt(2) == 1) { 
 					swap(column, 0, 1);
 					return column;
 				}
-				else {
+				else
 					return column;
-				}
 			}
 			
 			ArrayList<String> tmp1 = new ArrayList<String>();
