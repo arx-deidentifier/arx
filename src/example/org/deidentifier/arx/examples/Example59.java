@@ -78,7 +78,7 @@ public class Example59 extends Example {
         data.getDefinition().setAttributeType("Name", AttributeType.IDENTIFYING_ATTRIBUTE);
         data.getDefinition().setMaskingFunction("Name", MaskingFunction.createPermutationFunctionColumns(true, PermutationType.FYKY));
         data.getDefinition().setAttributeType("Surname", AttributeType.IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setMaskingFunction("Surname", MaskingFunction.createPermutationFunctionColumns(true, PermutationType.FYKY));
+        data.getDefinition().setMaskingFunction("Surname", MaskingFunction.createPermutationFunctionColumns(true, PermutationType.RS));
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();

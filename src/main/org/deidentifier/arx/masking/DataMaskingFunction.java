@@ -18,6 +18,7 @@ package org.deidentifier.arx.masking;
 
 import java.io.Serializable;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 import java.util.Random;
 
 import org.deidentifier.arx.DataType;
@@ -113,7 +114,8 @@ public abstract class DataMaskingFunction implements Serializable {
     	 *
     	 */
     	public enum PermutationType {
-    		FYKY
+    		FYKY,
+    		RS
     	}
 		
     	/**
@@ -133,7 +135,72 @@ public abstract class DataMaskingFunction implements Serializable {
 			case FYKY:
 				fisherYatesKnuthYao(column);
 			break;
+			case RS:
+				raoSandelius(column);
+			break;
 			}	
+		}
+		
+		/**
+		 * Implementation of Rao-Sandelius algorithm is based on the paper:
+		 * Axel Bacher, Olivier Bodini, Hsien-Kuei Hwang, and Tsung-Hsi Tsai.
+		 * Generating random permutations by coin-tossing: classical algorithms, new analysis and modern implementation
+		 * 
+		 * @param column
+		 */
+		private void raoSandelius(DataColumn column) {
+			
+			int lengthColumn = column.getNumRows();
+			ArrayList<String> col = new ArrayList<String>();
+			ArrayList<String> colout = new ArrayList<String>();
+			
+			for (int i = 0; i < lengthColumn; i++)
+				col.add(column.get(i));
+			
+			colout = rs(lengthColumn, col);
+			
+			for (int i=0;i<lengthColumn;i++)
+				column.set(i, colout.get(i));
+		}
+		
+		/**
+		 * Implementation of the core Rao Sandelius function
+		 * 
+		 * @param lengthColumn
+		 * @param column
+		 * @return permuted ArrayList
+		 */
+		private ArrayList<String> rs(int lengthColumn, ArrayList<String> column) {
+			
+			Random rand = new SecureRandom();
+			if(lengthColumn <= 1)
+				return column;
+			
+			if(lengthColumn == 2) {
+				if(rand.nextInt(2) == 1) { 
+					swap(column, 0, 1);
+					return column;
+				}
+				else
+					return column;
+			}
+			
+			ArrayList<String> tmp1 = new ArrayList<String>();
+			ArrayList<String> tmp2 = new ArrayList<String>();
+			
+			for(int i = 0; i < lengthColumn; i++) {
+				
+				if(rand.nextInt(2) == 1)
+					tmp1.add(column.get(i));
+				else
+					tmp2.add(column.get(i));
+			}
+			
+			ArrayList<String> array1 = rs(tmp1.size(),tmp1);
+			ArrayList<String> array2 = rs(tmp2.size(),tmp2);
+			array1.addAll(array2);
+			
+			return array1;
 		}
 
 		@Override
@@ -153,7 +220,7 @@ public abstract class DataMaskingFunction implements Serializable {
 			int j = 0;
 			int lengthColumn = column.getNumRows()-1;
 			
-			for(int i = lengthColumn; i>=2; i--) {
+			for(int i = lengthColumn; i >= 2; i--) {
 				j = knuthYao(i)+1;
 				swap(column, i, j);
 			}
@@ -194,6 +261,18 @@ public abstract class DataMaskingFunction implements Serializable {
          * @param j
          */
 		private void swap(DataColumn column, int i, int j) {
+			String tmp = column.get(i);
+			column.set(i, column.get(j));
+			column.set(j, tmp);
+		}
+		
+		/**
+         * swapping rows
+         * @param column
+         * @param i
+         * @param j
+         */
+		private void swap(ArrayList<String> column, int i, int j) {
 			String tmp = column.get(i);
 			column.set(i, column.get(j));
 			column.set(j, tmp);

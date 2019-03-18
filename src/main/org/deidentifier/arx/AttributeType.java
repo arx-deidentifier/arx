@@ -1119,6 +1119,13 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
 					@Override public MaskingFunction createInstance(boolean ignoreMissingData) {
 						return MaskingFunction.createPermutationFunctionColumns(ignoreMissingData, PermutationType.FYKY);
 					}
+                },
+                new MaskingFunctionDescription(DataScale.NOMINAL, "random permutation on column's rows using RS algorithm") {
+                	
+					/** SVUID*/  private static final long serialVersionUID = -5012666134229682310L;
+					@Override public MaskingFunction createInstance(boolean ignoreMissingData) {
+						return MaskingFunction.createPermutationFunctionColumns(ignoreMissingData, PermutationType.RS);
+					}
                 }
         });
     }
