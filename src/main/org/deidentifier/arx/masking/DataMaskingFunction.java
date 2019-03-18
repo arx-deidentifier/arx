@@ -161,9 +161,14 @@ public abstract class DataMaskingFunction implements Serializable {
 			
 			for (int i=0;i<lengthColumn;i++)
 				column.set(i, colout.get(i));
-			
 		}
 		
+		/**
+		 * 
+		 * @param lengthColumn
+		 * @param column
+		 * @return permuted ArrayList
+		 */
 		private ArrayList<String> rs(int lengthColumn, ArrayList<String> column) {
 			
 			Random rand = new SecureRandom();
@@ -195,9 +200,7 @@ public abstract class DataMaskingFunction implements Serializable {
 			array1.addAll(array2);
 			
 			return array1;
-			
 		}
-
 
 		@Override
 		public DataMaskingFunction clone() {
