@@ -154,7 +154,7 @@ public abstract class DataMaskingFunction implements Serializable {
 			ArrayList<String> col = new ArrayList<String>();
 			ArrayList<String> colout = new ArrayList<String>();
 			
-			for (int i=0;i<lengthColumn;i++)
+			for (int i = 0; i < lengthColumn; i++)
 				col.add(column.get(i));
 			
 			colout = rs(lengthColumn, col);
@@ -164,6 +164,7 @@ public abstract class DataMaskingFunction implements Serializable {
 		}
 		
 		/**
+		 * Implementation of the core Rao Sandelius function
 		 * 
 		 * @param lengthColumn
 		 * @param column
@@ -219,7 +220,7 @@ public abstract class DataMaskingFunction implements Serializable {
 			int j = 0;
 			int lengthColumn = column.getNumRows()-1;
 			
-			for(int i = lengthColumn; i>=2; i--) {
+			for(int i = lengthColumn; i >= 2; i--) {
 				j = knuthYao(i)+1;
 				swap(column, i, j);
 			}
