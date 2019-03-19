@@ -456,7 +456,6 @@ public class MainToolBar extends AbstractMenu {
         this.labelSelected.setToolTipText(tooltip);
         this.labelApplied.setToolTipText(tooltip);
         this.labelTransformations.setToolTipText(tooltip);
-        this.toolbar.setToolTipText(tooltip);
     }
 
     /**
