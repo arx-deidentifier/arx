@@ -19,7 +19,7 @@ graphical user interface. You can find further information on the project [websi
 License
 ------
 
-ARX (C) 2012 - 2018 Fabian Prasser and Contributors.
+ARX (C) 2012 - 2019 Fabian Prasser and Contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
