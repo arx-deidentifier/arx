@@ -411,7 +411,7 @@ public class HashGroupify {
      * @param transformation
      * @param force
      */
-    public void stateAnalyze(Transformation transformation, boolean force) {
+    public void stateAnalyze(Transformation<?> transformation, boolean force) {
         if (force) analyzeAll(transformation);
         else analyzeWithEarlyAbort(transformation);
     }
@@ -518,7 +518,7 @@ public class HashGroupify {
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
      */
-    private void analyzeAll(Transformation transformation) {
+    private void analyzeAll(Transformation<?> transformation) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -564,7 +564,7 @@ public class HashGroupify {
      * @param earlyAbort May we perform an early abort, if we reach the threshold
      * @return
      */
-    private void analyzeSampleBasedCriteria(Transformation transformation, boolean earlyAbort) {
+    private void analyzeSampleBasedCriteria(Transformation<?> transformation, boolean earlyAbort) {
         
         // Nothing to do
         if (this.sampleBasedCriteria.length == 0) {
@@ -594,7 +594,7 @@ public class HashGroupify {
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
      */
-    private void analyzeWithEarlyAbort(Transformation transformation) {
+    private void analyzeWithEarlyAbort(Transformation<?> transformation) {
         
         // We have only checked k-anonymity so far
         minimalClassSizeFulfilled = (currentNumOutliers <= suppressionLimit);
@@ -711,7 +711,7 @@ public class HashGroupify {
      * @return
      * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
      */
-    private int isPrivacyModelFulfilled(Transformation transformation, HashGroupifyEntry entry) {
+    private int isPrivacyModelFulfilled(Transformation<?> transformation, HashGroupifyEntry entry) {
         
         // Check minimal group size
         if (minimalClassSize != Integer.MAX_VALUE && entry.count < minimalClassSize) {

@@ -104,7 +104,7 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
     }
     
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
         
         ILMultiDimensionalWithBound result = super.getInformationLossInternal(node, g);
         double[] loss = result.getInformationLoss() != null ? result.getInformationLoss().getValues() : null;
@@ -122,12 +122,12 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         return super.getInformationLossInternal(node, entry);
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
 
         AbstractILMultiDimensional result = super.getLowerBoundInternal(node);
         if (result == null) return null;
@@ -143,7 +143,7 @@ public class MetricMDNUNMNormalizedEntropyPrecomputed extends MetricMDNUNMEntrop
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node,
                                                                HashGroupify groupify) {
         
         AbstractILMultiDimensional result = super.getLowerBoundInternal(node, groupify);

@@ -51,7 +51,7 @@ public class DistinctLDiversity extends LDiversity{
     }
 
 	@Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         return entry.distributions[index].size() >= minSize; // minSize=(int)l;
     }
 

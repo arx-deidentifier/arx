@@ -190,7 +190,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify groupify) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> transformation, HashGroupify groupify) {
         
         // Prepare
         double real = 0;
@@ -231,7 +231,7 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation<?> transformation, HashGroupifyEntry entry) {
 
         // Prepare
         double gFactor = super.getGeneralizationFactor();
@@ -257,12 +257,12 @@ public class MetricSDNMPublisherPayout extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation transformation) {
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> transformation) {
         return null;
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation transformation,
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> transformation,
                                                         HashGroupify groupify) {
 
         // Compute

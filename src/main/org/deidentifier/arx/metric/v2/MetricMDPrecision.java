@@ -103,7 +103,7 @@ public class MetricMDPrecision extends MetricMDNMPrecision {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
         AbstractILMultiDimensional loss = super.getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, loss);
     }

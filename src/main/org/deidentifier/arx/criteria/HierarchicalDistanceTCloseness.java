@@ -85,7 +85,7 @@ public class HierarchicalDistanceTCloseness extends TCloseness {
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         
         // Empty data in tree
         System.arraycopy(empty, 0, tree, start, empty.length);

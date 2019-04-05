@@ -134,6 +134,7 @@ public class WorkerLoad extends Worker<Model> {
             arg0.worked(1);
         } catch (final Exception e) {
             error = e;
+            e.printStackTrace();
             arg0.done();
             return;
         }
@@ -324,7 +325,7 @@ public class WorkerLoad extends Worker<Model> {
             
             // Create solution space
             ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
-            SolutionSpace solutions = new SolutionSpace(lattice, arxconfig);
+            SolutionSpace<?> solutions = SolutionSpace.create(lattice, arxconfig);
             
             // Update model
             model.setResult(new ARXResult(config.getInput().getHandle(),

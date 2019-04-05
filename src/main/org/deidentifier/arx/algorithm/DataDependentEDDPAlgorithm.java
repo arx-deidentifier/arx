@@ -28,11 +28,11 @@ import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.history.History.StorageStrategy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
+import org.deidentifier.arx.framework.lattice.TransformationList;
 import org.deidentifier.arx.metric.v2.ILScore;
 import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
 import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
-import cern.colt.list.LongArrayList;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
@@ -65,7 +65,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param epsilonSearch
      * @return
      */
-    public static AbstractAlgorithm create(SolutionSpace solutionSpace, TransformationChecker checker,
+    public static AbstractAlgorithm create(SolutionSpace<?> solutionSpace, TransformationChecker checker,
                                            boolean deterministic, int expansionLimit, double epsilonSearch) {
         return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, expansionLimit, epsilonSearch);
     }
@@ -78,7 +78,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param expansionLimit
      * @param epsilonSearch
      */
-    private DataDependentEDDPAlgorithm(SolutionSpace space, TransformationChecker checker,
+    private DataDependentEDDPAlgorithm(SolutionSpace<?> space, TransformationChecker checker,
                                        boolean deterministic, int expansionLimit, double epsilonSearch) {
         super(space, checker);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
@@ -105,37 +105,37 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         
         // Create a new local ExponentialMechanism instance in order to reduce memory consumption caused
         // by internal caches used by this class
-        ExponentialMechanism<Long> exponentialMechanism;
+        ExponentialMechanism<Object> exponentialMechanism;
         try {
-            exponentialMechanism = new ExponentialMechanism<Long>(epsilonPerStep, deterministic);
+            exponentialMechanism = new ExponentialMechanism<Object>(epsilonPerStep, deterministic);
         } catch (IntervalArithmeticException e) {
             throw new RuntimeException(e);
         }
         
         // Set the top-transformation to be the initial pivot element
-        Transformation pivot = solutionSpace.getTop();
+        Transformation<?> pivot = solutionSpace.getTop();
         assureChecked(pivot);
         ILScore score = (ILScore)pivot.getInformationLoss();
         
         // Initialize variables tracking the best of all pivot elements
-        Transformation bestTransformation = pivot;
+        Transformation<?> bestTransformation = pivot;
         ILScore bestScore = score;
         
         progress(0d);
 
         // Initialize the set of candidates, each mapped to its respective score
-        Map<Long, ILScore> transformationIDToScore = new HashMap<Long, ILScore>();
+        Map<Object, ILScore> transformationIDToScore = new HashMap<>();
         transformationIDToScore.put(pivot.getIdentifier(), score);
         
         // For each step
         for (int step = 1; step <= expansionLimit; ++step) {
             
             // Add predecessors of the current pivot element to the set of candidates
-            LongArrayList list = pivot.getPredecessors();
+            TransformationList<?> list = pivot.getPredecessors();
             for (int i = 0; i < list.size(); i++) {
                 long id = list.getQuick(i);
                 if (transformationIDToScore.containsKey(id)) continue;
-                Transformation predecessor = solutionSpace.getTransformation(id);
+                Transformation<?> predecessor = solutionSpace.getTransformation(id);
                 assureChecked(predecessor);
                 transformationIDToScore.put(id, (ILScore)predecessor.getInformationLoss());
             }
@@ -144,7 +144,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
             transformationIDToScore.remove(pivot.getIdentifier());
             
             // Select the next pivot element from the set of candidates using the exponential mechanism
-            long id = executeExponentialMechanism(transformationIDToScore, exponentialMechanism);
+            Object id = executeExponentialMechanism(transformationIDToScore, exponentialMechanism);
             pivot = solutionSpace.getTransformation(id);
             score = transformationIDToScore.get(id);
             
@@ -163,10 +163,10 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     }
     
     /**
-    * Makes sure that the given Transformation has been checked
+    * Makes sure that the given Transformation<?> has been checked
     * @param transformation
     */
-    private void assureChecked(final Transformation transformation) {
+    private void assureChecked(final Transformation<?> transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true, ScoreType.DP_SCORE));
         }
@@ -178,15 +178,14 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param exponentialMechanism 
      * @return
      */
-    private long executeExponentialMechanism(Map<Long, ILScore> transformationIDToScore, ExponentialMechanism<Long> exponentialMechanism) {
+    private Object executeExponentialMechanism(Map<Object, ILScore> transformationIDToScore, ExponentialMechanism<Object> exponentialMechanism) {
         
         // Convert the map into arrays of the types required by the exponential mechanism
-
-        Long[] values = new Long[transformationIDToScore.size()];
+        Object[] values = new Object[transformationIDToScore.size()];
         BigFraction[] scores = new BigFraction[values.length];
         
         int i = 0;
-        for (Entry<Long, ILScore> entry : transformationIDToScore.entrySet()) {
+        for (Entry<Object, ILScore> entry : transformationIDToScore.entrySet()) {
             values[i] = entry.getKey();
             scores[i] = entry.getValue().getValue();
             i++;

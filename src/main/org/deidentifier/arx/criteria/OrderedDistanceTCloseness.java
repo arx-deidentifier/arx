@@ -111,7 +111,7 @@ public class OrderedDistanceTCloseness extends TCloseness {
     }
     
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
 
         // Init
         int[] buckets = entry.distributions[index].getBuckets();

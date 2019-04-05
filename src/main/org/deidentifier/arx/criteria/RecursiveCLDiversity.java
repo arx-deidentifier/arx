@@ -70,7 +70,7 @@ public class RecursiveCLDiversity extends LDiversity{
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
 
         Distribution d = entry.distributions[index];
         

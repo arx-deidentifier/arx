@@ -127,7 +127,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
      * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
      * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
      */
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+    public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
         
         if (k < 0) {
             throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
@@ -199,7 +199,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
         
         // Prepare
         int dimensions = getDimensions();
@@ -252,14 +252,14 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
         
         double gFactor = super.getGeneralizationFactor();
         double[] result = new double[getDimensions()];
@@ -276,7 +276,7 @@ public class MetricMDNMPrecision extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node,
                                                            HashGroupify groupify) {
        return getLowerBoundInternal(node);
     }

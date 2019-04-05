@@ -86,7 +86,7 @@ public class MetricMDNUNMNormalizedEntropy extends MetricMDNUNMNormalizedEntropy
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
         return null;
     }
 }

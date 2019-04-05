@@ -96,7 +96,7 @@ public class MetricMDNUEntropy extends MetricMDNUEntropyPrecomputed {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
         return null;
     }
 }

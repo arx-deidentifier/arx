@@ -178,7 +178,7 @@ public abstract class PrivacyCriterion implements Serializable{
      *
      * @return
      */
-    public abstract boolean isAnonymous(Transformation node, HashGroupifyEntry entry);
+    public abstract boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry);
 
     /**
      * Returns whether the criterion supports local recoding.

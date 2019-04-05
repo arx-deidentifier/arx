@@ -107,7 +107,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
      * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
      * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
      */
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+    public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
         
         if (k < 0 || numRows < 0) {
             throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
@@ -157,7 +157,7 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
         
         double rows = getNumTuples();
         double dm = 0;
@@ -176,17 +176,17 @@ public class MetricSDNMDiscernability extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count);
     }
     
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node) {
         return null;
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation node,
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node,
                                                         HashGroupify groupify) {
         double lowerBound = 0;
         HashGroupifyEntry m = groupify.getFirstEquivalenceClass();

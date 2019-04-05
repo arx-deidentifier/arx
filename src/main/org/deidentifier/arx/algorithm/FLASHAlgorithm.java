@@ -44,7 +44,7 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    public static AbstractAlgorithm create(final SolutionSpace solutionSpace,
+    public static AbstractAlgorithm create(final SolutionSpace<Long> solutionSpace,
                                            final TransformationChecker checker,
                                            final FLASHStrategy strategy) {
 
@@ -106,7 +106,7 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createFullFull(final SolutionSpace solutionSpace,
+    private static AbstractAlgorithm createFullFull(final SolutionSpace<Long> solutionSpace,
                                                     final TransformationChecker checker,
                                                     final FLASHStrategy strategy) {
 
@@ -116,7 +116,7 @@ public class FLASHAlgorithm {
         // Skip nodes for which the anonymity property is known
         DependentAction triggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyNotAnonymous());
             }
@@ -125,12 +125,12 @@ public class FLASHAlgorithm {
         // We predictively tag the anonymity property
         DependentAction triggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
                 node.setProperty(solutionSpace.getPropertySuccessorsPruned()); 
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyAnonymous());
             }
         };
@@ -161,7 +161,7 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createFullNone(final SolutionSpace solutionSpace,
+    private static AbstractAlgorithm createFullNone(final SolutionSpace<Long> solutionSpace,
                                                     final TransformationChecker checker,
                                                     final FLASHStrategy strategy) {
 
@@ -176,7 +176,7 @@ public class FLASHAlgorithm {
         // Skip nodes for which the anonymity property is known
         DependentAction binaryTriggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyNotAnonymous());
             }
@@ -185,12 +185,12 @@ public class FLASHAlgorithm {
         // We predictively tag the anonymity property
         DependentAction binaryTriggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
                 // Empty by design
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return false; // Empty trigger
             }
         };
@@ -210,7 +210,7 @@ public class FLASHAlgorithm {
         // We skip nodes which are not anonymous or which have already been visited during the second phase
         DependentAction linearTriggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyNotAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyVisited());
             }
@@ -219,7 +219,7 @@ public class FLASHAlgorithm {
         // We evaluate nodes which have not been skipped, if the metric is independent
         DependentAction linearTriggerEvaluate = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return checker.getMetric().isIndependent() &&
                        !node.hasProperty(solutionSpace.getPropertyChecked()) &&
                        !node.hasProperty(solutionSpace.getPropertyNotAnonymous());
@@ -229,7 +229,7 @@ public class FLASHAlgorithm {
         // We check nodes which have not been skipped, if the metric is dependent
         DependentAction linearTriggerCheck = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return !checker.getMetric().isIndependent() &&
                        !node.hasProperty(solutionSpace.getPropertyChecked()) &&
                        !node.hasProperty(solutionSpace.getPropertyNotAnonymous());
@@ -239,12 +239,12 @@ public class FLASHAlgorithm {
         // Mark nodes as already visited during the second phase
         DependentAction linearTriggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
                 node.setProperty(solutionSpace.getPropertyVisited());
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return true;
             }
         };
@@ -275,7 +275,7 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createNoneFull(final SolutionSpace solutionSpace,
+    private static AbstractAlgorithm createNoneFull(final SolutionSpace<Long> solutionSpace,
                                                     final TransformationChecker checker,
                                                     final FLASHStrategy strategy) {
 
@@ -285,7 +285,7 @@ public class FLASHAlgorithm {
         // We skip nodes for which the anonymity property is known or which have insufficient utility
         DependentAction triggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyNotAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyInsufficientUtility());
@@ -299,13 +299,13 @@ public class FLASHAlgorithm {
         // We predictively tag nodes with insufficient utility because of the monotonic metric
         DependentAction triggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
                 node.setPropertyToNeighbours(solutionSpace.getPropertyInsufficientUtility());
                 node.setProperty(solutionSpace.getPropertySuccessorsPruned());
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyAnonymous());
             }
         };
@@ -331,7 +331,7 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createNoneNone(final SolutionSpace solutionSpace,
+    private static AbstractAlgorithm createNoneNone(final SolutionSpace<Long> solutionSpace,
                                                     TransformationChecker checker,
                                                     FLASHStrategy strategy) {
 
@@ -341,7 +341,7 @@ public class FLASHAlgorithm {
         // Skip nodes for which the anonymity property is known
         DependentAction triggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyNotAnonymous());
             }
@@ -373,7 +373,7 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createPartialFull(final SolutionSpace solutionSpace,
+    private static AbstractAlgorithm createPartialFull(final SolutionSpace<Long> solutionSpace,
                                                        final TransformationChecker checker,
                                                        final FLASHStrategy strategy) {
         /* *******************************
@@ -387,7 +387,7 @@ public class FLASHAlgorithm {
         // Skip nodes for which the k-anonymity property is known or which have insufficient utility
         DependentAction binaryTriggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyKAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyNotKAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyInsufficientUtility());
@@ -397,7 +397,7 @@ public class FLASHAlgorithm {
         // We predictively tag the k-anonymity property and the insufficient utility property
         DependentAction binaryTriggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
 
                 // Tag insufficient utility
                 node.setPropertyToNeighbours(solutionSpace.getPropertyInsufficientUtility());
@@ -405,7 +405,7 @@ public class FLASHAlgorithm {
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyAnonymous());
             }
         };
@@ -426,7 +426,7 @@ public class FLASHAlgorithm {
         // or which have insufficient utility
         DependentAction linearTriggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyVisited()) ||
                        node.hasProperty(solutionSpace.getPropertyNotKAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyInsufficientUtility());
@@ -439,7 +439,7 @@ public class FLASHAlgorithm {
         // We check nodes which have not been skipped
         DependentAction linearTriggerCheck = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return !node.hasProperty(solutionSpace.getPropertyVisited()) &&
                        !node.hasProperty(solutionSpace.getPropertyNotKAnonymous()) &&
                        !node.hasProperty(solutionSpace.getPropertyInsufficientUtility()) &&
@@ -450,7 +450,7 @@ public class FLASHAlgorithm {
         // We predictively tag the insufficient utility property
         DependentAction linearTriggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
                 node.setProperty(solutionSpace.getPropertyVisited());
                 if (node.hasProperty(solutionSpace.getPropertyAnonymous())) {
                     node.setPropertyToNeighbours(solutionSpace.getPropertyInsufficientUtility());
@@ -459,7 +459,7 @@ public class FLASHAlgorithm {
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return true;
             }
         };
@@ -490,7 +490,7 @@ public class FLASHAlgorithm {
      * @param strategy
      * @return
      */
-    private static AbstractAlgorithm createPartialNone(final SolutionSpace solutionSpace,
+    private static AbstractAlgorithm createPartialNone(final SolutionSpace<Long> solutionSpace,
                                                        final TransformationChecker checker,
                                                        final FLASHStrategy strategy) {
         /* *******************************
@@ -504,7 +504,7 @@ public class FLASHAlgorithm {
         // Skip nodes for which the k-anonymity property is known
         DependentAction binaryTriggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyKAnonymous()) ||
                        node.hasProperty(solutionSpace.getPropertyNotKAnonymous());
             }
@@ -513,12 +513,12 @@ public class FLASHAlgorithm {
         // We predictively tag the k-anonymity property
         DependentAction binaryTriggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
                 // Empty by design
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return false; // Empty trigger
             }
         };
@@ -538,7 +538,7 @@ public class FLASHAlgorithm {
         // We skip nodes for which are not k-anonymous and which have not been visited yet in the 2nd phase
         DependentAction linearTriggerSkip = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return node.hasProperty(solutionSpace.getPropertyVisited()) ||
                        node.hasProperty(solutionSpace.getPropertyNotKAnonymous());
             }
@@ -550,7 +550,7 @@ public class FLASHAlgorithm {
         // We check nodes which are k-anonymous and have not been checked already
         DependentAction linearTriggerCheck = new DependentAction() {
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return !node.hasProperty(solutionSpace.getPropertyChecked()) &&
                        !node.hasProperty(solutionSpace.getPropertyNotKAnonymous());
             }
@@ -559,12 +559,12 @@ public class FLASHAlgorithm {
         // Mark nodes as already visited during the second phase
         DependentAction linearTriggerTag = new DependentAction() {
             @Override
-            public void action(Transformation node) {
+            public void action(Transformation<?> node) {
                 node.setProperty(solutionSpace.getPropertyVisited());
             }
 
             @Override
-            public boolean appliesTo(Transformation node) {
+            public boolean appliesTo(Transformation<?> node) {
                 return true;
             }
         };

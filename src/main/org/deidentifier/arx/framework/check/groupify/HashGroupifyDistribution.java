@@ -94,7 +94,7 @@ public class HashGroupifyDistribution {
      * @param entry
      */
     HashGroupifyDistribution(final Metric<?> metric,
-                             final Transformation transformation,
+                             final Transformation<?> transformation,
                              HashGroupifyEntry entry) {
         
         // Initialize

@@ -69,7 +69,7 @@ public class MetricSDDiscernability extends MetricSDNMDiscernability {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
         ILSingleDimensional result = super.getLowerBoundInternal(node, g);
         return new ILSingleDimensionalWithBound(result.getValue(), result.getValue());
     }

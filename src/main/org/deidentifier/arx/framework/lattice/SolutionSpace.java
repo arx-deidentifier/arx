@@ -17,17 +17,13 @@
 
 package org.deidentifier.arx.framework.lattice;
 
+import java.math.BigInteger;
+
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.ARXLattice;
-import org.deidentifier.arx.ARXLattice.ARXNode;
-import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.metric.InformationLoss;
 
-import com.carrotsearch.hppc.LongObjectOpenHashMap;
-
-import de.linearbits.jhpl.JHPLIterator.LongIterator;
-import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
 
@@ -35,19 +31,8 @@ import de.linearbits.jhpl.PredictiveProperty.Direction;
  * A class representing the solution space
  * @author Fabian Prasser
  */
-public class SolutionSpace {
+public abstract class SolutionSpace<T> {
 
-    /** Information loss */
-    private LongObjectOpenHashMap<Object>             data                        = new LongObjectOpenHashMap<Object>();
-    /** The backing JHPL lattice */
-    private final Lattice<Integer, Integer>           lattice;
-    /** Information loss */
-    private LongObjectOpenHashMap<InformationLoss<?>> lowerBound                  = new LongObjectOpenHashMap<InformationLoss<?>>();
-    /** The offsets for indices */
-    private final int[]                               offsetIndices;
-    /** The offset the level */
-    private final int                                 offsetLevel;
-    
     /** Potentially changing property */
     private PredictiveProperty                        propertyAnonymous           = new PredictiveProperty("Anonymous",
                                                                                                            Direction.NONE);
@@ -80,118 +65,48 @@ public class SolutionSpace {
     /** Static property */
     private final PredictiveProperty                  propertyExpanded             = new PredictiveProperty("Expanded",
                                                                                                            Direction.NONE);
-
-    /** Information loss */
-    private LongObjectOpenHashMap<InformationLoss<?>> utility                     = new LongObjectOpenHashMap<InformationLoss<?>>();
+    
 
     /**
-     * For de-serialization
-     * @param lattice
+     * Sets the monotonicity of the anonymity property
      * @param config
      */
-    public SolutionSpace(ARXLattice lattice, ARXConfiguration config) {
-        this(lattice.getBottom().getTransformation(), lattice.getTop().getTransformation());
-        setMonotonicity(config);
-        for (ARXNode[] level : lattice.getLevels()) {
-            for (ARXNode node : level) {
-                int[] index = toJHPL(node.getTransformation());
-                int lvl = getLevel(index);
-                long id = this.lattice.space().toId(index);
-                if (node.getAnonymity() == Anonymity.ANONYMOUS) {
-                    this.lattice.putProperty(index, lvl, this.getPropertyAnonymous());
-                } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
-                    this.lattice.putProperty(index, lvl, this.getPropertyNotAnonymous());
-                }
-                if (node.isChecked()) {
-                    this.lattice.putProperty(index, lvl, this.getPropertyChecked());
-                    this.setInformationLoss(id, node.getHighestScore());
-                }
-            }
+    protected void setMonotonicity(ARXConfiguration config) {
+        setAnonymityPropertyPredictable(config.getMonotonicityOfPrivacy() == Monotonicity.FULL);
+    }
+   
+    /**
+     * Makes the anonymity property predictable
+     * @param predictable
+     */
+    public void setAnonymityPropertyPredictable(boolean predictable) {
+        if (predictable) {
+            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.UP);
+            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.DOWN);
+        } else {
+            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.NONE);
+            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.NONE);
         }
     }
 
-    /**
-     * Creates a new solution space
-     * @param minLevels
-     * @param maxLevels
-     */
-    public SolutionSpace(int[] minLevels, int[] maxLevels) {
-        
-        // Create offsets
-        minLevels = reverse(minLevels);
-        maxLevels = reverse(maxLevels);
-        this.offsetIndices = minLevels.clone();
-        int lvl = 0; for (int i : offsetIndices) lvl+=i;
-        this.offsetLevel = lvl;
-        
-        
-        // Create lattice
-        Integer[][] elements = new Integer[minLevels.length][];
-        for (int i = 0; i < elements.length; i++) {
-            Integer[] element = new Integer[maxLevels[i] - minLevels[i] + 1];
-            int idx = 0;
-            for (int j = minLevels[i]; j <= maxLevels[i]; j++) {
-                element[idx++] = j;
-            }
-            elements[i] = element;
-        }
-        this.lattice = new Lattice<Integer, Integer>(elements);
-    }
-    
     /**
      * Returns the bottom transformation
      * @return
      */
-    public Transformation getBottom() {
-        return getTransformation(fromJHPL(lattice.nodes().getBottom()));
-    }
+    public abstract Transformation<T> getBottom();
     
     /**
      * Returns the level of the given transformation
      * @param transformation
      * @return
      */
-    public int getLevel(int[] transformation) {
-        int level = 0;
-        for (int dimension : transformation) {
-            level += dimension;
-        }
-        return level;
-    }
+    public abstract int getLevel(int[] transformation);
     
     /**
      * Returns all materialized transformations
      * @return
      */
-    public LongIterator getMaterializedTransformations() {
-        return lattice.listNodesAsIdentifiers();
-    }
-
-    /**
-     * Returns the multipliers
-     * @return
-     */
-    public long[] getMultipliersForHighDimensionalData() {
-        long[] multiplier = lattice.nodes().getMultiplier();
-        long[] result = new long[multiplier.length];
-        for (int i = 0; i < result.length; i++) {
-            result[result.length - i - 1] = multiplier[i];
-        }
-        return result;
-    }
-
-    /**
-     * Returns the multipliers
-     * @return
-     */
-    public int[] getMultipliersForLowDimensionalData() {
-        long[] multiplier = lattice.nodes().getMultiplier();
-        int[] result = new int[multiplier.length];
-        for (int i = 0; i < result.length; i++) {
-            result[result.length - i - 1] = (int) multiplier[i];
-        }
-        return result;
-    }
+    public abstract ObjectIterator<T> getMaterializedTransformations();
 
     /**
      * Returns a property
@@ -277,46 +192,34 @@ public class SolutionSpace {
      * Returns the overall number of transformations in the solution space
      * @return
      */
-    public long getSize() {
-        return lattice.numNodes();
-    }
+    public abstract BigInteger getSize();
     
     /**
      * Returns the top-transformation
      * @return
      */
-    public Transformation getTop() {
-        return getTransformation(fromJHPL(lattice.nodes().getTop()));
-    }
+    public abstract Transformation<T> getTop();
     
     /**
      * Returns a wrapper object with access to all properties about the transformation
      * @param transformation
      * @return
      */
-    public Transformation getTransformation(int[] transformation) {
-        return new Transformation(transformation, lattice, this);
-    }
+    public abstract Transformation<T> getTransformation(int[] transformation);
     
     /**
      * Returns the transformation with the given identifier
-     * @param identifier
+     * @param _identifier
      * @return
      */
-    public Transformation getTransformation(long identifier) {
-        
-        int[] transformationJHPL = lattice.space().toIndex(identifier);
-        return new Transformation(transformationJHPL, identifier, lattice, this);
-    }
+    public abstract Transformation<Long> getTransformation(Object _identifier);
 
     /**
      * Returns the utility of the transformation with the given identifier
      * @param identifier
      * @return
      */
-    public InformationLoss<?> getUtility(long identifier) {
-        return utility.getOrDefault(identifier, null);
-    }
+    public abstract InformationLoss<?> getUtility(Object _identifier);
     
     /**
      * Returns whether a node has a given property
@@ -324,11 +227,7 @@ public class SolutionSpace {
      * @param property
      * @return
      */
-    public boolean hasProperty(int[] transformation, PredictiveProperty property) {
-        int[] index = toJHPL(transformation);
-        int level = getLevel(index);
-        return lattice.hasProperty(index, level, property);
-    }
+    public abstract boolean hasProperty(int[] transformation, PredictiveProperty property);
 
     /**
      * Determines whether a direct parent-child relationship exists.
@@ -364,153 +263,56 @@ public class SolutionSpace {
     }
 
     /**
-     * Makes the anonymity property predictable
-     * @param predictable
-     */
-    public void setAnonymityPropertyPredictable(boolean predictable) {
-        if (predictable) {
-            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.UP);
-            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.DOWN);
-        } else {
-            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.NONE);
-            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.NONE);
-        }
-    }
-
-    /**
      * Returns all transformations in the solution space
      * @return
      */
-    public LongIterator unsafeGetAllTransformations() {
-        return lattice.unsafe().listAllNodesAsIdentifiers();
-    }
+    public abstract ObjectIterator<T> unsafeGetAllTransformations();
 
     /**
      * Returns *all* nodes on the given level. This is an unsafe operation that only performs well for "small" spaces.
      * @param level
      * @return
      */
-    public LongIterator unsafeGetLevel(int level) {
-        return lattice.unsafe().listAllNodesAsIdentifiers(toJHPL(level));
-    }
+    public abstract ObjectIterator<T> unsafeGetLevel(int level);
 
     /**
-     * Reverses the given array
-     * @param input
+     * Returns the virtual size
+     * @param hierarchiesMinLevels
+     * @param hierarchiesMaxLevels
      * @return
      */
-    private int[] reverse(int[] input) {
-        int[] result = new int[input.length];
-        for (int i = 0; i < input.length; i++) {
-            result[i] = input[input.length - i - 1];
+    public static BigInteger getSize(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
+        BigInteger size = BigInteger.valueOf(1);
+        for (int i = 0; i < hierarchiesMinLevels.length; i++) {
+            size = size.multiply(BigInteger.valueOf(hierarchiesMaxLevels[i] - hierarchiesMinLevels[i] + 1));
         }
-        return result;
+        return size;
     }
 
     /**
-     * Sets the monotonicity of the anonymity property
+     * Creates a new solution space
+     * @param hierarchiesMinLevels
+     * @param hierarchiesMaxLevels
+     * @return
+     */
+    public static SolutionSpace<?> create(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
+        if (getSize(hierarchiesMinLevels, hierarchiesMaxLevels).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
+            return new SolutionSpaceLong(hierarchiesMinLevels, hierarchiesMaxLevels);   
+        } else {
+            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
+        }
+    }
+    
+    /**
+     * Creates a new solution space
+     * @param lattice
      * @param config
      */
-    private void setMonotonicity(ARXConfiguration config) {
-        setAnonymityPropertyPredictable(config.getMonotonicityOfPrivacy() == Monotonicity.FULL);
-    }
-
-    /**
-     * Internal method that adds the offset
-     * @param level
-     * @return
-     */
-    protected int fromJHPL(int level) {
-        return level + offsetLevel;
-    }
-
-    /**
-     * Internal method that adds the offsets
-     * @param transformation
-     * @return
-     */
-    protected int[] fromJHPL(int[] transformation) {
-        int[] result = new int[transformation.length];
-        for (int i=0; i<result.length; i++) {
-            result[i] = transformation[transformation.length - i - 1] + offsetIndices[transformation.length - i - 1];
+    public static SolutionSpace<?> create(ARXLattice lattice, ARXConfiguration config) {
+        if (getSize(lattice.getBottom().getTransformation(), lattice.getTop().getTransformation()).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
+            return new SolutionSpaceLong(lattice, config);   
+        } else {
+            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
         }
-        return result;
-    }
-    
-    /**
-     * Returns data
-     * @param id
-     * @return
-     */
-    protected Object getData(long id) {
-        return data.getOrDefault(id, null);
-    }
-    
-
-    /**
-     * Returns the information loss
-     * @param identifier
-     * @return
-     */
-    protected InformationLoss<?> getInformationLoss(long identifier) {
-        return utility.getOrDefault(identifier, null);
-    }
-    
-    /**
-     * Returns the lower bound
-     * @param identifier
-     * @return
-     */
-    protected InformationLoss<?> getLowerBound(long identifier) {
-        return lowerBound.getOrDefault(identifier, null);
-    }
-
-    /**
-     * Sets data
-     * @param id
-     * @param object
-     */
-    protected void setData(long id, Object object) {
-        data.put(id, object);
-    }
-
-    /**
-     * Sets the information loss
-     * @param identifier
-     * @param loss
-     */
-    protected void setInformationLoss(long identifier, InformationLoss<?> loss) {
-        utility.put(identifier, loss);
-    }
-
-    /**
-     * Sets the lower bound
-     * @param identifier
-     * @param loss
-     */
-    protected void setLowerBound(long identifier, InformationLoss<?> loss) {
-        lowerBound.put(identifier, loss);
-    }
-
-    /**
-     * Internal method that subtracts the offset
-     * @param level
-     * @return
-     */
-    protected int toJHPL(int level) {
-        return level - offsetLevel;
-    }
-    
-    /**
-     * Internal method that subtracts the offsets
-     * @param transformation
-     * @return
-     */
-    protected int[] toJHPL(int[] transformation) {
-        int[] result = new int[transformation.length];
-        for (int i=0; i<result.length; i++) {
-            result[i]=transformation[transformation.length - i - 1] - offsetIndices[i];
-        }
-        return result;
     }
 }

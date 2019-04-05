@@ -101,20 +101,20 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
         AbstractILMultiDimensional loss = this.getLowerBoundInternal(node);
         return new ILMultiDimensionalWithBound(loss, (AbstractILMultiDimensional)loss.clone());
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         double[] result = new double[getDimensions()];
         Arrays.fill(result, entry.count);
         return new ILMultiDimensionalWithBound(super.createInformationLoss(result));
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
         double[] values = new double[getDimensions()];
         int[] transformation = node.getGeneralization();
         for (int i = 0; i < transformation.length; i++) {
@@ -124,7 +124,7 @@ public class MetricMDStatic extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node,
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node,
                                                        HashGroupify groupify) {
         return this.getLowerBoundInternal(node);
     }

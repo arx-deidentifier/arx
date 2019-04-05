@@ -55,7 +55,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
      * @param maxIL
      * @return
      */
-    public static double getEntropyBasedInformationLoss(Transformation transformation, 
+    public static double getEntropyBasedInformationLoss(Transformation<?> transformation, 
                                                         HashGroupifyEntry entry,
                                                         DomainShare[] shares,
                                                         DataAggregationInformation aggregation,
@@ -223,7 +223,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation transformation, HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> transformation, HashGroupify g) {
         
         // Prepare
         double real = 0;
@@ -253,7 +253,7 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     }
 
     @Override
-    protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation transformation,
+    protected InformationLossWithBound<ILSingleDimensional> getInformationLossInternal(Transformation<?> transformation,
                                                                                        HashGroupifyEntry entry) {
         
         DataAggregationInformation aggregation = super.getAggregationInformation();
@@ -270,12 +270,12 @@ public class MetricSDNMEntropyBasedInformationLoss extends AbstractMetricSingleD
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation transformation) {
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> transformation) {
         return null;
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation transformation,
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> transformation,
                                                         HashGroupify groupify) {
 
         // Compute

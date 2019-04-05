@@ -84,7 +84,7 @@ public class EnhancedBLikeness extends ExplicitPrivacyCriterion {
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
 
         // For table t
         // For each class c
