@@ -134,7 +134,6 @@ public class WorkerLoad extends Worker<Model> {
             arg0.worked(1);
         } catch (final Exception e) {
             error = e;
-            e.printStackTrace();
             arg0.done();
             return;
         }
