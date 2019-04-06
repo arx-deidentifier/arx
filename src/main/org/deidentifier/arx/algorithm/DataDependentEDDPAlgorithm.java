@@ -133,7 +133,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
             // Add predecessors of the current pivot element to the set of candidates
             TransformationList<?> list = pivot.getPredecessors();
             for (int i = 0; i < list.size(); i++) {
-                long id = list.getQuick(i);
+                Object id = list.getQuick(i);
                 if (transformationIDToScore.containsKey(id)) continue;
                 Transformation<?> predecessor = solutionSpace.getTransformation(id);
                 assureChecked(predecessor);

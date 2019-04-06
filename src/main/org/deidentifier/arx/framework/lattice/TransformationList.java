@@ -46,7 +46,7 @@ public abstract class TransformationList<T> {
      * @param i
      * @return
      */
-    public abstract long getQuick(int i);
+    public abstract T getQuick(int i);
 
     /**
      * Adds from to
@@ -79,7 +79,7 @@ public abstract class TransformationList<T> {
         }
 
         @Override
-        public long getQuick(int i) {
+        public Long getQuick(int i) {
             return list.getQuick(i);
         }
 

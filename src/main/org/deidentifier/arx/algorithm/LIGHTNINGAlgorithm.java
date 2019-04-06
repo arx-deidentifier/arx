@@ -173,7 +173,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         Transformation<?> result = null;
         TransformationList<?> list = transformation.getSuccessors();
         for (int i = 0; i < list.size(); i++) {
-            long id = list.getQuick(i);
+            Object id = list.getQuick(i);
             Transformation<?> successor = solutionSpace.getTransformation(id);
             if (!successor.hasProperty(propertyExpanded) && !successor.hasProperty(propertyInsufficientUtility)) {
                 assureChecked(successor);

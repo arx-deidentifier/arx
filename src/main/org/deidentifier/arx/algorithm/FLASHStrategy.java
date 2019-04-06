@@ -136,7 +136,7 @@ public class FLASHStrategy implements Comparator<Integer> {
         double level = 0;
         double prec = 0;
         double ddistinct = 0;
-        Transformation<?> transformation = solutionSpace.getTransformation(id);
+        Transformation<?> transformation = solutionSpace.getTransformation((long)id);
         int[] generalization = transformation.getGeneralization();
         
         // Compute

@@ -350,6 +350,7 @@ public class ARXProcessStatistics implements Serializable {
         
         // Compute statistics
         this.initialNumberOfRecords = initialNumberOfRecords;
+        this.transformationsTotalLargeLattice = BigInteger.valueOf(0);
         this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(result.solutionSpace.getSize());
         this.transformationsTotal += result.solutionSpace.getSize().longValue();
         this.duration += duration;
@@ -472,6 +473,9 @@ public class ARXProcessStatistics implements Serializable {
         }
         if (!this.steps.isEmpty() && !this.steps.get(0).isNumberOfRecordsTransformedAvailable()) {
             this.steps.get(0).numRecordsTransformed = this.initialNumberOfRecords;
+        }
+        if (this.transformationsTotalLargeLattice == null) {
+            this.transformationsTotalLargeLattice = BigInteger.valueOf(0);
         }
         this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(stats.transformationsTotalLargeLattice);
         this.transformationsTotal += stats.transformationsTotal;
