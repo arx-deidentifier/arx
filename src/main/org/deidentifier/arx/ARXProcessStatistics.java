@@ -280,6 +280,7 @@ public class ARXProcessStatistics implements Serializable {
     private ARXProcessStatistics(ARXProcessStatistics other) {
         this.transformationsChecked = other.transformationsChecked;
         this.transformationsTotal = other.transformationsTotal;
+        this.transformationsTotalLargeLattice = other.transformationsTotalLargeLattice;
         this.duration = other.duration;
         this.initialNumberOfRecords = other.initialNumberOfRecords;
         this.steps = new ArrayList<>();
@@ -312,7 +313,7 @@ public class ARXProcessStatistics implements Serializable {
         // Compute statistics
         this.duration += duration;
         this.transformationsTotal += lattice.getVirtualSize().longValue();  
-        this.transformationsTotalLargeLattice = BigInteger.valueOf(1);
+        this.transformationsTotalLargeLattice = BigInteger.valueOf(0);
         this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(lattice.getVirtualSize());
         for (final ARXNode[] level : lattice.getLevels()) {
             for (final ARXNode node : level) {
