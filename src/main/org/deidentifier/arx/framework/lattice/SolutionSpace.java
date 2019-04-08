@@ -22,8 +22,13 @@ import java.math.BigInteger;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.ARXLattice;
+import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.metric.InformationLoss;
 
+import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
+
+import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
 
@@ -33,60 +38,153 @@ import de.linearbits.jhpl.PredictiveProperty.Direction;
  */
 public abstract class SolutionSpace<T> {
 
-    /** Potentially changing property */
-    private PredictiveProperty                        propertyAnonymous           = new PredictiveProperty("Anonymous",
-                                                                                                           Direction.NONE);
-    /** Static property */
-    private final PredictiveProperty                  propertyChecked             = new PredictiveProperty("Checked",
-                                                                                                           Direction.NONE);
-    /** Static property */
-    private final PredictiveProperty                  propertyForceSnapshot       = new PredictiveProperty("Force snapshot",
-                                                                                                           Direction.NONE);
-    /** Static property */
-    private final PredictiveProperty                  propertyInsufficientUtility = new PredictiveProperty("Insufficient utility",
-                                                                                                           Direction.UP);
-    /** Static property */
-    private final PredictiveProperty                  propertyKAnonymous          = new PredictiveProperty("K-Anonymous",
-                                                                                                           Direction.UP);
-    /** Potentially changing property */
-    private PredictiveProperty                        propertyNotAnonymous        = new PredictiveProperty("Not anonymous",
-                                                                                                           Direction.NONE);
-
-    /** Static property */
-    private final PredictiveProperty                  propertyNotKAnonymous       = new PredictiveProperty("Not k-anonymous",
-                                                                                                           Direction.DOWN);
-    /** Static property */
-    private final PredictiveProperty                  propertySuccessorsPruned    = new PredictiveProperty("Successors pruned",
-                                                                                                           Direction.UP); // TODO: Was NONE?
-
-    /** Static property */
-    private final PredictiveProperty                  propertyVisited             = new PredictiveProperty("Visited",
-                                                                                                           Direction.NONE);
-    /** Static property */
-    private final PredictiveProperty                  propertyExpanded             = new PredictiveProperty("Expanded",
-                                                                                                           Direction.NONE);
-    
-
     /**
-     * Sets the monotonicity of the anonymity property
+     * Creates a new solution space
+     * @param lattice
      * @param config
      */
-    protected void setMonotonicity(ARXConfiguration config) {
-        setAnonymityPropertyPredictable(config.getMonotonicityOfPrivacy() == Monotonicity.FULL);
+    public static SolutionSpace<?> create(ARXLattice lattice, ARXConfiguration config) {
+        
+        if (true) {
+            return new SolutionSpaceIntArray(lattice, config);  
+        }
+        
+        if (getSize(lattice.getBottom().getTransformation(), lattice.getTop().getTransformation()).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
+            return new SolutionSpaceLong(lattice, config);   
+        } else {
+            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
+        }
     }
+    /**
+     * Creates a new solution space
+     * @param hierarchiesMinLevels
+     * @param hierarchiesMaxLevels
+     * @return
+     */
+    public static SolutionSpace<?> create(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
+
+        if (true) {
+            return new SolutionSpaceIntArray(hierarchiesMinLevels, hierarchiesMaxLevels);  
+        }
+        
+        if (getSize(hierarchiesMinLevels, hierarchiesMaxLevels).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
+            return new SolutionSpaceLong(hierarchiesMinLevels, hierarchiesMaxLevels);   
+        } else {
+            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
+        }
+    }
+    /**
+     * Returns the virtual size
+     * @param hierarchiesMinLevels
+     * @param hierarchiesMaxLevels
+     * @return
+     */
+    public static BigInteger getSize(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
+        BigInteger size = BigInteger.valueOf(1);
+        for (int i = 0; i < hierarchiesMinLevels.length; i++) {
+            size = size.multiply(BigInteger.valueOf(hierarchiesMaxLevels[i] - hierarchiesMinLevels[i] + 1));
+        }
+        return size;
+    }
+    /** Potentially changing property */
+    private PredictiveProperty                                    propertyAnonymous           = new PredictiveProperty("Anonymous",
+                                                                                                                       Direction.NONE);
+    /** Static property */
+    private final PredictiveProperty                              propertyChecked             = new PredictiveProperty("Checked",
+                                                                                                                       Direction.NONE);
+    /** Static property */
+    private final PredictiveProperty                              propertyForceSnapshot       = new PredictiveProperty("Force snapshot",
+                                                                                                                       Direction.NONE);
+    /** Static property */
+    private final PredictiveProperty                              propertyInsufficientUtility = new PredictiveProperty("Insufficient utility",
+                                                                                                                       Direction.UP);
+    /** Static property */
+    private final PredictiveProperty                              propertyKAnonymous          = new PredictiveProperty("K-Anonymous",
+                                                                                                                       Direction.UP);
+    /** Potentially changing property */
+    private PredictiveProperty                                    propertyNotAnonymous        = new PredictiveProperty("Not anonymous",
+                                                                                                                       Direction.NONE);
+    /** Static property */
+    private final PredictiveProperty                              propertyNotKAnonymous       = new PredictiveProperty("Not k-anonymous",
+                                                                                                                       Direction.DOWN);
+
+    /** Static property */
+    private final PredictiveProperty                              propertySuccessorsPruned    = new PredictiveProperty("Successors pruned",
+                                                                                                                       Direction.UP);         // TODO: Was NONE?
+    /** Static property */
+    private final PredictiveProperty                              propertyVisited             = new PredictiveProperty("Visited",
+                                                                                                                       Direction.NONE);
+
+    /** Static property */
+    private final PredictiveProperty                              propertyExpanded            = new PredictiveProperty("Expanded",
+                                                                                                                       Direction.NONE);
+
+    /** The offsets for indices */
+    private final int[]                                           offsetIndices;
+    /** The offset the level */
+    private final int                                             offsetLevel;
+    /** The backing JHPL lattice */
+    protected final Lattice<Integer, Integer>                     lattice;
+
+    /** Information loss */
+    protected ObjectObjectOpenHashMap<Object, Object>             data                        = new ObjectObjectOpenHashMap<>();
+
+    /** Information loss */
+    protected ObjectObjectOpenHashMap<Object, InformationLoss<?>> lowerBound                  = new ObjectObjectOpenHashMap<>();
+
+    /** Information loss */
+    protected ObjectObjectOpenHashMap<Object, InformationLoss<?>> utility                     = new ObjectObjectOpenHashMap<>();
    
     /**
-     * Makes the anonymity property predictable
-     * @param predictable
+     * For de-serialization
+     * @param lattice
+     * @param config
      */
-    public void setAnonymityPropertyPredictable(boolean predictable) {
-        if (predictable) {
-            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.UP);
-            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.DOWN);
-        } else {
-            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.NONE);
-            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.NONE);
+    public SolutionSpace(ARXLattice lattice, ARXConfiguration config) {
+        this(lattice.getBottom().getTransformation(), lattice.getTop().getTransformation());
+        setMonotonicity(config);
+        for (ARXNode[] level : lattice.getLevels()) {
+            for (ARXNode node : level) {
+                int[] index = toJHPL(node.getTransformation());
+                int lvl = getLevel(index);
+                if (node.getAnonymity() == Anonymity.ANONYMOUS) {
+                    this.lattice.putProperty(index, lvl, this.getPropertyAnonymous());
+                } else if (node.getAnonymity() == Anonymity.NOT_ANONYMOUS) {
+                    this.lattice.putProperty(index, lvl, this.getPropertyNotAnonymous());
+                }
+                if (node.isChecked()) {
+                    this.lattice.putProperty(index, lvl, this.getPropertyChecked());
+                    this.setInformationLoss(node.getTransformation(), node.getHighestScore());
+                }
+            }
         }
+    }
+
+    /**
+     * Creates a new instance
+     * @param minLevels
+     * @param maxLevels
+     */
+    protected SolutionSpace(int[] minLevels, int[] maxLevels) {
+
+        // Create offsets
+        minLevels = reverse(minLevels);
+        maxLevels = reverse(maxLevels);
+        this.offsetIndices = minLevels.clone();
+        int lvl = 0; for (int i : offsetIndices) lvl+=i;
+        this.offsetLevel = lvl;
+
+        // Create lattice
+        Integer[][] elements = new Integer[minLevels.length][];
+        for (int i = 0; i < elements.length; i++) {
+            Integer[] element = new Integer[maxLevels[i] - minLevels[i] + 1];
+            int idx = 0;
+            for (int j = minLevels[i]; j <= maxLevels[i]; j++) {
+                element[idx++] = j;
+            }
+            elements[i] = element;
+        }
+        this.lattice = new Lattice<Integer, Integer>(elements);
     }
 
     /**
@@ -100,8 +198,14 @@ public abstract class SolutionSpace<T> {
      * @param transformation
      * @return
      */
-    public abstract int getLevel(int[] transformation);
-    
+    public int getLevel(int[] transformation) {
+        int level = 0;
+        for (int dimension : transformation) {
+            level += dimension;
+        }
+        return level;
+    }
+
     /**
      * Returns all materialized transformations
      * @return
@@ -187,7 +291,7 @@ public abstract class SolutionSpace<T> {
     public PredictiveProperty getPropertyVisited() {
         return propertyVisited;
     }
-
+    
     /**
      * Returns the overall number of transformations in the solution space
      * @return
@@ -206,21 +310,21 @@ public abstract class SolutionSpace<T> {
      * @return
      */
     public abstract Transformation<T> getTransformation(int[] transformation);
-    
+
     /**
      * Returns the transformation with the given identifier
      * @param _identifier
      * @return
      */
-    public abstract Transformation<Long> getTransformation(Object _identifier);
-
+    public abstract Transformation<T> getTransformation(Object _identifier);
+    
     /**
      * Returns the utility of the transformation with the given identifier
      * @param identifier
      * @return
      */
     public abstract InformationLoss<?> getUtility(Object _identifier);
-    
+
     /**
      * Returns whether a node has a given property
      * @param transformation
@@ -228,7 +332,7 @@ public abstract class SolutionSpace<T> {
      * @return
      */
     public abstract boolean hasProperty(int[] transformation, PredictiveProperty property);
-
+    
     /**
      * Determines whether a direct parent-child relationship exists.
      * @param parent
@@ -246,7 +350,7 @@ public abstract class SolutionSpace<T> {
         }
         return diff == 1;
     }
-    
+
     /**
      * Determines whether a parent-child relationship exists, or both are equal
      * @param parent
@@ -263,6 +367,20 @@ public abstract class SolutionSpace<T> {
     }
 
     /**
+     * Makes the anonymity property predictable
+     * @param predictable
+     */
+    public void setAnonymityPropertyPredictable(boolean predictable) {
+        if (predictable) {
+            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.UP);
+            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.DOWN);
+        } else {
+            propertyAnonymous = new PredictiveProperty("Anonymous", Direction.NONE);
+            propertyNotAnonymous = new PredictiveProperty("Not anonymous", Direction.NONE);
+        }
+    }
+
+    /**
      * Returns all transformations in the solution space
      * @return
      */
@@ -276,43 +394,116 @@ public abstract class SolutionSpace<T> {
     public abstract ObjectIterator<T> unsafeGetLevel(int level);
 
     /**
-     * Returns the virtual size
-     * @param hierarchiesMinLevels
-     * @param hierarchiesMaxLevels
+     * Internal method that adds the offset
+     * @param level
      * @return
      */
-    public static BigInteger getSize(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
-        BigInteger size = BigInteger.valueOf(1);
-        for (int i = 0; i < hierarchiesMinLevels.length; i++) {
-            size = size.multiply(BigInteger.valueOf(hierarchiesMaxLevels[i] - hierarchiesMinLevels[i] + 1));
-        }
-        return size;
+    protected int fromJHPL(int level) {
+        return level + offsetLevel;
     }
 
     /**
-     * Creates a new solution space
-     * @param hierarchiesMinLevels
-     * @param hierarchiesMaxLevels
+     * Internal method that adds the offsets
+     * @param transformation
      * @return
      */
-    public static SolutionSpace<?> create(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
-        if (getSize(hierarchiesMinLevels, hierarchiesMaxLevels).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
-            return new SolutionSpaceLong(hierarchiesMinLevels, hierarchiesMaxLevels);   
-        } else {
-            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
+    protected int[] fromJHPL(int[] transformation) {
+        int[] result = new int[transformation.length];
+        for (int i=0; i<result.length; i++) {
+            result[i] = transformation[transformation.length - i - 1] + offsetIndices[transformation.length - i - 1];
         }
+        return result;
+    }
+
+    /**
+     * Returns data
+     * @param id
+     * @return
+     */
+    protected abstract Object getData(T id);
+
+    /**
+     * Returns the information loss
+     * @param identifier
+     * @return
+     */
+    protected abstract InformationLoss<?> getInformationLoss(T identifier);
+    
+    /**
+     * Returns the lower bound
+     * @param identifier
+     * @return
+     */
+    protected abstract InformationLoss<?> getLowerBound(T identifier);
+    
+    /**
+     * Reverses the given array
+     * @param input
+     * @return
+     */
+    protected int[] reverse(int[] input) {
+        int[] result = new int[input.length];
+        for (int i = 0; i < input.length; i++) {
+            result[i] = input[input.length - i - 1];
+        }
+        return result;
     }
     
     /**
-     * Creates a new solution space
-     * @param lattice
+     * Sets data
+     * @param id
+     * @param object
+     */
+    protected abstract void setData(T id, Object object);
+
+    /**
+     * Sets the information loss
+     * @param transformation
+     * @param loss
+     */
+    protected abstract void setInformationLoss(int[] transformation, InformationLoss<?> loss);
+
+    /**
+     * Sets the information loss
+     * @param identifier
+     * @param loss
+     */
+    protected abstract void setInformationLoss(T identifier, InformationLoss<?> loss);
+    
+    /**
+     * Sets the lower bound
+     * @param identifier
+     * @param loss
+     */
+    protected abstract void setLowerBound(T identifier, InformationLoss<?> loss);
+
+    /**
+     * Sets the monotonicity of the anonymity property
      * @param config
      */
-    public static SolutionSpace<?> create(ARXLattice lattice, ARXConfiguration config) {
-        if (getSize(lattice.getBottom().getTransformation(), lattice.getTop().getTransformation()).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
-            return new SolutionSpaceLong(lattice, config);   
-        } else {
-            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
+    protected void setMonotonicity(ARXConfiguration config) {
+        setAnonymityPropertyPredictable(config.getMonotonicityOfPrivacy() == Monotonicity.FULL);
+    }
+
+    /**
+     * Internal method that subtracts the offset
+     * @param level
+     * @return
+     */
+    protected int toJHPL(int level) {
+        return level - offsetLevel;
+    }
+
+    /**
+     * Internal method that subtracts the offsets
+     * @param transformation
+     * @return
+     */
+    protected int[] toJHPL(int[] transformation) {
+        int[] result = new int[transformation.length];
+        for (int i=0; i<result.length; i++) {
+            result[i]=transformation[transformation.length - i - 1] - offsetIndices[i];
         }
+        return result;
     }
 }

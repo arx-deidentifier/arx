@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.framework.lattice;
 
+import java.util.List;
+
 import cern.colt.list.LongArrayList;
 
 /**
@@ -27,34 +29,43 @@ import cern.colt.list.LongArrayList;
 public abstract class TransformationList<T> {
 
     /**
-     * Creates a new list for transformations managed by longs
-     * @param result
-     * @return
+     * List for transformations managed by int arrays
+     * @author Fabian Prasser
      */
-    public static TransformationList<Long> create(LongArrayList result) {
-        return new TransformationListLong(result);
+    private static class TransformationListIntArray extends TransformationList<int[]> {
+        
+        /** The list*/
+        private final List<int[]> list;
+        /** The list*/
+        private final SolutionSpace<?> lattice;
+
+        /**
+         * Creates a new instance
+         * @param lattice
+         * @param list
+         */
+        public TransformationListIntArray(SolutionSpace<?> lattice, List<int[]> list) {
+            this.list = list;
+            this.lattice = lattice;
+        }
+
+        @Override
+        public void addAllOfFromTo(TransformationList<?> list, int from, int to) {
+            for (int i = from; i <= to; i++) {
+                this.list.add(((TransformationListIntArray)list).list.get(i));
+            }
+        }
+
+        @Override
+        public int[] getQuick(int i) {
+            return lattice.fromJHPL(list.get(i));
+        }
+
+        @Override
+        public int size() {
+            return list.size();
+        }
     }
-
-    /**
-     * Returns the size
-     * @return
-     */
-    public abstract int size();
-
-    /**
-     * Returns an element
-     * @param i
-     * @return
-     */
-    public abstract T getQuick(int i);
-
-    /**
-     * Adds from to
-     * @param successors
-     * @param from
-     * @param to
-     */
-    public abstract void addAllOfFromTo(TransformationList<?> successors, int from, int to);
 
     /**
      * List for transformations managed by longs
@@ -74,8 +85,8 @@ public abstract class TransformationList<T> {
         }
 
         @Override
-        public int size() {
-            return list.size();
+        public void addAllOfFromTo(TransformationList<?> list, int from, int to) {
+            this.list.addAllOfFromTo(((TransformationListLong)list).list, from, to);
         }
 
         @Override
@@ -84,9 +95,47 @@ public abstract class TransformationList<T> {
         }
 
         @Override
-        public void addAllOfFromTo(TransformationList<?> list, int from, int to) {
-            this.list.addAllOfFromTo(((TransformationListLong)list).list, from, to);
+        public int size() {
+            return list.size();
         }
-        
     }
+    /**
+     * Creates a new list for transformations managed by longs
+     * @param result
+     * @return
+     */
+    public static TransformationList<Long> create(LongArrayList result) {
+        return new TransformationListLong(result);
+    }
+
+    /**
+     * Creates a new list for transformations managed by int arrays
+     * @param lattice
+     * @param result
+     * @return
+     */
+    public static TransformationList<int[]> create(SolutionSpace<int[]> lattice, List<int[]> result) {
+        return new TransformationListIntArray(lattice, result);
+    }
+
+    /**
+     * Adds from to
+     * @param successors
+     * @param from
+     * @param to
+     */
+    public abstract void addAllOfFromTo(TransformationList<?> successors, int from, int to);
+
+    /**
+     * Returns an element
+     * @param i
+     * @return
+     */
+    public abstract T getQuick(int i);
+
+    /**
+     * Returns the size
+     * @return
+     */
+    public abstract int size();
 }

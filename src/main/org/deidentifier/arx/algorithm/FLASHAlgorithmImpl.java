@@ -127,7 +127,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             for (int id : getSortedUnprocessedNodes(level, outerLoopConfiguration.getTriggerSkip())) {
 
                 // Run the correct phase
-                Transformation<Long> transformation = solutionSpace.getTransformation((long)id);
+                Transformation<Long> transformation = ((SolutionSpaceLong)solutionSpace).getTransformation((long)id);
                 if (config.isBinaryPhaseRequired()) {
                     binarySearch(transformation, queue);
                 } else {
@@ -170,7 +170,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         while (!queue.isEmpty()) {
 
             // Remove head and process
-            transformation = solutionSpace.getTransformation((long)queue.poll());
+            transformation = ((SolutionSpaceLong)solutionSpace).getTransformation((long)queue.poll());
             if (!skip(triggerSkip, transformation)) {
 
                 // First phase
@@ -253,7 +253,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 // Add nodes to queue
                 if (!transformation.hasProperty(anonymityProperty)) {
                     for (final int up : getSortedSuccessors(transformation)) {
-                        if (!skip(triggerSkip, solutionSpace.getTransformation((long)up))) {
+                        if (!skip(triggerSkip, ((SolutionSpaceLong)solutionSpace).getTransformation((long)up))) {
                             queue.add(up);
                         }
                     }
@@ -288,7 +288,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         while (found) {
             found = false;
             for (final int id : getSortedSuccessors(current)) {
-                Transformation<Long> next = solutionSpace.getTransformation((long)id);
+                Transformation<Long> next = ((SolutionSpaceLong)solutionSpace).getTransformation((long)id);
                 if (!skip(triggerSkip, next)) {
                     current = next;
                     path.add(next);
@@ -334,7 +334,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         IntArrayList list = new IntArrayList();
         for (ObjectIterator<Long> iter = ((SolutionSpaceLong)solutionSpace).unsafeGetLevel(level); iter.hasNext();) {
             long id = iter.next();
-            if (!skip(triggerSkip, solutionSpace.getTransformation(id))) {
+            if (!skip(triggerSkip, ((SolutionSpaceLong)solutionSpace).getTransformation(id))) {
                 list.add((int)id);
             }            
         }
@@ -364,7 +364,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
             // DFS
             for (final int child : getSortedSuccessors(transformation)) {
-                Transformation<Long> childTransformation = solutionSpace.getTransformation((long)child);
+                Transformation<Long> childTransformation = ((SolutionSpaceLong)solutionSpace).getTransformation((long)child);
                 if (!skip(triggerSkip, childTransformation)) {
                     linearSearch(childTransformation);
                 }
@@ -431,7 +431,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
                 Integer current = iterator.next();
 
                 // Remove the candidate, if it was already pruned in the meantime
-                Transformation<Long> currentTransformation = solutionSpace.getTransformation((long)current);
+                Transformation<Long> currentTransformation = ((SolutionSpaceLong)solutionSpace).getTransformation((long)current);
                 if (currentTransformation.hasProperty(solutionSpace.getPropertySuccessorsPruned())) {
                     iterator.remove();
 

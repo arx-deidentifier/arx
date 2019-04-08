@@ -16,6 +16,8 @@
  */
 package org.deidentifier.arx.framework.lattice;
 
+import java.util.Iterator;
+
 import de.linearbits.jhpl.JHPLIterator.LongIterator;
 
 /**
@@ -27,24 +29,44 @@ import de.linearbits.jhpl.JHPLIterator.LongIterator;
 public abstract class ObjectIterator<T> {
 
     /**
-     * Creates a new instance for longs
-     * @param iter
-     * @return
+     * Iterator for int arrays
+     * @author Fabian Prasser
      */
-    public static ObjectIterator<Long> create(LongIterator iter) {
-        return new ObjectIteratorLong(iter);
+    public static class ObjectIteratorIntArray extends ObjectIterator<int[]> {
+
+        /** Iter*/
+        private final Iterator<int[]> iter;
+        /** Lattice*/
+        private final SolutionSpace<?> lattice;
+        
+        /**
+         * Creates a new instance
+         * @param lattice
+         * @param iter
+         */
+        private ObjectIteratorIntArray(SolutionSpace<?> lattice, Iterator<int[]> iter) {
+            this.iter = iter;
+            this.lattice = lattice;
+        }
+
+
+        /**
+         * @return
+         * @see de.linearbits.jhpl.JHPLIterator.LongIterator#hasNext()
+         */
+        public boolean hasNext() {
+            return iter.hasNext();
+        }
+
+        /**
+         * @return
+         * @see de.linearbits.jhpl.JHPLIterator.LongIterator#next()
+         */
+        public int[] next() {
+            return lattice.fromJHPL(iter.next());
+        }
     }
 
-    /**
-     * Is there a next element?
-     */
-    public abstract boolean hasNext();
-
-    /**
-     * Returns the next element
-     */
-    public abstract T next();
-    
     /**
      * Iterator for longs
      * @author Fabian Prasser
@@ -78,4 +100,32 @@ public abstract class ObjectIterator<T> {
             return iter.next();
         }
     }
+    /**
+     * Creates a new instance for longs
+     * @param iter
+     * @return
+     */
+    public static ObjectIterator<Long> create(LongIterator iter) {
+        return new ObjectIteratorLong(iter);
+    }
+
+    /**
+     * Creates a new instance for int arrays
+     * @param lattice
+     * @param iter
+     * @return
+     */
+    public static ObjectIterator<int[]> create(SolutionSpace<?> lattice, Iterator<int[]> iter) {
+        return new ObjectIteratorIntArray(lattice, iter);
+    }
+    
+    /**
+     * Is there a next element?
+     */
+    public abstract boolean hasNext();
+
+    /**
+     * Returns the next element
+     */
+    public abstract T next();
 }

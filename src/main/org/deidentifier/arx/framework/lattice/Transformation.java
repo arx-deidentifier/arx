@@ -20,6 +20,7 @@ package org.deidentifier.arx.framework.lattice;
 import org.deidentifier.arx.framework.check.TransformationResult;
 import org.deidentifier.arx.metric.InformationLoss;
 
+import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
@@ -27,63 +28,94 @@ import de.linearbits.jhpl.PredictiveProperty;
  * 
  * @author Fabian Prasser
  */
-public interface Transformation<T> {
+public abstract class Transformation<T> {
 
+    /** The lattice */
+    protected final Lattice<Integer, Integer> lattice;
+
+    /** The solution space */
+    protected final SolutionSpace<T>          solutionSpace;
+
+    /** The level */
+    protected int                             levelARX          = -1;
+
+    /** The level */
+    protected int                             levelJHPL         = -1;
+
+    /** Transformation in ARX's space */
+    protected int[]                           transformationARX = null;
+
+    /** Transformation in JHPL's space */
+    protected final int[]                     transformationJHPL;
+
+    /**
+     * Instantiates a new transformation.
+     * @param transformationARX In ARX space
+     * @param lattice
+     * @param solutionSpace 
+     */
+    protected Transformation(int[] transformationARX, Lattice<Integer, Integer> lattice, SolutionSpace<T> solutionSpace) {
+        this.lattice = lattice;
+        this.solutionSpace = solutionSpace;
+        this.transformationARX = transformationARX;
+        this.transformationJHPL = solutionSpace.toJHPL(transformationARX);
+    }
+    
     /**
      * Returns associated data
      * @return
      */
-    public Object getData();
+    public abstract Object getData();
 
     /**
      * Returns the generalization
      * @return
      */
-    public int[] getGeneralization();
+    public abstract int[] getGeneralization();
     
     /**
      * Returns the id
      * @return
      */
-    public T getIdentifier();
+    public abstract T getIdentifier();
 
     /**
      * Returns the information loss
      * @return
      */
-    public InformationLoss<?> getInformationLoss() ;
+    public abstract InformationLoss<?> getInformationLoss() ;
 
     /**
      * Return level
      * @return
      */
-    public int getLevel();
+    public abstract int getLevel();
     
     /**
      * Returns the lower bound on information loss
      * @return
      */
-    public InformationLoss<?> getLowerBound();
+    public abstract InformationLoss<?> getLowerBound();
 
     /**
      * Returns all predeccessors of the transformation with the given identifier
      * @param transformation
      * @return
      */
-    public TransformationList<T> getPredecessors();
+    public abstract TransformationList<T> getPredecessors();
 
     /**
      * Returns all successors
      * @return
      */
-    public TransformationList<T> getSuccessors();
+    public abstract TransformationList<T> getSuccessors();
 
     /**
      * Returns whether this transformation has a given property
      * @param property
      * @return
      */
-    public boolean hasProperty(PredictiveProperty property);
+    public abstract boolean hasProperty(PredictiveProperty property);
 
     /**
      * Sets the properties to the given node.
@@ -91,41 +123,65 @@ public interface Transformation<T> {
      * @param node the node
      * @param result the result
      */
-    public void setChecked(TransformationResult result);
+    public void setChecked(TransformationResult result) {
+        
+        // Set checked
+        this.setProperty(solutionSpace.getPropertyChecked());
+        
+        // Anonymous
+        if (result.privacyModelFulfilled){
+            this.setProperty(solutionSpace.getPropertyAnonymous());
+        } else {
+            this.setProperty(solutionSpace.getPropertyNotAnonymous());
+        }
+
+        // k-Anonymous
+        if (result.minimalClassSizeFulfilled != null) {
+            if (result.minimalClassSizeFulfilled){
+                this.setProperty(solutionSpace.getPropertyKAnonymous());
+            } else {
+                this.setProperty(solutionSpace.getPropertyNotKAnonymous());
+            }
+        }
+
+        // Infoloss
+        this.setInformationLoss(result.informationLoss);
+        this.setLowerBound(result.lowerBound);
+    }
 
     /**
      * Sets a data
      * @param object
      */
-    public void setData(Object object);
+    public abstract void setData(Object object);
 
     /**
      * Sets the information loss
      * @param informationLoss
      */
-    public void setInformationLoss(InformationLoss<?> informationLoss);
+    public abstract void setInformationLoss(InformationLoss<?> informationLoss);
+    
 
     /**
      * Sets the lower bound
      * @param lowerBound
      */
-    public void setLowerBound(InformationLoss<?> lowerBound);
-    
+    public abstract void setLowerBound(InformationLoss<?> lowerBound);
 
     /**
      * Sets a property
      * @param property
      */
-    public void setProperty(PredictiveProperty property);
+    public abstract void setProperty(PredictiveProperty property);
     
     /**
      * Sets the property to all neighbors
      * @param property
      */
-    public void setPropertyToNeighbours(PredictiveProperty property);
+    public abstract void setPropertyToNeighbours(PredictiveProperty property);
 
     /**
      * Returns a string representation
      */
-    public String toString();
+    public abstract String toString();
 }

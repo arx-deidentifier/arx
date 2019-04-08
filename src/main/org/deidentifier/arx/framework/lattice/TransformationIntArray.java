@@ -17,12 +17,13 @@
 
 package org.deidentifier.arx.framework.lattice;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 
 import org.deidentifier.arx.metric.InformationLoss;
 
-import cern.colt.list.LongArrayList;
-import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
@@ -32,35 +33,16 @@ import de.linearbits.jhpl.PredictiveProperty.Direction;
  * 
  * @author Fabian Prasser
  */
-public class TransformationLong extends Transformation<Long> {
-
-    /** The id. */
-    private final Long                      identifier;
+public class TransformationIntArray extends Transformation<int[]> {
 
     /**
-     * Instantiates a new transformation.
-     * @param transformation In ARX space
-     * @param lattice
-     * @param solutionSpace 
-     */
-    public TransformationLong(int[] transformation, Lattice<Integer, Integer> lattice, SolutionSpaceLong solutionSpace) {
-        super(transformation, lattice, solutionSpace);
-        this.identifier = lattice.space().toId(transformationJHPL);
-    }
-
-    /**
-     * Instantiates a new transformation.
-     * @param transformationJHPL
-     * @param identifier
+     * Delegate constructor
+     * @param transformationARX
      * @param lattice
      * @param solutionSpace
      */
-    public TransformationLong(int[] transformationJHPL,
-                              long identifier,
-                              Lattice<Integer, Integer> lattice,
-                              SolutionSpaceLong solutionSpace) {
-        super(solutionSpace.fromJHPL(transformationJHPL), lattice, solutionSpace);
-        this.identifier = identifier;
+    protected TransformationIntArray(int[] transformationARX, Lattice<Integer, Integer> lattice, SolutionSpace<int[]> solutionSpace) {
+        super(transformationARX, lattice, solutionSpace);
     }
 
     /**
@@ -68,7 +50,7 @@ public class TransformationLong extends Transformation<Long> {
      * @return
      */
     public Object getData() {
-        return this.solutionSpace.getData(this.identifier);
+        return this.solutionSpace.getData(this.transformationARX);
     }
 
     /**
@@ -76,9 +58,6 @@ public class TransformationLong extends Transformation<Long> {
      * @return
      */
     public int[] getGeneralization() {
-        if (this.transformationARX == null) {
-            this.transformationARX = solutionSpace.fromJHPL(transformationJHPL);
-        }
         return this.transformationARX;
     }
     
@@ -86,8 +65,8 @@ public class TransformationLong extends Transformation<Long> {
      * Returns the id
      * @return
      */
-    public Long getIdentifier() {
-        return identifier;
+    public int[] getIdentifier() {
+        return transformationARX;
     }
 
     /**
@@ -95,7 +74,7 @@ public class TransformationLong extends Transformation<Long> {
      * @return
      */
     public InformationLoss<?> getInformationLoss() {
-        return solutionSpace.getInformationLoss(this.identifier);
+        return solutionSpace.getInformationLoss(this.transformationARX);
     }
 
     /**
@@ -115,7 +94,7 @@ public class TransformationLong extends Transformation<Long> {
      * @return
      */
     public InformationLoss<?> getLowerBound() {
-        return solutionSpace.getLowerBound(this.identifier);
+        return solutionSpace.getLowerBound(this.transformationARX);
     }
 
     /**
@@ -123,34 +102,34 @@ public class TransformationLong extends Transformation<Long> {
      * @param transformation
      * @return
      */
-    public TransformationList<Long> getPredecessors() {
+    public TransformationList<int[]> getPredecessors() {
         
-        LongArrayList result = new LongArrayList();
-        for (LongIterator iter = lattice.nodes().listPredecessorsAsIdentifiers(transformationJHPL, identifier); iter.hasNext();) {
-            result.add(iter.next());
+        List<int[]> result = new ArrayList<>();
+        for (Iterator<int[]> iter = lattice.nodes().listPredecessors(transformationJHPL); iter.hasNext();) {
+            result.add(iter.next().clone());
         }
-        return TransformationList.create(result);
+        return TransformationList.create(solutionSpace, result);
     }
 
     /**
      * Returns all successors
      * @return
      */
-    public TransformationList<Long> getSuccessors() {
-        cern.colt.list.LongArrayList result = new cern.colt.list.LongArrayList();
-        for (LongIterator iter = lattice.nodes().listSuccessorsAsIdentifiers(transformationJHPL, identifier); iter.hasNext();) {
-            result.add(iter.next());
+    public TransformationList<int[]> getSuccessors() {
+        List<int[]> result = new ArrayList<>();
+        for (Iterator<int[]> iter = lattice.nodes().listSuccessors(transformationJHPL); iter.hasNext();) {
+            result.add(iter.next().clone());
         }
         int lower = 0;
         int upper = result.size() - 1;
         while (lower < upper) {
-            long temp = result.get(lower);
+            int[] temp = result.get(lower);
             result.set(lower, result.get(upper));
             result.set(upper, temp);
             lower++;
             upper--;
         }
-        return TransformationList.create(result);
+        return TransformationList.create(solutionSpace, result);
     }
 
     /**
@@ -162,12 +141,13 @@ public class TransformationLong extends Transformation<Long> {
         getLevel();
         return this.lattice.hasProperty(this.transformationJHPL, this.levelJHPL, property);
     }
+
     /**
      * Sets a data
      * @param object
      */
     public void setData(Object object) {
-        this.solutionSpace.setData(this.identifier, object);
+        this.solutionSpace.setData(this.transformationARX, object);
     }
 
     /**
@@ -175,7 +155,7 @@ public class TransformationLong extends Transformation<Long> {
      * @param informationLoss
      */
     public void setInformationLoss(InformationLoss<?> informationLoss) {
-        this.solutionSpace.setInformationLoss(this.identifier, informationLoss);
+        ((SolutionSpaceIntArray)this.solutionSpace).setInformationLoss(this.transformationARX, informationLoss);
     }
 
     /**
@@ -183,7 +163,7 @@ public class TransformationLong extends Transformation<Long> {
      * @param lowerBound
      */
     public void setLowerBound(InformationLoss<?> lowerBound) {
-        this.solutionSpace.setLowerBound(this.identifier, lowerBound);
+        this.solutionSpace.setLowerBound(this.transformationARX, lowerBound);
     }
     
 
@@ -201,20 +181,20 @@ public class TransformationLong extends Transformation<Long> {
      * @param property
      */
     public void setPropertyToNeighbours(PredictiveProperty property) {
-        LongIterator neighbors;
+        Iterator<int[]> neighbors;
         if (property.getDirection() == Direction.UP) {
-            neighbors = lattice.nodes().listSuccessorsAsIdentifiers(transformationJHPL, identifier);
+            neighbors = lattice.nodes().listSuccessors(transformationJHPL);
         } else if (property.getDirection() == Direction.DOWN) {
-            neighbors = lattice.nodes().listPredecessorsAsIdentifiers(transformationJHPL, identifier);
+            neighbors = lattice.nodes().listPredecessors(transformationJHPL);
         } else {
             return;
         }
-        LongArrayList list = new LongArrayList();
+        List<int[]> list = new ArrayList<>();
         for (;neighbors.hasNext();) {
-            list.add(neighbors.next());
+            list.add(neighbors.next().clone());
         }
         for (int i=0; i<list.size(); i++) {
-            int[] index = lattice.space().toIndex(list.getQuick(i));
+            int[] index = list.get(i);
             int level = lattice.nodes().getLevel(index);
             lattice.putProperty(index, level, property);
         }
@@ -228,7 +208,7 @@ public class TransformationLong extends Transformation<Long> {
         builder.append("Transformation {\n");
         builder.append(" - Solution space: ").append(this.solutionSpace.hashCode()).append("\n");
         builder.append(" - Index: ").append(Arrays.toString(transformationJHPL)).append("\n");
-        builder.append(" - Id: ").append(identifier).append("\n");
+        builder.append(" - Id: ").append(Arrays.toString(transformationARX)).append("\n");
         builder.append(" - Generalization: ").append(Arrays.toString(getGeneralization())).append("\n");
         builder.append(" - Level: ").append(getLevel()).append("\n");
         builder.append(" - Properties:\n");
