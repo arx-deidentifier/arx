@@ -140,7 +140,7 @@ public abstract class SolutionSpace<T> {
      * @param lattice
      * @param config
      */
-    public SolutionSpace(ARXLattice lattice, ARXConfiguration config) {
+    protected SolutionSpace(ARXLattice lattice, ARXConfiguration config) {
         this(lattice.getBottom().getTransformation(), lattice.getTop().getTransformation());
         setMonotonicity(config);
         for (ARXNode[] level : lattice.getLevels()) {
