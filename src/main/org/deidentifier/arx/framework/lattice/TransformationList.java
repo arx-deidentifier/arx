@@ -18,6 +18,8 @@ package org.deidentifier.arx.framework.lattice;
 
 import java.util.List;
 
+import org.deidentifier.arx.framework.lattice.SolutionSpaceIntArray.IntArrayWrapper;
+
 import cern.colt.list.LongArrayList;
 
 /**
@@ -32,21 +34,18 @@ public abstract class TransformationList<T> {
      * List for transformations managed by int arrays
      * @author Fabian Prasser
      */
-    private static class TransformationListIntArray extends TransformationList<int[]> {
+    private static class TransformationListIntArray extends TransformationList<IntArrayWrapper> {
         
         /** The list*/
-        private final List<int[]> list;
-        /** The list*/
-        private final SolutionSpace<?> lattice;
+        private final List<IntArrayWrapper> list;
 
         /**
          * Creates a new instance
          * @param lattice
          * @param list
          */
-        public TransformationListIntArray(SolutionSpace<?> lattice, List<int[]> list) {
+        public TransformationListIntArray(List<IntArrayWrapper> list) {
             this.list = list;
-            this.lattice = lattice;
         }
 
         @Override
@@ -57,8 +56,8 @@ public abstract class TransformationList<T> {
         }
 
         @Override
-        public int[] getQuick(int i) {
-            return lattice.fromJHPL(list.get(i));
+        public IntArrayWrapper getQuick(int i) {
+            return list.get(i);
         }
 
         @Override
@@ -111,11 +110,10 @@ public abstract class TransformationList<T> {
     /**
      * Creates a new list for transformations managed by int arrays
      * @param lattice
-     * @param result
      * @return
      */
-    public static TransformationList<int[]> create(SolutionSpace<int[]> lattice, List<int[]> result) {
-        return new TransformationListIntArray(lattice, result);
+    public static TransformationList<IntArrayWrapper> create(List<IntArrayWrapper> result) {
+        return new TransformationListIntArray(result);
     }
 
     /**

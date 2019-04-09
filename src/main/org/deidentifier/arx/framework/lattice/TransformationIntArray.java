@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.deidentifier.arx.framework.lattice.SolutionSpaceIntArray.IntArrayWrapper;
 import org.deidentifier.arx.metric.InformationLoss;
 
 import de.linearbits.jhpl.Lattice;
@@ -33,7 +34,10 @@ import de.linearbits.jhpl.PredictiveProperty.Direction;
  * 
  * @author Fabian Prasser
  */
-public class TransformationIntArray extends Transformation<int[]> {
+public class TransformationIntArray extends Transformation<IntArrayWrapper> {
+    
+    /** Id*/
+    private final IntArrayWrapper wrapper;
 
     /**
      * Delegate constructor
@@ -41,8 +45,9 @@ public class TransformationIntArray extends Transformation<int[]> {
      * @param lattice
      * @param solutionSpace
      */
-    protected TransformationIntArray(int[] transformationARX, Lattice<Integer, Integer> lattice, SolutionSpace<int[]> solutionSpace) {
-        super(transformationARX, lattice, solutionSpace);
+    protected TransformationIntArray(IntArrayWrapper transformationARX, Lattice<Integer, Integer> lattice, SolutionSpace<IntArrayWrapper> solutionSpace) {
+        super(transformationARX.array, lattice, solutionSpace);
+        this.wrapper = transformationARX;
     }
 
     /**
@@ -50,7 +55,7 @@ public class TransformationIntArray extends Transformation<int[]> {
      * @return
      */
     public Object getData() {
-        return this.solutionSpace.getData(this.transformationARX);
+        return this.solutionSpace.getData(this.wrapper);
     }
 
     /**
@@ -65,8 +70,8 @@ public class TransformationIntArray extends Transformation<int[]> {
      * Returns the id
      * @return
      */
-    public int[] getIdentifier() {
-        return transformationARX;
+    public IntArrayWrapper getIdentifier() {
+        return wrapper;
     }
 
     /**
@@ -74,7 +79,7 @@ public class TransformationIntArray extends Transformation<int[]> {
      * @return
      */
     public InformationLoss<?> getInformationLoss() {
-        return solutionSpace.getInformationLoss(this.transformationARX);
+        return solutionSpace.getInformationLoss(this.wrapper);
     }
 
     /**
@@ -94,7 +99,7 @@ public class TransformationIntArray extends Transformation<int[]> {
      * @return
      */
     public InformationLoss<?> getLowerBound() {
-        return solutionSpace.getLowerBound(this.transformationARX);
+        return solutionSpace.getLowerBound(this.wrapper);
     }
 
     /**
@@ -102,34 +107,34 @@ public class TransformationIntArray extends Transformation<int[]> {
      * @param transformation
      * @return
      */
-    public TransformationList<int[]> getPredecessors() {
+    public TransformationList<IntArrayWrapper> getPredecessors() {
         
-        List<int[]> result = new ArrayList<>();
+        List<IntArrayWrapper> result = new ArrayList<>();
         for (Iterator<int[]> iter = lattice.nodes().listPredecessors(transformationJHPL); iter.hasNext();) {
-            result.add(iter.next().clone());
+            result.add(new IntArrayWrapper(solutionSpace.fromJHPL(iter.next())));
         }
-        return TransformationList.create(solutionSpace, result);
+        return TransformationList.create(result);
     }
 
     /**
      * Returns all successors
      * @return
      */
-    public TransformationList<int[]> getSuccessors() {
-        List<int[]> result = new ArrayList<>();
+    public TransformationList<IntArrayWrapper> getSuccessors() {
+        List<IntArrayWrapper> result = new ArrayList<>();
         for (Iterator<int[]> iter = lattice.nodes().listSuccessors(transformationJHPL); iter.hasNext();) {
-            result.add(iter.next().clone());
+            result.add(new IntArrayWrapper(solutionSpace.fromJHPL(iter.next())));
         }
         int lower = 0;
         int upper = result.size() - 1;
         while (lower < upper) {
-            int[] temp = result.get(lower);
+            IntArrayWrapper temp = result.get(lower);
             result.set(lower, result.get(upper));
             result.set(upper, temp);
             lower++;
             upper--;
         }
-        return TransformationList.create(solutionSpace, result);
+        return TransformationList.create(result);
     }
 
     /**
@@ -147,7 +152,7 @@ public class TransformationIntArray extends Transformation<int[]> {
      * @param object
      */
     public void setData(Object object) {
-        this.solutionSpace.setData(this.transformationARX, object);
+        this.solutionSpace.setData(this.wrapper, object);
     }
 
     /**
@@ -163,7 +168,7 @@ public class TransformationIntArray extends Transformation<int[]> {
      * @param lowerBound
      */
     public void setLowerBound(InformationLoss<?> lowerBound) {
-        this.solutionSpace.setLowerBound(this.transformationARX, lowerBound);
+        this.solutionSpace.setLowerBound(this.wrapper, lowerBound);
     }
     
 

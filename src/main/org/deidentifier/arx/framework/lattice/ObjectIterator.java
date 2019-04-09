@@ -18,6 +18,8 @@ package org.deidentifier.arx.framework.lattice;
 
 import java.util.Iterator;
 
+import org.deidentifier.arx.framework.lattice.SolutionSpaceIntArray.IntArrayWrapper;
+
 import de.linearbits.jhpl.JHPLIterator.LongIterator;
 
 /**
@@ -32,7 +34,7 @@ public abstract class ObjectIterator<T> {
      * Iterator for int arrays
      * @author Fabian Prasser
      */
-    public static class ObjectIteratorIntArray extends ObjectIterator<int[]> {
+    public static class ObjectIteratorIntArray extends ObjectIterator<IntArrayWrapper> {
 
         /** Iter*/
         private final Iterator<int[]> iter;
@@ -62,8 +64,8 @@ public abstract class ObjectIterator<T> {
          * @return
          * @see de.linearbits.jhpl.JHPLIterator.LongIterator#next()
          */
-        public int[] next() {
-            return lattice.fromJHPL(iter.next());
+        public IntArrayWrapper next() {
+            return new IntArrayWrapper(lattice.fromJHPL(iter.next()));
         }
     }
 
@@ -115,7 +117,7 @@ public abstract class ObjectIterator<T> {
      * @param iter
      * @return
      */
-    public static ObjectIterator<int[]> create(SolutionSpace<?> lattice, Iterator<int[]> iter) {
+    public static ObjectIterator<IntArrayWrapper> create(SolutionSpace<?> lattice, Iterator<int[]> iter) {
         return new ObjectIteratorIntArray(lattice, iter);
     }
     

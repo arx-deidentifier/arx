@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXLattice;
+import org.deidentifier.arx.framework.lattice.SolutionSpaceIntArray.IntArrayWrapper;
 import org.deidentifier.arx.metric.InformationLoss;
 
 import de.linearbits.jhpl.PredictiveProperty;
@@ -30,16 +31,16 @@ import de.linearbits.jhpl.PredictiveProperty;
  * A class representing the solution space
  * @author Fabian Prasser
  */
-public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
+public class SolutionSpaceIntArray extends SolutionSpace<IntArrayWrapper> {
     
     /**
      * Int array wrapper
      * @author Fabian Prasser
      */
-    public static class IntArrayWrapper {
+    static class IntArrayWrapper {
         
         /** Array*/
-        private final int[] array;
+        final int[] array;
         /** Hashcode*/
         private final int hashcode;
         /** 
@@ -87,7 +88,7 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * Returns the bottom transformation
      * @return
      */
-    public Transformation<int[]> getBottom() {
+    public Transformation<IntArrayWrapper> getBottom() {
         return getTransformation(fromJHPL(lattice.nodes().getBottom()));
     }
     
@@ -95,7 +96,7 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * Returns all materialized transformations
      * @return
      */
-    public ObjectIterator<int[]> getMaterializedTransformations() {
+    public ObjectIterator<IntArrayWrapper> getMaterializedTransformations() {
         return ObjectIterator.create(this, lattice.listNodes());
     }
 
@@ -111,7 +112,7 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
             int[] bottom = lattice.nodes().getBottom();
             int[] top = lattice.nodes().getTop();
             for (int i=0; i<bottom.length; i++) {
-                size = size.multiply(BigInteger.valueOf(top[i] - bottom[i]));
+                size = size.multiply(BigInteger.valueOf(top[i] - bottom[i] + 1));
             }
         }
         
@@ -123,7 +124,7 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * Returns the top-transformation
      * @return
      */
-    public Transformation<int[]> getTop() {
+    public Transformation<IntArrayWrapper> getTop() {
         return getTransformation(fromJHPL(lattice.nodes().getTop()));
     }
     
@@ -132,8 +133,8 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @param transformation - in ARX format
      * @return
      */
-    public Transformation<int[]> getTransformation(int[] transformation) {
-        return new TransformationIntArray(transformation, lattice, this);
+    public Transformation<IntArrayWrapper> getTransformation(int[] transformation) {
+        return new TransformationIntArray(new IntArrayWrapper(transformation), lattice, this);
     }
     
     /**
@@ -141,8 +142,8 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @param _identifier - in ARX format
      * @return
      */
-    public Transformation<int[]> getTransformation(Object _identifier) {
-        return new TransformationIntArray((int[])_identifier, lattice, this);
+    public Transformation<IntArrayWrapper> getTransformation(Object _identifier) {
+        return new TransformationIntArray((IntArrayWrapper)_identifier, lattice, this);
     }
 
     /**
@@ -151,7 +152,7 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @return
      */
     public InformationLoss<?> getUtility(Object identifier) {
-        return utility.getOrDefault(new IntArrayWrapper((int[])identifier), null);
+        return utility.getOrDefault((IntArrayWrapper)identifier, null);
     }
     
     /**
@@ -170,7 +171,7 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * Returns all transformations in the solution space
      * @return
      */
-    public ObjectIterator<int[]> unsafeGetAllTransformations() {
+    public ObjectIterator<IntArrayWrapper> unsafeGetAllTransformations() {
         // Sanity check
         throw new UnsupportedOperationException("Not supported for large solution spaces");
     }
@@ -180,7 +181,7 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @param level
      * @return
      */
-    public ObjectIterator<int[]> unsafeGetLevel(int level) {
+    public ObjectIterator<IntArrayWrapper> unsafeGetLevel(int level) {
         // Sanity check
         throw new UnsupportedOperationException("Not supported for large solution spaces");
     }
@@ -190,8 +191,8 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @param id - in ARX format
      * @return
      */
-    protected Object getData(int[] id) {
-        return data.getOrDefault(new IntArrayWrapper(id), null);
+    protected Object getData(IntArrayWrapper id) {
+        return data.getOrDefault(id, null);
     }
     
 
@@ -200,8 +201,8 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @param identifier - in ARX format
      * @return
      */
-    protected InformationLoss<?> getInformationLoss(int[] identifier) {
-        return utility.getOrDefault(new IntArrayWrapper(identifier), null);
+    protected InformationLoss<?> getInformationLoss(IntArrayWrapper identifier) {
+        return utility.getOrDefault(identifier, null);
     }
     
     /**
@@ -209,8 +210,8 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @param identifier - in ARX format
      * @return
      */
-    protected InformationLoss<?> getLowerBound(int[] identifier) {
-        return lowerBound.getOrDefault(new IntArrayWrapper(identifier), null);
+    protected InformationLoss<?> getLowerBound(IntArrayWrapper identifier) {
+        return lowerBound.getOrDefault(identifier, null);
     }
 
     /**
@@ -218,8 +219,17 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
      * @param id - in ARX format
      * @param object
      */
-    protected void setData(int[] id, Object object) {
-        data.put(new IntArrayWrapper(id), object);
+    protected void setData(IntArrayWrapper id, Object object) {
+        data.put(id, object);
+    }
+
+    /**
+     * Sets the information loss
+     * @param identifier - in ARX format
+     * @param loss
+     */
+    protected void setInformationLoss(IntArrayWrapper identifier, InformationLoss<?> loss) {
+        utility.put(identifier, loss);
     }
 
     /**
@@ -230,13 +240,13 @@ public class SolutionSpaceIntArray extends SolutionSpace<int[]> {
     protected void setInformationLoss(int[] identifier, InformationLoss<?> loss) {
         utility.put(new IntArrayWrapper(identifier), loss);
     }
-
+    
     /**
      * Sets the lower bound
      * @param identifier - in ARX format
      * @param loss
      */
-    protected void setLowerBound(int[] identifier, InformationLoss<?> loss) {
-        lowerBound.put(new IntArrayWrapper(identifier), loss);
+    protected void setLowerBound(IntArrayWrapper identifier, InformationLoss<?> loss) {
+        lowerBound.put(identifier, loss);
     }
 }
