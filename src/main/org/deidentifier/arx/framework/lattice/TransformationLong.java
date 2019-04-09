@@ -262,14 +262,4 @@ public class TransformationLong extends Transformation<Long> {
         builder.append("}");
         return builder.toString();
     }
-
-    /**
-     * Returns the sum of all transformation levels;
-     * @param transformation
-     * @return
-     */
-    private int getLevel(int[] transformation) {
-        int level = 0; for (int lvl : transformation) level += lvl;
-        return level;
-    }
 }

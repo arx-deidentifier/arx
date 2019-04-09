@@ -184,4 +184,14 @@ public abstract class Transformation<T> {
      * Returns a string representation
      */
     public abstract String toString();
+
+    /**
+     * Returns the sum of all transformation levels;
+     * @param transformation
+     * @return
+     */
+    protected int getLevel(int[] transformation) {
+        int level = 0; for (int lvl : transformation) level += lvl;
+        return level;
+    }
 }

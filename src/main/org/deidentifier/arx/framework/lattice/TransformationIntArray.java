@@ -160,7 +160,7 @@ public class TransformationIntArray extends Transformation<IntArrayWrapper> {
      * @param informationLoss
      */
     public void setInformationLoss(InformationLoss<?> informationLoss) {
-        ((SolutionSpaceIntArray)this.solutionSpace).setInformationLoss(this.transformationARX, informationLoss);
+        this.solutionSpace.setInformationLoss(this.wrapper, informationLoss);
     }
 
     /**
@@ -246,15 +246,5 @@ public class TransformationIntArray extends Transformation<IntArrayWrapper> {
         }
         builder.append("}");
         return builder.toString();
-    }
-
-    /**
-     * Returns the sum of all transformation levels;
-     * @param transformation
-     * @return
-     */
-    private int getLevel(int[] transformation) {
-        int level = 0; for (int lvl : transformation) level += lvl;
-        return level;
     }
 }
