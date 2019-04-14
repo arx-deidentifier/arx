@@ -132,47 +132,38 @@ public class DialogAnonymization extends TitleAreaDialog {
      */
     private void checkValidity() {
         
+        // State
+        String error = null;
+        
         // Handle parameter
         if (getHeuristicSearchTimeLimit() == null) {
-            setErrorMessage(Resources.getMessage("DialogAnonymization.5")); //$NON-NLS-1$
-            if (okButton != null) {
-                configurationValid = false;
-                okButton.setEnabled(false);
-                return;
-            }
+            error = Resources.getMessage("DialogAnonymization.5"); //$NON-NLS-1$
+            configuration.setHeuristicSearchTimeLimit(0);
         } else {
             configuration.setHeuristicSearchTimeLimit(getHeuristicSearchTimeLimit());
         }
         
         // Handle parameter
         if (getNumIterations() == null) {
-            setErrorMessage(Resources.getMessage("DialogAnonymization.4")); //$NON-NLS-1$
-            if (okButton != null) {
-                configurationValid = false;
-                okButton.setEnabled(false);
-                return;
-            }
+            error = Resources.getMessage("DialogAnonymization.4"); //$NON-NLS-1$
+            configuration.setNumIterations(0);
         } else {
             configuration.setNumIterations(getNumIterations());
         }
         
         // Handle parameter
         if (getHeuristicSearchStepLimit() == null) {
-            setErrorMessage(Resources.getMessage("DialogAnonymization.8")); //$NON-NLS-1$
-            if (okButton != null) {
-                configurationValid = false;
-                okButton.setEnabled(false);
-                return;
-            }
+            error = Resources.getMessage("DialogAnonymization.8"); //$NON-NLS-1$
+            configuration.setHeuristicSearchStepLimit(0);
         } else {
             configuration.setHeuristicSearchStepLimit(getHeuristicSearchStepLimit());
         }
 
-        // Everything is fine
-        setErrorMessage(null);
+        // Update state
+        setErrorMessage(error);
         if (okButton != null) {
-            configurationValid = true;
-            okButton.setEnabled(true);
+            configurationValid = error == null;
+            okButton.setEnabled(error == null);
         }
     }
     
@@ -216,7 +207,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         } catch (Exception e) {
             return null;
         }
-        if (value > 0d) {
+        if (value > 0d && value < ((double)Integer.MAX_VALUE / 10000d)) {
             return value;
         } else {
             return null;
