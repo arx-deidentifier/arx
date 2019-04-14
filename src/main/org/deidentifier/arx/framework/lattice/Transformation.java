@@ -99,14 +99,6 @@ public abstract class Transformation<T> {
     }
 
     /**
-     * Returns the lower bound on information loss
-     * @return
-     */
-    public InformationLoss<?> getLowerBound() {
-        return solutionSpace.getLowerBound(this.identifier);
-    }
-
-    /**
      * Return level
      * @return
      */
@@ -116,6 +108,14 @@ public abstract class Transformation<T> {
             this.levelARX = solutionSpace.fromJHPL(levelJHPL);
         }
         return levelARX;
+    }
+
+    /**
+     * Returns the lower bound on information loss
+     * @return
+     */
+    public InformationLoss<?> getLowerBound() {
+        return solutionSpace.getLowerBound(this.identifier);
     }
     
     /**
@@ -213,16 +213,6 @@ public abstract class Transformation<T> {
     public abstract void setPropertyToNeighbours(PredictiveProperty property);
 
     /**
-     * Returns the sum of all transformation levels;
-     * @param transformation
-     * @return
-     */
-    protected int getLevel(int[] transformation) {
-        int level = 0; for (int lvl : transformation) level += lvl;
-        return level;
-    }
-
-    /**
      * Returns a string representation
      */
     public String toString() {
@@ -263,5 +253,15 @@ public abstract class Transformation<T> {
         }
         builder.append("}");
         return builder.toString();
+    }
+
+    /**
+     * Returns the sum of all transformation levels;
+     * @param transformation
+     * @return
+     */
+    protected int getLevel(int[] transformation) {
+        int level = 0; for (int lvl : transformation) level += lvl;
+        return level;
     }
 }

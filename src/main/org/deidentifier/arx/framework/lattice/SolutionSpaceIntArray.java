@@ -228,8 +228,8 @@ public class SolutionSpaceIntArray extends SolutionSpace<IntArrayWrapper> {
      * @param identifier - in ARX format
      * @param loss
      */
-    protected void setInformationLoss(IntArrayWrapper identifier, InformationLoss<?> loss) {
-        utility.put(identifier, loss);
+    protected void setInformationLoss(int[] identifier, InformationLoss<?> loss) {
+        utility.put(new IntArrayWrapper(identifier), loss);
     }
 
     /**
@@ -237,8 +237,8 @@ public class SolutionSpaceIntArray extends SolutionSpace<IntArrayWrapper> {
      * @param identifier - in ARX format
      * @param loss
      */
-    protected void setInformationLoss(int[] identifier, InformationLoss<?> loss) {
-        utility.put(new IntArrayWrapper(identifier), loss);
+    protected void setInformationLoss(IntArrayWrapper identifier, InformationLoss<?> loss) {
+        utility.put(identifier, loss);
     }
     
     /**

@@ -99,21 +99,21 @@ public abstract class TransformationList<T> {
         }
     }
     /**
-     * Creates a new list for transformations managed by longs
-     * @param result
-     * @return
-     */
-    public static TransformationList<Long> create(LongArrayList result) {
-        return new TransformationListLong(result);
-    }
-
-    /**
      * Creates a new list for transformations managed by int arrays
      * @param lattice
      * @return
      */
     public static TransformationList<IntArrayWrapper> create(List<IntArrayWrapper> result) {
         return new TransformationListIntArray(result);
+    }
+
+    /**
+     * Creates a new list for transformations managed by longs
+     * @param result
+     * @return
+     */
+    public static TransformationList<Long> create(LongArrayList result) {
+        return new TransformationListLong(result);
     }
 
     /**

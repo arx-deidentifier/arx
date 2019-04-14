@@ -45,14 +45,11 @@ public abstract class SolutionSpace<T> {
      */
     public static SolutionSpace<?> create(ARXLattice lattice, ARXConfiguration config) {
         
-        if (false) {
-            return new SolutionSpaceIntArray(lattice, config);  
-        }
-        
+        // Choose implementation based on virtual size
         if (getSize(lattice.getBottom().getTransformation(), lattice.getTop().getTransformation()).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
-            return new SolutionSpaceLong(lattice, config);   
+            return new SolutionSpaceLong(lattice, config);
         } else {
-            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
+            return new SolutionSpaceIntArray(lattice, config);
         }
     }
     /**
@@ -63,29 +60,28 @@ public abstract class SolutionSpace<T> {
      */
     public static SolutionSpace<?> create(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
 
-        if (false) {
-            return new SolutionSpaceIntArray(hierarchiesMinLevels, hierarchiesMaxLevels);  
-        }
-        
+        // Choose implementation based on virtual size
         if (getSize(hierarchiesMinLevels, hierarchiesMaxLevels).compareTo(BigInteger.valueOf(Long.MAX_VALUE)) <= 0) {
-            return new SolutionSpaceLong(hierarchiesMinLevels, hierarchiesMaxLevels);   
+            return new SolutionSpaceLong(hierarchiesMinLevels, hierarchiesMaxLevels);
         } else {
-            throw new RuntimeException("High-dimensional solution space not implemented, yet.");
+            return new SolutionSpaceIntArray(hierarchiesMinLevels, hierarchiesMaxLevels);
         }
     }
+    
     /**
      * Returns the virtual size
      * @param hierarchiesMinLevels
      * @param hierarchiesMaxLevels
      * @return
      */
-    public static BigInteger getSize(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
+    private static BigInteger getSize(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
         BigInteger size = BigInteger.valueOf(1);
         for (int i = 0; i < hierarchiesMinLevels.length; i++) {
             size = size.multiply(BigInteger.valueOf(hierarchiesMaxLevels[i] - hierarchiesMinLevels[i] + 1));
         }
         return size;
     }
+    
     /** Potentially changing property */
     private PredictiveProperty                                    propertyAnonymous           = new PredictiveProperty("Anonymous",
                                                                                                                        Direction.NONE);
