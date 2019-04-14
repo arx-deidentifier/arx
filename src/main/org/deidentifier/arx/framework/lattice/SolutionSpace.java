@@ -29,6 +29,7 @@ import org.deidentifier.arx.metric.InformationLoss;
 import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
 
 import de.linearbits.jhpl.Lattice;
+import de.linearbits.jhpl.LatticeHighdimensional;
 import de.linearbits.jhpl.PredictiveProperty;
 import de.linearbits.jhpl.PredictiveProperty.Direction;
 
@@ -180,7 +181,11 @@ public abstract class SolutionSpace<T> {
             }
             elements[i] = element;
         }
-        this.lattice = new Lattice<Integer, Integer>(elements);
+        if (this instanceof SolutionSpaceLong) {
+            this.lattice =  new Lattice<Integer, Integer>(elements);
+        } else {
+            this.lattice =  new LatticeHighdimensional<Integer, Integer>(elements);
+        }
     }
 
     /**
