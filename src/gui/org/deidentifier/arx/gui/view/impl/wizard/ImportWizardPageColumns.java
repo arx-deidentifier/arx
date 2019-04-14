@@ -110,13 +110,16 @@ public class ImportWizardPageColumns extends WizardPage {
          */
         public void update(List<ImportWizardModelColumn> columns) {
             
+            // Match types
+            Map<ImportWizardModelColumn, List<Pair<DataType<?>, Double>>> matchingtypes = wizardImport.getData().getMatchingDataTypes(columns);
+            
+            // Process
             for (ImportWizardModelColumn column : columns) {
-                this.types.put(column, new HashMap<String, DataType<?>>());
                 
-                List<Pair<DataType<?>, Double>> matchingtypes = wizardImport.getData().getMatchingDataTypes(column);
+                this.types.put(column, new HashMap<String, DataType<?>>());
                 List<String> labels = new ArrayList<String>();
                 List<DataType<?>> types = new ArrayList<DataType<?>>();
-                for (Pair<DataType<?>, Double> match : matchingtypes) {
+                for (Pair<DataType<?>, Double> match : matchingtypes.get(column)) {
                     
                     StringBuilder builder = new StringBuilder();
                     builder.append(match.getFirst().getDescription().getLabel());
@@ -285,7 +288,7 @@ public class ImportWizardPageColumns extends WizardPage {
     private static class AutoDropComboBoxViewerCellEditor extends ComboBoxViewerCellEditor {
         
         /**
-         * 
+         * Contructor
          *
          * @param parent
          */
@@ -437,12 +440,12 @@ public class ImportWizardPageColumns extends WizardPage {
     public void createControl(Composite parent) {
 
         Composite container = new Composite(parent, SWT.NULL);
-
+        
         setControl(container);
         container.setLayout(new GridLayout(2, false));
 
         /* TableViewer for the columns with a checkbox in each row */
-        checkboxTableViewer = SWTUtil.createTableViewerCheckbox(container, SWT.BORDER | SWT.FULL_SELECTION);
+        checkboxTableViewer = SWTUtil.createTableViewerCheckbox(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
         checkboxTableViewer.setContentProvider(new ArrayContentProvider());
         checkboxTableViewer.setCheckStateProvider(new ICheckStateProvider() {
 
@@ -697,14 +700,17 @@ public class ImportWizardPageColumns extends WizardPage {
 
         super.setVisible(visible);
         if (visible) {
+
+            // Match types
+            Map<ImportWizardModelColumn, List<Pair<DataType<?>, Double>>> matchingtypes = wizardImport.getData().getMatchingDataTypes(wizardImport.getData().getWizardColumns());
             
+            // Store
             for (ImportWizardModelColumn column : wizardImport.getData().getWizardColumns()) {
-                column.getColumn().setDataType(wizardImport.getData().getMatchingDataTypes(column).iterator().next().getFirst());
+                column.getColumn().setDataType(matchingtypes.get(column).iterator().next().getFirst());
             }
             
             tableViewerColumnDatatypeEditingSupport.update(wizardImport.getData()
                                                                        .getWizardColumns());
-            
             checkboxTableViewer.setInput(wizardImport.getData()
                                                      .getWizardColumns());
             check();

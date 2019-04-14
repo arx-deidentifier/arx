@@ -20,8 +20,10 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.Data;
@@ -252,24 +254,40 @@ public class ImportWizardModel {
     
     /**
      * Returns a list of matching data types
-     * @param column
+     * @param columns
      */
-    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(ImportWizardModelColumn column) {
+    public Map<ImportWizardModelColumn, List<Pair<DataType<?>, Double>>> getMatchingDataTypes(List<ImportWizardModelColumn> columns) {
         
-        if (wizardColumns.indexOf(column) == -1) { 
-            throw new IllegalArgumentException(Resources.getMessage("ImportWizardModel.0"));  //$NON-NLS-1$
-        }
-
+        // Prepare
+        Map<ImportWizardModelColumn, List<Pair<DataType<?>, Double>>> result = new HashMap<>();
         Data data = Data.create(getPreviewData());
-        int columnIndex = -1;
-        ImportColumn c = column.getColumn();
-        if (c instanceof ImportColumnIndexed) {
-            columnIndex =  ((ImportColumnIndexed) column.getColumn()).getIndex();
-        } else if (column.getColumn() instanceof ImportColumnJDBC){
-            columnIndex = ((ImportColumnJDBC) column.getColumn()).getIndex();
+        for (ImportWizardModelColumn column : wizardColumns) {
+            result.put(column, null);
         }
         
-        return data.getHandle().getMatchingDataTypes(columnIndex, locale, 0d);
+        // For each column
+        for (ImportWizardModelColumn column : columns) {
+
+            // Check
+            if (!result.containsKey(column)) { 
+                throw new IllegalArgumentException(Resources.getMessage("ImportWizardModel.0"));  //$NON-NLS-1$
+            }
+
+            // Get index
+            int columnIndex = -1;
+            ImportColumn c = column.getColumn();
+            if (c instanceof ImportColumnIndexed) {
+                columnIndex =  ((ImportColumnIndexed) column.getColumn()).getIndex();
+            } else if (column.getColumn() instanceof ImportColumnJDBC){
+                columnIndex = ((ImportColumnJDBC) column.getColumn()).getIndex();
+            }
+            
+            // Compute and store
+            result.put(column, data.getHandle().getMatchingDataTypes(columnIndex, locale, 0d));
+        }
+        
+        // Done
+        return result;
     }
 
     /**
