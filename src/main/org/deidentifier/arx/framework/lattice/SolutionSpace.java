@@ -45,7 +45,7 @@ public abstract class SolutionSpace<T> {
      */
     public static SolutionSpace<?> create(ARXLattice lattice, ARXConfiguration config) {
         
-        if (true) {
+        if (false) {
             return new SolutionSpaceIntArray(lattice, config);  
         }
         
@@ -63,7 +63,7 @@ public abstract class SolutionSpace<T> {
      */
     public static SolutionSpace<?> create(int[] hierarchiesMinLevels, int[] hierarchiesMaxLevels) {
 
-        if (true) {
+        if (false) {
             return new SolutionSpaceIntArray(hierarchiesMinLevels, hierarchiesMaxLevels);  
         }
         
