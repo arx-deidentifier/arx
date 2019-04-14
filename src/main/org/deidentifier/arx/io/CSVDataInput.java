@@ -534,6 +534,7 @@ public class CSVDataInput {
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
+        settings.setMaxColumns(4096);
         if (options != null) {
             options.apply(settings);
         }
