@@ -140,8 +140,8 @@ public class ImportWizardPageColumns extends WizardPage {
                 public void widgetSelected(SelectionEvent arg0) {
                     String name = wizardImport.getController()
                                               .actionShowInputDialog(wizardImport.getShell(),
-                                                                     "ImportWizardPageColumns.38", //$NON-NLS-1$
-                                                                     "ImportWizardPageColumns.39", //$NON-NLS-1$
+                                                                     Resources.getMessage("ImportWizardPageColumns.38"), //$NON-NLS-1$
+                                                                     Resources.getMessage("ImportWizardPageColumns.39"), //$NON-NLS-1$
                                                                      wizardColumn.getColumn().getAliasName());
                     if (name != null) {
                         wizardColumn.getColumn().setAliasName(name);
