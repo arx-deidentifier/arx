@@ -470,6 +470,17 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.nebula.widgets.pagination</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>de.linearbits</groupId>
             <artifactId>newtonraphson</artifactId>
             <version>0.0.1</version>
