@@ -351,6 +351,10 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     item = new TableItem(table2, SWT.NONE);
                     item.setText(0, Resources.getMessage("ViewStatisticsQuality.19")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getAttributeLevelSquaredError().getArithmeticMean(false));
+
+                    item = new TableItem(table2, SWT.NONE);
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.20")); //$NON-NLS-1$
+                    setNumericValueAtIndex(item, 1, quality.getSSESST().getValue());
                     
                     // Done
                     table2.setRedraw(true);
