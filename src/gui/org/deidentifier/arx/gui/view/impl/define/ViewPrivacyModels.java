@@ -53,7 +53,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author fabian
  */
-public class ViewCriteriaList implements IView {
+public class ViewPrivacyModels implements IView {
 
     /** Controller */
     private Controller               controller;
@@ -88,7 +88,7 @@ public class ViewCriteriaList implements IView {
     /** View */
     private final Image              symbolB;
     /** View */
-    private final LayoutCriteria     layout;
+    private final LayoutPrivacySettings     layout;
 
     /**
      * Creates a new instance.
@@ -97,7 +97,7 @@ public class ViewCriteriaList implements IView {
      * @param controller
      * @param layoutCriteria 
      */
-    public ViewCriteriaList(final Composite parent, final Controller controller, LayoutCriteria layoutCriteria) {
+    public ViewPrivacyModels(final Composite parent, final Controller controller, LayoutPrivacySettings layoutCriteria) {
 
         // Register
         this.controller = controller;

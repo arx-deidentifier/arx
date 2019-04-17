@@ -417,7 +417,7 @@ public class ImportWizardPageColumns extends WizardPage {
         tblclmnEnabled = tableViewerColumnEnabled.getColumn();
         tblclmnEnabled.setToolTipText(Resources.getMessage("ImportWizardPageColumns.11")); //$NON-NLS-1$
         tblclmnEnabled.setText(Resources.getMessage("ImportWizardPageColumns.12")); //$NON-NLS-1$
-        tblclmnEnabled.setWidth(40);
+        tblclmnEnabled.setWidth(80);
 
         /* Column containing the names */
         tableViewerColumnName = new TableViewerColumn(paginationTable.getViewer(), SWT.NONE);
