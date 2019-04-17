@@ -20,7 +20,6 @@ package org.deidentifier.arx.gui.view.impl.wizard;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -266,58 +265,23 @@ public class ImportWizardPageColumns extends WizardPage {
          * Update the context menu
          * @param columns
          */
-        public void update(List<ImportWizardModelColumn> columns) {
+        public void update(final List<ImportWizardModelColumn> columns) {
             
             // Return if no columns
             if (columns == null) {
                 return;
             }
 
-            // Clear
-            this.matching.clear();
-            this.nonmatching.clear();
+            // Obtain            
+            Pair<Map<ImportWizardModelColumn, Map<String, DataType<?>>>,
+                 Map<ImportWizardModelColumn, Map<String, DataType<?>>>> types =  
+                    wizardImport.getData().getMatchingDataTypes(ImportWizardPageColumns.this.wizardImport.getController(), columns);
+            this.matching  = types.getFirst();
+            this.nonmatching = types.getSecond();
             
-            // Match types
-            Map<ImportWizardModelColumn, List<Pair<DataType<?>, Double>>> matchingtypes = wizardImport.getData().getMatchingDataTypes(columns);
-            
-            // Process
+            // Update
             for (ImportWizardModelColumn column : columns) {
-                
-                // Prepare
-                this.matching.put(column, new LinkedHashMap<String, DataType<?>>());
-                this.nonmatching.put(column, new LinkedHashMap<String, DataType<?>>());
-                List<String> labels = new ArrayList<String>();
-                List<DataType<?>> types = new ArrayList<DataType<?>>();
-                
-                // Enable first match
-                column.getColumn().setDataType(matchingtypes.get(column).iterator().next().getFirst());
                 viewer.update(column, null);
-                
-                // Store rest
-                for (Pair<DataType<?>, Double> match : matchingtypes.get(column)) {
-                    
-                    StringBuilder builder = new StringBuilder();
-                    builder.append(match.getFirst().getDescription().getLabel());
-                    if (match.getFirst() instanceof DataTypeWithFormat && ((DataTypeWithFormat)match.getFirst()).getFormat() != null) {
-                        builder.append(" ("); //$NON-NLS-1$
-                        builder.append(((DataTypeWithFormat)match.getFirst()).getFormat());
-                        builder.append(")"); //$NON-NLS-1$
-                    }
-                    builder.append(" "); //$NON-NLS-1$
-                    builder.append((int)(match.getSecond() * 100d));
-                    builder.append("%"); //$NON-NLS-1$
-                    
-                    String label = builder.toString();
-                    DataType<?> type = match.getFirst();
-                    labels.add(label);
-                    types.add(type);
-                    
-                    if (match.getSecond() > 0.5d) {
-                        this.matching.get(column).put(label, type);
-                    } else {
-                        this.nonmatching.get(column).put(label, type);   
-                    }
-                }
             }
         }
     }
