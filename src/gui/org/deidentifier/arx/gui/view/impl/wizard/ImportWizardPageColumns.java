@@ -37,6 +37,11 @@ import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.wizard.WizardPage;
+import org.eclipse.nebula.widgets.pagination.IPageLoader;
+import org.eclipse.nebula.widgets.pagination.PageableController;
+import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResult;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
@@ -69,10 +74,29 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class ImportWizardPageColumns extends WizardPage {
     
+    /** Items per page in the viewer*/
+    private static final int ITEMS_PER_PAGE = 100;
+    
+    /**
+     * Page loader
+     * @author Fabian Prasser
+     */
+    private class ColumnPageLoader implements IPageLoader<PageResult<ImportWizardModelColumn>> {
+
+        @Override
+        public PageResult<ImportWizardModelColumn> loadPage(PageableController controller) {
+            if (wizardImport.getData().getWizardColumns() == null) {
+                return PageListHelper.createPage(new ArrayList<ImportWizardModelColumn>(), controller);
+            } else {
+                return PageListHelper.createPage(wizardImport.getData().getWizardColumns(), controller);
+            }
+        }
+    }
+    
     /**
      * Implements a context menu for editing the data type column within the column page
      */
-    public class DatatypeContextMenu {
+    private class DatatypeContextMenu {
 
         /** Types*/
         private Map<ImportWizardModelColumn, Map<String, DataType<?>>> matching = new HashMap<ImportWizardModelColumn, Map<String, DataType<?>>>();
@@ -304,7 +328,7 @@ public class ImportWizardPageColumns extends WizardPage {
     private Table                  table;
 
     /** View */
-    private TableViewer            tableViewer;
+    private PageableTable          paginationTable;
     
     /** View*/
     private DatatypeContextMenu    tableDatatypeContextMenu; 
@@ -367,13 +391,16 @@ public class ImportWizardPageColumns extends WizardPage {
         container.setLayout(new GridLayout(2, false));
 
         /* TableViewer for the columns with a checkbox in each row */
-        tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
-        tableViewer.setContentProvider(new ArrayContentProvider());
+        paginationTable = SWTUtil.createPageableTableViewer(container, ITEMS_PER_PAGE, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
+        paginationTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+        paginationTable.getViewer().setContentProvider(new ArrayContentProvider());
+        paginationTable.setPageLoader(new ColumnPageLoader());
+        paginationTable.setCurrentPage(0);
 
         /* Actual table for {@link #checkboxTableViewer} */
-        table = tableViewer.getTable();
+        table = paginationTable.getViewer().getTable();
+        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         table.setHeaderVisible(true);
-        table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
         table.addSelectionListener(new SelectionAdapter() {
 
             /**
@@ -403,7 +430,7 @@ public class ImportWizardPageColumns extends WizardPage {
         });
 
         /* Empty column to make checkboxes appear in an own cell */
-        tableViewerColumnEnabled = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnEnabled = new TableViewerColumn(paginationTable.getViewer(), SWT.NONE);
         tableViewerColumnEnabled.setLabelProvider(new ColumnLabelProvider() {
             /** Cells within this column should always be empty */
             @Override
@@ -420,7 +447,7 @@ public class ImportWizardPageColumns extends WizardPage {
         tblclmnEnabled.setWidth(40);
 
         /* Column containing the names */
-        tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnName = new TableViewerColumn(paginationTable.getViewer(), SWT.NONE);
         tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
             /**
@@ -444,8 +471,8 @@ public class ImportWizardPageColumns extends WizardPage {
         tblclmnName.setText(Resources.getMessage("ImportWizardPageColumns.14")); //$NON-NLS-1$
 
         /* Column containing the datatypes */
-        tableViewerColumnDatatype = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableDatatypeContextMenu = new DatatypeContextMenu(tableViewer, wizardImport.getData().getWizardColumns());
+        tableViewerColumnDatatype = new TableViewerColumn(paginationTable.getViewer(), SWT.NONE);
+        tableDatatypeContextMenu = new DatatypeContextMenu(paginationTable.getViewer(), wizardImport.getData().getWizardColumns());
         tableViewerColumnDatatype.setLabelProvider(new ColumnLabelProvider() {
 
             /**
@@ -468,7 +495,7 @@ public class ImportWizardPageColumns extends WizardPage {
         tblclmnDatatype.setText(Resources.getMessage("ImportWizardPageColumns.16")); //$NON-NLS-1$
 
         /* Column containing the format of the format */
-        tableViewerColumnFormat = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnFormat = new TableViewerColumn(paginationTable.getViewer(), SWT.NONE);
         tableViewerColumnFormat.setLabelProvider(new ColumnLabelProvider() {
 
             /**
@@ -525,9 +552,10 @@ public class ImportWizardPageColumns extends WizardPage {
                 if (current > 0) {
                     List<ImportWizardModelColumn> columns = wizardImport.getData()
                                                                         .getWizardColumns();
-                    Collections.swap(columns, current, current - 1);
-                    tableViewer.setInput(columns);
-                    tableViewer.getTable().select(current - 1);
+                    int index = current + (paginationTable.getController().getCurrentPage() * ITEMS_PER_PAGE);
+                    Collections.swap(columns, index, index - 1);
+                    paginationTable.refreshPage();
+                    paginationTable.getViewer().getTable().select(current - 1);
                     table.notifyListeners(SWT.Selection, null);
                 }
             }
@@ -557,9 +585,10 @@ public class ImportWizardPageColumns extends WizardPage {
 
                     List<ImportWizardModelColumn> columns = wizardImport.getData()
                                                                         .getWizardColumns();
-                    Collections.swap(columns, current, current + 1);
-                    tableViewer.setInput(columns);
-                    tableViewer.getTable().select(current + 1);
+                    int index = current + (paginationTable.getController().getCurrentPage() * ITEMS_PER_PAGE);
+                    Collections.swap(columns, index, index + 1);
+                    paginationTable.refreshPage();
+                    paginationTable.getViewer().getTable().select(current + 1);
                     table.notifyListeners(SWT.Selection, null);
                 }
             }
@@ -595,7 +624,9 @@ public class ImportWizardPageColumns extends WizardPage {
         super.setVisible(visible);
         if (visible) {
             tableDatatypeContextMenu.update(wizardImport.getData().getWizardColumns());
-            tableViewer.setInput(wizardImport.getData().getWizardColumns());
+            //tableViewer.getViewer().setInput(wizardImport.getData().getWizardColumns());
+            paginationTable.refreshPage();
+            paginationTable.setCurrentPage(0);
             check();
         }
     }

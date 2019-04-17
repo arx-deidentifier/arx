@@ -29,6 +29,9 @@ import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
+import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageGraphicsRendererFactory;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.SashForm;
@@ -506,6 +509,27 @@ public class SWTUtil {
         return viewer;
     }
 
+    /**
+     * Returns a table viewer with pagination. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static PageableTable createPageableTableViewer(Composite container, int pageSize, int style) {
+        
+        PageableTable pageableTable = new PageableTable(
+                                          container,
+                                          SWT.BORDER,
+                                          style,
+                                          pageSize,
+                                          PageResultContentProvider.getInstance(),
+                                          ResultAndNavigationPageGraphicsRendererFactory.getBlueFactory(),
+                                          null);
+        
+        TableViewer viewer = pageableTable.getViewer();
+        fixOSXTableBug(viewer.getTable());
+        return pageableTable;
+    }
     /**
      * Returns a checkbox table viewer. Implements hacks for fixing OSX bugs.
      * @param parent
