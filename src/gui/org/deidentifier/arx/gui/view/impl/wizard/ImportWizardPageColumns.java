@@ -47,6 +47,7 @@ import org.eclipse.swt.events.MenuDetectEvent;
 import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -76,7 +77,7 @@ public class ImportWizardPageColumns extends WizardPage {
     
     /** Items per page in the viewer*/
     private static final int ITEMS_PER_PAGE = 100;
-    
+
     /**
      * Page loader
      * @author Fabian Prasser
@@ -432,11 +433,19 @@ public class ImportWizardPageColumns extends WizardPage {
         /* Empty column to make checkboxes appear in an own cell */
         tableViewerColumnEnabled = new TableViewerColumn(paginationTable.getViewer(), SWT.NONE);
         tableViewerColumnEnabled.setLabelProvider(new ColumnLabelProvider() {
-            /** Cells within this column should always be empty */
+            
             @Override
             public String getText(Object element) {
-                ImportWizardModelColumn column = (ImportWizardModelColumn) element;
-                return column.isEnabled() ? Resources.getMessage("ImportWizardPageColumns.29") : Resources.getMessage("ImportWizardPageColumns.30"); //$NON-NLS-1$ //$NON-NLS-2$
+               return "";
+            }
+            
+            @Override
+            public Image getImage(Object element) {
+                if (((ImportWizardModelColumn)element).isEnabled()) {
+                    return wizardImport.getController().getResources().getManagedImage("yes.png");
+                } else {
+                    return null;
+                }
             }
         });
 
