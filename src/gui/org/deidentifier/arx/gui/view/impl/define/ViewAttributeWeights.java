@@ -183,12 +183,12 @@ public class ViewAttributeWeights implements IView {
         
         if (event.part == ModelPart.MODEL ||
             event.part == ModelPart.INPUT) {
-            this.attributes.clear();
+            reset();
         } 
         
         if (event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.MODEL) {
-            if (model!=null) {
+            if (model != null) {
                 updateControls();
             }
         }
@@ -220,7 +220,6 @@ public class ViewAttributeWeights implements IView {
 
         // Create ordered list of QIs
         DataDefinition definition = model.getInputDefinition();
-        
         if (definition != null) {
             Set<String> _qis = definition.getQuasiIdentifyingAttributes();
             
@@ -241,18 +240,25 @@ public class ViewAttributeWeights implements IView {
             this.attributes.addAll(sortedAttributes);
         }
 
-        if (root.isDisposed()) return;
+        // Check
+        if (root == null || root.isDisposed()) {
+            return;
+        }
         
         root.setRedraw(false);
         
         // Dispose widgets
         if (panel != null) {
             panel.dispose();
+            panel = null;
         }
 
+        // Create new widget
         panel = new Composite(root, SWT.NONE);
         panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
+        root.setContent(panel);
         
+        // Leave empty if no data
         if (this.attributes.size() == 0) {
         	return;
         }
@@ -422,11 +428,11 @@ public class ViewAttributeWeights implements IView {
                 }
             }
             
+            // Set size
             root.setMinWidth(MIN_SPACE * sortedAttributes.size());
         }
 
         // Update root composite
-        root.setContent(panel);
         root.setExpandHorizontal(true);
         root.setExpandVertical(true);
         root.setVisible(!sortedAttributes.isEmpty());
