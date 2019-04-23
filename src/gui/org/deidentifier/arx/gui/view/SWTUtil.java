@@ -546,9 +546,11 @@ public class SWTUtil {
                     TableColumn[] columns = viewer.getTable().getColumns();
                     
                     // Add
-                    for (TableColumn c : columns) {
-                        c.removeControlListener(this);
-                        c.addControlListener(this);
+                    if (!equalSize) {
+                        for (TableColumn c : columns) {
+                            c.removeControlListener(this);
+                            c.addControlListener(this);
+                        }
                     }
                     
                     // Store
@@ -589,6 +591,7 @@ public class SWTUtil {
                         }
                         columns[columns.length - 1].setWidth(width - total);
                     }
+                    viewer.getTable().redraw();
                 }
             });
         }
