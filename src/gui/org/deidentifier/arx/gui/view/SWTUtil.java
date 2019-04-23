@@ -564,7 +564,7 @@ public class SWTUtil {
                         return;
                     }
                     
-                    if (equalSize) {
+                    if (!equalSize) {
                         
                         // Remove
                         for (int i = 0; i < columns.length - 1; i++) {
