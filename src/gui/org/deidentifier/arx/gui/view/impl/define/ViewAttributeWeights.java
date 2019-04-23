@@ -154,8 +154,7 @@ public class ViewAttributeWeights implements IView {
 				root.redraw();
 			}
 		});
-        
-        root.pack();
+        this.root.pack();
     }
 
     @Override
@@ -166,7 +165,7 @@ public class ViewAttributeWeights implements IView {
     @Override
     public void reset() {
         root.setRedraw(false);
-        if (panel != null) {
+        if (panel != null && !panel.isDisposed()) {
             panel.dispose();
             panel = null;
         }
@@ -257,12 +256,6 @@ public class ViewAttributeWeights implements IView {
         // Create new widget
         panel = new Composite(root, SWT.NONE);
         panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
-        root.setContent(panel);
-        
-        // Leave empty if no data
-        if (this.attributes.size() == 0) {
-        	return;
-        }
         
         // For handling high-dimensional data
         final int MAX_KNOBS = 32;
@@ -437,14 +430,15 @@ public class ViewAttributeWeights implements IView {
                     knobs.get(i).setValue(model.getInputConfig().getAttributeWeight(sortedAttributes.get(i)));
                 }
             }
-            
-            // Set size
-            root.setMinWidth(MIN_SPACE * sortedAttributes.size());
         }
 
         // Update root composite
+        root.setContent(panel);
         root.setExpandHorizontal(true);
         root.setExpandVertical(true);
+        if (sortedAttributes.size() <= MAX_KNOBS) {
+            root.setMinWidth(MIN_SPACE * sortedAttributes.size());
+        }
         root.setVisible(!sortedAttributes.isEmpty());
         root.layout(true, true);    
         root.setRedraw(true);
