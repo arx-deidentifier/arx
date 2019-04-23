@@ -253,6 +253,10 @@ public class ViewAttributeWeights implements IView {
         panel = new Composite(root, SWT.NONE);
         panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
         
+        if (this.attributes.size() == 0) {
+        	return;
+        }
+        
         // For handling high-dimensional data
         final int MAX_KNOBS = 32;
         

@@ -18,8 +18,10 @@
 package org.deidentifier.arx.gui.view.impl.explore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXResult;
@@ -306,7 +308,7 @@ public class ViewFilter implements IView {
     private void create(final Composite parent) {
 
         // Add table
-        generalization = new ComponentFilterTable(parent, controller, new ArrayList<String>());
+        generalization = new ComponentFilterTable(parent, controller);
         GridData data = SWTUtil.createFillGridData();
         data.heightHint = 70;
         data.horizontalSpan = 2;
@@ -319,7 +321,7 @@ public class ViewFilter implements IView {
                         
                         String entry = generalization.getSelectedEntry();
                         String property = generalization.getSelectedProperty();
-                        int dimension = generalization.getEntries().indexOf(entry);
+                        int dimension = generalization.getIndexOfEntry(entry);
                         int level = Integer.valueOf(property);
                         boolean enabled = generalization.isSelected(entry, property);
                         
@@ -507,29 +509,33 @@ public class ViewFilter implements IView {
         // Create ordered list of qis
         String[] attributes = result.getLattice().getBottom().getQuasiIdentifyingAttributes();
         
+        // Set generalization levels
         int min = Integer.MAX_VALUE;
         int max = Integer.MIN_VALUE;
         for (String attribute : attributes) {
             min = Math.min(min, result.getLattice().getBottom().getGeneralization(attribute));
             max = Math.max(max, result.getLattice().getTop().getGeneralization(attribute));
         }
-
         List<String> properties = new ArrayList<String>();
         for (int i=min; i<=max; i++){
             properties.add(String.valueOf(i));
         }
-        
         generalization.setProperties(properties);
 
+        // Set levels for attributes
+        List<String> entries = new ArrayList<>();
+        Map<String, Set<String>> entryProperties = new HashMap<>();
         for (String attribute : attributes) {
-            List<String> attributeProperties = new ArrayList<String>();
+            Set<String> attributeProperties = new HashSet<>();
             int attributeMin = result.getLattice().getBottom().getGeneralization(attribute);
             int attributeMax = result.getLattice().getTop().getGeneralization(attribute);
             for (int i=attributeMin; i<=attributeMax; i++){
                 attributeProperties.add(String.valueOf(i));
             }
-            generalization.addEntry(attribute, attributeProperties);
+            entries.add(attribute);
+            entryProperties.put(attribute, attributeProperties);
         }
+        generalization.setPermitted(entries, entryProperties);
 
         int i=0;
         for (String attribute : attributes) {;
