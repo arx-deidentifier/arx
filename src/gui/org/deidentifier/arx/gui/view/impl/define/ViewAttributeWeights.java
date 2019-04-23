@@ -92,22 +92,22 @@ public class ViewAttributeWeights implements IView {
     private static final int        MIN_SPACE        = 60;
 
     /** Constant */
-    private static final int        MIN_KNOB   = 30;
+    private static final int        MIN_KNOB         = 30;
 
     /** Controller. */
-    private Controller              controller = null;
-    
-    /** Model. */
-    private Model                   model      = null;
-
-    /** Model*/
-    private List<String>             sortedAttributes = new ArrayList<String>();
+    private Controller              controller       = null;
 
     /** Model. */
-    private final Set<String>       attributes = new HashSet<String>();
+    private Model                   model            = null;
+
+    /** Model */
+    private List<String>            sortedAttributes = new ArrayList<String>();
+
+    /** Model. */
+    private final Set<String>       attributes       = new HashSet<String>();
 
     /** View. */
-    private Composite               panel      = null;
+    private Composite               panel            = null;
 
     /** View. */
     private final ScrolledComposite root;
@@ -171,6 +171,7 @@ public class ViewAttributeWeights implements IView {
             panel = null;
         }
         attributes.clear();
+        sortedAttributes.clear();
         root.setRedraw(true);
     }
 
@@ -352,9 +353,12 @@ public class ViewAttributeWeights implements IView {
             
             // Create composites
             List<Composite> composites = new ArrayList<Composite>();
-            for(int i=0; i<sortedAttributes.size(); i++){
+            for (int i = 0; i < sortedAttributes.size(); i++) {
                 Composite c = new Composite(panel, SWT.NONE);
-                c.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
+                c.setLayoutData(GridDataFactory.fillDefaults()
+                                               .grab(true, true)
+                                               .align(SWT.FILL, SWT.CENTER)
+                                               .create());
                 c.setLayout(GridLayoutFactory.swtDefaults().numColumns(1).margins(2, 0).create());
                 composites.add(c);
             }
@@ -369,8 +373,14 @@ public class ViewAttributeWeights implements IView {
             // Create knob widgets
             List<Knob<Double>> knobs = new ArrayList<Knob<Double>>();
             for(int i=0; i<sortedAttributes.size(); i++){
-                Knob<Double> knob = new Knob<Double>(composites.get(i), SWT.NULL, new KnobRange.Double(0d, 1d));
-                knob.setLayoutData(GridDataFactory.swtDefaults().grab(false, false).align(SWT.CENTER, SWT.CENTER).hint(MIN_KNOB, MIN_KNOB).create());
+                Knob<Double> knob = new Knob<Double>(composites.get(i),
+                                                     SWT.NULL,
+                                                     new KnobRange.Double(0d, 1d));
+                knob.setLayoutData(GridDataFactory.swtDefaults()
+                                                  .grab(false, false)
+                                                  .align(SWT.CENTER, SWT.CENTER)
+                                                  .hint(MIN_KNOB, MIN_KNOB)
+                                                  .create());
                 knob.setDefaultColorProfile(defaultColorProfile);
                 knob.setFocusedColorProfile(focusedColorProfile);
                 knobs.add(knob);
@@ -438,5 +448,6 @@ public class ViewAttributeWeights implements IView {
         root.setVisible(!sortedAttributes.isEmpty());
         root.layout(true, true);    
         root.setRedraw(true);
+        root.redraw();
     }
 }
