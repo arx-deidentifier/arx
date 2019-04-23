@@ -703,8 +703,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         item.setEnabled(enabled);
 
         // Items
-        for (final String _function : new String[] {
-                                                     "x", //$NON-NLS-1$
+        for (final String _function : new String[] { "x", //$NON-NLS-1$
                                                      "x^2", //$NON-NLS-1$
                                                      "sqrt(x)", //$NON-NLS-1$
                                                      "log(x)", //$NON-NLS-1$
@@ -728,9 +727,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
                             state.scaling.put(data, _function);
                         }
                         features.refreshPage();
-                        controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this,
-                                                         ModelPart.CLASSIFICATION_CONFIGURATION,
-                                                         null));
+                        controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
                     }
                 }
             });
