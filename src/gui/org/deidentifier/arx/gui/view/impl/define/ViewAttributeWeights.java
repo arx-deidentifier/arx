@@ -364,7 +364,7 @@ public class ViewAttributeWeights implements IView {
             }
             
             // Create labels
-            for(int i=0; i<sortedAttributes.size(); i++){
+            for (int i = 0; i < sortedAttributes.size(); i++) {
                 Label label = new Label(composites.get(i), SWT.CENTER);
                 label.setText(sortedAttributes.get(i));
                 label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -372,7 +372,7 @@ public class ViewAttributeWeights implements IView {
             
             // Create knob widgets
             List<Knob<Double>> knobs = new ArrayList<Knob<Double>>();
-            for(int i=0; i<sortedAttributes.size(); i++){
+            for (int i = 0; i < sortedAttributes.size(); i++) {
                 Knob<Double> knob = new Knob<Double>(composites.get(i),
                                                      SWT.NULL,
                                                      new KnobRange.Double(0d, 1d));
@@ -387,7 +387,7 @@ public class ViewAttributeWeights implements IView {
             }
     
             // Create labels
-            for(int i=0; i<sortedAttributes.size(); i++){
+            for (int i = 0; i < sortedAttributes.size(); i++) {
                 
                 final Label label = new Label(composites.get(i), SWT.CENTER);
                 label.setText("0.0"); //$NON-NLS-1$
