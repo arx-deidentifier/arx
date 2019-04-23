@@ -689,79 +689,94 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         });
 
         // Only for numeric attributes
-        if (state != null && state.dtypes.get(data) != DataType.STRING) {
-             
-            // Separate
-            new MenuItem(menu, SWT.SEPARATOR);
-            
-            // Submenu
-            Menu featureScaling = new Menu(menu);
-            item = new MenuItem(menu, SWT.CASCADE);
-            item.setText(LABEL_FEATURE_SCALING); //$NON-NLS-1$
-            item.setMenu(featureScaling);
-    
-            // Items
-            for (final String _function : new String[]{ "x", //$NON-NLS-1$
-                                                        "x^2", //$NON-NLS-1$
-                                                        "sqrt(x)", //$NON-NLS-1$
-                                                        "log(x)", //$NON-NLS-1$
-                                                        "2^x", //$NON-NLS-1$
-                                                        "1/x", //$NON-NLS-1$
-                                                        LABEL_CATEGORICAL}) {
-    
-                item = new MenuItem(featureScaling, SWT.NONE);
-                item.setText(_function);
-                item.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent arg0) {
-                        String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(data);
-                        if ((function == null && _function != null) || !_function.equals(function)) {
-                            if (_function.equals(LABEL_CATEGORICAL)) {
-                                model.getClassificationModel().setScalingFunction(data, null);
-                                state.scaling.put(data, null);
-                            } else {
-                                model.getClassificationModel().setScalingFunction(data, _function);
-                                state.scaling.put(data, _function);
-                            }
-                            features.refreshPage();
-                            controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
-                         }
-                    } 
-                });
-            }
-            
-            // Item
+        boolean enabled = (state != null && state.dtypes.get(data) != DataType.STRING);
+
+        // Separate
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        // Submenu
+        Menu featureScaling = new Menu(menu);
+        featureScaling.setEnabled(enabled);
+        item = new MenuItem(menu, SWT.CASCADE);
+        item.setText(LABEL_FEATURE_SCALING); // $NON-NLS-1$
+        item.setMenu(featureScaling);
+        item.setEnabled(enabled);
+
+        // Items
+        for (final String _function : new String[] {
+                                                     "x", //$NON-NLS-1$
+                                                     "x^2", //$NON-NLS-1$
+                                                     "sqrt(x)", //$NON-NLS-1$
+                                                     "log(x)", //$NON-NLS-1$
+                                                     "2^x", //$NON-NLS-1$
+                                                     "1/x", //$NON-NLS-1$
+                                                     LABEL_CATEGORICAL }) {
+
             item = new MenuItem(featureScaling, SWT.NONE);
-            item.setText(LABEL_FEATURE_SCALING_EDIT);
+            item.setText(_function);
+            item.setEnabled(enabled);
             item.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent arg0) {
-                    if (state != null) {
-                        String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(data);
-                        if (function == null || function.equals("")) { //$NON-NLS-1$
-                            function = LABEL_CATEGORICAL;
+                    String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(data);
+                    if ((function == null && _function != null) || !_function.equals(function)) {
+                        if (_function.equals(LABEL_CATEGORICAL)) {
+                            model.getClassificationModel().setScalingFunction(data, null);
+                            state.scaling.put(data, null);
+                        } else {
+                            model.getClassificationModel().setScalingFunction(data, _function);
+                            state.scaling.put(data, _function);
                         }
-                        String _function = controller.actionShowInputDialog(features.getShell(), Resources.getMessage("ViewClassificationAttributes.113"), Resources.getMessage("ViewClassificationAttributes.114"), function, new IInputValidator() { //$NON-NLS-1$ //$NON-NLS-2$
-                            @Override
-                            public String isValid(String arg0) {
-                                return model.getClassificationModel().getFeatureScaling().isValidScalingFunction(arg0) || arg0.equals(LABEL_CATEGORICAL) ? null : Resources.getMessage("ViewClassificationAttributes.115"); //$NON-NLS-1$
-                            }
-                        });
-                        if (!function.equals(_function)) {
-                           if (_function == null || function.equals("") || function.equals(LABEL_CATEGORICAL)) { //$NON-NLS-1$
-                               model.getClassificationModel().setScalingFunction(data, null);
-                               state.scaling.put(data, null);
-                           } else {
-                               model.getClassificationModel().setScalingFunction(data, function);
-                               state.scaling.put(data, function);
-                           }
-                           features.refreshPage();
-                           controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
-                        }
+                        features.refreshPage();
+                        controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this,
+                                                         ModelPart.CLASSIFICATION_CONFIGURATION,
+                                                         null));
                     }
                 }
             });
         }
+
+        // Item
+        item = new MenuItem(featureScaling, SWT.NONE);
+        item.setText(LABEL_FEATURE_SCALING_EDIT);
+        item.setEnabled(enabled);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (state != null) {
+                    String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(data);
+                    if (function == null || function.equals("")) { //$NON-NLS-1$
+                        function = LABEL_CATEGORICAL;
+                    }
+                    String _function = controller.actionShowInputDialog(features.getShell(),
+                                                                        Resources.getMessage("ViewClassificationAttributes.113"), //$NON-NLS-1$
+                                                                        Resources.getMessage("ViewClassificationAttributes.114"), //$NON-NLS-1$
+                                                                        function,
+                                                                        new IInputValidator() {
+                                                                            @Override
+                                                                            public String isValid(String arg0) {
+                                                                                return model.getClassificationModel()
+                                                                                            .getFeatureScaling()
+                                                                                            .isValidScalingFunction(arg0) ||
+                                                                                       arg0.equals(LABEL_CATEGORICAL) ? null : Resources.getMessage("ViewClassificationAttributes.115"); //$NON-NLS-1$
+                                                                            }
+                                                                        });
+                    if (!function.equals(_function)) {
+                        if (_function == null || function.equals("") || function.equals(LABEL_CATEGORICAL)) { //$NON-NLS-1$
+                            model.getClassificationModel().setScalingFunction(data, null);
+                            state.scaling.put(data, null);
+                        } else {
+                            model.getClassificationModel().setScalingFunction(data, function);
+                            state.scaling.put(data, function);
+                        }
+                        features.refreshPage();
+                        controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this,
+                                                         ModelPart.CLASSIFICATION_CONFIGURATION,
+                                                         null));
+                    }
+                }
+            }
+        });
         
         // Show
         menu.setVisible(true);
