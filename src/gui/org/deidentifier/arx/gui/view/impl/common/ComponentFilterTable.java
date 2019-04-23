@@ -18,8 +18,10 @@ package org.deidentifier.arx.gui.view.impl.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.math3.util.Pair;
@@ -182,33 +184,12 @@ public class ComponentFilterTable {
         this.selectedProperty = null;
         this.keyProperties = null;
         this.properties = null;
+        this.permitted = null;
         this.pageableTable.setRedraw(false);
         for (TableColumn c : this.pageableTable.getViewer().getTable().getColumns()) {
         	c.dispose();
         }
         this.pageableTable.setRedraw(true);
-    }
-
-    /**
-     * Fires a new event
-     * @param selectedEntry
-     * @param selectedProperty
-     */
-    private void fireSelectionEvent(String selectedEntry, String selectedProperty) {
-    	
-    	// Maintain state
-        this.selectedKey = selectedEntry;
-        this.selectedProperty = selectedProperty;
-    	
-    	// Fire event
-        Event event = new Event();
-        event.display = pageableTable.getDisplay();
-        event.item = pageableTable;
-        event.widget = pageableTable;
-        SelectionEvent sEvent = new SelectionEvent(event);
-        for (SelectionListener listener : listeners) {
-            listener.widgetSelected(sEvent);
-        }
     }
 
     /**
@@ -218,52 +199,6 @@ public class ComponentFilterTable {
      */
     public int getIndexOfEntry(String entry) {
     	return this.keys.indexOf(entry);
-    }
-
-    /**
-     * Returns the item at the given location.
-     * 
-     * @param x
-     * @param y
-     * @return
-     */
-    private int getItemColumnAt(int x, int y) {
-        Point pt = new Point(x, y);
-        int index = table.getTopIndex();
-        while (index < table.getItemCount()) {
-            final TableItem item = table.getItem(index);
-            for (int i = 0; i < table.getColumns().length; i++) {
-                final Rectangle rect = item.getBounds(i);
-                if (rect.contains(pt)) {
-                    return i;
-                }
-            }
-            index++;
-        }
-        return -1;
-    }
-
-    /**
-     * Returns the item at the given location.
-     * 
-     * @param x
-     * @param y
-     * @return
-     */
-    private int getItemRowAt(int x, int y) {
-        Point pt = new Point(x, y);
-        int index = table.getTopIndex();
-        while (index < table.getItemCount()) {
-            final TableItem item = table.getItem(index);
-            for (int i = 0; i < table.getColumns().length; i++) {
-                final Rectangle rect = item.getBounds(i);
-                if (rect.contains(pt)) {
-                    return index;
-                }
-            }
-            index++;
-        }
-        return -1;
     }
 
     /**
@@ -320,22 +255,6 @@ public class ComponentFilterTable {
     }
 
     /**
-     * Specifies the properties permitted per entry
-     * @param entries
-     * @param permitted
-     */
-    public void setPermitted(List<String> entries, Map<String, Set<String>> permitted) {
-    	this.keys = entries;
-    	this.keyProperties = new HashMap<>(permitted);
-    	this.permitted = new HashMap<>(permitted);
-    	this.pageableTable.refreshPage();
-        this.pageableTable.setCurrentPage(0);
-        for (TableColumn c : this.table.getColumns()) {
-        	c.pack();
-        }
-    }
-
-    /**
      * Sets layout data.
      * 
      * @param layoutData
@@ -343,6 +262,32 @@ public class ComponentFilterTable {
     public void setLayoutData(Object layoutData) {
         this.pageableTable.setLayoutData(layoutData);
     }
+
+    /**
+     * Specifies the properties permitted per entry
+     * @param entries
+     * @param permitted
+     */
+    public void setPermitted(List<String> entries, Map<String, Set<String>> permitted) {
+    	
+        // Store
+        this.keys = entries;
+    	this.keyProperties = new HashMap<>(permitted);
+    	
+    	// Create deep copy of for managing permitted values
+    	this.permitted = new HashMap<>();
+    	for (Entry<String, Set<String>> entry : keyProperties.entrySet()) {
+    	    this.permitted.put(entry.getKey(), new HashSet<>(entry.getValue()));
+    	}
+    	
+    	// Refresh table
+    	this.pageableTable.refreshPage();
+        this.pageableTable.setCurrentPage(0);
+        for (TableColumn c : this.table.getColumns()) {
+        	c.pack();
+        }
+    }
+
     /**
      * Sets new properties. Clears the table
      * @param properties
@@ -436,5 +381,72 @@ public class ComponentFilterTable {
         	this.keyProperties.get(entry).remove(property);
         }
         this.pageableTable.refreshPage();
+    }
+
+    /**
+     * Fires a new event
+     * @param selectedEntry
+     * @param selectedProperty
+     */
+    private void fireSelectionEvent(String selectedEntry, String selectedProperty) {
+    	
+    	// Maintain state
+        this.selectedKey = selectedEntry;
+        this.selectedProperty = selectedProperty;
+    	
+    	// Fire event
+        Event event = new Event();
+        event.display = pageableTable.getDisplay();
+        event.item = pageableTable;
+        event.widget = pageableTable;
+        SelectionEvent sEvent = new SelectionEvent(event);
+        for (SelectionListener listener : listeners) {
+            listener.widgetSelected(sEvent);
+        }
+    }
+    /**
+     * Returns the item at the given location.
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    private int getItemColumnAt(int x, int y) {
+        Point pt = new Point(x, y);
+        int index = table.getTopIndex();
+        while (index < table.getItemCount()) {
+            final TableItem item = table.getItem(index);
+            for (int i = 0; i < table.getColumns().length; i++) {
+                final Rectangle rect = item.getBounds(i);
+                if (rect.contains(pt)) {
+                    return i;
+                }
+            }
+            index++;
+        }
+        return -1;
+    }
+
+    /**
+     * Returns the item at the given location.
+     * 
+     * @param x
+     * @param y
+     * @return
+     */
+    private int getItemRowAt(int x, int y) {
+        Point pt = new Point(x, y);
+        int index = table.getTopIndex();
+        while (index < table.getItemCount()) {
+            final TableItem item = table.getItem(index);
+            for (int i = 0; i < table.getColumns().length; i++) {
+                final Rectangle rect = item.getBounds(i);
+                if (rect.contains(pt)) {
+                    return index;
+                }
+            }
+            index++;
+        }
+        return -1;
     }
 }
