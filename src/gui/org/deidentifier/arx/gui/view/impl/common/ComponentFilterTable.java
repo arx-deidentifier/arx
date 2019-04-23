@@ -129,7 +129,7 @@ public class ComponentFilterTable {
         IMAGE_DISABLED = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         
         this.listeners = new ArrayList<SelectionListener>();
-        this.pageableTable = SWTUtil.createPageableTableViewer(parent, ITEMS_PER_PAGE, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+        this.pageableTable = SWTUtil.createPageableTableViewer(parent, ITEMS_PER_PAGE, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL, false, false);
         this.pageableTable.getViewer().setContentProvider(new ArrayContentProvider());
         this.pageableTable.setPageLoader(new FilterPageLoader());
         this.pageableTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));

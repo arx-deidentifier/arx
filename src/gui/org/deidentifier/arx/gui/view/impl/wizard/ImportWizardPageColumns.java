@@ -356,7 +356,7 @@ public class ImportWizardPageColumns extends WizardPage {
         container.setLayout(new GridLayout(2, false));
 
         /* TableViewer for the columns with a checkbox in each row */
-        paginationTable = SWTUtil.createPageableTableViewer(container, ITEMS_PER_PAGE, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
+        paginationTable = SWTUtil.createPageableTableViewer(container, ITEMS_PER_PAGE, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL, true, false);
         paginationTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
         paginationTable.getViewer().setContentProvider(new ArrayContentProvider());
         paginationTable.setPageLoader(new ColumnPageLoader());

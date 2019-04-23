@@ -512,10 +512,13 @@ public class SWTUtil {
     /**
      * Returns a table viewer with pagination. Implements hacks for fixing OSX bugs.
      * @param parent
+     * @param pageSize
      * @param style
+     * @param fill
+     * @param equalSize
      * @return
      */
-    public static PageableTable createPageableTableViewer(Composite container, int pageSize, int style) {
+    public static PageableTable createPageableTableViewer(Composite container, int pageSize, int style, boolean fill, final boolean equalSize) {
         
         PageableTable pageableTable = new PageableTable(
                                           container,
@@ -526,8 +529,70 @@ public class SWTUtil {
                                           ResultAndNavigationPageGraphicsRendererFactory.getBlueFactory(),
                                           null);
         
-        TableViewer viewer = pageableTable.getViewer();
+        final TableViewer viewer = pageableTable.getViewer();
         fixOSXTableBug(viewer.getTable());
+        
+        // Generically fill space using the rightmost column
+        if (fill) {
+            viewer.getTable().addControlListener(new ControlAdapter() {
+                
+                // Minimum width
+                int minimumWidth = -1;
+    
+                @Override
+                public void controlResized(ControlEvent arg0) {
+                    
+                    // Obtain
+                    TableColumn[] columns = viewer.getTable().getColumns();
+                    
+                    // Add
+                    for (TableColumn c : columns) {
+                        c.removeControlListener(this);
+                        c.addControlListener(this);
+                    }
+                    
+                    // Store
+                    if (minimumWidth == -1) {
+                        minimumWidth = columns[columns.length - 1].getWidth();
+                    }
+                    
+                    // Width
+                    int width = viewer.getTable().getClientArea().width;
+                    
+                    // Check
+                    if (width <= 0) {
+                        return;
+                    }
+                    
+                    if (equalSize) {
+                        
+                        // Remove
+                        for (int i = 0; i < columns.length - 1; i++) {
+                            width -= columns[i].getWidth();
+                        }
+        
+                        // Check
+                        if (width <= minimumWidth) {
+                            return;
+                        }
+                        
+                        // Increase size of last column
+                        columns[columns.length -1].setWidth(width);
+                        
+                    } else {
+                        
+                        // Equally distribute remaining space
+                        int total = 0;
+                        for (int i = 0; i < columns.length - 1; i++) {
+                            columns[i].setWidth(width / columns.length);
+                            total += width / columns.length;
+                        }
+                        columns[columns.length - 1].setWidth(width - total);
+                    }
+                }
+            });
+        }
+        
         return pageableTable;
     }
     /**
