@@ -1557,18 +1557,6 @@ public class Controller implements IView {
                                   model.getClipboard().getClipboardEntries()));
         }
 
-        // Update the attribute types
-        if (model.getInputConfig().getInput() != null) {
-            final DataHandle handle = model.getInputConfig()
-                                           .getInput()
-                                           .getHandle();
-            for (int i = 0; i < handle.getNumColumns(); i++) {
-                update(new ModelEvent(this,
-                                      ModelPart.ATTRIBUTE_TYPE,
-                                      handle.getAttributeName(i)));
-            }
-        }
-
         // Update research subset
         update(new ModelEvent(this,
                               ModelPart.RESEARCH_SUBSET,
