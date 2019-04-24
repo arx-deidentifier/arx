@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigator;
 import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigatorFactory;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -476,21 +477,23 @@ public class SWTUtil {
     /**
      * Returns a table viewer with pagination. Implements hacks for fixing OSX bugs.
      * @param parent
-     * @param pageSize
      * @param style
      * @param fill
      * @param equalSize
      * @return
      */
-    public static PageableTable createPageableTableViewer(Composite container, int pageSize, int style, boolean fill, final boolean equalSize) {
+    public static PageableTable createPageableTableViewer(Composite container, 
+                                                          int style, 
+                                                          boolean fill, 
+                                                          final boolean equalSize) {
         
         PageableTable pageableTable = new PageableTable(
                                           container,
                                           SWT.BORDER,
                                           style,
-                                          pageSize,
+                                          PageableTableNavigator.PAGE_SIZE,
                                           PageResultContentProvider.getInstance(),
-                                          new PageableTableNavigatorFactory(10),
+                                          PageableTableNavigatorFactory.getFactory(),
                                           null);
         
         final TableViewer viewer = pageableTable.getViewer();

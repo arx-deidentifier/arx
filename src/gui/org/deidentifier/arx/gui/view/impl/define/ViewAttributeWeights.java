@@ -85,9 +85,6 @@ public class ViewAttributeWeights implements IView {
         }
     }
 
-    /** Items per page in the viewer */
-    private static final int        ITEMS_PER_PAGE   = 100;
-
     /** Constant */
     private static final int        MIN_SPACE        = 60;
 
@@ -267,7 +264,7 @@ public class ViewAttributeWeights implements IView {
             panel.setLayout(SWTUtil.createGridLayout(1, true));
 
             // Viewer
-            final PageableTable paginationTable = SWTUtil.createPageableTableViewer(panel, ITEMS_PER_PAGE, SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE | SWT.V_SCROLL | SWT.VIRTUAL, true, false);
+            final PageableTable paginationTable = SWTUtil.createPageableTableViewer(panel, SWT.BORDER | SWT.FULL_SELECTION | SWT.SINGLE | SWT.V_SCROLL | SWT.VIRTUAL, true, false);
             paginationTable.getViewer().setContentProvider(new ArrayContentProvider());
             paginationTable.setPageLoader(new AttributePageLoader());
             paginationTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));

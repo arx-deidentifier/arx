@@ -77,9 +77,6 @@ public class ViewRisksQuasiIdentifiers implements IView {
         }
     }
 
-    /** Constant */
-    private final int           MAX_ITEMS_PER_PAGE = 100;
-
     /** Controller */
     private final Controller    controller;
     /** View */
@@ -121,7 +118,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
         this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
 
         // Create table
-        this.table = SWTUtil.createPageableTableViewer(parent, MAX_ITEMS_PER_PAGE, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, true, true);
+        this.table = SWTUtil.createPageableTableViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, true, true);
         this.table.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
         this.table.getViewer().setContentProvider(new ArrayContentProvider());
         this.table.setPageLoader(new AttributesPageLoader());

@@ -80,9 +80,6 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         }
     }
 
-    /** Constant */
-    private static final int  MAX_ITEMS_PER_PAGE = 100;
-
     /** Model */
     private StatisticsQuality data;
 
@@ -188,7 +185,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         separator1.setText(Resources.getMessage("ViewStatisticsQuality.9")); //$NON-NLS-1$
         
         // Add to upper
-        this.table = SWTUtil.createPageableTableViewer(upper, MAX_ITEMS_PER_PAGE, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, true, true);
+        this.table = SWTUtil.createPageableTableViewer(upper, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, true, true);
         this.table.setLayoutData(SWTUtil.createFillGridData());
         this.table.getViewer().setContentProvider(new ArrayContentProvider());
         this.table.setPageLoader(new QualityPageLoader());

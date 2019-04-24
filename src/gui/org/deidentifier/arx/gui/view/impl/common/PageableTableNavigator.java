@@ -20,6 +20,7 @@ import java.text.MessageFormat;
 import java.util.Locale;
 
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.nebula.widgets.pagination.AbstractPageControllerComposite;
 import org.eclipse.nebula.widgets.pagination.PageableController;
 import org.eclipse.nebula.widgets.pagination.PaginationHelper;
@@ -43,11 +44,14 @@ import org.eclipse.swt.widgets.Label;
  */
 public class PageableTableNavigator extends AbstractPageControllerComposite {
 
+    /** Enable pagination */
+    public static final int                           PAGE_SIZE = 100;
+
     /** the result label **/
-    private Label resultLabel;
+    private Label                                     resultLabel;
     /** the navigation page graphics **/
-    private NavigationPageGraphics navigationPage;
-    /** Configurator*/
+    private NavigationPageGraphics                    navigationPage;
+    /** Configurator */
     private final INavigationPageGraphicsConfigurator configurator;
 
     /**
@@ -110,13 +114,22 @@ public class PageableTableNavigator extends AbstractPageControllerComposite {
         // Do nothing
     }
 
-    public void totalElementsChanged(long oldTotalElements,
-            long newTotalElements, PageableController controller) {
+    @Override
+    public void totalElementsChanged(long oldTotalElements, long newTotalElements, PageableController controller) {
+        
+        if (newTotalElements <= PAGE_SIZE) {
+            ((GridData)this.getLayoutData()).heightHint = 0;
+            this.getParent().layout();
+        } else {
+            ((GridData)this.getLayoutData()).heightHint = -1;
+            this.getParent().layout();
+        }
+        
         // 1) Compute page indexes
-        int[] indexes = PaginationHelper.getPageIndexes(
-                controller.getCurrentPage(), controller.getTotalPages(), 10);
+        int[] indexes = PaginationHelper.getPageIndexes(controller.getCurrentPage(), controller.getTotalPages(), 10);
         // Update the GC navigation page with page indexes and selected page.
         navigationPage.update(indexes, 0, getLocale());
+                
         refreshEnabled(controller);
     }
 
@@ -240,16 +253,34 @@ public class PageableTableNavigator extends AbstractPageControllerComposite {
         navigationPage.setEnabled(controller.hasPreviousPage(), controller.hasNextPage());
     }
 
-    /**
-     * Create the UI
-     */
+    @Override
     protected void createUI(Composite parent) {
-        GridLayout layout = new GridLayout(2, false);
+        
+        // Parent == this
+        GridLayout layout = SWTUtil.createGridLayout(2, true);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
-        this.setLayout(layout);
+        layout.makeColumnsEqualWidth = false;
+        parent.setLayout(layout);
 
         createLeftContainer(parent);
         createRightContainer(parent);
+//
+//        // Parent
+//        GridLayout layout = SWTUtil.createGridLayout(1, true);
+//        layout.marginWidth = 0;
+//        layout.marginHeight = 0;
+//        this.setLayout(layout);
+//        GridData data = SWTUtil.createNoFillGridData();
+//        data.heightHint=0;
+//        data.widthHint=0;
+//        this.setLayoutData(data);
+//        
+//        // Empty child
+//        Composite empty = new Composite(parent, SWT.NONE);
+//        data = SWTUtil.createNoFillGridData();
+//        data.heightHint=0;
+//        data.widthHint=0;
+//        empty.setLayoutData(data);
     }
 }

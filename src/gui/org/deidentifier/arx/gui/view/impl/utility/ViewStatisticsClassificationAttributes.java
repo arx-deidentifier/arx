@@ -179,8 +179,6 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         }
     }
 
-    /** Constant */
-    private static final int    MAX_ITEMS_PER_PAGE         = 100;
     /** Label */
     private final String        LABEL_SELECT               = Resources.getMessage("ViewClassificationAttributes.39"); //$NON-NLS-1$
     /** Label */
@@ -228,7 +226,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
 
         // Create group
         root = parent;
-        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).create());
 
         Label label = new Label(parent, SWT.LEFT);
         label.setText(Resources.getMessage("ViewClassificationAttributes.0")); //$NON-NLS-1$
@@ -238,7 +236,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         // Create pageable table
-        features = SWTUtil.createPageableTableViewer(parent, MAX_ITEMS_PER_PAGE, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER, true, false);
+        features = SWTUtil.createPageableTableViewer(parent, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER, true, false);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
         features.getViewer().setContentProvider(new ArrayContentProvider());
         features.setPageLoader(new AttributesPageLoader());
@@ -359,7 +357,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         });
         
         // Create pageable table
-        classes = SWTUtil.createPageableTableViewer(parent,  MAX_ITEMS_PER_PAGE, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER, true, false);
+        classes = SWTUtil.createPageableTableViewer(parent, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER, true, false);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
         classes.getViewer().setContentProvider(new ArrayContentProvider());
         classes.setPageLoader(new AttributesPageLoader());

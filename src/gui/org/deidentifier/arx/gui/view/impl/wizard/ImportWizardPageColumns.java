@@ -29,6 +29,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.DataType.DataTypeWithFormat;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigator;
 import org.deidentifier.arx.io.ImportColumn;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -73,9 +74,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * @author Fabian Prasser
  */
 public class ImportWizardPageColumns extends WizardPage {
-    
-    /** Items per page in the viewer*/
-    private static final int ITEMS_PER_PAGE = 100;
 
     /**
      * Page loader
@@ -356,7 +354,7 @@ public class ImportWizardPageColumns extends WizardPage {
         container.setLayout(new GridLayout(2, false));
 
         /* TableViewer for the columns with a checkbox in each row */
-        paginationTable = SWTUtil.createPageableTableViewer(container, ITEMS_PER_PAGE, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL, true, false);
+        paginationTable = SWTUtil.createPageableTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL, true, false);
         paginationTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
         paginationTable.getViewer().setContentProvider(new ArrayContentProvider());
         paginationTable.setPageLoader(new ColumnPageLoader());
@@ -525,7 +523,7 @@ public class ImportWizardPageColumns extends WizardPage {
                 if (current > 0) {
                     List<ImportWizardModelColumn> columns = wizardImport.getData()
                                                                         .getWizardColumns();
-                    int index = current + (paginationTable.getController().getCurrentPage() * ITEMS_PER_PAGE);
+                    int index = current + (paginationTable.getController().getCurrentPage() * PageableTableNavigator.PAGE_SIZE);
                     Collections.swap(columns, index, index - 1);
                     paginationTable.refreshPage();
                     paginationTable.getViewer().getTable().select(current - 1);
@@ -558,7 +556,7 @@ public class ImportWizardPageColumns extends WizardPage {
 
                     List<ImportWizardModelColumn> columns = wizardImport.getData()
                                                                         .getWizardColumns();
-                    int index = current + (paginationTable.getController().getCurrentPage() * ITEMS_PER_PAGE);
+                    int index = current + (paginationTable.getController().getCurrentPage() * PageableTableNavigator.PAGE_SIZE);
                     Collections.swap(columns, index, index + 1);
                     paginationTable.refreshPage();
                     paginationTable.getViewer().getTable().select(current + 1);

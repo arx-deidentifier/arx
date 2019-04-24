@@ -86,8 +86,6 @@ public class ViewAttributeList implements IView {
         }
     }
 
-    /** Constant */
-    private static final int ITEMS_PER_PAGE = 100;
     /** Resource */
     private final Image      IMAGE_ENABLED;
 
@@ -255,7 +253,7 @@ public class ViewAttributeList implements IView {
      * @param parent
      */
     private void create(final Composite parent) {
-        this.table = SWTUtil.createPageableTableViewer(parent, ITEMS_PER_PAGE, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION, true, true);
+        this.table = SWTUtil.createPageableTableViewer(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION, true, true);
         this.table.setLayoutData(SWTUtil.createFillGridData());
         this.table.getViewer().setContentProvider(new ArrayContentProvider());
         this.table.setPageLoader(new AttributesPageLoader());

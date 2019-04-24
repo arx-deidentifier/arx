@@ -31,27 +31,19 @@ import org.eclipse.swt.widgets.Composite;
 public class PageableTableNavigatorFactory implements ICompositeRendererFactory {
 
     /** Number of  items*/
-    private final int numItems;
-    
-    /** Enable pagination*/
-    private static final int MAX_ITEMS_WITHOUT_PAGINATION = 100;
+    private static final PageableTableNavigatorFactory FACTORY = new PageableTableNavigatorFactory();
     
     /**
-     * Returns a new factory
-     * @param numItems
+     * Returns the factory
      */
-    public PageableTableNavigatorFactory(int numItems) {
-        this.numItems = numItems;
+    public static PageableTableNavigatorFactory getFactory() {
+        return FACTORY;
     }
 
     /**
      * Creates the composite
      */
     public Composite createComposite(Composite parent, int style, PageableController controller) {
-        if (numItems <= MAX_ITEMS_WITHOUT_PAGINATION) {
-            return new PageableTableNavigatorEmpty(parent, SWT.NONE, controller);
-        } else {
-            return new PageableTableNavigator(parent, SWT.NONE, controller);
-        }
+        return new PageableTableNavigator(parent, SWT.NONE, controller);
     }
 }
