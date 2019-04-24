@@ -25,12 +25,12 @@ import java.util.Map;
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigatorFactory;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
 import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
-import org.eclipse.nebula.widgets.pagination.renderers.navigation.ResultAndNavigationPageGraphicsRendererFactory;
 import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -474,42 +474,6 @@ public class SWTUtil {
     }
 
     /**
-     * Returns a table. Implements hacks for fixing OSX bugs.
-     * @param parent
-     * @param style
-     * @return
-     */
-    public static Table createTable(Composite parent, int style) {
-        Table table = new Table(parent, style);
-        fixOSXTableBug(table);
-        return table;
-    }
-
-    /**
-     * Returns a dynamic table. Implements hacks for fixing OSX bugs.
-     * @param parent
-     * @param style
-     * @return
-     */
-    public static DynamicTable createTableDynamic(Composite parent, int style) {
-        DynamicTable table = new DynamicTable(parent, style);
-        fixOSXTableBug(table);
-        return table;
-    }
-
-    /**
-     * Returns a table viewer. Implements hacks for fixing OSX bugs.
-     * @param parent
-     * @param style
-     * @return
-     */
-    public static TableViewer createTableViewer(Composite container, int style) {
-        TableViewer viewer = new TableViewer(container, style);
-        fixOSXTableBug(viewer.getTable());
-        return viewer;
-    }
-
-    /**
      * Returns a table viewer with pagination. Implements hacks for fixing OSX bugs.
      * @param parent
      * @param pageSize
@@ -526,7 +490,7 @@ public class SWTUtil {
                                           style,
                                           pageSize,
                                           PageResultContentProvider.getInstance(),
-                                          ResultAndNavigationPageGraphicsRendererFactory.getBlueFactory(),
+                                          new PageableTableNavigatorFactory(10),
                                           null);
         
         final TableViewer viewer = pageableTable.getViewer();
@@ -597,6 +561,42 @@ public class SWTUtil {
         }
         
         return pageableTable;
+    }
+
+    /**
+     * Returns a table. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static Table createTable(Composite parent, int style) {
+        Table table = new Table(parent, style);
+        fixOSXTableBug(table);
+        return table;
+    }
+
+    /**
+     * Returns a dynamic table. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static DynamicTable createTableDynamic(Composite parent, int style) {
+        DynamicTable table = new DynamicTable(parent, style);
+        fixOSXTableBug(table);
+        return table;
+    }
+
+    /**
+     * Returns a table viewer. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @return
+     */
+    public static TableViewer createTableViewer(Composite container, int style) {
+        TableViewer viewer = new TableViewer(container, style);
+        fixOSXTableBug(viewer.getTable());
+        return viewer;
     }
     /**
      * Returns a checkbox table viewer. Implements hacks for fixing OSX bugs.
@@ -715,29 +715,6 @@ public class SWTUtil {
     }
 
     /**
-     * Fixes bugs on OSX when scrolling in tables
-     * @param table
-     */
-    private static void fixOSXTableBug(final Table table) {
-        if (isMac()) {
-            SelectionListener bugFixer = new SelectionListener(){
-                
-                @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    widgetSelected(arg0);
-                }
-
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    table.redraw();
-                }
-            };
-            table.getVerticalBar().addSelectionListener(bugFixer);
-            table.getHorizontalBar().addSelectionListener(bugFixer);
-        }
-    }
-
-    /**
      * Converts a boolean into a pretty string
      * @param value
      * @return
@@ -749,7 +726,7 @@ public class SWTUtil {
             return Resources.getMessage("PropertiesView.170");
         }
     }
-    
+
     /**
      * Returns a pretty string representing the given double
      * @param value
@@ -809,7 +786,7 @@ public class SWTUtil {
         }
         return String.valueOf(value);
     }
-   
+    
     /**
      * Are we running on an OSX system
      * @return
@@ -817,24 +794,7 @@ public class SWTUtil {
     public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
-    /**
-     * En-/disables the composite and its children.
-     *
-     * @param elem
-     * @param val
-     */
-    private static void setEnabled(final Composite elem, final boolean val) {
-        elem.setEnabled(val);
-        for (final Control c : elem.getChildren()) {
-            if (c instanceof Composite) {
-                setEnabled((Composite) c, val);
-            } else {
-                c.setEnabled(val);
-            }
-        }
-    }
-    
+   
     /**
      * Converts the slider value to a double.
      *
@@ -854,5 +814,45 @@ public class SWTUtil {
             val = max;
         }
         return val;
+    }
+    
+    /**
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
+     */
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            SelectionListener bugFixer = new SelectionListener(){
+                
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
+        }
+    }
+    
+    /**
+     * En-/disables the composite and its children.
+     *
+     * @param elem
+     * @param val
+     */
+    private static void setEnabled(final Composite elem, final boolean val) {
+        elem.setEnabled(val);
+        for (final Control c : elem.getChildren()) {
+            if (c instanceof Composite) {
+                setEnabled((Composite) c, val);
+            } else {
+                c.setEnabled(val);
+            }
+        }
     }
 }

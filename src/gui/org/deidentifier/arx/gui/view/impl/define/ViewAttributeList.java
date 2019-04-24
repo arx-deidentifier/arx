@@ -255,7 +255,7 @@ public class ViewAttributeList implements IView {
      * @param parent
      */
     private void create(final Composite parent) {
-        this.table = SWTUtil.createPageableTableViewer(parent, ITEMS_PER_PAGE, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION, true, true);
+        this.table = SWTUtil.createPageableTableViewer(parent, ITEMS_PER_PAGE, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION, true, true);
         this.table.setLayoutData(SWTUtil.createFillGridData());
         this.table.getViewer().setContentProvider(new ArrayContentProvider());
         this.table.setPageLoader(new AttributesPageLoader());
