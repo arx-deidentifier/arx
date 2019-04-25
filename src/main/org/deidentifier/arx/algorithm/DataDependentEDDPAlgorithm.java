@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
@@ -49,12 +48,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
 
     /** Number of expansions to be performed */
     private final int                        expansionLimit;
-
-    /** Privacy budget to use for each execution of the exponential mechanism */
-    private final double                     epsilonPerStep;
-
-    /** True iff this algorithm should be executed in a deterministic manner */
-    private final boolean                    deterministic;
+    
+    /** The exponential mechanism */
+    private final ExponentialMechanism<Long> exponentialMechanism;
 
     /**
      * Creates a new instance
@@ -84,33 +80,25 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
-        this.deterministic = deterministic;
         this.expansionLimit = expansionLimit;
         
-        if (this.expansionLimit == 0) {
-            // Avoid division by zero
-            this.epsilonPerStep = 0d;
-        } else {
+        // Calculate the privacy budget to use for each step
+        double epsilonPerStep = 0d;
+        if (this.expansionLimit != 0) {
             IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
             try {
-                this.epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(this.expansionLimit)).lower;
+                epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(this.expansionLimit)).lower;
             } catch (IntervalArithmeticException e) {
                 throw new RuntimeException(e);
             }
         }
+        
+        // Initialize the exponential mechanism
+        this.exponentialMechanism = new ExponentialMechanism<Long>(epsilonPerStep, deterministic);
     }
     
     @Override
     public boolean traverse() {
-        
-        // Create a new local ExponentialMechanism instance in order to reduce memory consumption caused
-        // by internal caches used by this class
-        ExponentialMechanism<Long> exponentialMechanism;
-        try {
-            exponentialMechanism = new ExponentialMechanism<Long>(epsilonPerStep, deterministic);
-        } catch (IntervalArithmeticException e) {
-            throw new RuntimeException(e);
-        }
         
         // Set the top-transformation to be the initial pivot element
         Transformation pivot = solutionSpace.getTop();
@@ -183,12 +171,12 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         // Convert the map into arrays of the types required by the exponential mechanism
 
         Long[] values = new Long[transformationIDToScore.size()];
-        BigFraction[] scores = new BigFraction[values.length];
+        double[] scores = new double[values.length];
         
         int i = 0;
         for (Entry<Long, ILScore> entry : transformationIDToScore.entrySet()) {
             values[i] = entry.getKey();
-            scores[i] = entry.getValue().getValue();
+            scores[i] = entry.getValue().getValue().doubleValue();
             i++;
         }
 
