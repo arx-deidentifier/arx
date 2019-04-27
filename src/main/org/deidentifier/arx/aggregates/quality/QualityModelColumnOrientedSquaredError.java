@@ -39,6 +39,8 @@ public class QualityModelColumnOrientedSquaredError extends QualityModel<Quality
      * @param totalWorkload
      * @param input
      * @param output
+     * @param suppressedInput
+     * @param suppressedOutput
      * @param groupedInput
      * @param groupedOutput
      * @param hierarchies
@@ -47,27 +49,31 @@ public class QualityModelColumnOrientedSquaredError extends QualityModel<Quality
      * @param config
      */
     public QualityModelColumnOrientedSquaredError(WrappedBoolean interrupt,
-                                         WrappedInteger progress,
-                                         int totalWorkload,
-                                         DataHandle input,
-                                         DataHandle output,
-                                         Groupify<TupleWrapper> groupedInput,
-                                         Groupify<TupleWrapper> groupedOutput,
-                                         String[][][] hierarchies,
-                                         QualityDomainShare[] shares,
-                                         int[] indices,
-                                         QualityConfiguration config) {
-        super(interrupt,
-              progress,
-              totalWorkload,
-              input,
-              output,
-              groupedInput,
-              groupedOutput,
-              hierarchies,
-              shares,
-              indices,
-              config);
+                                                  WrappedInteger progress,
+                                                  int totalWorkload,
+                                                  DataHandle input,
+                                                  DataHandle output,
+                                                  int suppressedInput,
+                                                  int suppressedOutput,
+                                                  Groupify<TupleWrapper> groupedInput,
+                                                  Groupify<TupleWrapper> groupedOutput,
+                                                  String[][][] hierarchies,
+                                                  QualityDomainShare[] shares,
+                                                  int[] indices,
+                                                  QualityConfiguration config) {
+                super(interrupt,
+                      progress,
+                      totalWorkload,
+                      input,
+                      output,
+                      suppressedInput,
+                      suppressedOutput,
+                      groupedInput,
+                      groupedOutput,
+                      hierarchies,
+                      shares,
+                      indices,
+                      config);
     }
     
     @Override

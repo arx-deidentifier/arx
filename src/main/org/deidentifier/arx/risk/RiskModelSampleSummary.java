@@ -326,8 +326,10 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, ignoreOutliers, suppressed);
-            map.add(tuple);
+            if (!handle.isOutlier(row)) {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+                map.add(tuple);
+            }
             if (stop.value) { throw new ComputationInterruptedException(); }
         }
 
@@ -371,30 +373,27 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
             
-            // Only process unsuppressed records
-            if (!element.getElement().isSuppressed()) {
-                
-                int groupSizeInSample = element.getCount();
-                int groupSizeInPopulation = groupSizeInSample;
-                if (population != sample) {
-                    groupSizeInPopulation = population.get(element.getElement()).getCount();
-                }
-                
-                // Compute rA
-                if (1d / groupSizeInPopulation > threshold) {
-                    rA += groupSizeInSample;
-                }
-                // Compute rB
-                if (groupSizeInPopulation < smallestClassSizeInPopulation) {
-                    smallestClassSizeInPopulation = groupSizeInPopulation;
-                }
-                // Compute rC
-                numClassesInSample++;
-                numRecordsInSample += groupSizeInSample;
-                rC1 += groupSizeInPopulation;
-                rC2 += (double)groupSizeInSample / (double)groupSizeInPopulation;
+            // Process
+            int groupSizeInSample = element.getCount();
+            int groupSizeInPopulation = groupSizeInSample;
+            if (population != sample) {
+                groupSizeInPopulation = population.get(element.getElement()).getCount();
             }
-                
+
+            // Compute rA
+            if (1d / groupSizeInPopulation > threshold) {
+                rA += groupSizeInSample;
+            }
+            // Compute rB
+            if (groupSizeInPopulation < smallestClassSizeInPopulation) {
+                smallestClassSizeInPopulation = groupSizeInPopulation;
+            }
+            // Compute rC
+            numClassesInSample++;
+            numRecordsInSample += groupSizeInSample;
+            rC1 += groupSizeInPopulation;
+            rC2 += (double) groupSizeInSample / (double) groupSizeInPopulation;
+
             // Next element
             element = element.next();
             
@@ -448,20 +447,17 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
             
-            // Only process unsuppressed records
-            if (!element.getElement().isSuppressed()) {
-                
-                int groupSizeInSample = element.getCount();
-                int groupSizeInPopulation = groupSizeInSample;
-                if (population != sample) {
-                    groupSizeInPopulation = population.get(element.getElement()).getCount();
-                }
-                
-                // Compute rC
-                numRecordsInSample += groupSizeInSample;
-                rC += (double)groupSizeInSample / (double)groupSizeInPopulation;
+            // Process
+            int groupSizeInSample = element.getCount();
+            int groupSizeInPopulation = groupSizeInSample;
+            if (population != sample) {
+                groupSizeInPopulation = population.get(element.getElement()).getCount();
             }
-                
+
+            // Compute rC
+            numRecordsInSample += groupSizeInSample;
+            rC += (double) groupSizeInSample / (double) groupSizeInPopulation;
+
             // Next element
             element = element.next();
             
@@ -510,24 +506,20 @@ public class RiskModelSampleSummary {
             if (prog != progress.value) {
                 progress.value = prog;
             }
-            
-            // Only process unsuppressed records
-            if (!element.getElement().isSuppressed()) {
-                
-                // Compute rA
-                int groupSize = element.getCount();
-                if (1d / groupSize > threshold) {
-                    rA += groupSize;
-                }
-                // Compute rB
-                if (groupSize < smallestClassSize) {
-                    smallestClassSize = groupSize;
-                }
-                // Compute rC
-                numClasses++;
-                numRecords += groupSize;
+
+            // Compute rA
+            int groupSize = element.getCount();
+            if (1d / groupSize > threshold) {
+                rA += groupSize;
             }
-                
+            // Compute rB
+            if (groupSize < smallestClassSize) {
+                smallestClassSize = groupSize;
+            }
+            // Compute rC
+            numClasses++;
+            numRecords += groupSize;
+    
             // Next element
             element = element.next();
             

@@ -48,7 +48,8 @@ public class RiskModelHistogram {
     private double numClasses;
 
     /**
-     * Creates a new instance from the given distribution
+     * Creates a new instance from the given distribution.
+     * IMPORTANT: Suppressed should have been ignored before calling this.
      * 
      * @param distribution
      */
@@ -103,7 +104,7 @@ public class RiskModelHistogram {
             }
 
             if (!handle.isOutlier(row)) {
-                TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row);
                 map.add(tuple);
             }
             if (stop.value) { throw new ComputationInterruptedException(); }

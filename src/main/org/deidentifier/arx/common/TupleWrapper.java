@@ -32,8 +32,6 @@ public class TupleWrapper {
     private final int      hashcode;
     /** Indices */
     private final String[] values;
-    /** Suppressed */
-    private final boolean  suppressed;
 
     /**
      * Creates a new instance
@@ -51,7 +49,9 @@ public class TupleWrapper {
             values[idx++] = value;
         }
         this.hashcode = hashcode;
-        this.suppressed = handle.isOutlier(row);
+        if (handle.isOutlier(row)) {
+            throw new IllegalStateException("Suppressed tuples must not be analyzed");
+        }
     }
     
     /**
@@ -59,66 +59,22 @@ public class TupleWrapper {
      * @param handle
      * @param indices
      * @param row
-     * @param ignoreSuppression
      */
-    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreSuppression) {
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row) {
         this.values = new String[indices.length];
         int hashcode = 1;
         int idx = 0;
         for (int index : indices) {
-            String value = handle.getValue(row, index, ignoreSuppression);
+            String value = handle.getValue(row, index);
             hashcode = 31 * hashcode + value.hashCode();
             values[idx++] = value;
         }
         this.hashcode = hashcode;
-        this.suppressed = handle.isOutlier(row);
-    }
-
-    /**
-     * Creates a new instance
-     * @param handle
-     * @param indices
-     * @param row
-     * @param ignoreSuppression
-     * @param wildcard
-     */
-    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreSuppression, String wildcard) {
-        this.values = new String[indices.length];
-        int hashcode = 1;
-        int idx = 0;
-        boolean suppressed = true;
-        for (int index : indices) {
-            String value = handle.getValue(row, index, ignoreSuppression);
-            hashcode = 31 * hashcode + value.hashCode();
-            values[idx++] = value;
-            suppressed = suppressed && (wildcard != null && value.equals(wildcard));
+        if (handle.isOutlier(row)) {
+            throw new IllegalStateException("Suppressed tuples must not be analyzed");
         }
-        this.hashcode = hashcode;
-        this.suppressed = handle.isOutlier(row) || suppressed;
     }
     
-    /**
-     * Creates a new instance
-     * @param handle
-     * @param indices
-     * @param row
-     * @param wildcard
-     */
-    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, String wildcard) {
-        this.values = new String[indices.length];
-        int hashcode = 1;
-        int idx = 0;
-        boolean suppressed = true;
-        for (int index : indices) {
-            String value = handle.getValue(row, index, false);
-            hashcode = 31 * hashcode + value.hashCode();
-            values[idx++] = value;
-            suppressed = suppressed && value.equals(wildcard);
-        }
-        this.hashcode = hashcode;
-        this.suppressed = suppressed;
-    }
-
     @Override
     public boolean equals(Object other) {
         return Arrays.equals(((TupleWrapper) other).values, this.values);
@@ -135,13 +91,5 @@ public class TupleWrapper {
     @Override
     public int hashCode() {
         return hashcode;
-    }
-    
-    /**
-     * Is this record suppressed
-     * @return
-     */
-    public boolean isSuppressed() {
-        return suppressed;
     }
 }
