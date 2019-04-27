@@ -137,7 +137,7 @@ public class RiskModelHistogram {
      * @return the avgClassSize
      */
     public double getAvgClassSize() {
-        return avgClassSize;
+        return Double.isNaN(avgClassSize) ? 0d : avgClassSize;
     }
 
     /**
