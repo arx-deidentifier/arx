@@ -92,10 +92,12 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
      * @return
      */
     private String format(double value, double baseline) {
+        double relative = value / baseline * 100d;
+        relative = Double.isNaN(relative) ? 0d : relative;
         StringBuilder builder = new StringBuilder();
         builder.append(SWTUtil.getPrettyString(value));
         builder.append(" (");
-        builder.append(SWTUtil.getPrettyString(value / baseline * 100d));
+        builder.append(SWTUtil.getPrettyString(relative));
         builder.append("%)");
         return builder.toString();
     }
@@ -196,7 +198,7 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
                            SWTUtil.getPrettyString(summary.getNumberOfRecords()));
 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.9"), //$NON-NLS-1$
-                           format(summary.getNumberOfSuppressedRecords(), summary.getNumberOfSuppressedRecords()));
+                           format(summary.getNumberOfSuppressedRecords(), summary.getNumberOfRecords()));
                 
                 table.setRedraw(true);
                 
