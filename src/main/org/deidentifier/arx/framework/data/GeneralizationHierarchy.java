@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.data;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * The class GeneralizationHierarchy.
@@ -60,7 +61,7 @@ public class GeneralizationHierarchy {
         final int height = hierarchy[0].length;
 
         // Determine number of unique input values
-        final int uniqueIn = dictionary.getNumUniqueUnfinalizedValues(dimension);
+        final int uniqueIn = dictionary.getUnfinalizedValues(dimension).size();
 
         // Build hierarchy
         map = new int[uniqueIn][height];
@@ -91,7 +92,32 @@ public class GeneralizationHierarchy {
 
         // Sanity check
         if (distinctValues[0] < uniqueIn) {
-            throw new IllegalArgumentException("Attribute '" + name + "': hierarchy misses some values or contains duplicates"); 
+            
+            // Collect values for which transformation rules have been found
+            IntOpenHashSet rules = new IntOpenHashSet();
+            for (int k = 0; k < map.length; k++) {
+                rules.add(map[k][0]);
+            }
+            
+            // Search for values for which no rules have been defined
+            String missing = null;
+            ObjectIntOpenHashMap<String> dictmap = dictionary.getUnfinalizedValues(dimension);
+            for (int index = 0; index < dictmap.allocated.length; index++) {
+                if (dictmap.allocated[index]) {
+                    int id = dictmap.values[index];
+                    if (!rules.contains(id)) {
+                        missing = dictmap.keys[index];
+                        break;
+                    }
+                }
+            }
+
+            // Try to throw a verbose exception
+            if (missing != null) {
+                throw new IllegalArgumentException("Attribute '" + name + "': hierarchy does not contain a transformation rule for value '" + missing + "'");    
+            } else {
+                throw new IllegalArgumentException("Attribute '" + name + "': hierarchy misses some values or contains duplicates");
+            } 
         }
     }
 
