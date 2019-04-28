@@ -237,11 +237,21 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     }
 
     /**
+     * Sets the contains header.
+     *
+     * @param containsHeader {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
+    }
+
+    /**
      * Sets the indexes based on the header.
      *
      * @param row the row
      */
-    public void prepare(String[] row) {
+    protected void prepare(String[] row) {
 
         for (ImportColumn c : super.getColumns()) {
             ImportColumnCSV column = (ImportColumnCSV) c;
@@ -258,15 +268,5 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
                 }
             }
         }
-    }
-
-    /**
-     * Sets the contains header.
-     *
-     * @param containsHeader {@link #containsHeader}
-     */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
     }
 }
