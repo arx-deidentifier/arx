@@ -353,6 +353,17 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
+    protected boolean internalIsOutlier(int row, int[] columns) {
+        int[] suppressed = dictionary.getSuppressedCodes();
+        for (int column : columns) {
+            if (data.get(row, column) != suppressed[column]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     protected boolean internalReplace(int column,
                                       String original,
                                       String replacement) {
@@ -412,7 +423,7 @@ public class DataHandleInput extends DataHandle {
     protected void setLocked(boolean locked){
         this.locked = locked;
     }
-
+    
     /**
      * Update the definition.
      *
@@ -426,7 +437,7 @@ public class DataHandleInput extends DataHandle {
             this.definition.setLocked(true);
         }
     }
-    
+
     /**
      * Updates the definition with further data to swap.
      *

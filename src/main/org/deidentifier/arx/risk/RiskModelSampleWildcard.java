@@ -338,7 +338,7 @@ public class RiskModelSampleWildcard {
                 progress.value = prog;
             }
 
-            if (!handle.isOutlier(row)) {
+            if (!handle.isOutlier(row, indices)) {
                 TupleWrapper tuple = new TupleWrapper(handle, indices, row);
                 map.add(tuple);
             }

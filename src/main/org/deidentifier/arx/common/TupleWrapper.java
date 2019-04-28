@@ -49,9 +49,6 @@ public class TupleWrapper {
             values[idx++] = value;
         }
         this.hashcode = hashcode;
-        if (handle.isOutlier(row)) {
-            throw new IllegalStateException("Suppressed tuples must not be analyzed");
-        }
     }
     
     /**
@@ -70,9 +67,6 @@ public class TupleWrapper {
             values[idx++] = value;
         }
         this.hashcode = hashcode;
-        if (handle.isOutlier(row)) {
-            throw new IllegalStateException("Suppressed tuples must not be analyzed");
-        }
     }
     
     @Override

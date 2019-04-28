@@ -278,4 +278,14 @@ public class DataHandleInternal {
             return this.handle instanceof DataHandleOutput;
         }
     }
+
+    /**
+     * Returns whether this is an outlier regarding the given columns
+     * @param row
+     * @param columns
+     * @return
+     */
+    public boolean isOutlier(int row, int[] columns) {
+        return this.handle.internalIsOutlier(row, columns);
+    }
 }
