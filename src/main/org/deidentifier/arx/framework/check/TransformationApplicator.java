@@ -149,7 +149,7 @@ public class TransformationApplicator {
         
         // Perform suppression
         if (config.getAbsoluteSuppressionLimit() != 0 || !currentGroupify.isPrivacyModelFulfilled()) {
-            currentGroupify.performSuppression();
+            currentGroupify.performSuppression(inputGeneralized.getDictionary());
         }
         
         // Return the buffer
