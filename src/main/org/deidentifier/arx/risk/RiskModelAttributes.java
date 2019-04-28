@@ -115,7 +115,7 @@ public class RiskModelAttributes {
          * @return the alpha distinction
          */
         public double getDistinction() {
-            return alphaDistinction;
+            return Double.isNaN(alphaDistinction) ? 0d : alphaDistinction;
         }
 
         /**
@@ -133,7 +133,7 @@ public class RiskModelAttributes {
          * @return the alpha separation
          */
         public double getSeparation() {
-            return alphaSeparation;
+            return Double.isNaN(alphaSeparation) ? 0d : alphaSeparation;
         }
     }
     /** Stop flag */

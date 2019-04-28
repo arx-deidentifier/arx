@@ -93,35 +93,35 @@ public class RiskModelSampleRisks extends RiskModelSample {
     }
 
     /**
-     * Returns the fraction of tuples affected by the highest re-identification
+     * Returns the fraction of records affected by the highest re-identification
      * risk
      * 
      * @return
      */
-    public double getFractionOfTuplesAffectedByHighestRisk() {
+    public double getFractionOfRecordsAffectedByHighestRisk() {
         if (getHistogram().isEmpty()) {
             return 0d;
         }
-        return getNumTuplesAffectedByHighestRisk() /
+        return getNumRecordsAffectedByHighestRisk() /
                getHistogram().getNumRecords();
     }
 
     /**
-     * Returns the fraction of tuples affected by the lowest re-identification
+     * Returns the fraction of records affected by the lowest re-identification
      * risk
      * 
      * @return
      */
-    public double getFractionOfTuplesAffectedByLowestRisk() {
+    public double getFractionOfRecordsAffectedByLowestRisk() {
         if (getHistogram().isEmpty()) {
             return 0d;
         }
-        return getNumTuplesAffectedByLowestRisk() /
+        return getNumRecordsAffectedByLowestRisk() /
                getHistogram().getNumRecords();
     }
 
     /**
-     * Returns the highest re-identification risk of any tuple in the data set
+     * Returns the highest re-identification risk of any records in the data set
      * 
      * @return
      */
@@ -134,7 +134,7 @@ public class RiskModelSampleRisks extends RiskModelSample {
     }
 
     /**
-     * Returns the lowest re-identification risk of any tuple in the data set
+     * Returns the lowest re-identification risk of any records in the data set
      * 
      * @return
      */
@@ -148,12 +148,12 @@ public class RiskModelSampleRisks extends RiskModelSample {
     }
     
     /**
-     * Returns the number of tuples affected by the highest re-identification
+     * Returns the number of records affected by the highest re-identification
      * risk
      * 
      * @return
      */
-    public double getNumTuplesAffectedByHighestRisk() {
+    public double getNumRecordsAffectedByHighestRisk() {
         if (getHistogram().isEmpty()) {
             return 0d;
         }
@@ -162,12 +162,12 @@ public class RiskModelSampleRisks extends RiskModelSample {
     }
     
     /**
-     * Returns the number of tuples affected by the lowest re-identification
+     * Returns the number of records affected by the lowest re-identification
      * risk
      * 
      * @return
      */
-    public double getNumTuplesAffectedByLowestRisk() {
+    public double getNumRecordsAffectedByLowestRisk() {
         if (getHistogram().isEmpty()) {
             return 0d;
         }

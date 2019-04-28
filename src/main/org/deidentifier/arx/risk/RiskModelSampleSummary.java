@@ -78,7 +78,7 @@ public class RiskModelSampleSummary {
          * @return
          */
         public double getSuccessRate() {
-            return rC;
+            return Double.isNaN(rC) ? 0d : rC;
         }
     }
 
@@ -150,7 +150,7 @@ public class RiskModelSampleSummary {
          * @return
          */
         public double getHighestRisk() {
-            return rB;
+            return Double.isNaN(rB) ? 0d : rB;
         }
 
         /**
@@ -158,7 +158,7 @@ public class RiskModelSampleSummary {
          * @return
          */
         public double getRecordsAtRisk() {
-            return rA;
+            return Double.isNaN(rA) ? 0d : rA;
         }
 
         /**
@@ -175,7 +175,7 @@ public class RiskModelSampleSummary {
          * @return
          */
         public double getSuccessRate() {
-            return rC;
+            return Double.isNaN(rC) ? 0d : rC;
         }
     }
 

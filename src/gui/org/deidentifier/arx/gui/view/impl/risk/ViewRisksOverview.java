@@ -252,10 +252,10 @@ public class ViewRisksOverview extends ViewRisks<AnalysisContextRisk> {
                 RiskModelPopulationUniqueness popUniqueModel = builder.getPopulationBasedUniquenessRisk();
                 
                 lowestRisk = samReidModel.getLowestRisk();
-                fractionOfTuplesAffectedByLowestRisk = samReidModel.getFractionOfTuplesAffectedByLowestRisk();
+                fractionOfTuplesAffectedByLowestRisk = samReidModel.getFractionOfRecordsAffectedByLowestRisk();
                 averageRisk = samReidModel.getAverageRisk();
                 highestRisk = samReidModel.getHighestRisk();
-                fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfTuplesAffectedByHighestRisk();
+                fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfRecordsAffectedByHighestRisk();
                 estimatedProsecutorRisk = samReidModel.getEstimatedProsecutorRisk();
                 estimatedJournalistRisk = samReidModel.getEstimatedJournalistRisk();
                 estimatedMarketerRisk = samReidModel.getEstimatedMarketerRisk();
