@@ -167,6 +167,14 @@ public class RiskModelHistogram {
     public double getNumRecords() {
         return numRecords;
     }
+    
+    /**
+     * Returns whether the histogram is empty
+     * @return
+     */
+    public boolean isEmpty() {
+        return numRecords == 0d;
+    }
 
     /**
      * Convert and analyze

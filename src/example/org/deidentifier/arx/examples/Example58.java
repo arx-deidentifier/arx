@@ -166,7 +166,7 @@ public class Example58 extends Example {
         System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfTuplesAffectedByLowestRisk());
         System.out.println("       + Highest risk     : " + sampleReidentifiationRisk.getHighestRisk());
         System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfTuplesAffectedByHighestRisk());
-        System.out.println("       + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueTuples());
+        System.out.println("       + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueRecords());
         System.out.println("     - Population-based measures");
         System.out.println("       + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(PopulationUniquenessModel.ZAYATZ));
     }

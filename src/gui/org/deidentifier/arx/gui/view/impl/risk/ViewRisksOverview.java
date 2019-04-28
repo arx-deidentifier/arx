@@ -259,7 +259,7 @@ public class ViewRisksOverview extends ViewRisks<AnalysisContextRisk> {
                 estimatedProsecutorRisk = samReidModel.getEstimatedProsecutorRisk();
                 estimatedJournalistRisk = samReidModel.getEstimatedJournalistRisk();
                 estimatedMarketerRisk = samReidModel.getEstimatedMarketerRisk();
-                fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueTuples();
+                fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueRecords();
                 fractionOfUniqueTuplesDankar = popUniqueModel.getFractionOfUniqueTuplesDankar();
                 populationModel = popUniqueModel.getPopulationUniquenessModel();
 

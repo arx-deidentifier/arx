@@ -53,6 +53,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getAverageRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return 1.0d / getHistogram().getAvgClassSize();
     }
 
@@ -61,6 +64,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedJournalistRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdJournalist() : 1d);
     }
 
@@ -69,6 +75,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedMarketerRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null && anonymous ? config.getRiskThresholdMarketer() : 1d);
     }
 
@@ -77,6 +86,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedProsecutorRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
     }
 
@@ -87,6 +99,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getFractionOfTuplesAffectedByHighestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return getNumTuplesAffectedByHighestRisk() /
                getHistogram().getNumRecords();
     }
@@ -98,6 +113,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getFractionOfTuplesAffectedByLowestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return getNumTuplesAffectedByLowestRisk() /
                getHistogram().getNumRecords();
     }
@@ -108,6 +126,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getHighestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         return 1d / (double) classes[0];
     }
@@ -118,6 +139,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getLowestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         int index = classes.length - 2;
         return 1d / (double) classes[index];
@@ -130,6 +154,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getNumTuplesAffectedByHighestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         return (double) classes[0] * (double) classes[1];
     }
@@ -141,6 +168,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getNumTuplesAffectedByLowestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         int index = classes.length - 2;
         return (double) classes[index] * (double) classes[index + 1];
