@@ -79,6 +79,7 @@ public class ViewRisksQuasiIdentifiers implements IView {
 
     /** Controller */
     private final Controller    controller;
+    
     /** View */
     private final Composite     root;
     /** View */
@@ -87,7 +88,6 @@ public class ViewRisksQuasiIdentifiers implements IView {
     private final Label         label;
     /** View */
     private final Image         IMAGE_ENABLED;
-
     /** View */
     private final Image         IMAGE_DISABLED;
     /** Model */
@@ -226,16 +226,15 @@ public class ViewRisksQuasiIdentifiers implements IView {
      */
     private void fireEvent() {
         if (model != null && selection != null) {
-            if (selection.equals(model.getSelectedQuasiIdentifiers())) {
-                return;
-            }
             if (selection.size() <= model.getRiskModel().getMaxQiSize()) {
-                model.setSelectedQuasiIdentifiers(new HashSet<>(selection));
-                controller.update(new ModelEvent(ViewRisksQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
-                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.3") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
+                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.3") + (int)(Math.pow(2, selection.size()) - 1)); //$NON-NLS-1$
                 label.setForeground(GUIHelper.COLOR_BLACK);
+                if (!selection.equals(model.getSelectedQuasiIdentifiers())) {
+                    model.setSelectedQuasiIdentifiers(new HashSet<>(selection));
+                    controller.update(new ModelEvent(ViewRisksQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
+                }
             } else {
-                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.4") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
+                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.4") + (int)(Math.pow(2, selection.size()) - 1)); //$NON-NLS-1$
                 label.setForeground(GUIHelper.COLOR_RED);
             }
         }
