@@ -585,19 +585,20 @@ public class StatisticsBuilder {
         int capacity = handle.getNumRows() / 10;
         capacity = capacity > 10 ? capacity : 10;
         Groupify<TupleWrapper> map = new Groupify<TupleWrapper>(capacity);
-        int numSuppressed = 0;
-        int numRows = 0;
+        int numberOfSuppressedRecords = 0;
+        int numberOfRecordsSuppressedRecords = 0;
         for (int row = 0; row < handle.getNumRows(); row++) {
 
+            numberOfRecordsSuppressedRecords++;
             if (handle.isOutlier(row)) {
-                numSuppressed++;
+                numberOfSuppressedRecords++;
             } else {
                 TupleWrapper tuple = new TupleWrapper(handle, indices, row);
                 map.add(tuple);
-                numRows++;
             }
             checkInterrupt();
         }
+        
         // Now compute the following values
         double averageEquivalenceClassSize = 0d;
         int maximalEquivalenceClassSize = Integer.MIN_VALUE;
@@ -615,6 +616,7 @@ public class StatisticsBuilder {
             element = element.next();
         }
         
+        // Calculate average
         averageEquivalenceClassSize /= (double)numberOfEquivalenceClasses;
         
         // Fix corner cases
@@ -629,8 +631,8 @@ public class StatisticsBuilder {
                                                 maximalEquivalenceClassSize,
                                                 minimalEquivalenceClassSize,
                                                 numberOfEquivalenceClasses,
-                                                numRows,
-                                                numSuppressed);
+                                                numberOfRecordsSuppressedRecords,
+                                                numberOfSuppressedRecords);
     }
     
     /**

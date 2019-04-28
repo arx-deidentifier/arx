@@ -32,9 +32,9 @@ public class StatisticsEquivalenceClasses {
     /** Statistic value */
     private final int                        numberOfEquivalenceClasses;
     /** Statistic value */
-    private final int                        numberOfTuples;
+    private final int                        numberOfRecordsIncludingSuppressedRecords;
     /** Statistic value */
-    private final int                        numberOfOutlyingTuples;
+    private final int                        numberOfSuppressedRecords;
     
     /**
      * Creates a new instance
@@ -42,21 +42,21 @@ public class StatisticsEquivalenceClasses {
      * @param maximalEquivalenceClassSize
      * @param minimalEquivalenceClassSize
      * @param numberOfEquivalenceClasses
-     * @param numberOfTuples
-     * @param numberOfOutlyingTuples
+     * @param numberOfRecordsIncludingSuppressedRecords
+     * @param numberOfSuppressedRecords
      */
     StatisticsEquivalenceClasses(double averageEquivalenceClassSize,
                                  int maximalEquivalenceClassSize,
                                  int minimalEquivalenceClassSize,
                                  int numberOfEquivalenceClasses,
-                                 int numberOfTuples,
-                                 int numberOfOutlyingTuples) {
+                                 int numberOfRecordsIncludingSuppressedRecords,
+                                 int numberOfSuppressedRecords) {
         this.averageEquivalenceClassSize = averageEquivalenceClassSize;
         this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;
         this.minimalEquivalenceClassSize = minimalEquivalenceClassSize;
         this.numberOfEquivalenceClasses = numberOfEquivalenceClasses;
-        this.numberOfTuples = numberOfTuples;
-        this.numberOfOutlyingTuples = numberOfOutlyingTuples;
+        this.numberOfRecordsIncludingSuppressedRecords = numberOfRecordsIncludingSuppressedRecords;
+        this.numberOfSuppressedRecords = numberOfSuppressedRecords;
     }
 
     /**
@@ -103,9 +103,8 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getNumberOfSuppressedRecords() {
-        return numberOfOutlyingTuples;
+        return numberOfSuppressedRecords;
     }
-
     /**
      * Returns the number of tuples in the currently selected data
      * representation.
@@ -113,7 +112,17 @@ public class StatisticsEquivalenceClasses {
      * @return
      */
     public int getNumberOfRecords() {
-        return numberOfTuples;
+        return numberOfRecordsIncludingSuppressedRecords - numberOfSuppressedRecords;
+    }
+    
+    /**
+     * Returns the number of tuples in the currently selected data
+     * representation.
+     *
+     * @return
+     */
+    public int getNumberOfRecordsIncludingSuppressedRecords() {
+        return numberOfRecordsIncludingSuppressedRecords;
     }
 
     @Override
@@ -125,4 +134,6 @@ public class StatisticsEquivalenceClasses {
                "- Number of records = " + getNumberOfRecords() + "\n" +
                "- Number of suppressed records = " + getNumberOfSuppressedRecords() + "\n}";
     }
+    
+    
 }
