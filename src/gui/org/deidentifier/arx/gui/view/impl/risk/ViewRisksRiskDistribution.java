@@ -21,39 +21,30 @@ import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.model.ModelRisk.ViewRiskType;
 import org.deidentifier.arx.gui.resources.Resources;
-import org.deidentifier.arx.gui.view.SWTUtil;
-import org.deidentifier.arx.gui.view.impl.common.ClipboardHandlerTable;
+import org.deidentifier.arx.gui.view.impl.common.ComponentRiskProfile;
+import org.deidentifier.arx.gui.view.impl.common.ComponentRiskProfile.RiskProfile;
 import org.deidentifier.arx.gui.view.impl.common.ComponentStatusLabelProgressProvider;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
+import org.deidentifier.arx.reliability.ParameterTranslation;
 import org.deidentifier.arx.risk.RiskEstimateBuilderInterruptible;
 import org.deidentifier.arx.risk.RiskModelSampleRiskDistribution;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-
-import de.linearbits.swt.table.DynamicTable;
-import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * This view displays basic risk estimates.
  *
  * @author Fabian Prasser
  */
-public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksRiskDistribution extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
-    private Composite                root;
-
-    /** View */
-    private DynamicTable             table;
+    private ComponentRiskProfile profile;
 
     /** Internal stuff. */
-    private AnalysisManager          manager;
+    private AnalysisManager      manager;
 
     /**
      * Creates a new instance.
@@ -63,7 +54,7 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
      * @param target
      * @param reset
      */
-    public ViewRisksRiskDistributionTable(final Composite parent,
+    public ViewRisksRiskDistribution(final Composite parent,
                                    final Controller controller,
                                    final ModelPart target,
                                    final ModelPart reset) {
@@ -73,6 +64,13 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
     }
     
+    /**
+     * Returns the risk profile
+     */
+    public ComponentRiskProfile getRiskProfile() {
+        return this.profile;
+    }
+    
     @Override
     public void update(ModelEvent event) {
         super.update(event);
@@ -80,34 +78,13 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
             triggerUpdate();
         }
     }
-    
+
     @Override
     protected Control createControl(Composite parent) {
-
-        this.root = new Composite(parent, SWT.NONE);
-        this.root.setLayout(new FillLayout());
-        
-        table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-        table.setMenu(new ClipboardHandlerTable(table).getMenu());
-
-        DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.1")); //$NON-NLS-1$
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.2")); //$NON-NLS-1$
-        c = new DynamicTableColumn(table, SWT.LEFT);
-        SWTUtil.createColumnWithBarCharts(table, c);
-        c.setWidth("33%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        c.setText(Resources.getMessage("RiskAnalysis.3")); //$NON-NLS-1$
-        for (final TableColumn col : table.getColumns()) {
-            col.pack();
-        }
-        SWTUtil.createGenericTooltip(table);
-        return this.root;
+        this.profile = new ComponentRiskProfile(parent, super.controller);
+        this.profile.setYAxisTitle(Resources.getMessage("ViewRisksClassDistributionPlot.0")); //$NON-NLS-1$
+        this.profile.setXAxisTitle(Resources.getMessage("ViewRisksClassDistributionPlot.1")); //$NON-NLS-1$
+        return this.profile.getControl();
     }
 
     @Override
@@ -115,19 +92,15 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
         return new AnalysisContextRisk(context);
     }
 
+
     @Override
     protected void doReset() {
         if (this.manager != null) {
             this.manager.stop();
         }
-        table.setRedraw(false);
-        for (final TableItem i : table.getItems()) {
-            i.dispose();
-        }
-        table.setRedraw(true);
+        profile.reset();
         setStatusEmpty();
     }
-
 
     @Override
     protected void doUpdate(final AnalysisContextRisk context) {
@@ -148,7 +121,9 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
             private boolean  stopped = false;
             private double[] frequencies;
             private double[] cumulative;
-            private String[] labels;
+            private double[] threshold;
+            private double[] lower;
+            private double[] upper;
 
             @Override
             public int getProgress() {
@@ -167,26 +142,11 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                     return;
                 }
                 
-                // Disable drawing
-                table.setRedraw(false);
-                
-                // Update chart
-                for (final TableItem i : table.getItems()) {
-                    i.dispose();
-                }
-
-                // Create entries
-                for (int i = labels.length-1; i >=0 ; i--) {
-                    TableItem item = new TableItem(table, SWT.NONE);
-                    item.setText(0, labels[i]);
-                    item.setData("1", frequencies[i]);
-                    item.setData("2", cumulative[i]);
-                }
-
-                // Enable drawing and redraw
-                table.setRedraw(true);
-                table.redraw();
-                root.layout();
+                // Update
+                profile.setProfiles(lower, upper, 
+                                    new RiskProfile(Resources.getMessage("ViewRisksClassDistributionPlot.3"), cumulative, true),
+                                    new RiskProfile(Resources.getMessage("ViewRisksClassDistributionPlot.2"), frequencies, true),
+                                    new RiskProfile(Resources.getMessage("ViewRisksClassDistributionPlot.4"), threshold, false));
                 
                 // Set status
                 setStatusDone();
@@ -210,13 +170,17 @@ public class ViewRisksRiskDistributionTable extends ViewRisks<AnalysisContextRis
                 // Perform work
                 RiskModelSampleRiskDistribution model = builder.getSampleBasedRiskDistribution();
 
-                // Create array
-                frequencies = model.getFractionOfRecordsForRiskThresholds();
-                cumulative = model.getFractionOfRecordsForCumulativeRiskThresholds();
-                labels = new String[frequencies.length];
+                // Create arrays
+                frequencies = model.getFractionOfRecordsForRiskThresholds().clone();
+                cumulative = model.getFractionOfRecordsForCumulativeRiskThresholds().clone();
+                threshold = new double[frequencies.length];
+                lower = model.getAvailableLowerRiskThresholds().clone();
+                upper = model.getAvailableUpperRiskThresholds().clone();
+                double enforced = model.getRiskThreshold();
                 for (int i = 0; i < frequencies.length; i++) {
-                    labels[i] = "]" + String.valueOf(SWTUtil.getPrettyString(model.getAvailableLowerRiskThresholds()[i] * 100d)) +  //$NON-NLS-1$
-                                ", " + String.valueOf(SWTUtil.getPrettyString(model.getAvailableUpperRiskThresholds()[i] * 100d)) + "]"; //$NON-NLS-1$ $NON-NLS-2$
+                    if (enforced != 1d && ParameterTranslation.getEffectiveRiskThreshold(enforced) < ParameterTranslation.getEffectiveRiskThreshold(upper[i])) {
+                        threshold[i] = 1d;
+                    }
                 }
 
                 // Our users are patient
