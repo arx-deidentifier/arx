@@ -94,13 +94,13 @@ public class RiskModelAttributes {
             }
 
             // Compare distinction
-            cmp = Double.compare(this.alphaDistinction, other.alphaDistinction);
+            cmp = Double.compare(this.getDistinction(), other.getDistinction());
             if (cmp != 0) {
                 return cmp;
             }
 
             // Compare separation
-            cmp = Double.compare(this.alphaSeparation, other.alphaSeparation);
+            cmp = Double.compare(this.getSeparation(), other.getSeparation());
             if (cmp != 0) {
                 return cmp;
             }
