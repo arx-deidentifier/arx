@@ -173,6 +173,7 @@ public abstract class ViewProperties implements IView, ViewStatisticsBasic {
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.METRIC, this);
         controller.addListener(ModelPart.ATTRIBUTE_WEIGHT, this);
         controller.addListener(ModelPart.GS_FACTOR, this);

@@ -104,6 +104,7 @@ public class ViewPrivacyModels implements IView {
         this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         this.layout = layoutCriteria;
         
         this.symbolL = controller.getResources().getManagedImage("symbol_l.png"); //$NON-NLS-1$
@@ -239,6 +240,7 @@ public class ViewPrivacyModels implements IView {
         
         if (event.part == ModelPart.CRITERION_DEFINITION ||
             event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
             event.part == ModelPart.MODEL) {
             if (model!=null) {
                 updateTable();

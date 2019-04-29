@@ -32,9 +32,9 @@ import org.eclipse.swt.widgets.Composite;
  * @author Fabian Prasser
  */
 public class LayoutAttributeSettings implements ILayout {
-    
+
     /** View */
-    private final ViewAttributeTransformation      attributeTransformationView;
+    private final ViewAttributeTransformation attributeTransformationView;
 
     /**
      * Creates a new instance.

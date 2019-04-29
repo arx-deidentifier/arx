@@ -55,13 +55,14 @@ public class ViewRisksRiskDistribution extends ViewRisks<AnalysisContextRisk> {
      * @param reset
      */
     public ViewRisksRiskDistribution(final Composite parent,
-                                   final Controller controller,
-                                   final ModelPart target,
-                                   final ModelPart reset) {
+                                     final Controller controller,
+                                     final ModelPart target,
+                                     final ModelPart reset) {
         
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
     }
     
     /**
@@ -74,7 +75,8 @@ public class ViewRisksRiskDistribution extends ViewRisks<AnalysisContextRisk> {
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
             triggerUpdate();
         }
     }

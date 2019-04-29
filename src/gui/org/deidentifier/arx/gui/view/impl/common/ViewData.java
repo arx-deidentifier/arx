@@ -99,6 +99,7 @@ public abstract class ViewData implements IView {
 
         // Register
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.OUTPUT, this);

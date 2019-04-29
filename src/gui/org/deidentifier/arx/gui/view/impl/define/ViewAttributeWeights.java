@@ -126,6 +126,7 @@ public class ViewAttributeWeights implements IView {
         // Register
         this.controller = controller;
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
         
@@ -184,6 +185,7 @@ public class ViewAttributeWeights implements IView {
         } 
         
         if (event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
             event.part == ModelPart.MODEL) {
             if (model != null) {
                 updateControls();

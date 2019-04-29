@@ -155,10 +155,7 @@ public class ViewTransformationSettings implements IView {
         sliderOutliers.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                model.getInputConfig()
-                     .setSuppressionLimit(SWTUtil.sliderToDouble(0d,
-                                                            1d,
-                                                            sliderOutliers.getSelection()));
+                model.getInputConfig().setSuppressionLimit(SWTUtil.sliderToDouble(0d, 1d, sliderOutliers.getSelection()));
                 labelOutliers.setText(SWTUtil.getPrettyString(model.getInputConfig().getSuppressionLimit()*100d)+"%");
                 if (model.getInputConfig().getSuppressionLimit() != 0) {
                     buttonPracticalMonotonicity.setEnabled(true);

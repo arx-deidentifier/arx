@@ -218,6 +218,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.RESPONSE_VARIABLES, this);
@@ -504,7 +505,8 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
            this.model = (Model) event.data;
            update();
         } else if (event.part == ModelPart.INPUT ||
-                   event.part == ModelPart.ATTRIBUTE_TYPE || 
+                   event.part == ModelPart.ATTRIBUTE_TYPE ||
+                   event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE || 
                    event.part == ModelPart.OUTPUT ||
                    event.part == ModelPart.DATA_TYPE ||
                    event.part == ModelPart.RESPONSE_VARIABLES) {

@@ -124,6 +124,7 @@ public class ViewAttributeList implements IView {
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.dataTypes = getDataTypes();
         
@@ -140,9 +141,9 @@ public class ViewAttributeList implements IView {
     @Override
     public void reset() {
         this.attributes = null;
-        table.setCurrentPage(0);
-        table.refreshPage();
-        SWTUtil.disable(table);
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
+        SWTUtil.disable(this.table);
     }
 
     @Override
@@ -155,7 +156,8 @@ public class ViewAttributeList implements IView {
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             String attribute = (String) event.data;
             updateSelectedAttribute(attribute);
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE ||
+                   event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
             if (!attributes.isEmpty()) {
                 table.refreshPage();
             }

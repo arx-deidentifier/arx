@@ -63,6 +63,7 @@ public class LayoutTransformationModel implements ILayout, IView {
         
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.METRIC, this);
 

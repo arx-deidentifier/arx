@@ -247,8 +247,8 @@ public class ViewPropertiesInput extends ViewProperties {
             metric = config.getMetric();
 
             // We don't need to update in many cases, if we are displaying an output configuration
-            if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
-                part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
+            if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
+                part == ModelPart.METRIC || part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
                 part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE ||
                 part == ModelPart.COST_BENEFIT_MODEL) {
                 return;

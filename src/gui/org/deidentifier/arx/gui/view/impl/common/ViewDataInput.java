@@ -77,6 +77,7 @@ public class ViewDataInput extends ViewData {
         controller.addListener(ModelPart.RESEARCH_SUBSET, this);
         controller.addListener(ModelPart.RESULT, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
         controller.addListener(ModelPart.RESPONSE_VARIABLES, this);
         
@@ -186,7 +187,8 @@ public class ViewDataInput extends ViewData {
             table.setResearchSubset(model.getInputConfig().getResearchSubset());
             table.redraw();
             
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.RESPONSE_VARIABLES) {
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE || 
+                   event.part == ModelPart.RESPONSE_VARIABLES) {
             
             if (model != null){
                 
@@ -203,6 +205,29 @@ public class ViewDataInput extends ViewData {
                     final int index = handle.getColumnIndexOf(attr);
                     updateHeaderImage(index, attr, definition);
     
+                    // Redraw
+                    table.setEnabled(true);
+                    table.redraw();
+                }
+            }
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
+
+            // Check
+            if (model != null) {
+
+                // Check
+                DataHandle handle = getHandle();
+                if (handle != null) {
+
+                    // Obtain data definition
+                    DataDefinition definition = getDefinition();
+
+                    // Update
+                    for (int index = 0; index < handle.getNumColumns(); index++) {
+                        String attr = handle.getAttributeName(index);
+                        updateHeaderImage(index, attr, definition);
+                    }
+
                     // Redraw
                     table.setEnabled(true);
                     table.redraw();
