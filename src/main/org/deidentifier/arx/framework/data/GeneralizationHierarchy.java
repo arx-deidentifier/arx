@@ -17,6 +17,8 @@
 
 package org.deidentifier.arx.framework.data;
 
+import org.deidentifier.arx.DataType;
+
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
@@ -67,9 +69,15 @@ public class GeneralizationHierarchy {
         map = new int[uniqueIn][height];
         for (int i = 0; i < hierarchy.length; i++) {
             final String[] input = hierarchy[i];
+            if (input == null || input.length == 0) {
+                throw new IllegalArgumentException("Attribute '" + name + "': contains empty rule");
+            }
             final Integer key = dictionary.probe(dimension, input[0]);
+            if (input.length != height) {
+                throw new IllegalArgumentException("Attribute '" + name + "': a height of " + height + " has been detected for the hierarchy, but rule for " + input[0] + " has " + input[0].length() +" entries");
+            }
             if (key != null && key < uniqueIn) {
-                for (int j = 0; j < input.length; j++) {
+                for (int j = 0; j < height; j++) {
                     final String value = input[j];
                     final int incode = dictionary.register(dimension, value);
                     map[key][j] = incode;
@@ -106,8 +114,12 @@ public class GeneralizationHierarchy {
                 if (dictmap.allocated[index]) {
                     int id = dictmap.values[index];
                     if (!rules.contains(id)) {
-                        missing = dictmap.keys[index];
-                        break;
+                        // Work around some weird casting issues, probably caused by HPPC
+                        String value = String.valueOf(((Object[])dictmap.keys)[index]);
+                        if (!value.equals(DataType.ANY_VALUE)) {
+                            missing = value;
+                            break;
+                        }
                     }
                 }
             }

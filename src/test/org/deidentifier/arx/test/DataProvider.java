@@ -29,31 +29,31 @@ import org.deidentifier.arx.Data.DefaultData;
  * @author Florian Kohlmayer
  */
 public class DataProvider {
-    
+
     /** Data */
-    protected DefaultData data;
-    
+    protected DefaultData          data;
+
     /** Hierarchy */
-    protected DefaultHierarchy age;
-    
+    protected DefaultHierarchy     age;
+
     /** Hierarchy */
     private final DefaultHierarchy ageWrong;
-    
+
     /** Hierarchy */
     private final DefaultHierarchy gender;
-    
+
     /** Hierarchy */
     private final DefaultHierarchy zipcode;
-    
+
     /** Hierarchy */
     private final DefaultHierarchy ageOne;
-    
+
     /** Hierarchy */
     private final DefaultHierarchy genderOne;
-    
+
     /** Hierarchy */
     private final DefaultHierarchy zipcodeOne;
-    
+
     /** Hierarchy */
     private final DefaultHierarchy ageMissing;
     
