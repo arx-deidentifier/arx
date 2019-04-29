@@ -266,7 +266,7 @@ public class CSVHierarchyInput { // NO_UCD
      */
     private void load(final CSVDataInput input) throws IOException {
 
-        final Iterator<String[]> iter = input.iterator();
+        final Iterator<String[]> iter = input.iterator(false);
         final List<String[]> elems = new ArrayList<String[]>();
         while (iter.hasNext()) {
             final String[] line = iter.next();
