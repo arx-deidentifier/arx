@@ -177,6 +177,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         for (Entry<Long, ILScore> entry : transformationIDToScore.entrySet()) {
             values[i] = entry.getKey();
             scores[i] = entry.getValue().getValue().doubleValue();
+            if (Double.isInfinite(scores[i]) || Double.isNaN(scores[i])) {
+               throw new RuntimeException("Encountered a value which can not be represented as a double value");
+            }
             i++;
         }
 

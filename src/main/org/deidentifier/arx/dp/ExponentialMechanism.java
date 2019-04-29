@@ -21,12 +21,8 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
-
 import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.AbstractRandomGenerator;
@@ -40,6 +36,12 @@ import org.apache.commons.math3.util.Pair;
  * Foundations of Computer Science 2007. pp. 94-103
  * 
  * This implementation assumes that all score values have been divided by the sensitivity of the respective score function.
+ * 
+ * We point out that this implementation draws from a probability distribution which approximates the mathematically precise
+ * distribution of the exponential mechanism as a consequence of floating-point arithmetic, which could potentially affect
+ * the privacy guarantees provided. However, it can be shown that the resulting exceedance of the privacy parameter epsilon
+ * is at most in the order of log((1 + n * 10^{1-p}) / (1 - n * 10^{1-p})) where n is the size of the domain and p is
+ * the floating-point precision which can be specified by the user.
  * 
  * @author Raffael Bild
  */
@@ -165,37 +167,36 @@ public class ExponentialMechanism<T> {
         // The following code calculates the probability distribution which assigns every value
         // a probability proportional to exp(0,5 * epsilon * score)
         
-        // Determine the smallest of all exponents having the form 0,5 * epsilon * score.
+        // Calculate all exponents having the form 0,5 * epsilon * score and remember the maximal value.
         // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
         // (which can get very large due to the application of the exponential function) while it does not change the result;
         // it is a trick to make the following computations feasible.
-        double shift = Double.MAX_VALUE;
-        for (double score : scores) {
-            shift = Math.min(shift, 0.5d * epsilon * score);
+        double[] exponents = new double[scores.length];
+        double shift = -Double.MAX_VALUE;
+        for (int i = 0; i < scores.length; ++i) {
+            exponents[i] = 0.5d * epsilon * scores[i];
+            shift = Math.max(shift, exponents[i]);
         }
 
-        // For every value, calculate exp(0,5 * epsilon * score) (enumerator), and calculate the sum of all these numbers (divisor).
+        // For every value, calculate exp(0,5 * epsilon * score - shift) (enumerator), and calculate the sum of all these numbers (divisor).
         // Note that all numbers are effectively being multiplied with exp(-shift).
         BigDecimal divisor = new BigDecimal(0d, mc);
-        Map<T, BigDecimal> valueToEnumerator = new HashMap<T, BigDecimal>();
-        for (int i = 0; i < values.length; ++i) {
-            T value = values[i];
-            double score = scores[i];
-
-            BigDecimal enumerator = exp(0.5d * epsilon * score - shift);
-            valueToEnumerator.put(value, enumerator);
-
-            divisor = divisor.add(enumerator, mc);
+        BigDecimal[] enumerators = new BigDecimal[scores.length];
+        for (int i = 0; i < scores.length; ++i) {
+            enumerators[i] = exp(exponents[i] - shift);
+            divisor = divisor.add(enumerators[i], mc);
         }
 
         // Compute the probability for every value by calculating enumerator / divisor.
         // Note that during this computation, the factor exp(-shift) is effectively being cancelled.
         List<Pair<T, Double>> pmf = new ArrayList<>();
-        for (Entry<T, BigDecimal> entry : valueToEnumerator.entrySet()) {
-            T value = entry.getKey();
-            BigDecimal enumerator = entry.getValue();
+        for (int i = 0; i < scores.length; ++i) {
+            BigDecimal enumerator = enumerators[i];
             BigDecimal probability = enumerator.divide(divisor, mc);
-            pmf.add(new Pair<T, Double>(value, probability.doubleValue()));
+            // Add entry to the PMF.
+            // Note that BigDecimal.doubleValue() may yield infinity.
+            // In such a case, the constructor of the class EnumeratedDistribution will throw an exception.
+            pmf.add(new Pair<T, Double>(values[i], probability.doubleValue()));
         }
 
         // Store the distribution
