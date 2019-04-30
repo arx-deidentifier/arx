@@ -36,7 +36,7 @@ import org.apache.commons.math3.util.Pair;
  * We point out that this implementation draws from a probability distribution which approximates the mathematically precise
  * distribution of the exponential mechanism as a consequence of floating-point arithmetic, which could potentially affect
  * the privacy guarantees provided. However, it can be shown that the resulting exceedance of the privacy parameter epsilon
- * is at most in the order of log((1 + n * 2^52) / (1 - n * 2^52)) where n is the size of the domain.
+ * is at most in the order of log((1 + n * 2^{-51}) / (1 - n * 2^{-51})) where n is the size of the domain.
  * 
  * @author Raffael Bild
  */
