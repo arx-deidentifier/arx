@@ -16,14 +16,10 @@
  */
 package org.deidentifier.arx.dp;
 
-import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import org.apache.commons.math3.analysis.function.Exp;
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.AbstractRandomGenerator;
 import org.apache.commons.math3.util.Pair;
@@ -40,24 +36,17 @@ import org.apache.commons.math3.util.Pair;
  * We point out that this implementation draws from a probability distribution which approximates the mathematically precise
  * distribution of the exponential mechanism as a consequence of floating-point arithmetic, which could potentially affect
  * the privacy guarantees provided. However, it can be shown that the resulting exceedance of the privacy parameter epsilon
- * is at most in the order of log((1 + n * 10^{1-p}) / (1 - n * 10^{1-p})) where n is the size of the domain and p is
- * the floating-point precision which can be specified by the user.
+ * is at most in the order of log((1 + n * 2^52) / (1 - n * 2^52)) where n is the size of the domain.
  * 
  * @author Raffael Bild
  */
 public class ExponentialMechanism<T> {
-
-    /** The precision to use for BigDecimal arithmetic */
-    public static final int           DEFAULT_PRECISION = 100;
 
     /** The probability distribution */
     private EnumeratedDistribution<T> distribution;
 
     /** The privacy parameter epsilon */
     private double                    epsilon;
-
-    /** The math context to use for BigDecimal arithmetic */
-    private MathContext               mc;
 
     /** The random generator */
     private AbstractRandomGenerator   random;
@@ -113,16 +102,7 @@ public class ExponentialMechanism<T> {
      * @param epsilon
      */
     public ExponentialMechanism(double epsilon) {
-        this(epsilon, DEFAULT_PRECISION, false);
-    }
-    
-    /**
-     * Constructs a new instance
-     * @param epsilon
-     * @param deterministic
-     */
-    public ExponentialMechanism(double epsilon, boolean deterministic) {
-        this(epsilon, DEFAULT_PRECISION, deterministic);
+        this(epsilon, false);
     }
 
     /**
@@ -130,11 +110,9 @@ public class ExponentialMechanism<T> {
      * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
      * 
      * @param epsilon
-     * @param precision
      * @param deterministic
      */
-    public ExponentialMechanism(double epsilon, int precision, boolean deterministic) {
-        this.mc = new MathContext(precision, RoundingMode.HALF_UP);
+    public ExponentialMechanism(double epsilon, boolean deterministic) {
         this.epsilon = epsilon;
         this.random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
     }
@@ -178,43 +156,17 @@ public class ExponentialMechanism<T> {
             shift = Math.max(shift, exponents[i]);
         }
 
-        // For every value, calculate exp(0,5 * epsilon * score - shift) (enumerator), and calculate the sum of all these numbers (divisor).
-        // Note that all numbers are effectively being multiplied with exp(-shift).
-        BigDecimal divisor = new BigDecimal(0d, mc);
-        BigDecimal[] enumerators = new BigDecimal[scores.length];
-        for (int i = 0; i < scores.length; ++i) {
-            enumerators[i] = exp(exponents[i] - shift);
-            divisor = divisor.add(enumerators[i], mc);
-        }
-
-        // Compute the probability for every value by calculating enumerator / divisor.
-        // Note that during this computation, the factor exp(-shift) is effectively being cancelled.
+        // Create a probability mass function containing numbers of the form exp(0,5 * epsilon * score - shift)
+        // which correspond to non-normalized probabilities multiplied with exp(-shift).
         List<Pair<T, Double>> pmf = new ArrayList<>();
         for (int i = 0; i < scores.length; ++i) {
-            BigDecimal enumerator = enumerators[i];
-            BigDecimal probability = enumerator.divide(divisor, mc);
-            // Add entry to the PMF.
-            // Note that BigDecimal.doubleValue() may yield infinity.
-            // In such a case, the constructor of the class EnumeratedDistribution will throw an exception.
-            pmf.add(new Pair<T, Double>(values[i], probability.doubleValue()));
+            double prob = Math.exp(exponents[i] - shift);
+            pmf.add(new Pair<T, Double>(values[i], prob));
         }
 
-        // Store the distribution
+        // Create the distribution. Note that all probabilities are being normalized by the class
+        // EnumeratedDistribution by effectively dividing them through their sum, which cancels
+        // the factor exp(-shift)
         this.distribution = new EnumeratedDistribution<T>(this.random, pmf);
-    }
-
-    /**
-     * An implementation of the exponential function for the BigDecimal type
-     * @param exponent
-     * @return
-     */
-    private BigDecimal exp(double exponent) {
-        int exponentFloor = (int) (Math.floor(exponent));
-        double exponentRemainder = exponent - exponentFloor;
-
-        BigDecimal floorPart = (new BigDecimal(new Exp().value(1), mc)).pow(exponentFloor, mc);
-        double remPart = (new Exp()).value(exponentRemainder);
-
-        return floorPart.multiply(new BigDecimal(remPart, mc), mc);
     }
 }

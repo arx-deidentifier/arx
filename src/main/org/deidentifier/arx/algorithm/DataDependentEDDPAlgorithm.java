@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.math3.fraction.BigFraction;
 import org.deidentifier.arx.dp.ExponentialMechanism;
 import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
@@ -176,10 +177,7 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         int i = 0;
         for (Entry<Long, ILScore> entry : transformationIDToScore.entrySet()) {
             values[i] = entry.getKey();
-            scores[i] = entry.getValue().getValue().doubleValue();
-            if (Double.isInfinite(scores[i]) || Double.isNaN(scores[i])) {
-               throw new RuntimeException("Encountered a value which can not be represented as a double value");
-            }
+            scores[i] = toDouble(entry.getValue().getValue());
             i++;
         }
 
@@ -188,5 +186,22 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         
         // Select and return a value
         return exponentialMechanism.sample();
+    }
+    
+    /**
+     * Tries converting fraction into a double which is within one ulp of the exact result.
+     * If this is not possible, an exception is thrown.
+     * @param fraction
+     * @return
+     */
+    private double toDouble(BigFraction fraction) {
+        double d = fraction.doubleValue();
+        if (Double.isInfinite(d) || Double.isNaN(d)) {
+            throw new RuntimeException("Encountered a value which can not be represented as a double value");
+        }
+        if (fraction.subtract(new BigFraction(d)).abs().compareTo(new BigFraction(Math.ulp(d))) > 0) {
+            throw new RuntimeException("Encountered a value with sufficient precision");
+        }
+        return d;
     }
 }
