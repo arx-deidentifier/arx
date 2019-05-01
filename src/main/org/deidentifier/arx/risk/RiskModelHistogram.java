@@ -49,7 +49,7 @@ public class RiskModelHistogram {
 
     /**
      * Creates a new instance from the given distribution.
-     * IMPORTANT: Suppressed should have been ignored before calling this.
+     * IMPORTANT: Suppressed records should have been ignored before calling this.
      * 
      * @param distribution
      */

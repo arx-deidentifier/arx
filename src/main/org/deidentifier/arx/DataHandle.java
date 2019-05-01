@@ -1046,7 +1046,8 @@ public abstract class DataHandle {
     }
 
     /**
-     * Returns whether the row is an outlier regarding the given columns
+     * Returns whether this is an outlier regarding the given columns. If no columns have been
+     * specified, <code>true</code> will be returned.
      * @param row
      * @param columns
      * @return

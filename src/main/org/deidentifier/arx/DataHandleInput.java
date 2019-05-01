@@ -342,10 +342,7 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     protected boolean internalIsOutlier(int row, int[] columns) {
-        
-        if (columns.length == 0) {
-            return false;
-        }
+ 
         int[] suppressed = dictionary.getSuppressedCodes();
         for (int column : columns) {
             if (data.get(row, column) != suppressed[column]) {
