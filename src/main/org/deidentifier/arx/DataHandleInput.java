@@ -37,25 +37,25 @@ import org.deidentifier.arx.framework.data.Dictionary;
 public class DataHandleInput extends DataHandle {
 
     /** The data. */
-    protected DataMatrix data            = null;
+    protected DataMatrix data               = null;
 
     /** The dictionary. */
-    protected Dictionary dictionary      = null;
+    protected Dictionary dictionary         = null;
 
     /** The data. */
-    private DataMatrix   dataGeneralized = null;
+    private DataMatrix   dataGeneralized    = null;
 
     /** The data. */
-    private DataMatrix   dataAnalyzed    = null;
+    private DataMatrix   dataAnalyzed       = null;
 
     /** Is this handle locked?. */
-    private boolean      locked          = false;
+    private boolean      locked             = false;
 
-    /** Stores the set of QIs for which the suppression status has been determined*/
-    private Set<String> suppressionQIs = null;
+    /** Stores the set of QIs for which the suppression status has been determined */
+    private Set<String>  suppressionQIs     = null;
 
     /** Stores the set of rows which are suppressed */
-    private RowSet suppressionRecords = null;
+    private RowSet       suppressionRecords = null;
 
     /**
      * Creates a new data handle.
@@ -240,20 +240,8 @@ public class DataHandleInput extends DataHandle {
         }
         
         // Flag each row
-        int[] suppressedCodes = dictionary.getSuppressedCodes();
         for (int row = 0; row < data.getNumRows(); row++) {
-            
-            // Determine suppression status
-            boolean suppressed = columns.length == 0 ? false : true;
-            for (int column : columns) {
-                if (internalGetEncodedValue(row, column, false) != suppressedCodes[column]) {
-                    suppressed = false;
-                    break;
-                }
-            }
-            
-            // Flag
-            if (suppressed) {
+            if (internalIsOutlier(row, columns)) {
                 suppressionRecords.add(row);
             }
         }
@@ -354,6 +342,10 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     protected boolean internalIsOutlier(int row, int[] columns) {
+        
+        if (columns.length == 0) {
+            return false;
+        }
         int[] suppressed = dictionary.getSuppressedCodes();
         for (int column : columns) {
             if (data.get(row, column) != suppressed[column]) {
