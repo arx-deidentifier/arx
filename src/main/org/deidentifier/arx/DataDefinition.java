@@ -757,6 +757,11 @@ public class DataDefinition implements Cloneable{
         // For each relevant attribute
         for (String attribute : attributes) {
 
+            // Skip unknown attributes
+            if (handle.getColumnIndexOf(attribute) < 0) {
+                continue;
+            }
+            
             // Obtain data
             String[] data = handle.getDistinctValues(handle.getColumnIndexOf(attribute));
 

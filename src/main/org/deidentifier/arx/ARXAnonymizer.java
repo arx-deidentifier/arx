@@ -419,13 +419,6 @@ public class ARXAnonymizer { // NO_UCD
             }
         }
         
-        // Check if all needed hierarchies have been defined
-        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
-            if (handle.getDefinition().getHierarchy(attribute) == null) {
-                throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
-            }
-        }
-        
         for (String attr : handle.getDefinition().getSensitiveAttributes()){
             boolean found = false;
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
@@ -507,6 +500,8 @@ public class ARXAnonymizer { // NO_UCD
         for (int i=0; i<handle.getNumColumns(); i++){
             attributes.add(handle.getAttributeName(i));
         }
+
+        // Check if specified attributes are here
         for (String attribute : handle.getDefinition().getSensitiveAttributes()){
             if (!attributes.contains(attribute)) {
                 throw new IllegalArgumentException("Sensitive attribute '"+attribute+"' is not contained in the dataset");
@@ -527,7 +522,15 @@ public class ARXAnonymizer { // NO_UCD
                 throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
             }
         }
+
+        // Check if all needed hierarchies have been defined
+        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
+            if (handle.getDefinition().getHierarchy(attribute) == null) {
+                throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
+            }
+        }
         
+        // Check if aggregate functions have been defined
         for (String attribute : handle.getDefinition().getQuasiIdentifiersWithMicroaggregation()) {
             
             if (handle.getDefinition().getMicroAggregationFunction(attribute)==null) {

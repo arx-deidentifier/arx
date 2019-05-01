@@ -24,6 +24,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Assert;
 import org.junit.Before;
@@ -351,14 +352,14 @@ public class TestIllegalArguments extends AbstractTest {
             data.getDefinition().setAttributeType("age", (AttributeType) null);
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setSuppressionLimit(1.2d);
+            config.setSuppressionLimit(1d);
             anonymizer.anonymize(data, config);
         } catch (final NullPointerException e) {
             return;
         }
         Assert.fail();
     }
-    
+
     /**
      * Performs a test.
      */
@@ -398,6 +399,29 @@ public class TestIllegalArguments extends AbstractTest {
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
             anonymizer.setMaximumSnapshotSizeDataset(0);
+        } catch (final IllegalArgumentException e) {
+            return;
+        }
+        Assert.fail();
+    }
+    
+    /**
+     * Performs a test.
+     *
+     * @throws IOException
+     */
+    @Test
+    public void testWrongAttributeName() throws IOException {
+        try {
+            final ARXAnonymizer anonymizer = new ARXAnonymizer();
+            final Data data = provider.getData();
+            data.getDefinition().setAttributeType("age", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+            data.getDefinition().setAttributeType("not-present", AttributeType.SENSITIVE_ATTRIBUTE);
+            final ARXConfiguration config = ARXConfiguration.create();
+            config.addPrivacyModel(new KAnonymity(2));
+            config.addPrivacyModel(new DistinctLDiversity("not-present", 3));
+            config.setSuppressionLimit(1d);
+            anonymizer.anonymize(data, config);
         } catch (final IllegalArgumentException e) {
             return;
         }
