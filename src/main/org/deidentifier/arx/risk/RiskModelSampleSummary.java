@@ -331,8 +331,8 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
 
-            if (!handle.isOutlier(row, indices)) {
-                TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+            if (ignoreOutliers || !handle.isOutlier(row, indices)) {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row, ignoreOutliers);
                 map.add(tuple);
             }
             if (stop.value) { throw new ComputationInterruptedException(); }

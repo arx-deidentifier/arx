@@ -58,11 +58,22 @@ public class TupleWrapper {
      * @param row
      */
     public TupleWrapper(DataHandleInternal handle, int[] indices, int row) {
+        this(handle, indices, row, false);
+    }
+    
+    /**
+     * Creates a new instance
+     * @param handle
+     * @param indices
+     * @param row
+     * @param ignoreOutliers Needed to measure journalist and marketer risk
+     */
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreOutliers) {
         this.values = new String[indices.length];
         int hashcode = 1;
         int idx = 0;
         for (int index : indices) {
-            String value = handle.getValue(row, index);
+            String value = handle.getValue(row, index, ignoreOutliers);
             hashcode = 31 * hashcode + value.hashCode();
             values[idx++] = value;
         }
