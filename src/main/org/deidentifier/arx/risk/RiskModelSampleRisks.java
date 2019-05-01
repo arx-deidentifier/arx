@@ -53,6 +53,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getAverageRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return 1.0d / getHistogram().getAvgClassSize();
     }
 
@@ -61,6 +64,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedJournalistRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdJournalist() : 1d);
     }
 
@@ -69,6 +75,9 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedMarketerRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return Math.min(1.0d / getHistogram().getAvgClassSize(), config != null && anonymous ? config.getRiskThresholdMarketer() : 1d);
     }
 
@@ -77,70 +86,91 @@ public class RiskModelSampleRisks extends RiskModelSample {
      * @return
      */
     public double getEstimatedProsecutorRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         return Math.min(1.0d / (double)getHistogram().getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
     }
 
     /**
-     * Returns the fraction of tuples affected by the highest re-identification
+     * Returns the fraction of records affected by the highest re-identification
      * risk
      * 
      * @return
      */
-    public double getFractionOfTuplesAffectedByHighestRisk() {
-        return getNumTuplesAffectedByHighestRisk() /
+    public double getFractionOfRecordsAffectedByHighestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
+        return getNumRecordsAffectedByHighestRisk() /
                getHistogram().getNumRecords();
     }
 
     /**
-     * Returns the fraction of tuples affected by the lowest re-identification
+     * Returns the fraction of records affected by the lowest re-identification
      * risk
      * 
      * @return
      */
-    public double getFractionOfTuplesAffectedByLowestRisk() {
-        return getNumTuplesAffectedByLowestRisk() /
+    public double getFractionOfRecordsAffectedByLowestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
+        return getNumRecordsAffectedByLowestRisk() /
                getHistogram().getNumRecords();
     }
 
     /**
-     * Returns the highest re-identification risk of any tuple in the data set
+     * Returns the highest re-identification risk of any records in the data set
      * 
      * @return
      */
     public double getHighestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         return 1d / (double) classes[0];
     }
 
     /**
-     * Returns the lowest re-identification risk of any tuple in the data set
+     * Returns the lowest re-identification risk of any records in the data set
      * 
      * @return
      */
     public double getLowestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         int index = classes.length - 2;
         return 1d / (double) classes[index];
     }
     
     /**
-     * Returns the number of tuples affected by the highest re-identification
+     * Returns the number of records affected by the highest re-identification
      * risk
      * 
      * @return
      */
-    public double getNumTuplesAffectedByHighestRisk() {
+    public double getNumRecordsAffectedByHighestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         return (double) classes[0] * (double) classes[1];
     }
     
     /**
-     * Returns the number of tuples affected by the lowest re-identification
+     * Returns the number of records affected by the lowest re-identification
      * risk
      * 
      * @return
      */
-    public double getNumTuplesAffectedByLowestRisk() {
+    public double getNumRecordsAffectedByLowestRisk() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         int index = classes.length - 2;
         return (double) classes[index] * (double) classes[index + 1];

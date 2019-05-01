@@ -383,8 +383,9 @@ public class HashGroupify {
      * Suppresses all records in the output dataset which <br>
      * (a) do not satisfy privacy requirements, or <br>
      * (b) are not included in the research subset
+     * @param dictionary 
      */
-    public void performSuppression() {
+    public void performSuppression(Dictionary dictionary) {
         
         for (int row = 0; row < dataOutput.getNumRows(); row++) {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
@@ -397,8 +398,9 @@ public class HashGroupify {
                 if (m == null) {
                     throw new RuntimeException("Invalid state! Group the data before suppressing records!");
                 }
-                if (!m.isNotOutlier) {
+                if (!m.isNotOutlier || m.isCompletelyGeneralized(dictionary)) {
                     dataOutput.or(row, Data.OUTLIER_MASK);
+                    m.isNotOutlier = false;
                 }
             } else {
                 dataOutput.or(row, Data.OUTLIER_MASK);

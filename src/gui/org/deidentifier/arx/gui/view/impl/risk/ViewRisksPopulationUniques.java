@@ -432,7 +432,7 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
                     ARXPopulationModel population = ARXPopulationModel.create(sampleSize, POINTS[idx]);
                     builder = getBuilder(context, population, histogram);
                     
-                    if (idx == 0 && builder.getSampleBasedUniquenessRisk().getFractionOfUniqueTuples() == 0.0d) {
+                    if (idx == 0 && builder.getSampleBasedUniquenessRisk().getFractionOfUniqueRecords() == 0.0d) {
                         Arrays.fill(dataDankar, 0.0d);
                         Arrays.fill(dataPitman, 0.0d);
                         Arrays.fill(dataZayatz, 0.0d);

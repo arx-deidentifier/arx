@@ -1044,4 +1044,12 @@ public abstract class DataHandle {
     protected void setView(DataHandle handle) {
         subset = handle;
     }
+
+    /**
+     * Returns whether the row is an outlier regarding the given columns
+     * @param row
+     * @param columns
+     * @return
+     */
+    protected abstract boolean internalIsOutlier(int row, int[] columns);
 }

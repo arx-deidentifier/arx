@@ -121,7 +121,7 @@ public class RiskModelSampleRiskDistribution {
             // Store
             this.recordsAtCumulativeRisk[i] = cumulativeRisk;
         }
-        this.threshold = Math.min(1.0d / (double)histogram.getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
+        this.threshold = histogram.isEmpty() ? 0d : Math.min(1.0d / (double)histogram.getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
     }
     
     /**

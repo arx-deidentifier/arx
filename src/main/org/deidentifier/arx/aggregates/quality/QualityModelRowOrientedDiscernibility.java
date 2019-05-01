@@ -43,6 +43,8 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
      * @param totalWorkload
      * @param input
      * @param output
+     * @param suppressedInput
+     * @param suppressedOutput
      * @param groupedInput
      * @param groupedOutput
      * @param hierarchies
@@ -55,23 +57,27 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
                                                  int totalWorkload,
                                                  DataHandle input,
                                                  DataHandle output,
+                                                 int suppressedInput,
+                                                 int suppressedOutput,
                                                  Groupify<TupleWrapper> groupedInput,
                                                  Groupify<TupleWrapper> groupedOutput,
                                                  String[][][] hierarchies,
                                                  QualityDomainShare[] shares,
                                                  int[] indices,
                                                  QualityConfiguration config) {
-        super(interrupt,
-              progress,
-              totalWorkload,
-              input,
-              output,
-              groupedInput,
-              groupedOutput,
-              hierarchies,
-              shares,
-              indices,
-              config);
+               super(interrupt,
+                     progress,
+                     totalWorkload,
+                     input,
+                     output,
+                     suppressedInput,
+                     suppressedOutput,
+                     groupedInput,
+                     groupedOutput,
+                     hierarchies,
+                     shares,
+                     indices,
+                     config);
     }
 
     @Override
@@ -85,12 +91,14 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
             // Calculate
             double rows = getInput().getNumRows();
             double min = getDiscernibility(getGroupedInput(), rows);
+            min += (double)getSuppressedRecordsInInput() * rows;
 
             // Progress
             setStepPerformed();
             
             double max = rows * rows;
             double result = getDiscernibility(getGroupedOutput(), rows);
+            result += (double)getSuppressedRecordsInOutput() * rows;
 
             // Progress
             setStepsDone();
@@ -115,30 +123,16 @@ public class QualityModelRowOrientedDiscernibility extends QualityModel<QualityM
      */
     private double getDiscernibility(Groupify<TupleWrapper> groupify, double rows) {
         Group<TupleWrapper> e = groupify.first();
-        double sum = getPenalty(e, rows);
+        double sum = e.getCount() * e.getCount();
         while (e.hasNext()) {
+            
+            // Compute
             e = e.next();
-            sum += getPenalty(e, rows);
+            sum += e.getCount() * e.getCount();
 
             // Check
             checkInterrupt();
         }
         return sum;
-    }
-
-    /**
-     * Returns the penalty for the given table
-     * @param entry
-     * @param rows
-     * @return
-     */
-    private double getPenalty(Group<TupleWrapper> entry, double rows) {
-
-        double count = entry.getCount();
-        if (isSuppressed(entry)) {
-            return count * rows;
-        } else {            
-            return count * count;
-        }
     }
 }

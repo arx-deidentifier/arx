@@ -191,7 +191,7 @@ public class StatisticsClassification {
          * @return
          */
         public double getAUC() {
-            return AUC;
+            return Double.isNaN(AUC) ? 0d : AUC;
         }
         
         /**
@@ -215,7 +215,7 @@ public class StatisticsClassification {
          * @return the sensitivity
          */
         public double getSensitivity() {
-            return sensitivity;
+            return Double.isNaN(sensitivity) ? 0d : sensitivity;
         }
         
         /**
@@ -223,7 +223,7 @@ public class StatisticsClassification {
          * @return the specificity
          */
         public double getSpecificity() {
-            return specificity;
+            return Double.isNaN(specificity) ? 0d : specificity;
         }
 
         /**
