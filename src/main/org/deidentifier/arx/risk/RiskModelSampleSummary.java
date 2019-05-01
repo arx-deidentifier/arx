@@ -218,10 +218,15 @@ public class RiskModelSampleSummary {
             sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress, false, suppressed);
             population = sample;
         }
-        
-        this.prosecutorRisk = getProsecutorRisk(population, sample, 0.9d, stop, progress);
-        this.journalistRisk = getJournalistRisk(population, sample, 0.933d, stop, progress);
-        this.marketerRisk = getMarketerRisk(population, sample, 0.966d, stop, progress);
+        if (sample.size() == 0) {
+            this.prosecutorRisk = new ProsecutorRisk(threshold, 0d, 0d, 0d);
+            this.journalistRisk = new JournalistRisk(threshold, 0d, 0d, 0d);
+            this.marketerRisk = new MarketerRisk(0d);          
+        } else {
+            this.prosecutorRisk = getProsecutorRisk(population, sample, 0.9d, stop, progress);
+            this.journalistRisk = getJournalistRisk(population, sample, 0.933d, stop, progress);
+            this.marketerRisk = getMarketerRisk(population, sample, 0.966d, stop, progress);
+        }
     }
     
     /**
