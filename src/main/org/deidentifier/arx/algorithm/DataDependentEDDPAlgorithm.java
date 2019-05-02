@@ -197,10 +197,10 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     private double toDouble(BigFraction fraction) {
         double d = fraction.doubleValue();
         if (Double.isInfinite(d) || Double.isNaN(d)) {
-            throw new RuntimeException("Encountered a value which can not be represented as a double value");
+            throw new RuntimeException("Encountered a value which can not be represented as a double");
         }
         if (fraction.subtract(new BigFraction(d)).abs().compareTo(new BigFraction(Math.ulp(d))) > 0) {
-            throw new RuntimeException("Encountered a value with sufficient precision");
+            throw new RuntimeException("Encountered a value with insufficient precision");
         }
         return d;
     }
