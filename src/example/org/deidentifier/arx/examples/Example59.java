@@ -24,6 +24,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
@@ -34,18 +35,13 @@ import org.deidentifier.arx.risk.RiskEstimateBuilder;
 import org.deidentifier.arx.risk.RiskModelAttributes;
 import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
 import org.deidentifier.arx.risk.RiskModelHistogram;
-import org.deidentifier.arx.risk.RiskModelPopulationUniqueness;
-import org.deidentifier.arx.risk.RiskModelPopulationUniqueness.PopulationUniquenessModel;
-import org.deidentifier.arx.risk.RiskModelSampleRisks;
-import org.deidentifier.arx.risk.RiskModelSampleUniqueness;
 
 /**
- * This class implements an example of how to perform risk analyses with the API
+ * This class implements an example that shows handling of suppressed values and records in input data
  *
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-public class Example29 extends Example {
+public class Example59 extends Example {
 
     /**
      * Entry point.
@@ -57,7 +53,7 @@ public class Example29 extends Example {
         // Define data
         DefaultData data = Data.create();
         data.add("age", "gender", "zipcode");
-        data.add("45", "female", "81675");
+        data.add("45", "male", "81675");
         data.add("34", "male", "81667");
         data.add("66", "male", "81925");
         data.add("70", "female", "81931");
@@ -86,14 +82,8 @@ public class Example29 extends Example {
         data.getDefinition().setAttributeType("age", age);
         data.getDefinition().setAttributeType("gender", gender);
         data.getDefinition().setAttributeType("zipcode", zipcode);
-        
-        // Perform risk analysis
-        System.out.println("\n - Input data");
-        print(data.getHandle());
-        System.out.println("\n - Quasi-identifiers sorted by risk:");
-        analyzeAttributes(data.getHandle());
-        System.out.println("\n - Risk analysis:");
-        analyzeData(data.getHandle());
+        data.getDefinition().setMinimumGeneralization("gender", 1);
+        data.getDefinition().setMaximumGeneralization("age", 0);
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
@@ -104,26 +94,36 @@ public class Example29 extends Example {
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);
 
-        // Perform risk analysis
-        System.out.println("\n - Output data");
-        print(result.getOutput());
-        System.out.println("\n - Risk analysis:");
-        analyzeData(result.getOutput());
-    }
-
-    /**
-     * Perform risk analysis
-     * @param handle
-     */
-    private static void analyzeAttributes(DataHandle handle) {
+        // Convert output to input
+        Data outputAsInput = Data.create(result.getOutput().iterator());
+        DataHandle handle = outputAsInput.getHandle();
+        handle.getDefinition().setAttributeType("age", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        handle.getDefinition().setAttributeType("gender", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        handle.getDefinition().setAttributeType("zipcode", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        
+        System.out.println(" - Data:");
+        print(handle);
+        
+        // For each attribute combination sorted by risk ascending
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
         RiskModelAttributes riskmodel = builder.getAttributeRisks();
         for (QuasiIdentifierRisk risk : riskmodel.getAttributeRisks()) {
-            System.out.println("   * Distinction: " + risk.getDistinction() + ", Separation: " + risk.getSeparation() + ", Identifier: " + risk.getIdentifier());
+            
+            // Specify
+            handle.getDefinition().setAttributeType("age", AttributeType.INSENSITIVE_ATTRIBUTE);
+            handle.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
+            handle.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
+            for (String qi : risk.getIdentifier()) {
+                handle.getDefinition().setAttributeType(qi, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+            }
+            
+            // Print
+            System.out.println("\n - Stats for QI: " + risk.getIdentifier());
+            analyzeData(handle);
         }
     }
-        
+
     /**
      * Perform risk analysis
      * @param handle
@@ -133,28 +133,9 @@ public class Example29 extends Example {
         ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
         RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
         RiskModelHistogram classes = builder.getEquivalenceClassModel();
-        RiskModelSampleRisks sampleReidentifiationRisk = builder.getSampleBasedReidentificationRisk();
-        RiskModelSampleUniqueness sampleUniqueness = builder.getSampleBasedUniquenessRisk();
-        RiskModelPopulationUniqueness populationUniqueness = builder.getPopulationBasedUniquenessRisk();
-        
-        int[] histogram = classes.getHistogram();
-        
         System.out.println("   * Equivalence classes:");
         System.out.println("     - Average size: " + classes.getAvgClassSize());
         System.out.println("     - Num classes : " + classes.getNumClasses());
-        System.out.println("     - Histogram   :");
-        for (int i = 0; i < histogram.length; i += 2) {
-            System.out.println("        [Size: " + histogram[i] + ", count: " + histogram[i + 1] + "]");
-        }
-        System.out.println("   * Risk estimates:");
-        System.out.println("     - Sample-based measures");
-        System.out.println("       + Average risk     : " + sampleReidentifiationRisk.getAverageRisk());
-        System.out.println("       + Lowest risk      : " + sampleReidentifiationRisk.getLowestRisk());
-        System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByLowestRisk());
-        System.out.println("       + Highest risk     : " + sampleReidentifiationRisk.getHighestRisk());
-        System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByHighestRisk());
-        System.out.println("       + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueRecords());
-        System.out.println("     - Population-based measures");
-        System.out.println("       + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(PopulationUniquenessModel.ZAYATZ));
+        System.out.println("     - Records : " + classes.getNumRecords());
     }
 }

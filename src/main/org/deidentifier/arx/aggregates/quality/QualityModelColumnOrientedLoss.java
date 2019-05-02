@@ -41,6 +41,8 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
      * @param totalWorkload
      * @param input
      * @param output
+     * @param suppressedInput
+     * @param suppressedOutput
      * @param groupedInput
      * @param groupedOutput
      * @param hierarchies
@@ -53,6 +55,8 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
                                           int totalWorkload,
                                           DataHandle input,
                                           DataHandle output,
+                                          int suppressedInput,
+                                          int suppressedOutput,
                                           Groupify<TupleWrapper> groupedInput,
                                           Groupify<TupleWrapper> groupedOutput,
                                           String[][][] hierarchies,
@@ -64,6 +68,8 @@ public class QualityModelColumnOrientedLoss extends QualityModel<QualityMeasureC
               totalWorkload,
               input,
               output,
+              suppressedInput,
+              suppressedOutput,
               groupedInput,
               groupedOutput,
               hierarchies,

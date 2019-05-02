@@ -48,7 +48,8 @@ public class RiskModelHistogram {
     private double numClasses;
 
     /**
-     * Creates a new instance from the given distribution
+     * Creates a new instance from the given distribution.
+     * IMPORTANT: Suppressed records should have been ignored before calling this.
      * 
      * @param distribution
      */
@@ -102,8 +103,8 @@ public class RiskModelHistogram {
                 progress.value = prog;
             }
 
-            if (!handle.isOutlier(row)) {
-                TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
+            if (!handle.isOutlier(row, indices)) {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row);
                 map.add(tuple);
             }
             if (stop.value) { throw new ComputationInterruptedException(); }
@@ -136,7 +137,7 @@ public class RiskModelHistogram {
      * @return the avgClassSize
      */
     public double getAvgClassSize() {
-        return avgClassSize;
+        return Double.isNaN(avgClassSize) ? 0d : avgClassSize;
     }
 
     /**
@@ -165,6 +166,14 @@ public class RiskModelHistogram {
      */
     public double getNumRecords() {
         return numRecords;
+    }
+    
+    /**
+     * Returns whether the histogram is empty
+     * @return
+     */
+    public boolean isEmpty() {
+        return numRecords == 0d;
     }
 
     /**

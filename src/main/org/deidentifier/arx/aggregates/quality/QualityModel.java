@@ -27,7 +27,6 @@ import java.util.Set;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.common.Groupify;
-import org.deidentifier.arx.common.Groupify.Group;
 import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
@@ -51,6 +50,12 @@ abstract class QualityModel<T> {
     /** Output */
     private final DataHandle             output;
 
+    /** Input */
+    private final int                    suppressedInput;
+
+    /** Output */
+    private final int                    suppressedOutput;
+
     /** Grouped */
     private final Groupify<TupleWrapper> groupedInput;
 
@@ -68,7 +73,7 @@ abstract class QualityModel<T> {
 
     /** Workload */
     private final int                    startWorkload;
-    
+
     /** Workload */
     private final int                    totalWorkload;
 
@@ -110,6 +115,8 @@ abstract class QualityModel<T> {
                  int totalWorkload,
                  DataHandle input,
                  DataHandle output,
+                 int suppressedInput,
+                 int suppressedOutput,
                  Groupify<TupleWrapper> groupedInput,
                  Groupify<TupleWrapper> groupedOutput,
                  String[][][] hierarchies,
@@ -120,6 +127,8 @@ abstract class QualityModel<T> {
         // Store data
         this.input = input;
         this.output = output;
+        this.suppressedInput = suppressedInput;
+        this.suppressedOutput = suppressedOutput;
         this.groupedInput = groupedInput;
         this.groupedOutput = groupedOutput;
         this.indices = indices;
@@ -165,167 +174,6 @@ abstract class QualityModel<T> {
      * @return
      */
     protected abstract T evaluate();
-
-    /**
-     * Returns the domain shares
-     */
-    protected QualityDomainShare[] getDomainShares() {
-        return shares;
-    }
-
-    /**
-     * Returns grouped input
-     */
-    protected Groupify<TupleWrapper> getGroupedInput() {
-        return groupedInput;
-    }
-
-    /**
-     * Returns grouped output
-     */
-    protected Groupify<TupleWrapper> getGroupedOutput() {
-        return groupedOutput;
-    }
-
-    /**
-     * Returns the hierarchies
-     */
-    protected String[][][] getHierarchies() {
-        return hierarchies;
-    }
-    
-    /**
-     * Returns relevant indices
-     */
-    protected int[] getIndices() {
-        return indices;
-    }
-
-    /**
-     * Returns input
-     * 
-     * @return
-     */
-    protected DataHandle getInput() {
-        return this.input;
-    }
-
-    /**
-     * Returns output
-     * 
-     * @return
-     */
-    protected DataHandle getOutput() {
-        return this.output;
-    }
-
-    /**
-     * Returns the suppression string
-     * @return
-     */
-    protected String getSuppressionString() {
-        return suppressedValue;
-    }
-
-    /**
-     * Returns whether a value is suppressed
-     * 
-     * @param handle
-     * @param row
-     * @param column
-     * @return
-     */
-    protected boolean isSuppressed(DataHandle handle, int row, int column) {
-
-        // Check flag
-        if (handle.isOutlier(row)) {
-            return true;
-        } else {
-            return isSuppressed(column, handle.getValue(row, column));
-        }
-    }
-
-    /**
-     * We assume that an entry is suppressed, if all values are equal
-     * 
-     * @param entry
-     * @return
-     */
-    protected boolean isSuppressed(DataHandle handle, int[] indices, int row) {
-
-        // Check flag
-        if (handle.isOutlier(row)) { return true; }
-
-        // Check values
-        for (int i = 1; i < indices.length; i++) {
-            if (!handle.getValue(row, indices[i - 1]).equals(handle.getValue(row, indices[i]))) { return false; }
-        }
-        return true;
-    }
-
-    /**
-     * We assume that an entry is suppressed, if all values are equal
-     * 
-     * @param entry
-     * @return
-     */
-    protected boolean isSuppressed(Group<TupleWrapper> entry) {
-
-        // Check flag
-        if (entry.getElement().isSuppressed()) { return true; }
-
-        // Check values
-        String[] array = entry.getElement().getValues();
-        for (int i = 1; i < array.length; i++) {
-            if (!array[i - 1].equals(array[i])) { return false; }
-        }
-        return true;
-    }
-
-    /**
-     * Returns whether a value is suppressed
-     * 
-     * @param column
-     * @param value
-     * @return
-     */
-    protected boolean isSuppressed(int column, String value) {
-        return value.equals(suppressedValue) || value.equals(roots.get(column));
-    }
-
-    /**
-     * Log base-2
-     * 
-     * @param d
-     * @return
-     */
-    protected double log2(double d) {
-        return Math.log(d) / LOG2;
-    }
-
-    /**
-     * One step performed
-     */
-    protected void setStepPerformed() {
-        this.currentSteps++;
-        int value = (int)Math.round((double)totalWorkload * (double)currentSteps / (double)totalSteps);
-        this.progress.value = startWorkload + value;
-    }
-
-    /**
-     * Total number of steps
-     * @param steps
-     */
-    protected void setSteps(int steps) {
-        this.totalSteps = steps;
-    }
-
-    /**
-     * All steps performed
-     */
-    protected void setStepsDone() {
-        this.progress.value = startWorkload + totalWorkload;
-    }
 
     /**
      * Returns a columns from the input and output dataset converted to numbers
@@ -381,6 +229,72 @@ abstract class QualityModel<T> {
         
         // HIERARCHY - HIERARCHY
         return new double[][]{inputAsNumbers, outputAsNumbers};
+    }
+
+    /**
+     * Returns the domain shares
+     */
+    protected QualityDomainShare[] getDomainShares() {
+        return shares;
+    }
+
+    /**
+     * Returns grouped input
+     */
+    protected Groupify<TupleWrapper> getGroupedInput() {
+        return groupedInput;
+    }
+
+    /**
+     * Returns grouped output
+     */
+    protected Groupify<TupleWrapper> getGroupedOutput() {
+        return groupedOutput;
+    }
+    
+    /**
+     * Returns the hierarchies
+     */
+    protected String[][][] getHierarchies() {
+        return hierarchies;
+    }
+
+    /**
+     * Returns relevant indices
+     */
+    protected int[] getIndices() {
+        return indices;
+    }
+
+    /**
+     * Returns input
+     * 
+     * @return
+     */
+    protected DataHandle getInput() {
+        return this.input;
+    }
+
+    /**
+     * Returns minimum, maximum for the given column
+     * @param column
+     * @return
+     */
+    protected double[] getMinMax(double[] column) {
+        
+        // Init
+        double min = Double.MAX_VALUE;
+        double max = -Double.MAX_VALUE;
+        
+        // Calculate min and max
+        for (int i = 0; i < column.length; i++) {
+            double value = column[i];
+            min = Math.min(min, value);
+            max = Math.max(max, value);
+        }
+        
+        // Return
+        return new double[]{min, max};
     }
 
     /**
@@ -632,6 +546,15 @@ abstract class QualityModel<T> {
     }
 
     /**
+     * Returns output
+     * 
+     * @return
+     */
+    protected DataHandle getOutput() {
+        return this.output;
+    }
+
+    /**
      * Tries to parse numbers from output when there is a numeric input column
      * @param inputNumbers
      * @param output
@@ -697,24 +620,107 @@ abstract class QualityModel<T> {
     }
 
     /**
-     * Returns minimum, maximum for the given column
+     * Returns the number of records suppressed in input
+     * @return
+     */
+    protected int getSuppressedRecordsInInput() {
+        return suppressedInput;
+    }
+
+    /**
+     * Returns the number of records suppressed in output
+     * @return
+     */
+    protected int getSuppressedRecordsInOutput() {
+        return suppressedOutput;
+    }
+
+    /**
+     * Returns the suppression string
+     * @return
+     */
+    protected String getSuppressionString() {
+        return suppressedValue;
+    }
+
+    /**
+     * Returns whether a value is suppressed
+     * 
+     * @param handle
+     * @param row
      * @param column
      * @return
      */
-    protected double[] getMinMax(double[] column) {
-        
-        // Init
-        double min = Double.MAX_VALUE;
-        double max = -Double.MAX_VALUE;
-        
-        // Calculate min and max
-        for (int i = 0; i < column.length; i++) {
-            double value = column[i];
-            min = Math.min(min, value);
-            max = Math.max(max, value);
+    protected boolean isSuppressed(DataHandle handle, int row, int column) {
+
+        // Check flag
+        if (handle.isOutlier(row)) {
+            return true;
+        } else {
+            return isSuppressed(column, handle.getValue(row, column));
         }
-        
-        // Return
-        return new double[]{min, max};
+    }
+
+    /**
+     * We assume that an entry is suppressed, if all values are equal
+     * 
+     * @param entry
+     * @return
+     */
+    protected boolean isSuppressed(DataHandle handle, int[] indices, int row) {
+
+        // Check flag
+        if (handle.isOutlier(row)) { return true; }
+
+        // Check values
+        for (int i = 1; i < indices.length; i++) {
+            if (!handle.getValue(row, indices[i - 1]).equals(handle.getValue(row, indices[i]))) { return false; }
+        }
+        return true;
+    }
+
+    /**
+     * Returns whether a value is suppressed
+     * 
+     * @param column
+     * @param value
+     * @return
+     */
+    protected boolean isSuppressed(int column, String value) {
+        return value.equals(suppressedValue) || value.equals(roots.get(column));
+    }
+
+    /**
+     * Log base-2
+     * 
+     * @param d
+     * @return
+     */
+    protected double log2(double d) {
+        return Math.log(d) / LOG2;
+    }
+
+    /**
+     * One step performed
+     */
+    protected void setStepPerformed() {
+        this.currentSteps++;
+        int value = (int)Math.round((double)totalWorkload * (double)currentSteps / (double)totalSteps);
+        this.progress.value = startWorkload + value;
+    }
+
+    /**
+     * Total number of steps
+     * @param steps
+     */
+    protected void setSteps(int steps) {
+        this.totalSteps = steps;
+    }
+
+    /**
+     * All steps performed
+     */
+    protected void setStepsDone() {
+        this.progress.value = startWorkload + totalWorkload;
     }
 }

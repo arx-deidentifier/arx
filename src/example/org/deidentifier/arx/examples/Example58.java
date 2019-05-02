@@ -24,6 +24,7 @@ import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXPopulationModel;
 import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.ARXResult;
+import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
@@ -40,12 +41,11 @@ import org.deidentifier.arx.risk.RiskModelSampleRisks;
 import org.deidentifier.arx.risk.RiskModelSampleUniqueness;
 
 /**
- * This class implements an example of how to perform risk analyses with the API
+ * This class implements an example that shows consistent handling of suppressed records in input and output
  *
  * @author Fabian Prasser
- * @author Florian Kohlmayer
  */
-public class Example29 extends Example {
+public class Example58 extends Example {
 
     /**
      * Entry point.
@@ -109,6 +109,18 @@ public class Example29 extends Example {
         print(result.getOutput());
         System.out.println("\n - Risk analysis:");
         analyzeData(result.getOutput());
+        
+        // Convert output to input
+        Data outputAsInput = Data.create(result.getOutput().iterator());
+        outputAsInput.getDefinition().setAttributeType("age", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        outputAsInput.getDefinition().setAttributeType("gender", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        outputAsInput.getDefinition().setAttributeType("zipcode", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+
+        // Perform risk analysis
+        System.out.println("\n - Output as input data");
+        print(outputAsInput.getHandle());
+        System.out.println("\n - Risk analysis:");
+        analyzeData(outputAsInput.getHandle());
     }
 
     /**
@@ -142,6 +154,7 @@ public class Example29 extends Example {
         System.out.println("   * Equivalence classes:");
         System.out.println("     - Average size: " + classes.getAvgClassSize());
         System.out.println("     - Num classes : " + classes.getNumClasses());
+        System.out.println("     - Records : " + classes.getNumRecords());
         System.out.println("     - Histogram   :");
         for (int i = 0; i < histogram.length; i += 2) {
             System.out.println("        [Size: " + histogram[i] + ", count: " + histogram[i + 1] + "]");
