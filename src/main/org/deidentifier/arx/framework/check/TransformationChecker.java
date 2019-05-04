@@ -148,12 +148,14 @@ public class TransformationChecker {
         this.currentGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                                 manager.getDataGeneralized().getArray(),
                                                 transformer.getBuffer(),
-                                                manager.getDataAnalyzed().getArray());
+                                                manager.getDataAnalyzed().getArray(),
+                                                manager.getDataGeneralized().getDictionary().getSuppressedCodes());
         
         this.lastGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                              manager.getDataGeneralized().getArray(),
                                              transformer.getBuffer(),
-                                             manager.getDataAnalyzed().getArray());
+                                             manager.getDataAnalyzed().getArray(),
+                                             manager.getDataGeneralized().getDictionary().getSuppressedCodes());
     }
 
     /**

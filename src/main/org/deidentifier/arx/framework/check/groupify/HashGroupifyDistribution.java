@@ -78,7 +78,7 @@ public class HashGroupifyDistribution {
     /** The backing map */
     private IntIntOpenHashMap   distribution = new IntIntOpenHashMap();
     /** The number of suppressed tuples */
-    private int                 numSuppressed   = 0;
+    private int                 internalNumSuppressed   = 0;
     /** Entries that can be suppressed */
     private HashGroupifyEntry[] entries;
     /** Number of tuples in the data set */
@@ -87,24 +87,32 @@ public class HashGroupifyDistribution {
     private double              numClasses   = 0;
 
     /**
-     * Creates a new instance
+     * Creates a new instance.
      * 
      * @param metric, null if ordering should not be applied
      * @param transformation
-     * @param entry
+     * @param groupify
      */
     HashGroupifyDistribution(final Metric<?> metric,
                              final Transformation transformation,
-                             HashGroupifyEntry entry) {
+                             HashGroupify groupify) {
+        
+        // We need to apply a hack here, to consider fully generalized records as suppressed in
+        // the risk model. We cannot suppress fully generalized records while running the internal
+        // algorithms of ARX, as this breaks monotonicity. Here, we want to consider them suppressed
+        // when analyzing the distribution of equivalence class sizes. The number of suppressed records
+        // reported by this class must follow the internal counting scheme, though. The according variable
+        // should not be used for measuring risks.
         
         // Initialize
+        HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();
         while(entry != null) {
-            if (entry.isNotOutlier && entry.count > 0) {
+            if (entry.isNotOutlier && entry.count > 0 && !groupify.isCompletelyGeneralized(entry)) {
                 addToDistribution(entry.count);
                 list.add(entry);
             } else {
-                this.numSuppressed += entry.count;
+                this.internalNumSuppressed += !groupify.isCompletelyGeneralized(entry) ? entry.count : 0;
             }
             entry = entry.nextOrdered;
         }
@@ -178,7 +186,7 @@ public class HashGroupifyDistribution {
      * @return
      */
     public double getAverageClassSize() {
-        return numRecords / numClasses;
+        return (int)numRecords == 0 ? 0 : (numRecords / numClasses);
     }
 
     /**
@@ -187,7 +195,7 @@ public class HashGroupifyDistribution {
      * @return
      */
     public double getFractionOfRecordsInClassesOfSize(int size) {
-        return (double)distribution.get(size) * (double)size / numRecords;
+        return (int)numRecords == 0 ? 0 : ((double)distribution.getOrDefault(size, 0) * (double)size / numRecords);
     }
 
     /**
@@ -198,39 +206,38 @@ public class HashGroupifyDistribution {
     }
 
     /**
-     * Returns the number of records
+     * Returns the number of suppressed records. This uses the internal counting scheme, which means that
+     * records that have been fully generalized are *not* considered suppressed, although they are
+     * interpreted this way by the risk model.
      * @return
      */
-    public int getNumRecords() {
-        return (int)this.numRecords;
+    public int internalGetNumSuppressedRecords() {
+        return this.internalNumSuppressed;
     }
     
     /**
-     * Returns the number of suppressed records
+     * Returns whether there are no records to consider
      * @return
      */
-    public int getNumSuppressedRecords() {
-        return this.numSuppressed;
+    public boolean isEmpty() {
+        return (int)this.numRecords == 0;
     }
     
-
     /**
      * Suppresses entries until the condition is fulfilled
      * @param condition
-     * @return the number of tuples that have been suppressed
      */
-    public int suppressWhileNotFulfilledBinary(PrivacyCondition condition) {
+    public void suppressWhileNotFulfilledBinary(PrivacyCondition condition) {
         
         // Nothing to suppress
         if (entries.length == 0) {
-            return this.numSuppressed;
+            return;
         }
 
         // Start parameters
         int low = 0;
         int high = entries.length - 1;
         int mid = (low + high) / 2;
-        int initiallySuppressed = this.numSuppressed;
         State state = State.ABORT;
 
         // Initially suppress from low to mid
@@ -273,19 +280,13 @@ public class HashGroupifyDistribution {
                 suppressEntry(entries[mid + 1]);
             }
         }
-
-        return this.numSuppressed - initiallySuppressed;
     }
 
     /**
      * Suppresses entries until the condition is fulfilled
      * @param condition
-     * @return the number of tuples that have been suppressed
      */
-    public int suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
-
-        int initiallySuppressed = this.numSuppressed;
-
+    public void suppressWhileNotFulfilledLinear(PrivacyCondition condition) {
         for (int i=0; i<entries.length; i++) {
             State state = condition.isFulfilled(this);
             if (state == State.NOT_FULFILLED) {
@@ -295,8 +296,6 @@ public class HashGroupifyDistribution {
                 break;
             }
         }
-        
-        return this.numSuppressed - initiallySuppressed;
     }
 
     /**
@@ -329,7 +328,7 @@ public class HashGroupifyDistribution {
     private void suppressEntry(HashGroupifyEntry entry) {
         entry.isNotOutlier = false;
         removeFromDistribution(entry.count);
-        this.numSuppressed += entry.count;
+        this.internalNumSuppressed += entry.count;
         // No need to adjust "numRecords", because this is done in "removeFromDistribution"
     }
 
@@ -339,11 +338,11 @@ public class HashGroupifyDistribution {
      */
     private void unSuppressEntry(HashGroupifyEntry entry) {
         
-        if (this.numSuppressed == 0 || entry.isNotOutlier) {
+        if (this.internalNumSuppressed == 0 || entry.isNotOutlier) {
             throw new IllegalStateException("Internal error. There are no suppressed entries.");
         }
         entry.isNotOutlier = true;
-        this.numSuppressed -= entry.count;
+        this.internalNumSuppressed -= entry.count;
         addToDistribution(entry.count);
         // No need to adjust "numRecords", because this is done in "addToDistribution"
     }

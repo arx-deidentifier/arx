@@ -121,7 +121,8 @@ public class TransformationApplicator {
                                                         aggregation.getHeader().length,
                                                         inputGeneralized.getArray(),
                                                         outputGeneralized,
-                                                        inputAnalyzed);
+                                                        inputAnalyzed,
+                                                        inputGeneralized.getDictionary().getSuppressedCodes());
         
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);
@@ -149,7 +150,7 @@ public class TransformationApplicator {
         
         // Perform suppression
         if (config.getAbsoluteSuppressionLimit() != 0 || !currentGroupify.isPrivacyModelFulfilled()) {
-            currentGroupify.performSuppression(inputGeneralized.getDictionary());
+            currentGroupify.performSuppression();
         }
         
         // Return the buffer
