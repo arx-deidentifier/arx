@@ -50,15 +50,6 @@ import org.apache.commons.math3.util.Pair;
  */
 public class ExponentialMechanism<T> {
 
-    /** The probability distribution */
-    private EnumeratedDistribution<T> distribution;
-
-    /** The privacy parameter epsilon */
-    private double                    epsilon;
-
-    /** The random generator */
-    private AbstractRandomGenerator   random;
-
     /** 
      * Random number generator to use here
      * @author Fabian Prasser
@@ -94,6 +85,15 @@ public class ExponentialMechanism<T> {
             this.random.setSeed(seed);
         }
     }
+
+    /** The probability distribution */
+    private EnumeratedDistribution<T> distribution;
+
+    /** The privacy parameter epsilon */
+    private double                    epsilon;
+
+    /** The random generator */
+    private AbstractRandomGenerator   random;
     
     /**
      * Constructs a new instance
