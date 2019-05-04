@@ -161,8 +161,7 @@ public class Example21 extends Example {
         Class.forName("org.sqlite.JDBC");
         
         // Configuration for JDBC source
-        DataSource source = DataSource.createJDBCSource("jdbc:sqlite:data/test.db",
-                                                        "test");
+        DataSource source = DataSource.createJDBCSource("jdbc:sqlite:data/test.db", "test");
                                                         
         // Add columns
         source.addColumn(2, DataType.STRING); // zipcode (index based addressing)

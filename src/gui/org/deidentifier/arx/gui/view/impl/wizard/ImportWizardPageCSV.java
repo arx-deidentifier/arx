@@ -760,7 +760,7 @@ public class ImportWizardPageCSV extends WizardPage {
 
         /* Variables needed for processing */
         final CSVDataInput in = new CSVDataInput(location, charset, delimiter, quote, escape, linebreak);
-        final Iterator<String[]> it = in.iterator();
+        final Iterator<String[]> it = in.iterator(false);
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
         ImportConfigurationCSV config = new ImportConfigurationCSV(location, charset, delimiter, quote, escape, linebreak, containsHeader);

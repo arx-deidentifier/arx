@@ -19,6 +19,8 @@ package org.deidentifier.arx.framework.data;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.DataType;
+
 import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
@@ -35,6 +37,9 @@ public class Dictionary implements Serializable {
     /** The resulting array mapping dimension->integer->string. */
     private final String[][]                         mapping;
 
+    /** Codes of suppressed values for each dimension*/
+    private final int[]                              suppressed;
+
     /** Map used when building the dictionary. */
     private transient ObjectIntOpenHashMap<String>[] maps;
 
@@ -47,9 +52,11 @@ public class Dictionary implements Serializable {
     public Dictionary(Dictionary input, int[] columns) {
         maps = new ObjectIntOpenHashMap[columns.length];
         mapping = new String[columns.length][];
+        suppressed = new int[columns.length];
         for (int i = 0; i < columns.length; i++) {
             maps[i] = input.maps == null ? null : input.maps[columns[i]].clone();
             mapping[i] = input.mapping[columns[i]].clone();
+            suppressed[i] = input.suppressed[columns[i]];
         }
     }
     
@@ -62,6 +69,7 @@ public class Dictionary implements Serializable {
     public Dictionary(final int dimensions) {
         maps = new ObjectIntOpenHashMap[dimensions];
         mapping = new String[dimensions][];
+        suppressed = new int[dimensions];
         for (int i = 0; i < dimensions; i++) {
             maps[i] = new ObjectIntOpenHashMap<String>();
         }
@@ -100,12 +108,16 @@ public class Dictionary implements Serializable {
     public void finalizeAll() {
         for (int i = 0; i < maps.length; i++) {
             mapping[i] = new String[maps[i].size()];
+            suppressed[i] = -1; // Won't match anything
             final Object[] keys = maps[i].keys;
             final int[] values = maps[i].values;
             final boolean[] allocated = maps[i].allocated;
             for (int j = 0; j < allocated.length; j++) {
                 if (allocated[j]) {
-                    mapping[i][values[j]] = (String) keys[j];
+                    String key = (String) keys[j];
+                    int value = values[j];
+                    mapping[i][value] = key;
+                    suppressed[i] = key.equals(DataType.ANY_VALUE) ? value : suppressed[i];
                 }
             }
 
@@ -123,6 +135,14 @@ public class Dictionary implements Serializable {
     }
 
     /**
+     * Returns the codes for suppressed values
+     * @return
+     */
+    public int[] getSuppressedCodes() {
+        return suppressed;
+    }
+    
+    /**
      * Returns the number of dimensions in the dictionary.
      *
      * @return
@@ -132,14 +152,12 @@ public class Dictionary implements Serializable {
     }
 
     /**
-     * Returns the number of unique values contained before finalizing the
-     * dictionary.
-     *
+     * Returns the map with unfinalized values for the given dimension
      * @param dimension
      * @return
      */
-    public int getNumUniqueUnfinalizedValues(final int dimension) {
-        return maps[dimension].size();
+    public ObjectIntOpenHashMap<String> getUnfinalizedValues(final int dimension) {
+        return maps[dimension];
     }
 
     /**

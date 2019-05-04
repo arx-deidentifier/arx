@@ -103,9 +103,15 @@ public class HashGroupify {
     /** Output */
     private final DataMatrix             dataAnalyzed;
 
-    /** Number of columns (from index 0) that need to be analyzed in hot-mode*/ 
+    /** Number of columns (from index 0) that need to be analyzed in hot-mode */
     private final int                    dataAnalyzedNumberOfColumns;
+
+    /** Suppressed codes */
+    private final int[]                  suppressedCodes;
     
+    /** Hash code of fully generalized records*/
+    private final int                    suppressedHashCode;
+
     /**
      * Constructs a new hash groupify operator.
      *
@@ -115,19 +121,23 @@ public class HashGroupify {
      * @param input
      * @param output
      * @param analyzed
+     * @param suppressedCodes
      */
     public HashGroupify(int capacity, 
-                        final ARXConfigurationInternal config,
-                        final int dataAnalyzedNumberOfColumns,
-                        final DataMatrix input,
-                        final DataMatrix output,
-                        final DataMatrix analyzed) {
+                        ARXConfigurationInternal config,
+                        int dataAnalyzedNumberOfColumns,
+                        DataMatrix input,
+                        DataMatrix output,
+                        DataMatrix analyzed,
+                        int[] suppressedCodes) {
         
         // Store
         this.dataInput = input;
         this.dataOutput = output;
         this.dataAnalyzed = analyzed;
         this.dataAnalyzedNumberOfColumns = dataAnalyzedNumberOfColumns;
+        this.suppressedCodes = suppressedCodes;
+        this.suppressedHashCode = dataOutput.hashCode(suppressedCodes);
         
         // Set capacity
         capacity = HashTableUtil.calculateCapacity(capacity);
@@ -313,6 +323,25 @@ public class HashGroupify {
     }
     
     /**
+     * Returns whether the given entry is completely generalized
+     * @param entry
+     * @return
+     */
+    public boolean isCompletelyGeneralized(HashGroupifyEntry entry) {
+        if (entry.hashcode != this.suppressedHashCode) {
+            return false;
+        }
+        int column = 0;
+        entry.read();
+        while (entry.hasNext()) {
+            if (suppressedCodes[column++] != (entry.next() & Data.REMOVE_OUTLIER_MASK)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
      * Returns whether the current state of the dataset fulfills the minimal class-size property
      * @return
      */
@@ -327,7 +356,7 @@ public class HashGroupify {
     public boolean isPrivacyModelFulfilled() {
         return privacyModelFulfilled;
     }
-
+    
     /**
      * Returns a data object with microaggregation performed
      * @param microaggregationData
@@ -383,6 +412,7 @@ public class HashGroupify {
      * Suppresses all records in the output dataset which <br>
      * (a) do not satisfy privacy requirements, or <br>
      * (b) are not included in the research subset
+     * @param dictionary 
      */
     public void performSuppression() {
         
@@ -397,15 +427,16 @@ public class HashGroupify {
                 if (m == null) {
                     throw new RuntimeException("Invalid state! Group the data before suppressing records!");
                 }
-                if (!m.isNotOutlier) {
+                if (!m.isNotOutlier || this.isCompletelyGeneralized(m)) {
                     dataOutput.or(row, Data.OUTLIER_MASK);
+                    m.isNotOutlier = false;
                 }
             } else {
                 dataOutput.or(row, Data.OUTLIER_MASK);
             }
         }
     }
-    
+
     /**
      * Analyzes the current state
      * @param transformation
@@ -574,7 +605,7 @@ public class HashGroupify {
         // Build a distribution
         HashGroupifyDistribution distribution = new HashGroupifyDistribution(heuristicForSampleBasedCriteria ? null : utilityMeasure,
                                                                              transformation,
-                                                                             this.hashTableFirstEntry);
+                                                                             this);
         
         // For each criterion
         for (SampleBasedCriterion criterion : this.sampleBasedCriteria) {
@@ -583,13 +614,13 @@ public class HashGroupify {
             criterion.enforce(distribution, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE);
             
             // Early abort
-            this.currentNumOutliers = distribution.getNumSuppressedRecords();
+            this.currentNumOutliers = distribution.internalGetNumSuppressedRecords();
             if (earlyAbort && currentNumOutliers > suppressionLimit) {
                 return;
             }
         }
     }
-    
+        
     /**
      * Analyzes the content of the hash table. Checks the privacy criteria against each class.
      * @param transformation
@@ -656,7 +687,7 @@ public class HashGroupify {
         this.analyzeSampleBasedCriteria(transformation, true);
         this.privacyModelFulfilled = (currentNumOutliers <= suppressionLimit);
     }
-        
+
     /**
      * Creates a new entry.
      * 
@@ -709,7 +740,9 @@ public class HashGroupify {
      * @param transformation
      * @param entry
      * @return
-     * @returns -1, if all criteria are fulfilled, 0, if minimal group size is not fulfilled, (index+1) if criteria[index] is not fulfilled
+     * @returns -1, if all criteria are fulfilled, 0, 
+     *              if minimal group size is not fulfilled, 
+     *              (index+1) if criteria[index] is not fulfilled
      */
     private int isPrivacyModelFulfilled(Transformation<?> transformation, HashGroupifyEntry entry) {
         

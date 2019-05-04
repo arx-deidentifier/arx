@@ -197,7 +197,7 @@ public class DialogOpenHierarchy extends TitleAreaDialog implements IDialog {
         
         // Read the first few lines
         final CSVDataInput in = new CSVDataInput(file, charset, separators[selectionSeparator]);
-        final Iterator<String[]> it = in.iterator();
+        final Iterator<String[]> it = in.iterator(false);
         final List<String[]> data = new ArrayList<String[]>();
 
         int count = 0;

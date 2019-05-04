@@ -121,7 +121,8 @@ public class TransformationApplicator {
                                                         aggregation.getHeader().length,
                                                         inputGeneralized.getArray(),
                                                         outputGeneralized,
-                                                        inputAnalyzed);
+                                                        inputAnalyzed,
+                                                        inputGeneralized.getDictionary().getSuppressedCodes());
         
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);

@@ -572,7 +572,6 @@ public class DataHandleOutput extends DataHandle {
 
         // Extract info
         Data data = columnToData[col];
-        int index = columnToIndex[col];
         
         // Handle identifying values
         if (data == null) {
@@ -586,7 +585,7 @@ public class DataHandleOutput extends DataHandle {
         } else {
             
             // Decode and return
-            return data.getArray().get(row, index) & Data.REMOVE_OUTLIER_MASK;
+            return data.getArray().get(row, columnToIndex[col]) & Data.REMOVE_OUTLIER_MASK;
         }
     }
     
@@ -635,6 +634,40 @@ public class DataHandleOutput extends DataHandle {
     }
     
     @Override
+    protected boolean internalIsOutlier(int row, int[] columns) {
+
+        for (int column : columns) {
+
+            // Extract info
+            Data data = columnToData[column];
+            
+            // Identifying values are suppressed
+            if (data == null) {
+                continue;
+            }
+                
+            // Suppressed values are suppressed
+            if ((dataGeneralized.getArray().get(row, 0) & Data.OUTLIER_MASK) !=0 && columnToSuppressionStatus[column]) {
+                continue;
+            }
+            
+            // Extract info
+            int index = columnToIndex[column];
+            
+            // Completely generalized values are suppressed
+            int suppressed = data.getDictionary().getSuppressedCodes()[index];
+            if ((data.getArray().get(row, index) & Data.REMOVE_OUTLIER_MASK) == suppressed) {
+                continue;
+            }
+            
+            // Not suppressed
+            return false;
+        }
+        return true;
+    }
+    
+
+    @Override
     protected boolean internalReplace(int column,
                                       String original,
                                       String replacement) {
@@ -668,7 +701,6 @@ public class DataHandleOutput extends DataHandle {
         // Return
         return found;
     }
-    
 
     /**
      * Swap internal.

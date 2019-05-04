@@ -137,7 +137,7 @@ public class TestRiskMetrics {
         
         RiskModelPopulationUniqueness model = handle.getRiskEstimator(ARXPopulationModel.create(handle.getNumRows(), 0.2d)).getPopulationBasedUniquenessRisk();
         double populationUniqueness = model.getFractionOfUniqueTuplesDankar();
-        double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(handle.getNumRows(), 0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
+        double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(handle.getNumRows(), 0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueRecords();
         
         // Risk before anonymization
         assertTrue(sampleUniqueness + " / " + populationUniqueness, compareUniqueness(populationUniqueness, 1.0d) == 0);
@@ -172,7 +172,7 @@ public class TestRiskMetrics {
         DataHandle handle = data.getHandle();
         
         RiskModelPopulationUniqueness model = handle.getRiskEstimator(ARXPopulationModel.create(handle.getNumRows(), 0.1d)).getPopulationBasedUniquenessRisk();
-        double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(handle.getNumRows(), 0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueTuples();
+        double sampleUniqueness = handle.getRiskEstimator(ARXPopulationModel.create(handle.getNumRows(), 0.1d)).getSampleBasedUniquenessRisk().getFractionOfUniqueRecords();
         double populationUniqueness = model.getFractionOfUniqueTuplesDankar();
         
         if (model.getPopulationUniquenessModel() == PopulationUniquenessModel.PITMAN) {

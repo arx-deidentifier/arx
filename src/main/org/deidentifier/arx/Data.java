@@ -186,7 +186,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @return the data
@@ -197,7 +197,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file A file
      * @param delimiter The utilized separator character
@@ -209,7 +209,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file A file
      * @param delimiter The utilized separator character
@@ -222,7 +222,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param delimiter the delimiter
@@ -236,7 +236,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param delimiter the delimiter
@@ -251,7 +251,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param config the config
@@ -263,7 +263,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param config the config
@@ -276,7 +276,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param config the config
@@ -288,7 +288,7 @@ public abstract class Data { // NO_UCD
         return new IterableData(new CSVDataInput(file, charset, config, datatypes).iterator());
     }
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @return the data
@@ -299,7 +299,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream An input stream
      * @param delimiter The utilized separator character
@@ -311,7 +311,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream An input stream
      * @param delimiter The utilized separator character
@@ -324,7 +324,7 @@ public abstract class Data { // NO_UCD
     }
     
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream An input stream
      * @param delimiter The utilized separator character
@@ -337,7 +337,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param delimiter the delimiter
@@ -351,7 +351,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param delimiter the delimiter
@@ -366,7 +366,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param config the config
@@ -378,7 +378,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param config the config
@@ -454,7 +454,7 @@ public abstract class Data { // NO_UCD
     }
     
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @return the data
@@ -465,7 +465,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path A path to the file
      * @param delimiter The utilized separator character
@@ -477,7 +477,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path A path to the file
      * @param delimiter The utilized separator character
@@ -490,7 +490,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param delimiter the delimiter
@@ -504,7 +504,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param delimiter the delimiter
@@ -519,7 +519,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param config the config
@@ -532,7 +532,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param config the config

@@ -334,6 +334,8 @@ public class ComponentRiskProfile {
                             double x = xAxis.getDataCoordinate(cursor.x);
                             double y = yAxis.getDataCoordinate(cursor.y);
                             builder.setLength(0);
+                            builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.12")); //$NON-NLS-1$
+                            builder.append(": ("); //$NON-NLS-1$
                             builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.10")); //$NON-NLS-1$
                             builder.append(": "); //$NON-NLS-1$
                             builder.append(SWTUtil.getPrettyString(x));
@@ -341,7 +343,7 @@ public class ComponentRiskProfile {
                             builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.11")); //$NON-NLS-1$
                             builder.append(": "); //$NON-NLS-1$
                             builder.append(SWTUtil.getPrettyString(y));
-                            builder.append("%"); //$NON-NLS-1$
+                            builder.append("%)"); //$NON-NLS-1$
                             root.setToolTipText(builder.toString());
                             return;
                         }

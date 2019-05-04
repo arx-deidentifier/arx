@@ -43,18 +43,15 @@ import de.linearbits.jhpl.PredictiveProperty;
  * @author Raffael Bild
  */
 public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
-    
+
     /** Property */
-    private final PredictiveProperty         propertyChecked;
+    private final PredictiveProperty           propertyChecked;
 
     /** Number of expansions to be performed */
-    private final int                        expansionLimit;
+    private final int                          expansionLimit;
 
-    /** Privacy budget to use for each execution of the exponential mechanism */
-    private final double                     epsilonPerStep;
-
-    /** True iff this algorithm should be executed in a deterministic manner */
-    private final boolean                    deterministic;
+    /** The exponential mechanism */
+    private final ExponentialMechanism<Object> exponentialMechanism;
 
     /**
      * Creates a new instance
@@ -84,33 +81,25 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
-        this.deterministic = deterministic;
         this.expansionLimit = expansionLimit;
         
-        if (this.expansionLimit == 0) {
-            // Avoid division by zero
-            this.epsilonPerStep = 0d;
-        } else {
+        // Calculate the privacy budget to use for each step
+        double epsilonPerStep = 0d;
+        if (this.expansionLimit != 0) {
             IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
             try {
-                this.epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(this.expansionLimit)).lower;
+                epsilonPerStep = arithmetic.div(arithmetic.createInterval(epsilonSearch), arithmetic.createInterval(this.expansionLimit)).lower;
             } catch (IntervalArithmeticException e) {
                 throw new RuntimeException(e);
             }
         }
+        
+        // Initialize the exponential mechanism
+        this.exponentialMechanism = new ExponentialMechanism<Object>(epsilonPerStep, deterministic);
     }
     
     @Override
     public boolean traverse() {
-        
-        // Create a new local ExponentialMechanism instance in order to reduce memory consumption caused
-        // by internal caches used by this class
-        ExponentialMechanism<Object> exponentialMechanism;
-        try {
-            exponentialMechanism = new ExponentialMechanism<Object>(epsilonPerStep, deterministic);
-        } catch (IntervalArithmeticException e) {
-            throw new RuntimeException(e);
-        }
         
         // Set the top-transformation to be the initial pivot element
         Transformation<?> pivot = solutionSpace.getTop();
@@ -182,12 +171,12 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         
         // Convert the map into arrays of the types required by the exponential mechanism
         Object[] values = new Object[transformationIDToScore.size()];
-        BigFraction[] scores = new BigFraction[values.length];
-        
+        double[] scores = new double[values.length];
+
         int i = 0;
         for (Entry<Object, ILScore> entry : transformationIDToScore.entrySet()) {
             values[i] = entry.getKey();
-            scores[i] = entry.getValue().getValue();
+            scores[i] = toDouble(entry.getValue().getValue());
             i++;
         }
 
@@ -196,5 +185,22 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         
         // Select and return a value
         return exponentialMechanism.sample();
+    }
+    
+    /**
+     * Tries converting fraction into a double which is within one ulp of the exact result.
+     * If this is not possible, an exception is thrown.
+     * @param fraction
+     * @return
+     */
+    private double toDouble(BigFraction fraction) {
+        double d = fraction.doubleValue();
+        if (Double.isInfinite(d) || Double.isNaN(d)) {
+            throw new RuntimeException("Encountered a value which can not be represented as a double");
+        }
+        if (fraction.subtract(new BigFraction(d)).abs().compareTo(new BigFraction(Math.ulp(d))) > 0) {
+            throw new RuntimeException("Encountered a value with insufficient precision");
+        }
+        return d;
     }
 }

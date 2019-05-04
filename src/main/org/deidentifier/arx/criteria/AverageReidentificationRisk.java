@@ -156,6 +156,11 @@ public class AverageReidentificationRisk extends RiskBasedCriterion {
     @Override
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
         
+        // All suppressed
+        if (distribution.isEmpty()) {
+            return true;
+        }
+        
         // Check average class size
         boolean result = 1.0d / (double)distribution.getAverageClassSize() <= getRiskThreshold();
         if (highestRisk == null || !result) {

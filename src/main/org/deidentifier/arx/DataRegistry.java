@@ -169,9 +169,15 @@ class DataRegistry {
         final Swapper s = new Swapper() {
             @Override
             public void swap(final int arg0, final int arg1) {
-                if (input != null) input.internalSwap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
-                for (DataHandleOutput handle : output.values()) handle.internalSwap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
-                if (swapper != null) swapper.swap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
+                if (input != null) {
+                    input.internalSwap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
+                }
+                for (DataHandleOutput handle : output.values()) {
+                    handle.internalSwap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
+                }
+                if (swapper != null) {
+                    swapper.swap(outer.internalTranslate(arg0), outer.internalTranslate(arg1));
+                }
             }
         };
         
@@ -187,8 +193,12 @@ class DataRegistry {
      * @param row2
      */
     private void swapAll(DataHandle handle, int row1, int row2) {
-        if (input!=null) input.internalSwap(row1, row2);
-        for (DataHandleOutput outhandle : output.values()) outhandle.internalSwap(row1, row2);
+        if (input != null) {
+            input.internalSwap(row1, row2);
+        }
+        for (DataHandleOutput outhandle : output.values()) {
+            outhandle.internalSwap(row1, row2);
+        }
         
         // Important to swap in only one subset
         DataHandleSubset subset = getSubset();
@@ -210,7 +220,7 @@ class DataRegistry {
         // Nothing to do for subsets
         row1 = handle.internalTranslate(row1);
         row2 = handle.internalTranslate(row2);
-        if (input!=null) input.internalSwap(row1, row2);
+        if (input != null) input.internalSwap(row1, row2);
         for (DataHandleOutput outhandle : output.values()) outhandle.internalSwap(row1, row2);
     }
 
@@ -282,7 +292,7 @@ class DataRegistry {
     protected boolean isOutlier(DataHandle handle, int row){
         
         if (handle instanceof DataHandleInput){
-            return false;
+            return ((DataHandleInput)handle).internalIsOutlier(row);
         } else if (handle instanceof DataHandleOutput){
             return ((DataHandleOutput)handle).internalIsOutlier(row);
         } else if (handle instanceof DataHandleSubset){
