@@ -20,6 +20,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
 import org.apache.commons.math3.distribution.EnumeratedDistribution;
 import org.apache.commons.math3.random.AbstractRandomGenerator;
 import org.apache.commons.math3.util.Pair;
@@ -58,52 +59,42 @@ public class ExponentialMechanism<T> {
     /** The random generator */
     private AbstractRandomGenerator   random;
 
-    /** A cryptographically strong random generator */
-    private static class SecureRandomGenerator extends AbstractRandomGenerator {
+    /** 
+     * Random number generator to use here
+     * @author Fabian Prasser
+     */
+    private static class RandomNumberGenerator extends AbstractRandomGenerator {
         
         /** The random generator */
-        private SecureRandom random;
+        private final Random random;
 
-        /** Constructor */
-        public SecureRandomGenerator() {
+        /** 
+         * Constructor
+         * @param deterministic
+         */
+        public RandomNumberGenerator(boolean deterministic) {
             super();
-            random = new SecureRandom();
+            if (deterministic) {
+                this.random = new Random(0xDEADBEEF);
+            } else {
+                this.random = new SecureRandom();
+            }
         }
 
         @Override
         public double nextDouble() {
-            return random.nextDouble();
+            return this.random.nextDouble();
         }
 
         @Override
         public void setSeed(long seed) {
-            random.setSeed(seed);
+            if (this.random instanceof SecureRandom) {
+                throw new IllegalStateException("May not set seed on non-deterministic RNG");
+            }
+            this.random.setSeed(seed);
         }
     }
     
-    /** A deterministic random generator */
-    private static class DeterministicRandomGenerator extends AbstractRandomGenerator {
-        
-        /** The random generator */
-        private Random random;
-
-        /** Constructor */
-        public DeterministicRandomGenerator() {
-            super();
-            random = new Random(0xDEADBEEF);
-        }
-
-        @Override
-        public double nextDouble() {
-            return random.nextDouble();
-        }
-
-        @Override
-        public void setSeed(long seed) {
-            random.setSeed(seed);
-        }
-    }
-
     /**
      * Constructs a new instance
      * @param epsilon
@@ -121,7 +112,7 @@ public class ExponentialMechanism<T> {
      */
     public ExponentialMechanism(double epsilon, boolean deterministic) {
         this.epsilon = epsilon;
-        this.random = deterministic ? new DeterministicRandomGenerator() : new SecureRandomGenerator();
+        this.random = new RandomNumberGenerator(deterministic);
     }
     
     /**
@@ -143,10 +134,10 @@ public class ExponentialMechanism<T> {
         
         // Check arguments
         if (values.length == 0) {
-            throw new RuntimeException("No values supplied");
+            throw new IllegalStateException("No values supplied");
         }
         if (values.length != scores.length) {
-            throw new RuntimeException("Number of scores and values must be identical");
+            throw new IllegalStateException("Number of scores and values must be identical");
         }
         
         // The following code calculates the probability distribution which assigns every value
