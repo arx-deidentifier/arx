@@ -16,9 +16,14 @@
  */
 package org.deidentifier.arx.masking;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import org.deidentifier.arx.DataType;
@@ -63,15 +68,21 @@ public abstract class DataMaskingFunction implements Serializable {
             // Prepare
             Random random = new SecureRandom();
             char[] buffer = new char[length];
+            String randomString = new String();
+            
+            Map<String, String> map = new HashMap<String, String>();
 
             // Mask
             for (int row = 0; row < column.getNumRows(); row++) {
                 
                 // Leave null as is, if configured to not ignore missing data
                 if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
-                    column.set(row, getRandomAlphanumericString(buffer, random));
+                	randomString = getRandomAlphanumericString(buffer, random);
+                	map.put(randomString, column.get(row));
+                    column.set(row, randomString);
                 }
             }
+            writeFile(map, column.getAttribute());
         }
 
         @Override
@@ -90,6 +101,23 @@ public abstract class DataMaskingFunction implements Serializable {
                 buffer[i] = CHARACTERS[random.nextInt(CHARACTERS.length)];
             }
             return new String(buffer);
+        }
+        
+        /**
+         * Create a file to come back from masked attribute to clear attribute
+         * @param map
+         * @param attribute
+         */
+        private void writeFile(Map<String, String> map, String attribute) {
+        	try {
+        		FileOutputStream fos = new FileOutputStream("mapping_of_" + attribute);
+        		ObjectOutputStream oos = new ObjectOutputStream(fos);
+        		oos.writeObject(map);
+                oos.close();
+                fos.close();
+        	}catch(IOException ioe) {
+        		ioe.printStackTrace();
+        	}
         }
     }
     
