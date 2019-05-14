@@ -747,6 +747,13 @@ public class ARXAnonymizer { // NO_UCD
         }
         return org.deidentifier.arx.framework.data.Data.createCombination(manager.getDataInput(), columns);
     }
+    
+    private void getMap(DataManager manager, DataDefinition definition) {
+    	DataColumn[] columns = manager.getDataMasking();
+    	for (DataColumn column : columns) {
+            definition.getMaskingFunction(column.getAttribute()).getMap();
+        }
+    }
 
     /**
      * Parses the settings provided by the given instance

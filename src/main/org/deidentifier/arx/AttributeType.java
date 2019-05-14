@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionArithmeticMean;
@@ -973,6 +974,10 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
          */
         protected void apply(DataColumn column) {
             function.apply(column);
+        }
+        
+        protected Map<String, String> getMap(){
+        	return function.getMap();
         }
     }
 

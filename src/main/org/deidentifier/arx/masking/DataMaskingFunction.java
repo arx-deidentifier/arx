@@ -16,9 +16,6 @@
  */
 package org.deidentifier.arx.masking;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -52,6 +49,9 @@ public abstract class DataMaskingFunction implements Serializable {
         /** Length */
         private final int           length;
         
+        private 					Map<String, String> map = new HashMap<String, String>();
+
+        
         /**
          * Creates a new instance
          * @param ignoreMissingData
@@ -70,19 +70,19 @@ public abstract class DataMaskingFunction implements Serializable {
             char[] buffer = new char[length];
             String randomString = new String();
             
-            Map<String, String> map = new HashMap<String, String>();
+            map.put("attribute", column.getAttribute());
 
             // Mask
             for (int row = 0; row < column.getNumRows(); row++) {
                 
                 // Leave null as is, if configured to not ignore missing data
                 if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
+                	
                 	randomString = getRandomAlphanumericString(buffer, random);
                 	map.put(randomString, column.get(row));
-                    column.set(row, randomString);
+                	column.set(row, randomString);
                 }
             }
-            writeFile(map, column.getAttribute());
         }
 
         @Override
@@ -103,21 +103,9 @@ public abstract class DataMaskingFunction implements Serializable {
             return new String(buffer);
         }
         
-        /**
-         * Create a file to come back from masked attribute to clear attribute
-         * @param map
-         * @param attribute
-         */
-        private void writeFile(Map<String, String> map, String attribute) {
-        	try {
-        		FileOutputStream fos = new FileOutputStream("mapping_of_" + attribute);
-        		ObjectOutputStream oos = new ObjectOutputStream(fos);
-        		oos.writeObject(map);
-                oos.close();
-                fos.close();
-        	}catch(IOException ioe) {
-        		ioe.printStackTrace();
-        	}
+        @Override
+        public Map<String, String> getMap() {
+        	return map;
         }
     }
     
@@ -305,6 +293,11 @@ public abstract class DataMaskingFunction implements Serializable {
 			column.set(i, column.get(j));
 			column.set(j, tmp);
 		}
+
+		@Override
+		public Map<String, String> getMap() {
+			return null;
+		}
     	
     }
 
@@ -335,6 +328,8 @@ public abstract class DataMaskingFunction implements Serializable {
 
     /** Clone*/
     public abstract DataMaskingFunction clone();
+    
+    public abstract Map<String, String> getMap();
 
     /**
      * Returns whether the function ignores missing data
