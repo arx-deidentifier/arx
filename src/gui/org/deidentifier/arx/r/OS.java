@@ -45,10 +45,8 @@ public class OS {
 	                                               "/usr/bin/",
 	                                               "/usr/share/R/share"};
 
-	/** Locations*/
-	private static final String[] locationsWindows = {"C:\\Program Files\\R\\R-3.5.0\\bin",
-			                                          "C:\\Program Files\\R\\R-3.3.2\\bin",
-	                                                  "C:\\Program Files\\R\\R-2.1.5.1\\bin"}; //Suggestion: TODO change to version independent
+	/** Location*/
+	private static final String locationWindows = "C:\\Program Files\\R\\";
 	/** Executables*/
 	private static final String[] executablesMac = {"R", "R.app"};
 	/** Executables*/
@@ -86,7 +84,27 @@ public class OS {
 	    case UNIX:
 	        return getPath(locationsUnix, executablesUnix);
 	    case WINDOWS:
-	        return getPath(locationsWindows, executablesWindows);
+	    	File rFolder = new File(locationWindows);
+	    	// check for the default R path
+	    	if (rFolder.exists()) {
+	    		String[] paths = rFolder.list();
+	    		// check which versions of R (if any) are installed
+	    		if (paths.length == 0)
+	    			return null;
+
+	    		// fill locations with the full path in reverse order to start with the latest version of R
+	    		String[] locations = new String[paths.length];
+	    		for(int i = 0; i < paths.length; i++) {
+	    			locations[i] = locationWindows + paths[paths.length - 1 - i] + "\\bin";
+	            }
+	    		
+	    		// start trying to find the latest version of R
+	    		return getPath(locations, executablesWindows);
+	    	}
+	    	else {
+	    		// The R installation path was not found
+	    		return null;
+	    	}
 	    default:
 	        throw new IllegalStateException("Unknown operating system");
 	    }
@@ -100,46 +118,63 @@ public class OS {
     public static String getR(String folder) {
         switch (getOS()) {
         case MAC:
-            return getPath(new String[]{folder}, executablesMac);
+            return getPath(folder, executablesMac);
         case UNIX:
-            return getPath(new String[]{folder}, executablesUnix);
+            return getPath(folder, executablesUnix);
         case WINDOWS:
-            return getPath(new String[]{folder}, executablesWindows);
+            return getPath(folder, executablesWindows);
         default:
             throw new IllegalStateException("Unknown operating system");
         }
     }
-    
+
     /**
      * Returns the path of the R executable or null if R cannot be found
+     * @param locations The list of possible file system locations
+     * @param executables The list of possible names for the executable file
      * @return
      */
     private static String getPath(String[] locations, String[] executables) {
-        
         // For each location
         for (String location : locations) {
-            if (!location.endsWith(File.separator)) {
-                location += File.separator;
-            }
-            
-            // For each name of the executable
-            for (String executable : executables) {
-                try {
+        	String path = getPath(location, executables);
+        	
+        	if (path != null)
+        		return path;
+        }
+        
+        // We haven't found anything
+        return null;
+    }
+
+    /**
+     * Returns the path of the R executable or null if R cannot be found
+     * @param location A possible file system location
+     * @param executables The list of possible names for the executable file
+     * @return
+     */
+    private static String getPath(String location, String[] executables) {
+        if (!location.endsWith(File.separator)) {
+            location += File.separator;
+        }
+        
+        // For each name of the executable
+        for (String executable : executables) {
+            try {
+                
+                // Check whether the file exists
+                File file = new File(location + executable);
+                if (file.exists()) {
                     
-                    // Check whether the file exists
-                    File file = new File(location + executable);
-                    if (file.exists()) {
-                        
-                        // Check if we have the permissions to run the file
-                        ProcessBuilder builder = new ProcessBuilder(file.getCanonicalPath(), "--vanilla");
-                        builder.start().destroy();
-                        
-                        // Return
-                        return file.getCanonicalPath();
-                    }
-                } catch (Exception e) {
-                    // Ignore: try the next location
+                    // Check if we have the permissions to run the file
+                    ProcessBuilder builder = new ProcessBuilder(file.getCanonicalPath(), "--vanilla");
+                    builder.start().destroy();
+                    
+                    // Return
+                    return file.getCanonicalPath();
                 }
+            } catch (Exception e) {
+                // Ignore: try the next location
             }
         }
         
