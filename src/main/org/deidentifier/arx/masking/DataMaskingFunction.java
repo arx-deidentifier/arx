@@ -19,8 +19,6 @@ package org.deidentifier.arx.masking;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 import org.deidentifier.arx.DataType;
@@ -49,9 +47,6 @@ public abstract class DataMaskingFunction implements Serializable {
         /** Length */
         private final int           length;
         
-        private 					Map<String, String> map = new HashMap<String, String>();
-
-        
         /**
          * Creates a new instance
          * @param ignoreMissingData
@@ -68,19 +63,13 @@ public abstract class DataMaskingFunction implements Serializable {
             // Prepare
             Random random = new SecureRandom();
             char[] buffer = new char[length];
-            String randomString = new String();
             
-            map.put("attribute", column.getAttribute());
-
             // Mask
             for (int row = 0; row < column.getNumRows(); row++) {
                 
                 // Leave null as is, if configured to not ignore missing data
                 if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
-                	
-                	randomString = getRandomAlphanumericString(buffer, random);
-                	map.put(randomString, column.get(row));
-                	column.set(row, randomString);
+                	column.set(row, getRandomAlphanumericString(buffer, random));
                 }
             }
         }
@@ -101,11 +90,6 @@ public abstract class DataMaskingFunction implements Serializable {
                 buffer[i] = CHARACTERS[random.nextInt(CHARACTERS.length)];
             }
             return new String(buffer);
-        }
-        
-        @Override
-        public Map<String, String> getMap() {
-        	return map;
         }
     }
     
@@ -292,13 +276,7 @@ public abstract class DataMaskingFunction implements Serializable {
 			String tmp = column.get(i);
 			column.set(i, column.get(j));
 			column.set(j, tmp);
-		}
-
-		@Override
-		public Map<String, String> getMap() {
-			return null;
-		}
-    	
+		}    	
     }
 
     /** SVUID */
@@ -329,8 +307,6 @@ public abstract class DataMaskingFunction implements Serializable {
     /** Clone*/
     public abstract DataMaskingFunction clone();
     
-    public abstract Map<String, String> getMap();
-
     /**
      * Returns whether the function ignores missing data
      * @return
