@@ -29,6 +29,7 @@
                     <include>**/*.gif</include>
                     <include>**/*.pdf</include>
                     <include>**/*.txt</include>
+                    <include>**/*.r</include>
                 </includes>
             </resource>
             <resource>
