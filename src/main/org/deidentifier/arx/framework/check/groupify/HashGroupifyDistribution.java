@@ -94,7 +94,7 @@ public class HashGroupifyDistribution {
      * @param groupify
      */
     HashGroupifyDistribution(final Metric<?> metric,
-                             final Transformation transformation,
+                             final Transformation<?> transformation,
                              HashGroupify groupify) {
         
         // We need to apply a hack here, to consider fully generalized records as suppressed in
@@ -103,7 +103,7 @@ public class HashGroupifyDistribution {
         // when analyzing the distribution of equivalence class sizes. The number of suppressed records
         // reported by this class must follow the internal counting scheme, though. The according variable
         // should not be used for measuring risks.
-        
+
         // Initialize
         HashGroupifyEntry entry = groupify.getFirstEquivalenceClass();
         List<HashGroupifyEntry> list = new ArrayList<HashGroupifyEntry>();

@@ -82,7 +82,7 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> { // NO
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
 
         double value = 0;
         final int[] transformation = node.getGeneralization();
@@ -93,17 +93,17 @@ public class MetricStatic extends MetricWeighted<InformationLossDefault> { // NO
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Transformation node) {
+    protected InformationLossDefault getLowerBoundInternal(Transformation<?> node) {
         return this.getInformationLossInternal(node, (HashGroupify)null).getLowerBound();
     }
     
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Transformation node,
+    protected InformationLossDefault getLowerBoundInternal(Transformation<?> node,
                                                            HashGroupify groupify) {
          return this.getLowerBoundInternal(node);
     }

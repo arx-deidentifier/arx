@@ -45,7 +45,7 @@ public abstract class DependentAction {
         }
 
         @Override
-        public boolean appliesTo(Transformation transformation) {
+        public boolean appliesTo(Transformation<?> transformation) {
             return result;
         }
     }
@@ -70,7 +70,7 @@ public abstract class DependentAction {
         }
 
         @Override
-        public boolean appliesTo(Transformation transformation) {
+        public boolean appliesTo(Transformation<?> transformation) {
             return !action.appliesTo(transformation);
         }
     }
@@ -80,7 +80,7 @@ public abstract class DependentAction {
      *
      * @param transformation
      */
-    public void action(Transformation transformation) {
+    public void action(Transformation<?> transformation) {
         // Empty by design
     }
     
@@ -90,14 +90,14 @@ public abstract class DependentAction {
      * @param transformation
      * @return
      */
-    public abstract boolean appliesTo(Transformation transformation);
+    public abstract boolean appliesTo(Transformation<?> transformation);
     
     /**
      * Applies the trigger to the given transformation.
      *
      * @param transformation
      */
-    public final void apply(Transformation transformation){
+    public final void apply(Transformation<?> transformation){
         if (appliesTo(transformation)) {
             action(transformation);
         }

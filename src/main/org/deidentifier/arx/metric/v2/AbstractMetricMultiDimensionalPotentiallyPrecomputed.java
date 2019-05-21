@@ -130,7 +130,7 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+    public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
         return precomputed ?
                precomputedMetric.getScore(node, groupify) :
                defaultMetric.getScore(node, groupify);
@@ -168,13 +168,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
 
     @Override
     protected InformationLossWithBound<AbstractILMultiDimensional>
-            getInformationLossInternal(Transformation node, HashGroupify groupify) {
+            getInformationLossInternal(Transformation<?> node, HashGroupify groupify) {
         return precomputed ? precomputedMetric.getInformationLoss(node, groupify) : 
                              defaultMetric.getInformationLoss(node, groupify);
     }
 
     @Override
-    protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         if (precomputed) {
             return precomputedMetric.getInformationLoss(node, entry);
         } else {
@@ -183,13 +183,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
         return precomputed ? precomputedMetric.getLowerBound(node) : 
                              defaultMetric.getLowerBound(node);
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify groupify) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node, HashGroupify groupify) {
         return precomputed ? precomputedMetric.getLowerBound(node, groupify) : 
                              defaultMetric.getLowerBound(node, groupify);
     }

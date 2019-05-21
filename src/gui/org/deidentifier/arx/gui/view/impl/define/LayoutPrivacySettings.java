@@ -36,10 +36,10 @@ import org.eclipse.swt.widgets.ToolItem;
  *
  * @author Fabian Prasser
  */
-public class LayoutCriteria implements ILayout {
+public class LayoutPrivacySettings implements ILayout {
 
     /** View */
-    private final ViewCriteriaList      criteriaView;
+    private final ViewPrivacyModels      criteriaView;
     /** View */
     private final ToolItem              buttonAdd;
     /** View */
@@ -59,8 +59,8 @@ public class LayoutCriteria implements ILayout {
      * @param parent
      * @param controller
      */
-    public LayoutCriteria(final Composite parent,
-                          final Controller controller) {
+    public LayoutPrivacySettings(final Composite parent,
+                                 final Controller controller) {
 
 
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-80"); //$NON-NLS-1$
@@ -118,7 +118,7 @@ public class LayoutCriteria implements ILayout {
 
         Composite composite1 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.4"), null); //$NON-NLS-1$
         composite1.setLayout(SWTUtil.createGridLayout(1));
-        this.criteriaView = new ViewCriteriaList(composite1, controller, this);
+        this.criteriaView = new ViewPrivacyModels(composite1, controller, this);
 
         Composite composite2 = folder.createItem(Resources.getMessage("CriterionSelectionDialog.5"), null); //$NON-NLS-1$
         composite2.setLayout(new FillLayout());
