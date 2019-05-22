@@ -1132,7 +1132,7 @@ public class ARXLattice implements Serializable {
      */
     public ElementData render() {
         ElementData result = new ElementData("Search space");
-        result.addProperty("Size", this.virtualSize.toString());
+        result.addProperty("Size", this.getVirtualSize().toString());
         result.addProperty("Materialized", this.size);
         return result;
     }
