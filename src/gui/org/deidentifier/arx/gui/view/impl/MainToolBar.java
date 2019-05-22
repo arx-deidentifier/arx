@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.gui.view.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -398,10 +401,12 @@ public class MainToolBar extends AbstractMenu {
      * @param stats
      */
     private void setToolTip(ARXProcessStatistics stats) {
-        
+
         // Prepare
-        double prunedPercentage = (double) (stats.getTransformationsAvailable() - stats.getTransformationsChecked()) /
-                                  (double) (stats.getTransformationsAvailable()) * 100d;
+        double prunedPercentage = new BigDecimal(stats.getTransformationsAvailable())
+                                       .subtract(BigDecimal.valueOf(stats.getTransformationsChecked()))
+                                       .divide(new BigDecimal(stats.getTransformationsAvailable()), 1000, RoundingMode.HALF_UP)
+                                       .multiply(BigDecimal.valueOf(100)).doubleValue();
         
         // Render statistics about the solution space
         StringBuilder sb = new StringBuilder();
@@ -411,7 +416,7 @@ public class MainToolBar extends AbstractMenu {
           .append("\n"); //$NON-NLS-1$
         
         sb.append(Resources.getMessage("MainToolBar.12")) //$NON-NLS-1$
-          .append(stats.getTransformationsAvailable() - stats.getTransformationsChecked());
+          .append(stats.getTransformationsAvailable().subtract(BigInteger.valueOf(stats.getTransformationsChecked())).toString());
         sb.append(" [") //$NON-NLS-1$
           .append(SWTUtil.getPrettyString(prunedPercentage))
           .append("%]\n"); //$NON-NLS-1$

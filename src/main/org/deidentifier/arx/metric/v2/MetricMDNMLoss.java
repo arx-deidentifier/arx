@@ -139,7 +139,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
      * Bild R, Kuhn KA, Prasser F. SafePub: A Truthful Data Anonymization Algorithm With Strong Privacy Guarantees.
      * Proceedings on Privacy Enhancing Technologies. 2018(1):67-87.
      */
-    public ILScore getScore(final Transformation node, final HashGroupify groupify) {
+    public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
         
         if (k < 0) {
             throw new RuntimeException("Parameters required for differential privacy have not been initialized yet");
@@ -242,7 +242,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
 
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupify g) {
         
         // Prepare
         int dimensions = getDimensions();
@@ -299,7 +299,7 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected ILMultiDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
 
         // Init
         int dimensions = getDimensions();
@@ -330,12 +330,12 @@ public class MetricMDNMLoss extends AbstractMetricMultiDimensional {
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
         return null;
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify g) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node, HashGroupify g) {
         
         // Prepare
         int dimensions = getDimensions();

@@ -93,6 +93,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
@@ -198,7 +199,9 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         }
         
         // Potentially invalidate
-        if (event.part == ModelPart.DATA_TYPE || event.part == ModelPart.ATTRIBUTE_TYPE) {
+        if (event.part == ModelPart.DATA_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
             if (dependsOnAttribute) {
                 if (model == null ||  viewContext == null || viewContext.isAttributeSelected(model.getSelectedAttribute())) {
                     this.triggerUpdate();

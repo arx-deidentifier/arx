@@ -442,20 +442,30 @@ public class CSVDataInput {
         reader.close();
     }
 
+    /**
+     * Returns an iterator. Assumes that the first line is the header. 
+     * <b>You must iterate trough all elements to prevent resource leaks!</b>
+     * 
+     * @return the iterator
+     */
+    public Iterator<String[]> iterator() {
+        return iterator(true);
+    }
 
     /**
      * Returns an iterator. <b>You must iterate trough all elements to prevent resource leaks!</b>
      * 
      * @return the iterator
      */
-    public Iterator<String[]> iterator() {
+    public Iterator<String[]> iterator(final boolean header) {
 
         return new Iterator<String[]>() {
 
-            // Next tuple
-            boolean   initialized = false;
-            CsvParser parser      = null;
-            String[]  next        = null;
+            // Next record
+            boolean   initialized  = false;
+            boolean   headerParsed = false;
+            CsvParser parser       = null;
+            String[]  next         = null;
 
             @Override
             public boolean hasNext() {
@@ -478,7 +488,7 @@ public class CSVDataInput {
                 next = parser.parseNext();
                 
                 // Replace each non matching value with the special NULL string
-                if (cleansing) {
+                if (cleansing && (!header || headerParsed)) {
 
                     if (result.length != datatypes.length) {
                         throw new IllegalArgumentException("More columns available in CSV file than data types specified");
@@ -490,6 +500,7 @@ public class CSVDataInput {
                         }
                     }
                 }
+                headerParsed = true;
                 return result;
             }
 
@@ -534,6 +545,7 @@ public class CSVDataInput {
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
+        settings.setMaxColumns(4096);
         if (options != null) {
             options.apply(settings);
         }

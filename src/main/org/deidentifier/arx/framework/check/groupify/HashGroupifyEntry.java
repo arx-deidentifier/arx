@@ -73,10 +73,17 @@ public class HashGroupifyEntry {
     
     /**
      * Columns
-     * @return
      */
     public int columns() {
         return matrix.getNumColumns();
+    }
+
+    /**
+     * Return has next
+     * @return
+     */
+    public boolean hasNext() {
+        return matrix.iterator_hasNext();
     }
     
     /**

@@ -51,44 +51,44 @@ import de.linearbits.swt.table.DynamicTableColumn;
 /**
  * This class displays a list of all defined privacy criteria.
  *
- * @author fabian
+ * @author Fabian Prasser
  */
 public class ViewCriteriaList implements IView {
 
     /** Controller */
-    private Controller               controller;
+    private Controller                  controller;
 
     /** Model */
-    private Model                    model = null;
+    private Model                       model = null;
 
     /** View */
-    private final DynamicTable       table;
+    private final DynamicTable          table;
     /** View */
-    private final DynamicTableColumn column1;
+    private final DynamicTableColumn    column1;
     /** View */
-    private final DynamicTableColumn column2;
+    private final DynamicTableColumn    column2;
     /** View */
-    private final DynamicTableColumn column3;
+    private final DynamicTableColumn    column3;
     /** View */
-    private final Composite          root;
+    private final Composite             root;
     /** View */
-    private final Image              symbolL;
+    private final Image                 symbolL;
     /** View */
-    private final Image              symbolT;
+    private final Image                 symbolT;
     /** View */
-    private final Image              symbolK;
+    private final Image                 symbolK;
     /** View */
-    private final Image              symbolD;
+    private final Image                 symbolD;
     /** View */
-    private final Image              symbolDP;
+    private final Image                 symbolDP;
     /** View */
-    private final Image              symbolR;
+    private final Image                 symbolR;
     /** View */
-    private final Image              symbolG;
+    private final Image                 symbolG;
     /** View */
-    private final Image              symbolB;
+    private final Image                 symbolB;
     /** View */
-    private final LayoutCriteria     layout;
+    private final LayoutPrivacySettings layout;
 
     /**
      * Creates a new instance.
@@ -97,7 +97,7 @@ public class ViewCriteriaList implements IView {
      * @param controller
      * @param layoutCriteria 
      */
-    public ViewCriteriaList(final Composite parent, final Controller controller, LayoutCriteria layoutCriteria) {
+    public ViewCriteriaList(final Composite parent, final Controller controller, LayoutPrivacySettings layoutCriteria) {
 
         // Register
         this.controller = controller;

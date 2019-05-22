@@ -87,9 +87,7 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
         TableItem item = new TableItem(table, SWT.NONE);
         item.setText(0, key);
         item.setText(1, value1);
-        if (super.getTarget() == ModelPart.OUTPUT) {
-            item.setText(2, value2);
-        }
+        item.setText(2, value2);
     }
 
     /**
@@ -99,10 +97,12 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
      * @return
      */
     private String format(double value, double baseline) {
+        double relative = value / baseline * 100d;
+        relative = Double.isNaN(relative) ? 0d : relative;
         StringBuilder builder = new StringBuilder();
         builder.append(SWTUtil.getPrettyString(value));
         builder.append(" (");
-        builder.append(SWTUtil.getPrettyString(value / baseline * 100d));
+        builder.append(SWTUtil.getPrettyString(relative));
         builder.append("%)");
         return builder.toString();
     }
@@ -110,6 +110,7 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
     @Override
     protected Control createControl(Composite parent) {
 
+        // Table
         this.root = new Composite(parent, SWT.NONE);
         this.root.setLayout(new FillLayout());
         this.table = SWTUtil.createTableDynamic(root, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
@@ -117,26 +118,22 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
         this.table.setLinesVisible(true);
         this.table.setMenu(new ClipboardHandlerTable(table).getMenu());
 
-        String size = "50%";
-        if (super.getTarget() == ModelPart.OUTPUT) {
-            size = "33%";
-        }
-        
+        // Columns
+        String size = "33%";
         DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth(size, "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("EquivalenceClassStatistics.1")); //$NON-NLS-1$
         c = new DynamicTableColumn(table, SWT.LEFT);
         c.setWidth(size, "100px"); //$NON-NLS-1$ //$NON-NLS-2$
         c.setText(Resources.getMessage("EquivalenceClassStatistics.2")); //$NON-NLS-1$
-        if (super.getTarget() == ModelPart.OUTPUT) {
-            c = new DynamicTableColumn(table, SWT.LEFT);
-            c.setWidth(size, "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-            c.setText(Resources.getMessage("EquivalenceClassStatistics.3")); //$NON-NLS-1$
-        }
+        c = new DynamicTableColumn(table, SWT.LEFT);
+        c.setWidth(size, "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+        c.setText(Resources.getMessage("EquivalenceClassStatistics.3")); //$NON-NLS-1$
+        
+        // Layout
         for (final TableColumn col : table.getColumns()) {
             col.pack();
         }
-        
         SWTUtil.createGenericTooltip(table);
         return root;
     }
@@ -193,28 +190,28 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
                 table.removeAll();
                 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.4"), //$NON-NLS-1$
-                               format(summary.getAverageEquivalenceClassSizeIncludingOutliers(), summary.getNumberOfTuplesIncludingOutliers()),
-                               format(summary.getAverageEquivalenceClassSize(), summary.getNumberOfTuples()));
+                               format(summary.getAverageEquivalenceClassSize(), summary.getNumberOfRecordsIncludingSuppressedRecords()),
+                               format(summary.getAverageEquivalenceClassSize(), summary.getNumberOfRecords()));
                 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.5"), //$NON-NLS-1$
-                           format(summary.getMaximalEquivalenceClassSizeIncludingOutliers(), summary.getNumberOfTuplesIncludingOutliers()),
-                           format(summary.getMaximalEquivalenceClassSize(), summary.getNumberOfTuples()));
+                           format(summary.getMaximalEquivalenceClassSize(), summary.getNumberOfRecordsIncludingSuppressedRecords()),
+                           format(summary.getMaximalEquivalenceClassSize(), summary.getNumberOfRecords()));
 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.6"), //$NON-NLS-1$
-                           format(summary.getMinimalEquivalenceClassSizeIncludingOutliers(), summary.getNumberOfTuplesIncludingOutliers()),
-                           format(summary.getMinimalEquivalenceClassSize(), summary.getNumberOfTuples()));
+                           format(summary.getMinimalEquivalenceClassSize(), summary.getNumberOfRecordsIncludingSuppressedRecords()),
+                           format(summary.getMinimalEquivalenceClassSize(), summary.getNumberOfRecords()));
+
+                createItem(Resources.getMessage("EquivalenceClassStatistics.9"), //$NON-NLS-1$
+                           format(summary.getNumberOfSuppressedRecords(), summary.getNumberOfRecordsIncludingSuppressedRecords()),
+                           SWTUtil.getPrettyString(0));
 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.7"), //$NON-NLS-1$
-                           SWTUtil.getPrettyString(summary.getNumberOfEquivalenceClassesIncludingOutliers()),
+                           SWTUtil.getPrettyString(summary.getNumberOfEquivalenceClasses()),
                            SWTUtil.getPrettyString(summary.getNumberOfEquivalenceClasses()));
 
                 createItem(Resources.getMessage("EquivalenceClassStatistics.8"), //$NON-NLS-1$
-                           SWTUtil.getPrettyString(summary.getNumberOfTuplesIncludingOutliers()),
-                           format(summary.getNumberOfTuples(), summary.getNumberOfTuplesIncludingOutliers()));
-
-                createItem(Resources.getMessage("EquivalenceClassStatistics.9"), //$NON-NLS-1$
-                           format(summary.getNumberOfOutlyingTuples(), summary.getNumberOfTuplesIncludingOutliers()),
-                           SWTUtil.getPrettyString(0));
+                           SWTUtil.getPrettyString(summary.getNumberOfRecordsIncludingSuppressedRecords()),
+                           SWTUtil.getPrettyString(summary.getNumberOfRecords()));
                 
                 table.setRedraw(true);
                 

@@ -29,6 +29,7 @@
                     <include>**/*.gif</include>
                     <include>**/*.pdf</include>
                     <include>**/*.txt</include>
+                    <include>**/*.r</include>
                 </includes>
             </resource>
             <resource>
@@ -473,6 +474,17 @@
             <groupId>org.eclipse.nebula.widgets.nattable</groupId>
             <artifactId>core</artifactId>
             <version>1.1.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.nebula.widgets.pagination</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>

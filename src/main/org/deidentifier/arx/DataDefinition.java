@@ -32,6 +32,8 @@ import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
+import com.carrotsearch.hppc.IntObjectOpenHashMap;
+
 /**
  * Encapsulates a definition of the types of attributes contained in a dataset.
  *
@@ -41,35 +43,38 @@ import org.deidentifier.arx.io.ImportConfiguration;
 public class DataDefinition implements Cloneable{
 
     /** Is this data definition locked. */
-    private boolean                                     locked            = false;
+    private boolean                                     locked                = false;
 
     /** The mapped attribute types. */
-    private final Map<String, AttributeType>            attributeTypes    = new HashMap<String, AttributeType>();
+    private final Map<String, AttributeType>            attributeTypes        = new HashMap<String, AttributeType>();
+
+    /** The mapped attribute types. */
+    private final IntObjectOpenHashMap<Set<String>>     inverseAttributeTypes = new IntObjectOpenHashMap<>();
 
     /** The mapped builders. */
-    private final Map<String, HierarchyBuilder<?>>      builders          = new HashMap<String, HierarchyBuilder<?>>();
+    private final Map<String, HierarchyBuilder<?>>      builders              = new HashMap<String, HierarchyBuilder<?>>();
 
     /** The mapped hierchies. */
-    private final Map<String, Hierarchy>                hierarchies       = new HashMap<String, Hierarchy>();
+    private final Map<String, Hierarchy>                hierarchies           = new HashMap<String, Hierarchy>();
 
     /** The mapped functions. */
-    private final Map<String, MicroAggregationFunction> functions         = new HashMap<String, MicroAggregationFunction>();
+    private final Map<String, MicroAggregationFunction> functions             = new HashMap<String, MicroAggregationFunction>();
 
     /** The mapped data types. */
-    private final Map<String, DataType<?>>              dataTypes         = new HashMap<String, DataType<?>>();
+    private final Map<String, DataType<?>>              dataTypes             = new HashMap<String, DataType<?>>();
 
     /** The mapped minimum generalization. */
-    private final Map<String, Integer>                  minGeneralization = new HashMap<String, Integer>();
+    private final Map<String, Integer>                  minGeneralization     = new HashMap<String, Integer>();
 
     /** The mapped maximum generalization. */
-    private final Map<String, Integer>                  maxGeneralization = new HashMap<String, Integer>();
+    private final Map<String, Integer>                  maxGeneralization     = new HashMap<String, Integer>();
 
     /** Whether to perform clustering before aggregation. */
-    private Map<String, Boolean>                        clustering        = new HashMap<String, Boolean>();
+    private Map<String, Boolean>                        clustering            = new HashMap<String, Boolean>();
 
     /** Set of response variables. */
-    private Map<String, Boolean>                        response          = new HashMap<String, Boolean>();
-    
+    private Map<String, Boolean>                        response              = new HashMap<String, Boolean>();
+
     @Override
     public DataDefinition clone() {
 
@@ -279,6 +284,7 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     public Set<String> getQuasiIdentifyingAttributes() {
+        // It's important that the same set is returned if no changes have been made
         return getAttributesByType(AttributeType.ATTR_TYPE_QI);
     }
 
@@ -379,6 +385,7 @@ public class DataDefinition implements Cloneable{
         // Clone and copy stuff
         this.attributeTypes.clear();
         this.attributeTypes.putAll(other.attributeTypes);
+        this.inverseAttributeTypes.clear();
         this.builders.clear();
         this.builders.putAll(other.builders);
         this.hierarchies.clear();
@@ -442,6 +449,7 @@ public class DataDefinition implements Cloneable{
     public void resetAttributeType(String attribute) {
         checkLocked();
         this.attributeTypes.remove(attribute);
+        this.inverseAttributeTypes.clear();
     }
 
     /**
@@ -500,7 +508,8 @@ public class DataDefinition implements Cloneable{
     	
         checkLocked();
         checkNullArgument(type, "Type");
-        attributeTypes.put(attribute, type);
+        this.attributeTypes.put(attribute, type);
+        this.inverseAttributeTypes.clear();
         if (type instanceof Hierarchy) {
             this.hierarchies.put(attribute, (Hierarchy)type);
         } else if (type instanceof MicroAggregationFunction) {
@@ -520,7 +529,8 @@ public class DataDefinition implements Cloneable{
         
         checkLocked();
         checkNullArgument(builder, "Builder");
-        attributeTypes.put(attribute, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        this.attributeTypes.put(attribute, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        this.inverseAttributeTypes.clear();
         builders.put(attribute, builder);
     }
 
@@ -661,13 +671,19 @@ public class DataDefinition implements Cloneable{
      * @return
      */
     private Set<String> getAttributesByType(int type) {
-        final Set<String> result = new HashSet<String>();
-        for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
-            if (entry.getValue().getType() == type) {
-                result.add(entry.getKey());
+        
+        // Prepare inverse set
+        if (this.inverseAttributeTypes.isEmpty()) {
+            for (final Entry<String, AttributeType> entry : attributeTypes.entrySet()) {
+                if (!inverseAttributeTypes.containsKey(entry.getValue().getType())) {
+                    inverseAttributeTypes.put(entry.getValue().getType(), new HashSet<String>());
+                }
+                inverseAttributeTypes.get(entry.getValue().getType()).add(entry.getKey());
             }
         }
-        return result;
+        
+        // Return
+        return inverseAttributeTypes.getOrDefault(type, new HashSet<String>());
     }
 
     /**
@@ -741,6 +757,11 @@ public class DataDefinition implements Cloneable{
         // For each relevant attribute
         for (String attribute : attributes) {
 
+            // Skip unknown attributes
+            if (handle.getColumnIndexOf(attribute) < 0) {
+                continue;
+            }
+            
             // Obtain data
             String[] data = handle.getDistinctValues(handle.getColumnIndexOf(attribute));
 

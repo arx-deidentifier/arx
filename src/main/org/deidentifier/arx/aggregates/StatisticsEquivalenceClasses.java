@@ -26,57 +26,37 @@ public class StatisticsEquivalenceClasses {
     /** Statistic value */
     private final double                     averageEquivalenceClassSize;
     /** Statistic value */
-    private final double                     averageEquivalenceClassSizeIncludingOutliers;
-    /** Statistic value */
     private final int                        maximalEquivalenceClassSize;
-    /** Statistic value */
-    private final int                        maximalEquivalenceClassSizeIncludingOutliers;
     /** Statistic value */
     private final int                        minimalEquivalenceClassSize;
     /** Statistic value */
-    private final int                        minimalEquivalenceClassSizeIncludingOutliers;
-    /** Statistic value */
     private final int                        numberOfEquivalenceClasses;
     /** Statistic value */
-    private final int                        numberOfEquivalenceClassesIncludingOutliers;
+    private final int                        numberOfRecordsIncludingSuppressedRecords;
     /** Statistic value */
-    private final int                        numberOfTuples;
-    /** Statistic value */
-    private final int                        numberOfOutlyingTuples;
+    private final int                        numberOfSuppressedRecords;
     
     /**
      * Creates a new instance
      * @param averageEquivalenceClassSize
-     * @param averageEquivalenceClassSizeIncludingOutliers
      * @param maximalEquivalenceClassSize
-     * @param maximalEquivalenceClassSizeIncludingOutliers
      * @param minimalEquivalenceClassSize
-     * @param minimalEquivalenceClassSizeIncludingOutliers
      * @param numberOfEquivalenceClasses
-     * @param numberOfEquivalenceClassesIncludingOutliers
-     * @param numberOfTuples
-     * @param numberOfOutlyingTuples
+     * @param numberOfRecordsIncludingSuppressedRecords
+     * @param numberOfSuppressedRecords
      */
     StatisticsEquivalenceClasses(double averageEquivalenceClassSize,
-                                 double averageEquivalenceClassSizeIncludingOutliers,
                                  int maximalEquivalenceClassSize,
-                                 int maximalEquivalenceClassSizeIncludingOutliers,
                                  int minimalEquivalenceClassSize,
-                                 int minimalEquivalenceClassSizeIncludingOutliers,
                                  int numberOfEquivalenceClasses,
-                                 int numberOfEquivalenceClassesIncludingOutliers,
-                                 int numberOfTuples,
-                                 int numberOfOutlyingTuples) {
+                                 int numberOfRecordsIncludingSuppressedRecords,
+                                 int numberOfSuppressedRecords) {
         this.averageEquivalenceClassSize = averageEquivalenceClassSize;
-        this.averageEquivalenceClassSizeIncludingOutliers = averageEquivalenceClassSizeIncludingOutliers;
         this.maximalEquivalenceClassSize = maximalEquivalenceClassSize;
-        this.maximalEquivalenceClassSizeIncludingOutliers = maximalEquivalenceClassSizeIncludingOutliers;
         this.minimalEquivalenceClassSize = minimalEquivalenceClassSize;
-        this.minimalEquivalenceClassSizeIncludingOutliers = minimalEquivalenceClassSizeIncludingOutliers;
         this.numberOfEquivalenceClasses = numberOfEquivalenceClasses;
-        this.numberOfEquivalenceClassesIncludingOutliers = numberOfEquivalenceClassesIncludingOutliers;
-        this.numberOfTuples = numberOfTuples;
-        this.numberOfOutlyingTuples = numberOfOutlyingTuples;
+        this.numberOfRecordsIncludingSuppressedRecords = numberOfRecordsIncludingSuppressedRecords;
+        this.numberOfSuppressedRecords = numberOfSuppressedRecords;
     }
 
     /**
@@ -90,15 +70,6 @@ public class StatisticsEquivalenceClasses {
 
     /**
      * Returns the maximal size of an equivalence class.
-     * This number takes into account one additional equivalence class containing all outliers
-     * @return
-     */
-    public double getAverageEquivalenceClassSizeIncludingOutliers(){
-        return averageEquivalenceClassSizeIncludingOutliers;
-    }
-
-    /**
-     * Returns the maximal size of an equivalence class.
      *
      * @return
      */
@@ -107,31 +78,12 @@ public class StatisticsEquivalenceClasses {
     }
 
     /**
-     * Returns the maximal size of an equivalence class.
-     * This number takes into account one additional equivalence class containing all outliers
-     * @return
-     */
-    public int getMaximalEquivalenceClassSizeIncludingOutliers(){
-        return maximalEquivalenceClassSizeIncludingOutliers;
-    }
-
-
-    /**
      * Returns the minimal size of an equivalence class.
      *
      * @return
      */
     public int getMinimalEquivalenceClassSize(){
         return minimalEquivalenceClassSize;
-    }
-
-    /**
-     * Returns the minimal size of an equivalence class. 
-     * This number takes into account one additional equivalence class containing all outliers
-     * @return
-     */
-    public int getMinimalEquivalenceClassSizeIncludingOutliers(){
-        return minimalEquivalenceClassSizeIncludingOutliers;
     }
 
     /**
@@ -145,23 +97,13 @@ public class StatisticsEquivalenceClasses {
     }
 
     /**
-     * Returns the number of outlying equivalence classes in the currently selected data
-     * representation.
-     *
-     * @return
-     */
-    public int getNumberOfEquivalenceClassesIncludingOutliers() {
-        return numberOfEquivalenceClassesIncludingOutliers;
-    }
-
-    /**
      * Returns the number of outliers in the currently selected data
      * representation.
      *
      * @return
      */
-    public int getNumberOfOutlyingTuples() {
-        return numberOfOutlyingTuples;
+    public int getNumberOfSuppressedRecords() {
+        return numberOfSuppressedRecords;
     }
     /**
      * Returns the number of tuples in the currently selected data
@@ -169,8 +111,8 @@ public class StatisticsEquivalenceClasses {
      *
      * @return
      */
-    public int getNumberOfTuples() {
-        return numberOfTuples - numberOfOutlyingTuples;
+    public int getNumberOfRecords() {
+        return numberOfRecordsIncludingSuppressedRecords - numberOfSuppressedRecords;
     }
     
     /**
@@ -179,22 +121,18 @@ public class StatisticsEquivalenceClasses {
      *
      * @return
      */
-    public int getNumberOfTuplesIncludingOutliers() {
-        return numberOfTuples;
+    public int getNumberOfRecordsIncludingSuppressedRecords() {
+        return numberOfRecordsIncludingSuppressedRecords;
     }
 
     @Override
     public String toString() {
         return "EquivalenceClassStatistics {\n- Average equivalence class size = " + getAverageEquivalenceClassSize() + "\n" +
-               "- Average equivalence class size (including outliers) = " + getAverageEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Maximal equivalence class size = " + getMaximalEquivalenceClassSize() + "\n" +
-               "- Maximal equivalence class size (including outliers) = " + getMaximalEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Minimal equivalence class size = " + getMinimalEquivalenceClassSize() + "\n" +
-               "- Minimal equivalence class size (including outliers) = " + getMinimalEquivalenceClassSizeIncludingOutliers() + "\n" +
                "- Number of equivalence classes = " + getNumberOfEquivalenceClasses() + "\n" +
-               "- Number of equivalence classes (including outliers) = " + getNumberOfEquivalenceClassesIncludingOutliers() + "\n" +
-               "- Number of tuples = " + getNumberOfTuples() + "\n" +
-               "- Number of outlying tuples = " + getNumberOfOutlyingTuples() + "\n}";
+               "- Number of records = " + getNumberOfRecords() + "\n" +
+               "- Number of suppressed records = " + getNumberOfSuppressedRecords() + "\n}";
     }
     
     

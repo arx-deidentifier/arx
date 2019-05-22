@@ -18,12 +18,24 @@ package org.deidentifier.arx.gui.view.impl.common;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.nebula.widgets.pagination.IPageLoader;
+import org.eclipse.nebula.widgets.pagination.PageableController;
+import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResult;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -32,6 +44,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
@@ -45,44 +58,58 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class ComponentFilterTable {
 
-    /** Constant. */
-    private static final int                  LABEL_WIDTH      = 100;
+    /**
+     * Page loader
+     * @author Fabian Prasser
+     */
+    private class FilterPageLoader implements IPageLoader<PageResult<Pair<String, Set<String>>>> {
 
-    /** Constant. */
-    private static final int                  CHECKBOX_WIDTH   = 20;
+        @Override
+        public PageResult<Pair<String, Set<String>>> loadPage(PageableController controller) {
+            if (keys == null || properties == null || keyProperties == null) {
+                return PageListHelper.createPage(new ArrayList<Pair<String, Set<String>>>(), controller);
+            } else {
+            	List<Pair<String, Set<String>>> list = new ArrayList<>();
+            	for (String key : keys) {
+            		list.add(new Pair<String, Set<String>>(key, keyProperties.get(key)));
+            	}
+                return PageListHelper.createPage(list, controller);
+            }
+        }
+    }
 
     /** Image. */
     private final Image                       IMAGE_ENABLED;
 
     /** Image. */
     private final Image                       IMAGE_DISABLED;
+    
+    /** Widget. */
+    private final PageableTable               pageableTable;
 
     /** Widget. */
     private final Table                       table;
 
-    /** Widgets. */
-    private Map<String, TableItem>            items;
+    /** State*/
+    private List<String>                      keys;
 
     /** The registered listeners. */
     private List<SelectionListener>           listeners;
 
-    /** The selection map. */
-    private Map<String, Map<String, Boolean>> selected;
-
     /** The list of properties. */
-    private Map<String, List<String>>         itemProperties;
-
+    private Map<String, Set<String>>          keyProperties;
+    
     /** The list of properties. */
     private List<String>                      properties;
 
-    /** The list of entries. */
-    private List<String>                      entries;
+    /** State*/
+    private String 							  selectedKey;
+    
+    /** State*/
+    private String 							  selectedProperty;
 
-    /** Selected entry. */
-    private String                            selectedEntry    = null;
-
-    /** Selected property. */
-    private String                            selectedProperty = null;
+    /** State*/
+	private Map<String, Set<String>> 		  permitted;
 
     /**
      * Creates a new instance.
@@ -90,86 +117,50 @@ public class ComponentFilterTable {
      * @param parent
      * @param controller
      * @param properties
+     * @param entries
      */
     public ComponentFilterTable(Composite parent, 
-                                Controller controller, 
-                                List<String> properties) {
+                                Controller controller) {
         
         IMAGE_ENABLED = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
         IMAGE_DISABLED = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         
         this.listeners = new ArrayList<SelectionListener>();
-        this.selected = new HashMap<String, Map<String, Boolean>>();
-        this.properties = new ArrayList<String>(properties);
-        this.entries = new ArrayList<String>();
-        this.items = new HashMap<String, TableItem>();
-        this.itemProperties = new HashMap<String, List<String>>();
-        this.table = SWTUtil.createTable(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
-        this.table.setHeaderVisible(true);
-        this.setProperties(properties);
+        this.pageableTable = SWTUtil.createPageableTableViewer(parent, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL, false, false);
+        this.pageableTable.getViewer().setContentProvider(new ArrayContentProvider());
+        this.pageableTable.setPageLoader(new FilterPageLoader());
+        this.pageableTable.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         
-        table.addMouseListener(new MouseAdapter(){
-            public void mouseDown(MouseEvent arg0) {
+        this.table = this.pageableTable.getViewer().getTable();
+        this.table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        this.table.setHeaderVisible(true);
+        
+        // React on events
+        this.table.addMouseListener(new MouseAdapter(){
+            
+        	@Override
+        	@SuppressWarnings("unchecked")
+        	public void mouseDown(MouseEvent arg0) {
                 int row = getItemRowAt(arg0.x, arg0.y);
                 int column = getItemColumnAt(arg0.x, arg0.y);
                 if (row != -1 && column > 0 && column <= ComponentFilterTable.this.properties.size()) {
                     String property = ComponentFilterTable.this.properties.get(column-1);
-                    String entry = ComponentFilterTable.this.entries.get(row);
-                    if (itemProperties.get(entry).contains(property)) {
-                        selectedProperty = property;
-                        selectedEntry = entry;
-                    } else {
-                        selectedProperty = null;
-                        selectedEntry = null;
-                    }
+					String entry = ((Pair<String, Set<String>>)ComponentFilterTable.this.table.getItem(row).getData()).getFirst();
+					if (permitted != null && permitted.get(entry).contains(property) && property != null && entry != null) {
+	                    boolean selected = isSelected(entry, property);
+	                    setSelected(entry, property, !selected);
+	                    fireSelectionEvent(entry, property);
+	                }
                 } else {
                     selectedProperty = null;
-                    selectedEntry = null;
+                    selectedKey = null;
                 }
             }
         });
         
-        table.addMouseListener(new MouseAdapter(){
-            public void mouseDown(MouseEvent arg0) {
-                if (selectedProperty != null && selectedEntry != null) {
-                    boolean selected = isSelected(selectedEntry, selectedProperty);
-                    setSelected(selectedEntry,
-                                selectedProperty,
-                                !selected);
-                    fireSelectionEvent();
-                }
-            }
-        });
-    }
-
-    /**
-     * Adds a new entry, i.e., a row in the table
-     * 
-     * @param entry
-     * @param properties
-     */
-    public void addEntry(String entry, List<String> properties) {
-
-        if (!this.properties.containsAll(properties)) {
-            throw new RuntimeException(Resources.getMessage("ComponentFilterTable.2")); //$NON-NLS-1$
-        }
-
-        TableItem item = new TableItem(table, SWT.NONE);
-        for (int i = 0; i < this.properties.size(); i++) {
-            if (properties.contains(this.properties.get(i))) {
-                item.setImage(i + 1, IMAGE_DISABLED);
-            }
-        }
-        item.setImage(0, null);
-        item.setText(0, entry);
-        this.items.put(entry, item);
-        this.itemProperties.put(entry, properties);
-        this.entries.add(entry);
-        table.redraw();
-
-        for (TableColumn c : table.getColumns()) {
-            c.pack();
-        }
+        // Init
+        this.pageableTable.setCurrentPage(0);
+        this.pageableTable.refreshPage();
     }
 
     /**
@@ -180,35 +171,31 @@ public class ComponentFilterTable {
     public void addSelectionListener(SelectionListener listener) {
         this.listeners.add(listener);
     }
-
+    
     /**
      * Clears the table.
      */
     public void clear() {
-        this.table.setRedraw(false);
-        for (TableItem item : table.getItems()) {
-            item.dispose();
+        this.selectedKey = null;
+        this.keys = null;
+        this.selectedProperty = null;
+        this.keyProperties = null;
+        this.properties = null;
+        this.permitted = null;
+        this.pageableTable.setRedraw(false);
+        for (TableColumn c : this.pageableTable.getViewer().getTable().getColumns()) {
+        	c.dispose();
         }
-        for (TableColumn column : table.getColumns()) {
-            column.dispose();
-        }
-        this.table.removeAll();
-        this.table.setRedraw(true);
-        this.table.redraw();
-        this.items.clear();
-        this.itemProperties.clear();
-        this.properties.clear();
-        this.entries.clear();
-        this.selected.clear();
+        this.pageableTable.setRedraw(true);
     }
 
     /**
      * Returns the entries.
-     * 
+     * @param entry
      * @return
      */
-    public List<String> getEntries() {
-        return entries;
+    public int getIndexOfEntry(String entry) {
+    	return this.keys.indexOf(entry);
     }
 
     /**
@@ -226,7 +213,7 @@ public class ComponentFilterTable {
      * @return
      */
     public String getSelectedEntry() {
-        return selectedEntry;
+        return selectedKey;
     }
 
     /**
@@ -246,20 +233,13 @@ public class ComponentFilterTable {
      * @return
      */
     public boolean isSelected(String entry, String property) {
-        if (!this.entries.contains(entry)) {
+        if (!this.keyProperties.containsKey(entry)) {
             throw new RuntimeException(Resources.getMessage("ComponentFilterTable.3")); //$NON-NLS-1$
         }
         if (!this.properties.contains(property)) {
             throw new RuntimeException(Resources.getMessage("ComponentFilterTable.4")); //$NON-NLS-1$
         }
-        Map<String, Boolean> map = selected.get(entry);
-        if (map == null) {
-            return false;
-        }
-        else {
-            Boolean b = map.get(property);
-            return b == null ? false : b;
-        }
+        return this.keyProperties.get(entry).contains(property);
     }
 
     /**
@@ -268,7 +248,7 @@ public class ComponentFilterTable {
      * @param enabled
      */
     public void setEnabled(boolean enabled) {
-        this.table.setEnabled(enabled);
+        this.pageableTable.setEnabled(enabled);
     }
 
     /**
@@ -277,7 +257,32 @@ public class ComponentFilterTable {
      * @param layoutData
      */
     public void setLayoutData(Object layoutData) {
-        this.table.setLayoutData(layoutData);
+        this.pageableTable.setLayoutData(layoutData);
+    }
+
+    /**
+     * Specifies the properties permitted per entry
+     * @param entries
+     * @param permitted
+     */
+    public void setPermitted(List<String> entries, Map<String, Set<String>> permitted) {
+    	
+        // Store
+        this.keys = entries;
+    	this.keyProperties = new HashMap<>(permitted);
+    	
+    	// Create deep copy of for managing permitted values
+    	this.permitted = new HashMap<>();
+    	for (Entry<String, Set<String>> entry : keyProperties.entrySet()) {
+    	    this.permitted.put(entry.getKey(), new HashSet<>(entry.getValue()));
+    	}
+    	
+    	// Refresh table
+    	this.pageableTable.refreshPage();
+        this.pageableTable.setCurrentPage(0);
+        for (TableColumn c : this.table.getColumns()) {
+        	c.pack();
+        }
     }
 
     /**
@@ -285,60 +290,117 @@ public class ComponentFilterTable {
      * @param properties
      */
     public void setProperties(List<String> properties) {
+    	
+    	// Clear
         this.clear();
         this.properties = new ArrayList<String>(properties);
 
-        TableColumn column = new TableColumn(table, SWT.LEFT);
-        column.setWidth(LABEL_WIDTH);
-        column.setText(""); //$NON-NLS-1$
-        for (String property : properties) {
-            column = new TableColumn(table, SWT.CENTER);
-            column.setText(property);
-            column.setWidth(CHECKBOX_WIDTH);
+        /* First column for attribute names*/
+    	TableViewerColumn column = new TableViewerColumn(pageableTable.getViewer(), SWT.NONE);
+    	column.setLabelProvider(new ColumnLabelProvider() {
+            
+			@Override
+            public Image getImage(Object element) {
+                return null;
+            }
+            
+            @Override
+            @SuppressWarnings("unchecked")
+            public String getText(Object element) {
+               return ((Pair<String, Set<String>>)element).getKey();
+            }
+        });	
+    	
+    	TableColumn tColumn = column.getColumn();
+    	tColumn.setText(Resources.getMessage("ComponentFilterTable.9")); //$NON-NLS-1$
+    	tColumn.setToolTipText(Resources.getMessage("ComponentFilterTable.9")); //$NON-NLS-1$
+    	tColumn.setWidth(80);
+    	
+    	// One column per property
+        for (final String property : properties) {
+
+            /* Empty column to make checkboxes appear in an own cell */
+        	column = new TableViewerColumn(pageableTable.getViewer(), SWT.NONE);
+        	column.setLabelProvider(new ColumnLabelProvider() {
+                
+                @Override
+                @SuppressWarnings("unchecked")
+                public Image getImage(Object element) {
+                    String key = ((Pair<String, Set<String>>)element).getKey();
+                    Set<String> values = ((Pair<String, Set<String>>)element).getValue();
+                    if (ComponentFilterTable.this.permitted == null) {
+                    	return null;
+                    } else if (!ComponentFilterTable.this.permitted.get(key).contains(property)) {
+                    	return null;
+                    } else if (values.contains(property)) {
+                    	return IMAGE_ENABLED;
+                    } else {
+                        return IMAGE_DISABLED;
+                    }
+                }
+                
+                @Override
+                public String getText(Object element) {
+                   return "";
+                }
+            });	
+        	tColumn = column.getColumn();
+        	tColumn.setText(property);
+        	tColumn.setToolTipText(property);
+        	tColumn.setWidth(30);
         }
-        column = new TableColumn(table, SWT.LEFT);
-        column.setText(""); //$NON-NLS-1$
     }
 
     /**
-     * Sets the given property selected for the given entry .
+     * Sets the given property selected for the given entry.
      * 
      * @param entry
      * @param property
      * @param selected
      */
     public void setSelected(String entry, String property, boolean selected) {
-        if (!this.entries.contains(entry)) {
-            return;
-        }
+ 
+    	// Check
+    	if (this.properties == null || this.keyProperties == null) {
+    		return;
+    	}
+    	
+    	// We only support this for existing entries and properties
         if (!this.properties.contains(property)) {
             return;
         }
-        if (!this.selected.containsKey(entry)) {
-            this.selected.put(entry, new HashMap<String, Boolean>());
+        if (!this.keyProperties.containsKey(entry)) {
+            return;
         }
-        if (this.itemProperties.get(entry).contains(property)) {
-            this.selected.get(entry).put(property, selected);
-            int index = properties.indexOf(property);
-            this.items.get(entry).setImage(index + 1, selected ? IMAGE_ENABLED : IMAGE_DISABLED);
-            table.redraw();
+        if (selected) {
+        	this.keyProperties.get(entry).add(property);
+        } else {
+        	this.keyProperties.get(entry).remove(property);
         }
+        this.pageableTable.refreshPage();
     }
 
     /**
-     * Fires a new event.
+     * Fires a new event
+     * @param selectedEntry
+     * @param selectedProperty
      */
-    private void fireSelectionEvent() {
+    private void fireSelectionEvent(String selectedEntry, String selectedProperty) {
+    	
+    	// Maintain state
+        this.selectedKey = selectedEntry;
+        this.selectedProperty = selectedProperty;
+    	
+    	// Fire event
         Event event = new Event();
-        event.display = table.getDisplay();
-        event.item = table;
-        event.widget = table;
+        event.display = pageableTable.getDisplay();
+        event.item = pageableTable;
+        event.widget = pageableTable;
         SelectionEvent sEvent = new SelectionEvent(event);
         for (SelectionListener listener : listeners) {
             listener.widgetSelected(sEvent);
         }
     }
-
     /**
      * Returns the item at the given location.
      * 

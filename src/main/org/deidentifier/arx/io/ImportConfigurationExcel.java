@@ -188,11 +188,37 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
     }
 
     /**
+     * @param containsHeader
+     *            {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
+    }
+
+    /**
+     * @param excelFileType
+     *            {@link #ExcelFileTypes}
+     */
+    public void setExcelFileType(ExcelFileTypes excelFileType) {
+        this.excelFileType = excelFileType;
+    }
+
+    /**
+     * @param sheetIndex
+     *            {@link #sheetIndex}
+     */
+    public void setSheetIndex(int sheetIndex) {
+        this.sheetIndex = sheetIndex;
+    }
+
+
+    /**
      * Sets the indexes based on the header.
      *
      * @param row
      */
-    public void prepare(Row row) {
+    protected void prepare(Row row) {
 
         for (ImportColumn c : super.getColumns()) {
             ImportColumnExcel column = (ImportColumnExcel) c;
@@ -210,31 +236,5 @@ public class ImportConfigurationExcel extends ImportConfigurationFile implements
                 }
             }
         }
-    }
-
-    /**
-     * @param containsHeader
-     *            {@link #containsHeader}
-     */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
-    }
-
-    /**
-     * @param excelFileType
-     *            {@link #ExcelFileTypes}
-     */
-    public void setExcelFileType(ExcelFileTypes excelFileType) {
-        this.excelFileType = excelFileType;
-    }
-
-
-    /**
-     * @param sheetIndex
-     *            {@link #sheetIndex}
-     */
-    public void setSheetIndex(int sheetIndex) {
-        this.sheetIndex = sheetIndex;
     }
 }

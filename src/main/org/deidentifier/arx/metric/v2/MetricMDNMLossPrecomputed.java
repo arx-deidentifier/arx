@@ -117,7 +117,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
 
         // Prepare
         int dimensions = getDimensions();
@@ -158,7 +158,7 @@ public class MetricMDNMLossPrecomputed extends MetricMDNMLoss {
     }
 
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify g) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node, HashGroupify g) {
         return this.getLowerBoundInternal(node);
     }
 

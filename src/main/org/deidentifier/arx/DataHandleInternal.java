@@ -288,4 +288,15 @@ public class DataHandleInternal {
             return this.handle instanceof DataHandleOutput;
         }
     }
+
+    /**
+     * Returns whether this is an outlier regarding the given columns. If no columns have been
+     * specified, <code>true</code> will be returned.
+     * @param row
+     * @param columns
+     * @return
+     */
+    public boolean isOutlier(int row, int[] columns) {
+        return this.handle.internalIsOutlier(row, columns);
+    }
 }

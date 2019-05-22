@@ -111,17 +111,19 @@ public class ComponentRiskProfile {
             return result;
         }
     }
+    
     /**
      * Checks a given series
      * @param values
      */
     private static void checkSeries(double[] values) {
         for (double value : values) {
-            if (value <0d || value>1d) {
-                throw new IllegalArgumentException("Values must be in range [0, 1]");
+            if (value < 0d) {
+                throw new IllegalArgumentException("Values must be >= 0 but is " + value);
             }
         }
     }
+    
     /**
      * Insert item to back
      * @param array
@@ -332,6 +334,8 @@ public class ComponentRiskProfile {
                             double x = xAxis.getDataCoordinate(cursor.x);
                             double y = yAxis.getDataCoordinate(cursor.y);
                             builder.setLength(0);
+                            builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.12")); //$NON-NLS-1$
+                            builder.append(": ("); //$NON-NLS-1$
                             builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.10")); //$NON-NLS-1$
                             builder.append(": "); //$NON-NLS-1$
                             builder.append(SWTUtil.getPrettyString(x));
@@ -339,7 +343,7 @@ public class ComponentRiskProfile {
                             builder.append(Resources.getMessage("ViewRisksRiskDistributionPlot.11")); //$NON-NLS-1$
                             builder.append(": "); //$NON-NLS-1$
                             builder.append(SWTUtil.getPrettyString(y));
-                            builder.append("%"); //$NON-NLS-1$
+                            builder.append("%)"); //$NON-NLS-1$
                             root.setToolTipText(builder.toString());
                             return;
                         }

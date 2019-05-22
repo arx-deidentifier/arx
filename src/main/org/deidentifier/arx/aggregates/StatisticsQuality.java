@@ -149,7 +149,8 @@ public class StatisticsQuality {
         this.progress.value = 8;
         String[][][] hierarchies = getHierarchies(input, indices, configuration);
         QualityDomainShare[] shares = getDomainShares(input, indices, hierarchies, configuration);
-
+        int suppressedInput = getSuppressed(input);
+        int suppressedOutput = getSuppressed(output);
         this.progress.value = 10;
         
         // Build
@@ -161,6 +162,8 @@ public class StatisticsQuality {
                                                            workload,
                                                            input,
                                                            output,
+                                                           suppressedInput,
+                                                           suppressedOutput,
                                                            groupedInput,
                                                            groupedOutput,
                                                            hierarchies,
@@ -182,6 +185,8 @@ public class StatisticsQuality {
                                                                            workload,
                                                                            input,
                                                                            output,
+                                                                           suppressedInput,
+                                                                           suppressedOutput,
                                                                            groupedInput,
                                                                            groupedOutput,
                                                                            hierarchies,
@@ -203,6 +208,8 @@ public class StatisticsQuality {
                                                                      workload,
                                                                      input,
                                                                      output,
+                                                                     suppressedInput,
+                                                                     suppressedOutput,
                                                                      groupedInput,
                                                                      groupedOutput,
                                                                      hierarchies,
@@ -220,16 +227,18 @@ public class StatisticsQuality {
         workload = 10;
         try {
             this.mse = new QualityModelColumnOrientedSquaredError(stop,
-                                                         progress,
-                                                         workload,
-                                                         input,
-                                                         output,
-                                                         groupedInput,
-                                                         groupedOutput,
-                                                         hierarchies,
-                                                         shares,
-                                                         indices,
-                                                         configuration).evaluate();
+                                                                  progress,
+                                                                  workload,
+                                                                  input,
+                                                                  output,
+                                                                  suppressedInput,
+                                                                  suppressedOutput,
+                                                                  groupedInput,
+                                                                  groupedOutput,
+                                                                  hierarchies,
+                                                                  shares,
+                                                                  indices,
+                                                                  configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -245,6 +254,8 @@ public class StatisticsQuality {
                                                         workload,
                                                         input,
                                                         output,
+                                                        suppressedInput,
+                                                        suppressedOutput,
                                                         groupedInput,
                                                         groupedOutput,
                                                         hierarchies,
@@ -266,6 +277,8 @@ public class StatisticsQuality {
                                                                   workload,
                                                                   input,
                                                                   output,
+                                                                  suppressedInput,
+                                                                  suppressedOutput,
                                                                   groupedInput,
                                                                   groupedOutput,
                                                                   hierarchies,
@@ -287,6 +300,8 @@ public class StatisticsQuality {
                                                                             workload,
                                                                             input,
                                                                             output,
+                                                                            suppressedInput,
+                                                                            suppressedOutput,
                                                                             groupedInput,
                                                                             groupedOutput,
                                                                             hierarchies,
@@ -308,6 +323,8 @@ public class StatisticsQuality {
                                                             workload,
                                                             input,
                                                             output,
+                                                            suppressedInput,
+                                                            suppressedOutput,
                                                             groupedInput,
                                                             groupedOutput,
                                                             hierarchies,
@@ -325,16 +342,18 @@ public class StatisticsQuality {
         workload = 15;
         try {
             this.sse = new QualityModelRowOrientedSquaredError(stop,
-                                                      progress,
-                                                      workload,
-                                                      input,
-                                                      output,
-                                                      groupedInput,
-                                                      groupedOutput,
-                                                      hierarchies,
-                                                      shares,
-                                                      indices,
-                                                      configuration).evaluate();
+                                                               progress,
+                                                               workload,
+                                                               input,
+                                                               output,
+                                                               suppressedInput,
+                                                               suppressedOutput,
+                                                               groupedInput,
+                                                               groupedOutput,
+                                                               hierarchies,
+                                                               shares,
+                                                               indices,
+                                                               configuration).evaluate();
             this.checkInterrupt();
         } catch (Exception e) {
             // Fail silently
@@ -475,7 +494,7 @@ public class StatisticsQuality {
     public QualityMeasureRowOriented getSSESST() {
         return ssesst;
     }
-    
+
     /**
      * Checks whether an interruption happened.
      */
@@ -484,7 +503,7 @@ public class StatisticsQuality {
             throw new ComputationInterruptedException("Interrupted");
         }
     }
-
+    
     /**
      * Returns a list of the attributes covered
      * @param output
@@ -575,8 +594,10 @@ public class StatisticsQuality {
         Groupify<TupleWrapper> groupify = new Groupify<TupleWrapper>(capacity);
         int numRows = handle.getNumRows();
         for (int row = 0; row < numRows; row++) {
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row);
-            groupify.add(tuple);
+            if (!handle.isOutlier(row)) {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+                groupify.add(tuple);
+            }
             checkInterrupt();
         }
         
@@ -729,5 +750,18 @@ public class StatisticsQuality {
 
         // Return
         return new QualityMeasureColumnOriented(output, indices, minimum, result, maximum);
+    }
+
+    /**
+     * Returns the number of suppressed records
+     * @param handle
+     * @return
+     */
+    private int getSuppressed(DataHandle handle) {
+        int suppressed = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
+            suppressed += handle.isOutlier(row) ? 1 : 0;
+        }
+        return suppressed;
     }
 }

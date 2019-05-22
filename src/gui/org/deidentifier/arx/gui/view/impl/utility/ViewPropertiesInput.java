@@ -18,6 +18,7 @@
 package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.deidentifier.arx.ARXCostBenefitConfiguration;
@@ -246,8 +247,8 @@ public class ViewPropertiesInput extends ViewProperties {
             metric = config.getMetric();
 
             // We don't need to update in many cases, if we are displaying an output configuration
-            if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.METRIC ||
-                part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
+            if (part == ModelPart.ATTRIBUTE_TYPE || part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
+                part == ModelPart.METRIC || part == ModelPart.ATTRIBUTE_WEIGHT || part == ModelPart.GS_FACTOR ||
                 part == ModelPart.MAX_OUTLIERS || part == ModelPart.DATA_TYPE ||
                 part == ModelPart.COST_BENEFIT_MODEL) {
                 return;
@@ -327,70 +328,80 @@ public class ViewPropertiesInput extends ViewProperties {
         // Attributes
         final Property attributes = new Property(Resources.getMessage("PropertiesView.12"), new String[] { String.valueOf(data.getNumColumns()) }); //$NON-NLS-1$
         
+        // For handling high-dimensional data
+        final int MAX_ATTRIBUTES = 128;
+        
         // Print identifying attributes
         final Property identifying = new Property(attributes, Resources.getMessage("PropertiesView.13"), new String[] { String.valueOf(definition.getIdentifyingAttributes().size()) }); //$NON-NLS-1$
         int index = 0;
-        for (int i = 0; i < data.getNumColumns(); i++) {
-            final String s = data.getAttributeName(i);
-            if (definition.getIdentifyingAttributes().contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                values[0] = s;
-                values[1] = definition.getDataType(s).toString();
+        for (String s : definition.getIdentifyingAttributes()) {
+            final String[] values = new String[] { s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            values[1] = definition.getDataType(s).toString();
+            if (index < MAX_ATTRIBUTES) {
                 new Property(identifying, Resources.getMessage("PropertiesView.19") + (index++), values); //$NON-NLS-1$
+            } else {
+                Arrays.fill(values, ""); //$NON-NLS-1$
+                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                new Property(identifying, "...", values); //$NON-NLS-1$
             }
         }
 
         // Print quasi-identifying attributes
         final Property quasiIdentifying = new Property(attributes, Resources.getMessage("PropertiesView.20"), new String[] { String.valueOf(definition.getQuasiIdentifyingAttributes().size()) }); //$NON-NLS-1$
         index = 0;
-        for (int i = 0; i < data.getNumColumns(); i++) {
-            final String s = data.getAttributeName(i);
-            if (definition.getQuasiIdentifyingAttributes().contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" , "", "", ""}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-                values[0] = s;
-                if (definition.getHierarchy(s) != null) {
-                    DataType<?> type = definition.getDataType(s);
-                    values[1] = type.getDescription().getLabel();
-                    if (type.getDescription().hasFormat() && 
-                        ((DataTypeWithFormat)type).getFormat() != null){
-                        values[2] = ((DataTypeWithFormat)type).getFormat();
-                    }
-                    
-                    // Determine height of hierarchy
-                    int height = 0;
-                    String[][] hierarchy = definition.getHierarchy(s);
-                    if (hierarchy != null && hierarchy.length != 0 && hierarchy[0] != null) {
-                        height = hierarchy[0].length;
-                    }
-                    values[3] = String.valueOf(height);
-                    values[4] = String.valueOf(definition.getMinimumGeneralization(s));
-                    values[5] = String.valueOf(definition.getMaximumGeneralization(s));
-                } 
-                if (definition.getMicroAggregationFunction(s) != null){
-                    values[7] = definition.getMicroAggregationFunction(s).getLabel();
+        for (String s : definition.getQuasiIdentifyingAttributes()) {
+            final String[] values = new String[] { s, "", "", "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+            if (definition.getHierarchy(s) != null) {
+                DataType<?> type = definition.getDataType(s);
+                values[1] = type.getDescription().getLabel();
+                if (type.getDescription().hasFormat() &&
+                    ((DataTypeWithFormat) type).getFormat() != null) {
+                    values[2] = ((DataTypeWithFormat) type).getFormat();
                 }
-                values[6] = SWTUtil.getPrettyString(config.getAttributeWeight(s));
+
+                // Determine height of hierarchy
+                int height = 0;
+                String[][] hierarchy = definition.getHierarchy(s);
+                if (hierarchy != null && hierarchy.length != 0 && hierarchy[0] != null) {
+                    height = hierarchy[0].length;
+                }
+                values[3] = String.valueOf(height);
+                values[4] = String.valueOf(definition.getMinimumGeneralization(s));
+                values[5] = String.valueOf(definition.getMaximumGeneralization(s));
+            }
+            if (definition.getMicroAggregationFunction(s) != null) {
+                values[7] = definition.getMicroAggregationFunction(s).getLabel();
+            }
+            values[6] = SWTUtil.getPrettyString(config.getAttributeWeight(s));
+            if (index < MAX_ATTRIBUTES) {
                 new Property(quasiIdentifying, Resources.getMessage("PropertiesView.26") + (index++), values); //$NON-NLS-1$
+            } else {
+                Arrays.fill(values, ""); //$NON-NLS-1$
+                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) +
+                            Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                new Property(quasiIdentifying, "...", values); //$NON-NLS-1$
             }
         }
         
         // Print sensitive attributes
         final Property sensitive = new Property(attributes, Resources.getMessage("PropertiesView.27"), new String[] { String.valueOf(definition.getSensitiveAttributes().size()) }); //$NON-NLS-1$
         index = 0;
-        for (int i = 0; i < data.getNumColumns(); i++) {
-            final String s = data.getAttributeName(i);
-            if (definition.getSensitiveAttributes().contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                values[0] = s;
-                if (config.getHierarchy(s) != null && config.getHierarchy(s).getHierarchy() != null) {
-                    int height = 0;
-                    if (config.getHierarchy(s).getHierarchy().length > 0) {
-                        height = config.getHierarchy(s).getHierarchy()[0].length;
-                    }
-                    values[1] = definition.getDataType(s).toString();
-                    values[2] = String.valueOf(height);
+        for (String s : definition.getSensitiveAttributes()) {
+            final String[] values = new String[] {s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            if (config.getHierarchy(s) != null && config.getHierarchy(s).getHierarchy() != null) {
+                int height = 0;
+                if (config.getHierarchy(s).getHierarchy().length > 0) {
+                    height = config.getHierarchy(s).getHierarchy()[0].length;
                 }
+                values[1] = definition.getDataType(s).toString();
+                values[2] = String.valueOf(height);
+            }
+            if (index < MAX_ATTRIBUTES) {
                 new Property(sensitive, Resources.getMessage("PropertiesView.33") + (index++), values); //$NON-NLS-1$
+            } else {
+                Arrays.fill(values, ""); //$NON-NLS-1$
+                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                new Property(sensitive, "...", values); //$NON-NLS-1$
             }
         }
 
@@ -398,13 +409,16 @@ public class ViewPropertiesInput extends ViewProperties {
         final Property insensitive = new Property(attributes, Resources.getMessage("PropertiesView.34"), new String[] { String.valueOf(definition.getInsensitiveAttributes().size()) }); //$NON-NLS-1$
 
         index = 0;
-        for (int i = 0; i < data.getNumColumns(); i++) {
-            final String s = data.getAttributeName(i);
-            if (definition.getInsensitiveAttributes().contains(s)) {
-                final String[] values = new String[] { "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-                values[0] = s;
-                values[1] = definition.getDataType(s).toString();
+        for (String s : definition.getInsensitiveAttributes()) {
+            final String[] values = new String[] { s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+            values[0] = s;
+            values[1] = definition.getDataType(s).toString();
+            if (index < MAX_ATTRIBUTES) {
                 new Property(insensitive, Resources.getMessage("PropertiesView.40") + (index++), values); //$NON-NLS-1$
+            } else {
+                Arrays.fill(values, ""); //$NON-NLS-1$
+                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                new Property(insensitive, "...", values); //$NON-NLS-1$
             }
         }
 

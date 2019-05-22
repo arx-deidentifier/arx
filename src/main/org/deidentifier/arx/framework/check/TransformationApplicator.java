@@ -91,7 +91,7 @@ public class TransformationApplicator {
      * @param transformation
      * @return
      */
-    public TransformedData applyTransformation(final Transformation transformation) {
+    public TransformedData applyTransformation(final Transformation<?> transformation) {
         return applyTransformation(transformation, new Dictionary(aggregation.getMicroaggregationHeader().length));
     }
         
@@ -101,7 +101,7 @@ public class TransformationApplicator {
      * @param microaggregationDictionary A dictionary for microaggregated values
      * @return
      */
-    public TransformedData applyTransformation(final Transformation transformation,
+    public TransformedData applyTransformation(final Transformation<?> transformation,
                                                final Dictionary microaggregationDictionary) {
         
         // Prepare
@@ -121,7 +121,8 @@ public class TransformationApplicator {
                                                         aggregation.getHeader().length,
                                                         inputGeneralized.getArray(),
                                                         outputGeneralized,
-                                                        inputAnalyzed);
+                                                        inputAnalyzed,
+                                                        inputGeneralized.getDictionary().getSuppressedCodes());
         
         // Apply transition and groupify
         currentGroupify = transformer.apply(0L, transformation.getGeneralization(), currentGroupify);

@@ -154,12 +154,10 @@ public class RiskModelSampleWildcard {
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
-            if (!group.getElement().isSuppressed()) {
-                frequencies.put(group, group.getCount());
-                numRecords += group.getCount();
-                add(stop, frequencies, group, index, 0);
-                index(stop, frequencies, group, index, 0);
-            }
+            frequencies.put(group, group.getCount());
+            numRecords += group.getCount();
+            add(stop, frequencies, group, index, 0);
+            index(stop, frequencies, group, index, 0);
             group = group.next();
         }
         
@@ -174,13 +172,11 @@ public class RiskModelSampleWildcard {
             if (stop.value) {
                 throw new ComputationInterruptedException();
             }
-            if (!group.getElement().isSuppressed()) {
-                double risk = 1d / (double)group.getCount();
-                highestRisk = Math.max(highestRisk, risk);
-                totalRisk += risk * (double)frequencies.get(group);
-                if (group.getCount() < sizeThreshold) {
-                    numAtRisk += frequencies.get(group);
-                }
+            double risk = 1d / (double) group.getCount();
+            highestRisk = Math.max(highestRisk, risk);
+            totalRisk += risk * (double) frequencies.get(group);
+            if (group.getCount() < sizeThreshold) {
+                numAtRisk += frequencies.get(group);
             }
             group = group.next();
         }
@@ -342,8 +338,10 @@ public class RiskModelSampleWildcard {
                 progress.value = prog;
             }
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, wildcard);
-            map.add(tuple);
+            if (!handle.isOutlier(row, indices)) {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+                map.add(tuple);
+            }
             if (stop.value) { 
                 throw new ComputationInterruptedException();
             }

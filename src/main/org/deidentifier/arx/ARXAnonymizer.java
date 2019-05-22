@@ -18,6 +18,7 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.SolutionSpaceLong;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.MetricSDClassification;
 
@@ -71,7 +73,7 @@ public class ARXAnonymizer { // NO_UCD
         final TransformationChecker checker;
 
         /** The solution space. */
-        final SolutionSpace         solutionSpace;
+        final SolutionSpace<?>      solutionSpace;
 
         /** The data manager. */
         final DataManager           manager;
@@ -80,7 +82,7 @@ public class ARXAnonymizer { // NO_UCD
         final long                  time;
 
         /** The global optimum */
-        final Transformation        optimum;
+        final Transformation<?>     optimum;
 
         /** Whether the optimum has been found */
         final boolean               optimumFound;
@@ -96,7 +98,7 @@ public class ARXAnonymizer { // NO_UCD
          * @param time
          */
         Result(final TransformationChecker checker,
-               final SolutionSpace solutionSpace,
+               final SolutionSpace<?> solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
                final long time,
@@ -419,13 +421,6 @@ public class ARXAnonymizer { // NO_UCD
             }
         }
         
-        // Check if all needed hierarchies have been defined
-        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
-            if (handle.getDefinition().getHierarchy(attribute) == null) {
-                throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
-            }
-        }
-        
         for (String attr : handle.getDefinition().getSensitiveAttributes()){
             boolean found = false;
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
@@ -507,6 +502,8 @@ public class ARXAnonymizer { // NO_UCD
         for (int i=0; i<handle.getNumColumns(); i++){
             attributes.add(handle.getAttributeName(i));
         }
+
+        // Check if specified attributes are here
         for (String attribute : handle.getDefinition().getSensitiveAttributes()){
             if (!attributes.contains(attribute)) {
                 throw new IllegalArgumentException("Sensitive attribute '"+attribute+"' is not contained in the dataset");
@@ -527,7 +524,15 @@ public class ARXAnonymizer { // NO_UCD
                 throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
             }
         }
+
+        // Check if all needed hierarchies have been defined
+        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
+            if (handle.getDefinition().getHierarchy(attribute) == null) {
+                throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
+            }
+        }
         
+        // Check if aggregate functions have been defined
         for (String attribute : handle.getDefinition().getQuasiIdentifiersWithMicroaggregation()) {
             
             if (handle.getDefinition().getMicroAggregationFunction(attribute)==null) {
@@ -607,7 +612,7 @@ public class ARXAnonymizer { // NO_UCD
      */
     private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
                                            final DataManager manager,
-                                           final SolutionSpace solutionSpace,
+                                           final SolutionSpace<?> solutionSpace,
                                            final TransformationChecker checker) {
 
         int numQIs = manager.getHierarchies().length;
@@ -620,13 +625,13 @@ public class ARXAnonymizer { // NO_UCD
             }
         }
 
-        if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
+        if (!(solutionSpace instanceof SolutionSpaceLong) || config.isHeuristicSearchEnabled() || solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
                                              config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
-            return FLASHAlgorithm.create(solutionSpace, checker, strategy);
+            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy);
         }
     }
 
@@ -674,8 +679,8 @@ public class ARXAnonymizer { // NO_UCD
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
-        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
-
+        SolutionSpace<?> solutionSpace = SolutionSpace.create(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
+      
         // Initialize the metric
         config.getQualityModel().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 

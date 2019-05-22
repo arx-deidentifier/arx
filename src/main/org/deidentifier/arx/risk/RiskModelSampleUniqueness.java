@@ -34,22 +34,28 @@ public class RiskModelSampleUniqueness extends RiskModelSample {
     }
 
     /**
-     * Returns the fraction of tuples affected by the highest re-identification
+     * Returns the fraction of records affected by the highest re-identification
      * risk
      * 
      * @return
      */
-    public double getFractionOfUniqueTuples() {
-        return getNumUniqueTuples() / getHistogram().getNumRecords();
+    public double getFractionOfUniqueRecords() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
+        return getNumUniqueRecords() / getHistogram().getNumRecords();
     }
 
     /**
-     * Returns the number of tuples affected by the lowest re-identification
+     * Returns the number of records affected by the lowest re-identification
      * risk
      * 
      * @return
      */
-    public double getNumUniqueTuples() {
+    public double getNumUniqueRecords() {
+        if (getHistogram().isEmpty()) {
+            return 0d;
+        }
         int[] classes = getHistogram().getHistogram();
         return classes[0] == 1 ? classes[1] : 0;
     }

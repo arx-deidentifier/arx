@@ -71,6 +71,7 @@
             <filename name="**/ojdbc7.jar" />
             <filename name="**/org.eclipse.nebula.visualization.widgets_1.0.0.201511041902.jar" />
             <filename name="**/org.eclipse.nebula.visualization.xygraph_1.0.0.201511041902.jar" />
+            <filename name="**/org.eclipse.nebula.widgets.pagination_1.0.0.201806070735.jar" />
         </or>
     </fileset>
 

@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.data;
 
 import com.carrotsearch.hppc.IntIntOpenHashMap;
 import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.ObjectIntOpenHashMap;
 
 /**
  * The class GeneralizationHierarchy.
@@ -58,40 +59,63 @@ public class GeneralizationHierarchy {
         // Init
         this.attribute = name;
         final int height = hierarchy[0].length;
-
-        // Determine number of unique input values
-        final int uniqueIn = dictionary.getNumUniqueUnfinalizedValues(dimension);
+        final int uniqueIn = dictionary.getUnfinalizedValues(dimension).size();
 
         // Build hierarchy
-        map = new int[uniqueIn][height];
+        this.map = new int[uniqueIn][];
         for (int i = 0; i < hierarchy.length; i++) {
             final String[] input = hierarchy[i];
+            if (input == null || input.length == 0) {
+                throw new IllegalArgumentException("Attribute '" + name + "': contains empty rule");
+            }
+            if (input.length != height) {
+                throw new IllegalArgumentException("Attribute '" + name + "': a height of " + height + " has been detected for the hierarchy, but rule for " + input[0] + " has " + input[0].length() +" entries");
+            }
             final Integer key = dictionary.probe(dimension, input[0]);
             if (key != null && key < uniqueIn) {
-                for (int j = 0; j < input.length; j++) {
-                    final String value = input[j];
+                map[key] = new int[height];
+                for (int column = 0; column < height; column++) {
+                    final String value = input[column];
                     final int incode = dictionary.register(dimension, value);
-                    map[key][j] = incode;
+                    map[key][column] = incode;
                 }
+            }
+        }
+        
+        // Check for missing rules
+        for (int valueID = 0; valueID < map.length; valueID++) {
+            
+            // Check if missing
+            if (map[valueID] == null) {
+                
+                // Find missing value
+                String value = "unknown-value";
+                ObjectIntOpenHashMap<String> dictmap = dictionary.getUnfinalizedValues(dimension);
+                for (int index = 0; index < dictmap.allocated.length; index++) {
+                    if (dictmap.allocated[index] && dictmap.values[index] == valueID) {
+                        // Work around some weird casting issues, probably caused by HPPC
+                        value = String.valueOf(((Object[]) dictmap.keys)[index]);
+                        break;
+
+                    }
+                }
+
+                // Throw exception
+                throw new IllegalArgumentException("Attribute '" + name + "': hierarchy does not contain a transformation rule for value '" + value + "'");
             }
         }
 
         // Count distinct values on each level
-        distinctValues = new int[height];
-        final IntOpenHashSet vals = new IntOpenHashSet();
+        this.distinctValues = new int[height];
 
         // for each column
-        for (int i = 0; i < map[0].length; i++) {
-            for (int k = 0; k < map.length; k++) {
-                vals.add(map[k][i]);
+        final IntOpenHashSet vals = new IntOpenHashSet();
+        for (int column = 0; column < map[0].length; column++) {
+            for (int row = 0; row < map.length; row++) {
+                vals.add(map[row][column]);
             }
-            distinctValues[i] = vals.size();
+            this.distinctValues[column] = vals.size();
             vals.clear();
-        }
-
-        // Sanity check
-        if (distinctValues[0] < uniqueIn) {
-            throw new IllegalArgumentException("Attribute '" + name + "': hierarchy misses some values or contains duplicates"); 
         }
     }
 

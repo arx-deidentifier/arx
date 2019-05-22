@@ -60,7 +60,7 @@ public class History {
     private final IntArrayDictionary        dictionarySensValue;
 
     /** A map from nodes to snapshots. */
-    private HashMap<Long, int[]>            nodeToSnapshot                = null;
+    private HashMap<Object, int[]>          nodeToSnapshot                = null;
 
     /** The current requirements. */
     private final int                       requirements;
@@ -78,12 +78,12 @@ public class History {
     private final double                    snapshotSizeSnapshot;
 
     /** The solution space */
-    private final SolutionSpace             solutionSpace;
+    private final SolutionSpace<?>             solutionSpace;
 
     /** Store the results of all types of transformations. */
     private final DependentAction STORAGE_TRIGGER_ALL = new DependentAction(){
         @Override
-        public boolean appliesTo(Transformation node) {
+        public boolean appliesTo(Transformation<?> node) {
             return true;
         }
     };
@@ -91,7 +91,7 @@ public class History {
     /** Store only the results of non-anonymous transformations. */
     private final DependentAction STORAGE_TRIGGER_NON_ANONYMOUS = new DependentAction(){
         @Override
-        public boolean appliesTo(Transformation node) {
+        public boolean appliesTo(Transformation<?> node) {
             return node.hasProperty(solutionSpace.getPropertyNotAnonymous());
         }
     };
@@ -118,12 +118,12 @@ public class History {
                    final ARXConfigurationInternal config,
                    final IntArrayDictionary dictionarySensValue,
                    final IntArrayDictionary dictionarySensFreq,
-                   final SolutionSpace solutionSpace) {
+                   final SolutionSpace<?> solutionSpace) {
         
         this.snapshotSizeDataset = (long) (rowCount * snapshotSizeDataset);
         this.snapshotSizeSnapshot = snapshotSizeSnapshot;
         this.cache = new MRUCache<MRUCacheEntryMetadata>(size);
-        this.nodeToSnapshot = new HashMap<Long, int[]>(size);
+        this.nodeToSnapshot = new HashMap<Object, int[]>(size);
         this.size = size;
         this.dictionarySensFreq = dictionarySensFreq;
         this.dictionarySensValue = dictionarySensValue;
@@ -252,7 +252,7 @@ public class History {
      * @param snapshot The snapshot that was previously used, if any
      * @return
      */
-    public boolean store(final Transformation transformation, final HashGroupify groupify, final int[] snapshot) {
+    public boolean store(final Transformation<?> transformation, final HashGroupify groupify, final int[] snapshot) {
 
         // Early abort if too large, or no space
         if (size == 0 || groupify.getNumberOfEquivalenceClasses() > snapshotSizeDataset) {

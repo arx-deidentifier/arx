@@ -22,69 +22,48 @@ import java.util.Arrays;
 import org.deidentifier.arx.framework.check.TransformationResult;
 import org.deidentifier.arx.metric.InformationLoss;
 
-import cern.colt.list.LongArrayList;
-import de.linearbits.jhpl.JHPLIterator.LongIterator;
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.PredictiveProperty;
-import de.linearbits.jhpl.PredictiveProperty.Direction;
 
 /**
- * The class Transformation.
+ * The interface Transformation.
  * 
  * @author Fabian Prasser
  */
-public class Transformation {
+public abstract class Transformation<T> {
 
     /** The id. */
-    private final long                      identifier;
+    protected T                               identifier;
 
     /** The lattice */
-    private final Lattice<Integer, Integer> lattice;
-
-    /** The level */
-    private int                             levelARX          = -1;
-
-    /** The level */
-    private int                             levelJHPL         = -1;
+    protected final Lattice<Integer, Integer> lattice;
 
     /** The solution space */
-    private final SolutionSpace             solutionSpace;
+    protected final SolutionSpace<T>          solutionSpace;
+
+    /** The level */
+    protected int                             levelARX          = -1;
+
+    /** The level */
+    protected int                             levelJHPL         = -1;
 
     /** Transformation in ARX's space */
-    private int[]                           transformationARX = null;
+    protected int[]                           transformationARX = null;
 
     /** Transformation in JHPL's space */
-    private final int[]                     transformationJHPL;
+    protected final int[]                     transformationJHPL;
 
     /**
      * Instantiates a new transformation.
-     * @param transformation In ARX space
+     * @param transformationARX In ARX space
      * @param lattice
      * @param solutionSpace 
      */
-    public Transformation(int[] transformation, Lattice<Integer, Integer> lattice, SolutionSpace solutionSpace) {
+    protected Transformation(int[] transformationARX, Lattice<Integer, Integer> lattice, SolutionSpace<T> solutionSpace) {
         this.lattice = lattice;
         this.solutionSpace = solutionSpace;
-        this.transformationARX = transformation;
-        this.transformationJHPL = solutionSpace.toJHPL(transformation);
-        this.identifier = lattice.space().toId(transformationJHPL);
-    }
-
-    /**
-     * Instantiates a new transformation.
-     * @param transformationJHPL
-     * @param identifier
-     * @param lattice2
-     * @param solutionSpace2
-     */
-    public Transformation(int[] transformationJHPL,
-                          long identifier,
-                          Lattice<Integer, Integer> lattice,
-                          SolutionSpace solutionSpace) {
-        this.lattice = lattice;
-        this.solutionSpace = solutionSpace;
-        this.transformationJHPL = transformationJHPL;
-        this.identifier = identifier;
+        this.transformationARX = transformationARX;
+        this.transformationJHPL = solutionSpace.toJHPL(transformationARX);
     }
 
     /**
@@ -100,18 +79,15 @@ public class Transformation {
      * @return
      */
     public int[] getGeneralization() {
-        if (this.transformationARX == null) {
-            this.transformationARX = solutionSpace.fromJHPL(transformationJHPL);
-        }
         return this.transformationARX;
     }
-    
+
     /**
      * Returns the id
      * @return
      */
-    public long getIdentifier() {
-        return identifier;
+    public T getIdentifier() {
+        return this.identifier;
     }
 
     /**
@@ -133,7 +109,7 @@ public class Transformation {
         }
         return levelARX;
     }
-    
+
     /**
      * Returns the lower bound on information loss
      * @return
@@ -141,41 +117,19 @@ public class Transformation {
     public InformationLoss<?> getLowerBound() {
         return solutionSpace.getLowerBound(this.identifier);
     }
-
+    
     /**
      * Returns all predeccessors of the transformation with the given identifier
      * @param transformation
      * @return
      */
-    public LongArrayList getPredecessors() {
-        
-        LongArrayList result = new LongArrayList();
-        for (LongIterator iter = lattice.nodes().listPredecessorsAsIdentifiers(transformationJHPL, identifier); iter.hasNext();) {
-            result.add(iter.next());
-        }
-        return result;
-    }
+    public abstract TransformationList<T> getPredecessors();
 
     /**
      * Returns all successors
      * @return
      */
-    public LongArrayList getSuccessors() {
-        cern.colt.list.LongArrayList result = new cern.colt.list.LongArrayList();
-        for (LongIterator iter = lattice.nodes().listSuccessorsAsIdentifiers(transformationJHPL, identifier); iter.hasNext();) {
-            result.add(iter.next());
-        }
-        int lower = 0;
-        int upper = result.size() - 1;
-        while (lower < upper) {
-            long temp = result.get(lower);
-            result.set(lower, result.get(upper));
-            result.set(upper, temp);
-            lower++;
-            upper--;
-        }
-        return result;
-    }
+    public abstract TransformationList<T> getSuccessors();
 
     /**
      * Returns whether this transformation has a given property
@@ -242,7 +196,6 @@ public class Transformation {
     public void setLowerBound(InformationLoss<?> lowerBound) {
         this.solutionSpace.setLowerBound(this.identifier, lowerBound);
     }
-    
 
     /**
      * Sets a property
@@ -257,25 +210,7 @@ public class Transformation {
      * Sets the property to all neighbors
      * @param property
      */
-    public void setPropertyToNeighbours(PredictiveProperty property) {
-        LongIterator neighbors;
-        if (property.getDirection() == Direction.UP) {
-            neighbors = lattice.nodes().listSuccessorsAsIdentifiers(transformationJHPL, identifier);
-        } else if (property.getDirection() == Direction.DOWN) {
-            neighbors = lattice.nodes().listPredecessorsAsIdentifiers(transformationJHPL, identifier);
-        } else {
-            return;
-        }
-        LongArrayList list = new LongArrayList();
-        for (;neighbors.hasNext();) {
-            list.add(neighbors.next());
-        }
-        for (int i=0; i<list.size(); i++) {
-            int[] index = lattice.space().toIndex(list.getQuick(i));
-            int level = lattice.nodes().getLevel(index);
-            lattice.putProperty(index, level, property);
-        }
-    }
+    public abstract void setPropertyToNeighbours(PredictiveProperty property);
 
     /**
      * Returns a string representation
@@ -285,7 +220,7 @@ public class Transformation {
         builder.append("Transformation {\n");
         builder.append(" - Solution space: ").append(this.solutionSpace.hashCode()).append("\n");
         builder.append(" - Index: ").append(Arrays.toString(transformationJHPL)).append("\n");
-        builder.append(" - Id: ").append(identifier).append("\n");
+        builder.append(" - Id: ").append(Arrays.toString(transformationARX)).append("\n");
         builder.append(" - Generalization: ").append(Arrays.toString(getGeneralization())).append("\n");
         builder.append(" - Level: ").append(getLevel()).append("\n");
         builder.append(" - Properties:\n");
@@ -325,7 +260,7 @@ public class Transformation {
      * @param transformation
      * @return
      */
-    private int getLevel(int[] transformation) {
+    protected int getLevel(int[] transformation) {
         int level = 0; for (int lvl : transformation) level += lvl;
         return level;
     }

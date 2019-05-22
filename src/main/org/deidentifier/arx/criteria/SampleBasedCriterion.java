@@ -62,7 +62,7 @@ public abstract class SampleBasedCriterion extends PrivacyCriterion {
      *
      * @return
      */
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         throw new UnsupportedOperationException("Not implemented");
     }
     

@@ -868,6 +868,7 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
                         } else {
                             relativeAUC = (rocOutput.getAUC() - rocZeror.getAUC()) / (rocOriginal.getAUC() - rocZeror.getAUC());
                         }
+                        relativeAUC = Double.isNaN(relativeAUC) ? 0d : relativeAUC;
                         item.setData("4", relativeAUC);
                     }
                 }

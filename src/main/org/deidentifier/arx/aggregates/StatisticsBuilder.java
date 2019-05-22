@@ -585,60 +585,39 @@ public class StatisticsBuilder {
         int capacity = handle.getNumRows() / 10;
         capacity = capacity > 10 ? capacity : 10;
         Groupify<TupleWrapper> map = new Groupify<TupleWrapper>(capacity);
-        int numRows = handle.getNumRows();
-        for (int row = 0; row < numRows; row++) {
+        int numberOfSuppressedRecords = 0;
+        int numberOfRecordsSuppressedRecords = 0;
+        for (int row = 0; row < handle.getNumRows(); row++) {
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, false);
-            map.add(tuple);
+            numberOfRecordsSuppressedRecords++;
+            if (handle.isOutlier(row)) {
+                numberOfSuppressedRecords++;
+            } else {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row);
+                map.add(tuple);
+            }
             checkInterrupt();
         }
-
+        
         // Now compute the following values
         double averageEquivalenceClassSize = 0d;
-        double averageEquivalenceClassSizeIncludingOutliers = 0d;
         int maximalEquivalenceClassSize = Integer.MIN_VALUE;
-        int maximalEquivalenceClassSizeIncludingOutliers = Integer.MIN_VALUE;
         int minimalEquivalenceClassSize = Integer.MAX_VALUE;
-        int minimalEquivalenceClassSizeIncludingOutliers = Integer.MAX_VALUE;
-        int numberOfEquivalenceClasses = 0;
-        int numberOfEquivalenceClassesIncludingOutliers = map.size();
-        int numberOfTuples = 0;
-        int numberOfOutlyingTuples = 0;
-         
+        int numberOfEquivalenceClasses = map.size();
+        
         // Let's do it
-        boolean containsOutliers = false;
         Group<TupleWrapper> element = map.first();
         while (element != null) {
             
             checkInterrupt();
-            maximalEquivalenceClassSizeIncludingOutliers = Math.max(element.getCount(), maximalEquivalenceClassSizeIncludingOutliers);
-            minimalEquivalenceClassSizeIncludingOutliers = Math.min(element.getCount(), minimalEquivalenceClassSizeIncludingOutliers);
-            averageEquivalenceClassSizeIncludingOutliers += element.getCount();
-            numberOfTuples += element.getCount();
-            
-            if (!element.getElement().isSuppressed()) {
-                
-                maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
-                minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);
-                averageEquivalenceClassSize += element.getCount();
-                
-            } else {
-                
-                containsOutliers = true;
-                // All suppressed records will collapse into a single group, so we can use the "=" assignment operator here
-                numberOfOutlyingTuples = element.getCount();
-            }
-            
+            maximalEquivalenceClassSize = Math.max(element.getCount(), maximalEquivalenceClassSize);
+            minimalEquivalenceClassSize = Math.min(element.getCount(), minimalEquivalenceClassSize);
+            averageEquivalenceClassSize += element.getCount();
             element = element.next();
         }
         
-        numberOfEquivalenceClasses = numberOfEquivalenceClassesIncludingOutliers;
-        if (containsOutliers) {
-            numberOfEquivalenceClasses -= 1;
-        }
-        
+        // Calculate average
         averageEquivalenceClassSize /= (double)numberOfEquivalenceClasses;
-        averageEquivalenceClassSizeIncludingOutliers /= (double)numberOfEquivalenceClassesIncludingOutliers;
         
         // Fix corner cases
         if (numberOfEquivalenceClasses == 0) {
@@ -649,15 +628,11 @@ public class StatisticsBuilder {
 
         // And return
         return new StatisticsEquivalenceClasses(averageEquivalenceClassSize,
-                                                averageEquivalenceClassSizeIncludingOutliers,
                                                 maximalEquivalenceClassSize,
-                                                maximalEquivalenceClassSizeIncludingOutliers,
                                                 minimalEquivalenceClassSize,
-                                                minimalEquivalenceClassSizeIncludingOutliers,
                                                 numberOfEquivalenceClasses,
-                                                numberOfEquivalenceClassesIncludingOutliers,
-                                                numberOfTuples,
-                                                numberOfOutlyingTuples);
+                                                numberOfRecordsSuppressedRecords,
+                                                numberOfSuppressedRecords);
     }
     
     /**

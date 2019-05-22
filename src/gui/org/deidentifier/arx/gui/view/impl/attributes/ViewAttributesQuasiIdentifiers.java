@@ -18,7 +18,9 @@
 package org.deidentifier.arx.gui.view.impl.attributes;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.deidentifier.arx.DataHandle;
@@ -31,15 +33,25 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
+import org.eclipse.nebula.widgets.pagination.IPageLoader;
+import org.eclipse.nebula.widgets.pagination.PageableController;
+import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResult;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * This view allows to select a subset of the quasi-identifiers
@@ -48,18 +60,41 @@ import org.eclipse.swt.widgets.TableItem;
  */
 public class ViewAttributesQuasiIdentifiers implements IView {
 
-    /** Controller */
-    private final Controller controller;
+    /**
+     * Page loader
+     * @author Fabian Prasser
+     */
+    private class AttributesPageLoader implements IPageLoader<PageResult<String>> {
 
+        @Override
+        public PageResult<String> loadPage(PageableController controller) {
+            List<String> attributes = getAttributes();
+            if (attributes == null) {
+                return PageListHelper.createPage(new ArrayList<String>(), controller);
+            } else {
+                return PageListHelper.createPage(attributes, controller);
+            }
+        }
+    }
+
+    /** Controller */
+    private final Controller    controller;
+    
     /** View */
-    private final Composite  root;
+    private final Composite     root;
     /** View */
-    private final Table      table;
+    private final PageableTable table;
     /** View */
-    private final Label      label;
+    private final Label         label;
+    /** View */
+    private final Image         IMAGE_ENABLED;
+    /** View */
+    private final Image         IMAGE_DISABLED;
+    /** Model */
+    private Model               model;
 
     /** Model */
-    private Model            model;
+    private Set<String>         selection;
 
     /**
      * Creates a new instance.
@@ -67,24 +102,70 @@ public class ViewAttributesQuasiIdentifiers implements IView {
      * @param parent
      * @param controller
      */
-    public ViewAttributesQuasiIdentifiers(final Composite parent,
-                                    final Controller controller) {
+    public ViewAttributesQuasiIdentifiers(final Composite parent, final Controller controller) {
 
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_QUASI_IDENTIFIERS, this);
-        
+
+        // Load images
+        this.IMAGE_ENABLED = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
+        this.IMAGE_DISABLED = controller.getResources().getManagedImage("cross.png"); //$NON-NLS-1$
         this.controller = controller;
 
         // Create group
-        root = parent;
-        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        this.root = parent;
+        this.root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
 
         // Create table
-        table = SWTUtil.createTable(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
-        table.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
-        table.addSelectionListener(new SelectionAdapter(){
+        this.table = SWTUtil.createPageableTableViewer(parent, SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER, true, true);
+        this.table.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(2, 1).create());
+        this.table.getViewer().setContentProvider(new ArrayContentProvider());
+        this.table.setPageLoader(new AttributesPageLoader());
+
+        // Table
+        final Table tTable = table.getViewer().getTable();
+        SWTUtil.createGenericTooltip(tTable);
+        GridData gd = SWTUtil.createFillGridData();
+        gd.heightHint = 100;
+        tTable.setLayoutData(gd);
+        tTable.setHeaderVisible(false);
+        
+        // Column
+        TableViewerColumn column = new TableViewerColumn(table.getViewer(), SWT.NONE);
+        column.setLabelProvider(new ColumnLabelProvider() {
+            @Override
+            public Image getImage(Object element) {
+                return (selection != null && selection.contains(element)) ? IMAGE_ENABLED : IMAGE_DISABLED;
+            }
+            @Override
+            public String getText(Object element) {
+                return (String)element;
+            }
+        });
+        TableColumn tColumn = column.getColumn();
+        tColumn.setToolTipText("Attribute");
+        tColumn.setText("Attribute");
+        tColumn.setWidth(30);
+        tColumn.setResizable(false);
+        
+        // Selection event
+        tTable.addSelectionListener(new SelectionAdapter(){
             public void widgetSelected(SelectionEvent arg0) {
+                int index = tTable.getSelectionIndex();
+                if (index < 0) {
+                    return;
+                } 
+                String attribute = (String)tTable.getItem(index).getData();
+                if (selection == null) {
+                    selection = new HashSet<>();
+                }
+                if (selection.contains(attribute)) {
+                    selection.remove(attribute);
+                } else {
+                    selection.add(attribute);
+                }
+                table.refreshPage();
                 fireEvent();
             }   
         });
@@ -95,17 +176,21 @@ public class ViewAttributesQuasiIdentifiers implements IView {
         button.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.0")); //$NON-NLS-1$
         button.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent arg0) {
-                for (TableItem item : table.getItems()) {
-                    item.setChecked(false);
-                }
+                selection = new HashSet<>();
+                table.setCurrentPage(0);
+                table.refreshPage();
                 fireEvent();
             }
         });
         
         // Create label
-        label = new Label(parent, SWT.RIGHT);
-        label.setText(""); //$NON-NLS-1$
-        label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        this.label = new Label(parent, SWT.RIGHT);
+        this.label.setText(""); //$NON-NLS-1$
+        this.label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        
+        // Init
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
         
         // Reset view
         reset();
@@ -118,10 +203,11 @@ public class ViewAttributesQuasiIdentifiers implements IView {
 
     @Override
     public void reset() {
-        label.setText(""); //$NON-NLS-1$
-        for (TableItem item : table.getItems()) {
-            item.dispose();
-        }
+        this.label.setText(""); //$NON-NLS-1$
+        this.model = null;
+        this.selection = null;
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
         SWTUtil.disable(root);
     }
 
@@ -139,28 +225,45 @@ public class ViewAttributesQuasiIdentifiers implements IView {
      * Checks the selected items and fires an event on changes
      */
     private void fireEvent() {
-        Set<String> selection = new HashSet<String>();
-        for (TableItem item : table.getItems()) {
-            if (item.getChecked()) {
-                selection.add(item.getText());
-            }
-        }
-        if (model != null) {
-            
-            if (selection.equals(model.getSelectedQuasiIdentifiers())) {
-                return;
-            }
-            
+        if (model != null && selection != null) {
             if (selection.size() <= model.getRiskModel().getMaxQiSize()) {
-                model.setSelectedQuasiIdentifiers(selection);
-                controller.update(new ModelEvent(ViewAttributesQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
-                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.3") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
+                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.3") + (int)(Math.pow(2, selection.size()) - 1)); //$NON-NLS-1$
                 label.setForeground(GUIHelper.COLOR_BLACK);
+                if (!selection.equals(model.getSelectedQuasiIdentifiers())) {
+                    model.setSelectedQuasiIdentifiers(new HashSet<>(selection));
+                    controller.update(new ModelEvent(ViewAttributesQuasiIdentifiers.this, ModelPart.SELECTED_QUASI_IDENTIFIERS, selection));
+                }
             } else {
-                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.4") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
+                label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.4") + (int)(Math.pow(2, selection.size()) - 1)); //$NON-NLS-1$
                 label.setForeground(GUIHelper.COLOR_RED);
             }
         }
+    }
+
+    /**
+     * Returns the attributes to display, <code>null</code> if nothing to show.
+     * @return
+     */
+    private List<String> getAttributes() {
+
+        // Check
+        if (model == null || model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null || model.getSelectedQuasiIdentifiers() == null) {
+            return null;
+        }
+        
+        // Obtain handle
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        if (handle == null) {
+            return null;
+        }
+        
+        // Return
+        List<String> result = new ArrayList<>();
+        for (int i = 0; i < handle.getNumColumns(); i++) {
+            result.add(handle.getAttributeName(i));
+        }
+        return result;
     }
 
     /**
@@ -169,32 +272,13 @@ public class ViewAttributesQuasiIdentifiers implements IView {
      * @param node
      */
     private void update() {
-
-        if (model == null || model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null || model.getSelectedQuasiIdentifiers() == null) {
+        if (this.getAttributes() == null) {
             return;
         }
-        
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-
-        root.setRedraw(false);
-        
-        Set<String> selection = model.getSelectedQuasiIdentifiers();
-        
-        for (TableItem item : table.getItems()) {
-            item.dispose();
-        }
-        
-        for (int i = 0; i < handle.getNumColumns(); i++) {
-            TableItem item = new TableItem(table, SWT.NONE);
-            String value = handle.getAttributeName(i);
-            item.setText(value);
-            item.setChecked(selection.contains(value));
-        }
-        
-        label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.5") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
-        
-        root.setRedraw(true);
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
+        this.selection = new HashSet<>(model.getSelectedQuasiIdentifiers());
+        this.label.setText(Resources.getMessage("ViewRisksQuasiIdentifiers.5") + (int)(Math.pow(2, selection.size())-1)); //$NON-NLS-1$
         SWTUtil.enable(root);
     }
 }

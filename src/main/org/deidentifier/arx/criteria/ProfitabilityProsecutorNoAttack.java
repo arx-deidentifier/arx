@@ -129,7 +129,7 @@ public class ProfitabilityProsecutorNoAttack extends ImplicitPrivacyCriterion {
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         return entry.count >= k;
     }
 
