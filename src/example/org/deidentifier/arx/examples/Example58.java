@@ -98,6 +98,7 @@ public class Example58 extends Example {
 
         // Print info
         printResult(result, data);
+        System.out.println(result.getMapping(1));
 
         // Process results
         System.out.println(" - Transformed data:");

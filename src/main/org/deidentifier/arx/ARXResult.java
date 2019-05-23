@@ -61,9 +61,6 @@ public class ARXResult {
     /** Masked data */
     private Data                       masked;
     
-    /** Clear data */
-    private String[][]				   clear;
-
     /** The config. */
     private final ARXConfiguration     config;
 
@@ -190,7 +187,6 @@ public class ARXResult {
                         DataRegistry registry,
                         DataManager manager,
                         Data maskedData,
-                        String[][] clearData,
                         TransformationChecker checker,
                         DataDefinition definition,
                         ARXConfiguration config,
@@ -201,7 +197,6 @@ public class ARXResult {
 
         this.anonymizer = anonymizer;
         this.masked = maskedData;
-        this.clear = clearData;
         this.registry = registry;
         this.manager = manager;
         this.buffer = checker.getOutputBuffer();
@@ -213,16 +208,6 @@ public class ARXResult {
         this.solutionSpace = solutionSpace;
         this.optimumFound = optimumFound;
         this.statistics = new ARXProcessStatistics(lattice, optimalTransformation, optimumFound, duration);
-    }
-    
-    /**
-     * Returns clear Data
-     * 
-     * @return
-     */
-    
-    public String[][] getClearData(){
-    	return clear;
     }
 
     /**
@@ -983,5 +968,9 @@ public class ARXResult {
             bufferLockedByHandle = null;
             bufferLockedByNode = null;
         }
+    }
+    
+    public Map<String, String> getMapping(int col){
+    	return manager.getMapping(col);
     }
 }

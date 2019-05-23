@@ -90,9 +90,6 @@ public class ARXAnonymizer { // NO_UCD
         /** Masked data */
         final org.deidentifier.arx.framework.data.Data maskedData;
         
-        /** Clear data*/
-        final String[][] clearData;
-
         /**
          * Creates a new instance.
          *
@@ -108,7 +105,6 @@ public class ARXAnonymizer { // NO_UCD
                final SolutionSpace solutionSpace,
                final DataManager manager,
                final org.deidentifier.arx.framework.data.Data maskedData,
-               final String[][] clearData,
                final AbstractAlgorithm algorithm,
                final long time,
                final boolean optimumFound) {
@@ -116,7 +112,6 @@ public class ARXAnonymizer { // NO_UCD
             this.solutionSpace = solutionSpace;
             this.manager = manager;
             this.maskedData = maskedData;
-            this.clearData = clearData;
             this.algorithm = algorithm;
             this.time = time;
             this.optimum = algorithm.getGlobalOptimum();
@@ -144,7 +139,6 @@ public class ARXAnonymizer { // NO_UCD
                                  handle.getRegistry(),
                                  this.manager,
                                  this.maskedData,
-                                 this.clearData,
                                  this.checker,
                                  handle.getDefinition(),
                                  config,
@@ -730,8 +724,8 @@ public class ARXAnonymizer { // NO_UCD
         // Perform data masking
         org.deidentifier.arx.framework.data.Data maskedData = mask(manager, definition);
         
-        String[][] clearData = manager.getDataInput().getDictionary().getMapping();
-
+        manager.setMaskedData(maskedData);
+        
         // Execute search algorithm
         boolean optimumFound = algorithm.traverse();
         
@@ -739,7 +733,7 @@ public class ARXAnonymizer { // NO_UCD
         checker.reset();
         
         // Return the result
-        return new Result(checker, solutionSpace, manager, maskedData, clearData, algorithm, time, optimumFound);
+        return new Result(checker, solutionSpace, manager, maskedData, algorithm, time, optimumFound);
     }
 
     /**
