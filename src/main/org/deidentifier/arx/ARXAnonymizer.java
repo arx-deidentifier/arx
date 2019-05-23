@@ -57,6 +57,9 @@ import org.deidentifier.arx.metric.v2.MetricSDClassification;
  * @author Florian Kohlmayer
  */
 public class ARXAnonymizer { // NO_UCD
+	
+	/** The global version string of this release*/
+	public static final String VERSION = "3.8.0";
 
     /**
      * Temporary result of the ARX algorithm.

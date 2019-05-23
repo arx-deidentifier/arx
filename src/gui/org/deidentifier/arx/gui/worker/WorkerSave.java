@@ -39,6 +39,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.io.FileUtils;
+import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXLattice;
 import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.AttributeType;
@@ -647,7 +648,7 @@ public class WorkerSave extends Worker<Model> {
         final OutputStreamWriter w = new OutputStreamWriter(zip);
         XMLWriter writer = new XMLWriter(new FileBuilder(w));
         writer.indent(vocabulary.getMetadata());
-        writer.write(vocabulary.getVersion(), Resources.getVersion());
+        writer.write(vocabulary.getVersion(), ARXAnonymizer.VERSION);
         writer.write(vocabulary.getVocabulary(), vocabulary.getVocabularyVersion());
         writer.unindent();
         w.flush();
