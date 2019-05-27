@@ -21,6 +21,10 @@ Development setup
 
 Currently, the main development of ARX is carried out using Eclipse as an IDE and Ant as a build tool. Support for further IDEs such as IntelliJ IDEA and Maven is experimental.
 
+To build only the core code using Maven, set the system property `core` to `true`. This will build a platform independant jar with the arx main code module and no GUI components. For example,
+
+```$ mvn compile -Dcore=true``` 
+
 Contributing and code of conduct
 ------
 
