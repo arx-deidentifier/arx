@@ -30,6 +30,7 @@ import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
+import org.deidentifier.arx.algorithm.GAAlgorithm;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
@@ -618,6 +619,10 @@ public class ARXAnonymizer { // NO_UCD
                                            final SolutionSpace<?> solutionSpace,
                                            final TransformationChecker checker) {
 
+    	if (true) {
+    		return GAAlgorithm.create(solutionSpace, checker);
+    	}
+    	
         int numQIs = manager.getHierarchies().length;
         
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
