@@ -52,6 +52,7 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -134,6 +135,7 @@ public class ViewAttributeWeights implements IView {
         this.defaultColorProfile = KnobColorProfile.createDefaultSystemProfile(parent.getDisplay());
         this.focusedColorProfile = KnobColorProfile.createFocusedBlueRedProfile(parent.getDisplay());
         
+        // Create scrolled composite
         this.root = new ScrolledComposite(parent, SWT.H_SCROLL);
         this.root.addDisposeListener(new DisposeListener() {
             @Override
@@ -152,6 +154,13 @@ public class ViewAttributeWeights implements IView {
 				root.redraw();
 			}
 		});
+
+        // Create panel
+        this.panel = new Composite(root, SWT.NONE);
+        this.panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
+
+        // Embed and pack
+        this.root.setContent(panel);
         this.root.pack();
     }
 
@@ -162,13 +171,15 @@ public class ViewAttributeWeights implements IView {
 
     @Override
     public void reset() {
-        root.setRedraw(false);
-        if (panel != null && !panel.isDisposed()) {
-            panel.dispose();
-            panel = null;
+        if (panel == null || panel.isDisposed()) {
+            return;
         }
         attributes.clear();
         sortedAttributes.clear();
+        root.setRedraw(false);
+        for (Control control : panel.getChildren()) {
+            control.dispose();
+        }
         root.setRedraw(true);
     }
 
@@ -186,7 +197,8 @@ public class ViewAttributeWeights implements IView {
         
         if (event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
-            event.part == ModelPart.MODEL) {
+            event.part == ModelPart.MODEL || 
+            event.part == ModelPart.INPUT ) {
             if (model != null) {
                 updateControls();
             }
@@ -246,15 +258,10 @@ public class ViewAttributeWeights implements IView {
         
         root.setRedraw(false);
         
-        // Dispose widgets
-        if (panel != null) {
-            panel.dispose();
-            panel = null;
+        // Dispose children
+        for (Control control : panel.getChildren()) {
+            control.dispose();
         }
-
-        // Create new widget
-        panel = new Composite(root, SWT.NONE);
-        panel.setLayoutData(GridDataFactory.swtDefaults().grab(true, true).align(SWT.FILL, SWT.CENTER).create());
         
         // For handling high-dimensional data
         final int MAX_KNOBS = 32;
@@ -431,8 +438,10 @@ public class ViewAttributeWeights implements IView {
             }
         }
 
-        // Update root composite
-        root.setContent(panel);
+        // Update base composites
+        panel.pack();
+        panel.layout(true, true);
+        panel.redraw();
         root.setExpandHorizontal(true);
         root.setExpandVertical(true);
         if (sortedAttributes.size() <= MAX_KNOBS) {
@@ -442,5 +451,6 @@ public class ViewAttributeWeights implements IView {
         root.layout(true, true);    
         root.setRedraw(true);
         root.redraw();
+        SWTUtil.enable(root);
     }
 }
