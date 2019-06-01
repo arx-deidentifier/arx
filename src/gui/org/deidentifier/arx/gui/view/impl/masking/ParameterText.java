@@ -29,54 +29,54 @@ import org.eclipse.swt.widgets.Text;
  * @author Peter Bock
  *
  */
+
 // TODO Drop this class and find another solution.
 public class ParameterText extends Text {
 
-    /** The paramter */
-    private DistributionParameter<?> parameter;
+	/** The paramter */
+	private DistributionParameter<?> parameter;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param parameter
-     * @param composite
-     * @param style
-     */
-    public ParameterText(DistributionParameter<?> parameter, Composite composite, int style) {
+	/**
+	 * Creates an instance.
+	 * 
+	 * @param parameter
+	 * @param composite
+	 * @param style
+	 */
+	public ParameterText(DistributionParameter<?> parameter, Composite composite, int style) {
 
-        super(composite, style);
-        this.parameter = parameter;
+		super(composite, style);
+		this.parameter = parameter;
 
-        // Set initial value
-        setText(String.valueOf(parameter.getInitial()));
+		// Set initial value
+		setText(String.valueOf(parameter.getInitial()));
 
-    }
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.eclipse.swt.widgets.Widget#checkSubclass()
-     */
-    @Override
-    protected void checkSubclass() {
-        // Nothing to do
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.swt.widgets.Widget#checkSubclass()
+	 */
+	@Override
+	protected void checkSubclass() {
+		// Nothing to do
+	}
 
-    /**
-     * Returns the parameter.
-     * @return
-     */
-    public DistributionParameter<?> getParameter() {
-
-        // Integer
-        if (parameter.getType().equals(Integer.class)) {
-            ((DistributionParameter.IntegerParameter) parameter).setValue(Integer.valueOf(getText()));
-        }
-        // Double
-        else if (parameter.getType().equals(Double.class)) {
-            ((DistributionParameter.DoubleParameter) parameter).setValue(Double.valueOf(getText()));
-        }
-        return parameter;
-    }
-
+	/**
+	 * Returns the parameter.
+	 * 
+	 * @return
+	 */
+	public DistributionParameter<?> getParameter() {
+		// Integer
+		if (parameter.getType().equals(Integer.class)) {
+			((DistributionParameter.IntegerParameter) parameter).setValue(Integer.valueOf(getText()));
+		}
+		// Double
+		else if (parameter.getType().equals(Double.class)) {
+			((DistributionParameter.DoubleParameter) parameter).setValue(Double.valueOf(getText()));
+		}
+		return parameter;
+	}
 }

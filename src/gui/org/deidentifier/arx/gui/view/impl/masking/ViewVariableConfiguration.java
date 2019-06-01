@@ -51,323 +51,343 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.ToolItem;
 
 /**
- * This view displays all random variables and allows them to be configured (distribution, parameters, etc.)
+ * This view displays all random variables and allows them to be configured
+ * (distribution, parameters, etc.)
  *
  * @author Karol Babioch
  */
 public class ViewVariableConfiguration implements IView {
 
-    /** Button */
-    private ToolItem    buttonAdd;
-
-    /** Button */
-    private ToolItem    buttonEdit;
-
-    /** Button */
-    private ToolItem    buttonRemove;
-
-    /** Controller */
-    private Controller  controller;
-
-    /** Table viewer */
-    private TableViewer tableViewer;
-
-    /**
-     * Creates an instance.
-     * 
-     * @param parent
-     * @param controller
-     */
-    public ViewVariableConfiguration(final Composite parent, final Controller controller) {
-
-        this.controller = controller;
-        build(parent);
-
-        controller.addListener(ModelPart.RANDOM_VARIABLE, this);
-
-    }
-
-    /**
-     * Build component.
-     * 
-     * @param parent
-     */
-    private void build(Composite parent) {
-
-        // Create button bar
-        ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(null); // TODO Assign help id
-        bar.add(Resources.getMessage("VariableConfigurationView.0"), controller.getResources().getManagedImage("add.png"), new Runnable() { //$NON-NLS-1$ FS
-
-            @Override
-            public void run() {
-                // Open dialog to configure new variable
-                DialogVariableConfiguration config = new DialogVariableConfiguration(controller);
-                config.setBlockOnOpen(true);
-                if (config.open() == Window.OK)
-                    tableViewer.getTable().select(tableViewer.getTable().getItemCount() - 1);
-
-            }
-
-        });
-        bar.add(Resources.getMessage("VariableConfigurationView.1"), controller.getResources().getManagedImage("remove.png"), new Runnable() { //$NON-NLS-1$
-
-            @Override
-            public void run() {
-
-                // Get currently selected variable
-                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-
-                // Delete distribution mapped to selected attribute
-                int deletedIndex = -1;
-                Map<String, AttributeParameters> entries = MaskingConfiguration.getMapping();
-                for (Entry<String, AttributeParameters> entry : entries.entrySet()) {
-                    int value = entry.getValue().getDistributionIndex();
-                    if (tableViewer.getTable().getSelectionIndex() == value - 1) {
-                        MaskingConfiguration.removeMasking(entry.getKey());
-                        deletedIndex = value - 1;
-                        break; // TODO: this only removes the first masking using the deleted distribution, remove break if multiple maskings can use the same distribution
-                    }
-                }
-                // Update the indices after an attribute has been removed
-                // (another for loop because the map is ordered alphabetically, not by Distributionindex)
-                for (Entry<String, AttributeParameters> entry : entries.entrySet()) {
-                    int value = entry.getValue().getDistributionIndex();
-                    // Compared to Value-1 due to "Identity" being index 0
-                    if (deletedIndex >= 0 && deletedIndex < entries.size() - 1 && value - 1 > deletedIndex) {
-                        entry.getValue().setDistribution(value - 1);
-                    }
-                }
-                // selects the first item in the table, after deletion
-                if (tableViewer.getTable().getItemCount() > 1) {
-                    if (tableViewer.getTable().getSelectionIndex() > 0)
-                        tableViewer.getTable().setSelection(0);
-                    else
-                        tableViewer.getTable().setSelection(1);
-                }
-
-                // Update button status
-                updateButtons();
-
-                // Remove from controller
-                controller.getModel().getMaskingModel().removeRandomVariable((variable));
-
-                // update VariableConfiguration View List
-                controller.update(new ModelEvent(this, ModelPart.RANDOM_VARIABLE, (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
-
-            }
-
-        });
-        bar.add(Resources.getMessage("VariableConfigurationView.2"), controller.getResources().getManagedImage("edit.png"), new Runnable() { //$NON-NLS-1$
+	/** Button */
+	private ToolItem buttonAdd;
+
+	/** Button */
+	private ToolItem buttonRemove;
+
+	/** Button */
+	private ToolItem buttonEdit;
+
+	/** Controller */
+	private Controller controller;
+
+	/** Table viewer */
+	private TableViewer tableViewer;
+
+	/**
+	 * Creates an instance.
+	 * 
+	 * @param parent
+	 * @param controller
+	 */
+	public ViewVariableConfiguration(final Composite parent, final Controller controller) {
+
+		this.controller = controller;
+		build(parent);
+
+		controller.addListener(ModelPart.RANDOM_VARIABLE, this);
+
+	}
+
+	/**
+	 * Build component.
+	 * 
+	 * @param parent
+	 */
+	private void build(Composite parent) {
+
+		// Create button bar
+		ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar(null); // TODO
+																						// Assign
+																						// help
+																						// id
+		bar.add(Resources.getMessage("VariableConfigurationView.0"), //$NON-NLS-1$
+				controller.getResources().getManagedImage("add.png"), new Runnable() { // FS
+
+					@Override
+					public void run() {
+						// Open dialog to configure new variable
+						DialogVariableConfiguration config = new DialogVariableConfiguration(controller);
+						config.setBlockOnOpen(true);
+						if (config.open() == Window.OK)
+							tableViewer.getTable().select(tableViewer.getTable().getItemCount() - 1);
+
+					}
+
+				});
+		bar.add(Resources.getMessage("VariableConfigurationView.1"), //$NON-NLS-1$
+				controller.getResources().getManagedImage("remove.png"), new Runnable() {
+
+					@Override
+					public void run() {
+
+						// Get currently selected variable
+						RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection())
+								.getFirstElement();
+
+						// Delete distribution mapped to selected attribute
+						int deletedIndex = -1;
+						Map<String, AttributeParameters> entries = MaskingConfiguration.getMapping();
+						for (Entry<String, AttributeParameters> entry : entries.entrySet()) {
+							int value = entry.getValue().getDistributionIndex();
+							if (tableViewer.getTable().getSelectionIndex() == value - 1) {
+								MaskingConfiguration.removeMasking(entry.getKey());
+								deletedIndex = value - 1;
+								break; // TODO: this only removes the first
+										// masking using the deleted
+										// distribution, remove break if
+										// multiple maskings can use the same
+										// distribution
+							}
+						}
+						// Update the indices after an attribute has been
+						// removed
+						// (another for loop because the map is ordered
+						// alphabetically, not by Distributionindex)
+						for (Entry<String, AttributeParameters> entry : entries.entrySet()) {
+							int value = entry.getValue().getDistributionIndex();
+							// Compared to Value-1 due to "Identity" being index
+							// 0
+							if (deletedIndex >= 0 && deletedIndex < entries.size() - 1 && value - 1 > deletedIndex) {
+								entry.getValue().setDistribution(value - 1);
+							}
+						}
+						// selects the first item in the table, after deletion
+						if (tableViewer.getTable().getItemCount() > 1) {
+							if (tableViewer.getTable().getSelectionIndex() > 0)
+								tableViewer.getTable().setSelection(0);
+							else
+								tableViewer.getTable().setSelection(1);
+						}
+
+						// Update button status
+						updateButtons();
 
-            @Override
-            public void run() {
+						// Remove from controller
+						controller.getModel().getMaskingModel().removeRandomVariable((variable));
 
-                // Get currently selected variable
-                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+						// update VariableConfiguration View List
+						controller.update(new ModelEvent(this, ModelPart.RANDOM_VARIABLE,
+								((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
 
-                // Open dialog to edit existing variable
-                new DialogVariableConfiguration(controller, variable).open();
+					}
 
-            }
+				});
+		bar.add(Resources.getMessage("VariableConfigurationView.2"), //$NON-NLS-1$
+				controller.getResources().getManagedImage("edit.png"), new Runnable() {
 
-        });
+					@Override
+					public void run() {
 
-        // Create title bar
-        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
-        folder.setLayoutData(SWTUtil.createFillGridData());
-        Composite composite = folder.createItem(Resources.getMessage("MaskingView.3"), null); //$NON-NLS-1$
-        composite.setLayout(SWTUtil.createGridLayout(1));
-        folder.setSelection(0);
+						// Get currently selected variable
+						RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection())
+								.getFirstElement();
 
-        // Get references to buttons
-        buttonAdd = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.0")); //$NON-NLS-1$
-        buttonRemove = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.1")); //$NON-NLS-1$
-        buttonEdit = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.2")); //$NON-NLS-1$
+						// Open dialog to edit existing variable
+						new DialogVariableConfiguration(controller, variable).open();
 
-        // Create table
-        tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
-        tableViewer.setContentProvider(new ArrayContentProvider());
-        tableViewer.addDoubleClickListener(new IDoubleClickListener() {
+					}
 
-            @Override
-            public void doubleClick(DoubleClickEvent event) {
+				});
 
-                // Get currently selected variable
-                RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+		// Create title bar
+		ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
+		folder.setLayoutData(SWTUtil.createFillGridData());
+		Composite composite = folder.createItem(Resources.getMessage("MaskingView.3"), null); //$NON-NLS-1$
+		composite.setLayout(SWTUtil.createGridLayout(1));
+		folder.setSelection(0);
 
-                // Edit config dialog for variable
-                new DialogVariableConfiguration(controller, variable).open();
+		// Get references to buttons
+		buttonAdd = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.0")); //$NON-NLS-1$
+		buttonRemove = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.1")); //$NON-NLS-1$
+		buttonEdit = folder.getButtonItem(Resources.getMessage("VariableConfigurationView.2")); //$NON-NLS-1$
 
-            }
-        });
+		// Create table
+		tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer.setContentProvider(new ArrayContentProvider());
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 
-        Table table = tableViewer.getTable();
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-        table.setLayoutData(SWTUtil.createFillGridData());
-        table.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void doubleClick(DoubleClickEvent event) {
 
-            @Override
-            public void widgetSelected(SelectionEvent event) {
+				// Get currently selected variable
+				RandomVariable variable = (RandomVariable) ((IStructuredSelection) tableViewer.getSelection())
+						.getFirstElement();
 
-                // Update button status
-                updateButtons();
+				// Edit config dialog for variable
+				new DialogVariableConfiguration(controller, variable).open();
 
-            }
+			}
+		});
 
-        });
+		Table table = tableViewer.getTable();
+		table.setHeaderVisible(true);
+		table.setLinesVisible(true);
+		table.setLayoutData(SWTUtil.createFillGridData());
+		table.addSelectionListener(new SelectionAdapter() {
 
-        // Column containing variable name
-        TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
 
-            @Override
-            public String getText(Object element) {
-                return ((RandomVariable) element).getName();
-            }
+				// Update button status
+				updateButtons();
 
-        });
+			}
 
-        TableColumn columnName = tableViewerColumnName.getColumn();
-        columnName.setToolTipText(Resources.getMessage("VariableConfigurationView.3")); //$NON-NLS-1$
-        columnName.setText(Resources.getMessage("VariableConfigurationView.4")); //$NON-NLS-1$
-        columnName.setWidth(150);
+		});
 
-        // Column containing distribution type
-        TableViewerColumn tableViewerColumnDistribution = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnDistribution.setLabelProvider(new ColumnLabelProvider() {
+		// Column containing variable name
+		TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
+		tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
-            @Override
-            public String getText(Object element) {
-                return ((RandomVariable) element).getDistributionType().getDescription().getLabel();
-            }
+			@Override
+			public String getText(Object element) {
+				return ((RandomVariable) element).getName();
+			}
 
-        });
+		});
 
-        TableColumn columnDistribution = tableViewerColumnDistribution.getColumn();
-        columnDistribution.setToolTipText(Resources.getMessage("VariableConfigurationView.5")); //$NON-NLS-1$
-        columnDistribution.setText(Resources.getMessage("VariableConfigurationView.6")); //$NON-NLS-1$
-        columnDistribution.setWidth(300);
+		TableColumn columnName = tableViewerColumnName.getColumn();
+		columnName.setToolTipText(Resources.getMessage("VariableConfigurationView.3")); //$NON-NLS-1$
+		columnName.setText(Resources.getMessage("VariableConfigurationView.4")); //$NON-NLS-1$
+		columnName.setWidth(150);
 
-        // Column displaying number
-        TableViewerColumn tableViewerColumnNumber = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnNumber.setLabelProvider(new ColumnLabelProvider() {
+		// Column containing distribution type
+		TableViewerColumn tableViewerColumnDistribution = new TableViewerColumn(tableViewer, SWT.NONE);
+		tableViewerColumnDistribution.setLabelProvider(new ColumnLabelProvider() {
 
-            @Override
-            public String getText(Object element) {
-                return getParameterValue(((RandomVariable) element).getParameter("number"));
-            }
+			@Override
+			public String getText(Object element) {
+				return ((RandomVariable) element).getDistributionType().getDescription().getLabel();
+			}
 
-        });
+		});
 
-        TableColumn columnNumber = tableViewerColumnNumber.getColumn();
-        columnNumber.setToolTipText(Resources.getMessage("VariableConfigurationView.7")); //$NON-NLS-1$
-        columnNumber.setText(Resources.getMessage("VariableConfigurationView.8")); //$NON-NLS-1$
-        columnNumber.setWidth(50);
+		TableColumn columnDistribution = tableViewerColumnDistribution.getColumn();
+		columnDistribution.setToolTipText(Resources.getMessage("VariableConfigurationView.5")); //$NON-NLS-1$
+		columnDistribution.setText(Resources.getMessage("VariableConfigurationView.6")); //$NON-NLS-1$
+		columnDistribution.setWidth(300);
 
-        // Column displaying probability
-        TableViewerColumn tableViewerColumnProbability = new TableViewerColumn(tableViewer, SWT.NONE);
-        tableViewerColumnProbability.setLabelProvider(new ColumnLabelProvider() {
+		// Column displaying number
+		TableViewerColumn tableViewerColumnNumber = new TableViewerColumn(tableViewer, SWT.NONE);
+		tableViewerColumnNumber.setLabelProvider(new ColumnLabelProvider() {
 
-            @Override
-            public String getText(Object element) {
-                return getParameterValue(((RandomVariable) element).getParameter("probability"));
-            }
+			@Override
+			public String getText(Object element) {
+				return getParameterValue(((RandomVariable) element).getParameter("number"));
+			}
 
-        });
+		});
 
-        TableColumn columnProbability = tableViewerColumnProbability.getColumn();
-        columnProbability.setToolTipText(Resources.getMessage("VariableConfigurationView.9")); //$NON-NLS-1$
-        columnProbability.setText(Resources.getMessage("VariableConfigurationView.10")); //$NON-NLS-1$
-        columnProbability.setWidth(50);
+		TableColumn columnNumber = tableViewerColumnNumber.getColumn();
+		columnNumber.setToolTipText(Resources.getMessage("VariableConfigurationView.7")); //$NON-NLS-1$
+		columnNumber.setText(Resources.getMessage("VariableConfigurationView.8")); //$NON-NLS-1$
+		columnNumber.setWidth(50);
 
-        // Set default status for buttons
-        updateButtons();
+		// Column displaying probability
+		TableViewerColumn tableViewerColumnProbability = new TableViewerColumn(tableViewer, SWT.NONE);
+		tableViewerColumnProbability.setLabelProvider(new ColumnLabelProvider() {
 
-    }
+			@Override
+			public String getText(Object element) {
+				return getParameterValue(((RandomVariable) element).getParameter("probability"));
+			}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-     */
-    @Override
-    public void dispose() {
-        controller.removeListener(this);
-    }
+		});
 
-    /**
-     * Returns value in case it exists, or empty string otherwise
-     * @param parameter
-     * @return
-     */
-    private String getParameterValue(DistributionParameter<?> parameter) {
+		TableColumn columnProbability = tableViewerColumnProbability.getColumn();
+		columnProbability.setToolTipText(Resources.getMessage("VariableConfigurationView.9")); //$NON-NLS-1$
+		columnProbability.setText(Resources.getMessage("VariableConfigurationView.10")); //$NON-NLS-1$
+		columnProbability.setWidth(50);
 
-        if (parameter != null) {
-            return String.valueOf(parameter.getValue());
-        }
+		// Set default status for buttons
+		updateButtons();
 
-        return "";
-    }
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.deidentifier.arx.gui.view.def.IView#reset()
-     */
-    @Override
-    public void reset() {
-        tableViewer.getTable().clearAll();
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+	 */
+	@Override
+	public void dispose() {
+		controller.removeListener(this);
+	}
 
-    // TODO Maybe make this more effective by only updating affected row?
-    @Override
-    public void update(ModelEvent event) {
+	/**
+	 * Returns value in case it exists, or empty string otherwise
+	 * 
+	 * @param parameter
+	 * @return
+	 */
+	private String getParameterValue(DistributionParameter<?> parameter) {
 
-        if (event.part == ModelPart.RANDOM_VARIABLE) {
+		if (parameter != null) {
+			return String.valueOf(parameter.getValue());
+		}
 
-            // Disable redrawing, so changes won't be noticed by the user and appear to be atomic
-            tableViewer.getTable().setRedraw(false);
+		return "";
+	}
 
-            // Save selection
-            ISelection selection = tableViewer.getSelection();
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.deidentifier.arx.gui.view.def.IView#reset()
+	 */
+	@Override
+	public void reset() {
+		tableViewer.getTable().clearAll();
+	}
 
-            // Remove all data
-            tableViewer.getTable().removeAll();
+	// TODO Maybe make this more effective by only updating affected row?
+	@Override
+	public void update(ModelEvent event) {
 
-            // Apply new data
-            tableViewer.setInput(controller.getModel().getMaskingModel().getRandomVariables());
+		if (event.part == ModelPart.RANDOM_VARIABLE) {
 
-            // Restore selection
-            tableViewer.setSelection(selection, true);
+			// Disable redrawing, so changes won't be noticed by the user and
+			// appear to be atomic
+			tableViewer.getTable().setRedraw(false);
 
-            // Reenable redrawing
-            tableViewer.getTable().setRedraw(true);
+			// Save selection
+			ISelection selection = tableViewer.getSelection();
 
-            // Set default status for buttons
-            updateButtons();
+			// Remove all data
+			tableViewer.getTable().removeAll();
 
-        }
+			// Apply new data
+			tableViewer.setInput(controller.getModel().getMaskingModel().getRandomVariables());
 
-    }
+			// Restore selection
+			tableViewer.setSelection(selection, true);
 
-    /**
-     * Update buttons.
-     */
-    private void updateButtons() {
+			// Reenable redrawing
+			tableViewer.getTable().setRedraw(true);
 
-        // Refresh data
-        tableViewer.refresh();
+			// Set default status for buttons
+			updateButtons();
 
-        // Always enabled
-        buttonAdd.setEnabled(true);
+		}
 
-        // Only enable when something is selected
-        boolean enableButtons = !tableViewer.getSelection().isEmpty();
+	}
 
-        buttonRemove.setEnabled(enableButtons);
-        buttonEdit.setEnabled(enableButtons);
+	/**
+	 * Update buttons.
+	 */
+	private void updateButtons() {
 
-    }
+		// Refresh data
+		tableViewer.refresh();
+
+		// Always enabled
+		buttonAdd.setEnabled(true);
+
+		// Only enable when something is selected
+		boolean enableButtons = !tableViewer.getSelection().isEmpty();
+
+		buttonRemove.setEnabled(enableButtons);
+		buttonEdit.setEnabled(enableButtons);
+
+	}
 
 }

@@ -17,92 +17,98 @@
 package org.deidentifier.arx.masking;
 
 /**
- * This class is used to map attributes to their MaskingType and related configuration options, used in MaskingConfiguration.java
+ * This class is used to map attributes to their MaskingType and related
+ * configuration options, used in MaskingConfiguration.java
  * 
  * @author Sandro Schaeffler
  * @author Peter Bock
  */
 public class AttributeParameters {
 
-    /** Masking type */
-    private MaskingType maskingType;
+	/** Masking type */
+	private MaskingType maskingType;
 
-    /** 0 as default value represensts the "Identity" Distribution */
-    private int         selectedDistributionIndex = 0;
+	/** 0 as default value represents the "Identity" Distribution */
+	private int selectedDistributionIndex = 0;
 
-    /** String length */
-    private int         stringLength              = -1;
+	/** String length */
+	private int stringLength = -1;
 
-    /**
-     * Creates an instance.
-     * 
-     * @param maskingType
-     */
-    public AttributeParameters(MaskingType maskingType) {
-        this.maskingType = maskingType;
-    }
+	/**
+	 * Creates an instance.
+	 * 
+	 * @param maskingType
+	 */
+	public AttributeParameters(MaskingType maskingType) {
+		this.maskingType = maskingType;
+	}
 
-    /**
-     * Creates an instance.
-     * 
-     * @param maskingType
-     * @param stringLength
-     * @param selectedDistributionIndex
-     */
-    public AttributeParameters(MaskingType maskingType, int stringLength, int selectedDistributionIndex) {
-        this.maskingType = maskingType;
-        this.stringLength = stringLength;
-        this.selectedDistributionIndex = selectedDistributionIndex;
-    }
+	/**
+	 * Creates an instance.
+	 * 
+	 * @param maskingType
+	 * @param stringLength
+	 * @param selectedDistributionIndex
+	 */
+	public AttributeParameters(MaskingType maskingType, int stringLength, int selectedDistributionIndex) {
+		this.maskingType = maskingType;
+		this.stringLength = stringLength;
+		this.selectedDistributionIndex = selectedDistributionIndex;
+	}
 
-    /**
-     * Returns the distribution index
-     * @return
-     */
-    public int getDistributionIndex() {
-        return selectedDistributionIndex;
-    }
+	/**
+	 * Returns the distribution index
+	 * 
+	 * @return
+	 */
+	public int getDistributionIndex() {
+		return selectedDistributionIndex;
+	}
 
-    /**
-     * Returns the masking type
-     * @return
-     */
-    public MaskingType getMaskingType() {
-        return maskingType;
-    }
+	/**
+	 * Returns the masking type
+	 * 
+	 * @return
+	 */
+	public MaskingType getMaskingType() {
+		return maskingType;
+	}
 
-    /**
-     * Returns the string length.
-     * @return
-     */
-    public int getStringLength() {
-        return stringLength;
-    }
+	/**
+	 * Returns the string length.
+	 * 
+	 * @return
+	 */
+	public int getStringLength() {
+		return stringLength;
+	}
 
-    /**
-     * Sets the distribution
-     * @param distributionIndex
-     */
-    public void setDistribution(int distributionIndex) {
-        this.selectedDistributionIndex = distributionIndex;
-    }
+	/**
+	 * Sets the distribution
+	 * 
+	 * @param distributionIndex
+	 */
+	public void setDistribution(int distributionIndex) {
+		this.selectedDistributionIndex = distributionIndex;
+	}
 
-    /**
-     * Sets the string length
-     * @param stringLength
-     */
-    public void setStringLength(int stringLength) {
-        this.stringLength = stringLength;
-    }
+	/**
+	 * Sets the string length
+	 * 
+	 * @param stringLength
+	 */
+	public void setStringLength(int stringLength) {
+		this.stringLength = stringLength;
+	}
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "MaskingType: " + maskingType.getLabel() + ", Distribution: " + selectedDistributionIndex;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "MaskingType: " + maskingType.getLabel() + ", Distribution: " + selectedDistributionIndex;
+	}
 
 }

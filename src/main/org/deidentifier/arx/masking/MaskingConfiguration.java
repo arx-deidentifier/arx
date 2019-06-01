@@ -20,89 +20,113 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class containing the masking configuration, i.e. a map of attributes, MaskingTypes related configuration options
+ * Class containing the masking configuration, i.e. a map of attributes,
+ * MaskingTypes related configuration options
  *
  * @author Sandro Schaeffler
  * @author Peter Bock
  */
 public class MaskingConfiguration {
 
-    /** Maskings */
-    private static Map<String, AttributeParameters> maskings = new HashMap<String, AttributeParameters>();
+	/** Maskings */
+	private static Map<String, AttributeParameters> maskings = new HashMap<String, AttributeParameters>();
 
-    /**
-     * Adds a masking.
-     * @param attribute
-     * @param attributeParameters
-     */
-    public static void addMasking(String attribute, AttributeParameters attributeParameters) {
-        maskings.put(attribute, attributeParameters);
-    }
+	/**
+	 * Adds a masking.
+	 * 
+	 * @param attribute
+	 * @param attributeParameters
+	 */
+	public static void addMasking(String attribute, AttributeParameters attributeParameters) {
+		maskings.put(attribute, attributeParameters);
+	}
 
-    /**
-     * Adds a masking.
-     * @param attribute
-     * @param maskingType
-     */
-    public static void addMasking(String attribute, MaskingType maskingType) {
-        maskings.put(attribute, new AttributeParameters(maskingType));
-    }
+	/**
+	 * Adds a masking.
+	 * 
+	 * @param attribute
+	 * @param maskingType
+	 */
+	public static void addMasking(String attribute, MaskingType maskingType) {
+		maskings.put(attribute, new AttributeParameters(maskingType));
+	}
 
-    /**
-     * Returns the masking mapping.
-     * @return
-     */
-    public static Map<String, AttributeParameters> getMapping() {
-        return maskings;
-    }
+	/**
+	 * Returns the masking mapping.
+	 * 
+	 * @return
+	 */
+	public static Map<String, AttributeParameters> getMapping() {
+		return maskings;
+	}
 
-    /**
-     * Adds a distribution.
-     * @param attribute
-     * @param distributionIndex
-     */
-    public static void addDistribution(String attribute, int distributionIndex) {
-        maskings.get(attribute).setDistribution(distributionIndex);
-        System.out.println(maskings);
-    }
+	/**
+	 * Adds a distribution.
+	 * 
+	 * @param attribute
+	 * @param distributionIndex
+	 */
+	public static void addDistribution(String attribute, int distributionIndex) {
+		maskings.get(attribute).setDistribution(distributionIndex);
+		System.out.println(maskings);
+	}
 
-    /**
-     * Removes a masking configuration.
-     * @param attribute
-     */
-    public static void removeMasking(String attribute) {
-        maskings.remove(attribute);
-    }
+	/**
+	 * Removes a masking configuration.
+	 * 
+	 * @param attribute
+	 */
+	public static void removeMasking(String attribute) {
+		maskings.remove(attribute);
+	}
 
-    /**
-     * Returns the masking type for this attribute.
-     * @param attribute
-     * @return
-     */
-    public static MaskingType getMaskingType(String attribute) {
+	/**
+	 * Returns the masking type for this attribute.
+	 * 
+	 * @param attribute
+	 * @return
+	 */
+	public static MaskingType getMaskingType(String attribute) {
 
-        AttributeParameters parameter;
-        parameter = maskings.get(attribute);
-        if (parameter == null)
-            return MaskingType.SUPPRESSED;
-        else
-            return parameter.getMaskingType();
+		AttributeParameters parameter;
+		parameter = maskings.get(attribute);
+		if (parameter == null)
+			return MaskingType.SUPPRESSED;
+		else
+			return parameter.getMaskingType();
 
-    }
+	}
 
-    /**
-     * Returns the distribution index for this attribute.
-     * @param attribute
-     * @return
-     */
-    public static int getDistributionIndex(String attribute) {
+	/**
+	 * Returns the distribution index for this attribute.
+	 * 
+	 * @param attribute
+	 * @return
+	 */
+	public static int getDistributionIndex(String attribute) {
 
-        AttributeParameters parameter;
-        parameter = maskings.get(attribute);
-        if (parameter == null) {
-            return 0; // 0 equals "Identity" Distribution
-        } else
-            return parameter.getDistributionIndex();
-    }
+		AttributeParameters parameter;
+		parameter = maskings.get(attribute);
+		if (parameter == null) {
+			return 0; // 0 equals "Identity" Distribution
+		} else {
+			return parameter.getDistributionIndex();
+		}
+	}
 
+	public static int getStringLength(String attribute) {
+		AttributeParameters parameter;
+		parameter = maskings.get(attribute);
+		if (parameter == null) {
+			return 0;
+		} else {
+			return parameter.getStringLength();
+		}
+	}
+
+	public static void setStringLength(int length, String attribute) {
+		AttributeParameters parameter;
+		parameter = maskings.get(attribute);
+		parameter.setStringLength(length);
+	}
 }
