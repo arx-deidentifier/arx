@@ -93,40 +93,6 @@
                                     <mainClass>org.deidentifier.arx.gui.Main</mainClass>
                                 </transformer>
                             </transformers>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.apache</pattern>
-                                    <shadedPattern>org.shaded.apache</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.google</pattern>
-                                    <shadedPattern>com.shaded.google</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.googlecode</pattern>
-                                    <shadedPattern>com.shaded.googlecode</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.eclipse</pattern>
-                                    <shadedPattern>com.shaded.eclipse</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.oracle</pattern>
-                                    <shadedPattern>com.shaded.oracle</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>mysql</pattern>
-                                    <shadedPattern>shaded.mysql</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.postgresql</pattern>
-                                    <shadedPattern>com.shaded.postgresql</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>com.github</pattern>
-                                    <shadedPattern>com.shaded.github</shadedPattern>
-                               </relocation>
-                            </relocations>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
