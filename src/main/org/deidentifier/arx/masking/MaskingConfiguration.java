@@ -48,7 +48,7 @@ public class MaskingConfiguration {
 	 * @param maskingType
 	 */
 	public static void addMasking(String attribute, MaskingType maskingType) {
-		maskings.put(attribute, new AttributeParameters(maskingType));
+		getAttribute(attribute).maskingType = maskingType;
 	}
 
 	/**
@@ -67,8 +67,7 @@ public class MaskingConfiguration {
 	 * @param distributionIndex
 	 */
 	public static void addDistribution(String attribute, int distributionIndex) {
-		maskings.get(attribute).setDistribution(distributionIndex);
-		System.out.println(maskings);
+		getAttribute(attribute).selectedDistributionIndex = distributionIndex;
 	}
 
 	/**
@@ -87,14 +86,7 @@ public class MaskingConfiguration {
 	 * @return
 	 */
 	public static MaskingType getMaskingType(String attribute) {
-
-		AttributeParameters parameter;
-		parameter = maskings.get(attribute);
-		if (parameter == null)
-			return MaskingType.SUPPRESSED;
-		else
-			return parameter.getMaskingType();
-
+		return getAttribute(attribute).maskingType;
 	}
 
 	/**
@@ -104,29 +96,26 @@ public class MaskingConfiguration {
 	 * @return
 	 */
 	public static int getDistributionIndex(String attribute) {
-
-		AttributeParameters parameter;
-		parameter = maskings.get(attribute);
-		if (parameter == null) {
-			return 0; // 0 equals "Identity" Distribution
-		} else {
-			return parameter.getDistributionIndex();
-		}
+		return getAttribute(attribute).selectedDistributionIndex;
 	}
 
 	public static int getStringLength(String attribute) {
-		AttributeParameters parameter;
-		parameter = maskings.get(attribute);
-		if (parameter == null) {
-			return 0;
-		} else {
-			return parameter.getStringLength();
-		}
+		return getAttribute(attribute).stringLength;
 	}
 
-	public static void setStringLength(int length, String attribute) {
-		AttributeParameters parameter;
-		parameter = maskings.get(attribute);
-		parameter.setStringLength(length);
+	public static void setStringLength(String attribute, int length) {
+		getAttribute(attribute).stringLength = length;
+	}
+
+	private static AttributeParameters getAttribute(String attribute) {
+		// check if masking already exists
+		if (maskings.containsKey(attribute)) {
+			return maskings.get(attribute);
+		}
+
+		AttributeParameters newAttr = new AttributeParameters();
+		maskings.put(attribute, newAttr);
+
+		return newAttr;
 	}
 }

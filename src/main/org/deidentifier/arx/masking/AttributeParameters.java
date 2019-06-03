@@ -26,80 +26,13 @@ package org.deidentifier.arx.masking;
 public class AttributeParameters {
 
 	/** Masking type */
-	private MaskingType maskingType;
+	public MaskingType maskingType = MaskingType.SUPPRESSED;
 
 	/** 0 as default value represents the "Identity" Distribution */
-	private int selectedDistributionIndex = 0;
+	public int selectedDistributionIndex = 0;
 
 	/** String length */
-	private int stringLength = -1;
-
-	/**
-	 * Creates an instance.
-	 * 
-	 * @param maskingType
-	 */
-	public AttributeParameters(MaskingType maskingType) {
-		this.maskingType = maskingType;
-	}
-
-	/**
-	 * Creates an instance.
-	 * 
-	 * @param maskingType
-	 * @param stringLength
-	 * @param selectedDistributionIndex
-	 */
-	public AttributeParameters(MaskingType maskingType, int stringLength, int selectedDistributionIndex) {
-		this.maskingType = maskingType;
-		this.stringLength = stringLength;
-		this.selectedDistributionIndex = selectedDistributionIndex;
-	}
-
-	/**
-	 * Returns the distribution index
-	 * 
-	 * @return
-	 */
-	public int getDistributionIndex() {
-		return selectedDistributionIndex;
-	}
-
-	/**
-	 * Returns the masking type
-	 * 
-	 * @return
-	 */
-	public MaskingType getMaskingType() {
-		return maskingType;
-	}
-
-	/**
-	 * Returns the string length.
-	 * 
-	 * @return
-	 */
-	public int getStringLength() {
-		return stringLength;
-	}
-
-	/**
-	 * Sets the distribution
-	 * 
-	 * @param distributionIndex
-	 */
-	public void setDistribution(int distributionIndex) {
-		this.selectedDistributionIndex = distributionIndex;
-	}
-
-	/**
-	 * Sets the string length
-	 * 
-	 * @param stringLength
-	 */
-	public void setStringLength(int stringLength) {
-		this.stringLength = stringLength;
-	}
+	public int stringLength = 15;
 
 	/*
 	 * (non-Javadoc)

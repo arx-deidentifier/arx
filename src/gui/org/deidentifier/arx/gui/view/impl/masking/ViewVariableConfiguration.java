@@ -128,7 +128,7 @@ public class ViewVariableConfiguration implements IView {
 						int deletedIndex = -1;
 						Map<String, AttributeParameters> entries = MaskingConfiguration.getMapping();
 						for (Entry<String, AttributeParameters> entry : entries.entrySet()) {
-							int value = entry.getValue().getDistributionIndex();
+							int value = entry.getValue().selectedDistributionIndex;
 							if (tableViewer.getTable().getSelectionIndex() == value - 1) {
 								MaskingConfiguration.removeMasking(entry.getKey());
 								deletedIndex = value - 1;
@@ -144,11 +144,11 @@ public class ViewVariableConfiguration implements IView {
 						// (another for loop because the map is ordered
 						// alphabetically, not by Distributionindex)
 						for (Entry<String, AttributeParameters> entry : entries.entrySet()) {
-							int value = entry.getValue().getDistributionIndex();
+							int value = entry.getValue().selectedDistributionIndex;
 							// Compared to Value-1 due to "Identity" being index
 							// 0
 							if (deletedIndex >= 0 && deletedIndex < entries.size() - 1 && value - 1 > deletedIndex) {
-								entry.getValue().setDistribution(value - 1);
+								entry.getValue().selectedDistributionIndex = value - 1;
 							}
 						}
 						// selects the first item in the table, after deletion

@@ -62,8 +62,6 @@ public class ViewMaskingConfiguration implements IView {
 			MaskingType.PSEUDONYMIZATION_MASKING, MaskingType.NOISE_ADDITION_MASKING,
 			MaskingType.RANDOM_SHUFFLING_MASKING, MaskingType.RANDOM_GENERATION_MASKING };
 
-	private static final String DEFAULT_STR_LENGTH = "15";
-
 	/** Distributions */
 	private static String[] distributionItems;
 
@@ -194,8 +192,8 @@ public class ViewMaskingConfiguration implements IView {
 		compositetf.setLayout(typeInputGridLayout);
 		final int maxLength = 20;
 		textField = new Text(compositetf, SWT.SINGLE | SWT.BORDER);
-		textField.setText(DEFAULT_STR_LENGTH);
-		textField.setToolTipText(DEFAULT_STR_LENGTH);
+		textField.setText("");
+		textField.setToolTipText("");
 		textField.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 		textField.setEditable(false);
 		// Button for updating
@@ -209,7 +207,7 @@ public class ViewMaskingConfiguration implements IView {
 				String _value = controller.actionShowInputDialog(parent.getShell(),
 						Resources.getMessage("MaskingConfigurationView.8"), //$NON-NLS-1$
 						Resources.getMessage("MaskingConfigurationView.9") + maxLength, //$NON-NLS-1$
-						textField.getToolTipText(), new IInputValidator() {
+						MaskingConfiguration.getStringLength(attribute) + "", new IInputValidator() {
 							@Override
 							public String isValid(String arg0) {
 								int value = 0;
@@ -228,7 +226,7 @@ public class ViewMaskingConfiguration implements IView {
 				if (_value != null) {
 					textField.setText(_value);
 					textField.setToolTipText(_value);
-					MaskingConfiguration.setStringLength(Integer.valueOf(_value), attribute);
+					MaskingConfiguration.setStringLength(attribute, Integer.valueOf(_value));
 				}
 			}
 		});
@@ -325,7 +323,7 @@ public class ViewMaskingConfiguration implements IView {
 	 * org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.
 	 * model.ModelEvent)
 	 */
-	// TEAM FLUFF ^~^
+
 	@Override
 	public void update(final ModelEvent event) {
 		if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
