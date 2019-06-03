@@ -279,7 +279,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 		// Create text
 		final ParameterText text = new ParameterText(parameter, compositeParameter, SWT.BORDER);
 		text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		text.setText(String.valueOf(parameter.getInitial()));
+		text.setText(String.valueOf(parameter.getValue()));
 		text.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent arg0) {
@@ -421,11 +421,16 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 
 		// Iterate over parameters for selected distribution
 		for (DistributionTypeDescription distribution : DistributionType.list()) {
-
 			if (distribution.getLabel().equals(comboDistribution.getText())) {
 
 				for (DistributionParameter<?> parameter : distribution.getParameters()) {
-					createText(parameter);
+					DistributionParameter<?> localParam = variable.getParameter(parameter.getName());
+					if (localParam != null)
+						createText(localParam);
+					else {
+						parameter.reset();
+						createText(parameter);
+					}
 				}
 
 			}
