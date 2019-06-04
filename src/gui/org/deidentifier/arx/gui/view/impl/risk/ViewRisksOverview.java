@@ -72,6 +72,7 @@ public class ViewRisksOverview extends ViewRisks<AnalysisContextRisk> {
         
         super(parent, controller, target, reset);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.POPULATION_MODEL, this);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
@@ -79,7 +80,9 @@ public class ViewRisksOverview extends ViewRisks<AnalysisContextRisk> {
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.POPULATION_MODEL) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || 
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
+            event.part == ModelPart.POPULATION_MODEL) {
             triggerUpdate();
         }
     }

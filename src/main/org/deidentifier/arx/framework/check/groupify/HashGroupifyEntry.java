@@ -18,9 +18,7 @@
 package org.deidentifier.arx.framework.check.groupify;
 
 import org.deidentifier.arx.framework.check.distribution.Distribution;
-import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataMatrix;
-import org.deidentifier.arx.framework.data.Dictionary;
 
 /**
  * Implements an equivalence class.
@@ -81,23 +79,6 @@ public class HashGroupifyEntry {
         return matrix.iterator_hasNext();
     }
     
-    /**
-     * Returns whether this class is completely generalized
-     * @param dictionary
-     * @return
-     */
-    public boolean isCompletelyGeneralized(Dictionary dictionary) {
-        read();
-        int[] suppressed = dictionary.getSuppressedCodes();
-        int column = 0;
-        while (hasNext()) {
-            if (suppressed[column++] != (next() & Data.REMOVE_OUTLIER_MASK)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     /**
      * Return next value
      * @return

@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.algorithm;
 
+import java.math.BigInteger;
 import java.util.Comparator;
 
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
@@ -45,7 +46,7 @@ public class FLASHStrategy implements Comparator<Integer> {
     private final double[][]    cache;
 
     /** The solution space */
-    private final SolutionSpace solutionSpace;
+    private final SolutionSpace<?> solutionSpace;
 
     /**
      * Creates a new instance.
@@ -53,12 +54,12 @@ public class FLASHStrategy implements Comparator<Integer> {
      * @param solutionSpace the solution space
      * @param hierarchies the hierarchies
      */
-    public FLASHStrategy(final SolutionSpace solutionSpace,
+    public FLASHStrategy(final SolutionSpace<?> solutionSpace,
                          final GeneralizationHierarchy[] hierarchies) {
 
         // Check
-        if (solutionSpace.getSize() > Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("Solution space is too large for executing the FLASH algorithm");
+        if (solutionSpace.getSize().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
+            throw new IllegalArgumentException("Solution space is too large for running Flash. Choose another algorithm.");
         }
         
         // Store
@@ -80,7 +81,7 @@ public class FLASHStrategy implements Comparator<Integer> {
         }
         
         // Prepare cache
-        this.cache = new double[(int)solutionSpace.getSize()][];
+        this.cache = new double[solutionSpace.getSize().intValue()][];
     }
 
     /**
@@ -135,7 +136,7 @@ public class FLASHStrategy implements Comparator<Integer> {
         double level = 0;
         double prec = 0;
         double ddistinct = 0;
-        Transformation transformation = solutionSpace.getTransformation(id);
+        Transformation<?> transformation = solutionSpace.getTransformation((long)id);
         int[] generalization = transformation.getGeneralization();
         
         // Compute

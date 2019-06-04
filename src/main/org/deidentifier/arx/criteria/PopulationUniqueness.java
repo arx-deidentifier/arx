@@ -174,6 +174,11 @@ public class PopulationUniqueness extends RiskBasedCriterion { // NO_UCD
      * @return
      */
     protected boolean isFulfilled(HashGroupifyDistribution distribution) {
+        
+        // All suppressed
+        if (distribution.isEmpty()) {
+            return true;
+        }
 
         RiskModelPopulationUniqueness riskModel = new RiskModelPopulationUniqueness(this.populationModel,
                                                                                     distribution.getHistogram(),

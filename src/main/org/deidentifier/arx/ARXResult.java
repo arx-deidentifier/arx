@@ -80,7 +80,7 @@ public class ARXResult {
     private final DataRegistry              registry;
 
     /** The solution space. */
-    private final SolutionSpace             solutionSpace;
+    private final SolutionSpace<?>             solutionSpace;
 
     /** Whether the optimum has been found */
     private final boolean                   optimumFound;
@@ -113,7 +113,7 @@ public class ARXResult {
                      ARXConfiguration config,
                      ARXNode optimum,
                      final long time,
-                     SolutionSpace solutionSpace,
+                     SolutionSpace<?> solutionSpace,
                      ARXProcessStatistics statistics) {
 
         // Set registry and definition
@@ -187,7 +187,7 @@ public class ARXResult {
                         ARXConfiguration config,
                         ARXLattice lattice,
                         long duration,
-                        SolutionSpace solutionSpace,
+                        SolutionSpace<?> solutionSpace,
                         boolean optimumFound) {
 
         this.anonymizer = anonymizer;
@@ -311,7 +311,7 @@ public class ARXResult {
         }
 
         // Apply the transformation
-        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
+        final Transformation<?> transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformationApplicator applicator = new TransformationApplicator(this.manager,
                                                                            this.buffer,
                                                                            this.config.getQualityModel(),

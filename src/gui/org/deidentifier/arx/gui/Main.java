@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.impl.MainSplash;
 import org.deidentifier.arx.gui.view.impl.MainWindow;
@@ -69,7 +70,7 @@ public class Main {
         	
             // Update display settings
             Display.setAppName(Resources.getMessage("MainWindow.0"));
-            Display.setAppVersion(Resources.getVersion());
+            Display.setAppVersion(ARXAnonymizer.VERSION);
             
             // Display
             if (display == null) {

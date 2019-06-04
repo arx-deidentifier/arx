@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
@@ -59,7 +60,7 @@ public class Update implements Runnable {
     public void run() {
         
         // Fetch
-        final String currentVersion = Resources.getVersion();
+        final String currentVersion = ARXAnonymizer.VERSION;
         final String onlineVersion = getOnlineVersion();
         
         // Compare

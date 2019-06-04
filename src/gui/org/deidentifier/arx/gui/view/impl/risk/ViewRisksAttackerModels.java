@@ -108,6 +108,7 @@ public class ViewRisksAttackerModels extends ViewRisks<AnalysisContextRisk> {
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.RISK_THRESHOLD_MAIN, this);
         controller.addListener(ModelPart.RISK_THRESHOLD_DERIVED, this);
     }
@@ -115,7 +116,7 @@ public class ViewRisksAttackerModels extends ViewRisks<AnalysisContextRisk> {
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {            
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {            
             triggerUpdate();
         }
         if (event.part == ModelPart.RISK_THRESHOLD_MAIN) {
