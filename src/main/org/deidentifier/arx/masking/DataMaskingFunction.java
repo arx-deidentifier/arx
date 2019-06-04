@@ -19,6 +19,7 @@ package org.deidentifier.arx.masking;
 import java.io.Serializable;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 
 import org.deidentifier.arx.DataType;
@@ -63,13 +64,17 @@ public abstract class DataMaskingFunction implements Serializable {
             // Prepare
             Random random = new SecureRandom();
             char[] buffer = new char[length];
+            String randomString;
             
             // Mask
             for (int row = 0; row < column.getNumRows(); row++) {
                 
                 // Leave null as is, if configured to not ignore missing data
                 if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
-                	column.set(row, getRandomAlphanumericString(buffer, random));
+                	
+                	randomString = getRandomAlphanumericString(buffer, random);
+                	insertMappingValues(randomString, column.get(row));
+                	column.set(row, randomString);
                 }
             }
         }
@@ -276,7 +281,7 @@ public abstract class DataMaskingFunction implements Serializable {
 			String tmp = column.get(i);
 			column.set(i, column.get(j));
 			column.set(j, tmp);
-		}    	
+		}
     }
 
     /** SVUID */
@@ -287,6 +292,8 @@ public abstract class DataMaskingFunction implements Serializable {
 
     /** Preserves data types */
     private final boolean     typePreserving;
+    
+    private HashMap<String,String> map;
 
     /**
      * Creates a new instance
@@ -306,6 +313,21 @@ public abstract class DataMaskingFunction implements Serializable {
 
     /** Clone*/
     public abstract DataMaskingFunction clone();
+    
+    /**
+     * 
+     */
+    public void insertMappingValues(String clearValue, String maskedValue) {
+    	map.put(maskedValue, clearValue);
+    }
+    
+    
+    /**
+     * 
+     */
+    public HashMap<String,String> getMapping() {
+    	return map;
+    }
     
     /**
      * Returns whether the function ignores missing data
