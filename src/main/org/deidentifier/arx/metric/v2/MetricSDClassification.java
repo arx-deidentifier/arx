@@ -166,6 +166,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
         int i = 0;
         for (int index : this.responseVariablesQI) {
             
+            // Init
             BigFraction scoreQI = BigFraction.ZERO;
             
             // Group equivalence classes
@@ -186,8 +187,11 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             }
             
             // Obtain scale between 1 (in case the target variable is not generalized) and 0 (in case the target variable is generalized to the highest level)
+            BigFraction scale = BigFraction.ONE;
             int maxLevel = this.responseVariablesQIScaleFactors[i].length - 1;
-            BigFraction scale = BigFraction.ONE.subtract(new BigFraction(node.getGeneralization()[index], maxLevel));
+            if (maxLevel != 0) {
+                scale = scale.subtract(new BigFraction(node.getGeneralization()[index], maxLevel));
+            }
             
             // Multiply the score for this QI by scale in order to penalize high degrees of generalization.
             // This can only reduce the effects of the addition or removal of one record and hence
@@ -197,6 +201,7 @@ public class MetricSDClassification extends AbstractMetricSingleDimensional {
             // Add to the overall score value
             score = score.add(scoreQI);
             
+            // Next
             i++;
         }
         
