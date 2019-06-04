@@ -723,9 +723,7 @@ public class ARXAnonymizer { // NO_UCD
         
         // Perform data masking
         org.deidentifier.arx.framework.data.Data maskedData = mask(manager, definition);
-        
-        manager.setMaskedData(maskedData);
-        
+                
         // Execute search algorithm
         boolean optimumFound = algorithm.traverse();
         

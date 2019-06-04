@@ -19,7 +19,6 @@ package org.deidentifier.arx.framework.data;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -66,9 +65,6 @@ public class DataManager {
 
     /** Data. */
     private final Data                        dataInput;
-    
-    /** Data. */
-    private Data						  	  dataMasked;
 
     /** The data definition */
     private final DataDefinition              definition;
@@ -190,7 +186,6 @@ public class DataManager {
                                                                            coldQIs), 
                                                                            dictionary);
         this.dataInput = Data.createWrapper(data, header, getColumns(header), dictionary);
-        this.dataMasked = null;
         
         // Store information about aggregated attributes
         this.aggregationInformation = new DataAggregationInformation(dataAnalyzed, 
@@ -336,7 +331,6 @@ public class DataManager {
         this.generalizationLevelsMinimum = generalizationLevelsMinimum;
         this.generalizationLevelsMaximum = generalizationLevelsMaximum;
         this.aggregationInformation = microaggregationData;
-        this.dataMasked = null;
         
         // Both variables are only used for getDistribution() and getTree()
         // The projected instance delegates these methods to the original data manager
@@ -792,25 +786,5 @@ public class DataManager {
      */
     protected DataDefinition getDataDefinition() {
         return this.definition;
-    }
-    
-    private Data getMaskedData() {
-    	return dataMasked;
-    }
-
-    public void setMaskedData(Data maskedData) {
-    	this.dataMasked = maskedData;
-    }
-    
-    public Map<String, String> getMapping(int col) {
-    	
-    	String[] maskedData = getMaskedData().getDictionary().getMapping()[col-1];
-    	String[] inputData = getDataInput().getDictionary().getMapping()[col];
-    	Map<String, String> map = new HashMap<String, String>();
-    	for(int i=0;i<inputData.length;i++) {
-    		map.put(maskedData[i], inputData[i]);
-    	}
-    	
-    	return map;
     }
 }

@@ -969,8 +969,4 @@ public class ARXResult {
             bufferLockedByNode = null;
         }
     }
-    
-    public Map<String, String> getMapping(int col){
-    	return manager.getMapping(col);
-    }
 }
