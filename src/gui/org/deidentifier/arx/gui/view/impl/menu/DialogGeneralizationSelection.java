@@ -199,7 +199,7 @@ public class DialogGeneralizationSelection extends TitleAreaDialog implements ID
                     items[i].dispose();
                 }
                 
-                if (attribute != null) {
+                if (attribute != null && hierarchies.get(attribute) != null) {
                     
                     for (int i=0; i<hierarchies.get(attribute)[0].length; i++) {
                         MenuItem newItem = new MenuItem(menu, SWT.NONE);
