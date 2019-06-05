@@ -478,7 +478,11 @@ public class ARXProcessStatistics implements Serializable {
         if (this.transformationsTotalLargeLattice == null) {
             this.transformationsTotalLargeLattice = BigInteger.valueOf(0);
         }
-        this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(stats.transformationsTotalLargeLattice);
+        BigInteger otherTransformationsTotalLargeLattice = stats.transformationsTotalLargeLattice;
+        if (otherTransformationsTotalLargeLattice == null) {
+            otherTransformationsTotalLargeLattice = BigInteger.valueOf(0);
+        }
+        this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(otherTransformationsTotalLargeLattice);
         this.transformationsTotal += stats.transformationsTotal;
         this.transformationsChecked += stats.transformationsChecked;
         this.duration += stats.duration;
