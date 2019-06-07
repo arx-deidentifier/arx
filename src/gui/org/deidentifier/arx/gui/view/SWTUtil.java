@@ -501,6 +501,8 @@ public class SWTUtil {
         
         // Generically fill space using the rightmost column
         if (fill) {
+            
+            // Add listener
             viewer.getTable().addControlListener(new ControlAdapter() {
                 
                 // Minimum width
@@ -558,6 +560,8 @@ public class SWTUtil {
                         }
                         columns[columns.length - 1].setWidth(width - total);
                     }
+                    
+                    // Redraw table
                     viewer.getTable().redraw();
                 }
             });
