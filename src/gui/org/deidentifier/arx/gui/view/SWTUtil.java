@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.impl.common.PageableTableColumnLayout;
 import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigator;
 import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigatorFactory;
 import org.eclipse.jface.resource.FontDescriptor;
@@ -489,84 +490,20 @@ public class SWTUtil {
         
         PageableTable pageableTable = new PageableTable(
                                           container,
-                                          SWT.BORDER,
+                                          SWT.BORDER | SWT.NO_SCROLL,
                                           style,
                                           PageableTableNavigator.PAGE_SIZE,
                                           PageResultContentProvider.getInstance(),
                                           PageableTableNavigatorFactory.getFactory(),
                                           null);
         
-        final TableViewer viewer = pageableTable.getViewer();
-        fixOSXTableBug(viewer.getTable());
+        // Fix bug
+        fixOSXTableBug(pageableTable.getViewer().getTable());
         
-        // Generically fill space using the rightmost column
-        if (fill) {
-            
-            // Add listener
-            viewer.getTable().addControlListener(new ControlAdapter() {
-                
-                // Minimum width
-                int minimumWidth = -1;
-    
-                @Override
-                public void controlResized(ControlEvent arg0) {
-                    
-                    // Obtain
-                    TableColumn[] columns = viewer.getTable().getColumns();
-                    
-                    // Add
-                    if (!equalSize) {
-                        for (TableColumn c : columns) {
-                            c.removeControlListener(this);
-                            c.addControlListener(this);
-                        }
-                    }
-                    
-                    // Store
-                    if (minimumWidth == -1) {
-                        minimumWidth = columns[columns.length - 1].getWidth();
-                    }
-                    
-                    // Width
-                    int width = viewer.getTable().getClientArea().width;
-                    
-                    // Check
-                    if (width <= 0) {
-                        return;
-                    }
-                    
-                    if (!equalSize) {
-                        
-                        // Remove
-                        for (int i = 0; i < columns.length - 1; i++) {
-                            width -= columns[i].getWidth();
-                        }
-        
-                        // Check
-                        if (width <= minimumWidth) {
-                            return;
-                        }
-                        
-                        // Increase size of last column
-                        columns[columns.length -1].setWidth(width);
-                        
-                    } else {
-                        
-                        // Equally distribute remaining space
-                        int total = 0;
-                        for (int i = 0; i < columns.length - 1; i++) {
-                            columns[i].setWidth(width / columns.length);
-                            total += width / columns.length;
-                        }
-                        columns[columns.length - 1].setWidth(width - total);
-                    }
-                    
-                    // Redraw table
-                    viewer.getTable().redraw();
-                }
-            });
-        }
-        
+        // Create column layout
+        new PageableTableColumnLayout(pageableTable, fill, equalSize);
+
+        // Done
         return pageableTable;
     }
 
@@ -691,7 +628,7 @@ public class SWTUtil {
         // However, I had trouble unregistering the existing events for the items
         Menu systemMenu = Display.getCurrent().getSystemMenu();
         for (MenuItem systemItem : systemMenu.getItems()) {
-        	systemItem.setEnabled(false);
+            systemItem.setEnabled(false);
         }
     }
 
