@@ -280,9 +280,6 @@ public class ComponentFilterTable {
     	// Refresh table
     	this.pageableTable.refreshPage();
         this.pageableTable.setCurrentPage(0);
-        for (TableColumn c : this.table.getColumns()) {
-        	c.pack();
-        }
     }
 
     /**
@@ -314,7 +311,7 @@ public class ComponentFilterTable {
     	TableColumn tColumn = column.getColumn();
     	tColumn.setText(Resources.getMessage("ComponentFilterTable.9")); //$NON-NLS-1$
     	tColumn.setToolTipText(Resources.getMessage("ComponentFilterTable.9")); //$NON-NLS-1$
-    	tColumn.setWidth(80);
+    	tColumn.setWidth(150);
     	
     	// One column per property
         for (final String property : properties) {
