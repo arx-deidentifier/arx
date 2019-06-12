@@ -17,28 +17,26 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import org.deidentifier.arx.framework.lattice.Transformation;
 
 /**
- * Represents a subpopulation.
+ * Represents a sub-population.
  * 
  * @author Kieu-Mi Do
- * @author Fabian Prasser
  */
 public class GASubpopulation {
 
-	/** List of individuals*/
-	private List<Transformation<?>> individuals = new ArrayList<>();
+	/** List of individuals */
+	private List<Transformation> individuals = new ArrayList<>();
 
 	/**
-	 * Adds an individual to the subpopulation.
+	 * Adds an individual to the sub-population.
 	 * 
 	 * @param individual
 	 */
-	public void addIndividual(Transformation<?> individual) {
+	public void addIndividual(Transformation individual) {
 		individuals.add(individual);
 	}
 
@@ -48,12 +46,12 @@ public class GASubpopulation {
 	 * @param index
 	 * @return
 	 */
-	public Transformation<?> getIndividual(int index) {
+	public Transformation getIndividual(int index) {
 		return individuals.get(index);
 	}
 
 	/**
-	 * Gets the size of the subpopulation.
+	 * Gets the size of the sub-population.
 	 * 
 	 * @return
 	 */
@@ -62,7 +60,7 @@ public class GASubpopulation {
 	}
 
 	/**
-	 * Moves 'count' Individuals from this subpopulation to 'other'
+	 * Moves 'count' Individuals from this sub-population to 'other'
 	 * 
 	 * @param other
 	 * @param count
@@ -77,30 +75,29 @@ public class GASubpopulation {
 
 	/**
 	 * Replaces the individual at a certain index
+	 * 
 	 * @param index
 	 * @param individual
 	 */
-	public void setIndividual(int index, Transformation<?> individual) {
+	public void setIndividual(int index, Transformation individual) {
 		this.individuals.set(index, individual);
 	}
 
 	/**
-	 * Sorts the individuals descending by fitness, which means ascending in terms of information loss.
+	 * Sorts the individuals descending by fitness, which means ascending in
+	 * terms of information loss.
 	 */
 	public void sort() {
-		
+
 		// Sort descending by fitness, ascending in terms of information loss.
-		individuals.sort(new Comparator<Transformation<?>>() {
-            @Override
-            public int compare(Transformation<?> t1, Transformation<?> t2) {
-                if (t1 == null) {
-                    return -1;
-                }
-                if (t2 == null) {
-                    return +1;
-                }
-                return t1.getInformationLoss().compareTo(t2.getInformationLoss());
-            }
-        });
+		individuals.sort((a, b) -> {
+			if (a == null) {
+				return -1;
+			}
+			if (b == null) {
+				return +1;
+			}
+			return a.getInformationLoss().compareTo(b.getInformationLoss());
+		});
 	}
 }
