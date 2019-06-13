@@ -114,7 +114,6 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	 * @param controller
 	 */
 	public DialogVariableConfiguration(Controller controller) {
-
 		this(controller, new RandomVariable(""));
 		this.isNewVariable = true;
 
@@ -144,6 +143,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	 */
 	@Override
 	public void create() {
+		System.out.print("Create");
 
 		super.create();
 
@@ -269,6 +269,13 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	 * @param parameter
 	 */
 	private void createText(final DistributionParameter<?> parameter) {
+		if (parameter == null) {
+			Composite compositeString = new Composite(compositeParameter, SWT.NONE);
+			compositeString.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+			Label label = new Label(compositeString, SWT.NONE);
+			label.setText("");
+			return;
+		}
 
 		// Create label
 		Composite compositeString = new Composite(compositeParameter, SWT.NONE);
@@ -321,6 +328,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	 * Initialize parameter to label map
 	 */
 	private void initiliazeParameterLabelMap() {
+		System.out.println("init Param Label Map");
 		parameterLabels.put("number", Resources.getMessage("DialogVariableConfiguration.7")); //$NON-NLS-1$
 		parameterLabels.put("probability", Resources.getMessage("DialogVariableConfiguration.8")); //$NON-NLS-1$
 	}
@@ -332,6 +340,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	 */
 	@Override
 	protected void okPressed() {
+		System.out.println("ok Pressed");
 
 		// Set name of variable
 		variable.setName(textVariableName.getText());
@@ -393,6 +402,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	 * String)
 	 */
 	public void setErrorMessage(int index, String newErrorMessage) {
+		System.out.println("Set error message");
 		if (newErrorMessage == null)
 			errorMessages.remove(index);
 		else
@@ -406,25 +416,27 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 			super.setErrorMessage(null);
 		else
 			super.setErrorMessage((String) errorMessages.values().toArray()[0]);
-		System.out.println(errorMessages);
 	}
 
 	/**
 	 * Update parameters.
 	 */
 	private void updateParameters() {
+		System.out.println("Update params");
 
 		// Dispose all existing parameter widgets
 		for (Control children : compositeParameter.getChildren()) {
 			children.dispose();
 		}
 
+		int counter = 0;
+
 		// Iterate over parameters for selected distribution
 		for (DistributionTypeDescription distribution : DistributionType.list()) {
 			if (distribution.getLabel().equals(comboDistribution.getText())) {
-
 				for (DistributionParameter<?> parameter : distribution.getParameters()) {
 					DistributionParameter<?> localParam = variable.getParameter(parameter.getName());
+					counter++;
 					if (localParam != null)
 						createText(localParam);
 					else {
@@ -432,14 +444,11 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 						createText(parameter);
 					}
 				}
-
 			}
-
 		}
-
+		while (counter++ < 2)
+			createText(null);
 		// Update layout
 		compositeParameter.layout();
-
 	}
-
 }
