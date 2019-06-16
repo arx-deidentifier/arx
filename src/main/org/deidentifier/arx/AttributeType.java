@@ -26,6 +26,7 @@ import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -973,6 +974,10 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
          */
         protected void apply(DataColumn column) {
             function.apply(column);
+        }
+        
+        protected HashMap<String, String> getMapping() {
+        	return function.getMapping();
         }
     }
 

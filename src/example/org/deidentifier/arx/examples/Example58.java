@@ -95,6 +95,7 @@ public class Example58 extends Example {
         config.setSuppressionLimit(0d);
 
         ARXResult result = anonymizer.anonymize(data, config);
+        System.out.println(result.getPseudonymMappingTable().get("id"));
 
         // Print info
         printResult(result, data);

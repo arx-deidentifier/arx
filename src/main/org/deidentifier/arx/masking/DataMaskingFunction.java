@@ -73,7 +73,7 @@ public abstract class DataMaskingFunction implements Serializable {
                 if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
                 	
                 	randomString = getRandomAlphanumericString(buffer, random);
-                	insertMappingValues(column.get(row), randomString);
+                	insertMappingValues(randomString, column.get(row));
                 	column.set(row, randomString);
                 }
             }
@@ -318,7 +318,7 @@ public abstract class DataMaskingFunction implements Serializable {
     /**
      * 
      */
-    public void insertMappingValues(String clearValue, String maskedValue) {
+    protected void insertMappingValues(String maskedValue, String clearValue) {
     	map.put(maskedValue, clearValue);
     }
     

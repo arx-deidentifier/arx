@@ -31,6 +31,7 @@ import org.deidentifier.arx.framework.check.TransformationChecker;
 import org.deidentifier.arx.framework.check.TransformedData;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
+import org.deidentifier.arx.framework.data.DataColumn;
 import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
@@ -208,6 +209,18 @@ public class ARXResult {
         this.solutionSpace = solutionSpace;
         this.optimumFound = optimumFound;
         this.statistics = new ARXProcessStatistics(lattice, optimalTransformation, optimumFound, duration);
+    }
+
+    public HashMap<String, HashMap<String,String>> getPseudonymMappingTable() {
+    	
+    	DataColumn[] columns = manager.getDataMasking();
+        HashMap<String, HashMap<String,String>>output = new HashMap<String,HashMap<String,String>>();
+
+        for (DataColumn column : columns) {
+        	output.put(column.getAttribute(), definition.getMaskingFunction(column.getAttribute()).getMapping());
+        }
+        
+        return output;
     }
 
     /**
