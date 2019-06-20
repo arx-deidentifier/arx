@@ -238,6 +238,14 @@ public class ARXResult {
     public ARXLattice getLattice() {
         return lattice;
     }
+    
+    /**
+     * Returns the associated input handle
+     * @return
+     */
+    public DataHandle getInput() {
+        return this.registry.getInputHandle();
+    }
 
     /**
      * Returns whether the global optimum has been found
