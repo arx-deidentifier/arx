@@ -152,7 +152,9 @@ public class ViewVariableConfiguration implements IView {
 							}
 						}
 						// selects the first item in the table, after deletion
+						int subpart = 0;
 						if (tableViewer.getTable().getItemCount() > 1) {
+							subpart = 1;
 							if (tableViewer.getTable().getSelectionIndex() > 0)
 								tableViewer.getTable().setSelection(0);
 							else
@@ -167,8 +169,7 @@ public class ViewVariableConfiguration implements IView {
 
 						// update VariableConfiguration View List
 						controller.update(new ModelEvent(this, ModelPart.RANDOM_VARIABLE,
-								((IStructuredSelection) tableViewer.getSelection()).getFirstElement()));
-
+								((IStructuredSelection) tableViewer.getSelection()).getFirstElement(), subpart));
 					}
 
 				});

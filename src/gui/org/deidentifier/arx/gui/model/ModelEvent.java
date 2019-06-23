@@ -23,147 +23,158 @@ package org.deidentifier.arx.gui.model;
  * @author Fabian Prasser
  */
 public class ModelEvent {
-    
-    /**
-     * The part of the model that has changed.
-     *
-     * @author Fabian Prasser
-     */
-    public static enum ModelPart {
-        
-        /**  SELECTED_ATTRIBUTE */
-        SELECTED_ATTRIBUTE,
-        
-        /**  INPUT */
-        INPUT,
-        
-        /**  OUTPUT */
-        OUTPUT,
-        
-        /**  ATTRIBUTE_TYPE */
-        ATTRIBUTE_TYPE,
-        
-        /**  RESULT */
-        RESULT,
-        
-        /**  DATA_TYPE */
-        DATA_TYPE,
-        
-        /**  ALGORITHM */
-        ALGORITHM,
-        
-        /**  METRIC */
-        METRIC,
-        
-        /**  MAX_OUTLIERS */
-        MAX_OUTLIERS,
-        
-        /**  FILTER */
-        FILTER,
-        
-        /**  SELECTED_NODE */
-        SELECTED_NODE,
-        
-        /**  MODEL */
-        MODEL,
-        
-        /**  CLIPBOARD */
-        CLIPBOARD,
-        
-        /**  HIERARCHY */
-        HIERARCHY,
-        
-        /**  CRITERION_DEFINITION */
-        CRITERION_DEFINITION,
-        
-        /**  RESEARCH_SUBSET */
-        RESEARCH_SUBSET,
-        
-        /**  SELECTED_VIEW_CONFIG */
-        SELECTED_VIEW_CONFIG,
-        
-        /**  SELECTED_UTILITY_VISUALIZATION */
-        SELECTED_UTILITY_VISUALIZATION,
-        
-        /**  ATTRIBUTE_VALUE */
-        ATTRIBUTE_VALUE,
 
-        /**  SELECTED_PERSPECTIVE */
-        SELECTED_PERSPECTIVE,
+	/**
+	 * The part of the model that has changed.
+	 *
+	 * @author Fabian Prasser
+	 */
+	public static enum ModelPart {
 
-        /**  POPULATION_MODEL */
-        POPULATION_MODEL,
+		/** SELECTED_ATTRIBUTE */
+		SELECTED_ATTRIBUTE,
 
-        /**  SELECTED_RISK_VISUALIZATION */
-        SELECTED_RISK_VISUALIZATION,
-        
-        /**  SELECTED_QUASI_IDENTIFIERS */
-        SELECTED_QUASI_IDENTIFIERS,
+		/** INPUT */
+		INPUT,
 
-        /**  EXPAND */
-        EXPAND,
+		/** OUTPUT */
+		OUTPUT,
 
-        /**  CLASSIFICATION_CONFIGURATION */
-        CLASSIFICATION_CONFIGURATION,
-        
-        /** RISK THRESHOLDS*/
-        RISK_THRESHOLD_MAIN,
-        
-        /** RISK THRESHOLD*/
-        RISK_THRESHOLD_DERIVED,
-        
-        /** G/S FACTOR*/
-        GS_FACTOR,
-        
-        /** ATTRIBUTE WEIGHT*/
-        ATTRIBUTE_WEIGHT,
-        
-        /** COST/BENEFIT MODEL*/
-        COST_BENEFIT_MODEL,
-        
-        /** RANDOM_VARIABLE */
-        RANDOM_VARIABLE,
-        
-        /** MASKING_CONFIGURATION */
-        MASKING_CONFIGURATION,
-        
-        /** SELECTED_CLASS_VALUE */
-        SELECTED_CLASS_VALUE,
+		/** ATTRIBUTE_TYPE */
+		ATTRIBUTE_TYPE,
 
-        /** RESPONSE VARIABLES */
-        RESPONSE_VARIABLES
-    }
+		/** RESULT */
+		RESULT,
 
-    /** The part of the model that has changed. */
-    public final ModelPart   part;
-    
-    /** The associated data, if any. */
-    public final Object      data;
-    
-    /** The sender. */
-    public final Object      source;
+		/** DATA_TYPE */
+		DATA_TYPE,
 
-    /**
-     * Creates a new instance.
-     *
-     * @param source
-     * @param target
-     * @param data
-     */
-    public ModelEvent(final Object source,
-                      final ModelPart target,
-                      final Object data) {
-        this.part = target;
-        this.data = data;
-        this.source = source;
-    }
+		/** ALGORITHM */
+		ALGORITHM,
 
-    @Override
-    public String toString() {
-        String sourceLabel = "NULL"; //$NON-NLS-1$
-        if (source != null) sourceLabel = source.getClass().getSimpleName()+"@" + source.hashCode(); //$NON-NLS-1$
-        String dataLabel = "NULL"; //$NON-NLS-1$
-        if (data != null) dataLabel = data.getClass().getSimpleName()+"@" + data.hashCode(); //$NON-NLS-1$
-        return "[part=" + part + ", source=" + sourceLabel + ", data=" + dataLabel + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-    }
+		/** METRIC */
+		METRIC,
+
+		/** MAX_OUTLIERS */
+		MAX_OUTLIERS,
+
+		/** FILTER */
+		FILTER,
+
+		/** SELECTED_NODE */
+		SELECTED_NODE,
+
+		/** MODEL */
+		MODEL,
+
+		/** CLIPBOARD */
+		CLIPBOARD,
+
+		/** HIERARCHY */
+		HIERARCHY,
+
+		/** CRITERION_DEFINITION */
+		CRITERION_DEFINITION,
+
+		/** RESEARCH_SUBSET */
+		RESEARCH_SUBSET,
+
+		/** SELECTED_VIEW_CONFIG */
+		SELECTED_VIEW_CONFIG,
+
+		/** SELECTED_UTILITY_VISUALIZATION */
+		SELECTED_UTILITY_VISUALIZATION,
+
+		/** ATTRIBUTE_VALUE */
+		ATTRIBUTE_VALUE,
+
+		/** SELECTED_PERSPECTIVE */
+		SELECTED_PERSPECTIVE,
+
+		/** POPULATION_MODEL */
+		POPULATION_MODEL,
+
+		/** SELECTED_RISK_VISUALIZATION */
+		SELECTED_RISK_VISUALIZATION,
+
+		/** SELECTED_QUASI_IDENTIFIERS */
+		SELECTED_QUASI_IDENTIFIERS,
+
+		/** EXPAND */
+		EXPAND,
+
+		/** CLASSIFICATION_CONFIGURATION */
+		CLASSIFICATION_CONFIGURATION,
+
+		/** RISK THRESHOLDS */
+		RISK_THRESHOLD_MAIN,
+
+		/** RISK THRESHOLD */
+		RISK_THRESHOLD_DERIVED,
+
+		/** G/S FACTOR */
+		GS_FACTOR,
+
+		/** ATTRIBUTE WEIGHT */
+		ATTRIBUTE_WEIGHT,
+
+		/** COST/BENEFIT MODEL */
+		COST_BENEFIT_MODEL,
+
+		/** RANDOM_VARIABLE */
+		RANDOM_VARIABLE,
+
+		/** MASKING_CONFIGURATION */
+		MASKING_CONFIGURATION,
+
+		/** SELECTED_CLASS_VALUE */
+		SELECTED_CLASS_VALUE,
+
+		/** RESPONSE VARIABLES */
+		RESPONSE_VARIABLES
+	}
+
+	/** The part of the model that has changed. */
+	public final ModelPart part;
+
+	/** The associated data, if any. */
+	public final Object data;
+
+	/** The sender. */
+	public final Object source;
+
+	/** additional info for model part */
+	public final int subpart;
+
+	/**
+	 * Creates a new instance.
+	 *
+	 * @param source
+	 * @param target
+	 * @param data
+	 */
+	public ModelEvent(final Object source, final ModelPart target, final Object data) {
+		this.part = target;
+		this.data = data;
+		this.source = source;
+		subpart = 0;
+	}
+
+	public ModelEvent(final Object source, final ModelPart target, final Object data, final int subpart) {
+		this.part = target;
+		this.data = data;
+		this.source = source;
+		this.subpart = subpart;
+	}
+
+	@Override
+	public String toString() {
+		String sourceLabel = "NULL"; //$NON-NLS-1$
+		if (source != null)
+			sourceLabel = source.getClass().getSimpleName() + "@" + source.hashCode(); //$NON-NLS-1$
+		String dataLabel = "NULL"; //$NON-NLS-1$
+		if (data != null)
+			dataLabel = data.getClass().getSimpleName() + "@" + data.hashCode(); //$NON-NLS-1$
+		return "[part=" + part + ", source=" + sourceLabel + ", data=" + dataLabel + "]"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
 }
