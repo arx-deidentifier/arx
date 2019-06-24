@@ -122,7 +122,9 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			public void widgetDefaultSelected(SelectionEvent event) {
 			}
 		});
-
+		
+		// TODO: set the input as disabled from the start and enable it once the R executable has been found
+		
 		// User output
 		output = new StyledText(root, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
 		output.setLayoutData(RLayout.createFillGridData());
@@ -130,6 +132,9 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 		return this.root;
 	}
 
+	/**
+	 * Is called when the user confirms a command in the input of the combo-box
+	 */
 	public void uponUserSelection() {
 		if (input.getText() != null && !input.getText().isEmpty()) {
 			String command = input.getText();
@@ -175,9 +180,16 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 		super.update(event);
 		if (event.part == ModelPart.R_SCRIPT) {
 			String command = (String) event.data;
-			executeR(command);
-			commandBuffer.add(command);
-			input.setItems(commandBuffer.getCommands());
+			
+		    // if the command to execute was called from the options menu
+			// then don't show it in the terminal and don't add it to the command buffer
+			if (event.source instanceof ViewStatisticsROptions)
+				executeR(command, false);
+			else {
+				executeR(command, true);
+				commandBuffer.add(command);
+				input.setItems(commandBuffer.getCommands());
+			}
 		} else if (event.part == ModelPart.R_PATH) {
 			this.pathToR = (String) event.data;
 			triggerUpdate();
@@ -358,11 +370,20 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 	 * @param command
 	 */
 	private void executeR(String command) {
+		executeR(command, true);
+	}
+	/**
+	 * Execute command
+	 * 
+	 * @param command
+	 * @param showInTerminal
+	 */
+	private void executeR(String command, boolean showInTerminal) {
 		if (this.rIntegration != null && this.rIntegration.isAlive()) {
-			this.rIntegration.execute(command);
+			this.rIntegration.execute(command, showInTerminal);
 		}
 	}
-
+	
 	@Override
 	protected ComponentStatusLabelProgressProvider getProgressProvider() {
 		return new ComponentStatusLabelProgressProvider() {

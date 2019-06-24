@@ -107,15 +107,21 @@ public class RIntegration {
 	 * Executes a command
 	 * 
 	 * @param command
+	 * @param showInTerminal
 	 */
-	public void execute(String command) {
+	public void execute(String command, boolean showInTerminal) {
 	    if (this.process == null) {
 	        return;
 	    }
 
         try {
-            this.buffer.append(command.toCharArray());
-            this.buffer.append(NEWLINE);
+        	// TODO: Get rid of the "> " chars after a command was not shown
+        	if (showInTerminal)
+        	{
+        		this.buffer.append(command.toCharArray());
+        	}
+        	this.buffer.append(NEWLINE);
+        	
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
             writer.write(command);
             writer.newLine();

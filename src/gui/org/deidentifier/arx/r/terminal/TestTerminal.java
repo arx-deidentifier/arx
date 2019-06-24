@@ -68,7 +68,7 @@ public class TestTerminal {
         tabTerminal.setCommandListener(new RCommandListener() {
             @Override
             public void command(String command) {
-                r.execute(command);
+                r.execute(command, true);
             }
         });
     }

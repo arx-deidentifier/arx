@@ -5,6 +5,7 @@ import java.util.List;
 
 public class CommandBuffer {
 
+	// TODO: make the size of the command buffer adjustable
 	private static final int SIZE = 5;
 	private List<String> commands = new ArrayList<String>();
 
