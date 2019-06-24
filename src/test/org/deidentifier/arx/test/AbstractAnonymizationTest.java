@@ -54,7 +54,6 @@ import org.deidentifier.arx.criteria.EnhancedBLikeness;
 import org.deidentifier.arx.criteria.LDiversity;
 import org.deidentifier.arx.criteria.TCloseness;
 import org.deidentifier.arx.exceptions.RollbackRequiredException;
-import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.junit.Before;
 import org.junit.Rule;
@@ -482,7 +481,7 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             time2 /= REPETITIONS;
             
             StringBuilder line = new StringBuilder();
-            line.append(Resources.getVersion());
+            line.append(ARXAnonymizer.VERSION);
             line.append(";");
             line.append(version);
             line.append(";");

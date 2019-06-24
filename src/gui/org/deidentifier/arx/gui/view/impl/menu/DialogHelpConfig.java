@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.menu;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.gui.resources.Resources;
 
 /**
@@ -65,7 +66,7 @@ public class DialogHelpConfig {
      */
     public DialogHelpConfig() {
         
-        final String version = Resources.getVersion();
+        final String version = ARXAnonymizer.VERSION;
         
         entries.add(new Entry("id.overview.1", //$NON-NLS-1$
                               Resources.getMessage("DialogHelpConfig.-5"), //$NON-NLS-1$
