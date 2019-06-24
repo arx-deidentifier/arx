@@ -123,14 +123,14 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 
 		// Success message
 		pathText = new Label(root, SWT.RIGHT);
-		pathText.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+		pathText.setLayoutData(SWTUtil.createFillHorizontallyGridData(false));
 		pathToR = OS.getR();
         if (pathToR != null) {
 			setSuccessString();
 		} else {
 			pathText.setText("Executable of R not found. Please select one manually.");
 		}
-
+        
 		// Change path manually file chooser dialog
 		Button pathToRButton = new Button(root, SWT.PUSH);
 		pathToRButton.setText("Change manually");
