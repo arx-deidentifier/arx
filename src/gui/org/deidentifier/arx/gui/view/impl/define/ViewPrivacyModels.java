@@ -289,6 +289,12 @@ public class ViewPrivacyModels implements IView {
         	item.setData(model.getStackelbergModel());
         }
 
+        if (model.getMinimumKeySizeModel().isEnabled()) {
+            TableItem item = new TableItem(table, SWT.NONE);
+            item.setText(new String[] { "", model.getMinimumKeySizeModel().toString(), ""});
+            item.setImage(0, symbolK);
+            item.setData(model.getMinimumKeySizeModel());
+        }
 
         List<ModelExplicitCriterion> explicit = new ArrayList<ModelExplicitCriterion>();
         for (ModelLDiversityCriterion other : model.getLDiversityModel().values()) {
