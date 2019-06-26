@@ -98,7 +98,10 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 		input.setLayoutData(RLayout.createFillHorizontallyGridData(true));
 		// There do not yet exist items in the buffer, so we don't set the items of the
 		// input yet.
-
+		
+		// Disable the input by default / enable it once the R executable has been found
+		input.setEnabled(false);
+		
 		input.addTraverseListener(new TraverseListener() { // Typed Input
 
 			@Override
@@ -122,8 +125,6 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			public void widgetDefaultSelected(SelectionEvent event) {
 			}
 		});
-		
-		// TODO: set the input as disabled from the start and enable it once the R executable has been found
 		
 		// User output
 		output = new StyledText(root, SWT.BORDER | SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY);
@@ -192,6 +193,8 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 			}
 		} else if (event.part == ModelPart.R_PATH) {
 			this.pathToR = (String) event.data;
+			// Enable the input
+			input.setEnabled(true);
 			triggerUpdate();
 		}
 	}

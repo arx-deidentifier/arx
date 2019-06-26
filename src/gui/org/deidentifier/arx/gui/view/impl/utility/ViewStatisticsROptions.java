@@ -66,7 +66,7 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		c.setWidth("100%", "100px");
 		c.pack();
 		SWTUtil.createGenericTooltip(loadScriptTable);
-
+		
 		// Select from preexisting scripts
 		rmap = Resources.getRMapping(); // Map<Description what script does,rscript.r name>
 
@@ -126,8 +126,12 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 		pathText.setLayoutData(SWTUtil.createFillHorizontallyGridData(false));
 		pathToR = OS.getR();
         if (pathToR != null) {
+        	// Enable loadScriptTable once r executable has been found
+        	loadScriptTable.setEnabled(true);
 			setSuccessString();
 		} else {
+			// Disable loadScriptTable if r executable could not be found
+			loadScriptTable.setEnabled(false);
 			pathText.setText("Executable of R not found. Please select one manually.");
 		}
         
@@ -181,6 +185,8 @@ public class ViewStatisticsROptions implements ViewStatisticsBasic {
 				if (filename != null) {
 					changePathToR(filename);
 					pathToR = filename;
+					// Enable loadScriptTable once r executable has been found
+		        	loadScriptTable.setEnabled(true);
 					setSuccessString();
 				}
 
