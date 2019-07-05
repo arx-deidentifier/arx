@@ -82,7 +82,7 @@ public class TransformationChecker {
     private final Transformer                       transformer;
 
     /** The solution space */
-    private final SolutionSpace                     solutionSpace;
+    private final SolutionSpace<?>                     solutionSpace;
 
     /** Is a minimal class size required */
     private final boolean                           minimalClassSizeRequired;
@@ -104,7 +104,7 @@ public class TransformationChecker {
                                  final int historyMaxSize,
                                  final double snapshotSizeDataset,
                                  final double snapshotSizeSnapshot,
-                                 final SolutionSpace solutionSpace) {
+                                 final SolutionSpace<?> solutionSpace) {
         
         // Store data
         this.metric = metric;
@@ -148,12 +148,14 @@ public class TransformationChecker {
         this.currentGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                                 manager.getDataGeneralized().getArray(),
                                                 transformer.getBuffer(),
-                                                manager.getDataAnalyzed().getArray());
+                                                manager.getDataAnalyzed().getArray(),
+                                                manager.getDataGeneralized().getDictionary().getSuppressedCodes());
         
         this.lastGroupify = new HashGroupify(initialSize, config, manager.getAggregationInformation().getHotThreshold(),
                                              manager.getDataGeneralized().getArray(),
                                              transformer.getBuffer(),
-                                             manager.getDataAnalyzed().getArray());
+                                             manager.getDataAnalyzed().getArray(),
+                                             manager.getDataGeneralized().getDictionary().getSuppressedCodes());
     }
 
     /**
@@ -161,7 +163,7 @@ public class TransformationChecker {
      * @param node
      * @return
      */
-    public TransformationResult check(final Transformation node) {
+    public TransformationResult check(final Transformation<?> node) {
         return check(node, false, ScoreType.INFORMATION_LOSS);
     }
     
@@ -172,7 +174,7 @@ public class TransformationChecker {
      * @param scoreType
      * @return
      */
-    public TransformationResult check(final Transformation node, final boolean forceMeasureInfoLoss, final ScoreType scoreType) {
+    public TransformationResult check(final Transformation<?> node, final boolean forceMeasureInfoLoss, final ScoreType scoreType) {
         
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof TransformationResult) {

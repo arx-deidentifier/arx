@@ -25,10 +25,15 @@ import java.util.Map;
 import org.apache.commons.math3.analysis.function.Log;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.impl.common.PageableTableColumnLayout;
+import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigator;
+import org.deidentifier.arx.gui.view.impl.common.PageableTableNavigatorFactory;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResultContentProvider;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.SashForm;
@@ -471,6 +476,38 @@ public class SWTUtil {
     }
 
     /**
+     * Returns a table viewer with pagination. Implements hacks for fixing OSX bugs.
+     * @param parent
+     * @param style
+     * @param fill
+     * @param equalSize
+     * @return
+     */
+    public static PageableTable createPageableTableViewer(Composite container, 
+                                                          int style, 
+                                                          boolean fill, 
+                                                          final boolean equalSize) {
+        
+        PageableTable pageableTable = new PageableTable(
+                                          container,
+                                          SWT.BORDER | SWT.NO_SCROLL,
+                                          style,
+                                          PageableTableNavigator.PAGE_SIZE,
+                                          PageResultContentProvider.getInstance(),
+                                          PageableTableNavigatorFactory.getFactory(),
+                                          null);
+        
+        // Fix bug
+        fixOSXTableBug(pageableTable.getViewer().getTable());
+        
+        // Create column layout
+        new PageableTableColumnLayout(pageableTable, fill, equalSize);
+
+        // Done
+        return pageableTable;
+    }
+
+    /**
      * Returns a table. Implements hacks for fixing OSX bugs.
      * @param parent
      * @param style
@@ -505,7 +542,6 @@ public class SWTUtil {
         fixOSXTableBug(viewer.getTable());
         return viewer;
     }
-
     /**
      * Returns a checkbox table viewer. Implements hacks for fixing OSX bugs.
      * @param parent
@@ -592,7 +628,7 @@ public class SWTUtil {
         // However, I had trouble unregistering the existing events for the items
         Menu systemMenu = Display.getCurrent().getSystemMenu();
         for (MenuItem systemItem : systemMenu.getItems()) {
-        	systemItem.setEnabled(false);
+            systemItem.setEnabled(false);
         }
     }
 
@@ -623,29 +659,6 @@ public class SWTUtil {
     }
 
     /**
-     * Fixes bugs on OSX when scrolling in tables
-     * @param table
-     */
-    private static void fixOSXTableBug(final Table table) {
-        if (isMac()) {
-            SelectionListener bugFixer = new SelectionListener(){
-                
-                @Override
-                public void widgetDefaultSelected(SelectionEvent arg0) {
-                    widgetSelected(arg0);
-                }
-
-                @Override
-                public void widgetSelected(SelectionEvent arg0) {
-                    table.redraw();
-                }
-            };
-            table.getVerticalBar().addSelectionListener(bugFixer);
-            table.getHorizontalBar().addSelectionListener(bugFixer);
-        }
-    }
-
-    /**
      * Converts a boolean into a pretty string
      * @param value
      * @return
@@ -657,7 +670,7 @@ public class SWTUtil {
             return Resources.getMessage("PropertiesView.170");
         }
     }
-    
+
     /**
      * Returns a pretty string representing the given double
      * @param value
@@ -717,7 +730,7 @@ public class SWTUtil {
         }
         return String.valueOf(value);
     }
-   
+    
     /**
      * Are we running on an OSX system
      * @return
@@ -725,24 +738,7 @@ public class SWTUtil {
     public static boolean isMac() {
         return System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0; //$NON-NLS-1$ //$NON-NLS-2$
     }
-    
-    /**
-     * En-/disables the composite and its children.
-     *
-     * @param elem
-     * @param val
-     */
-    private static void setEnabled(final Composite elem, final boolean val) {
-        elem.setEnabled(val);
-        for (final Control c : elem.getChildren()) {
-            if (c instanceof Composite) {
-                setEnabled((Composite) c, val);
-            } else {
-                c.setEnabled(val);
-            }
-        }
-    }
-    
+   
     /**
      * Converts the slider value to a double.
      *
@@ -762,5 +758,45 @@ public class SWTUtil {
             val = max;
         }
         return val;
+    }
+    
+    /**
+     * Fixes bugs on OSX when scrolling in tables
+     * @param table
+     */
+    private static void fixOSXTableBug(final Table table) {
+        if (isMac()) {
+            SelectionListener bugFixer = new SelectionListener(){
+                
+                @Override
+                public void widgetDefaultSelected(SelectionEvent arg0) {
+                    widgetSelected(arg0);
+                }
+
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    table.redraw();
+                }
+            };
+            table.getVerticalBar().addSelectionListener(bugFixer);
+            table.getHorizontalBar().addSelectionListener(bugFixer);
+        }
+    }
+    
+    /**
+     * En-/disables the composite and its children.
+     *
+     * @param elem
+     * @param val
+     */
+    private static void setEnabled(final Composite elem, final boolean val) {
+        elem.setEnabled(val);
+        for (final Control c : elem.getChildren()) {
+            if (c instanceof Composite) {
+                setEnabled((Composite) c, val);
+            } else {
+                c.setEnabled(val);
+            }
+        }
     }
 }

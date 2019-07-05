@@ -14,234 +14,157 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.deidentifier.arx.dp;
 
-import java.math.BigInteger;
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-import org.apache.commons.math3.fraction.BigFraction;
+import org.apache.commons.math3.distribution.EnumeratedDistribution;
+import org.apache.commons.math3.random.AbstractRandomGenerator;
 import org.apache.commons.math3.util.Pair;
-import org.deidentifier.arx.reliability.IntervalArithmeticDouble;
-import org.deidentifier.arx.reliability.IntervalArithmeticException;
 
 /**
- * An implementation of the reliable variant of the exponential mechanism.
+ * An implementation of the exponential mechanism for discrete domains as proposed in:
+ * 
+ * McSherry, Frank, and Kunal Talwar:
+ * Mechanism design via differential privacy.
+ * Foundations of Computer Science 2007. pp. 94-103
+ * 
  * This implementation assumes that all score values have been divided by the sensitivity of the respective score function.
  * 
- * Note: This implementations uses internal caches which may grow up to the size of distinct values
- * provided as scores to the method setDistribution during the lifetime of an instance.
+ * We point out that this implementation draws from a probability distribution which approximates the mathematically precise
+ * distribution of the exponential mechanism as a consequence of floating-point arithmetic, which could potentially affect
+ * the privacy guarantees provided. However, it can be shown that the resulting absolute exceedance of the privacy parameter
+ * epsilon is at most in the order of E = log( (1 + n * 2^{-51})^2 ) where n is the size of the domain.
+ * For various values of n, these absolute errors are as follows:
+ * 
+ *  ------------------------------------------------------------------------------------------------------------------------
+ * | n |    10^1    |    10^2    |    10^3    |    10^4    |    10^5    |    10^6    |    10^7    |    10^8    |    10^9    |
+ *  ------------------------------------------------------------------------------------------------------------------------
+ * | E | 9*10^{-15} | 9*10^{-14} | 9*10^{-13} | 9*10^{-12} | 9*10^{-11} | 9*10^{-10} | 9*10^{-9}  | 9*10^{-8}  | 9*10^{-7}  |
+ *  ------------------------------------------------------------------------------------------------------------------------
  * 
  * @author Raffael Bild
  */
 public class ExponentialMechanism<T> {
-    
-    /** The base having the form of a fraction n/d */
-    private BigFraction                             base;
 
-    /** The cumulative distribution scaled so that it consists of natural numbers */
-    private BigInteger[]                            cumulativeDistribution;
-    
-    /** The values to sample from */
-    private T[]                                     values;
+    /** 
+     * Random number generator to use here
+     * @author Fabian Prasser
+     */
+    private static class RandomNumberGenerator extends AbstractRandomGenerator {
+        
+        /** The random generator */
+        private final Random random;
+
+        /** 
+         * Constructor
+         * @param deterministic
+         */
+        public RandomNumberGenerator(boolean deterministic) {
+            super();
+            if (deterministic) {
+                this.random = new Random(0xDEADBEEF);
+            } else {
+                this.random = new SecureRandom();
+            }
+        }
+
+        @Override
+        public double nextDouble() {
+            return this.random.nextDouble();
+        }
+
+        @Override
+        public void setSeed(long seed) {
+            if (this.random instanceof SecureRandom) {
+                throw new IllegalStateException("May not set seed on non-deterministic RNG");
+            }
+            this.random.setSeed(seed);
+        }
+    }
+
+    /** The probability distribution */
+    private EnumeratedDistribution<T> distribution;
+
+    /** The privacy parameter epsilon */
+    private double                    epsilon;
 
     /** The random generator */
-    private Random                                  random;
-
-    /** A cache mapping an exponent e to n^e used to increase performance */
-    private Map<Integer, BigInteger>                numeratorCache;
-
-    /** A cache mapping an exponent e to d^e used to increase performance */
-    private Map<Integer, BigInteger>                denominatorCache;
-
-    /** A cache mapping a pair of exponents (e_1,e_2) to n^{e_1} / d^{e_2} used to increase performance */
-    private Map<Pair<Integer, Integer>, BigInteger> productCache;
-
+    private AbstractRandomGenerator   random;
+    
     /**
-     * Creates a new instance
+     * Constructs a new instance
      * @param epsilon
-     * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanism(double epsilon) throws IntervalArithmeticException {
+    public ExponentialMechanism(double epsilon) {
         this(epsilon, false);
     }
 
     /**
-     * Creates a new instance which may be configured to produce deterministic output.
-     * Note: *never* set deterministic to true in production. This parameterization is for testing purposes, only.
+     * Constructs a new instance
+     * Note: *never* set deterministic to true in production. It is implemented for testing purposes, only.
      * 
      * @param epsilon
      * @param deterministic
-     * @throws IntervalArithmeticException 
      */
-    public ExponentialMechanism(double epsilon, boolean deterministic) throws IntervalArithmeticException {
-
-        // Calculate the base, depending on epsilon
-        IntervalArithmeticDouble arithmetic = new IntervalArithmeticDouble();
-        double bound = arithmetic.exp(arithmetic.div(arithmetic.createInterval(epsilon), arithmetic.createInterval(3d))).lower;
-        this.base = new BigFraction(bound);
-        
-        // Initialize the random generator
-        this.random = deterministic ? new Random(0xDEADBEEF) : new SecureRandom();
-        
-        // Initialize caches
-        this.numeratorCache = new HashMap<Integer,BigInteger>();
-        this.denominatorCache = new HashMap<Integer,BigInteger>();
-        this.productCache = new HashMap<Pair<Integer,Integer>, BigInteger>();
+    public ExponentialMechanism(double epsilon, boolean deterministic) {
+        this.epsilon = epsilon;
+        this.random = new RandomNumberGenerator(deterministic);
     }
     
     /**
-     * Returns a value drawn from the probability distribution
+     * Returns a random sampled value
      * @return
      */
     public T sample() {
-        
-        // Draw a number within the range of the cumulative distribution
-        BigInteger drawn = getRandomBigInteger(cumulativeDistribution[cumulativeDistribution.length-1]);
-
-        // Determine the according index
-        for (int i = 0; i < cumulativeDistribution.length; i++) {
-            if (drawn.compareTo(cumulativeDistribution[i]) == -1) {
-                return values[i];
-            }
-        }
-
-        // Must not happen
-        throw new IllegalStateException("Must not happen");
+        T solution = distribution.sample();
+        return solution;
     }
     
     /**
-     * Builds a probability distribution
+     * Sets the distribution to sample from.
+     * The arrays values and scores have to have the same length.
      * @param values
      * @param scores
      */
-    public void setDistribution(T[] values, BigFraction[] scores) {
+    public void setDistribution(T[] values, double[] scores) {
         
         // Check arguments
         if (values.length == 0) {
-            throw new RuntimeException("No values supplied");
+            throw new IllegalStateException("No values supplied");
         }
         if (values.length != scores.length) {
-            throw new RuntimeException("Number of scores and values must be identical");
+            throw new IllegalStateException("Number of scores and values must be identical");
         }
         
-        // Initialize
-        this.cumulativeDistribution = new BigInteger[scores.length];
-        this.values = values;
+        // The following code calculates the probability distribution which assigns every value
+        // a probability proportional to exp(0,5 * epsilon * score)
         
-        // The following code calculates a distribution consisting of natural numbers which is directly proportional to
-        // b^{e_1} = n^{e_1} / d^{e_1} ... b^{e_m} = n^{e_m} / d^{e_m} with e_i = floorToInt(scores[i])
-        // and accumulates the resulting distribution
-
-        // Calculate the exponents e_i and determine the smallest exponent
-        int[] exponents = new int[values.length];
-        int minExponent = Integer.MAX_VALUE;
-        for (int i=0; i<values.length; ++i) {
-            int exponent = floorToInt(scores[i]);
-            minExponent = Math.min(minExponent, exponent);
-            exponents[i] = exponent;
-        }
-        
-        // Subtract the smallest exponent from all exponents.
-        // This modification reduces the magnitude of powers, increases the chances for cache hits,
-        // and hence, it reduces the execution times of the following computations.
-        // Since b^{e_i - minExponent} = b^e_i * b^{-minExponent} holds, this transformation corresponds to a multiplication
-        // of the distribution with a constant factor and hence it retains proportionality.
-        // Moreover, the maximum of the resulting exponents is determined.
-        int maxExponent = Integer.MIN_VALUE;
-        for (int i=0; i<values.length; ++i) {
-            exponents[i] -= minExponent;
-            maxExponent = Math.max(exponents[i], maxExponent);
-        }
-        
-        // Calculate the scaled cumulative distribution by computing n^{exponents[i]} * d^{maxExponent - exponents[i]}
-        // and accumulating the results. Since
-        // n^{exponents[i]} * d^{maxExponent - exponents[i]} = (n^{exponents[i]} / d^{exponents[i]}) * d^{maxExponent}
-        // = b^{exponents[i]} * d^{maxExponent} holds, this transformation corresponds to a multiplication
-        // of the distribution with a constant factor and hence it retains proportionality.
-        for (int i = 0; i < values.length; i++) {
-
-            // Determine exponents
-            int numeratorExponent = exponents[i];
-            int denominatorExponent = maxExponent - numeratorExponent;
-            
-            // Assure that productCache contains n^{exponents[i]} * d^{maxExponent - exponents[i]}
-            Pair<Integer,Integer> exponentPair = new Pair<Integer,Integer>(numeratorExponent, denominatorExponent);
-            if (!productCache.containsKey(exponentPair)) {
-                
-                // Assure that numeratorCache contains n^{exponents[i]}
-                if (!numeratorCache.containsKey(numeratorExponent)) {
-                    numeratorCache.put(numeratorExponent, base.getNumerator().pow(numeratorExponent));
-                }
-                
-                // Assure that denominatorCache contains d^{maxExponent - exponents[i]}
-                if (!denominatorCache.containsKey(denominatorExponent)) {
-                    denominatorCache.put(denominatorExponent, base.getDenominator().pow(denominatorExponent));
-                }
-                
-                // Calculate n^{exponents[i]} * d^{maxExponent - exponents[i]} and insert into productCache
-                BigInteger product = numeratorCache.get(numeratorExponent).multiply(denominatorCache.get(denominatorExponent));
-                productCache.put(exponentPair, product);
-            }
-            
-            // Retrieve n^{exponents[i]} * d^{maxExponent - exponents[i]}
-            BigInteger nextElement = productCache.get(exponentPair);
-            
-            // Accumulate
-            cumulativeDistribution[i] = i == 0 ? nextElement : nextElement.add(cumulativeDistribution[i-1]);
-        }
-    }
-
-    /**
-     * Returns floor() to int if possible.
-     * If the absolute value of fraction is too big, an IllegalArgumentException is thrown.
-     * @param fraction
-     * @return
-     */
-    private int floorToInt(BigFraction fraction) {
-
-        // Assure that score is within the range of numbers which can be processed
-        if (fraction.compareTo(new BigFraction(Integer.MAX_VALUE)) == 1 || (fraction.subtract(1)).compareTo(new BigFraction(Integer.MIN_VALUE)) == -1) {
-            throw new IllegalArgumentException("The absolute value of " + fraction + " is too big to be processed");
+        // Calculate all exponents having the form 0,5 * epsilon * score and remember the maximal value.
+        // This value is used during the following calculations in a manner which reduces the magnitude of numbers involved
+        // (which can get very large due to the application of the exponential function) while it does not change the result;
+        // it is a trick to make the following computations feasible.
+        double[] exponents = new double[scores.length];
+        double shift = -Double.MAX_VALUE;
+        for (int i = 0; i < scores.length; ++i) {
+            exponents[i] = 0.5d * epsilon * scores[i];
+            shift = Math.max(shift, exponents[i]);
         }
 
-        // Extract the whole number part of the fraction 
-        int result = fraction.intValue();
-
-        // Extracting the whole number part effectively rounds towards zero, and not downwards.
-        // Hence, when fraction is negative and not an integer number, it has been rounded upwards.
-        // This is corrected by subtracting one.
-        if (fraction.compareTo(BigFraction.ZERO) < 0 && !fraction.equals(new BigFraction(result))) {
-            result -= 1;
+        // Create a probability mass function containing numbers of the form exp(0,5 * epsilon * score - shift)
+        // which correspond to non-normalized probabilities multiplied with exp(-shift).
+        List<Pair<T, Double>> pmf = new ArrayList<>();
+        for (int i = 0; i < scores.length; ++i) {
+            double prob = Math.exp(exponents[i] - shift);
+            pmf.add(new Pair<T, Double>(values[i], prob));
         }
 
-        // Return
-        return result;
-    }
-
-    /**
-     * Returns a random BigInteger in the interval [0, limit).
-     * The parameter limit has to be >= 1, otherwise an illegal argument exception is thrown.
-     * @param limit
-     * @return
-     */
-    private BigInteger getRandomBigInteger(BigInteger limit) {
-
-        // Check the argument
-        if (limit.compareTo(BigInteger.ONE) == -1) {
-            throw new IllegalArgumentException("Limit has to be greater than or equal to one");
-        }
-
-        // Compute a random value
-        BigInteger result;
-        do {
-            result = new BigInteger(limit.bitLength(), random);
-        } while(result.compareTo(limit) >= 0);
-
-        // Return
-        return result;
+        // Create the distribution. Note that all probabilities are being normalized by the class
+        // EnumeratedDistribution by effectively dividing them through their sum, which cancels
+        // the factor exp(-shift)
+        this.distribution = new EnumeratedDistribution<T>(this.random, pmf);
     }
 }

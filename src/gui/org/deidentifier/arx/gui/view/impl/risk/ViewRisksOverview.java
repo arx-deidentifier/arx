@@ -46,7 +46,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author Fabian Prasser
  */
-public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksOverview extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
     private Composite       root;
@@ -65,13 +65,14 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
      * @param target
      * @param reset
      */
-    public ViewRisksReIdentificationTable(final Composite parent,
+    public ViewRisksOverview(final Composite parent,
                                           final Controller controller,
                                           final ModelPart target,
                                           final ModelPart reset) {
         
         super(parent, controller, target, reset);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.POPULATION_MODEL, this);
         this.manager = new AnalysisManager(parent.getDisplay());
     }
@@ -79,7 +80,9 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.POPULATION_MODEL) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || 
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
+            event.part == ModelPart.POPULATION_MODEL) {
             triggerUpdate();
         }
     }
@@ -252,14 +255,14 @@ public class ViewRisksReIdentificationTable extends ViewRisks<AnalysisContextRis
                 RiskModelPopulationUniqueness popUniqueModel = builder.getPopulationBasedUniquenessRisk();
                 
                 lowestRisk = samReidModel.getLowestRisk();
-                fractionOfTuplesAffectedByLowestRisk = samReidModel.getFractionOfTuplesAffectedByLowestRisk();
+                fractionOfTuplesAffectedByLowestRisk = samReidModel.getFractionOfRecordsAffectedByLowestRisk();
                 averageRisk = samReidModel.getAverageRisk();
                 highestRisk = samReidModel.getHighestRisk();
-                fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfTuplesAffectedByHighestRisk();
+                fractionOfTuplesAffectedByHighestRisk = samReidModel.getFractionOfRecordsAffectedByHighestRisk();
                 estimatedProsecutorRisk = samReidModel.getEstimatedProsecutorRisk();
                 estimatedJournalistRisk = samReidModel.getEstimatedJournalistRisk();
                 estimatedMarketerRisk = samReidModel.getEstimatedMarketerRisk();
-                fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueTuples();
+                fractionOfUniqueTuples = samUniqueModel.getFractionOfUniqueRecords();
                 fractionOfUniqueTuplesDankar = popUniqueModel.getFractionOfUniqueTuplesDankar();
                 populationModel = popUniqueModel.getPopulationUniquenessModel();
 

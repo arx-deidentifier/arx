@@ -72,10 +72,11 @@ public class HashGroupifyEntry {
     }
     
     /**
-     * Initialize iterator
+     * Return has next
+     * @return
      */
-    public void read() {
-        matrix.iterator(row);
+    public boolean hasNext() {
+        return matrix.iterator_hasNext();
     }
     
     /**
@@ -84,5 +85,12 @@ public class HashGroupifyEntry {
      */
     public int next() {
         return matrix.iterator_next();
+    }
+
+    /**
+     * Initialize iterator
+     */
+    public void read() {
+        matrix.iterator(row);
     }
 }

@@ -51,6 +51,9 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class ImportWizardPagePreview extends WizardPage {
 
+    /** Hard limit on the maximal number of columns to show*/
+    private static final int MAX_COLUMS = 256;
+
     /**
      * Returns cell content for each column
      * 
@@ -153,6 +156,7 @@ public class ImportWizardPagePreview extends WizardPage {
         container.setLayout(new GridLayout(1, false));
 
         tableViewer = SWTUtil.createTableViewer(container, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
+        tableViewer.setUseHashlookup(true);
         tableViewer.setContentProvider(new ArrayContentProvider());
 
         table = tableViewer.getTable();
@@ -187,8 +191,15 @@ public class ImportWizardPagePreview extends WizardPage {
             }
 
             /* Add enabled columns with appropriate label providers */
+            int columns = 0;
             for (ImportColumn column : wizardImport.getData().getEnabledColumns()) {
 
+                columns++;
+                if (columns > MAX_COLUMS) {
+                    setMessage(Resources.getMessage("ImportWizardPageCSV.21"), WARNING); //$NON-NLS-1$
+                    break;
+                }
+                
                 TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewer, SWT.NONE);
                 tableViewerColumn.setLabelProvider(new PreviewColumnLabelProvider(((IImportColumnIndexed) column).getIndex()));
 

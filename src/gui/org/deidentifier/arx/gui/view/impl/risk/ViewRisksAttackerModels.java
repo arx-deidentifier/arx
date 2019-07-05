@@ -45,11 +45,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 /**
- * This view displays basic risk estimates.
+ * This view displays risk estimates according to different attacker models
  *
  * @author Fabian Prasser
  */
-public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
+public class ViewRisksAttackerModels extends ViewRisks<AnalysisContextRisk> {
 
     /** View */
     private static final String  MESSAGE_CAPTION1 = Resources.getMessage("ViewRisksReIdentification.0"); //$NON-NLS-1$
@@ -100,7 +100,7 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
      * @param target
      * @param reset
      */
-    public ViewRisksReIdentification(final Composite parent,
+    public ViewRisksAttackerModels(final Composite parent,
                                      final Controller controller,
                                      final ModelPart target,
                                      final ModelPart reset) {
@@ -108,6 +108,7 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.RISK_THRESHOLD_MAIN, this);
         controller.addListener(ModelPart.RISK_THRESHOLD_DERIVED, this);
     }
@@ -115,7 +116,7 @@ public class ViewRisksReIdentification extends ViewRisks<AnalysisContextRisk> {
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {            
+        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {            
             triggerUpdate();
         }
         if (event.part == ModelPart.RISK_THRESHOLD_MAIN) {

@@ -19,8 +19,10 @@ package org.deidentifier.arx.gui.view.impl.utility;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXFeatureScaling;
@@ -28,7 +30,6 @@ import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.DataDefinition;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
@@ -36,26 +37,35 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
-import org.deidentifier.arx.gui.view.impl.common.DelayedChangeListener;
 import org.deidentifier.arx.gui.view.impl.utility.LayoutUtility.ViewUtilityType;
+import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.nebula.widgets.pagination.IPageLoader;
+import org.eclipse.nebula.widgets.pagination.PageableController;
+import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResult;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CCombo;
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.KeyAdapter;
-import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MenuDetectEvent;
+import org.eclipse.swt.events.MenuDetectListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import de.linearbits.swt.table.DynamicTable;
-import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * This view allows to select a set of attributes for classification analysis
@@ -64,7 +74,23 @@ import de.linearbits.swt.table.DynamicTableColumn;
  * @author Johanna Eicher
  */
 public class ViewStatisticsClassificationAttributes implements IView, ViewStatisticsBasic {
-    
+
+    /**
+     * Page loader
+     * @author Fabian Prasser
+     */
+    private class AttributesPageLoader implements IPageLoader<PageResult<String>> {
+
+        @Override
+        public PageResult<String> loadPage(PageableController controller) {
+            if (state == null || state.attributes == null || state.attributes.isEmpty()) {
+                return PageListHelper.createPage(new ArrayList<String>(), controller);
+            } else {
+                return PageListHelper.createPage(state.attributes, controller);
+            }
+        }
+    }
+
     /**
      * Internal state management
      * 
@@ -73,19 +99,19 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     private class State {
 
         /** Data */
-        private final List<String>        attributes        = new ArrayList<String>();
+        private final List<String>               attributes        = new ArrayList<String>();
         /** Data */
-        private final List<AttributeType> types             = new ArrayList<AttributeType>();
+        private final Map<String, AttributeType> types             = new HashMap<>();
         /** Data */
-        private final List<DataType<?>>   dtypes            = new ArrayList<DataType<?>>();
+        private final Map<String, DataType<?>>   dtypes            = new HashMap<>();
         /** Data */
-        private final Set<String>         features          = new HashSet<String>();
+        private final Set<String>                features          = new HashSet<String>();
         /** Data */
-        private final Set<String>         classes           = new HashSet<String>();
+        private final Set<String>                classes           = new HashSet<String>();
         /** Data */
-        private final Set<String>         responseVariables = new HashSet<String>();
+        private final Set<String>                responseVariables = new HashSet<String>();
         /** Data */
-        private final List<String>        scaling           = new ArrayList<String>();
+        private final Map<String, String>        scaling           = new HashMap<>();
 
         /**
          * Creates a new instance
@@ -99,9 +125,9 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             for (int col = 0; col < handle.getNumColumns(); col++) {
                 String attribute = handle.getAttributeName(col);
                 attributes.add(attribute);
-                types.add(definition.getAttributeType(attribute));
-                dtypes.add(definition.getDataType(attribute));
-                scaling.add(featureScaling.getScalingFunction(attribute));
+                types.put(attribute, definition.getAttributeType(attribute));
+                dtypes.put(attribute, definition.getDataType(attribute));
+                scaling.put(attribute, featureScaling.getScalingFunction(attribute));
             }
             features.addAll(model.getSelectedFeatures());
             classes.addAll(model.getSelectedClasses());
@@ -154,21 +180,27 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     }
 
     /** Label */
-    private final String        LABEL_ALL         = Resources.getMessage("ViewClassificationAttributes.4"); //$NON-NLS-1$
+    private final String        LABEL_SELECT               = Resources.getMessage("ViewClassificationAttributes.39"); //$NON-NLS-1$
     /** Label */
-    private static final String LABEL_CATEGORICAL = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
-    /** Delay */
-    private static final int    DELAY             = 1000;
+    private final String        LABEL_DESELECT             = Resources.getMessage("ViewClassificationAttributes.40"); //$NON-NLS-1$
+    /** Label */
+    private final String        LABEL_SELECT_ALL           = Resources.getMessage("ViewClassificationAttributes.4"); //$NON-NLS-1$
+    /** Label */
+    private final String        LABEL_SELECT_NONE          = Resources.getMessage("ViewClassificationAttributes.38"); //$NON-NLS-1$
+    /** Label */
+    private static final String LABEL_CATEGORICAL          = Resources.getMessage("ViewClassificationAttributes.2"); //$NON-NLS-1$
+    /** Label */
+    private static final String LABEL_FEATURE_SCALING      = Resources.getMessage("ViewClassificationAttributes.41"); //$NON-NLS-1$
+    /** Label */
+    private static final String LABEL_FEATURE_SCALING_EDIT = Resources.getMessage("ViewClassificationAttributes.42"); //$NON-NLS-1$
     /** Controller */
     private final Controller    controller;
     /** View */
     private final Composite     root;
     /** View */
-    private final DynamicTable  features;
+    private final PageableTable features;
     /** View */
-    private final DynamicTable  classes;
-    /** View */
-    private List<TableEditor>   editors           = new ArrayList<TableEditor>();
+    private final PageableTable classes;
     /** Model */
     private Model               model;
     /** State */
@@ -186,6 +218,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.OUTPUT, this);
         controller.addListener(ModelPart.RESPONSE_VARIABLES, this);
@@ -194,7 +227,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
 
         // Create group
         root = parent;
-        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        root.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).equalWidth(true).create());
 
         Label label = new Label(parent, SWT.LEFT);
         label.setText(Resources.getMessage("ViewClassificationAttributes.0")); //$NON-NLS-1$
@@ -203,49 +236,237 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
         label.setText(Resources.getMessage("ViewClassificationAttributes.1")); //$NON-NLS-1$
         label.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
-        // Create table
-        features = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        // Create pageable table
+        features = SWTUtil.createPageableTableViewer(parent, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER, true, false);
         features.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        features.addSelectionListener(new SelectionAdapter() {
+        features.getViewer().setContentProvider(new ArrayContentProvider());
+        features.setPageLoader(new AttributesPageLoader());
 
+        // Table
+        Table featuresTable = features.getViewer().getTable();
+        SWTUtil.createGenericTooltip(featuresTable);
+        GridData gd = SWTUtil.createFillGridData();
+        gd.heightHint = 100;
+        featuresTable.setLayoutData(gd);
+        featuresTable.setHeaderVisible(true);
+        
+        // Menu
+        features.getViewer().getTable().addMenuDetectListener(new MenuDetectListener() {
             @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                Set<String> newSelection = new HashSet<String>();
-                boolean update = fireEvent(arg0, features, model.getSelectedFeatures(), newSelection);
-                if (update) {
-                    model.setSelectedFeatures(newSelection);
-                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+            public void menuDetected(MenuDetectEvent e) {
+                
+                // Check selection
+               int index = features.getViewer().getTable().getSelectionIndex();
+               if (state == null || index == -1) {
+                 return; 
+               }
+               
+               // Create and show context menu
+               showFeaturesMenu(features.getViewer(), (String) features.getViewer().getTable().getItem(index).getData()); 
+            }
+        });
+
+        // Menu
+        features.getViewer().getTable().addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(MouseEvent arg0) {
+
+                // Check selection
+                int index = features.getViewer().getTable().getSelectionIndex();
+                if (arg0.button != 1 || state == null || index == -1) { 
+                    return;
+                }
+                
+                // Update
+                TableItem item = features.getViewer().getTable().getItem(index);
+                String attribute = (String)item.getData();
+                if (state.features.contains(attribute)) {
+                    state.features.remove(attribute);
+                } else {
+                    state.features.add(attribute);
+                }
+                
+                // Propagate
+                features.refreshPage();
+                model.setSelectedFeatures(state.features);
+                controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+            }
+        });
+        
+        // Column
+        createColumn(features, Resources.getMessage("ViewClassificationAttributes.100"), 50, new ColumnLabelProvider() { //$NON-NLS-1$
+            @Override
+            public Image getImage(Object element) {
+                if (state == null) {
+                    return null;
+                } else if (state.features.contains(element)){
+                    return controller.getResources().getManagedImage("yes.png"); //$NON-NLS-1$
+                } else {
+                    return controller.getResources().getManagedImage("no.png"); //$NON-NLS-1$
+                }
+            }
+            @Override
+            public String getText(Object element) {
+                return null;
+            }
+        });
+
+        // Column
+        createColumn(features, Resources.getMessage("ViewClassificationAttributes.103"), 50, new ColumnLabelProvider() { //$NON-NLS-1$
+            @Override
+            public Image getImage(Object element) {
+                if (state == null) {
+                    return null;
+                } else {
+                    String attribute = (String)element;
+                    AttributeType type = state.types.get(attribute);
+                    return controller.getResources().getImage(type, state.responseVariables.contains(attribute));
+                }
+            }
+            @Override
+            public String getText(Object element) {
+                return null;
+            }
+        });
+
+        // Column
+        createColumn(features, Resources.getMessage("ViewClassificationAttributes.104"), 100, new ColumnLabelProvider() { //$NON-NLS-1$
+            @Override
+            public String getText(Object element) {
+                if (state == null) {
+                    return null;
+                } else {
+                    return (String)element;
                 }
             }
         });
-        DynamicTableColumn column0 = new DynamicTableColumn(features, SWT.NONE);
-        column0.setWidth("10%", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
-        DynamicTableColumn column1 = new DynamicTableColumn(features, SWT.NONE);
-        column1.setWidth("45%"); //$NON-NLS-1$
-        DynamicTableColumn column2 = new DynamicTableColumn(features, SWT.NONE);
-        column2.setWidth("45%"); //$NON-NLS-1$
         
+        // Column
+        createColumn(features, Resources.getMessage("ViewClassificationAttributes.105"), 100, new ColumnLabelProvider() { //$NON-NLS-1$
+            @Override
+            public String getText(Object element) {
+                if (state == null) {
+                    return null;
+                } else {
+                    String function = state.scaling.get((String)element);
+                    if (function == null || function.equals("")) { //$NON-NLS-1$
+                        function = LABEL_CATEGORICAL;
+                    }
+                    return function;
+                }
+            }
+        });
         
-        // Create button
-        classes = SWTUtil.createTableDynamic(parent, SWT.CHECK | SWT.V_SCROLL | SWT.H_SCROLL | SWT.BORDER);
+        // Create pageable table
+        classes = SWTUtil.createPageableTableViewer(parent, SWT.FULL_SELECTION | SWT.V_SCROLL | SWT.BORDER, true, false);
         classes.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(1, 1).create());
-        classes.addSelectionListener(new SelectionAdapter() {
+        classes.getViewer().setContentProvider(new ArrayContentProvider());
+        classes.setPageLoader(new AttributesPageLoader());
+
+        // Table
+        Table classesTable = classes.getViewer().getTable();
+        SWTUtil.createGenericTooltip(classesTable);
+        gd = SWTUtil.createFillGridData();
+        gd.heightHint = 100;
+        classesTable.setLayoutData(gd);
+        classesTable.setHeaderVisible(true);
+
+        // Menu
+        classes.getViewer().getTable().addMouseListener(new MouseAdapter() {
             @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                Set<String> newSelection = new HashSet<String>();
-                boolean update = fireEvent(arg0, classes, model.getSelectedClasses(), newSelection);
-                if (update) {
-                   model.setSelectedClasses(newSelection);
-                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+            public void mouseDown(MouseEvent arg0) {
+
+                // Check selection
+                int index = classes.getViewer().getTable().getSelectionIndex();
+                if (arg0.button != 1 || state == null || index == -1) { 
+                    return;
+                }
+                
+                // Update
+                TableItem item = classes.getViewer().getTable().getItem(index);
+                String attribute = (String)item.getData();
+                if (state.classes.contains(attribute)) {
+                    state.classes.remove(attribute);
+                } else {
+                    state.classes.add(attribute);
+                }
+                
+                // Propagate
+                classes.refreshPage();
+                model.setSelectedClasses(state.classes);
+                controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+            }
+        });
+        
+        // Menu
+        classes.getViewer().getTable().addMenuDetectListener(new MenuDetectListener() {
+            @Override
+            public void menuDetected(MenuDetectEvent e) {
+                
+                // Check selection
+               int index = classes.getViewer().getTable().getSelectionIndex();
+               if (state == null || index == -1) {
+                 return; 
+               }
+               
+               // Create and show context menu
+               showClassesMenu(classes.getViewer(), (String) classes.getViewer().getTable().getItem(index).getData()); 
+            }
+        });
+
+        // Column
+        createColumn(classes, Resources.getMessage("ViewClassificationAttributes.106"), 50, new ColumnLabelProvider() { //$NON-NLS-1$
+            @Override
+            public Image getImage(Object element) {
+                if (state == null) {
+                    return null;
+                } else if (state.classes.contains(element)){
+                    return controller.getResources().getManagedImage("yes.png"); //$NON-NLS-1$
+                } else {
+                    return controller.getResources().getManagedImage("no.png"); //$NON-NLS-1$
+                }
+            }
+            @Override
+            public String getText(Object element) {
+                return null;
+            }
+        });
+
+        // Column
+        createColumn(classes, Resources.getMessage("ViewClassificationAttributes.109"), 50, new ColumnLabelProvider() { //$NON-NLS-1$
+            @Override
+            public Image getImage(Object element) {
+                if (state == null) {
+                    return null;
+                } else {
+                    String attribute = (String)element;
+                    AttributeType type = state.types.get(attribute);
+                    return controller.getResources().getImage(type, state.responseVariables.contains(attribute));
+                }
+            }
+            @Override
+            public String getText(Object element) {
+                return null;
+            }
+        });
+
+        // Column
+        createColumn(classes, Resources.getMessage("ViewClassificationAttributes.104"), 100, new ColumnLabelProvider() { //$NON-NLS-1$
+            @Override
+            public String getText(Object element) {
+                if (state == null) {
+                    return null;
+                } else {
+                    return (String)element;
                 }
             }
         });
         
-        DynamicTableColumn column3 = new DynamicTableColumn(classes, SWT.NONE);
-        column3.setWidth("10%", "40px"); //$NON-NLS-1$ //$NON-NLS-2$
-        DynamicTableColumn column4 = new DynamicTableColumn(classes, SWT.NONE);
-        column4.setWidth("90%"); //$NON-NLS-1$
-        
+        features.setCurrentPage(0);
+        features.refreshPage();
+        classes.setCurrentPage(0);
+        classes.refreshPage();
+    
         // Reset view
         reset();
     }
@@ -259,7 +480,7 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     public Composite getParent() {
         return this.root;
     }
-
+    
     /**
      * Returns the type
      * @return
@@ -267,24 +488,15 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     public ViewUtilityType getType() {
         return ViewUtilityType.CLASSIFICATION;
     }
-
+    
     @Override
     public void reset() {
-        for (TableEditor editor : editors) {
-            editor.getEditor().dispose();
-            editor.dispose();
-        }
-        editors.clear();
-        for (TableItem item : features.getItems()) {
-            item.dispose();
-        }
-        for (TableItem item : classes.getItems()) {
-            item.dispose();
-        }
-        features.removeAll();
-        classes.removeAll();
-        SWTUtil.disable(root);
         state = null;
+        features.refreshPage();
+        features.setCurrentPage(0);
+        classes.refreshPage();
+        classes.setCurrentPage(0);
+        SWTUtil.disable(root);
     }
 
     @Override
@@ -293,59 +505,280 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
            this.model = (Model) event.data;
            update();
         } else if (event.part == ModelPart.INPUT ||
-                   event.part == ModelPart.ATTRIBUTE_TYPE || 
+                   event.part == ModelPart.ATTRIBUTE_TYPE ||
+                   event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE || 
                    event.part == ModelPart.OUTPUT ||
                    event.part == ModelPart.DATA_TYPE ||
                    event.part == ModelPart.RESPONSE_VARIABLES) {
            update();
         }
     }
-    
+
     /**
-     * Checks the selected items and fires an event on changes
-     * @param event
+     * Creates a new column
      * @param table
-     * @param currentSelection
-     * @param newSelection
-     * @return
+     * @param name
+     * @param width
+     * @param provider
      */
-    private boolean fireEvent(SelectionEvent event, DynamicTable table, Set<String> currentSelection, Set<String> newSelection){
+    private TableViewerColumn createColumn(PageableTable table,
+                                           String name, 
+                                           int width,
+                                           ColumnLabelProvider provider) {
         
-        // Item
-        TableItem item = (TableItem) event.item;
-
-        // Detect check all
-        Boolean checkAll = null;
-        if (item.getText(1).equals(LABEL_ALL)) {
-            if (item.getChecked()) {
-                checkAll = true;
-            } else {
-                checkAll = false;
-            }
-        }
-
-        // Ignore first item
-        for (int i = 1; i < table.getItemCount(); i++) {
-            item = table.getItem(i);
-            
-            // All checkbox checked or one item checked
-            if ((checkAll != null && checkAll) || (item.getChecked() && checkAll == null)) {
-                newSelection.add(item.getText(1));
-                item.setChecked(true);
-            } 
-            // All checkbox unchecked
-            else if (checkAll != null && !checkAll) {
-                item.setChecked(false);
-            }
-        }
-
-        // Update
-        if (model != null && !newSelection.equals(currentSelection)) {
-            return true;
-        }
-        return false;
+        TableViewerColumn column = new TableViewerColumn(table.getViewer(), SWT.NONE);
+        column.setLabelProvider(provider);
+        TableColumn tColumn = column.getColumn();
+        tColumn.setToolTipText(name);
+        tColumn.setText(name);
+        tColumn.setWidth(width);
+        tColumn.setResizable(true);
+        return column;
     }
 
+    /**
+     * Shows context menu for classes
+     * @param viewer
+     * @param data
+     */
+    private void showClassesMenu(TableViewer viewer, final String data) {
+
+        // Menu
+        Menu menu = new Menu(viewer.getTable());
+        viewer.getTable().setMenu(menu);
+        
+        // Item
+        MenuItem item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_SELECT);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+               if (state != null && !state.classes.contains(data)) {
+                   state.classes.add(data);
+                   classes.refreshPage();
+                   model.setSelectedClasses(state.classes);
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+               }
+            }
+        });
+        
+        // Item
+        item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_DESELECT);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (state != null && state.classes.contains(data)) {
+                    state.classes.remove(data);
+                    classes.refreshPage();
+                    model.setSelectedClasses(state.classes);
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+                }
+            }
+        });
+        
+        // Separate
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        // Item
+        item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_SELECT_ALL);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+               if (state != null && state.classes.size() != state.attributes.size()) {
+                   state.classes.addAll(state.attributes);
+                   classes.refreshPage();
+                   model.setSelectedClasses(state.classes);
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+               }
+            }
+        });
+        
+        // Item
+        item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_SELECT_NONE);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (state != null && state.classes.size() != 0) {
+                    state.classes.clear();
+                    classes.refreshPage();
+                    model.setSelectedClasses(state.classes);
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+                }
+            }
+        });
+        
+        // Show
+        menu.setVisible(true);
+    }
+
+    /**
+     * Shows context menu for features
+     * @param viewer
+     * @param data
+     */
+    private void showFeaturesMenu(TableViewer viewer, final String data) {
+
+        // Menu
+        Menu menu = new Menu(viewer.getTable());
+        viewer.getTable().setMenu(menu);
+        
+        // Item
+        MenuItem item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_SELECT);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+               if (state != null && !state.features.contains(data)) {
+                   state.features.add(data);
+                   features.refreshPage();
+                   model.setSelectedFeatures(state.features);
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+               }
+            }
+        });
+        
+        // Item
+        item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_DESELECT);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (state != null && state.features.contains(data)) {
+                    state.features.remove(data);
+                    features.refreshPage();
+                    model.setSelectedFeatures(state.features);
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+                }
+            }
+        });
+        
+        // Separate
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        // Item
+        item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_SELECT_ALL);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+               if (state != null && state.features.size() != state.attributes.size()) {
+                   state.features.addAll(state.attributes);
+                   features.refreshPage();
+                   model.setSelectedFeatures(state.features);
+                   controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+               }
+            }
+        });
+        
+        // Item
+        item = new MenuItem(menu, SWT.NONE);
+        item.setText(LABEL_SELECT_NONE);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (state != null && state.features.size() != 0) {
+                    state.features.clear();
+                    features.refreshPage();
+                    model.setSelectedFeatures(state.features);
+                    controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+                }
+            }
+        });
+
+        // Only for numeric attributes
+        boolean enabled = (state != null && state.dtypes.get(data) != DataType.STRING);
+
+        // Separate
+        new MenuItem(menu, SWT.SEPARATOR);
+
+        // Submenu
+        Menu featureScaling = new Menu(menu);
+        featureScaling.setEnabled(enabled);
+        item = new MenuItem(menu, SWT.CASCADE);
+        item.setText(LABEL_FEATURE_SCALING); // $NON-NLS-1$
+        item.setMenu(featureScaling);
+        item.setEnabled(enabled);
+
+        // Items
+        for (final String _function : new String[] { "x", //$NON-NLS-1$
+                                                     "x^2", //$NON-NLS-1$
+                                                     "sqrt(x)", //$NON-NLS-1$
+                                                     "log(x)", //$NON-NLS-1$
+                                                     "2^x", //$NON-NLS-1$
+                                                     "1/x", //$NON-NLS-1$
+                                                     LABEL_CATEGORICAL }) {
+
+            item = new MenuItem(featureScaling, SWT.NONE);
+            item.setText(_function);
+            item.setEnabled(enabled);
+            item.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent arg0) {
+                    String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(data);
+                    if ((function == null && _function != null) || !_function.equals(function)) {
+                        if (_function.equals(LABEL_CATEGORICAL)) {
+                            model.getClassificationModel().setScalingFunction(data, null);
+                            state.scaling.put(data, null);
+                        } else {
+                            model.getClassificationModel().setScalingFunction(data, _function);
+                            state.scaling.put(data, _function);
+                        }
+                        features.refreshPage();
+                        controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this, ModelPart.CLASSIFICATION_CONFIGURATION, null));
+                    }
+                }
+            });
+        }
+
+        // Item
+        item = new MenuItem(featureScaling, SWT.NONE);
+        item.setText(LABEL_FEATURE_SCALING_EDIT);
+        item.setEnabled(enabled);
+        item.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (state != null) {
+                    String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(data);
+                    if (function == null || function.equals("")) { //$NON-NLS-1$
+                        function = LABEL_CATEGORICAL;
+                    }
+                    String _function = controller.actionShowInputDialog(features.getShell(),
+                                                                        Resources.getMessage("ViewClassificationAttributes.113"), //$NON-NLS-1$
+                                                                        Resources.getMessage("ViewClassificationAttributes.114"), //$NON-NLS-1$
+                                                                        function,
+                                                                        new IInputValidator() {
+                                                                            @Override
+                                                                            public String isValid(String arg0) {
+                                                                                return model.getClassificationModel()
+                                                                                            .getFeatureScaling()
+                                                                                            .isValidScalingFunction(arg0) ||
+                                                                                       arg0.equals(LABEL_CATEGORICAL) ? null : Resources.getMessage("ViewClassificationAttributes.115"); //$NON-NLS-1$
+                                                                            }
+                                                                        });
+                    if (!function.equals(_function)) {
+                        if (_function == null || function.equals("") || function.equals(LABEL_CATEGORICAL)) { //$NON-NLS-1$
+                            model.getClassificationModel().setScalingFunction(data, null);
+                            state.scaling.put(data, null);
+                        } else {
+                            model.getClassificationModel().setScalingFunction(data, function);
+                            state.scaling.put(data, function);
+                        }
+                        features.refreshPage();
+                        controller.update(new ModelEvent(ViewStatisticsClassificationAttributes.this,
+                                                         ModelPart.CLASSIFICATION_CONFIGURATION,
+                                                         null));
+                    }
+                }
+            }
+        });
+        
+        // Show
+        menu.setVisible(true);
+    }
+    
     /**
      * Updates the view.
      * 
@@ -370,132 +803,11 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
             return;
         }
 
-        // Clear
-        root.setRedraw(false);        
-        for (TableEditor editor : editors) {
-            editor.getEditor().dispose();
-            editor.dispose();
-        }
-        editors.clear();
-        for (TableItem item : features.getItems()) {
-            item.dispose();
-        }
-        for (TableItem item : classes.getItems()) {
-            item.dispose();
-        }
-        features.removeAll();
-        classes.removeAll();
-        
-        TableItem itemAllFeatures = new TableItem(features, SWT.NONE);
-        itemAllFeatures.setText(new String[] { "", LABEL_ALL, "" }); //$NON-NLS-1$ //$NON-NLS-2$
-
-        TableItem itemAllclasses = new TableItem(classes, SWT.NONE);
-        itemAllclasses.setText(new String[] { "", LABEL_ALL }); //$NON-NLS-1$
-        
-        for (int i = 0; i < state.attributes.size(); i++) {
-
-            // Features
-            final String attribute = state.attributes.get(i);
-            AttributeType type = state.types.get(i);
-            Image image = controller.getResources().getImage(type);
-            TableItem itemF = new TableItem(features, SWT.NONE);
-            itemF.setText(new String[] { "", attribute, ""} ); //$NON-NLS-1$ //$NON-NLS-2$
-            itemF.setImage(0, image);
-            itemF.setChecked(model.getSelectedFeatures().contains(attribute));
-
-            // Classes
-            TableItem itemC = new TableItem(classes, SWT.NONE);
-            itemC.setText(new String[] { "", attribute }); //$NON-NLS-1$
-            image = controller.getResources().getImage(type, state.responseVariables.contains(attribute));
-            itemC.setImage(0, image);
-            itemC.setChecked(model.getSelectedClasses().contains(attribute));
-            
-            // Add combo, if functions supported
-            if (definition.getDataType(attribute) instanceof DataTypeWithRatioScale) {
-                TableEditor editor = new TableEditor(features);
-                editors.add(editor);
-                final CCombo combo = new CCombo(features, SWT.NONE);
-                final Color defaultColor = combo.getForeground();
-                
-                combo.add("x"); //$NON-NLS-1$
-                combo.add("x^2"); //$NON-NLS-1$
-                combo.add("sqrt(x)"); //$NON-NLS-1$
-                combo.add("log(x)"); //$NON-NLS-1$
-                combo.add("2^x"); //$NON-NLS-1$
-                combo.add("1/x"); //$NON-NLS-1$
-                
-                combo.add(LABEL_CATEGORICAL);
-                combo.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent arg0) {
-                        updateCombo(attribute, combo, defaultColor);
-                    }
-                });
-                combo.addSelectionListener(new DelayedChangeListener(DELAY) {
-                    public void delayedEvent() {
-                        updateFunction(attribute, combo);
-                    }   
-                });
-                combo.addKeyListener(new KeyAdapter() {
-                    @Override
-                    public void keyReleased(KeyEvent arg0) {
-                        updateCombo(attribute, combo, defaultColor);
-                        updateFunction(attribute, combo);
-                    }
-                });
-                combo.addKeyListener(new DelayedChangeListener(DELAY) {
-                    public void delayedEvent() {
-                        updateFunction(attribute, combo);
-                    }   
-                });
-                editor.grabHorizontal = true;
-                editor.setEditor(combo, itemF, 2);
-                String function = model.getClassificationModel().getFeatureScaling().getScalingFunction(attribute);
-                if (function == null || function.equals("")) { //$NON-NLS-1$
-                    function = LABEL_CATEGORICAL;
-                }
-                combo.setText(function);
-            } else {
-                itemF.setText(2, LABEL_CATEGORICAL);
-            }
-        }
-        
-        // Finish
-        features.layout();
-        root.setRedraw(true);
+        // Update
+        features.refreshPage();
+        classes.refreshPage();
+        features.setCurrentPage(0);
+        classes.setCurrentPage(0);
         SWTUtil.enable(root);
-    }
-    
-    /**
-     * Updates the combo
-     * @param attribute
-     * @param combo
-     * @param defaultColor 
-     */
-    private void updateCombo(String attribute, CCombo combo, Color defaultColor) {
-        String function = combo.getText();
-        if (function.equals(LABEL_CATEGORICAL)) {
-            combo.setForeground(defaultColor);
-        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
-            combo.setForeground(GUIHelper.COLOR_RED);
-        } else {
-            combo.setForeground(defaultColor);
-        }
-    }
-
-    /**
-     * Updates the function
-     * @param attribute
-     * @param combo
-     */
-    private void updateFunction(String attribute, CCombo combo) {
-        String function = combo.getText();
-        if (function.equals(LABEL_CATEGORICAL)) {
-            model.getClassificationModel().setScalingFunction(attribute, null);
-        } else if (!model.getClassificationModel().getFeatureScaling().isValidScalingFunction(function)) {
-            model.getClassificationModel().setScalingFunction(attribute, null);
-        } else {
-            model.getClassificationModel().setScalingFunction(attribute, function);
-        }
     }
 }

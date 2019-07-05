@@ -122,6 +122,7 @@ public class ViewAttributeTransformation implements IView {
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.INPUT, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.controller.addListener(ModelPart.HIERARCHY, this);
@@ -152,7 +153,12 @@ public class ViewAttributeTransformation implements IView {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
                 if ((cmbType.getSelectionIndex() != -1) && (attribute != null)) {
+                    
+                    // Update combo
                     actionAttributeTypeChanged(attribute, COMBO1_TYPES[cmbType.getSelectionIndex()]);
+
+                    // Update the other views
+                    controller.update(new ModelEvent(this, ModelPart.ATTRIBUTE_TYPE, attribute));
                 }
             }
         });
@@ -319,6 +325,11 @@ public class ViewAttributeTransformation implements IView {
             if (attr.equals(attribute)) {
                 updateAttributeType();
             }
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
+            SWTUtil.enable(root);
+            if (attribute != null) {
+                updateAttributeType();
+            }
         } else if (event.part == ModelPart.HIERARCHY) {
             SWTUtil.enable(root);
             if (attribute.equals(model.getSelectedAttribute())) {
@@ -411,15 +422,8 @@ public class ViewAttributeTransformation implements IView {
 
             // Update criteria
             if (criteriaDisabled) {
-                controller.update(new ModelEvent(this,
-                                                 ModelPart.CRITERION_DEFINITION,
-                                                 null));
+                controller.update(new ModelEvent(this, ModelPart.CRITERION_DEFINITION, null));
             }
-
-            // Update the views
-            controller.update(new ModelEvent(this,
-                                             ModelPart.ATTRIBUTE_TYPE,
-                                             attribute));
         }
     }
     
@@ -531,7 +535,7 @@ public class ViewAttributeTransformation implements IView {
     }
     
     /**
-     * Update attribute type of all attributes.
+     * Update attribute type of all attributes. Called from the parent layout only.
      * @param typeNew
      */
     public void actionUpdateAttributeTypes(AttributeType typeNew) {
@@ -557,6 +561,9 @@ public class ViewAttributeTransformation implements IView {
                         actionAttributeTypeChanged(attribute, typeNew);
                     }
                 }
+
+                // Update the other views
+                controller.update(new ModelEvent(this, ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, model.getInputDefinition()));
             }
         }
     }

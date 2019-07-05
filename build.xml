@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.7.1" />
+    <property name="arx.version" value="3.8.0" />
 
     <!-- add extra parameter to javadoc generation if Java 1.8 is used -->
     <condition property="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" else="-notimestamp">
@@ -70,6 +70,7 @@
             <filename name="**/ojdbc7.jar" />
             <filename name="**/org.eclipse.nebula.visualization.widgets_1.0.0.201511041902.jar" />
             <filename name="**/org.eclipse.nebula.visualization.xygraph_1.0.0.201511041902.jar" />
+            <filename name="**/org.eclipse.nebula.widgets.pagination_1.0.0.201806070735.jar" />
         </or>
     </fileset>
 
@@ -104,7 +105,7 @@
         <mkdir dir="build/test" />
         <mkdir dir="build/junitReports" />
 
-        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.7" debug="true">
+        <javac includeantruntime="false" srcdir="src/main:src/gui:src/example:src/test/" destdir="build/test" source="1.8" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
@@ -232,7 +233,7 @@
 
     <target name="javadoc-api" depends="clean-javadoc">
         <mkdir dir="doc/api" />
-        <javadoc overview="doc/overview-api.html" destdir="doc/api" source="1.7" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX API Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
+        <javadoc overview="doc/overview-api.html" destdir="doc/api" source="1.8" notree="false" nonavbar="false" noindex="false" splitindex="true" access="public" use="true" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX API Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
 
             <classpath>
                 <fileset refid="lib.jars" />
@@ -249,7 +250,7 @@
 
     <target name="javadoc-dev" depends="clean-javadoc">
         <mkdir dir="doc/dev" />
-        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX Developer Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
+        <javadoc overview="doc/overview-dev.html" destdir="doc/dev" source="1.8" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX Developer Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
@@ -264,7 +265,7 @@
 
     <target name="javadoc-gui" depends="clean-javadoc">
         <mkdir dir="doc/gui" />
-        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.7" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX GUI Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
+        <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.8" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX GUI Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
@@ -287,13 +288,13 @@
     </target>
 
     <target name="compile" depends="prepare" description="compile the source ">
-        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib/ant" source="1.7" debug="true">
+        <javac includeantruntime="false" srcdir="src/main/" destdir="build/lib/ant" source="1.8" debug="true">
             <classpath>
                 <fileset refid="lib.jars" />
                 <path path="src/main" />
             </classpath>
         </javac>
-        <javac includeantruntime="false" srcdir="src/main:src/gui/" destdir="build/gui" source="1.7">
+        <javac includeantruntime="false" srcdir="src/main:src/gui/" destdir="build/gui" source="1.8">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />

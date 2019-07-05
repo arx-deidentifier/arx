@@ -150,10 +150,10 @@ public class Example29 extends Example {
         System.out.println("     - Sample-based measures");
         System.out.println("       + Average risk     : " + sampleReidentifiationRisk.getAverageRisk());
         System.out.println("       + Lowest risk      : " + sampleReidentifiationRisk.getLowestRisk());
-        System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfTuplesAffectedByLowestRisk());
+        System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByLowestRisk());
         System.out.println("       + Highest risk     : " + sampleReidentifiationRisk.getHighestRisk());
-        System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfTuplesAffectedByHighestRisk());
-        System.out.println("       + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueTuples());
+        System.out.println("       + Tuples affected  : " + sampleReidentifiationRisk.getFractionOfRecordsAffectedByHighestRisk());
+        System.out.println("       + Sample uniqueness: " + sampleUniqueness.getFractionOfUniqueRecords());
         System.out.println("     - Population-based measures");
         System.out.println("       + Population unqiueness (Zayatz): " + populationUniqueness.getFractionOfUniqueTuples(PopulationUniquenessModel.ZAYATZ));
     }

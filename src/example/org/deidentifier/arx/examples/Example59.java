@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2016 Fabian Prasser, Florian Kohlmayer and contributors
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,86 +18,124 @@
 package org.deidentifier.arx.examples;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXPopulationModel;
+import org.deidentifier.arx.ARXPopulationModel.Region;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
-import org.deidentifier.arx.Data;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
-import org.deidentifier.arx.AttributeType.MaskingFunction;
+import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
-import org.deidentifier.arx.criteria.KAnonymity;
-import org.deidentifier.arx.masking.DataMaskingFunction.PermutationFunctionColumns.PermutationType;
+import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.criteria.AverageReidentificationRisk;
+import org.deidentifier.arx.risk.RiskEstimateBuilder;
+import org.deidentifier.arx.risk.RiskModelAttributes;
+import org.deidentifier.arx.risk.RiskModelAttributes.QuasiIdentifierRisk;
+import org.deidentifier.arx.risk.RiskModelHistogram;
 
 /**
- * This class implements an example of permutation function on columns
- * 
- * @author giupardeb
+ * This class implements an example that shows handling of suppressed values and records in input data
  *
+ * @author Fabian Prasser
  */
 public class Example59 extends Example {
-	/**
-	 * Entry point.
-	 * 
-	 * @param args the arguments
-	 * @throws IOException
-	 */
-	public static void main (String[] args) throws IOException {
-		
-		// Define data
-        DefaultData data = Data.create();
-        data.add("id","Name", "Surname");
-        data.add("1","Gerek", "Macourek");
-        data.add("2","Nadia", "Stare");
-        data.add("3","Bobby", "Spera");
-        data.add("4","Carly", "Avrahamof");
-        data.add("5","Morgan", "MacCaughey");
-        data.add("6","Leilah", "Yapp");
-        data.add("7","Alida", "Stud");
-        data.add("8","Shannon", "Diwell");
-        data.add("9","Kaitlin", "Farmar");
-        data.add("10","Angela", "Pinkett");
-        
-        DefaultHierarchy id = Hierarchy.create();
-        id.add("1", "*");
-        id.add("2", "*");
-        id.add("3", "*");
-        id.add("4", "*");
-        id.add("5", "*");
-        id.add("6", "*");
-        id.add("7", "*");
-        id.add("8", "*");
-        id.add("9", "*");
-        id.add("10", "*");
 
-        data.getDefinition().setAttributeType("id", id);
-        data.getDefinition().setAttributeType("Name", AttributeType.IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setMaskingFunction("Name", MaskingFunction.createPermutationFunctionColumns(true, PermutationType.FYKY));
-        data.getDefinition().setAttributeType("Surname", AttributeType.IDENTIFYING_ATTRIBUTE);
-        data.getDefinition().setMaskingFunction("Surname", MaskingFunction.createPermutationFunctionColumns(true, PermutationType.RS));
+    /**
+     * Entry point.
+     * 
+     * @param args the arguments
+     */
+    public static void main(String[] args) throws IOException {
+
+        // Define data
+        DefaultData data = Data.create();
+        data.add("age", "gender", "zipcode");
+        data.add("45", "male", "81675");
+        data.add("34", "male", "81667");
+        data.add("66", "male", "81925");
+        data.add("70", "female", "81931");
+        data.add("34", "female", "81931");
+        data.add("70", "male", "81931");
+        data.add("45", "male", "81931");
+
+        // Define hierarchies
+        DefaultHierarchy age = Hierarchy.create();
+        age.add("34", "<50", "*");
+        age.add("45", "<50", "*");
+        age.add("66", ">=50", "*");
+        age.add("70", ">=50", "*");
+
+        DefaultHierarchy gender = Hierarchy.create();
+        gender.add("male", "*");
+        gender.add("female", "*");
+
+        // Only excerpts for readability
+        DefaultHierarchy zipcode = Hierarchy.create();
+        zipcode.add("81667", "8166*", "816**", "81***", "8****", "*****");
+        zipcode.add("81675", "8167*", "816**", "81***", "8****", "*****");
+        zipcode.add("81925", "8192*", "819**", "81***", "8****", "*****");
+        zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
+
+        data.getDefinition().setAttributeType("age", age);
+        data.getDefinition().setAttributeType("gender", gender);
+        data.getDefinition().setAttributeType("zipcode", zipcode);
+        data.getDefinition().setMinimumGeneralization("gender", 1);
+        data.getDefinition().setMaximumGeneralization("age", 0);
         
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(3));
-        config.setSuppressionLimit(0d);
+        config.addPrivacyModel(new AverageReidentificationRisk(0.5d));
+        config.setSuppressionLimit(1d);
+
+        // Anonymize
+        ARXResult result = anonymizer.anonymize(data, config);
+
+        // Convert output to input
+        Data outputAsInput = Data.create(result.getOutput().iterator());
+        DataHandle handle = outputAsInput.getHandle();
+        handle.getDefinition().setAttributeType("age", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        handle.getDefinition().setAttributeType("gender", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+        handle.getDefinition().setAttributeType("zipcode", AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
         
-        ARXResult result = anonymizer.anonymize(data,config);
+        System.out.println(" - Data:");
+        print(handle);
         
-        // Print info
-        printResult(result, data);
-        
-        
-        // Process results
-        System.out.println(" - Transformed data:");
-        Iterator<String[]> transformed = result.getOutput(false).iterator();
-        while (transformed.hasNext()) {
-            System.out.print("   ");
-            System.out.println(Arrays.toString(transformed.next()));
+        // For each attribute combination sorted by risk ascending
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
+        RiskModelAttributes riskmodel = builder.getAttributeRisks();
+        for (QuasiIdentifierRisk risk : riskmodel.getAttributeRisks()) {
+            
+            // Specify
+            handle.getDefinition().setAttributeType("age", AttributeType.INSENSITIVE_ATTRIBUTE);
+            handle.getDefinition().setAttributeType("gender", AttributeType.INSENSITIVE_ATTRIBUTE);
+            handle.getDefinition().setAttributeType("zipcode", AttributeType.INSENSITIVE_ATTRIBUTE);
+            for (String qi : risk.getIdentifier()) {
+                handle.getDefinition().setAttributeType(qi, AttributeType.QUASI_IDENTIFYING_ATTRIBUTE);
+            }
+            
+            // Print
+            System.out.println("\n - Stats for QI: " + risk.getIdentifier());
+            analyzeData(handle);
         }
-	}
+    }
+
+    /**
+     * Perform risk analysis
+     * @param handle
+     */
+    private static void analyzeData(DataHandle handle) {
+        
+        ARXPopulationModel populationmodel = ARXPopulationModel.create(Region.USA);
+        RiskEstimateBuilder builder = handle.getRiskEstimator(populationmodel);
+        RiskModelHistogram classes = builder.getEquivalenceClassModel();
+        System.out.println("   * Equivalence classes:");
+        System.out.println("     - Average size: " + classes.getAvgClassSize());
+        System.out.println("     - Num classes : " + classes.getNumClasses());
+        System.out.println("     - Records : " + classes.getNumRecords());
+    }
 }

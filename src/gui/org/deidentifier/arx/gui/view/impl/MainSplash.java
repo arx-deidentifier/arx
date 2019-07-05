@@ -16,6 +16,7 @@
  */
 package org.deidentifier.arx.gui.view.impl;
 
+import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.nebula.widgets.nattable.util.GUIHelper;
@@ -53,7 +54,7 @@ public class MainSplash {
      */
     public MainSplash(Display display, Monitor monitor) {
         
-        this.version = Resources.getVersion();
+        this.version = ARXAnonymizer.VERSION;
         this.splash = Resources.getSplash(display);
         this.shell = new Shell(SWT.ON_TOP | (isMac() ? 0 : SWT.NO_TRIM));
         this.shell.setImages(Resources.getIconSet(display));

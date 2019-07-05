@@ -19,6 +19,7 @@ package org.deidentifier.arx.gui.view.impl.utility;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.aggregates.StatisticsBuilderInterruptible;
 import org.deidentifier.arx.aggregates.StatisticsQuality;
 import org.deidentifier.arx.gui.Controller;
@@ -31,11 +32,21 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledSeparator;
 import org.deidentifier.arx.gui.view.impl.common.async.Analysis;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisContext;
 import org.deidentifier.arx.gui.view.impl.common.async.AnalysisManager;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.nebula.widgets.pagination.IPageLoader;
+import org.eclipse.nebula.widgets.pagination.PageableController;
+import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResult;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
@@ -49,20 +60,43 @@ import de.linearbits.swt.table.DynamicTableColumn;
  */
 public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality> {
 
-    /** View */
-    private Composite       root;
+    /**
+     * Page loader
+     * @author Fabian Prasser
+     */
+    private class QualityPageLoader implements IPageLoader<PageResult<Pair<String, StatisticsQuality>>> {
+
+        @Override
+        public PageResult<Pair<String, StatisticsQuality>> loadPage(PageableController controller) {
+            if (data == null || data.getAttributes().isEmpty()) {
+                return PageListHelper.createPage(new ArrayList<Pair<String, StatisticsQuality>>(), controller);
+            } else {
+                List<Pair<String, StatisticsQuality>> list = new ArrayList<>();
+                for (String attribute : data.getAttributes()) {
+                    list.add(new Pair<>(attribute, data));
+                }
+                return PageListHelper.createPage(list, controller);
+            }
+        }
+    }
+
+    /** Model */
+    private StatisticsQuality data;
 
     /** View */
-    private SashForm        sash;
+    private Composite         root;
 
     /** View */
-    private DynamicTable    table;
+    private SashForm          sash;
 
     /** View */
-    private DynamicTable    table2;
+    private PageableTable     table;
+
+    /** View */
+    private DynamicTable      table2;
 
     /** Internal stuff. */
-    private AnalysisManager manager;
+    private AnalysisManager   manager;
 
     /**
      * Creates a new instance.
@@ -87,48 +121,24 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
     }
 
     /**
-     * Creates a table item
-     * @param attribute
-     * @param quality
+     * Creates a new column
+     * @param table
+     * @param name
+     * @param width
+     * @param provider
      */
-    private void createItem(String attribute, StatisticsQuality quality) {
-        TableItem item = new TableItem(this.table, SWT.NONE);
-        item.setText(0, attribute);
-        item.setText(1, quality.getDataType(attribute).getDescription().getLabel());
-        setNumericValueAtIndex(item, 2, quality.getMissings().getValue(attribute));
+    private TableViewerColumn createColumn(PageableTable table,
+                                           String name, 
+                                           ColumnLabelProvider provider) {
         
-        if (this.getTarget() == ModelPart.OUTPUT) {
-            setNumericValueAtIndex(item, 3, quality.getGeneralizationIntensity().getValue(attribute));
-            setNumericValueAtIndex(item, 4, quality.getGranularity().getValue(attribute));
-            setNumericValueAtIndex(item, 5, quality.getNonUniformEntropy().getValue(attribute));
-            setNumericValueAtIndex(item, 6, quality.getAttributeLevelSquaredError().getValue(attribute));
-        }
-    }
-
-    /**
-     * Returns a list of columns
-     * @return
-     */
-    private List<String> getColumns() {
-        
-        // Prepare
-        List<String> result = new ArrayList<>();
-        
-        // Input and output
-        result.add(Resources.getMessage("ViewStatisticsQuality.0")); //$NON-NLS-1$
-        result.add(Resources.getMessage("ViewStatisticsQuality.1")); //$NON-NLS-1$
-        result.add(Resources.getMessage("ViewStatisticsQuality.2")); //$NON-NLS-1$
-        
-        // Output only
-        if (getTarget() == ModelPart.OUTPUT) {
-            result.add(Resources.getMessage("ViewStatisticsQuality.3")); //$NON-NLS-1$
-            result.add(Resources.getMessage("ViewStatisticsQuality.4")); //$NON-NLS-1$
-            result.add(Resources.getMessage("ViewStatisticsQuality.5")); //$NON-NLS-1$
-            result.add(Resources.getMessage("ViewStatisticsQuality.18")); //$NON-NLS-1$
-        }
-        
-        // Return
-        return result;
+        TableViewerColumn column = new TableViewerColumn(table.getViewer(), SWT.NONE);
+        column.setLabelProvider(provider);
+        TableColumn tColumn = column.getColumn();
+        tColumn.setToolTipText(name);
+        tColumn.setText(name);
+        tColumn.setWidth(30);
+        tColumn.setResizable(false);
+        return column;
     }
 
     /**
@@ -175,27 +185,104 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         separator1.setText(Resources.getMessage("ViewStatisticsQuality.9")); //$NON-NLS-1$
         
         // Add to upper
-        this.table = SWTUtil.createTableDynamic(upper, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
-        this.table.setHeaderVisible(true);
-        this.table.setLinesVisible(true);
-        this.table.setMenu(new ClipboardHandlerTable(table).getMenu());
+        this.table = SWTUtil.createPageableTableViewer(upper, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION, true, true);
         this.table.setLayoutData(SWTUtil.createFillGridData());
-        
-        // Create columns
-        List<String> columns = getColumns();
-        int perc = (int)Math.floor(100d / (double)columns.size());
-        for (String column : columns) {
-            DynamicTableColumn c = new DynamicTableColumn(this.table, SWT.LEFT);
-            c.setWidth(perc + "%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
-            c.setText(column); //$NON-NLS-1$
-            SWTUtil.createColumnWithBarCharts(table, c);
-        }
+        this.table.getViewer().setContentProvider(new ArrayContentProvider());
+        this.table.setPageLoader(new QualityPageLoader());
 
+        // Table
+        Table tTable = this.table.getViewer().getTable();
+        SWTUtil.createGenericTooltip(tTable);
+        GridData gd = SWTUtil.createFillGridData();
+        gd.heightHint = 100;
+        tTable.setLayoutData(gd);
+        tTable.setHeaderVisible(true);
+        tTable.setMenu(new ClipboardHandlerTable(tTable).getMenu());
+        
+        // Create column: attribute
+        createColumn(this.table, Resources.getMessage("ViewStatisticsQuality.0"), //$NON-NLS-1$
+                     new ColumnLabelProvider() {
+                        @Override
+                        @SuppressWarnings("unchecked")
+                        public String getText(Object element) {
+                            Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
+                            return data.getFirst();
+                        }            
+        });
+        // Create column: data type
+        createColumn(this.table, Resources.getMessage("ViewStatisticsQuality.1"), //$NON-NLS-1$
+                     new ColumnLabelProvider() {
+                        @Override
+                        @SuppressWarnings("unchecked")
+                        public String getText(Object element) {
+                            Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
+                            return data.getSecond().getDataType(data.getFirst()).getDescription().getLabel();
+                        }            
+        });
+        // Create column: missings
+        createColumn(this.table, Resources.getMessage("ViewStatisticsQuality.2"), //$NON-NLS-1$
+                     new ColumnLabelProvider() {
+                        @Override
+                        @SuppressWarnings("unchecked")
+                        public String getText(Object element) {
+                            Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
+                            return SWTUtil.getPrettyString(data.getSecond().getMissings().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                        }            
+        });
+        
+        // Output only
+        if (getTarget() == ModelPart.OUTPUT) {
+            // Create column
+            createColumn(this.table, Resources.getMessage("ViewStatisticsQuality.3"), //$NON-NLS-1$
+                         new ColumnLabelProvider() {
+                            @Override
+                            @SuppressWarnings("unchecked")
+                            public String getText(Object element) {
+                                Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
+                                return SWTUtil.getPrettyString(data.getSecond().getGeneralizationIntensity().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                            }            
+            });
+            // Create column
+            createColumn(this.table, Resources.getMessage("ViewStatisticsQuality.4"), //$NON-NLS-1$
+                         new ColumnLabelProvider() {
+                            @Override
+                            @SuppressWarnings("unchecked")
+                            public String getText(Object element) {
+                                Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
+                                return SWTUtil.getPrettyString(data.getSecond().getGranularity().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                            }            
+            });
+            // Create column
+            createColumn(this.table, Resources.getMessage("ViewStatisticsQuality.5"), //$NON-NLS-1$
+                         new ColumnLabelProvider() {
+                            @Override
+                            @SuppressWarnings("unchecked")
+                            public String getText(Object element) {
+                                Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
+                                return SWTUtil.getPrettyString(data.getSecond().getNonUniformEntropy().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                            }            
+            });
+            // Create column
+            createColumn(this.table, Resources.getMessage("ViewStatisticsQuality.18"), //$NON-NLS-1$
+                         new ColumnLabelProvider() {
+                            @Override
+                            @SuppressWarnings("unchecked")
+                            public String getText(Object element) {
+                                Pair<String, StatisticsQuality> data = (Pair<String, StatisticsQuality>)element;
+                                return SWTUtil.getPrettyString(data.getSecond().getAttributeLevelSquaredError().getValue(data.getFirst()) * 100d) + "%"; //$NON-NLS-1$
+                            }            
+            });
+        }
+        
+        // Init
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
+        
         // Pack
-        for (final TableColumn col : table.getColumns()) {
+        for (final TableColumn col : table.getViewer().getTable().getColumns()) {
             col.pack();
         }
-        SWTUtil.createGenericTooltip(table);
+        SWTUtil.createGenericTooltip(table.getViewer().getTable());
 
         // Add to lower
         if (getTarget() == ModelPart.OUTPUT) {
@@ -228,7 +315,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
             for (final TableColumn col : table2.getColumns()) {
                 col.pack();
             }
-            SWTUtil.createGenericTooltip(table);
+            SWTUtil.createGenericTooltip(table2);
         }
         
         // Configure & return
@@ -252,11 +339,9 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
         if (this.manager != null) {
             this.manager.stop();
         }
-        table.setRedraw(false);
-        for (final TableItem i : table.getItems()) {
-            i.dispose();
-        }
-        table.setRedraw(true);
+        data = null;
+        table.setCurrentPage(0);
+        table.refreshPage();
         if (table2 != null) {
             table2.setRedraw(false);
             for (final TableItem i : table2.getItems()) {
@@ -297,23 +382,12 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     return;
                 }
 
-                // Prepare
-                table.setRedraw(false);
+                // Update
+                data = quality;
+                table.setCurrentPage(0);
+                table.refreshPage();
                 
-                // Clear
-                for (final TableItem i : table.getItems()) {
-                    i.dispose();
-                }
-                
-                // Add
-                for (String attribute : quality.getAttributes()) {
-                    createItem(attribute, quality);
-                }
-                
-                // Done
-                table.setRedraw(true);
-                table.layout();
-                
+                // Lower table
                 if (table2 != null) {
 
                     // Prepare
@@ -351,6 +425,10 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                     item = new TableItem(table2, SWT.NONE);
                     item.setText(0, Resources.getMessage("ViewStatisticsQuality.19")); //$NON-NLS-1$
                     setNumericValueAtIndex(item, 1, quality.getAttributeLevelSquaredError().getArithmeticMean(false));
+
+                    item = new TableItem(table2, SWT.NONE);
+                    item.setText(0, Resources.getMessage("ViewStatisticsQuality.20")); //$NON-NLS-1$
+                    setNumericValueAtIndex(item, 1, quality.getSSESST().getValue());
                     
                     // Done
                     table2.setRedraw(true);
@@ -360,7 +438,7 @@ public class ViewStatisticsQuality extends ViewStatistics<AnalysisContextQuality
                 // Dynamic weights
                 if (getTarget() == ModelPart.OUTPUT) {
                     
-                    int upperWeight = table.getItemCount();
+                    int upperWeight = table.getViewer().getTable().getItemCount();
                     int lowerWeight = table2.getItemCount();
                     if (upperWeight > 2 * lowerWeight) {
                         upperWeight = 2;

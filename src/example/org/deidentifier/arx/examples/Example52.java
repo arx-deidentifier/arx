@@ -175,6 +175,6 @@ public class Example52 extends Example {
         for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
             System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());
         }
-        System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
+        System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfSuppressedRecords());
     }
 }

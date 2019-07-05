@@ -80,7 +80,7 @@ public class RowSet implements Serializable, Cloneable {
      *
      * @param length
      */
-    private RowSet(int length) {
+    RowSet(int length) {
         this.length = length;
         int chunks = (int) (Math.ceil((double) this.length / 64d));
         this.array = new long[chunks];

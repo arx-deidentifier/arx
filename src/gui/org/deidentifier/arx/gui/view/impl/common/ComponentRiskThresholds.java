@@ -76,7 +76,6 @@ public class ComponentRiskThresholds {
     /**
      * Creates a new instance
      * @param parent
-     * @param shortText 
      */
     public ComponentRiskThresholds(final Composite parent) {
 
