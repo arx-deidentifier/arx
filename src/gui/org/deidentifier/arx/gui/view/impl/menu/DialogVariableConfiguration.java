@@ -73,6 +73,9 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	private static final int UNKNOWN_PARAMETER_ERROR = 4;
 	private static final int PROB_OUT_OF_BOUNDS_ERROR = 5;
 	private static final int NUMBER_OUT_OF_BOUNDS_ERROR = 6;
+	// TODO: add corresponding error message to Resource file
+	private static final int NAME_ALREADY_TAKEN_ERROR = 7;
+	private static final String NAME_ERROR_MSG = "Variable names must be unique.";
 
 	/** Combo for distributions */
 	private Combo comboDistribution;
@@ -154,12 +157,28 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 		textVariableName.addModifyListener(new ModifyListener() {
 			@Override
 			public void modifyText(ModifyEvent arg0) {
-				if (textVariableName.getText().equals(""))
-					setErrorMessage(EMPTY_NAME_ERROR, Resources.getMessage("DialogVariableConfiguration.5"));
-				else
-					setErrorMessage(EMPTY_NAME_ERROR, null);
+				validateVariableName(textVariableName.getText());
 			}
 		});
+	}
+
+	private void validateVariableName(String name) {
+		if (name.equals(""))
+			setErrorMessage(EMPTY_NAME_ERROR, Resources.getMessage("DialogVariableConfiguration.5"));
+		else
+			setErrorMessage(EMPTY_NAME_ERROR, null);
+
+		for (RandomVariable v : controller.getModel().getMaskingModel().getRandomVariables()) {
+			if (v == variable) {
+				continue;
+			}
+
+			if (v.getName().equals(name)) {
+				setErrorMessage(NAME_ALREADY_TAKEN_ERROR, NAME_ERROR_MSG);
+				return;
+			}
+		}
+		setErrorMessage(NAME_ALREADY_TAKEN_ERROR, null);
 	}
 
 	/*
@@ -173,10 +192,7 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	protected void createButtonsForButtonBar(Composite parent) {
 		createButton(parent, Window.OK, Resources.getMessage("DialogVariableConfiguration.9"), true);
 		createButton(parent, Window.CANCEL, Resources.getMessage("DialogVariableConfiguration.10"), false);
-		if (textVariableName.getText().equals(""))
-			setErrorMessage(EMPTY_NAME_ERROR, Resources.getMessage("DialogVariableConfiguration.5"));
-		else
-			setErrorMessage(EMPTY_NAME_ERROR, null);
+		validateVariableName(textVariableName.getText());
 	}
 
 	/*

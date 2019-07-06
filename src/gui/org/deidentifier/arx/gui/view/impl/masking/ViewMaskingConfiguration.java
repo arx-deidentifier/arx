@@ -333,6 +333,7 @@ public class ViewMaskingConfiguration implements IView {
 			}
 		} else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
 			updateMaskingType();
+
 			// TODO disable/hide masking configuration when no attribute is
 			// selected in the
 			// attribute configuration table (currently selected attribute is
@@ -362,8 +363,15 @@ public class ViewMaskingConfiguration implements IView {
 			reset();
 			return;
 		}
+
 		MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute);
-		textField.setText(MaskingConfiguration.getStringLength(attribute) + "");
+		Set<String> idAttributes = model.getInputDefinition().getIdentifyingAttributes();
+
+		if (idAttributes.isEmpty()) {
+			cmbMasking.select(0);
+			stack.setLayer(0);
+			return;
+		}
 		// sets the ComboBox to the appropriate Distribution, only if set to
 		// RandomGeneration or NoiseAddition
 		if (maskingType == MaskingType.RANDOM_GENERATION_MASKING || maskingType == MaskingType.NOISE_ADDITION_MASKING) {
@@ -376,6 +384,7 @@ public class ViewMaskingConfiguration implements IView {
 				cmbDistribution.select(0);
 			}
 		}
+
 		for (int i = 0; i < COMBO1_TYPES.length; i++) {
 			if (maskingType == COMBO1_TYPES[i]) {
 				cmbMasking.select(i);
