@@ -127,8 +127,13 @@ public class ModelEvent {
         /** RESPONSE VARIABLES */
         RESPONSE_VARIABLES,
         
+        /**  ATTRIBUTE_TYPE */
+        ATTRIBUTE_TYPE_BULK_UPDATE,
+        
+        /** R_SCRIPT */
 		R_SCRIPT,
 
+		/** R_PATH */
 		R_PATH
     }
 

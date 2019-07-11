@@ -109,11 +109,6 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected int getValueIdentifier(int column, String value) {
-        return source.getValueIdentifier(column, value);
-    }
-
-    @Override
     public boolean isOptimized() {
         checkRegistry();
         return source.isOptimized();
@@ -170,14 +165,14 @@ public class DataHandleSubset extends DataHandle {
     }
 
     @Override
-    protected ARXConfiguration getConfiguration() {
-        return source.getConfiguration();
+    protected DataType<?>[] getColumnToDataType() {
+        return source.columnToDataType;
     }
 
     @Override
-    protected DataType<?>[] getColumnToDataType() {
-        return source.columnToDataType;
-    }    
+    protected ARXConfiguration getConfiguration() {
+        return source.getConfiguration();
+    }
 
     @Override
     protected String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler handler) {
@@ -193,7 +188,7 @@ public class DataHandleSubset extends DataHandle {
         }
         handler.checkInterrupt();
         return vals.toArray(new String[vals.size()]);
-    }
+    }    
 
     /**
      * Returns the underlying source data handle.
@@ -202,6 +197,11 @@ public class DataHandleSubset extends DataHandle {
      */
     protected DataHandle getSource(){
         return source;
+    }
+
+    @Override
+    protected int getValueIdentifier(int column, String value) {
+        return source.getValueIdentifier(column, value);
     }
 
     @Override
@@ -217,6 +217,11 @@ public class DataHandleSubset extends DataHandle {
     @Override
     protected String internalGetValue(int row, int col, boolean ignoreSuppression) {
         return source.internalGetValue(this.subset.getArray()[row], col, ignoreSuppression);
+    }
+
+    @Override
+    protected boolean internalIsOutlier(int row, int[] columns) {
+        return source.internalIsOutlier(this.subset.getArray()[row], columns);
     }
 
     /**

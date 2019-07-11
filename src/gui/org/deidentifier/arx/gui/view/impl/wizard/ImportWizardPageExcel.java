@@ -81,6 +81,9 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class ImportWizardPageExcel extends WizardPage {
 
+    /** Hard limit on the maximal number of columns to show*/
+    private static final int MAX_COLUMS = 256;
+
     /**
      * Label provider for Excel columns
      *
@@ -117,44 +120,43 @@ public class ImportWizardPageExcel extends WizardPage {
     }
 
     /** Reference to the wizard containing this page. */
-    private ImportWizard wizardImport;
+    private ImportWizard                       wizardImport;
 
     /** Columns detected by this page and passed on to {@link ImportWizardModel}. */
     private ArrayList<ImportWizardModelColumn> wizardColumns;
-    /* Widgets */
-    /**  TODO */
-    private Label lblLocation;
-    
-    /**  TODO */
-    private Combo comboLocation;
-    
-    /**  TODO */
-    private Button btnChoose;
-    
-    /**  TODO */
-    private Button btnContainsHeader;
-    
-    /**  TODO */
-    private Combo comboSheet;
-    
-    /**  TODO */
-    private Label lblSheet;
-    
-    /**  TODO */
-    private Table tablePreview;
 
-    /**  TODO */
-    private TableViewer tableViewerPreview;
+    /** Widget */
+    private Label                              lblLocation;
+
+    /** Widget */
+    private Combo                              comboLocation;
+
+    /** Widget */
+    private Button                             btnChoose;
+
+    /** Widget */
+    private Button                             btnContainsHeader;
+
+    /** Widget */
+    private Combo                              comboSheet;
+
+    /** Widget */
+    private Label                              lblSheet;
+
+    /** Widget */
+    private Table                              tablePreview;
+
+    /** Widget */
+    private TableViewer                        tableViewerPreview;
 
     /** Preview data. */
-    ArrayList<String[]> previewData = new ArrayList<String[]>();
-
+    ArrayList<String[]>                        previewData = new ArrayList<String[]>();
 
     /** Workbook Either HSSFWorkbook or XSSFWorkbook, depending upon file type. */
-    private Workbook workbook;
-    
+    private Workbook                           workbook;
+
     /** Input stream. */
-    private InputStream stream;
+    private InputStream                        stream;
 
     /**
      * Creates a new instance of this page and sets its title and description.
@@ -452,7 +454,15 @@ public class ImportWizardPageExcel extends WizardPage {
         }
 
         /* Add new columns */
+        int columns = 0;
         for (ImportWizardModelColumn column : wizardColumns) {
+
+            // Make more resilient for high-dimensional data
+            columns++;
+            if (columns > MAX_COLUMS) {
+                setMessage(Resources.getMessage("ImportWizardPageCSV.21"), WARNING); //$NON-NLS-1$
+                break;
+            }
 
             TableViewerColumn tableViewerColumn = new TableViewerColumn(tableViewerPreview, SWT.NONE);
             tableViewerColumn.setLabelProvider(new ExcelColumnLabelProvider(((ImportColumnExcel) column.getColumn()).getIndex()));

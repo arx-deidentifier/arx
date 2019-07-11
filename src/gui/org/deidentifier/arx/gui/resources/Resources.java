@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.deidentifier.arx.gui.resources;
 
 import java.io.BufferedReader;
@@ -58,9 +57,10 @@ public class Resources {
 
     /** Messages */
     private static final ResourceBundle MESSAGES_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.messages"); //$NON-NLS-1$
-
-	private static final ResourceBundle RSCRIPT_BUNDLE = ResourceBundle
-			.getBundle("org.deidentifier.arx.gui.resources.r");
+    
+    /** Scripts*/
+    private static final ResourceBundle RSCRIPT_BUNDLE = ResourceBundle.getBundle("org.deidentifier.arx.gui.resources.r"); //$NON-NLS-1$
+    
     /** The splash. */
     private static Image                splash          = null;
 
@@ -70,14 +70,14 @@ public class Resources {
     /** The image cache */
     private final Map<String, Image>    imageCache;
 
-	/** All existing R script file names */
-	private static String[] scriptNames = RSCRIPT_BUNDLE.keySet().toArray(new String[0]);
-
-	/** The RScript temporary path cache */
-	private static final Map<String, String> scriptPathCache = new HashMap<String, String>();
-
     /** The charset used to read the license text */
     private final static Charset        CHARSET         = StandardCharsets.UTF_8;
+
+    /** All existing R script file names */
+    private static String[] scriptNames = RSCRIPT_BUNDLE.keySet().toArray(new String[0]);
+
+    /** The RScript temporary path cache */
+    private static final Map<String, String> scriptPathCache = new HashMap<String, String>();
 
     /**
      * Returns the logo.
@@ -144,7 +144,7 @@ public class Resources {
             return '!' + key + '!';
         }
     }
-
+    
     /**
      * Returns the splash image.
      *
@@ -156,15 +156,6 @@ public class Resources {
             splash = getImage(display, "splash.png"); //$NON-NLS-1$
         }
         return splash;
-    }
-    
-    /**
-     * Returns the version.
-     *
-     * @return
-     */
-    public static String getVersion() {
-        return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
     }
     
     /**
@@ -232,7 +223,7 @@ public class Resources {
                 }
             }
         });
-
+        
     }
     
     /**
@@ -377,47 +368,55 @@ public class Resources {
         }
     }
 
-	public static Map<String, String> getRMapping() {
-		Map<String, String> result = new HashMap<String, String>();
-		Enumeration<String> keys = RSCRIPT_BUNDLE.getKeys();
-		while (keys.hasMoreElements()) {
-			String key = keys.nextElement();
-			result.put(RSCRIPT_BUNDLE.getString(key), key);
-		}
-		return result;
-	}
+    /**
+     * Returns a mapping from script names to scripts
+     * @return
+     */
+    public static Map<String, String> getRMapping() {
+        Map<String, String> result = new HashMap<String, String>();
+        Enumeration<String> keys = RSCRIPT_BUNDLE.getKeys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            result.put(RSCRIPT_BUNDLE.getString(key), key);
+        }
+        return result;
+    }
 
-	public static String getRScript(String scriptName) {
+    /**
+     * Returns a script with a given name
+     * @param scriptName
+     * @return
+     */
+    public static String getRScript(String scriptName) {
 
-		if (!Arrays.asList(scriptNames).contains(scriptName)) { // There exists an R script for this name
-			System.out.println("There exists no script with this name: " + scriptName);
-			return null;
-		}
+        if (!Arrays.asList(scriptNames).contains(scriptName)) { // There exists an R script for this name
+            System.out.println("There exists no script with this name: " + scriptName);
+            return null;
+        }
 
-		// Already in ScriptBundle?
-		if (scriptPathCache.containsKey(scriptName)) {
-			return scriptPathCache.get(scriptName);
-		}
+        // Already in ScriptBundle?
+        if (scriptPathCache.containsKey(scriptName)) {
+            return scriptPathCache.get(scriptName);
+        }
 
-		// Otherwise read from file, store in temporary file:
-		try {
-			String prefix = scriptName.split("\\.")[0];
-			File tempFile = File.createTempFile(prefix, ".r");
+        // Otherwise read from file, store in temporary file:
+        try {
+            String prefix = scriptName.split("\\.")[0];
+            File tempFile = File.createTempFile(prefix, ".r");
 
-			Files.copy(Resources.class.getResourceAsStream(scriptName), tempFile.toPath(),
-					StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(Resources.class.getResourceAsStream(scriptName), tempFile.toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
 
-			// save file name of tempFile in the ScriptBundle Mapping
-			String tempFilePath = tempFile.getAbsolutePath();
-			scriptPathCache.put(scriptName, tempFilePath);
+            // save file name of tempFile in the ScriptBundle Mapping
+            String tempFilePath = tempFile.getAbsolutePath();
+            scriptPathCache.put(scriptName, tempFilePath);
 
-			return tempFilePath;
-		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Something went wrong with creating a temporary file for the R script " + scriptName);
-		}
+            return tempFilePath;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Something went wrong with creating a temporary file for the R script " + scriptName);
+        }
 
-		return null;
-	}
-
+        return null;
+    }
 }

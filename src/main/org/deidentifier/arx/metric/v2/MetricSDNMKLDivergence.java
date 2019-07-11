@@ -182,7 +182,7 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupify g) {
         
         // Obtain number of outliers
         double outliers = 0d;
@@ -220,17 +220,17 @@ public class MetricSDNMKLDivergence extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         return new ILSingleDimensionalWithBound(entry.count, entry.count);
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node) {
         return null;
     }
     
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation node,
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node,
                                                         HashGroupify g) {
         return null;
     }

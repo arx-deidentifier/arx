@@ -5,7 +5,7 @@
 
     <groupId>org.deidentifier.arx</groupId>
     <artifactId>arx</artifactId>
-    <version>3.7.1</version>
+    <version>3.8.0</version>
 
     <repositories>
         <repository>
@@ -29,6 +29,7 @@
                     <include>**/*.gif</include>
                     <include>**/*.pdf</include>
                     <include>**/*.txt</include>
+                    <include>**/*.r</include>
                 </includes>
             </resource>
             <resource>
@@ -470,6 +471,17 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.nebula.widgets.pagination</groupId>
+            <artifactId>core</artifactId>
+            <version>1.0.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>*</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>de.linearbits</groupId>
             <artifactId>newtonraphson</artifactId>
             <version>0.0.1</version>
@@ -643,6 +655,10 @@
                     <family>mac</family>
                     <arch>x86_64</arch>
                 </os>
+                <property>
+                    <name>core</name>
+                    <value>!true</value>
+                </property>
             </activation>
             <properties>
                 <envClassifier>osx-64</envClassifier>
@@ -669,6 +685,10 @@
                     <family>Windows</family>
                     <arch>x86_64</arch>
                 </os>
+                <property>
+                    <name>core</name>
+                    <value>!true</value>
+                </property>
             </activation>
             <properties>
                 <envClassifier>win-64</envClassifier>
@@ -694,6 +714,10 @@
                     <family>Windows</family>
                     <arch>x86</arch>
                 </os>
+                <property>
+                    <name>core</name>
+                    <value>!true</value>
+                </property>
             </activation>
             <properties>
                 <envClassifier>win</envClassifier>
@@ -719,6 +743,10 @@
                     <name>Linux</name>
                     <arch>x86</arch>
                 </os>
+                <property>
+                    <name>core</name>
+                    <value>!true</value>
+                </property>
             </activation>
             <properties>
                 <envClassifier>gtk</envClassifier>
@@ -744,6 +772,10 @@
                     <name>Linux</name>
                     <arch>x86_64</arch>
                 </os>
+                <property>
+                    <name>core</name>
+                    <value>!true</value>
+                </property>
             </activation>
             <properties>
                 <envClassifier>gtk-64</envClassifier>
@@ -761,6 +793,92 @@
                     </exclusions>
                 </dependency>
             </dependencies>
+        </profile>
+	<profile>
+            <id>core</id>
+            <activation>
+                <property>
+                    <name>core</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+        	<finalName>${project.artifactId}-${project.version}-${envClassifier}</finalName>
+                <resources>
+                    <resource>
+                        <directory>src/main</directory>
+                        <includes>
+                            <include>**/*.properties</include>
+                            <include>**/*.png</include>
+                            <include>**/*.gif</include>
+                            <include>**/*.pdf</include>
+                            <include>**/*.csv</include>
+                        </includes>
+                    </resource>
+                </resources>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>build-helper-maven-plugin</artifactId>
+                        <version>3.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>add-source</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>add-source</goal>
+                                </goals>
+                                <configuration>
+                                    <sources>
+                                        <source>${project.basedir}/src/main</source>
+                                        <source>${project.basedir}/src/example</source>
+                                    </sources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>3.6.1</version>
+                        <configuration>
+                            <source>1.8</source>
+                            <target>1.8</target>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-shade-plugin</artifactId>
+                        <version>3.1.1</version>
+                        <configuration>
+                			<createDependencyReducedPom>false</createDependencyReducedPom>
+           				</configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>shade</goal>
+                                </goals>
+                                <configuration>
+                                    <filters>
+                                        <filter>
+                                            <artifact>*:*</artifact>
+                                            <excludes>
+                                                <exclude>META-INF/*.SF</exclude>
+                                                <exclude>META-INF/*.DSA</exclude>
+                                                <exclude>META-INF/*.RSA</exclude>
+                                            </excludes>
+                                        </filter>
+                                    </filters>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>        
+            </build>
+            <properties>
+                <envClassifier>core</envClassifier>
+            </properties>
         </profile>
     </profiles>
 </project>

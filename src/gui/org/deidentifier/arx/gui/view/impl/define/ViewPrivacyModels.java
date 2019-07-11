@@ -53,7 +53,7 @@ import de.linearbits.swt.table.DynamicTableColumn;
  *
  * @author fabian
  */
-public class ViewCriteriaList implements IView {
+public class ViewPrivacyModels implements IView {
 
     /** Controller */
     private Controller               controller;
@@ -88,7 +88,7 @@ public class ViewCriteriaList implements IView {
     /** View */
     private final Image              symbolB;
     /** View */
-    private final LayoutCriteria     layout;
+    private final LayoutPrivacySettings     layout;
 
     /**
      * Creates a new instance.
@@ -97,13 +97,14 @@ public class ViewCriteriaList implements IView {
      * @param controller
      * @param layoutCriteria 
      */
-    public ViewCriteriaList(final Composite parent, final Controller controller, LayoutCriteria layoutCriteria) {
+    public ViewPrivacyModels(final Composite parent, final Controller controller, LayoutPrivacySettings layoutCriteria) {
 
         // Register
         this.controller = controller;
         this.controller.addListener(ModelPart.CRITERION_DEFINITION, this);
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         this.layout = layoutCriteria;
         
         this.symbolL = controller.getResources().getManagedImage("symbol_l.png"); //$NON-NLS-1$
@@ -239,6 +240,7 @@ public class ViewCriteriaList implements IView {
         
         if (event.part == ModelPart.CRITERION_DEFINITION ||
             event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
             event.part == ModelPart.MODEL) {
             if (model!=null) {
                 updateTable();
