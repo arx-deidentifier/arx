@@ -139,7 +139,7 @@ public class RIntegration {
 	 */
     public void shutdown() {
         if (this.process != null) {
-            RIntegration.this.process.destroy();
+            RIntegration.this.process.destroyForcibly();
             RIntegration.this.process = null;
             listener.fireClosedEvent();
         }
