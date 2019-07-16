@@ -1460,7 +1460,9 @@ public class Controller implements IView {
         } catch (final IOException e) {
             main.showInfoDialog(main.getShell(),
                                 Resources.getMessage("Controller.82"), e.getMessage()); //$NON-NLS-1$
-            actionMenuEditReset();
+
+            // Reset and return
+            reset();
             return;
         }
 
@@ -1478,7 +1480,8 @@ public class Controller implements IView {
             getResources().getLogger().info(worker.getError());
             main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.85"), //$NON-NLS-1$
                                 message);
-            actionMenuEditReset();
+            // Reset and return
+            reset();
             return;
         }
 
