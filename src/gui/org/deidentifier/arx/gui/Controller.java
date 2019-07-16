@@ -2034,6 +2034,7 @@ public class Controller implements IView {
 
     @Override
     public void reset() {
+        model.reset();
         for (final Set<IView> listeners : getListeners().values()) {
             for (final IView listener : listeners) {
                 listener.reset();
