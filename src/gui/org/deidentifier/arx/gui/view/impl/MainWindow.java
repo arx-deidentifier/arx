@@ -258,6 +258,7 @@ public class MainWindow implements IView {
     public void reset() {
         root.setSelection(0);
         root.setEnabled(false);
+        shell.setText(Resources.getMessage("MainWindow.0")); //$NON-NLS-1$
     }
 
     /**
