@@ -81,6 +81,10 @@ public class ViewStatisticsRTerminal extends ViewStatistics<AnalysisContextR> {
 		this.manager = new AnalysisManager(parent.getDisplay());
 
 		this.pathToR = OS.getR();
+
+		// Enable the Combo-Box Input if the R-path isn't null
+		if (this.pathToR != null)
+			input.setEnabled(true);
 	}
 
 	@Override
