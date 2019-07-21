@@ -111,11 +111,11 @@ public class ImportAdapterCSV extends ImportAdapter {
 
         /* Determine length*/
         if (config.isOptimizedLoading()) {
-            records = getLength(new FileInputStream(new File(config.getFileLocation())), config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+            records = getLength(new FileInputStream(new File(config.getFileLocation())), config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), config.getMaxColumns());
         }
         
         /* Get CSV iterator */
-        in = new CSVDataInput(cin, config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+        in = new CSVDataInput(cin, config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), new CSVOptions(config.getMaxColumns()));
         it = in.iterator(config.getContainsHeader());
 
         /* Check whether there is actual data within the CSV file */
@@ -150,7 +150,8 @@ public class ImportAdapterCSV extends ImportAdapter {
                               char delimiter,
                               char quote,
                               char escape,
-                              char[] linebreak) throws IOException {
+                              char[] linebreak,
+                              int maxColumns) throws IOException {
 
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
@@ -164,6 +165,9 @@ public class ImportAdapterCSV extends ImportAdapter {
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
+        if (maxColumns > 0) {
+            settings.setMaxColumns(maxColumns);
+        }
         
         CsvRoutines routines = new CsvRoutines(settings);
         long records = routines.getInputDimension(stream).rowCount();

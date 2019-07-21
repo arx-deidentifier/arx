@@ -2112,6 +2112,7 @@ public class Controller implements IView {
             model.getCSVSyntax().setEscape(csvconfig.getEscape());
             model.getCSVSyntax().setLinebreak(csvconfig.getLinebreak());
             model.getCSVSyntax().setQuote(csvconfig.getQuote());
+            model.getCSVSyntax().setMaxColumns(csvconfig.getMaxColumns());
         } else {
             model.setInputBytes(0);
         }

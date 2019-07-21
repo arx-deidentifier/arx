@@ -61,7 +61,7 @@ public class CSVOptions implements Serializable { // NO_UCD
      * @param settings
      */
     void apply(CsvParserSettings settings) {
-        if (maxColumns != null) {
+        if (maxColumns != null && maxColumns > 0) {
             settings.setMaxColumns(maxColumns);
         }
     }
@@ -71,7 +71,7 @@ public class CSVOptions implements Serializable { // NO_UCD
      * @param settings
      */
     void apply(CsvWriterSettings settings) {
-        if (maxColumns != null) {
+        if (maxColumns != null && maxColumns > 0) {
             settings.setMaxColumns(maxColumns);
         }
     }
