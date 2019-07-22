@@ -86,7 +86,20 @@ public class CSVDataChecksum {
      * @param linebreak the linebreak
      */
     public CSVDataChecksum(final char delimiter, final char quote, final char escape, final char[] linebreak) {
-        settings = createSettings(delimiter, quote, escape, linebreak);
+        settings = createSettings(delimiter, quote, escape, linebreak, 0);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param maxColumns 
+     */
+    public CSVDataChecksum(final char delimiter, final char quote, final char escape, final char[] linebreak, int maxColumns) {
+        settings = createSettings(delimiter, quote, escape, linebreak, maxColumns);
     }
 
     /**
@@ -95,7 +108,7 @@ public class CSVDataChecksum {
      * @param config the config
      */
     public CSVDataChecksum(final CSVSyntax config) {
-        this(config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+        this(config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), config.getMaxColumns());
     }
     
     /**
@@ -141,9 +154,10 @@ public class CSVDataChecksum {
      * @param quote the quote
      * @param escape the escape
      * @param linebreak the linebreak
+     * @param maxColumns 
      * @return the csv writer settings
      */
-    private CsvWriterSettings createSettings(final char delimiter, final char quote, final char escape, final char[] linebreak) {
+    private CsvWriterSettings createSettings(final char delimiter, final char quote, final char escape, final char[] linebreak, int maxColumns) {
         CsvFormat format = new CsvFormat();
         format.setDelimiter(delimiter);
         format.setQuote(quote);
@@ -155,6 +169,9 @@ public class CSVDataChecksum {
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
+        if (maxColumns > 0) {
+            settings.setMaxColumns(maxColumns);
+        }
         return settings;
     }
 }

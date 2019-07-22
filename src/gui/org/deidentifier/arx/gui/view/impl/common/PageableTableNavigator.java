@@ -262,25 +262,7 @@ public class PageableTableNavigator extends AbstractPageControllerComposite {
         layout.marginHeight = 0;
         layout.makeColumnsEqualWidth = false;
         parent.setLayout(layout);
-
         createLeftContainer(parent);
         createRightContainer(parent);
-//
-//        // Parent
-//        GridLayout layout = SWTUtil.createGridLayout(1, true);
-//        layout.marginWidth = 0;
-//        layout.marginHeight = 0;
-//        this.setLayout(layout);
-//        GridData data = SWTUtil.createNoFillGridData();
-//        data.heightHint=0;
-//        data.widthHint=0;
-//        this.setLayoutData(data);
-//        
-//        // Empty child
-//        Composite empty = new Composite(parent, SWT.NONE);
-//        data = SWTUtil.createNoFillGridData();
-//        data.heightHint=0;
-//        data.widthHint=0;
-//        empty.setLayoutData(data);
     }
 }

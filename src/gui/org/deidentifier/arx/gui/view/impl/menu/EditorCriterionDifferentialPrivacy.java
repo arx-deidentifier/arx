@@ -175,7 +175,7 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
         lLabel.setText(Resources.getMessage("CriterionDefinitionView.93")); //$NON-NLS-1$
 
         labelDelta = createLabel(group);
-        knobDelta = createKnobDouble(group, 0.00000000001d, 0.00001d);
+        knobDelta = createKnobDouble(group, 0.00000000001d, 0.01d);
         updateLabel(labelDelta, knobDelta.getValue());
         knobDelta.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -184,8 +184,23 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                 updateLabel(labelDelta, model.getDelta());
             }
         });
+        
+        // Create epsilon slider
+        final Label zLabel = new Label(group, SWT.NONE);
+        zLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
 
-        // Create criterion combo
+        labelEpsilon = createLabel(group);
+        knobEpsilon = createKnobDouble(group, 0.01d, 10d);
+        updateLabel(labelEpsilon, knobEpsilon.getValue()); //$NON-NLS-1$
+        knobEpsilon.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(final SelectionEvent arg0) {
+                model.setEpsilon(knobEpsilon.getValue());
+                updateLabel(labelEpsilon, model.getEpsilon());
+            }
+        });
+
+        // Create generalization combo
         final Label cLabel = new Label(group, SWT.PUSH);
         cLabel.setText(Resources.getMessage("CriterionDefinitionView.94")); //$NON-NLS-1$
 
@@ -233,21 +248,6 @@ public class EditorCriterionDifferentialPrivacy extends EditorCriterion<ModelDif
                         model.setGeneralization(DataGeneralizationScheme.create(getGeneralizationDegree(index)));
                     }
                 }
-            }
-        });
-        
-        // Create epsilon slider
-        final Label zLabel = new Label(group, SWT.NONE);
-        zLabel.setText(Resources.getMessage("CriterionDefinitionView.92")); //$NON-NLS-1$
-
-        labelEpsilon = createLabel(group);
-        knobEpsilon = createKnobDouble(group, 0.01d, 2d);
-        updateLabel(labelEpsilon, knobEpsilon.getValue()); //$NON-NLS-1$
-        knobEpsilon.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(final SelectionEvent arg0) {
-                model.setEpsilon(knobEpsilon.getValue());
-                updateLabel(labelEpsilon, model.getEpsilon());
             }
         });
         
