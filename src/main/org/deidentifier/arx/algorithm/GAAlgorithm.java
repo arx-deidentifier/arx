@@ -60,6 +60,10 @@ public class GAAlgorithm extends AbstractAlgorithm {
     private final int[]                 minValues;
     /** Checker */
     private final TransformationChecker checker;
+    /** Progress tracking */
+    private int                         checks    = 0;
+    /** Progress tracking */
+    private int                         maxChecks = 0;
 
 	/**
 	 * Creates a new instance
@@ -85,6 +89,11 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		int imm = config.getImmigrationInterval();
 		int immf = config.getImmigrationFraction();
 
+		// Progress
+        this.maxChecks = (2 * k + 
+                          itr * 2 * (int) Math.ceil(config.getCrossoverPercent() * k) +
+                          itr * 2 * (int) Math.ceil(config.getElitePercent() * k));
+		
 		// Build sub-populations
 		GASubpopulation z1 = new GASubpopulation();
 		GASubpopulation z2 = new GASubpopulation();
@@ -165,6 +174,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			transformation.setChecked(this.checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
 		}
 		trackOptimum(transformation);
+        progress((double)(checks++) / (double)maxChecks);
 		return transformation;
 	}
 	
