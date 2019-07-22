@@ -76,7 +76,6 @@ public class DialogVariableConfiguration extends TitleAreaDialog implements IDia
 	// TODO: add corresponding error message to Resource file
 	private static final int NAME_ALREADY_TAKEN_ERROR = 7;
 	private static final String NAME_ERROR_MSG = "Variable names must be unique.";
-
 	/** Combo for distributions */
 	private Combo comboDistribution;
 

@@ -363,8 +363,11 @@ public class ViewMaskingConfiguration implements IView {
 	private void updateMaskingType() {
 		if (model == null || model.getInputConfig() == null || model.getInputDefinition() == null) {
 			reset();
+			cmbMasking.setEnabled(false);
 			return;
 		}
+
+		cmbMasking.setEnabled(true);
 
 		MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute);
 		Set<String> idAttributes = model.getInputDefinition().getIdentifyingAttributes();
@@ -372,6 +375,7 @@ public class ViewMaskingConfiguration implements IView {
 		if (idAttributes.isEmpty()) {
 			cmbMasking.select(0);
 			stack.setLayer(0);
+			cmbMasking.setEnabled(false);
 			return;
 		}
 		// sets the ComboBox to the appropriate Distribution, only if set to

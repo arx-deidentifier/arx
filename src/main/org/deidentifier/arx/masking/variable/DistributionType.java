@@ -31,181 +31,195 @@ import java.util.List;
  */
 abstract public class DistributionType implements Serializable {
 
-    /**
-     * Class representing a discrete binomial distribution.
-     */
-    public static class DiscreteBinomial extends DistributionType {
+	/**
+	 * Class representing a discrete binomial distribution.
+	 */
+	public static class DiscreteBinomial extends DistributionType {
 
-        /** Description */
-        public static final DistributionTypeDescription description      = new DistributionTypeDescription("Binomial distribution (discrete)") {
+		/** Description */
+		public static final DistributionTypeDescription description = new DistributionTypeDescription(
+				"Binomial distribution (discrete)") {
 
-                                                                             /** SVUID */
-                                                                             private static final long serialVersionUID = 6235972585466197027L;
+			/** SVUID */
+			private static final long serialVersionUID = 6235972585466197027L;
 
-                                                                             /*
-                                                                              * (non-Javadoc)
-                                                                              * @see org.deidentifier.arx.masking.variable.DistributionType.DistributionTypeDescription#getParameters()
-                                                                              */
-                                                                             @Override
-                                                                             public List<DistributionParameter<?>> getParameters() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.deidentifier.arx.masking.variable.DistributionType.
+			 * DistributionTypeDescription#getParameters()
+			 */
+			@Override
+			public List<DistributionParameter<?>> getParameters() {
 
-                                                                                 // Number parameter
-                                                                                 DistributionParameter<Integer> paramNumber = new DistributionParameter.IntegerParameter();
-                                                                                 paramNumber.setName("number");
-                                                                                 paramNumber.setMin(0);
-                                                                                 paramNumber.setMax(Integer.MAX_VALUE);
-                                                                                 paramNumber.setInitial(10);
-                                                                                 paramNumber.setDescription("Number of tries");
+				// Number parameter
+				DistributionParameter<Integer> paramNumber = new DistributionParameter.IntegerParameter();
+				paramNumber.setName("number");
+				paramNumber.setMin(0);
+				paramNumber.setMax(1000);
+				paramNumber.setInitial(10);
+				paramNumber.setDescription("Number of tries");
 
-                                                                                 // Probability parameter
-                                                                                 DistributionParameter<Double> paramProbability = new DistributionParameter.DoubleParameter();
-                                                                                 paramProbability.setName("probability");
-                                                                                 paramProbability.setMin(0.0);
-                                                                                 paramProbability.setMax(1.0);
-                                                                                 paramProbability.setInitial(0.5);
-                                                                                 paramProbability.setDescription("Probability of success");
+				// Probability parameter
+				DistributionParameter<Double> paramProbability = new DistributionParameter.DoubleParameter();
+				paramProbability.setName("probability");
+				paramProbability.setMin(0.0);
+				paramProbability.setMax(1.0);
+				paramProbability.setInitial(0.5);
+				paramProbability.setDescription("Probability of success");
 
-                                                                                 ArrayList<DistributionParameter<?>> list = new ArrayList<>();
+				ArrayList<DistributionParameter<?>> list = new ArrayList<>();
 
-                                                                                 list.add(paramNumber);
-                                                                                 list.add(paramProbability);
+				list.add(paramNumber);
+				list.add(paramProbability);
 
-                                                                                 return list;
+				return list;
 
-                                                                             }
+			}
 
-                                                                         };
+		};
 
-        /** SVUID */
-        private static final long                       serialVersionUID = -6131417916199322727L;
+		/** SVUID */
+		private static final long serialVersionUID = -6131417916199322727L;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.masking.variable.DistributionType#getDescription()
-         */
-        @Override
-        public DistributionTypeDescription getDescription() {
-            return description;
-        }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.deidentifier.arx.masking.variable.DistributionType#getDescription
+		 * ()
+		 */
+		@Override
+		public DistributionTypeDescription getDescription() {
+			return description;
+		}
 
-    }
+	}
 
-    /**
-     * Class representing a discrete geometric distribution.
-     */
-    public static class DiscreteGeometric extends DistributionType {
+	/**
+	 * Class representing a discrete geometric distribution.
+	 */
+	public static class DiscreteGeometric extends DistributionType {
 
-        /** Description */
-        public static final DistributionTypeDescription description      = new DistributionTypeDescription("Geometric distribution (discrete)") {
+		/** Description */
+		public static final DistributionTypeDescription description = new DistributionTypeDescription(
+				"Geometric distribution (discrete)") {
 
-                                                                             /** SVUID */
-                                                                             private static final long serialVersionUID = 6235972585466197027L;
+			/** SVUID */
+			private static final long serialVersionUID = 6235972585466197027L;
 
-                                                                             /*
-                                                                              * (non-Javadoc)
-                                                                              * @see org.deidentifier.arx.masking.variable.DistributionType.DistributionTypeDescription#getParameters()
-                                                                              */
-                                                                             @Override
-                                                                             public List<DistributionParameter<?>> getParameters() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.deidentifier.arx.masking.variable.DistributionType.
+			 * DistributionTypeDescription#getParameters()
+			 */
+			@Override
+			public List<DistributionParameter<?>> getParameters() {
 
-                                                                                 // Probability parameter
-                                                                                 DistributionParameter<Double> paramProbability = new DistributionParameter.DoubleParameter();
-                                                                                 paramProbability.setName("probability");
-                                                                                 paramProbability.setMin(0.0);
-                                                                                 paramProbability.setMax(1.0);
-                                                                                 paramProbability.setInitial(0.5);
-                                                                                 paramProbability.setDescription("Probability");
+				// Probability parameter
+				DistributionParameter<Double> paramProbability = new DistributionParameter.DoubleParameter();
+				paramProbability.setName("probability");
+				paramProbability.setMin(0.0);
+				paramProbability.setMax(1.0);
+				paramProbability.setInitial(0.5);
+				paramProbability.setDescription("Probability");
 
-                                                                                 ArrayList<DistributionParameter<?>> list = new ArrayList<>();
+				ArrayList<DistributionParameter<?>> list = new ArrayList<>();
 
-                                                                                 list.add(paramProbability);
+				list.add(paramProbability);
 
-                                                                                 return list;
+				return list;
 
-                                                                             }
+			}
 
-                                                                         };
+		};
 
-        /** SVUID */
-        private static final long                       serialVersionUID = -6131417916199322727L;
+		/** SVUID */
+		private static final long serialVersionUID = -6131417916199322727L;
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see org.deidentifier.arx.masking.variable.DistributionType#getDescription()
-         */
-        @Override
-        public DistributionTypeDescription getDescription() {
-            return description;
-        }
+		/*
+		 * (non-Javadoc)
+		 * 
+		 * @see
+		 * org.deidentifier.arx.masking.variable.DistributionType#getDescription
+		 * ()
+		 */
+		@Override
+		public DistributionTypeDescription getDescription() {
+			return description;
+		}
 
-    }
+	}
 
-    /**
-     * Class representing a distribution type description.
-     */
-    public static abstract class DistributionTypeDescription implements Serializable {
+	/**
+	 * Class representing a distribution type description.
+	 */
+	public static abstract class DistributionTypeDescription implements Serializable {
 
-        /** SVUID */
-        private static final long serialVersionUID = 2298407320134003676L;
+		/** SVUID */
+		private static final long serialVersionUID = 2298407320134003676L;
 
-        /** Label */
-        private String            label;
+		/** Label */
+		private String label;
 
-        /**
-         * Creates an instance.
-         * 
-         * @param label
-         */
-        private DistributionTypeDescription(String label) {
-            this.label = label;
-        }
+		/**
+		 * Creates an instance.
+		 * 
+		 * @param label
+		 */
+		private DistributionTypeDescription(String label) {
+			this.label = label;
+		}
 
-        /**
-         * Returns the label.
-         * @return
-         */
-        public String getLabel() {
-            return this.label;
-        }
+		/**
+		 * Returns the label.
+		 * 
+		 * @return
+		 */
+		public String getLabel() {
+			return this.label;
+		}
 
-        /**
-         * Returns a list of parameters with their default value
-         * @return
-         */
-        abstract public List<DistributionParameter<?>> getParameters();
+		/**
+		 * Returns a list of parameters with their default value
+		 * 
+		 * @return
+		 */
+		abstract public List<DistributionParameter<?>> getParameters();
 
-    }
+	}
 
-    /** Discrete binomial distribution */
-    public static final DistributionType DISCRETE_BINOMIAL  = new DiscreteBinomial();
+	/** Discrete binomial distribution */
+	public static final DistributionType DISCRETE_BINOMIAL = new DiscreteBinomial();
 
-    /** Discrete geometric distribution */
-    public static final DistributionType DISCRETE_GEOMETRIC = new DiscreteGeometric();
+	/** Discrete geometric distribution */
+	public static final DistributionType DISCRETE_GEOMETRIC = new DiscreteGeometric();
 
-    /** SVUID */
-    private static final long            serialVersionUID   = -6444026395316975518L;
+	/** SVUID */
+	private static final long serialVersionUID = -6444026395316975518L;
 
-    /**
-     * Returns a list of distributions.
-     * @return
-     */
-    public static final List<DistributionTypeDescription> list() {
+	/**
+	 * Returns a list of distributions.
+	 * 
+	 * @return
+	 */
+	public static final List<DistributionTypeDescription> list() {
 
-        ArrayList<DistributionTypeDescription> list = new ArrayList<>();
+		ArrayList<DistributionTypeDescription> list = new ArrayList<>();
 
-        list.add(DISCRETE_BINOMIAL.getDescription());
-        list.add(DISCRETE_GEOMETRIC.getDescription());
+		list.add(DISCRETE_BINOMIAL.getDescription());
+		list.add(DISCRETE_GEOMETRIC.getDescription());
 
-        return list;
+		return list;
 
-    }
+	}
 
-    /**
-     * Returns the description.
-     * @return
-     */
-    abstract public DistributionTypeDescription getDescription();
+	/**
+	 * Returns the description.
+	 * 
+	 * @return
+	 */
+	abstract public DistributionTypeDescription getDescription();
 
 }
