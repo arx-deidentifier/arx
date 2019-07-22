@@ -192,8 +192,8 @@ public class ViewMaskingConfiguration implements IView {
 		compositetf.setLayout(typeInputGridLayout);
 		final int maxLength = 20;
 		textField = new Text(compositetf, SWT.SINGLE | SWT.BORDER);
-		textField.setText("");
-		textField.setToolTipText("");
+		textField.setText("15");
+		textField.setToolTipText("15");
 		textField.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 		textField.setEditable(false);
 		// Button for updating
