@@ -330,6 +330,8 @@ public class ViewMaskingConfiguration implements IView {
 			if (model != null) {
 				attribute = model.getSelectedAttribute();
 				updateMaskingType();
+				textField.setText(MaskingConfiguration.getStringLength(attribute) + "");
+				textField.setToolTipText(MaskingConfiguration.getStringLength(attribute) + "");
 			}
 		} else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
 			updateMaskingType();
