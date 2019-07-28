@@ -53,36 +53,37 @@ public class DataHandleSubset extends DataHandle {
 
     @Override
     public String getAttributeName(int col) {
-        checkRegistry();
+        checkReleased();
         return source.getAttributeName(col);
     }
     
     @Override
     public DataType<?> getDataType(String attribute) {
-        checkRegistry();
+        checkReleased();
         return source.getDataType(attribute);
     }
     
     @Override
     public int getGeneralization(String attribute) {
-        checkRegistry();
+        checkReleased();
         return source.getGeneralization(attribute);
     }
 
     @Override
     public int getNumColumns() {
-        checkRegistry();
+        checkReleased();
         return source.getNumColumns();
     }
 
     @Override
     public int getNumRows() {
-        checkRegistry();
+        checkReleased();
         return this.subset.getArray().length;
     }
 
     @Override
     public StatisticsBuilder getStatistics() {
+        checkReleased();
         return new StatisticsBuilder(new DataHandleInternal(this));
     }
 
@@ -92,37 +93,37 @@ public class DataHandleSubset extends DataHandle {
      * @return
      */
     public int[] getSubset() {
-        checkRegistry();
+        checkReleased();
         return this.subset.getArray();
     }
 
     @Override
     public String getValue(int row, int col) {
-        checkRegistry();
+        checkReleased();
         return source.getValue(this.subset.getArray()[row], col);
     }
 
     @Override
     public DataHandle getView(){
-        checkRegistry();
+        checkReleased();
         return this;
     }
 
     @Override
     public boolean isOptimized() {
-        checkRegistry();
+        checkReleased();
         return source.isOptimized();
     }
 
     @Override
     public boolean isOutlier(int row) {
-        checkRegistry();
+        checkReleased();
         return super.isOutlier(this.subset.getArray()[row]);
     }
 
     @Override
     public Iterator<String[]> iterator() {
-        checkRegistry();
+        checkReleased();
         return new Iterator<String[]>() {
 
             int index = -1;
@@ -178,7 +179,7 @@ public class DataHandleSubset extends DataHandle {
     protected String[] getDistinctValues(int column, boolean ignoreSuppression, InterruptHandler handler) {
 
         // Check
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
 
         final Set<String> vals = new HashSet<String>();

@@ -103,7 +103,7 @@ public abstract class DataHandle {
      * @return the column index of
      */
     public int getColumnIndexOf(final String attribute) {
-        checkRegistry();
+        checkReleased();
         return headerMap.getOrDefault(attribute, -1);
     }
 
@@ -114,7 +114,7 @@ public abstract class DataHandle {
      * @return the data type
      */
     public DataType<?> getDataType(final String attribute) {
-        checkRegistry();
+        checkReleased();
         return definition.getDataType(attribute);
     }
 
@@ -142,7 +142,7 @@ public abstract class DataHandle {
      * @return the definition
      */
     public DataDefinition getDefinition() {
-        checkRegistry();
+        checkReleased();
         return definition;
     }
 
@@ -315,7 +315,7 @@ public abstract class DataHandle {
      */
     public <U> List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Class<U> clazz, Locale locale, double threshold) {
 
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         double distinct = this.getDistinctValues(column).length;
         List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
@@ -375,7 +375,7 @@ public abstract class DataHandle {
      */
     public List<Pair<DataType<?>, Double>> getMatchingDataTypes(int column, Locale locale, double threshold) {
 
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         List<Pair<DataType<?>, Double>> result = new ArrayList<Pair<DataType<?>, Double>>();
         result.addAll(getMatchingDataTypes(column, Long.class, locale, threshold));
@@ -416,7 +416,7 @@ public abstract class DataHandle {
      * @return the non conforming values
      */
     public String[] getNonConformingValues(int column, DataType<?> type, int max) {
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         Set<String> result = new HashSet<String>();
         for (String value : this.getDistinctValues(column)) {
@@ -445,7 +445,7 @@ public abstract class DataHandle {
      * @return the num conforming values
      */
     public int getNumConformingValues(int column, DataType<?> type) {
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         int count = 0;
         for (String value : this.getDistinctValues(column)) {
@@ -562,7 +562,7 @@ public abstract class DataHandle {
      * @return the view
      */
     public DataHandle getView() {
-        checkRegistry();
+        checkReleased();
         if (subset == null) {
             return this;
         } else {
@@ -575,17 +575,8 @@ public abstract class DataHandle {
      * @return
      */
     public boolean isOptimized() {
-        checkRegistry();
+        checkReleased();
         return false;
-    }
-
-    /**
-     * Determines whether this handle is orphaned, i.e., should not be used anymore
-     *
-     * @return true, if is orphaned
-     */
-    public boolean isOrphaned() {
-        return registry == null;
     }
 
     /**
@@ -596,8 +587,17 @@ public abstract class DataHandle {
      * @return true, if is outlier
      */
     public boolean isOutlier(int row) {
-        checkRegistry();
+        checkReleased();
         return registry.isOutlier(this, row);
+    }
+
+    /**
+     * Determines whether this handle is orphaned, i.e., should not be used anymore
+     *
+     * @return true, if this handle has been released
+     */
+    public boolean isReleased() {
+        return registry == null;
     }
 
     /**
@@ -615,6 +615,7 @@ public abstract class DataHandle {
         if (registry != null) {
             registry.release(this);
         }
+        registry = null;
     }
 
     /**
@@ -638,7 +639,7 @@ public abstract class DataHandle {
      * @return Whether the original value was found
      */
     public boolean replace(int column, String original, String replacement) {
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         if (!getDataType(getAttributeName(column)).isValid(replacement)) {
             throw new IllegalArgumentException("Value does'nt match the attribute's data type");
@@ -658,7 +659,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final File file) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(file);
         output.write(iterator());
     }
@@ -671,7 +672,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final File file, final char separator) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(file, separator);
         output.write(iterator());
     }
@@ -684,7 +685,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final File file, final CSVSyntax config) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(file, config);
         output.write(iterator());
     }
@@ -696,7 +697,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final OutputStream out) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(out);
         output.write(iterator());
     }
@@ -709,7 +710,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final OutputStream out, final char separator) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(out, separator);
         output.write(iterator());
     }
@@ -722,7 +723,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final OutputStream out, final CSVSyntax config) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(out, config);
         output.write(iterator());
     }
@@ -734,7 +735,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final String path) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(path);
         output.write(iterator());
     }
@@ -747,7 +748,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final String path, final char separator) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(path, separator);
         output.write(iterator());
     }
@@ -760,7 +761,7 @@ public abstract class DataHandle {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public void save(final String path, final CSVSyntax config) throws IOException {
-        checkRegistry();
+        checkReleased();
         final CSVDataOutput output = new CSVDataOutput(path, config);
         output.write(iterator());
     }
@@ -773,7 +774,7 @@ public abstract class DataHandle {
      * @param columns An integer array containing column indicides
      */
     public void sort(boolean ascending, int... columns) {
-        checkRegistry();
+        checkReleased();
         registry.sort(this, ascending, columns);
     }
 
@@ -787,7 +788,7 @@ public abstract class DataHandle {
      * @param columns An integer array containing column indicides
      */
     public void sort(int from, int to, boolean ascending, int... columns) {
-        checkRegistry();
+        checkReleased();
         registry.sort(this, from, to, ascending, columns);
     }
 
@@ -800,7 +801,7 @@ public abstract class DataHandle {
      * @param columns An integer array containing column indicides
      */
     public void sort(Swapper swapper, boolean ascending, int... columns) {
-        checkRegistry();
+        checkReleased();
         registry.sort(this, swapper, ascending, columns);
     }
 
@@ -815,7 +816,7 @@ public abstract class DataHandle {
      * @param columns An integer array containing column indicides
      */
     public void sort(Swapper swapper, int from, int to, boolean ascending, int... columns) {
-        checkRegistry();
+        checkReleased();
         registry.sort(this, swapper, from, to, ascending, columns);
     }
 
@@ -826,7 +827,7 @@ public abstract class DataHandle {
      * @param row2 the row2
      */
     public void swap(int row1, int row2) {
-        checkRegistry();
+        checkReleased();
         registry.swap(this, row1, row2);
     }
 
@@ -870,10 +871,9 @@ public abstract class DataHandle {
     /**
      * Checks whether a registry is referenced.
      */
-    protected void checkRegistry() {
-        if (registry == null) {
-            throw new RuntimeException("This data handle (" + this.getClass().getSimpleName() + "@" +
-                                       hashCode() + ") is orphaned");
+    protected void checkReleased() {
+        if (isReleased()) {
+            throw new RuntimeException("This data handle (" + this.getClass().getSimpleName() + "@" + hashCode() + ") has been released");
         }
     }
 
@@ -901,15 +901,9 @@ public abstract class DataHandle {
      * @return the base data type
      */
     protected DataType<?> getBaseDataType(final String attribute) {
-        checkRegistry();
+        checkReleased();
         return getRegistry().getBaseDataType(attribute);
     }
-
-    /**
-     * Returns the ARXConfiguration that is currently being used, null if this is an input handle
-     * @return
-     */
-    protected abstract ARXConfiguration getConfiguration();
 
     /**
      * Generates an array of data types.
@@ -917,6 +911,12 @@ public abstract class DataHandle {
      * @return the data type array
      */
     protected abstract DataType<?>[] getColumnToDataType();
+
+    /**
+     * Returns the ARXConfiguration that is currently being used, null if this is an input handle
+     * @return
+     */
+    protected abstract ARXConfiguration getConfiguration();
 
     /**
      * Returns the distinct values.
@@ -962,7 +962,7 @@ public abstract class DataHandle {
                                   final int[] columns,
                                   final boolean ascending) {
 
-        checkRegistry();
+        checkReleased();
         try {
             for (int i = 0; i < columns.length; i++) {
 
@@ -998,6 +998,15 @@ public abstract class DataHandle {
     protected abstract String internalGetValue(int row, int col, boolean ignoreSuppression);
 
     /**
+     * Returns whether this is an outlier regarding the given columns. If no columns have been
+     * specified, <code>true</code> will be returned.
+     * @param row
+     * @param columns
+     * @return
+     */
+    protected abstract boolean internalIsOutlier(int row, int[] columns);
+
+    /**
      * Internal replacement method.
      *
      * @param column the column
@@ -1026,7 +1035,7 @@ public abstract class DataHandle {
             headerMap.put(header[i], i);
         }
     }
-
+    
     /**
      * Updates the registry.
      *
@@ -1035,7 +1044,7 @@ public abstract class DataHandle {
     protected void setRegistry(DataRegistry registry) {
         this.registry = registry;
     }
-    
+
     /**
      * Sets the subset.
      *
@@ -1044,13 +1053,4 @@ public abstract class DataHandle {
     protected void setView(DataHandle handle) {
         subset = handle;
     }
-
-    /**
-     * Returns whether this is an outlier regarding the given columns. If no columns have been
-     * specified, <code>true</code> will be returned.
-     * @param row
-     * @param columns
-     * @return
-     */
-    protected abstract boolean internalIsOutlier(int row, int[] columns);
 }
