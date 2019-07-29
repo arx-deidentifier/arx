@@ -615,7 +615,6 @@ public abstract class DataHandle {
         if (registry != null) {
             registry.release(this);
         }
-        registry = null;
     }
 
     /**
