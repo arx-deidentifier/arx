@@ -100,4 +100,26 @@ public class HashGroupifyEntry {
     public void read() {
         matrix.iterator(row);
     }
+
+    /**
+     * Suppresses columns[0] to columns[size-1]
+     * @param suppressed
+     * @param columns 
+     * @param size
+     * @return Whether new cells have been suppressed
+     */
+    public boolean suppress(int[] suppressed, int[] columns, int size) {
+        boolean modified = false;
+        matrix.setRow(this.representative);
+        for (int index = 0; index < size; index++) {
+            int column = columns[index];
+            int suppressedValue = suppressed[column];
+            int value = matrix.getValueAtColumn(column);
+            if (value != suppressedValue) {
+                matrix.setValueAtColumn(column, suppressedValue);
+                modified = true;
+            }
+        }
+        return modified;
+    }
 }

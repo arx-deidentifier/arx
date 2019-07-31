@@ -35,14 +35,17 @@ public class HashGroupifyArray {
     private final DataArray           array;
     /** Entry */
     private final HashGroupifyEntry[] entries;
+    /** Suppressed value */
+    private final int[]               suppressed;
 
     /**
      * Creates a new instance
      * 
      * @param metric, null if ordering should not be applied
+     * @param suppressed, suppressed values
      * @param entry
      */
-    HashGroupifyArray(HashGroupifyEntry entry) {
+    HashGroupifyArray(HashGroupifyEntry entry, int[] suppressed) {
         
         List<HashGroupifyEntry> entries = new ArrayList<HashGroupifyEntry>();
         
@@ -68,6 +71,7 @@ public class HashGroupifyArray {
         // Store
         this.entries = entries.toArray(new HashGroupifyEntry[entries.size()]);
         this.array =  new DataArray(entries);
+        this.suppressed = suppressed;
     }
     
     /**
@@ -97,5 +101,16 @@ public class HashGroupifyArray {
         boolean suppressed = entry.isNotOutlier;
         entry.isNotOutlier = false;
         return suppressed;
+    }
+
+    /**
+     * Columns to suppress are in columns[0] ... columns[size-1]
+     * @param index
+     * @param columns
+     * @param size
+     * @return
+     */
+    public boolean suppress(int index, int[] columns, int size) {
+        return entries[index].suppress(suppressed, columns, size);
     }
 }

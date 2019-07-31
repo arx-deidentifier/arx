@@ -612,7 +612,7 @@ public class HashGroupify {
         for (MatrixBasedCriterion criterion : this.privacyModelsMatrixBased) {
 
             // Build an array that can be modified
-            HashGroupifyArray array = new HashGroupifyArray(this.hashTableFirstEntry);
+            HashGroupifyArray array = new HashGroupifyArray(this.hashTableFirstEntry, this.suppressedCodes);
                 
             // Enforce: repeat until there are no more modifications
             while (criterion.enforce(array, earlyAbort ? this.suppressionLimit : Integer.MAX_VALUE)) {
@@ -624,7 +624,7 @@ public class HashGroupify {
                 }
                 
                 // Rebuild the array for the next iteration
-                array = new HashGroupifyArray(this.hashTableFirstEntry);
+                array = new HashGroupifyArray(this.hashTableFirstEntry, this.suppressedCodes);
             }
         }
     }
