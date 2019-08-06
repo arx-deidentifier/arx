@@ -271,6 +271,7 @@ public class DataManager {
         }
 
         // finalize dictionary
+        dataGeneralized.getDictionary().registerSpecialValues();
         dataGeneralized.getDictionary().finalizeAll();
         dataAnalyzed.getDictionary().finalizeAll();
 
