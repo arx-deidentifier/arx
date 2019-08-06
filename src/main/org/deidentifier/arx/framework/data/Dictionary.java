@@ -107,8 +107,6 @@ public class Dictionary implements Serializable {
      */
     public void finalizeAll() {
         for (int i = 0; i < maps.length; i++) {
-            register(i, DataType.ANY_VALUE);
-            register(i, DataType.NULL_VALUE);
             mapping[i] = new String[maps[i].size()];
             suppressed[i] = -1; // Won't match anything
             final Object[] keys = maps[i].keys;
