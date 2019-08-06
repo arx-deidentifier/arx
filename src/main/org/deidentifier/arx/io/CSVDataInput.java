@@ -152,6 +152,21 @@ public class CSVDataInput {
     public CSVDataInput(final File file, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         this(new LazyFileReader(file, charset), delimiter, quote, escape, linebreak, null);
     }
+
+    /**
+     * Instantiate.
+     *
+     * @param file the file
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param options
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataInput(final File file, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak, final CSVOptions options) throws IOException {
+        this(new LazyFileReader(file, charset), delimiter, quote, escape, linebreak, null, options);
+    }
     
     /**
      * Instantiate.
@@ -252,6 +267,21 @@ public class CSVDataInput {
      */
     public CSVDataInput(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         this(new InputStreamReader(stream, charset), delimiter, quote, escape, linebreak, null);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param options
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataInput(final InputStream stream, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak, final CSVOptions options) throws IOException {
+        this(new InputStreamReader(stream, charset), delimiter, quote, escape, linebreak, null, options);
     }
 
     /**
@@ -396,6 +426,21 @@ public class CSVDataInput {
      */
     public CSVDataInput(final String filename, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         this(new File(filename), charset, delimiter, quote, escape, linebreak);
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param filename the filename
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param options
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataInput(final String filename, final Charset charset, final char delimiter, final char quote, final char escape, final char[] linebreak, CSVOptions options) throws IOException {
+        this(new File(filename), charset, delimiter, quote, escape, linebreak, options);
     }
 
     /**

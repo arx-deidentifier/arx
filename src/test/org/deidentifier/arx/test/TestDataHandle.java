@@ -234,7 +234,7 @@ public class TestDataHandle extends AbstractTest {
         try {
             top.getValue(0, 0);
         } catch (RuntimeException e) {
-            if (e.getMessage().contains("orphaned")) {
+            if (e.getMessage().contains("released")) {
                 return;
             }
         }

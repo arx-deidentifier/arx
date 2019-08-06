@@ -145,37 +145,38 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     public String getAttributeName(final int column) {
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         return header[column];
     }
 
     @Override
     public int getGeneralization(final String attribute) {
-        checkRegistry();
+        checkReleased();
         return 0;
     }
 
     @Override
     public int getNumColumns() {
-        checkRegistry();
+        checkReleased();
         return header.length;
     }
 
     @Override
     public int getNumRows() {
-        checkRegistry();
+        checkReleased();
         return data.getNumRows();
     }
 
     @Override
     public StatisticsBuilder getStatistics() {
+        checkReleased();
         return new StatisticsBuilder(new DataHandleInternal(this));
     }
     
     @Override
     public String getValue(final int row, final int column) {
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         checkRow(row, data.getNumRows());
         return internalGetValue(row, column, false);
@@ -183,7 +184,7 @@ public class DataHandleInput extends DataHandle {
     
     @Override
     public Iterator<String[]> iterator() {
-        checkRegistry();
+        checkReleased();
         return new Iterator<String[]>() {
 
             int index = -1;
@@ -261,15 +262,8 @@ public class DataHandleInput extends DataHandle {
         return this.getDataType(attribute);
     }
 
-    @Override
-    protected DataArray getDataArray(int[] columns, int[] rows) {
-        checkRegistry();
-        return new DataArray(this.data, this.dictionary, columns, rows);
-    }
-
-    @Override
     protected DataType<?>[] getColumnToDataType() {
-        checkRegistry();
+        checkReleased();
         DataType<?>[] dataTypes = new DataType[header.length];
         for (int i = 0; i < header.length; i++) {
             final DataType<?> type = definition.getDataType(header[i]);
@@ -281,15 +275,21 @@ public class DataHandleInput extends DataHandle {
         }
         return dataTypes;
     }
-    
+
     @Override
     protected ARXConfiguration getConfiguration() {
         return null;
     }
+    
+    @Override
+    protected DataArray getDataArray(int[] columns, int[] rows) {
+        checkReleased();
+        return new DataArray(this.data, this.dictionary, columns, rows);
+    }
 
     @Override
     protected String[] getDistinctValues(final int column, final boolean ignoreSuppression, InterruptHandler handler) {
-        checkRegistry();
+        checkReleased();
         handler.checkInterrupt();
         checkColumn(column);
         handler.checkInterrupt();
@@ -306,7 +306,7 @@ public class DataHandleInput extends DataHandle {
      * @return
      */
     protected DataMatrix getInputBuffer() {
-        checkRegistry();
+        checkReleased();
         return this.dataGeneralized;
     }
     

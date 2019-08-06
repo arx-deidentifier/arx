@@ -31,6 +31,7 @@ import org.deidentifier.arx.gui.resources.Charsets;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.CSVOptions;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportColumn;
@@ -184,21 +185,21 @@ public class ImportWizardPageCSV extends WizardPage {
      * 
      * @see {@link #delimiters}
      */
-    private int                                selectedDelimiter = 0;
+    private int                                selectedDelimiter    = 0;
 
     /**
      * Currently selected delimiter (index).
      * 
      * @see {@link #quotes}
      */
-    private int                                selectedQuote = 0;
+    private int                                selectedQuote        = 0;
 
     /**
      * Currently selected escape (index).
      * 
      * @see {@link #quotes}
      */
-    private int                                selectedEscape    = 0;
+    private int                                selectedEscape       = 0;
     
     /**
      * Currently selected line break (index).
@@ -208,8 +209,12 @@ public class ImportWizardPageCSV extends WizardPage {
     /**
      * Currently selected charset (index).
      */
-    private int                                selectedCharset    = 0;
+    private int                                selectedCharset      = 0;
 
+    /**
+     * Currently selected max. number of columns
+     */
+    private int                                selectedMaxColumns   = 0;
 
     /**
      * Supported escape characters.
@@ -759,11 +764,11 @@ public class ImportWizardPageCSV extends WizardPage {
         final Charset charset = Charsets.getCharsetForName(Charsets.getNamesOfAvailableCharsets()[selectedCharset]);
 
         /* Variables needed for processing */
-        final CSVDataInput in = new CSVDataInput(location, charset, delimiter, quote, escape, linebreak);
+        final CSVDataInput in = new CSVDataInput(location, charset, delimiter, quote, escape, linebreak, new CSVOptions(selectedMaxColumns));
         final Iterator<String[]> it = in.iterator(false);
         final String[] firstLine;
         wizardColumns = new ArrayList<ImportWizardModelColumn>();
-        ImportConfigurationCSV config = new ImportConfigurationCSV(location, charset, delimiter, quote, escape, linebreak, containsHeader);
+        ImportConfigurationCSV config = new ImportConfigurationCSV(location, charset, delimiter, quote, escape, linebreak, containsHeader, selectedMaxColumns);
 
         /* Check whether there is at least one line in file and retrieve it */
         if (it.hasNext()) {

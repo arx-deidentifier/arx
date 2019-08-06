@@ -172,6 +172,22 @@ public class CSVDataOutput {
      * @param quote the quote
      * @param escape the escape
      * @param linebreak the linebreak
+     * @param maxColumns
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak, final int maxColumns) throws IOException {
+        this(new OutputStreamWriter(stream), delimiter, quote, escape, linebreak, maxColumns);
+        close = false;
+    }
+
+    /**
+     * Instantiate.
+     *
+     * @param stream the stream
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(final OutputStream stream, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
@@ -203,7 +219,7 @@ public class CSVDataOutput {
      * @throws IOException Signals that an I/O exception has occurred.
      */
     public CSVDataOutput(OutputStream stream, final CSVSyntax config) throws IOException {
-        this(stream, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
+        this(stream, config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), config.getMaxColumns());
     }
 
     /**
@@ -290,6 +306,22 @@ public class CSVDataOutput {
     public CSVDataOutput(String filename, final CSVSyntax config, final CSVOptions options) throws IOException {
         this(new FileWriter(new File(filename)), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), options);
     }
+
+    /**
+     * Instantiates a new CSV data output.
+     *
+     * @param writer the writer
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param maxColumns
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public CSVDataOutput(final Writer writer, final char delimiter, final char quote, final char escape, final char[] linebreak, final int maxColumns) throws IOException {
+        this(writer, delimiter, quote, escape, linebreak, new CSVOptions(maxColumns));
+    }
+    
     /**
      * Instantiates a new CSV data output.
      *
@@ -303,7 +335,7 @@ public class CSVDataOutput {
     public CSVDataOutput(final Writer writer, final char delimiter, final char quote, final char escape, final char[] linebreak) throws IOException {
         this(writer, delimiter, quote, escape, linebreak, null);
     }
-    
+
     /**
      * Instantiates a new CSV data output.
      *

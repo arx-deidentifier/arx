@@ -135,20 +135,20 @@ public class Dictionary implements Serializable {
     }
 
     /**
-     * Returns the codes for suppressed values
-     * @return
-     */
-    public int[] getSuppressedCodes() {
-        return suppressed;
-    }
-    
-    /**
      * Returns the number of dimensions in the dictionary.
      *
      * @return
      */
     public int getNumDimensions() {
         return mapping.length;
+    }
+    
+    /**
+     * Returns the codes for suppressed values
+     * @return
+     */
+    public int[] getSuppressedCodes() {
+        return suppressed;
     }
 
     /**
@@ -173,7 +173,6 @@ public class Dictionary implements Serializable {
         } else {
             return null;
         }
-        // return maps[dimension].get(string);
     }
 
     /**
@@ -212,6 +211,16 @@ public class Dictionary implements Serializable {
         final String[] vals = dictionary.mapping[sourceDimension];
         for (int id = 0; id < vals.length; id++) {
             maps[targetDimension].put(vals[id], id);
+        }
+    }
+
+    /**
+     * Registers special values
+     */
+    public void registerSpecialValues() {
+        for (int dimension = 0; dimension < maps.length; dimension++) {
+            register(dimension, DataType.ANY_VALUE);
+            register(dimension, DataType.NULL_VALUE);   
         }
     }
 }

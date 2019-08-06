@@ -56,7 +56,8 @@ public class DialogAbout extends TitleAreaDialog implements IDialog {
     /**  About */
     private static final String ABOUT        = Resources.getMessage("AboutDialog.16") + "\n" + //$NON-NLS-1$ //$NON-NLS-2$
                                                Resources.getMessage("AboutDialog.18") + "\n\n" + //$NON-NLS-1$ //$NON-NLS-2$
-                                               Resources.getMessage("AboutDialog.21") + ARXAnonymizer.VERSION + Resources.getMessage("AboutDialog.22"); //$NON-NLS-1$
+                                               Resources.getMessage("AboutDialog.21") + ARXAnonymizer.VERSION + //$NON-NLS-1$
+                                              (ARXAnonymizer.PRODUCTION_RELEASE ? Resources.getMessage("AboutDialog.22") : ""); //$NON-NLS-1$
     
     /**  Contributors */
     private static final String CONTRIBUTORS = "Karol Babioch (data import wizard)\n" + //$NON-NLS-1$
