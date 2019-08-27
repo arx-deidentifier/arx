@@ -107,3 +107,4 @@ public class Example61 extends Example {
             System.out.println(Arrays.toString(transformed.next()));
         }
    }
+}
