@@ -29,7 +29,7 @@ import java.io.Reader;
 public class RIntegration {
 
     /** Debug flag */
-    private static final boolean DEBUG   = false;
+    private static final boolean DEBUG   = true;
     /** Newline */
     private static final char[]  NEWLINE = System.getProperty("line.separator").toCharArray();
 
@@ -87,7 +87,9 @@ public class RIntegration {
 							}
                             listener.fireBufferUpdatedEvent();
                         }
-                        shutdown();
+                        
+                        shutdown();                        
+                        
                     } catch (IOException e) {
                         debug(e);
                         shutdown();
@@ -115,7 +117,6 @@ public class RIntegration {
 	    }
 
         try {
-        	// TODO: Get rid of the "> " chars after a command was not shown
         	if (showInTerminal)
         	{
         		this.buffer.append(command.toCharArray());
@@ -126,6 +127,9 @@ public class RIntegration {
             writer.write(command);
             writer.newLine();
             writer.flush();
+            
+            throw new IOException();
+            
         } catch (Exception e) {
             debug(e);
             shutdown();
@@ -145,8 +149,18 @@ public class RIntegration {
 	 */
     public void shutdown() {
         if (this.process != null) {
-            RIntegration.this.process.destroy();
-            RIntegration.this.process = null;
+        	// try to send the quit command to the R process in order to close it down properly
+            try {
+	            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
+	            writer.write("quit('no',0,TRUE)");
+	            writer.newLine();
+	            writer.flush();
+            } catch (Exception e) {
+            	// otherwise just destroy this process
+            	RIntegration.this.process.destroy();
+            }
+            
+        	this.process = null;
             listener.fireClosedEvent();
         }
     }
