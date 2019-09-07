@@ -128,8 +128,6 @@ public class RIntegration {
             writer.newLine();
             writer.flush();
             
-            throw new IOException();
-            
         } catch (Exception e) {
             debug(e);
             shutdown();
