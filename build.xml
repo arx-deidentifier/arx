@@ -6,10 +6,8 @@
     <!-- defines the version number -->
     <property name="arx.version" value="3.8.0" />
 
-    <!-- add extra parameter to javadoc generation if Java 1.8 is used -->
-    <condition property="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" else="-notimestamp">
-        <equals arg1="${ant.java.version}" arg2="1.8" />
-    </condition>
+    <!-- add extra parameter to javadoc generation to deal with errors in newer Java versions -->
+    <property name="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" />
 
     <!-- defines the to be included libraries -->
     <fileset id="lib.jars" dir="lib/ant">
