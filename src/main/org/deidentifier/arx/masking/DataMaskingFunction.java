@@ -18,7 +18,11 @@ package org.deidentifier.arx.masking;
 
 import java.io.Serializable;
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -326,6 +330,8 @@ public abstract class DataMaskingFunction implements Serializable {
 			case "Integer":
 				addNoise(column, allX, allY, dataType);
 				break;
+			case "Date":
+				addDateNoise(column, allX, allY, dataType);
 			default:
 				System.out.println("Datatype not fit for noise addition.");
 				break;
@@ -348,6 +354,25 @@ public abstract class DataMaskingFunction implements Serializable {
 						column.set(row, "" + (Integer.valueOf(column.get(row)) + noise));
 					} else {
 						column.set(row, "" + (Double.valueOf(column.get(row)) + noise));
+					}
+				}
+			}
+		}
+
+		private void addDateNoise(DataColumn column, int[] allX, double[] allY, String dataType) {
+			for (int row = 0; row < column.getNumRows(); row++) {
+				int noise = helper.numberFromDistribution(allX, allY);
+				if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
+					String value = column.get(row);
+					SimpleDateFormat format = helper.getDateFormat(value);
+					try {
+						Date date = format.parse(value);
+						long ms = date.getTime();
+						ms += noise * 1000L * 60L * 60L * 24L;
+						date.setTime(ms);
+						column.set(row, format.format(date));
+					} catch (ParseException e) {
+						e.printStackTrace();
 					}
 				}
 			}
@@ -385,7 +410,6 @@ public abstract class DataMaskingFunction implements Serializable {
 			int name = helper.getNameParam(parameters);
 			int[] allX = helper.allX(parameters.get(name));
 			double[] allY = helper.allY(var.getDistribution(), allX);
-			String[] strings = helper.generateStrings(8, 16, allX.length);
 
 			switch (dataType) {
 			case "Integer":
@@ -394,8 +418,29 @@ public abstract class DataMaskingFunction implements Serializable {
 				generate(allX, allY, null, column);
 				break;
 			case "String":
+				String[] strings = helper.generateStrings(8, 16, allX.length);
 				generate(allX, allY, strings, column);
+			case "Date":
+				if (nonNullRow(column) < 0)
+					break;
+				long earliest = new GregorianCalendar(1900, 1, 1).getTime().getTime() / (1000L * 60L * 60L * 24L);
+				long latest = new GregorianCalendar(2050, 1, 1).getTime().getTime() / (1000L * 60L * 60L * 24L);
+				String value = column.get(nonNullRow(column));
+				SimpleDateFormat format = helper.getDateFormat(value);
+				String[] dates = helper.generateDates(earliest, latest, allX.length, format);
+				generate(allX, allY, dates, column);
+			default:
+				break;
 			}
+		}
+
+		private int nonNullRow(DataColumn column) {
+			for (int row = 0; row < column.getNumRows(); row++) {
+				if (!column.get(row).equals(DataType.NULL_VALUE)) {
+					return row;
+				}
+			}
+			return -1;
 		}
 
 		/**
@@ -414,7 +459,7 @@ public abstract class DataMaskingFunction implements Serializable {
 				if (strings == null) {
 					replace = "" + helper.numberFromDistribution(allX, allY);
 				} else {
-					replace = helper.stringFromDistribution(allX, allY, strings);
+					replace = helper.fromDistribution(allX, allY, strings);
 				}
 				if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
 					column.set(row, replace);
@@ -531,14 +576,14 @@ public abstract class DataMaskingFunction implements Serializable {
 		}
 
 		/**
-		 * Chooses a random String given the distribution.
+		 * Chooses random object according to distribution.
 		 * 
 		 * @param allX
 		 * @param allY
-		 * @param strings
+		 * @param values
 		 * @return
 		 */
-		private String stringFromDistribution(int[] allX, double[] allY, String[] strings) {
+		private String fromDistribution(int[] allX, double[] allY, Object[] values) {
 			int len = allX.length;
 			HashMap<Integer, String> rangeToString = new HashMap<Integer, String>();
 			int[] ranges = new int[len];
@@ -547,11 +592,11 @@ public abstract class DataMaskingFunction implements Serializable {
 			for (int i = 0; i < len; i++) {
 				sum += 1000 * Math.round((float) allY[i]);
 				ranges[i] = sum;
-				rangeToString.put(sum, strings[i]);
+				rangeToString.put(sum, values[i].toString());
 			}
 
 			int randomNumber = new Random().nextInt(ranges[len - 1] + 1);
-			String out = strings[0];
+			String out = values[0].toString();
 
 			for (int i = 0; i < len; i++) {
 				if (randomNumber <= ranges[i]) {
@@ -588,6 +633,31 @@ public abstract class DataMaskingFunction implements Serializable {
 		}
 
 		/**
+		 * Generates LEN random dates of length between EARLIEST and LATEST.
+		 * Duplicates are not allowed
+		 * 
+		 * @param earliest
+		 * @param latest
+		 * @param len
+		 * @return
+		 */
+		public String[] generateDates(long earliest, long latest, int len, SimpleDateFormat format) {
+			String[] random = new String[len];
+
+			for (int i = 0; i < len; i++) {
+				long dateL = earliest + (long) (Math.random() * (latest - earliest));
+				Date date = new Date(dateL);
+				random[i] = format.format(date);
+			}
+
+			if (checkForDuplicates(random)) {
+				return generateDates(earliest, latest, len, format);
+			} else {
+				return random;
+			}
+		}
+
+		/**
 		 * Checks a string-array for duplicates.
 		 * 
 		 * @param arr
@@ -601,6 +671,21 @@ public abstract class DataMaskingFunction implements Serializable {
 					return true;
 			}
 			return false;
+		}
+
+		public SimpleDateFormat getDateFormat(String d) {
+			if (d != null) {
+				for (String parse : DataType.listDateFormats()) {
+					SimpleDateFormat sdf = new SimpleDateFormat(parse);
+					try {
+						sdf.parse(d);
+						return sdf;
+					} catch (ParseException e) {
+
+					}
+				}
+			}
+			return null;
 		}
 	}
 
