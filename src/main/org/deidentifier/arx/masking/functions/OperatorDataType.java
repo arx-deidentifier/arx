@@ -3,7 +3,8 @@ package org.deidentifier.arx.masking.functions;
 import org.deidentifier.arx.framework.data.DataColumn;
 
 /**
- * Returns an operator datatype.
+ * Reforms the masking function for the given datacolumn under the context of a
+ * given operator and datatype..
  * 
  * @author Kieu-Mi Do
  *
