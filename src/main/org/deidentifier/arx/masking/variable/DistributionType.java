@@ -56,10 +56,10 @@ abstract public class DistributionType implements Serializable {
 				DistributionParameter<Integer> paramNumber = new DistributionParameter.IntegerParameter();
 				paramNumber.setName("number");
 				paramNumber.setMin(0);
-				paramNumber.setMax(1000);
+				paramNumber.setMax(10);
 				paramNumber.setInitial(10);
 				paramNumber.setDescription("Number of tries");
-				paramNumber.setValue(0);
+				paramNumber.setValue(10);
 
 				// Probability parameter
 				DistributionParameter<Double> paramProbability = new DistributionParameter.DoubleParameter();
@@ -68,7 +68,7 @@ abstract public class DistributionType implements Serializable {
 				paramProbability.setMax(1.0);
 				paramProbability.setInitial(0.5);
 				paramProbability.setDescription("Probability of success");
-				paramProbability.setValue(0.0);
+				paramProbability.setValue(0.5);
 
 				ArrayList<DistributionParameter<?>> list = new ArrayList<>();
 

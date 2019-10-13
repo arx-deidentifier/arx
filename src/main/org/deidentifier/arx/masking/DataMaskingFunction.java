@@ -17,20 +17,18 @@
 package org.deidentifier.arx.masking;
 
 import java.io.Serializable;
-import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 
 import org.apache.commons.lang.RandomStringUtils;
-import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.framework.data.DataColumn;
+import org.deidentifier.arx.masking.functions.MaskingOperator;
 import org.deidentifier.arx.masking.variable.Distribution;
 import org.deidentifier.arx.masking.variable.DistributionParameter;
 import org.deidentifier.arx.masking.variable.DistributionType;
@@ -41,451 +39,15 @@ import org.deidentifier.arx.masking.variable.RandomVariable;
  * 
  * @author Fabian Prasser
  */
-public abstract class DataMaskingFunction implements Serializable {
-
-	/**
-	 * Generates a random alphanumeric string
-	 * 
-	 * @author Fabian Prasser
-	 */
-	public static class DataMaskingFunctionRandomAlphanumericString extends DataMaskingFunction {
-
-		/** SVUID */
-		private static final long serialVersionUID = 918401877743413029L;
-
-		/** Characters */
-		private static final char[] CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
-
-		/** Length */
-		private final int length;
-
-		/**
-		 * Creates a new instance
-		 * 
-		 * @param ignoreMissingData
-		 * @param length
-		 */
-		public DataMaskingFunctionRandomAlphanumericString(boolean ignoreMissingData, int length) {
-			super(ignoreMissingData, false);
-			this.length = length;
-		}
-
-		@Override
-		public void apply(DataColumn column) {
-
-			// Prepare
-			Random random = new SecureRandom();
-			char[] buffer = new char[length];
-
-			// Mask
-			for (int row = 0; row < column.getNumRows(); row++) {
-
-				// Leave null as is, if configured to not ignore missing data
-				if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
-					column.set(row, getRandomAlphanumericString(buffer, random));
-				}
-			}
-		}
-
-		@Override
-		public DataMaskingFunction clone() {
-			return new DataMaskingFunctionRandomAlphanumericString(super.isIgnoreMissingData(), length);
-		}
-
-		/**
-		 * Creates a random string
-		 * 
-		 * @param random
-		 * @param buffer
-		 * @return
-		 */
-		private String getRandomAlphanumericString(char[] buffer, Random random) {
-			for (int i = 0; i < buffer.length; i++) {
-				buffer[i] = CHARACTERS[random.nextInt(CHARACTERS.length)];
-			}
-			return new String(buffer);
-		}
-	}
-
-	/**
-	 * Generates a random permutation column's rows
-	 * 
-	 * @author giupardeb
-	 * 
-	 */
-
-	public static class PermutationFunctionColumns extends DataMaskingFunction {
-
-		/** SVUID */
-		private static final long serialVersionUID = 1470074649699937850L;
-
-		private final PermutationType typePermutation;
-
-		/**
-		 * create a type enum to define permutation type
-		 * 
-		 * @author giupardeb
-		 *
-		 */
-		public enum PermutationType {
-			FYKY, RS
-		}
-
-		/**
-		 * Creates a new instance
-		 * 
-		 * @param ignoreMissingData
-		 * @param typePermutation
-		 */
-		public PermutationFunctionColumns(boolean ignoreMissingData, PermutationType typePermutation) {
-			super(ignoreMissingData, false);
-			this.typePermutation = typePermutation;
-		}
-
-		@Override
-		public void apply(DataColumn column) {
-			switch (typePermutation) {
-			case FYKY:
-				fisherYatesKnuthYao(column);
-				break;
-			case RS:
-				raoSandelius(column);
-				break;
-			}
-		}
-
-		/**
-		 * Implementation of Rao-Sandelius algorithm is based on the paper: Axel
-		 * Bacher, Olivier Bodini, Hsien-Kuei Hwang, and Tsung-Hsi Tsai.
-		 * Generating random permutations by coin-tossing: classical algorithms,
-		 * new analysis and modern implementation
-		 * 
-		 * @param column
-		 */
-		private void raoSandelius(DataColumn column) {
-
-			int lengthColumn = column.getNumRows();
-			ArrayList<String> col = new ArrayList<String>();
-			ArrayList<String> colout = new ArrayList<String>();
-
-			for (int i = 0; i < lengthColumn; i++)
-				col.add(column.get(i));
-
-			colout = rs(lengthColumn, col);
-
-			for (int i = 0; i < lengthColumn; i++)
-				column.set(i, colout.get(i));
-		}
-
-		/**
-		 * Implementation of the core Rao Sandelius function
-		 * 
-		 * @param lengthColumn
-		 * @param column
-		 * @return permuted ArrayList
-		 */
-		private ArrayList<String> rs(int lengthColumn, ArrayList<String> column) {
-
-			Random rand = new SecureRandom();
-			if (lengthColumn <= 1)
-				return column;
-
-			if (lengthColumn == 2) {
-				if (rand.nextInt(2) == 1) {
-					swap(column, 0, 1);
-					return column;
-				} else
-					return column;
-			}
-
-			ArrayList<String> tmp1 = new ArrayList<String>();
-			ArrayList<String> tmp2 = new ArrayList<String>();
-
-			for (int i = 0; i < lengthColumn; i++) {
-
-				if (rand.nextInt(2) == 1)
-					tmp1.add(column.get(i));
-				else
-					tmp2.add(column.get(i));
-			}
-
-			ArrayList<String> array1 = rs(tmp1.size(), tmp1);
-			ArrayList<String> array2 = rs(tmp2.size(), tmp2);
-			array1.addAll(array2);
-
-			return array1;
-		}
-
-		@Override
-		public DataMaskingFunction clone() {
-			return new PermutationFunctionColumns(super.isIgnoreMissingData(), typePermutation);
-		}
-
-		/**
-		 * Implementation of Fisher-Yates Knuth-Yao algorithm is based on the
-		 * paper: Axel Bacher, Olivier Bodini, Hsien-Kuei Hwang, and Tsung-Hsi
-		 * Tsai. Generating random permutations by coin-tossing: classical
-		 * algorithms, new analysis and modern implementation
-		 * 
-		 * @param column
-		 */
-		private void fisherYatesKnuthYao(DataColumn column) {
-
-			int j = 0;
-			int lengthColumn = column.getNumRows() - 1;
-
-			for (int i = lengthColumn; i >= 2; i--) {
-				j = knuthYao(i) + 1;
-				swap(column, i, j);
-			}
-		}
-
-		/**
-		 * Implementation knuth Yao function
-		 * 
-		 * @param n
-		 * @return
-		 */
-		private int knuthYao(int n) {
-
-			Random rand = new SecureRandom();
-			// 0 to 1 inclusive.
-			int randBit = 0;
-
-			int u = 1;
-			int x = 0;
-			int d = 0;
-
-			while (true) {
-				while (u < n) {
-					randBit = rand.nextInt(2);
-					u = 2 * u;
-					x = 2 * x + randBit;
-				}
-				d = u - n;
-				if (x >= d)
-					return x - d;
-				else
-					u = d;
-			}
-		}
-
-		/**
-		 * swapping rows
-		 * 
-		 * @param column
-		 * @param i
-		 * @param j
-		 */
-		private void swap(DataColumn column, int i, int j) {
-			String tmp = column.get(i);
-			column.set(i, column.get(j));
-			column.set(j, tmp);
-		}
-
-		/**
-		 * swapping rows
-		 * 
-		 * @param column
-		 * @param i
-		 * @param j
-		 */
-		private void swap(ArrayList<String> column, int i, int j) {
-			String tmp = column.get(i);
-			column.set(i, column.get(j));
-			column.set(j, tmp);
-		}
-
-	}
-
-	public static class NoiseAddition extends DataMaskingFunction {
-		private RandomVariable var;
-		private DistributionMasking helper;
-
-		/**
-		 * Creates a new instance.
-		 * 
-		 * @param ignoreMissingData
-		 * @param type
-		 * @param handle
-		 */
-		public NoiseAddition(boolean ignoreMissingData, DistributionType type, DataHandle handle) {
-			super(ignoreMissingData, false);
-			var = new RandomVariable("XXX", type);
-			helper = new DistributionMasking(type, handle);
-		}
-
-		@Override
-		public void apply(DataColumn column) {
-			String dataType = helper.getDataType(column);
-			ArrayList<DistributionParameter<?>> parameters = helper.getParameters();
-			helper.addAllParams(var, parameters);
-
-			int name = helper.getNameParam(parameters);
-			int[] allX = helper.allX(parameters.get(name));
-			double[] allY = helper.allY(var.getDistribution(), allX);
-
-			switch (dataType) {
-			case "Decimal":
-			case "Integer":
-				addNoise(column, allX, allY, dataType);
-				break;
-			case "Date":
-				addDateNoise(column, allX, allY, dataType);
-			default:
-				System.out.println("Datatype not fit for noise addition.");
-				break;
-			}
-		}
-
-		/**
-		 * Adds noise to the column given the distribution and the datatype.
-		 * 
-		 * @param column
-		 * @param allX
-		 * @param allY
-		 * @param dataType
-		 */
-		private void addNoise(DataColumn column, int[] allX, double[] allY, String dataType) {
-			for (int row = 0; row < column.getNumRows(); row++) {
-				int noise = helper.numberFromDistribution(allX, allY);
-				if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
-					if (dataType.equals("Integer")) {
-						column.set(row, "" + (Integer.valueOf(column.get(row)) + noise));
-					} else {
-						column.set(row, "" + (Double.valueOf(column.get(row)) + noise));
-					}
-				}
-			}
-		}
-
-		private void addDateNoise(DataColumn column, int[] allX, double[] allY, String dataType) {
-			for (int row = 0; row < column.getNumRows(); row++) {
-				int noise = helper.numberFromDistribution(allX, allY);
-				if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
-					String value = column.get(row);
-					SimpleDateFormat format = helper.getDateFormat(value);
-					try {
-						Date date = format.parse(value);
-						long ms = date.getTime();
-						ms += noise * 1000L * 60L * 60L * 24L;
-						date.setTime(ms);
-						column.set(row, format.format(date));
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-		@Override
-		public DataMaskingFunction clone() {
-			return this;
-		}
-	}
-
-	public static class RandomGen extends DataMaskingFunction {
-		private RandomVariable var;
-		private DistributionMasking helper;
-
-		/**
-		 * Creates a new instance.
-		 * 
-		 * @param ignoreMissingData
-		 * @param type
-		 * @param handle
-		 */
-		public RandomGen(boolean ignoreMissingData, DistributionType type, DataHandle handle) {
-			super(ignoreMissingData, false);
-			var = new RandomVariable("XXX", type);
-			helper = new DistributionMasking(type, handle);
-		}
-
-		@Override
-		public void apply(DataColumn column) {
-			String dataType = helper.getDataType(column);
-			ArrayList<DistributionParameter<?>> parameters = helper.getParameters();
-
-			helper.addAllParams(var, parameters);
-			int name = helper.getNameParam(parameters);
-			int[] allX = helper.allX(parameters.get(name));
-			double[] allY = helper.allY(var.getDistribution(), allX);
-
-			switch (dataType) {
-			case "Integer":
-			case "Decimal":
-			case "Ordinal":
-				generate(allX, allY, null, column);
-				break;
-			case "String":
-				String[] strings = helper.generateStrings(8, 16, allX.length);
-				generate(allX, allY, strings, column);
-			case "Date":
-				if (nonNullRow(column) < 0)
-					break;
-				long earliest = new GregorianCalendar(1900, 1, 1).getTime().getTime() / (1000L * 60L * 60L * 24L);
-				long latest = new GregorianCalendar(2050, 1, 1).getTime().getTime() / (1000L * 60L * 60L * 24L);
-				String value = column.get(nonNullRow(column));
-				SimpleDateFormat format = helper.getDateFormat(value);
-				String[] dates = helper.generateDates(earliest, latest, allX.length, format);
-				generate(allX, allY, dates, column);
-			default:
-				break;
-			}
-		}
-
-		private int nonNullRow(DataColumn column) {
-			for (int row = 0; row < column.getNumRows(); row++) {
-				if (!column.get(row).equals(DataType.NULL_VALUE)) {
-					return row;
-				}
-			}
-			return -1;
-		}
-
-		/**
-		 * Replaces the values in the column with a randomly generated value.
-		 * For columns of type integer, double, and ordinal, strings must be
-		 * null.
-		 * 
-		 * @param allX
-		 * @param allY
-		 * @param strings
-		 * @param column
-		 */
-		private void generate(int[] allX, double[] allY, String[] strings, DataColumn column) {
-			for (int row = 0; row < column.getNumRows(); row++) {
-				String replace = "";
-				if (strings == null) {
-					replace = "" + helper.numberFromDistribution(allX, allY);
-				} else {
-					replace = helper.fromDistribution(allX, allY, strings);
-				}
-				if (super.isIgnoreMissingData() || !column.get(row).equals(DataType.NULL_VALUE)) {
-					column.set(row, replace);
-				}
-			}
-		}
-
-		@Override
-		public DataMaskingFunction clone() {
-			return this;
-		}
-	}
+public abstract class DataMaskingFunction implements Serializable, MaskingOperator {
 
 	public static class DistributionMasking {
 		private DistributionType type;
-		private DataHandle handle;
 		private RandomVariable var;
 
-		public DistributionMasking(DistributionType type, DataHandle handle) {
+		public DistributionMasking(DistributionType type) {
 			this.type = type;
-			this.handle = handle;
 			var = new RandomVariable("XXX", type);
-		}
-
-		public String getDataType(DataColumn column) {
-			return handle.getDataType(column.getAttribute()).toString();
 		}
 
 		public ArrayList<DistributionParameter<?>> getParameters() {
@@ -558,7 +120,7 @@ public abstract class DataMaskingFunction implements Serializable {
 			int sum = 0;
 
 			for (int i = 0; i < allX.length; i++) {
-				sum += 1000 * Math.round((float) allY[i]);
+				sum += Math.round(1000 * (float) allY[i]);
 				ranges[i] = sum;
 				rangeToX.put(sum, allX[i]);
 			}
@@ -704,7 +266,7 @@ public abstract class DataMaskingFunction implements Serializable {
 	 * @param ignoreMissingData
 	 * @param typePreserving
 	 */
-	private DataMaskingFunction(boolean ignoreMissingData, boolean typePreserving) {
+	protected DataMaskingFunction(boolean ignoreMissingData, boolean typePreserving) {
 		this.ignoreMissingData = ignoreMissingData;
 		this.typePreserving = typePreserving;
 	}
@@ -713,8 +275,9 @@ public abstract class DataMaskingFunction implements Serializable {
 	 * Applies the function to the given column
 	 * 
 	 * @param column
+	 * @param dataType
 	 */
-	public abstract void apply(DataColumn column);
+	public abstract void apply(DataColumn column, DataType<?> dataType);
 
 	/** Clone */
 	@Override

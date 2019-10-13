@@ -41,11 +41,11 @@ import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.IOUtil;
 import org.deidentifier.arx.masking.DataMaskingFunction;
-import org.deidentifier.arx.masking.DataMaskingFunction.DataMaskingFunctionRandomAlphanumericString;
-import org.deidentifier.arx.masking.DataMaskingFunction.NoiseAddition;
-import org.deidentifier.arx.masking.DataMaskingFunction.PermutationFunctionColumns;
-import org.deidentifier.arx.masking.DataMaskingFunction.PermutationFunctionColumns.PermutationType;
-import org.deidentifier.arx.masking.DataMaskingFunction.RandomGen;
+import org.deidentifier.arx.masking.functions.DataMaskingFunctionRandomAlphanumericString;
+import org.deidentifier.arx.masking.functions.NoiseAddition;
+import org.deidentifier.arx.masking.functions.PermutationFunctionColumns;
+import org.deidentifier.arx.masking.functions.PermutationFunctionColumns.PermutationType;
+import org.deidentifier.arx.masking.functions.RandomGen;
 import org.deidentifier.arx.masking.variable.DistributionType;
 
 /**
@@ -1026,16 +1026,13 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
 					DataScale.NOMINAL, "Random alphanumeric string");
 		}
 
-		public static MaskingFunction createNoiseAddition(boolean ignoreMissingData, DistributionType type,
-				DataHandle handle) {
-			return new MaskingFunction(new NoiseAddition(ignoreMissingData, type, handle), DataScale.NOMINAL,
-					"Noise addition");
+		public static MaskingFunction createNoiseAddition(boolean ignoreMissingData, DistributionType type) {
+			return new MaskingFunction(new NoiseAddition(ignoreMissingData, type), DataScale.NOMINAL, "Noise addition");
 		}
 
 		public static MaskingFunction createRandomGeneration(boolean ignoreMissingData, DistributionType type,
 				DataHandle handle) {
-			return new MaskingFunction(new RandomGen(ignoreMissingData, type, handle), DataScale.NOMINAL,
-					"Random Generation");
+			return new MaskingFunction(new RandomGen(ignoreMissingData, type), DataScale.NOMINAL, "Random Generation");
 		}
 
 		/**
@@ -1127,8 +1124,8 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
 		 * 
 		 * @param column
 		 */
-		protected void apply(DataColumn column) {
-			function.apply(column);
+		protected void apply(DataColumn column, DataType dataType) {
+			function.apply(column, dataType);
 		}
 	}
 
