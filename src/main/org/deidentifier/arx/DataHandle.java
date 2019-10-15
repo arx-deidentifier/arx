@@ -601,6 +601,16 @@ public abstract class DataHandle {
     }
 
     /**
+     * Determines whether a given row is completely suppressed
+     *
+     * @param row the row
+     * @return true, if is suppressed
+     */
+    public boolean isSuppressed(int row) {
+        return isOutlier(row);
+    }
+    
+    /**
      * Returns an iterator over the data.
      *
      * @return the iterator
