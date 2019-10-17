@@ -55,6 +55,9 @@ public class DataHandleOutput extends DataHandle {
         
         @Override
         public boolean hasNext() {
+        	if (dataGeneralized == null || dataGeneralized.getArray() == null) {
+        		throw new IllegalStateException("Looks as if this handle has already been released!");
+        	}
             return row < dataGeneralized.getArray().getNumRows();
         }
         
