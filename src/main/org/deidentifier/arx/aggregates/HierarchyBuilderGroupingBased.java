@@ -358,7 +358,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             @Override
             public int compare(Level<T> o1,
                                Level<T> o2) {
-                return new Integer(o1.getLevel()).compareTo(new Integer(o2.getLevel()));
+                return Integer.valueOf(o1.getLevel()).compareTo(Integer.valueOf(o2.getLevel()));
             }
         });
         return levels;

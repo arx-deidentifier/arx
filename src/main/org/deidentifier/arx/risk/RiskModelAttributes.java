@@ -191,7 +191,7 @@ public class RiskModelAttributes {
                     public int compare(String o1, String o2) {
                         int index1 = handle.getColumnIndexOf(o1);
                         int index2 = handle.getColumnIndexOf(o2);
-                        return new Integer(index1).compareTo(index2);
+                        return Integer.valueOf(index1).compareTo(index2);
                     }
                 });
             }
