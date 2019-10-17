@@ -73,8 +73,8 @@ public class Example26 extends Example {
 
         DataType<Double> dataType = DataType.createDecimal("#.####", Locale.ENGLISH);
 
-        Double lower = 40d;
-        Double upper = 41d;
+        double lower = 40d;
+        double upper = 41d;
 
         // Create the builder
         HierarchyBuilderIntervalBased<Double> builder = HierarchyBuilderIntervalBased.create(
