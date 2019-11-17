@@ -84,7 +84,7 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
                 config.setHeuristicSearchStepLimit(model.getHeuristicSearchStepLimit());
             } else if (searchType == SearchType.TIME_LIMIT) {
                 config.setHeuristicSearchEnabled(true);
-                config.setHeuristicSearchStepLimit(model.getHeuristicSearchTimeLimit());
+                config.setHeuristicSearchTimeLimit(model.getHeuristicSearchTimeLimit());
             }
             
             // Overwrite user-defined settings to prepare local recoding

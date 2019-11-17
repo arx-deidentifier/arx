@@ -55,6 +55,9 @@ public class DataHandleOutput extends DataHandle {
         
         @Override
         public boolean hasNext() {
+        	if (dataGeneralized == null || dataGeneralized.getArray() == null) {
+        		throw new IllegalStateException("Looks as if this handle has already been released!");
+        	}
             return row < dataGeneralized.getArray().getNumRows();
         }
         
@@ -187,37 +190,38 @@ public class DataHandleOutput extends DataHandle {
 
     @Override
     public String getAttributeName(final int col) {
-        checkRegistry();
+        checkReleased();
         checkColumn(col);
         return header[col];
     }
     
     @Override
     public DataType<?> getDataType(String attribute) {
-        checkRegistry();
+        checkReleased();
         return this.columnToDataType[this.getColumnIndexOf(attribute)];
     }
 
     @Override
     public int getGeneralization(final String attribute) {
-        checkRegistry();
+        checkReleased();
         return node.getGeneralization(attribute);
     }
 
     @Override
     public int getNumColumns() {
-        checkRegistry();
+        checkReleased();
         return header.length;
     }
     
     @Override
     public int getNumRows() {
-        checkRegistry();
+        checkReleased();
         return dataGeneralized.getDataLength();
     }
 
     @Override
     public StatisticsBuilder getStatistics() {
+        checkReleased();
         return new StatisticsBuilder(new DataHandleInternal(this));
     }
 
@@ -225,7 +229,7 @@ public class DataHandleOutput extends DataHandle {
     public String getValue(final int row, final int col) {
         
         // Check
-        checkRegistry();
+        checkReleased();
         checkColumn(col);
         checkRow(row, dataGeneralized.getDataLength());
         
@@ -235,6 +239,7 @@ public class DataHandleOutput extends DataHandle {
 
     @Override
     public boolean isOptimized() {
+        checkReleased();
         return this.optimized;
     }
     
@@ -245,7 +250,7 @@ public class DataHandleOutput extends DataHandle {
      */
     @Override
     public Iterator<String[]> iterator() {
-        checkRegistry();
+        checkReleased();
         return new ResultIterator();
     }
     
@@ -489,7 +494,7 @@ public class DataHandleOutput extends DataHandle {
     protected String[] getDistinctValues(final int col, final boolean ignoreSuppression, InterruptHandler handler) {
         
         // Check
-        checkRegistry();
+        checkReleased();
         checkColumn(col);
         
         final Set<String> vals = new HashSet<String>();
@@ -506,7 +511,7 @@ public class DataHandleOutput extends DataHandle {
      * @return
      */
     protected DataMatrix getInputBuffer() {
-        checkRegistry();
+        checkReleased();
         return registry.getInputHandle().getInputBuffer();
     }
     

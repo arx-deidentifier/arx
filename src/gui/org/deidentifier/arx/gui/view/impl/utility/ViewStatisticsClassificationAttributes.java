@@ -492,10 +492,10 @@ public class ViewStatisticsClassificationAttributes implements IView, ViewStatis
     @Override
     public void reset() {
         state = null;
-        features.refreshPage();
         features.setCurrentPage(0);
-        classes.refreshPage();
+        features.refreshPage();
         classes.setCurrentPage(0);
+        classes.refreshPage();
         SWTUtil.disable(root);
     }
 
