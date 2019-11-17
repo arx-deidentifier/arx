@@ -258,6 +258,7 @@ public class MainWindow implements IView {
     public void reset() {
         root.setSelection(0);
         root.setEnabled(false);
+        shell.setText(Resources.getMessage("MainWindow.0")); //$NON-NLS-1$
     }
 
     /**
@@ -819,6 +820,24 @@ public class MainWindow implements IView {
                                    controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
                                    false) {
             public void action(Controller controller) { controller.actionMenuEditInitializeHierarchy(); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.45"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuEditCreateSuppressionHierarchy(false); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.46"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuEditCreateSuppressionHierarchy(true); }
             public boolean isEnabled(Model model) { 
                 return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
             }

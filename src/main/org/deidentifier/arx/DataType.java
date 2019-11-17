@@ -350,7 +350,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public Double toDouble(Date date) {
-            return (date == null) ? null : new Long(date.getTime()).doubleValue();
+            return (date == null) ? null : Long.valueOf(date.getTime()).doubleValue();
         }
 
         @Override
