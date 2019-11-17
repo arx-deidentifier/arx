@@ -35,8 +35,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -70,6 +68,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvParserSettings;
@@ -80,6 +79,7 @@ import com.univocity.parsers.csv.CsvRoutines;
  *
  * @author Fabian Prasser
  */
+@SuppressWarnings("deprecation")
 public class WorkerLoad extends Worker<Model> {
 
     /** The vocabulary to use. */
@@ -191,9 +191,7 @@ public class WorkerLoad extends Worker<Model> {
         model.getClipboard().clearClipboard();
 
         // Parse
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        SAXParser parser = parserFactory.newSAXParser();
-        XMLReader xmlReader = parser.getXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             @Override
@@ -262,7 +260,6 @@ public class WorkerLoad extends Worker<Model> {
      * @throws SAXException
      * @throws ParserConfigurationException 
      */
-    @SuppressWarnings("deprecation")
     private void readConfiguration(final String prefix,
                                    final boolean output,
                                    final Map<String, ARXNode> map,
@@ -392,9 +389,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { return; }
 
         // Read xml
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        SAXParser parser = parserFactory.newSAXParser();
-        XMLReader xmlReader = parser.getXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
@@ -805,9 +800,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.7")); } //$NON-NLS-1$
 
         final Map<Integer, ARXNode> map = new HashMap<Integer, ARXNode>();
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        SAXParser parser = parserFactory.newSAXParser();
-        XMLReader xmlReader = parser.getXMLReader();
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
 
@@ -891,9 +884,7 @@ public class WorkerLoad extends Worker<Model> {
 
         // Read the lattice for the second time
         entry = zip.getEntry("lattice.xml"); //$NON-NLS-1$
-        parserFactory = SAXParserFactory.newInstance();
-        parser = parserFactory.newSAXParser();
-        xmlReader = parser.getXMLReader();
+        xmlReader = XMLReaderFactory.createXMLReader();
         inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
@@ -1020,9 +1011,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.9")); } //$NON-NLS-1$
 
         // Read vocabulary
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        SAXParser parser = parserFactory.newSAXParser();
-        XMLReader xmlReader = parser.getXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             
@@ -1089,9 +1078,7 @@ public class WorkerLoad extends Worker<Model> {
         final int[] result = new int[]{Integer.MAX_VALUE, 0};
         
         // Read
-        SAXParserFactory parserFactory = SAXParserFactory.newInstance();
-        SAXParser parser = parserFactory.newSAXParser();
-        XMLReader xmlReader = parser.getXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             
