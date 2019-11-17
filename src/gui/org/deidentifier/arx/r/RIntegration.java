@@ -29,7 +29,7 @@ import java.io.Reader;
 public class RIntegration {
 
     /** Debug flag */
-    private static final boolean DEBUG   = false;
+    private static final boolean DEBUG   = true;
     /** Newline */
     private static final char[]  NEWLINE = System.getProperty("line.separator").toCharArray();
 
@@ -87,7 +87,9 @@ public class RIntegration {
 							}
                             listener.fireBufferUpdatedEvent();
                         }
-                        shutdown();
+                        
+                        shutdown();                        
+                        
                     } catch (IOException e) {
                         debug(e);
                         shutdown();
@@ -107,19 +109,25 @@ public class RIntegration {
 	 * Executes a command
 	 * 
 	 * @param command
+	 * @param showInTerminal
 	 */
-	public void execute(String command) {
+	public void execute(String command, boolean showInTerminal) {
 	    if (this.process == null) {
 	        return;
 	    }
 
         try {
-            this.buffer.append(command.toCharArray());
-            this.buffer.append(NEWLINE);
+        	if (showInTerminal)
+        	{
+        		this.buffer.append(command.toCharArray());
+        	}
+        	this.buffer.append(NEWLINE);
+        	
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
             writer.write(command);
             writer.newLine();
             writer.flush();
+            
         } catch (Exception e) {
             debug(e);
             shutdown();
@@ -139,7 +147,17 @@ public class RIntegration {
 	 */
     public void shutdown() {
         if (this.process != null) {
-            RIntegration.this.process.destroyForcibly();
+        	// try to send the quit command to the R process in order to close it down properly
+            try {
+	            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(this.process.getOutputStream()));
+	            writer.write("quit('no',0,TRUE)");
+	            writer.newLine();
+	            writer.flush();
+            } catch (Exception e) {
+            	// otherwise just destroy this process
+                RIntegration.this.process.destroyForcibly();
+            }
+            
             RIntegration.this.process = null;
             listener.fireClosedEvent();
         }

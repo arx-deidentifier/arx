@@ -323,6 +323,10 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceString("Path to R") { 
             protected String getValue() { return model.getRModel().getPath(); }
             protected void setValue(Object t) { model.getRModel().setPath((String)t); }});
+        
+        window.addPreference(new PreferenceInteger("Commandbuffer size", 5, Integer.MAX_VALUE, 5) { 
+            protected Integer getValue() { return model.getRModel().getCommandBufferSize(); }
+            protected void setValue(Object t) { model.getRModel().setCommandBufferSize((Integer)t); }});
     }
     
     /**

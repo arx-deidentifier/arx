@@ -2,6 +2,7 @@ package org.deidentifier.arx.gui.model;
 
 import java.io.Serializable;
 
+import org.deidentifier.arx.r.CommandBuffer;
 import org.deidentifier.arx.r.OS;
 
 public class ModelR implements Serializable {
@@ -31,6 +32,14 @@ public class ModelR implements Serializable {
 		this.bufferSize = bufferSize;
 	}
 	
+	
+	public int getCommandBufferSize() {
+		return CommandBuffer.getCommandBufferSize();
+	}
+	
+	public void setCommandBufferSize(int commandBufferSize) {
+		CommandBuffer.setCommandBufferSize(commandBufferSize);
+	}
 	
 
 	/**
