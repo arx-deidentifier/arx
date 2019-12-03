@@ -25,8 +25,8 @@ import java.util.Arrays;
 
 import org.apache.commons.math3.fraction.BigFraction;
 
-import com.carrotsearch.hppc.LongObjectOpenHashMap;
-import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+import com.carrotsearch.hppc.LongObjectHashMap;
+import com.carrotsearch.hppc.ObjectIntHashMap;
 
 /**
  * This class represents a reliable set of domain shares for an attribute. The shares are derived from a materialized
@@ -47,7 +47,7 @@ public class DomainShareReliable implements Serializable {
     private final BigFraction[]                          shares;
 
     /** If an attribute exists with different shares on different generalization levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>. */
-    private transient LongObjectOpenHashMap<BigFraction> duplicates;
+    private transient LongObjectHashMap<BigFraction> duplicates;
 
     /**
      * Creates a new set of domain shares derived from the given attribute.
@@ -60,20 +60,20 @@ public class DomainShareReliable implements Serializable {
                                    String[] encodedValues, 
                                    int[][] encodedHierarchy) {
 
-        this.duplicates = new LongObjectOpenHashMap<BigFraction>();
+        this.duplicates = new LongObjectHashMap<BigFraction>();
         this.shares = new BigFraction[encodedValues.length];
         Arrays.fill(shares, NOT_AVAILABLE);
         @SuppressWarnings("unchecked")
-        ObjectIntOpenHashMap<String>[] maps = new ObjectIntOpenHashMap[rawHierarchy[0].length];
+        ObjectIntHashMap<String>[] maps = new ObjectIntHashMap[rawHierarchy[0].length];
         for (int level = 0; level < maps.length; level++) {
-            maps[level] = new ObjectIntOpenHashMap<String>();
+            maps[level] = new ObjectIntHashMap<String>();
         }
 
         // First, compute the share for each generalization strategy
         for (int value = 0; value < rawHierarchy.length; value++) {
             String[] transformation = rawHierarchy[value];
             for (int level = 0; level < transformation.length; level++) {
-                ObjectIntOpenHashMap<String> map = maps[level];
+                ObjectIntHashMap<String> map = maps[level];
                 String key = transformation[level];
                 if (!map.containsKey(key)) {
                     map.put(key, 0);
@@ -89,7 +89,7 @@ public class DomainShareReliable implements Serializable {
             
             for (int level = 0; level < strategy.length; level++){
                 
-                ObjectIntOpenHashMap<String> map = maps[level];
+                ObjectIntHashMap<String> map = maps[level];
                 int value = strategy[level];
                 String keyString = encodedValues[value];
                 BigFraction share = new BigFraction(map.get(keyString), rawHierarchy.length);
@@ -125,7 +125,7 @@ public class DomainShareReliable implements Serializable {
      * @param shares
      * @param duplicates
      */
-    private DomainShareReliable(BigFraction[] shares, LongObjectOpenHashMap<BigFraction> duplicates) {
+    private DomainShareReliable(BigFraction[] shares, LongObjectHashMap<BigFraction> duplicates) {
         this.shares = shares;
         this.duplicates = duplicates;
     }

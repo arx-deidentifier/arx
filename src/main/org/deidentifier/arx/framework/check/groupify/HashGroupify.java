@@ -32,7 +32,7 @@ import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.Metric;
 
-import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+import com.carrotsearch.hppc.ObjectIntHashMap;
 
 /**
  * A hash groupify operator. It implements a hash table with chaining and keeps
@@ -376,7 +376,7 @@ public class HashGroupify {
         Data result = Data.createWrapper(new DataMatrix(dataOutput.getNumRows(), indices.length), header, columns, dictionary);
 
         // TODO: To improve performance, microaggregation and marking of outliers could be performed in one pass
-        ObjectIntOpenHashMap<Distribution> cache = new ObjectIntOpenHashMap<Distribution>();
+        ObjectIntHashMap<Distribution> cache = new ObjectIntHashMap<Distribution>();
         for (int row = 0; row < dataOutput.getNumRows(); row++) {
             if (privacyModelDefinesSubset == null || privacyModelDefinesSubset.contains(row)) {
                 final int hash = dataOutput.hashCode(row);

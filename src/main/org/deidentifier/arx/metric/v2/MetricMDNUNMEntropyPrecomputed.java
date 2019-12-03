@@ -30,7 +30,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntIntHashMap;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 /**
  * This class provides an implementation of the non-uniform entropy
@@ -116,9 +117,9 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         
         // Compute loss induced by suppression
         double suppressed = 0;
-        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getGeneralization().length];
+        final IntIntHashMap[] original = new IntIntHashMap[node.getGeneralization().length];
         for (int i = 0; i < original.length; i++) {
-            original[i] = new IntIntOpenHashMap();
+            original[i] = new IntIntHashMap();
         }
 
         // Compute counts for suppressed values in each column 
@@ -138,12 +139,10 @@ public class MetricMDNUNMEntropyPrecomputed extends MetricMDNUEntropyPrecomputed
         // Evaluate non-uniform entropy for suppressed tuples
         if (suppressed != 0){
             for (int i = 0; i < original.length; i++) {
-                IntIntOpenHashMap map = original[i];
-                for (int j = 0; j < map.allocated.length; j++) {
-                    if (map.allocated[j]) {
-                        double count = map.values[j];
-                        result[i] += count * log2(count / suppressed) * sFactor;
-                    }
+                IntIntHashMap map = original[i];
+                for (IntCursor valCursor : map.values()) {
+                    double count = valCursor.value;
+                    result[i] += count * log2(count / suppressed) * sFactor;
                 }
             }
         }

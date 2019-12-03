@@ -32,7 +32,7 @@ import org.deidentifier.arx.certificate.elements.ElementData;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
 
-import com.carrotsearch.hppc.IntObjectOpenHashMap;
+import com.carrotsearch.hppc.IntObjectHashMap;
 
 /**
  * Encapsulates a definition of the types of attributes contained in a dataset.
@@ -49,7 +49,7 @@ public class DataDefinition implements Cloneable{
     private final Map<String, AttributeType>            attributeTypes        = new HashMap<String, AttributeType>();
 
     /** The mapped attribute types. */
-    private final IntObjectOpenHashMap<Set<String>>     inverseAttributeTypes = new IntObjectOpenHashMap<>();
+    private final IntObjectHashMap<Set<String>>     inverseAttributeTypes = new IntObjectHashMap<>();
 
     /** The mapped builders. */
     private final Map<String, HierarchyBuilder<?>>      builders              = new HashMap<String, HierarchyBuilder<?>>();

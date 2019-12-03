@@ -24,7 +24,7 @@ import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 import org.deidentifier.arx.common.WrappedBoolean;
 
 import com.carrotsearch.hppc.IntArrayList;
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntIntHashMap;
 
 import smile.classification.DecisionTree.SplitRule;
 import smile.classification.RandomForest;
@@ -53,7 +53,7 @@ public class MultiClassRandomForest extends ClassificationMethod {
     /** Input handle */
     private final DataHandleInternal                      inputHandle;
     /** Because SMILE sucks */
-    private IntIntOpenHashMap                             mapping;
+    private IntIntHashMap                             mapping;
 
     /**
      * Creates a new instance
@@ -121,14 +121,14 @@ public class MultiClassRandomForest extends ClassificationMethod {
         }
         
         // Encode classes because SMILE sucks!
-        this.mapping = new IntIntOpenHashMap();
-        IntIntOpenHashMap classMap = new IntIntOpenHashMap();
+        this.mapping = new IntIntHashMap();
+        IntIntHashMap classMap = new IntIntHashMap();
         int[] encodedClasses = new int[classes.size()];
         for (int i = 0; i < classes.size(); i++) {
             int value = classes.get(i);
             int encoded = classMap.size();
             if (classMap.containsKey(value)) {
-                encoded = classMap.lget();
+                encoded = classMap.get(value);
             } else {
                 classMap.put(value, encoded);
                 this.mapping.put(encoded, value);

@@ -22,8 +22,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
 
-import com.carrotsearch.hppc.LongDoubleOpenHashMap;
-import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+import com.carrotsearch.hppc.LongDoubleHashMap;
+import com.carrotsearch.hppc.ObjectIntHashMap;
 
 /**
  * This class represents a set of domain shares for an attribute. The shares are derived from a materialized
@@ -47,7 +47,7 @@ public class DomainShareMaterialized implements DomainShare {
     private final double[]              shares;
 
     /** If an attribute exists with different shares on different generalization levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>. */
-    private transient LongDoubleOpenHashMap duplicates;
+    private transient LongDoubleHashMap duplicates;
 
     /**
      * Creates a new set of domain shares derived from the given attribute.
@@ -61,20 +61,20 @@ public class DomainShareMaterialized implements DomainShare {
                                    int[][] encodedHierarchy) {
 
         this.size = rawHierarchy.length;
-        this.duplicates = new LongDoubleOpenHashMap();
+        this.duplicates = new LongDoubleHashMap();
         this.shares = new double[encodedValues.length];
         Arrays.fill(shares, NOT_AVAILABLE);
         @SuppressWarnings("unchecked")
-        ObjectIntOpenHashMap<String>[] maps = new ObjectIntOpenHashMap[rawHierarchy[0].length];
+        ObjectIntHashMap<String>[] maps = new ObjectIntHashMap[rawHierarchy[0].length];
         for (int level = 0; level < maps.length; level++) {
-            maps[level] = new ObjectIntOpenHashMap<String>();
+            maps[level] = new ObjectIntHashMap<String>();
         }
 
         // First, compute the share for each generalization strategy
         for (int value = 0; value < rawHierarchy.length; value++) {
             String[] transformation = rawHierarchy[value];
             for (int level = 0; level < transformation.length; level++) {
-                ObjectIntOpenHashMap<String> map = maps[level];
+                ObjectIntHashMap<String> map = maps[level];
                 String key = transformation[level];
                 if (!map.containsKey(key)) {
                     map.put(key, 0);
@@ -90,7 +90,7 @@ public class DomainShareMaterialized implements DomainShare {
             
             for (int level = 0; level < strategy.length; level++){
                 
-                ObjectIntOpenHashMap<String> map = maps[level];
+                ObjectIntHashMap<String> map = maps[level];
                 int value = strategy[level];
                 String keyString = encodedValues[value];
                 double share = (double) map.get(keyString) / size;
@@ -127,7 +127,7 @@ public class DomainShareMaterialized implements DomainShare {
      * @param shares
      * @param duplicates
      */
-    private DomainShareMaterialized(double size, double[] shares, LongDoubleOpenHashMap duplicates) {
+    private DomainShareMaterialized(double size, double[] shares, LongDoubleHashMap duplicates) {
         this.size = size;
         this.shares = shares;
         this.duplicates = duplicates;
@@ -179,7 +179,7 @@ public class DomainShareMaterialized implements DomainShare {
         aInputStream.defaultReadObject();
 
         // Read map
-        duplicates = IO.readLongDoubleOpenHashMap(aInputStream);
+        duplicates = IO.readLongDoubleHashMap(aInputStream);
     }
 
     /**
@@ -194,6 +194,6 @@ public class DomainShareMaterialized implements DomainShare {
         aOutputStream.defaultWriteObject();
         
         // Write map
-        IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
+        IO.writeLongDoubleHashMap(aOutputStream, duplicates);
     }
 }

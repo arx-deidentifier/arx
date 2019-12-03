@@ -34,8 +34,8 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.MetricConfiguration;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
-
+import com.carrotsearch.hppc.IntIntHashMap;
+import com.carrotsearch.hppc.cursors.IntCursor;
 /**
  * This class provides an efficient implementation of the non-uniform entropy
  * metric. It avoids a cell-by-cell process by utilizing a three-dimensional
@@ -149,9 +149,9 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         
         // Prepare
         int dimensionsGeneralized = getDimensionsGeneralized();
-        IntIntOpenHashMap[] nonSuppressedValueToCount = new IntIntOpenHashMap[dimensionsGeneralized];
+        IntIntHashMap[] nonSuppressedValueToCount = new IntIntHashMap[dimensionsGeneralized];
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
-            nonSuppressedValueToCount[dimension] = new IntIntOpenHashMap();
+            nonSuppressedValueToCount[dimension] = new IntIntHashMap();
         }
 
         // Compute score. The casts to long are required to avoid integer overflows
@@ -177,12 +177,8 @@ public class MetricMDNUEntropyPrecomputed extends AbstractMetricMultiDimensional
         }
         // Add values for all attribute values which were not suppressed
         for (int dimension=0; dimension<dimensionsGeneralized; dimension++) {
-            final boolean [] states = nonSuppressedValueToCount[dimension].allocated;
-            final int [] counts = nonSuppressedValueToCount[dimension].values;
-            for (int i=0; i<states.length; i++) {
-                if (states[i]) {
-                    score = score.add(new BigFraction((long)counts[i] * (long)counts[i]));
-                }
+            for (IntCursor valuesCursor : nonSuppressedValueToCount[dimension].values()) {
+                score = score.add(new BigFraction((long) valuesCursor.value * (long) valuesCursor.value));
             }
         }
 

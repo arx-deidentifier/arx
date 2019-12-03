@@ -30,7 +30,7 @@ import org.deidentifier.arx.DataType.ARXInteger;
 import org.deidentifier.arx.DataType.DataTypeWithRatioScale;
 import org.deidentifier.arx.aggregates.HierarchyBuilderIntervalBased;
 
-import com.carrotsearch.hppc.LongDoubleOpenHashMap;
+import com.carrotsearch.hppc.LongDoubleHashMap;
 
 /**
  * This class represents a set of domain shares for an attribute. The shares are derived from a functional
@@ -57,7 +57,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
     private final double[]              shares;
 
     /** If an attribute exists with different shares on different generalization levels, store the share in this map: <code>(((long)value) << 32) | (level & 0xffffffffL) -> share </code>. */
-    private transient LongDoubleOpenHashMap duplicates;
+    private transient LongDoubleHashMap duplicates;
 
     /**
      * Creates a new set of domain shares derived from the given functional interval-based hierarchy.
@@ -74,7 +74,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
         super(builder.getDataType(), builder.getLowerRange(), builder.getUpperRange());
         
         // Prepare
-        this.duplicates = new LongDoubleOpenHashMap();
+        this.duplicates = new LongDoubleHashMap();
         this.shares = new double[dictionary.length];
         Arrays.fill(shares, NOT_AVAILABLE);
         
@@ -175,7 +175,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
                                 DataType<T> dataType,
                                 Range<T> lower, Range<T> upper,
                                 double[] shares,
-                                LongDoubleOpenHashMap duplicates) {
+                                LongDoubleHashMap duplicates) {
         super(dataType, lower, upper);
         this.domainSize = domainSize;
         this.dataType = (DataTypeWithRatioScale<T>)dataType;
@@ -232,7 +232,7 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
         aInputStream.defaultReadObject();
 
         // Read map
-        duplicates = IO.readLongDoubleOpenHashMap(aInputStream);
+        duplicates = IO.readLongDoubleHashMap(aInputStream);
     }
 
     /**
@@ -265,6 +265,6 @@ public class DomainShareInterval<T> extends HierarchyBuilderIntervalBased<T> imp
         aOutputStream.defaultWriteObject();
         
         // Write map
-        IO.writeLongDoubleOpenHashMap(aOutputStream, duplicates);
+        IO.writeLongDoubleHashMap(aOutputStream, duplicates);
     }
 }

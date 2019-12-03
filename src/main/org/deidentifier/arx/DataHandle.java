@@ -51,7 +51,7 @@ import org.deidentifier.arx.risk.RiskModelHistogram;
 
 import cern.colt.Swapper;
 
-import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+import com.carrotsearch.hppc.ObjectIntHashMap;
 
 /**
  * This class provides access to dictionary encoded data. Furthermore, the data
@@ -77,7 +77,7 @@ public abstract class DataHandle {
     protected String[]                     header           = null;
 
     /** The header. */
-    protected ObjectIntOpenHashMap<String> headerMap        = null;
+    protected ObjectIntHashMap<String> headerMap        = null;
 
     /** The node. */
     protected ARXNode                      node             = null;
@@ -1039,7 +1039,7 @@ public abstract class DataHandle {
      */
     protected void setHeader(String[] header) {
         this.header = header;
-        this.headerMap = new ObjectIntOpenHashMap<String>();
+        this.headerMap = new ObjectIntHashMap<String>();
         for (int i = 0; i < header.length; i++) {
             headerMap.put(header[i], i);
         }

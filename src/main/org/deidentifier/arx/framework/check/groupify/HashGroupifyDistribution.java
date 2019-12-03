@@ -43,7 +43,7 @@ import org.deidentifier.arx.metric.v2.MetricSDDiscernability;
 import org.deidentifier.arx.metric.v2.MetricSDNMDiscernability;
 import org.deidentifier.arx.risk.RiskModelHistogram;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntIntHashMap;
 
 /**
  * A distribution of equivalence classes
@@ -76,7 +76,7 @@ public class HashGroupifyDistribution {
     }
 
     /** The backing map */
-    private IntIntOpenHashMap   distribution = new IntIntOpenHashMap();
+    private IntIntHashMap   distribution = new IntIntHashMap();
     /** The number of suppressed tuples */
     private int                 internalNumSuppressed   = 0;
     /** Entries that can be suppressed */

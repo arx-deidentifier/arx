@@ -42,8 +42,8 @@ import org.deidentifier.arx.framework.lattice.TransformationList;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 
-import com.carrotsearch.hppc.IntObjectOpenHashMap;
-import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
+import com.carrotsearch.hppc.IntObjectHashMap;
+import com.carrotsearch.hppc.ObjectObjectHashMap;
 
 /**
  * This class implements a representation of the generalization lattice that is
@@ -148,7 +148,7 @@ public class ARXLattice implements Serializable {
             lattice.solutions = solutions;
             
             // For backwards compatibility
-            lattice.map = new ObjectObjectOpenHashMap<Object, ARXNode>();
+            lattice.map = new ObjectObjectHashMap<Object, ARXNode>();
             for (ARXNode[] level : lattice.levels) {
                 for (ARXNode node : level) {
                     int[] levels = node.getTransformation();
@@ -757,7 +757,7 @@ public class ARXLattice implements Serializable {
     private transient SolutionSpace<?>                            solutions;
 
     /** Map from ids to nodes */
-    private transient ObjectObjectOpenHashMap<Object, ARXNode> map;
+    private transient ObjectObjectHashMap<Object, ARXNode> map;
 
     /**
      * Constructor.
@@ -1145,8 +1145,8 @@ public class ARXLattice implements Serializable {
     private void build(final Transformation<?> optimum, Map<String, Integer> headermap) {
 
         // Create nodes
-        this.map = new ObjectObjectOpenHashMap<Object, ARXNode>();
-        final IntObjectOpenHashMap<List<ARXNode>> levels = new IntObjectOpenHashMap<List<ARXNode>>(); 
+        this.map = new ObjectObjectHashMap<Object, ARXNode>();
+        final IntObjectHashMap<List<ARXNode>> levels = new IntObjectHashMap<List<ARXNode>>();
         int size = 0;
         int maxlevel = 0;
         for (ObjectIterator<?> iterator = solutions.getMaterializedTransformations(); iterator.hasNext();) {

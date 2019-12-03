@@ -29,8 +29,8 @@ import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
-
+import com.carrotsearch.hppc.IntIntHashMap;
+import com.carrotsearch.hppc.cursors.IntCursor;
 /**
  * This class encapsulates information about equivalence classes in a data set
  * 
@@ -53,7 +53,7 @@ public class RiskModelHistogram {
      * 
      * @param distribution
      */
-    public RiskModelHistogram(final IntIntOpenHashMap distribution) {
+    public RiskModelHistogram(final IntIntHashMap distribution) {
         this.convertAndAnalyze(distribution,
                                new WrappedBoolean(),
                                new WrappedInteger());
@@ -111,7 +111,7 @@ public class RiskModelHistogram {
         }
 
         // Group by size
-        IntIntOpenHashMap grouped = new IntIntOpenHashMap();
+        IntIntHashMap grouped = new IntIntHashMap();
 
         int i = 0;
         int size = map.size();
@@ -183,21 +183,18 @@ public class RiskModelHistogram {
      * @param stop
      * @param progress
      */
-    private void convertAndAnalyze(IntIntOpenHashMap grouped,
+    private void convertAndAnalyze(IntIntHashMap grouped,
                                    final WrappedBoolean stop,
                                    final WrappedInteger progress) {
 
         // Convert
         int[][] temp = new int[grouped.size()][2];
         int idx = 0;
-        final int[] values2 = grouped.values;
-        final int[] keys2 = grouped.keys;
-        final boolean[] states2 = grouped.allocated;
-        for (int i = 0; i < states2.length; i++) {
-            if (states2[i]) {
-                temp[idx++] = new int[] { keys2[i], values2[i] };
+        for (IntCursor keysCursor : grouped.keys()) {
+            temp[idx++] = new int[]{keysCursor.value, grouped.get(keysCursor.value)};
+            if (stop.value) {
+                throw new ComputationInterruptedException();
             }
-            if (stop.value) { throw new ComputationInterruptedException(); }
         }
         grouped = null;
 

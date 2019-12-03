@@ -23,8 +23,11 @@ import java.io.ObjectOutputStream;
 
 import org.apache.commons.math3.fraction.BigFraction;
 
-import com.carrotsearch.hppc.LongDoubleOpenHashMap;
-import com.carrotsearch.hppc.LongObjectOpenHashMap;
+import com.carrotsearch.hppc.LongDoubleHashMap;
+import com.carrotsearch.hppc.LongObjectHashMap;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class implements serialization for maps
@@ -34,26 +37,25 @@ import com.carrotsearch.hppc.LongObjectOpenHashMap;
 public class IO {
 
     /**
-     * Reads a LongDoubleOpenHashMap from the stream.
+     * Reads a LongDoubleHashMap from the stream.
      *
      * @param stream
      * @return
      * @throws ClassNotFoundException
      * @throws IOException
      */
-    public static LongDoubleOpenHashMap readLongDoubleOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
-        
+    public static LongDoubleHashMap readLongDoubleHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
+
         // Read
-        boolean[] allocated = (boolean[]) stream.readObject();
-        long[] keys = (long[]) stream.readObject();
-        double[] values = (double[]) stream.readObject();
-        
+        String mapAsString = (String) stream.readObject();
+        Map<String, String> map = Arrays.stream(mapAsString.split(","))
+                .map(entry -> entry.split("=>"))
+                .collect(Collectors.toMap(entry -> entry[0], entry -> entry[1]));
+
         // Set
-        LongDoubleOpenHashMap result = new LongDoubleOpenHashMap();
-        for (int i=0; i<allocated.length; i++) {
-            if (allocated[i]) {
-                result.put(keys[i], values[i]);
-            }
+        LongDoubleHashMap result = new LongDoubleHashMap();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            result.put(Long.parseLong(entry.getKey()), Double.parseDouble(entry.getValue()));
         }
         
         // Return
@@ -61,26 +63,25 @@ public class IO {
     }
     
     /**
-     * Reads a LongObjectOpenHashMap of the type BigFraction from the stream.
+     * Reads a LongObjectHashMap of the type BigFraction from the stream.
      *
      * @param stream
      * @return
      * @throws ClassNotFoundException
      * @throws IOException
      */
-    public static LongObjectOpenHashMap<BigFraction> readLongBigFractionOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
-        
+    public static LongObjectHashMap<BigFraction> readLongBigFractionOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
+
         // Read
-        boolean[] allocated = (boolean[]) stream.readObject();
-        long[] keys = (long[]) stream.readObject();
-        Object[] values = (Object[]) stream.readObject();
-        
+        String mapAsString = (String) stream.readObject();
+        Map<String, Object> map = Arrays.stream(mapAsString.split(","))
+                .map(entry -> entry.split("=>"))
+                .collect(Collectors.toMap(entry -> entry[0], entry -> entry[1]));
+
         // Set
-        LongObjectOpenHashMap<BigFraction> result = new LongObjectOpenHashMap<BigFraction>();
-        for (int i=0; i<allocated.length; i++) {
-            if (allocated[i]) {
-                result.put(keys[i], (BigFraction)values[i]);
-            }
+        LongObjectHashMap<BigFraction> result = new LongObjectHashMap<BigFraction>();
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            result.put(Long.parseLong(entry.getKey()), (BigFraction)entry.getValue());
         }
         
         // Return
@@ -88,32 +89,26 @@ public class IO {
     }
 
     /**
-     * Writes a LongDoubleOpenHashMap to the stream.
+     * Writes a LongDoubleHashMap to the stream.
      *
      * @param stream
      * @param hashmap
      * @throws IOException
      */
-    public static void writeLongDoubleOpenHashMap(ObjectOutputStream stream, LongDoubleOpenHashMap hashmap) throws IOException {
-        
+    public static void writeLongDoubleHashMap(ObjectOutputStream stream, LongDoubleHashMap hashmap) throws IOException {
         // Write
-        stream.writeObject(hashmap.allocated);
-        stream.writeObject(hashmap.keys);
-        stream.writeObject(hashmap.values);
+        stream.writeObject(hashmap.toString());
     }
     
     /**
-     * Writes a LongObjectOpenHashMap of the type BigFraction to the stream.
+     * Writes a LongObjectHashMap of the type BigFraction to the stream.
      *
      * @param stream
      * @param hashmap
      * @throws IOException
      */
-    public static void writeLongBigFractionOpenHashMap(ObjectOutputStream stream, LongObjectOpenHashMap<BigFraction> hashmap) throws IOException {
-        
+    public static void writeLongBigFractionOpenHashMap(ObjectOutputStream stream, LongObjectHashMap<BigFraction> hashmap) throws IOException {
         // Write
-        stream.writeObject(hashmap.allocated);
-        stream.writeObject(hashmap.keys);
-        stream.writeObject(hashmap.values);
+        stream.writeObject(hashmap.toString());
     }
 }

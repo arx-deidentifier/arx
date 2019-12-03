@@ -23,7 +23,8 @@ import java.io.Serializable;
 
 import org.deidentifier.arx.DataType;
 
-import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+import com.carrotsearch.hppc.ObjectIntHashMap;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
 
 /**
  * A dictionary mapping integers to strings for different dimensions.
@@ -40,7 +41,7 @@ public class Dictionary implements Serializable {
 	private final String[][]                         mapping;
 
 	/** Map used when building the dictionary. */
-	private transient ObjectIntOpenHashMap<String>[] maps;
+	private transient ObjectIntHashMap<String>[] maps;
 
 	/** Codes of suppressed values for each dimension */
 	private int[]                                    suppressed;
@@ -52,7 +53,7 @@ public class Dictionary implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public Dictionary(Dictionary input, int[] columns) {
-        maps = new ObjectIntOpenHashMap[columns.length];
+        maps = new ObjectIntHashMap[columns.length];
         mapping = new String[columns.length][];
         suppressed = new int[columns.length];
         for (int i = 0; i < columns.length; i++) {
@@ -69,11 +70,11 @@ public class Dictionary implements Serializable {
      */
     @SuppressWarnings("unchecked")
     public Dictionary(final int dimensions) {
-        maps = new ObjectIntOpenHashMap[dimensions];
+        maps = new ObjectIntHashMap[dimensions];
         mapping = new String[dimensions][];
         suppressed = new int[dimensions];
         for (int i = 0; i < dimensions; i++) {
-            maps[i] = new ObjectIntOpenHashMap<String>();
+            maps[i] = new ObjectIntHashMap<String>();
         }
     }
 
@@ -84,9 +85,9 @@ public class Dictionary implements Serializable {
     public void definalizeAll() {
         
         // Re-instantiate maps
-        maps = new ObjectIntOpenHashMap[mapping.length];
+        maps = new ObjectIntHashMap[mapping.length];
         for (int i = 0; i < maps.length; i++) {
-            maps[i] = new ObjectIntOpenHashMap<String>();
+            maps[i] = new ObjectIntHashMap<String>();
         }
         
         // Add from mapping
@@ -111,18 +112,11 @@ public class Dictionary implements Serializable {
         for (int i = 0; i < maps.length; i++) {
             mapping[i] = new String[maps[i].size()];
             suppressed[i] = -1; // Won't match anything
-            final Object[] keys = maps[i].keys;
-            final int[] values = maps[i].values;
-            final boolean[] allocated = maps[i].allocated;
-            for (int j = 0; j < allocated.length; j++) {
-                if (allocated[j]) {
-                    String key = (String) keys[j];
-                    int value = values[j];
-                    mapping[i][value] = key;
-                    suppressed[i] = key.equals(DataType.ANY_VALUE) ? value : suppressed[i];
-                }
+            for (ObjectCursor<String> key : maps[i].keys()) {
+                int value = maps[i].get(key.value);
+                mapping[i][value] = key.value;
+                suppressed[i] = key.equals(DataType.ANY_VALUE) ? value : suppressed[i];
             }
-
         }
         maps = null;
     }
@@ -158,7 +152,7 @@ public class Dictionary implements Serializable {
      * @param dimension
      * @return
      */
-    public ObjectIntOpenHashMap<String> getUnfinalizedValues(final int dimension) {
+    public ObjectIntHashMap<String> getUnfinalizedValues(final int dimension) {
         return maps[dimension];
     }
 
@@ -171,7 +165,7 @@ public class Dictionary implements Serializable {
      */
     public Integer probe(final int dimension, final String string) {
         if (maps[dimension].containsKey(string)) {
-            return maps[dimension].lget();
+            return maps[dimension].get(string);
         } else {
             return null;
         }
@@ -189,14 +183,14 @@ public class Dictionary implements Serializable {
     public int register(final int dimension, final String string) {
 
         // Prepare
-        ObjectIntOpenHashMap<String> map = maps[dimension];
+        ObjectIntHashMap<String> map = maps[dimension];
         int size = map.size();
 
         // Return or store
         if (map.putIfAbsent(string, size)) {
             return size;
         } else {
-            return map.lget();
+            return map.get(string);
         }
     }
 

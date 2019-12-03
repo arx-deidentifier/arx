@@ -27,7 +27,8 @@ import org.deidentifier.arx.framework.data.DataManager;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntIntHashMap;
+import com.carrotsearch.hppc.cursors.IntCursor;
 
 /**
  * This class provides an efficient implementation of a non-monotonic and
@@ -77,9 +78,9 @@ public class MetricNMEntropy extends MetricEntropy {
         double originalInfoLoss = originalInfoLossDefault.getValue();
         double suppressedTuples = 0;
         double additionalInfoLoss = 0;
-        final IntIntOpenHashMap[] original = new IntIntOpenHashMap[node.getGeneralization().length];
+        final IntIntHashMap[] original = new IntIntHashMap[node.getGeneralization().length];
         for (int i = 0; i < original.length; i++) {
-            original[i] = new IntIntOpenHashMap();
+            original[i] = new IntIntHashMap();
         }
 
         // Compute counts for suppressed values in each column 
@@ -99,13 +100,11 @@ public class MetricNMEntropy extends MetricEntropy {
         // Evaluate entropy for suppressed tuples
         if (suppressedTuples != 0){
 	        for (int i = 0; i < original.length; i++) {
-	            IntIntOpenHashMap map = original[i];
-	            for (int j = 0; j < map.allocated.length; j++) {
-	                if (map.allocated[j]) {
-	                    double count = map.values[j];
-	                    additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
-	                }
-	            }
+	            IntIntHashMap map = original[i];
+                for (IntCursor valueCur : map.values()) {
+                    double count = valueCur.value;
+                    additionalInfoLoss += count * MetricEntropy.log2(count / suppressedTuples);
+                }
 	        }
         }
         

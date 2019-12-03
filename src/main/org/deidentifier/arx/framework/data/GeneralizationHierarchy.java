@@ -17,9 +17,12 @@
 
 package org.deidentifier.arx.framework.data;
 
-import com.carrotsearch.hppc.IntIntOpenHashMap;
-import com.carrotsearch.hppc.IntOpenHashSet;
-import com.carrotsearch.hppc.ObjectIntOpenHashMap;
+import com.carrotsearch.hppc.IntIntHashMap;
+import com.carrotsearch.hppc.IntHashSet;
+import com.carrotsearch.hppc.ObjectIntHashMap;
+import com.carrotsearch.hppc.cursors.IntCursor;
+import com.carrotsearch.hppc.cursors.ObjectCursor;
+
 
 /**
  * The class GeneralizationHierarchy.
@@ -90,13 +93,11 @@ public class GeneralizationHierarchy {
                 
                 // Find missing value
                 String value = "unknown-value";
-                ObjectIntOpenHashMap<String> dictmap = dictionary.getUnfinalizedValues(dimension);
-                for (int index = 0; index < dictmap.allocated.length; index++) {
-                    if (dictmap.allocated[index] && dictmap.values[index] == valueID) {
-                        // Work around some weird casting issues, probably caused by HPPC
-                        value = String.valueOf(((Object[]) dictmap.keys)[index]);
+                ObjectIntHashMap<String> dictmap = dictionary.getUnfinalizedValues(dimension);
+                for (ObjectCursor<String> cursor : dictmap.keys()) {
+                    if (dictmap.get(cursor.value) == valueID) {
+                        value = String.valueOf(cursor.value);
                         break;
-
                     }
                 }
 
@@ -109,7 +110,7 @@ public class GeneralizationHierarchy {
         this.distinctValues = new int[height];
 
         // for each column
-        final IntOpenHashSet vals = new IntOpenHashSet();
+        final IntHashSet vals = new IntHashSet();
         for (int column = 0; column < map[0].length; column++) {
             for (int row = 0; row < map.length; row++) {
                 vals.add(map[row][column]);
@@ -141,7 +142,7 @@ public class GeneralizationHierarchy {
         }
         
         // Level value -> level+1 value
-        final IntIntOpenHashMap hMap = new IntIntOpenHashMap();
+        final IntIntHashMap hMap = new IntIntHashMap();
         
         // Input->level->output.
         for (int level = 0; level < (map[0].length - 1); level++) {
@@ -190,21 +191,11 @@ public class GeneralizationHierarchy {
      */
     public int[] getDistinctValues(final int level) {
 
-        final IntOpenHashSet vals = new IntOpenHashSet();
+        final IntHashSet vals = new IntHashSet();
         for (int k = 0; k < map.length; k++) {
             vals.add(map[k][level]);
         }
-
-        final int[] result = new int[vals.size()];
-        final int[] keys = vals.keys;
-        final boolean[] allocated = vals.allocated;
-        int index = 0;
-        for (int i = 0; i < allocated.length; i++) {
-            if (allocated[i]) {
-                result[index++] = keys[i];
-            }
-        }
-        return result;
+        return vals.toArray();
     }
 
     /**
