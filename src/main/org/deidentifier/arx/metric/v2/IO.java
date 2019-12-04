@@ -1,13 +1,13 @@
 /*
  * ARX: Powerful Data Anonymization
  * Copyright 2012 - 2018 Fabian Prasser and contributors
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,21 +17,21 @@
 
 package org.deidentifier.arx.metric.v2;
 
+import com.carrotsearch.hppc.LongDoubleHashMap;
+import com.carrotsearch.hppc.LongObjectHashMap;
+import org.apache.commons.math3.fraction.BigFraction;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-
-import org.apache.commons.math3.fraction.BigFraction;
-
-import com.carrotsearch.hppc.LongDoubleHashMap;
-import com.carrotsearch.hppc.LongObjectHashMap;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import java.math.BigInteger;
+import org.apache.commons.math3.fraction.BigFraction;
 /**
  * This class implements serialization for maps
- * 
+ *
  * @author Fabian Prasser
  */
 public class IO {
@@ -46,22 +46,24 @@ public class IO {
      */
     public static LongDoubleHashMap readLongDoubleHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
 
+        LongDoubleHashMap result = new LongDoubleHashMap();
         // Read
         String mapAsString = (String) stream.readObject();
-        Map<String, String> map = Arrays.stream(mapAsString.split(","))
-                .map(entry -> entry.split("=>"))
-                .collect(Collectors.toMap(entry -> entry[0], entry -> entry[1]));
+        if (mapAsString != null) {
+            Map<String, String> map = Arrays.stream(mapAsString.substring(1, mapAsString.length() - 1).split(","))
+                    .map(entry -> entry.split("=>"))
+                    .collect(Collectors.toMap(entry -> ((String)entry[0]).trim(), entry -> ((String)entry[1]).trim()));
 
-        // Set
-        LongDoubleHashMap result = new LongDoubleHashMap();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
-            result.put(Long.parseLong(entry.getKey()), Double.parseDouble(entry.getValue()));
+            // Set
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                result.put(Long.parseLong(entry.getKey()), Double.parseDouble(entry.getValue()));
+            }
         }
-        
+
         // Return
         return result;
     }
-    
+
     /**
      * Reads a LongObjectHashMap of the type BigFraction from the stream.
      *
@@ -72,18 +74,19 @@ public class IO {
      */
     public static LongObjectHashMap<BigFraction> readLongBigFractionOpenHashMap(ObjectInputStream stream) throws ClassNotFoundException, IOException {
 
+        LongObjectHashMap<BigFraction> result = new LongObjectHashMap<BigFraction>();
         // Read
         String mapAsString = (String) stream.readObject();
-        Map<String, Object> map = Arrays.stream(mapAsString.split(","))
-                .map(entry -> entry.split("=>"))
-                .collect(Collectors.toMap(entry -> entry[0], entry -> entry[1]));
+        if (mapAsString != null) {
+            Map<String, String> map = Arrays.stream(mapAsString.substring(1, mapAsString.length() - 1).split(","))
+                    .map(entry -> entry.split("=>"))
+                    .collect(Collectors.toMap(entry -> ((String)entry[0]).trim(), entry ->((String)entry[1]).trim()));
 
-        // Set
-        LongObjectHashMap<BigFraction> result = new LongObjectHashMap<BigFraction>();
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            result.put(Long.parseLong(entry.getKey()), (BigFraction)entry.getValue());
+            // Set
+            for (Map.Entry<String, String> entry : map.entrySet()) {
+                result.put(Long.parseLong(entry.getKey()), new BigFraction(new BigInteger(entry.getValue())));
+            }
         }
-        
         // Return
         return result;
     }
@@ -99,7 +102,7 @@ public class IO {
         // Write
         stream.writeObject(hashmap.toString());
     }
-    
+
     /**
      * Writes a LongObjectHashMap of the type BigFraction to the stream.
      *
