@@ -57,7 +57,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 import com.carrotsearch.hppc.CharIntOpenHashMap;
-import com.carrotsearch.hppc.IntIntOpenHashMap;
+import com.carrotsearch.hppc.IntIntHashMap;
 import com.univocity.parsers.common.TextParsingException;
 
 
@@ -586,7 +586,7 @@ public class ImportWizardPageCSV extends WizardPage {
         Charset charset = getCharset();
 
         final BufferedReader r = new BufferedReader(new InputStreamReader(new FileInputStream(comboLocation.getText()), charset));
-        final IntIntOpenHashMap map = new IntIntOpenHashMap();
+        final IntIntHashMap map = new IntIntHashMap();
         final CharIntOpenHashMap delimitors = new CharIntOpenHashMap();
         for (int i=0; i<this.delimiters.length; i++) {
             delimitors.put(this.delimiters[i], i);

@@ -26,7 +26,7 @@ import org.deidentifier.arx.ARXLattice.ARXNode;
 import org.deidentifier.arx.ARXLattice.Anonymity;
 import org.deidentifier.arx.metric.InformationLoss;
 
-import com.carrotsearch.hppc.ObjectObjectOpenHashMap;
+import com.carrotsearch.hppc.ObjectObjectHashMap;
 
 import de.linearbits.jhpl.Lattice;
 import de.linearbits.jhpl.LatticeHighdimensional;
@@ -124,13 +124,13 @@ public abstract class SolutionSpace<T> {
     protected final Lattice<Integer, Integer>                     lattice;
 
     /** Information loss */
-    protected ObjectObjectOpenHashMap<Object, Object>             data                        = new ObjectObjectOpenHashMap<>();
+    protected ObjectObjectHashMap<Object, Object>             data                        = new ObjectObjectHashMap<>();
 
     /** Information loss */
-    protected ObjectObjectOpenHashMap<Object, InformationLoss<?>> lowerBound                  = new ObjectObjectOpenHashMap<>();
+    protected ObjectObjectHashMap<Object, InformationLoss<?>> lowerBound                  = new ObjectObjectHashMap<>();
 
     /** Information loss */
-    protected ObjectObjectOpenHashMap<Object, InformationLoss<?>> utility                     = new ObjectObjectOpenHashMap<>();
+    protected ObjectObjectHashMap<Object, InformationLoss<?>> utility                     = new ObjectObjectHashMap<>();
    
     /**
      * For de-serialization

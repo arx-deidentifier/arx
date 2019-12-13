@@ -46,8 +46,10 @@ import org.deidentifier.arx.metric.v2.DomainShareRedaction;
 import cern.colt.Sorting;
 import cern.colt.function.IntComparator;
 
-import com.carrotsearch.hppc.IntObjectOpenHashMap;
-import com.carrotsearch.hppc.IntOpenHashSet;
+import com.carrotsearch.hppc.IntObjectHashMap;
+import com.carrotsearch.hppc.IntHashSet;
+import com.carrotsearch.hppc.cursors.IntCursor;
+import java.util.Iterator;
 
 /**
  * Holds all data needed for the anonymization process.
@@ -635,13 +637,13 @@ public class DataManager {
 
         // Temporary class for nodes
         class TNode {
-            IntOpenHashSet children = new IntOpenHashSet();
+            IntHashSet children = new IntHashSet();
             int            level    = 0;
             int            offset   = 0;
         }
 
         final int offsetsExtras = offsetLeafs + numLeafs;
-        final IntObjectOpenHashMap<TNode> nodes = new IntObjectOpenHashMap<TNode>();
+        final IntObjectHashMap<TNode> nodes = new IntObjectHashMap<TNode>();
         final ArrayList<ArrayList<TNode>> levels = new ArrayList<ArrayList<TNode>>();
 
         // Init levels
@@ -682,15 +684,12 @@ public class DataManager {
                     treeList.add(node.children.size());
                     treeList.add(node.level);
 
-                    final int[] keys = node.children.keys;
-                    final boolean[] allocated = node.children.allocated;
-                    for (int i = 0; i < allocated.length; i++) {
-                        if (allocated[i]) {
-                            treeList.add(node.level == 1 ? keys[i] + offsetsExtras
-                                    : nodes.get(keys[i]).offset);
-                        }
+                    Iterator<IntCursor> nodeChilditerator=node.children.iterator();
+                    while (nodeChilditerator.hasNext()){
+                        IntCursor cur= nodeChilditerator.next();
+                        treeList.add(node.level == 1 ? cur.value + offsetsExtras
+                                    : nodes.get(cur.value).offset);
                     }
-
                     treeList.add(0); // pos_e
                     treeList.add(0); // neg_e
                 }

@@ -26,7 +26,7 @@ import java.util.Set;
 
 import org.deidentifier.arx.AttributeType.Hierarchy;
 
-import com.carrotsearch.hppc.CharOpenHashSet;
+import com.carrotsearch.hppc.CharHashSet;
 
 /**
  * This class enables building hierarchies for categorical and non-categorical values
@@ -401,7 +401,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
      */
     public void setDomainMetadata(String[] data) {
         
-        CharOpenHashSet characterSet = new CharOpenHashSet();
+        CharHashSet characterSet = new CharHashSet();
         this.maxValueLength = 0d;
         for (int i = 0; i < data.length; i++) {
             String value = data[i];
