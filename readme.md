@@ -4,7 +4,7 @@ ARX - Open Source Data Anonymization Software
 Note
 ------
 
-ARX is a research project. To support our research, please cite one of our papers instead of referencing our website in scientific articles. You can find an overview of papers about ARX [here](https://arx.deidentifier.org/publications/). If you are not sure which paper to cite, we recommend this one:
+ARX is the result of a research project. To support our research, please cite one of our papers instead of referencing our website in scientific articles. You can find an overview of papers about ARX [here](https://arx.deidentifier.org/publications/). If you are not sure which paper to cite, we recommend this one:
 
 * Prasser F., Kohlmayer, F. (2015). Putting statistical disclosure control into practice: The ARX data anonymization tool. In Medical Data Privacy Handbook (pp. 111-148). Springer, Cham.
 
