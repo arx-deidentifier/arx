@@ -36,6 +36,7 @@ import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFu
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMedian;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionMode;
 import org.deidentifier.arx.framework.data.DataColumn;
+import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction.DistributionAggregateFunctionSet;
 import org.deidentifier.arx.io.CSVDataOutput;
 import org.deidentifier.arx.io.CSVHierarchyInput;
 import org.deidentifier.arx.io.CSVSyntax;
@@ -747,6 +748,23 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
             return new MicroAggregationFunction(new DistributionAggregateFunctionMode(ignoreMissingData),
                                                 DataScale.NOMINAL, "Mode");
         }
+        /**
+         * Creates a microaggregation function returning sets. This variant will ignore missing data.
+         */
+        public static MicroAggregationFunction createSet() {
+            return createSet(true);
+        }
+        
+        /**
+         * Creates a microaggregation function returning sets.
+         * 
+         * @param ignoreMissingData Should the function ignore missing data. Default is true.
+         * @return
+         */
+        public static MicroAggregationFunction createSet(boolean ignoreMissingData) {
+            return new MicroAggregationFunction(new DistributionAggregateFunctionSet(ignoreMissingData),
+                                                DataScale.NOMINAL, "Set");
+        }
         
         /** The microaggregation function */
         private final DistributionAggregateFunction function;
@@ -1084,6 +1102,12 @@ public class AttributeType implements Serializable, Cloneable { // NO_UCD
                     /** SVUID*/ private static final long serialVersionUID = 1803670665142101922L;
                     @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
                         return MicroAggregationFunction.createMode(ignoreMissingData);
+                    }
+                },
+                new MicroAggregationFunctionDescription(DataScale.NOMINAL, "Set") {
+					/** SVUID*/ private static final long serialVersionUID = 8001475078517380349L;
+                    @Override public MicroAggregationFunction createInstance(boolean ignoreMissingData) {
+                        return MicroAggregationFunction.createSet(ignoreMissingData);
                     }
                 }
         });

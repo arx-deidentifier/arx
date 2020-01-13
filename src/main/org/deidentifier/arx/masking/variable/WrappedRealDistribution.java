@@ -42,7 +42,8 @@ public class WrappedRealDistribution extends AbstractIntegerDistribution {
      * Creates an instance.
      * @param distribution
      */
-    public WrappedRealDistribution(AbstractRealDistribution distribution) {
+    @SuppressWarnings("deprecation")
+	public WrappedRealDistribution(AbstractRealDistribution distribution) {
         this.distribution = distribution;
     }
 
