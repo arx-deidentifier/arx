@@ -22,7 +22,7 @@ package org.deidentifier.arx.algorithm;
  * @author Kieu-Mi Do
  * @author Fabian Prasser
  */
-public class GAAlgorithmConfig {
+public class GAAlgorithmConfiguration {
 
     /** Sub-population size */
     private int     subpopulationSize   = 100;

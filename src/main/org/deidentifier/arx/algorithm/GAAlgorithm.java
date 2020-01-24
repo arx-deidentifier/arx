@@ -53,7 +53,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
     /** RNG */
     private final Random                random;
     /** Configuration */
-    private final GAAlgorithmConfig     config;
+    private final GAAlgorithmConfiguration     config;
     /** Max values */
     private final int[]                 maxLevels;
     /** Min values */
@@ -72,7 +72,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 */
 	private GAAlgorithm(SolutionSpace<?> solutionSpace, TransformationChecker checker) {
 		super(solutionSpace, checker);
-		this.config = new GAAlgorithmConfig();
+		this.config = new GAAlgorithmConfiguration();
 		this.checker = checker;
 		this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
 		this.maxLevels = solutionSpace.getTop().getGeneralization();
