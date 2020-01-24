@@ -55,9 +55,9 @@ public class GAAlgorithm extends AbstractAlgorithm {
     /** Configuration */
     private final GAAlgorithmConfig     config;
     /** Max values */
-    private final int[]                 maxValues;
+    private final int[]                 maxLevels;
     /** Min values */
-    private final int[]                 minValues;
+    private final int[]                 minLevels;
     /** Checker */
     private final TransformationChecker checker;
     /** Progress tracking */
@@ -75,8 +75,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		this.config = new GAAlgorithmConfig();
 		this.checker = checker;
 		this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
-		this.maxValues = solutionSpace.getTop().getGeneralization();
-		this.minValues = solutionSpace.getBottom().getGeneralization();
+		this.maxLevels = solutionSpace.getTop().getGeneralization();
+		this.minLevels = solutionSpace.getBottom().getGeneralization();
 		this.random = this.config.isDeterministic() ? new Random(0xDEADBEEF) : new Random();
 	}
 
@@ -84,7 +84,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	public boolean traverse() {
 
 		// Prepare
-		int k = this.maxValues.length + config.getSubpopulationSize(); // TODO: Why is k defined this way? Please explain and document.
+		int k = this.maxLevels.length + config.getSubpopulationSize(); // TODO: Why is k defined this way? Please explain and document.
 		int itr = config.getIterations();
 		int imm = config.getImmigrationInterval();
 		int immf = config.getImmigrationFraction();
@@ -102,25 +102,25 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		for (int i = 0; i < k; i++) {
 
 			// Prepare
-			int[] generalization = new int[maxValues.length];
+			int[] generalization = new int[maxLevels.length];
 			
 			// Create "triangle" structure to cover the solution space
-			if (i < this.maxValues.length) {
+			if (i < this.maxLevels.length) {
 
 				// Fill 0 .. i with max generalization levels
 				for (int j = 0; j <= i; j++) {
-					generalization[j] = maxValues[j]; 
+					generalization[j] = maxLevels[j]; 
 				}
 
 				// Fill the rest with min generalization levels
-				for (int j = i+1; j < maxValues.length; j++) {
-					generalization[j] = minValues[j]; 
+				for (int j = i+1; j < maxLevels.length; j++) {
+					generalization[j] = minLevels[j]; 
 				}
 				
 			} else {
 				
 				// Generate random individual
-				for (int j = 0; j < maxValues.length; j++) {
+				for (int j = 0; j < maxLevels.length; j++) {
 					generalization[j] = getRandomGeneralizationLevel(j); 
 				}
 			}
@@ -131,10 +131,10 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		for (int i = 0; i < k; i++) {
 
 			// Prepare
-			int[] generalization = new int[maxValues.length];
+			int[] generalization = new int[maxLevels.length];
 			
 			// Generate random individual
-			for (int j = 0; j < maxValues.length; j++) {
+			for (int j = 0; j < maxLevels.length; j++) {
 				generalization[j] = getRandomGeneralizationLevel(j); 
 			}
 			z2.addIndividual(getIndividual(generalization));
@@ -221,7 +221,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 * @return
 	 */
 	private int getRandomGeneralizationLevel(int dimension) {
-		return minValues[dimension] + (int)Math.round(random.nextDouble() * (maxValues[dimension] - minValues[dimension]));
+		return minLevels[dimension] + (int)Math.round(random.nextDouble() * (maxLevels[dimension] - minLevels[dimension]));
 	}
 	
 	/**
@@ -312,8 +312,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		for (int crossover = 0; crossover < crossoverCount; crossover++) {
 			
 			// Create crossover child
-			int[] vec = new int[maxValues.length];
-			for (int i = 0; i < maxValues.length; i++) {
+			int[] vec = new int[maxLevels.length];
+			for (int i = 0; i < maxLevels.length; i++) {
 				vec[i] = (random.nextDouble() < 0.5 ? parents1[crossover] : parents2[crossover]).getGeneralization()[i];
 			}
 			
