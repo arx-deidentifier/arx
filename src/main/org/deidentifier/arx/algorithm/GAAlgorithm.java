@@ -111,6 +111,11 @@ public class GAAlgorithm extends AbstractAlgorithm {
 				for (int j = 0; j <= i; j++) {
 					generalization[j] = maxValues[j]; 
 				}
+
+				// Fill the rest with min generalization levels
+				for (int j = i+1; j < maxValues.length; j++) {
+					generalization[j] = minValues[j]; 
+				}
 				
 			} else {
 				
