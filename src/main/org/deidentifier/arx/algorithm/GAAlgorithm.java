@@ -32,8 +32,9 @@ import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 
 /**
- * The genetic algorithm.
- * TODO: Which algorithm? Please include a reference.
+ * Implementation of the genetic algorithm described in "Expanding Access to Large-Scale Genomic Data While
+ * Promoting Privacy: A Game Theoretic Approach" by Wan et al. DOI:
+ * 10.1016/j.ajhg.2016.12.002
  * 
  * @author Kieu-Mi Do
  * @author Fabian Prasser
@@ -51,19 +52,19 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	}
 
     /** RNG */
-    private final Random                random;
+    private final Random                       random;
     /** Configuration */
     private final GAAlgorithmConfiguration     config;
     /** Max values */
-    private final int[]                 maxLevels;
+    private final int[]                        maxLevels;
     /** Min values */
-    private final int[]                 minLevels;
+    private final int[]                        minLevels;
     /** Checker */
-    private final TransformationChecker checker;
+    private final TransformationChecker        checker;
     /** Progress tracking */
-    private int                         checks    = 0;
+    private int                                checks    = 0;
     /** Progress tracking */
-    private int                         maxChecks = 0;
+    private int                                maxChecks = 0;
 
 	/**
 	 * Creates a new instance
@@ -84,7 +85,11 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	public boolean traverse() {
 
 		// Prepare
-		int k = this.maxLevels.length + config.getSubpopulationSize(); // TODO: Why is k defined this way? Please explain and document.
+		// k is defined in a way that stops very small sub-populations
+		// from breaking the algorithm, as very small values fail to
+		// solve. The GA requires diversity, and small sub-populations do not
+		// provide enough information to satisfy that
+		int k = this.maxLevels.length + config.getSubpopulationSize();
 		int itr = config.getIterations();
 		int imm = config.getImmigrationInterval();
 		int immf = config.getImmigrationFraction();
@@ -184,7 +189,13 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	}
 	
 	/**
-	 * Returns a mutated transformation:
+	 * Returns a mutated transformation, which means that a random parent is
+	 * selected. <br>
+	 * - Randomly generate an integer r, representing the number of mutated
+	 * places (from 1 to ceil (upper bound on mutation probability * m)) <br>
+	 * - Randomly generate r unrepeated integers (within the range [1, m]),
+	 * representing the locations of mutated places <br>
+	 * - Replace selected places with random levels
 	 * @return
 	 */
 	private Transformation<?> getMutatedIndividual(Transformation<?> transformation) {
