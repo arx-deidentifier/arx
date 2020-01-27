@@ -1,6 +1,18 @@
 ARX - Open Source Data Anonymization Software
 ====
 
+Note
+------
+
+ARX is the result of a research project. To support our research, please cite one of our papers instead of referencing our website in scientific articles. You can find an overview of papers about ARX [here](https://arx.deidentifier.org/publications/). If you are not sure which paper to cite, we recommend this one:
+
+* Prasser F., Kohlmayer, F. (2015). Putting statistical disclosure control into practice: The ARX data anonymization tool. In Medical Data Privacy Handbook (pp. 111-148). Springer, Cham.
+
+Thanks!
+
+Introduction
+------
+
 ARX is a comprehensive open source software for de-identifying sensitive personal data. 
 It has been designed from the ground up to provide high scalability, ease of use and a 
 tight integration of the many different aspects relevant to data anonymization. Its highlights include:
@@ -14,7 +26,7 @@ tight integration of the many different aspects relevant to data anonymization. 
  * Methods for analyzing re-identification risks
 
 The software is able to handle very large datasets on commodity hardware and features an intuitive cross-platform 
-graphical user interface. You can find further information on the project [website](http://arx.deidentifier.org/). 
+graphical user interface. You can find further information on the project [website](https://arx.deidentifier.org/). 
 
 Development setup
 ------

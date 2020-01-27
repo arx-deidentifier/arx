@@ -97,7 +97,7 @@ public class DebugData {
         
         StringBuilder builder = new StringBuilder();
         builder.append("DataHandle@").append(handle.hashCode()); //$NON-NLS-1$
-        if (handle.isOrphaned()) {
+        if (handle.isReleased()) {
             builder.append(" [Orphaned]\n"); //$NON-NLS-1$
         } else {
             builder.append("\n"); //$NON-NLS-1$
