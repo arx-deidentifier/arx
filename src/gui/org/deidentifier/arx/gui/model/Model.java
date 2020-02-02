@@ -311,6 +311,30 @@ public class Model implements Serializable {
     /** Statistics about the last optimization process */
     private ARXProcessStatistics                          optimizationStatistics          = null;
 
+    /* *****************************************
+     * GENETIC ALGORITHM
+     ******************************************/
+    /** Sub-population size */
+    private Integer                         			geneticAlgorithmSubpopulationSize;
+
+    /** Immigration interval */
+    private Integer                                     geneticAlgorithmImmigrationInterval;
+
+    /** Immigration fraction */
+    private Integer                                 	geneticAlgorithmImmigrationFraction;
+
+    /** Size of the elite */
+    private Double                                      geneticAlgorithmElitePercent;
+    
+    /** Fraction of individuals crossed-over */
+    private Double  									geneticAlgorithmCrossoverPercent; 
+    
+    /** Deterministic */
+    private boolean										geneticAlgorithmDeterministic;
+    
+    /** Mutation probability */
+    private Double  									geneticAlgorithmMutationProbability;
+    
     /**
      * Creates a new instance.
      *
@@ -523,6 +547,7 @@ public class Model implements Serializable {
             }            
         }
     }
+    
     /**
      * Returns the current anonymization configuration
      * @return
@@ -1284,6 +1309,81 @@ public class Model implements Serializable {
     }
 
     /**
+	 * Returns the fraction of individuals crossed over
+	 * @return
+	 */
+	public double getGeneticAlgorithmCrossoverPercent() {
+		if (this.geneticAlgorithmCrossoverPercent == null) {
+			this.geneticAlgorithmCrossoverPercent = 0.2d;
+		}
+		return geneticAlgorithmCrossoverPercent;
+	}
+    
+    /**
+	 * Deterministic execution
+	 * @return
+	 */
+	public boolean getGeneticAlgorithmDeterministic() {
+		return geneticAlgorithmDeterministic;
+	}
+    
+    /**
+	 * Returns the size of the elite group
+	 * @return
+	 */
+	public double getGeneticAlgorithmElitePercent() {
+		if (this.geneticAlgorithmElitePercent == null) {
+			this.geneticAlgorithmElitePercent = 0.2d;
+		}
+		return geneticAlgorithmElitePercent;
+	}
+  
+    /**
+	 * Returns the fraction to immigrate
+	 * @return
+	 */
+	public int getGeneticAlgorithmImmigrationFraction() {
+		if (this.geneticAlgorithmImmigrationFraction == null) {
+			this.geneticAlgorithmImmigrationFraction = 10;
+		}
+		return geneticAlgorithmImmigrationFraction;
+	}
+
+    /**
+	 * Returns the immigration interval
+	 * @return
+	 */
+	public int getGeneticAlgorithmImmigrationInterval() {
+		if (this.geneticAlgorithmImmigrationInterval == null) {
+			this.geneticAlgorithmImmigrationInterval = 10;
+		}
+		return geneticAlgorithmImmigrationInterval;
+	}
+    
+    /**
+	 * Returns the mutation probability
+	 * @return
+	 */
+	public double getGeneticAlgorithmMutationProbability() {
+		if (this.geneticAlgorithmMutationProbability == null) {
+			this.geneticAlgorithmMutationProbability = 0.2d;
+		}
+	    return geneticAlgorithmMutationProbability;
+	}
+    
+    /**
+	 * Returns the size of the sub-population
+	 * @return
+	 */
+	public int getGeneticAlgorithmSubpopulationSize() {
+		if (this.geneticAlgorithmSubpopulationSize == null) {
+			this.geneticAlgorithmSubpopulationSize = 100;
+		}
+		return geneticAlgorithmSubpopulationSize;
+	}
+
+    
+    /**
      * Returns whether debugging is enabled.
      *
      * @return
@@ -1362,6 +1462,7 @@ public class Model implements Serializable {
         this.localRecodingModel = null;
         this.selectedClassValue = null;
         this.selectedAttribute = null;
+        //TODO: add new GA varaibles
     }
 
     /**
@@ -1863,7 +1964,42 @@ public class Model implements Serializable {
         this.setModified();
     }
 
-    /**
+
+	public void setGeneticAlgorithmSubpopulationSize(Integer geneticAlgorithmSubpopulationSize) {
+		this.geneticAlgorithmSubpopulationSize = geneticAlgorithmSubpopulationSize;
+	}
+
+
+	public void setGeneticAlgorithmImmigrationInterval(Integer geneticAlgorithmImmigrationInterval) {
+		this.geneticAlgorithmImmigrationInterval = geneticAlgorithmImmigrationInterval;
+	}
+
+
+	public void setGeneticAlgorithmImmigrationFraction(Integer geneticAlgorithmImmigrationFraction) {
+		this.geneticAlgorithmImmigrationFraction = geneticAlgorithmImmigrationFraction;
+	}
+
+	public void setGeneticAlgorithmElitePercent(Double geneticAlgorithmElitePercent) {
+		this.geneticAlgorithmElitePercent = geneticAlgorithmElitePercent;
+	}
+	
+	public void setGeneticAlgorithmCrossoverPercent(Double geneticAlgorithmCrossoverPercent) {
+		this.geneticAlgorithmCrossoverPercent = geneticAlgorithmCrossoverPercent;
+	}
+
+	public boolean isGeneticAlgorithmDeterministic() {
+		return geneticAlgorithmDeterministic;
+	}
+
+	public void setGeneticAlgorithmDeterministic(boolean geneticAlgorithmDeterministic) {
+		this.geneticAlgorithmDeterministic = geneticAlgorithmDeterministic;
+	}
+
+	public void setGeneticAlgorithmMutationProbability(Double geneticAlgorithmMutationProbability) {
+		this.geneticAlgorithmMutationProbability = geneticAlgorithmMutationProbability;
+	}
+
+	/**
      * Converts attributes into an array ordered by occurrence in the dataset
      * @param set
      * @return

@@ -77,6 +77,7 @@ public class DialogProperties implements IDialog {
         this.createTabSearch(this.dialog);
         this.createTabUtility(this.dialog);
         this.createTabRisk(this.dialog);
+        this.createTabGeneticAlgorithm(this.dialog);
     }
 
     /**
@@ -218,6 +219,48 @@ public class DialogProperties implements IDialog {
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().setDeterministic((Boolean)t); }});        
     }
 
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabGeneticAlgorithm(PreferencesDialog window) {
+
+        window.addCategory(Resources.getMessage("PropertyDialog.136"), //$NON-NLS-1$
+                           controller.getResources().getManagedImage("symbol_g.png")); //$NON-NLS-1$
+        
+        window.addGroup(Resources.getMessage("DialogProperties.21")); //$NON-NLS-1$
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.137"), 1, 10, 10) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getGeneticAlgorithmSubpopulationSize(); }
+            protected void setValue(Object t) { model.setGeneticAlgorithmSubpopulationSize((Integer)t); }});
+        
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.138"), 1, 12, 20) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getGeneticAlgorithmImmigrationInterval(); }
+            protected void setValue(Object t) { model.setGeneticAlgorithmImmigrationInterval((Integer)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.139"), 1, 12, 13) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getGeneticAlgorithmImmigrationFraction(); }
+            protected void setValue(Object t) { model.setGeneticAlgorithmImmigrationFraction((Integer)t); }});
+
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.140"), 1.0e-12, 100,  0.2d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getGeneticAlgorithmElitePercent(); }
+            protected void setValue(Object t) { model.setGeneticAlgorithmElitePercent((Double)t); }});
+
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.141"), 1.0e-12, 100,  0.2d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getGeneticAlgorithmCrossoverPercent(); }
+            protected void setValue(Object t) { model.setGeneticAlgorithmCrossoverPercent((Double)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.142"), 1.0e-12,  0.2d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getGeneticAlgorithmMutationProbability(); }
+            protected void setValue(Object t) { model.setGeneticAlgorithmMutationProbability((Double)t); }});  
+        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), ARXSolverConfiguration.getDefaultDeterministic()) { //$NON-NLS-1$
+            protected Boolean getValue() { return model.getGeneticAlgorithmDeterministic(); }
+            protected void setValue(Object t) { model.setGeneticAlgorithmDeterministic((Boolean)t); }});        
+    	/***/
+    }
+    
     /**
      * Create a tab
      * @param window

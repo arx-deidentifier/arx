@@ -621,12 +621,22 @@ public class ARXAnonymizer { // NO_UCD
                                            final DataManager manager,
                                            final SolutionSpace<?> solutionSpace,
                                            final TransformationChecker checker) {
-
+    	
+    	int numQIs = manager.getHierarchies().length;
+    	
     	if (true) {
-    		return GAAlgorithm.create(solutionSpace, checker);
+    		return GAAlgorithm.create(solutionSpace, checker,
+    		config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs), //TODO: calculate GA iterations based on steps
+    		config.getGeneticAlgorithmCrossoverPercent(),
+    		config.getGeneticAlgorithmDeterministic(),
+    		config.getGeneticAlgorithmElitePercent(),
+    		config.getGeneticAlgorithmImmigrationFraction(),
+    		config.getGeneticAlgorithmImmigrationInterval(),
+    		config.getGeneticAlgorithmMutationProbability(),
+    		config.getGeneticAlgorithmSubpopulationSize());
     	}
     	
-        int numQIs = manager.getHierarchies().length;
+        
         
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
