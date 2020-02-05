@@ -33,7 +33,9 @@ public class ModelAnonymizationConfiguration implements Serializable {
     public static enum SearchType {
         OPTIMAL,
         STEP_LIMIT,
-        TIME_LIMIT
+        TIME_LIMIT,
+        HEURISTIC,
+        GENETIC
     }
     /**
      * Transformation type
