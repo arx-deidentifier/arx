@@ -75,7 +75,7 @@ public class DataMatrix implements Serializable {
             this.isMultidimensional = true;
         }
 
-        if(this.isMultidimensional){
+        if(this.isMultidimensional == false){
         	this.array = new int[cells];
             this.matrix = null;
         }else{
