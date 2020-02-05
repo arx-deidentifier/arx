@@ -33,7 +33,7 @@ public class DataMatrix implements Serializable {
     /** Indicates wheter the matrix is represented as an single array or
       * a multidimensional one
       */
-    private final boolean     isMultidimensional;
+    private boolean     	  isMultidimensional;
 
     /** Backing array */
     private final int[]       array;
@@ -65,18 +65,24 @@ public class DataMatrix implements Serializable {
     public DataMatrix(final int rows, final int columns) {
         this.columns = columns;
         this.rows = rows;
-        
-        int cells = Math.multiplyExact(rows, columns);
-        if (cells <= Integer.MAX_VALUE - 2) {
-        	this.array = new int[cells];
-        	this.isMultidimensional = false;
-        	this.matrix = null;        	
-        } else {
-        	// Create an multidimensional array if there are more than 2^31-1 cells
-        	this.matrix = new int[rows][columns];
-        	this.isMultidimensional = true;
-        	this.array = null;        	
+        int cells = 0;
+
+        try{
+            cells = Math.multiplyExact(rows, columns);
+            this.isMultidimensional = false;
+        } catch (ArithmeticException e) {
+            // Create an multidimensional array if there are more than 2^31-1 cells
+            this.isMultidimensional = true;
         }
+
+        if(this.isMultidimensional){
+        	this.array = new int[cells];
+            this.matrix = null;
+        }else{
+        	this.matrix = new int[rows][columns];
+            this.array = null;
+        }
+
     }
 
     /**
