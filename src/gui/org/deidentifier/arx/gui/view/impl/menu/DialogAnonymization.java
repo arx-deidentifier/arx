@@ -279,7 +279,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         GridData data1 = SWTUtil.createFillGridData();
         data1.horizontalIndent = 5;
         group1.setLayoutData(data1);
-        group1.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        group1.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
 
         // Radio - optimal
         final Button radio11 = new Button(group1, SWT.RADIO);
