@@ -13,7 +13,7 @@ Thanks!
 Introduction
 ------
 
-ARX is a comprehensive open source software for de-identifying sensitive personal data. 
+ARX is a comprehensive open source software for anonymizing sensitive personal data. 
 It has been designed from the ground up to provide high scalability, ease of use and a 
 tight integration of the many different aspects relevant to data anonymization. Its highlights include:
 
@@ -33,7 +33,7 @@ Development setup
 
 Currently, the main development of ARX is carried out using Eclipse as an IDE and Ant as a build tool. Support for further IDEs such as IntelliJ IDEA and Maven is experimental.
 
-The Ant build script features various targets that can be used to build different versions of ARX (e.g. including GUI code or not). To build only the core code using Maven, set the system property `core` to `true`. This will build a platform independent jar with the ARX main code module and no GUI components. For example,
+The Ant build script features various targets that can be used to build different versions of ARX (e.g. including GUI code or not). To build only the core code using Maven, set the system property `core` to `true`. This will build a platform independent jar with the ARX main code module and no GUI components:
 
 ```$ mvn compile -Dcore=true``` 
 
@@ -45,7 +45,7 @@ See [here](https://github.com/arx-deidentifier/arx/blob/master/contributing.md) 
 License
 ------
 
-ARX (C) 2012 - 2019 Fabian Prasser and Contributors.
+ARX (C) 2012 - 2020 Fabian Prasser and Contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License"); 
 you may not use this file except in compliance with the License. 
