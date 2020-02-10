@@ -519,6 +519,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchEnabled = this.heuristicSearchEnabled;
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
+        result.heuristicSearchStepLimit = this.heuristicSearchStepLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         result.dpSearchBudget = this.dpSearchBudget;
         result.heuristicSearchStepSemantics = this.heuristicSearchStepSemantics;
