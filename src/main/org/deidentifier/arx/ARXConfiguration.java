@@ -549,6 +549,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		result.geneticAlgorithmCrossoverPercent = this.geneticAlgorithmCrossoverPercent;
 		result.geneticAlgorithmDeterministic = this.geneticAlgorithmDeterministic;
 		result.geneticAlgorithmMutationProbability = this.geneticAlgorithmMutationProbability;
+		result.geneticAlgorithmIterations = this.geneticAlgorithmIterations;
 
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
@@ -653,14 +654,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		return geneticAlgorithmImmigrationFraction;
 	}
 
+	/**
+	 * Returns the genetic algorithm iterations
+	 * 
+	 * @return
+	 */
 	public int getGeneticAlgorithmIterations() {
-	    if (this.geneticAlgorithmIterations == null) {
-	        this.geneticAlgorithmIterations = 50;
-	    }
-	    return geneticAlgorithmIterations;
-	    }
-	
-	
+		if (this.geneticAlgorithmIterations == null) {
+			this.geneticAlgorithmIterations = 50;
+		}
+		return geneticAlgorithmIterations;
+	}
+
     /**
 	 * Returns the immigration interval
 	 * @return
@@ -1120,10 +1125,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		this.geneticAlgorithmImmigrationFraction = geneticAlgorithmImmigrationFraction;
 	}
 
+	/**
+	 * Sets the genetic algorithm iterations
+	 * @param geneticAlgorithmIterations
+	 */
 	public void setGeneticAlgorithmIterations(int geneticAlgorithmIterations) {
 	    this.geneticAlgorithmIterations = geneticAlgorithmIterations;
 	}
-	
 	
 	/**
 	 * Sets the immigration interval
