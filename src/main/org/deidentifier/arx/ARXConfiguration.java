@@ -389,27 +389,33 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Number of output records */
     private int                                numOutputRecords                      = 0;
-    
+
     /** Semantics of heuristic search steps */
     private SearchStepSemantics                searchStepSemantics                   = SearchStepSemantics.CHECKS;
 
     /** Sub-population size */
-    private Integer geneticAlgorithmSubpopulationSize       = 100;
+    private Integer                            geneticAlgorithmSubpopulationSize     = 100;
+    
     /** Immigration interval */
-    private Integer geneticAlgorithmImmigrationInterval     = 10;
+    private Integer                            geneticAlgorithmImmigrationInterval   = 10;
+    
     /** Immigration fraction */
-    private Integer geneticAlgorithmImmigrationFraction     = 10;
+    private Integer                            geneticAlgorithmImmigrationFraction   = 10;
+    
     /** Size of the elite */
-    private Double  geneticAlgorithmElitePercent            = 0.2d;
+    private Double                             geneticAlgorithmElitePercent          = 0.2d;
+    
     /** Fraction of individuals crossed-over */
-    private Double  geneticAlgorithmCrossoverPercent        = 0.2d;
+    private Double                             geneticAlgorithmCrossoverPercent      = 0.2d;
+    
     /** Deterministic */
-    private boolean geneticAlgorithmDeterministic           = false;
+    private boolean                            geneticAlgorithmDeterministic         = false;
+    
     /** Mutation probability */
-    private Double  geneticAlgorithmMutationProbability     = 0.2d;
+    private Double                             geneticAlgorithmMutationProbability   = 0.2d;
+    
     /** Number of GA iterations */
-	private Integer geneticAlgorithmIterations              = 50;
-
+    private Integer                            geneticAlgorithmIterations            = 50;
 
 	
     /**

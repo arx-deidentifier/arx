@@ -249,6 +249,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
 
     /**
      * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmIterations()
+     */
+    public int getGeneticAlgorithmIterations() {
+        return config.getGeneticAlgorithmIterations();
+    }
+
+    /**
+     * @return
      * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmMutationProbability()
      */
     public double getGeneticAlgorithmMutationProbability() {
@@ -278,7 +286,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public int getHeuristicSearchTimeLimit() {
         return config.getHeuristicSearchTimeLimit();
     }
-
+    
     /**
      * Returns the set of all assigned hierarchies.
      *
@@ -427,7 +435,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return suppressionWeight;
     }
-    
+
     /**
      * Returns the transformation mode for the given attribute. Returns ModelTransformationMode.GENERALIZATION
      * if no entry was found, for backwards compatibility
@@ -445,7 +453,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
             return ModelTransformationMode.GENERALIZATION;
         }
     }
-
+    
     /**
      * @param type
      * @return
@@ -545,7 +553,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         this.config.getCostBenefitConfiguration().setAdversaryGain(adversaryGain);
     }
-    
+
     /**
      * @param type
      * @param enabled
@@ -618,6 +626,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * @param geneticAlgorithmIterations
+     * @see org.deidentifier.arx.ARXConfiguration#setGeneticAlgorithmIterations(int)
+     */
+    public void setGeneticAlgorithmIterations(int geneticAlgorithmIterations) {
+        setModified();
+        config.setGeneticAlgorithmIterations(geneticAlgorithmIterations);
+    }
+    
+    /**
      * Sets the mutation probability
      * 
      * @param geneticAlgorithmMutationProbability
@@ -626,7 +643,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmMutationProbability(geneticAlgorithmMutationProbability);
     }
-    
+
     /**
      * Setter
      * 
