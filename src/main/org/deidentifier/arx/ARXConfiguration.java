@@ -549,6 +549,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		result.geneticAlgorithmCrossoverPercent = this.geneticAlgorithmCrossoverPercent;
 		result.geneticAlgorithmDeterministic = this.geneticAlgorithmDeterministic;
 		result.geneticAlgorithmMutationProbability = this.geneticAlgorithmMutationProbability;
+		result.geneticAlgorithmIterations = this.geneticAlgorithmIterations;
 
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
