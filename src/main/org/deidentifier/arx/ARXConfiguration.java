@@ -407,6 +407,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private boolean geneticAlgorithmDeterministic           = false;
     /** Mutation probability */
     private Double  geneticAlgorithmMutationProbability     = 0.2d;
+    /** Number of GA iterations */
+	private Integer geneticAlgorithmIterations              = 50;
+
+
 	
     /**
      * Creates a new configuration without tuple suppression.
@@ -534,6 +538,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchEnabled = this.heuristicSearchEnabled;
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
+        result.heuristicSearchStepLimit = this.heuristicSearchStepLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         result.dpSearchBudget = this.dpSearchBudget;
         result.searchStepSemantics = this.searchStepSemantics;
@@ -648,6 +653,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		return geneticAlgorithmImmigrationFraction;
 	}
 
+	public int getGeneticAlgorithmIterations() {
+	    if (this.geneticAlgorithmIterations == null) {
+	        this.geneticAlgorithmIterations = 50;
+	    }
+	    return geneticAlgorithmIterations;
+	    }
+	
+	
     /**
 	 * Returns the immigration interval
 	 * @return
@@ -1107,6 +1120,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		this.geneticAlgorithmImmigrationFraction = geneticAlgorithmImmigrationFraction;
 	}
 
+	public void setGeneticAlgorithmIterations(int geneticAlgorithmIterations) {
+	    this.geneticAlgorithmIterations = geneticAlgorithmIterations;
+	}
+	
+	
 	/**
 	 * Sets the immigration interval
 	 * @param geneticAlgorithmImmigrationInterval
@@ -1578,4 +1596,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected boolean requires(int requirement) {
         return (this.requirements & requirement) != 0;
     }
+
+
 }

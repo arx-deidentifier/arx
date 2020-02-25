@@ -60,14 +60,6 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
 
     /** The number indicating how often a depth-first-search will be performed */
     private final int                stepping;
-    /** Time limit */
-    private final int                timeLimit;
-    /** The start time */
-    private long                     timeStart;
-    /** The number of checks */
-    private int                      checkCount;
-    /** The number of checks */
-    private final int                checkLimit;
     
     /**
     * Constructor
@@ -77,7 +69,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param checkLimit
     */
     private LIGHTNINGAlgorithm(SolutionSpace<?> space, TransformationChecker checker, int timeLimit, int checkLimit) {
-        super(space, checker);
+        super(space, checker, timeLimit, checkLimit);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         int stepping = space.getTop().getLevel();
         this.stepping = stepping > 0 ? stepping : 1;
@@ -85,20 +77,14 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         this.propertyExpanded = space.getPropertyExpanded();
         this.propertyInsufficientUtility = space.getPropertyInsufficientUtility();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
-        this.timeLimit = timeLimit;
-        this.checkLimit = checkLimit;
-        if (timeLimit <= 0) { 
-            throw new IllegalArgumentException("Invalid time limit. Must be greater than zero."); 
-        }
-        if (checkLimit <= 0) { 
-            throw new IllegalArgumentException("Invalid step limit. Must be greater than zero."); 
-        }
     }
 
     @Override
     public boolean traverse() {
-        timeStart = System.currentTimeMillis();
-        checkCount = 0;
+
+        // Prepare
+        super.startTraverse();
+        
         PriorityQueue<Object> queue = new PriorityQueue<>(stepping, new Comparator<Object>() {
             @Override
             public int compare(Object arg0, Object arg1) {
@@ -139,10 +125,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             trackOptimum(transformation);
-            checkCount++;
-            double progressSteps = (double)checkCount / (double)checkLimit;
-            double progressTime = (double)(System.currentTimeMillis() - timeStart) / (double)timeLimit;
-            progress(Math.max(progressSteps, progressTime));
+            trackProgressFromLimits();
         }
     }
 
@@ -190,15 +173,6 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         return result;
     }
     
-    /**
-     * Returns whether we have exceeded the allowed number of steps or time.
-     * @return
-     */
-    private boolean mustStop() {
-        return ((int)(System.currentTimeMillis() - timeStart) > timeLimit) ||
-               (checkCount >= checkLimit);
-    }
-
     /**
     * Returns whether we can prune this Transformation
     * @param transformation

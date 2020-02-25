@@ -100,6 +100,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     
     @Override
     public boolean traverse() {
+
+        // Prepare
+        super.startTraverse();
         
         // Set the top-transformation to be the initial pivot element
         Transformation<?> pivot = solutionSpace.getTop();

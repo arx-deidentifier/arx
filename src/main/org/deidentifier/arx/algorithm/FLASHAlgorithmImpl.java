@@ -100,6 +100,9 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
     @Override
     public boolean traverse() {
+
+        // Prepare
+        super.startTraverse();
         
         // Determine configuration for the outer loop
         FLASHPhaseConfiguration outerLoopConfiguration;

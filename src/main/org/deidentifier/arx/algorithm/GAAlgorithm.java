@@ -69,10 +69,6 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	private final int[] minLevels;
 	/** Checker */
 	private final TransformationChecker checker;
-	/** Progress tracking */
-	private int checks = 0;
-	/** Progress tracking */
-	private int maxChecks = 0;
 
 	/** Configuration */
 	//TODO - currently the iterations are simply derived from the heuristicSearchStepLimit
@@ -119,7 +115,10 @@ public class GAAlgorithm extends AbstractAlgorithm {
 
 	@Override
 	public boolean traverse() {
-
+        
+	    // Prepare
+	    super.startTraverse();
+        
 		// Prepare
 		// k is defined in a way that stops very small sub-populations
 		// from breaking the algorithm, as very small values fail to
@@ -129,10 +128,6 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		int itr = geneticAlgorithmIterations;
 		int imm = geneticAlgorithmImmigrationInterval;
 		int immf = geneticAlgorithmImmigrationFraction;
-
-		// Progress
-		this.maxChecks = (2 * k + itr * 2 * (int) Math.ceil(geneticAlgorithmCrossoverPercent * k)
-				+ itr * 2 * (int) Math.ceil(geneticAlgorithmElitePercent * k));
 
 		// Build sub-populations
 		GASubpopulation z1 = new GASubpopulation();
@@ -164,6 +159,12 @@ public class GAAlgorithm extends AbstractAlgorithm {
 					generalization[j] = getRandomGeneralizationLevel(j);
 				}
 			}
+
+            // Stop
+            if (mustStop()) {
+                return false;
+            }
+            
 			z1.addIndividual(getIndividual(generalization));
 		}
 
@@ -177,6 +178,12 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			for (int j = 0; j < maxLevels.length; j++) {
 				generalization[j] = getRandomGeneralizationLevel(j);
 			}
+
+            // Stop
+            if (mustStop()) {
+                return false;
+            }
+            
 			z2.addIndividual(getIndividual(generalization));
 		}
 
@@ -202,6 +209,11 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			// Iterate
 			iterateSubpopulation(z1);
 			iterateSubpopulation(z2);
+
+            // Stop
+            if (mustStop()) {
+                return false;
+            }
 		}
 
 		// Check whether we found a solution
@@ -220,7 +232,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			transformation.setChecked(this.checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
 		}
 		trackOptimum(transformation);
-		progress((double) (checks++) / (double) maxChecks);
+        trackProgressFromLimits();
 		return transformation;
 	}
 
@@ -353,6 +365,11 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		// Mutate fittest non-elite individuals
 		for (int mutation = eliteCount; mutation < k - crossoverCount; mutation++) {
 
+            // Stop
+            if (mustStop()) {
+                return;
+            }
+            
 			// Mutate
 			Transformation<?> individual = getMutatedIndividual(population.getIndividual(mutation));
 			if (individual != null) {
@@ -371,9 +388,13 @@ public class GAAlgorithm extends AbstractAlgorithm {
 				vec[i] = (random.nextDouble() < 0.5 ? parents1[crossover] : parents2[crossover]).getGeneralization()[i];
 			}
 
+			// Stop
+			if (mustStop()) {
+			    return;
+			}
+			
 			// Replace
 			population.setIndividual(k - crossover - 1, getIndividual(vec));
 		}
 	}
-
 }
