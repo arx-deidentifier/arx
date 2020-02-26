@@ -400,13 +400,13 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Integer                            geneticAlgorithmImmigrationInterval   = 10;
     
     /** Immigration fraction */
-    private Integer                            geneticAlgorithmImmigrationFraction   = 10;
+    private Double                             geneticAlgorithmImmigrationFraction   = 0.1d;
     
     /** Size of the elite */
-    private Double                             geneticAlgorithmElitePercent          = 0.2d;
+    private Double                             geneticAlgorithmEliteFraction          = 0.2d;
     
     /** Fraction of individuals crossed-over */
-    private Double                             geneticAlgorithmCrossoverPercent      = 0.2d;
+    private Double                             geneticAlgorithmCrossoverFraction      = 0.2d;
     
     /** Deterministic */
     private boolean                            geneticAlgorithmDeterministic         = false;
@@ -551,8 +551,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		result.geneticAlgorithmSubpopulationSize = this.geneticAlgorithmSubpopulationSize;
 		result.geneticAlgorithmImmigrationInterval = this.geneticAlgorithmImmigrationInterval;
 		result.geneticAlgorithmImmigrationFraction = this.geneticAlgorithmImmigrationFraction;
-		result.geneticAlgorithmElitePercent = this.geneticAlgorithmElitePercent;
-		result.geneticAlgorithmCrossoverPercent = this.geneticAlgorithmCrossoverPercent;
+		result.geneticAlgorithmEliteFraction = this.geneticAlgorithmEliteFraction;
+		result.geneticAlgorithmCrossoverFraction = this.geneticAlgorithmCrossoverFraction;
 		result.geneticAlgorithmDeterministic = this.geneticAlgorithmDeterministic;
 		result.geneticAlgorithmMutationProbability = this.geneticAlgorithmMutationProbability;
 		result.geneticAlgorithmIterations = this.geneticAlgorithmIterations;
@@ -623,11 +623,11 @@ public class ARXConfiguration implements Serializable, Cloneable {
 	 * Returns the fraction of individuals crossed over
 	 * @return
 	 */
-	public double getGeneticAlgorithmCrossoverPercent() {
-		if (this.geneticAlgorithmCrossoverPercent == null) {
-			this.geneticAlgorithmCrossoverPercent = 0.2d;
+	public double getGeneticAlgorithmCrossoverFraction() {
+		if (this.geneticAlgorithmCrossoverFraction == null) {
+			this.geneticAlgorithmCrossoverFraction = 0.2d;
 		}
-		return geneticAlgorithmCrossoverPercent;
+		return geneticAlgorithmCrossoverFraction;
 	}
     
     /**
@@ -642,20 +642,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
 	 * Returns the size of the elite group
 	 * @return
 	 */
-	public double getGeneticAlgorithmElitePercent() {
-		if (this.geneticAlgorithmElitePercent == null) {
-			this.geneticAlgorithmElitePercent = 0.2d;
+	public double getGeneticAlgorithmEliteFraction() {
+		if (this.geneticAlgorithmEliteFraction == null) {
+			this.geneticAlgorithmEliteFraction = 0.2d;
 		}
-		return geneticAlgorithmElitePercent;
+		return geneticAlgorithmEliteFraction;
 	}
   
     /**
 	 * Returns the fraction to immigrate
 	 * @return
 	 */
-	public int getGeneticAlgorithmImmigrationFraction() {
+	public double getGeneticAlgorithmImmigrationFraction() {
 		if (this.geneticAlgorithmImmigrationFraction == null) {
-			this.geneticAlgorithmImmigrationFraction = 10;
+			this.geneticAlgorithmImmigrationFraction = 0.1d;
 		}
 		return geneticAlgorithmImmigrationFraction;
 	}
@@ -1103,8 +1103,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
 	 * Sets the fraction of individuals crossed over
 	 * @param geneticAlgorithmCrossoverPercent
 	 */
-	public void setGeneticAlgorithmCrossoverPercent(double geneticAlgorithmCrossoverPercent) {
-		this.geneticAlgorithmCrossoverPercent = geneticAlgorithmCrossoverPercent;
+	public void setGeneticAlgorithmCrossoverFraction(double geneticAlgorithmCrossoverFraction) {
+		this.geneticAlgorithmCrossoverFraction = geneticAlgorithmCrossoverFraction;
 	}
 
     /**
@@ -1119,15 +1119,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
 	 * Sets the size of the elite group
 	 * @param geneticAlgorithmElitePercent
 	 */
-	public void setGeneticAlgorithmElitePercent(double geneticAlgorithmElitePercent) {
-		this.geneticAlgorithmElitePercent = geneticAlgorithmElitePercent;
+	public void setGeneticAlgorithmEliteFraction(double geneticAlgorithmEliteFraction) {
+		this.geneticAlgorithmEliteFraction = geneticAlgorithmEliteFraction;
 	}
 
 	/**
 	 * Sets the fraction to immigrate
 	 * @param geneticAlgorithmImmigrationFraction
 	 */
-	public void setGeneticAlgorithmImmigrationFraction(int geneticAlgorithmImmigrationFraction) {
+	public void setGeneticAlgorithmImmigrationFraction(double geneticAlgorithmImmigrationFraction) {
 		this.geneticAlgorithmImmigrationFraction = geneticAlgorithmImmigrationFraction;
 	}
 

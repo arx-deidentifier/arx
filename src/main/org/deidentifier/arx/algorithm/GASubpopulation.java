@@ -67,10 +67,10 @@ public class GASubpopulation {
 	 * @param other
 	 * @param count
 	 */
-	public void moveFittestIndividuals(GASubpopulation other, int count) {
+	public void moveFittestIndividuals(GASubpopulation other, double immigrationFraction) {
 		int size = this.individualCount();
-		int min = Math.min(count, size);
-		for (int i = 0; i < min; i++) {
+		int immigrationCount = (int) (size * immigrationFraction);
+		for (int i = 0; i < immigrationCount; i++) {
 			other.individuals.add(individuals.remove(0));
 		}
 	}

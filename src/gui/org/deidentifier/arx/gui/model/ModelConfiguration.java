@@ -208,10 +208,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
     
     /**
      * @return
-     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmCrossoverPercent()
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmCrossoverFraction()
      */
-    public double getGeneticAlgorithmCrossoverPercent() {
-        return config.getGeneticAlgorithmCrossoverPercent();
+    public double getGeneticAlgorithmCrossoverFraction() {
+        return config.getGeneticAlgorithmCrossoverFraction();
     }
     
     /**
@@ -225,17 +225,17 @@ public class ModelConfiguration implements Serializable, Cloneable {
 
     /**
      * @return
-     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmElitePercent()
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmEliteFraction()
      */
-    public double getGeneticAlgorithmElitePercent() {
-        return config.getGeneticAlgorithmElitePercent();
+    public double getGeneticAlgorithmEliteFraction() {
+        return config.getGeneticAlgorithmEliteFraction();
     }
     
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmImmigrationFraction()
      */
-    public int getGeneticAlgorithmImmigrationFraction() {
+    public double getGeneticAlgorithmImmigrationFraction() {
         return config.getGeneticAlgorithmImmigrationFraction();
     }
 
@@ -578,11 +578,11 @@ public class ModelConfiguration implements Serializable, Cloneable {
     /**
      * Sets crossover percentage
      * 
-     * @param geneticAlgorithmCrossoverPercent
+     * @param geneticAlgorithmCrossoverFraction
      */
-    public void setGeneticAlgorithmCrossoverPercent(double geneticAlgorithmCrossoverPercent) {
+    public void setGeneticAlgorithmCrossoverFraction(double geneticAlgorithmCrossoverFraction) {
         setModified();
-        config.setGeneticAlgorithmCrossoverPercent(geneticAlgorithmCrossoverPercent);
+        config.setGeneticAlgorithmCrossoverFraction(geneticAlgorithmCrossoverFraction);
     }
 
     /**
@@ -598,11 +598,11 @@ public class ModelConfiguration implements Serializable, Cloneable {
     /**
      * Sets the size of the elite group
      * 
-     * @param geneticAlgorithmElitePercent
+     * @param geneticAlgorithmEliteFraction
      */
-    public void setGeneticAlgorithmElitePercent(double geneticAlgorithmElitePercent) {
+    public void setGeneticAlgorithmEliteFraction(double geneticAlgorithmEliteFraction) {
         setModified();
-        config.setGeneticAlgorithmElitePercent(geneticAlgorithmElitePercent);
+        config.setGeneticAlgorithmEliteFraction(geneticAlgorithmEliteFraction);
     }
 
     /**
@@ -610,7 +610,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * 
      * @param geneticAlgorithmImmigrationFraction
      */
-    public void setGeneticAlgorithmImmigrationFraction(int geneticAlgorithmImmigrationFraction) {
+    public void setGeneticAlgorithmImmigrationFraction(double geneticAlgorithmImmigrationFraction) {
         setModified();
         config.setGeneticAlgorithmImmigrationFraction(geneticAlgorithmImmigrationFraction);
     }

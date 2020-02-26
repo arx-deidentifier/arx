@@ -49,12 +49,12 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 * @return
 	 */
 	public static AbstractAlgorithm create(SolutionSpace<?> solutionSpace, TransformationChecker checker,
-			int heuristicSearchStepLimit, double geneticAlgorithmCrossoverPercent,
-			boolean geneticAlgorithmDeterministic, double geneticAlgorithmElitePercent,
-			int geneticAlgorithmImmigrationFraction, int geneticAlgorithmImmigrationInterval,
+			int heuristicSearchStepLimit, double geneticAlgorithmCrossoverFraction,
+			boolean geneticAlgorithmDeterministic, double geneticAlgorithmEliteFraction,
+			double geneticAlgorithmImmigrationFraction, int geneticAlgorithmImmigrationInterval,
 			double geneticAlgorithmMutationProbability, int geneticAlgorithmSubpopulationSize) {
-		return new GAAlgorithm(solutionSpace, checker, heuristicSearchStepLimit, geneticAlgorithmCrossoverPercent,
-				geneticAlgorithmDeterministic, geneticAlgorithmElitePercent, geneticAlgorithmImmigrationFraction,
+		return new GAAlgorithm(solutionSpace, checker, heuristicSearchStepLimit, geneticAlgorithmCrossoverFraction,
+				geneticAlgorithmDeterministic, geneticAlgorithmEliteFraction, geneticAlgorithmImmigrationFraction,
 				geneticAlgorithmImmigrationInterval, geneticAlgorithmMutationProbability,
 				geneticAlgorithmSubpopulationSize);
 	}
@@ -74,11 +74,11 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	//TODO - currently the iterations are simply derived from the heuristicSearchStepLimit
 	private int geneticAlgorithmIterations;
 
-	private double geneticAlgorithmCrossoverPercent;
+	private double geneticAlgorithmCrossoverFraction;
 
-	private double geneticAlgorithmElitePercent;
+	private double geneticAlgorithmEliteFraction;
 
-	private int geneticAlgorithmImmigrationFraction;
+	private double geneticAlgorithmImmigrationFraction;
 
 	private int geneticAlgorithmImmigrationInterval;
 
@@ -93,8 +93,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 * @param checker
 	 */
 	public GAAlgorithm(SolutionSpace<?> solutionSpace, TransformationChecker checker, int geneticAlgorithmIterations,
-			double geneticAlgorithmCrossoverPercent, boolean geneticAlgorithmDeterministic,
-			double geneticAlgorithmElitePercent, int geneticAlgorithmImmigrationFraction,
+			double geneticAlgorithmCrossoverFraction, boolean geneticAlgorithmDeterministic,
+			double geneticAlgorithmEliteFraction, double geneticAlgorithmImmigrationFraction,
 			int geneticAlgorithmImmigrationInterval, double geneticAlgorithmMutationProbability,
 			int geneticAlgorithmSubpopulationSize) {
 		super(solutionSpace, checker);
@@ -104,8 +104,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		this.minLevels = solutionSpace.getBottom().getGeneralization();
 		this.geneticAlgorithmIterations = geneticAlgorithmIterations;
 
-		this.geneticAlgorithmCrossoverPercent = geneticAlgorithmCrossoverPercent;
-		this.geneticAlgorithmElitePercent = geneticAlgorithmElitePercent;
+		this.geneticAlgorithmCrossoverFraction = geneticAlgorithmCrossoverFraction;
+		this.geneticAlgorithmEliteFraction = geneticAlgorithmEliteFraction;
 		this.geneticAlgorithmImmigrationFraction = geneticAlgorithmImmigrationFraction;
 		this.geneticAlgorithmImmigrationInterval = geneticAlgorithmImmigrationInterval;
 		this.geneticAlgorithmMutationProbability = geneticAlgorithmMutationProbability;
@@ -127,7 +127,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		int k = this.maxLevels.length + geneticAlgorithmSubpopulationSize;
 		int itr = geneticAlgorithmIterations;
 		int imm = geneticAlgorithmImmigrationInterval;
-		int immf = geneticAlgorithmImmigrationFraction;
+		double immf = geneticAlgorithmImmigrationFraction;
 
 		// Build sub-populations
 		GASubpopulation z1 = new GASubpopulation();
@@ -359,8 +359,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 
 		// Calculate mutation configuration parameters
 		int k = population.individualCount();
-		int crossoverCount = (int) Math.ceil(geneticAlgorithmCrossoverPercent * k);
-		int eliteCount = (int) Math.ceil(geneticAlgorithmElitePercent * k);
+		int crossoverCount = (int) Math.ceil(geneticAlgorithmCrossoverFraction * k);
+		int eliteCount = (int) Math.ceil(geneticAlgorithmEliteFraction * k);
 
 		// Mutate fittest non-elite individuals
 		for (int mutation = eliteCount; mutation < k - crossoverCount; mutation++) {
