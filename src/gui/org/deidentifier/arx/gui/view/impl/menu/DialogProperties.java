@@ -97,6 +97,10 @@ public class DialogProperties implements IDialog {
         controller.getResources().getManagedImage("symbol_g.png")); //$NON-NLS-1$
         
         window.addGroup(Resources.getMessage("DialogProperties.21")); //$NON-NLS-1$
+
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.143"), 1, 10000000, 50) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getInputConfig().getGeneticAlgorithmIterations(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmIterations((Integer)t); }});
         
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.137"), 1, 1000, 100) { //$NON-NLS-1$
             protected Integer getValue() { return model.getInputConfig().getGeneticAlgorithmSubpopulationSize(); }
