@@ -311,16 +311,16 @@ public class DialogAnonymization extends TitleAreaDialog {
         group2.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
         
         // Checkbox - step limit
-        final Button btnStepLimit = new Button(group2, SWT.CHECK);
-        btnStepLimit.setText(Resources.getMessage("DialogAnonymization.7"));
+        final Button radioStepLimit = new Button(group2, SWT.RADIO);
+        radioStepLimit.setText(Resources.getMessage("DialogAnonymization.7"));
         
         // Text - step limit
         this.txtHeuristicSearchStepLimit = new Text(group2, SWT.BORDER);
         this.txtHeuristicSearchStepLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         
         // Checkbox - time limit
-        final Button btnTimeLimit = new Button(group2, SWT.CHECK);
-        btnTimeLimit.setText(Resources.getMessage("DialogAnonymization.2"));
+        final Button radioTimeLimit = new Button(group2, SWT.RADIO);
+        radioTimeLimit.setText(Resources.getMessage("DialogAnonymization.2"));
         
         // Text - time limit
         this.txtHeuristicSearchTimeLimit = new Text(group2, SWT.BORDER);
@@ -355,10 +355,10 @@ public class DialogAnonymization extends TitleAreaDialog {
         case HEURISTIC_GENETIC: radioAlgorithmGenetic.setSelection(true); break;
 		default:
 			radioAlgorithmFlashOptimal.setSelection(true);
-			btnStepLimit.setSelection(false);
-            btnStepLimit.setEnabled(false);
-            btnTimeLimit.setSelection(false);
-            btnTimeLimit.setEnabled(false);
+			radioStepLimit.setSelection(false);
+            radioStepLimit.setEnabled(false);
+            radioTimeLimit.setSelection(false);
+            radioTimeLimit.setEnabled(false);
             txtHeuristicSearchStepLimit.setEnabled(false);
             txtHeuristicSearchTimeLimit.setEnabled(false);
         }
@@ -394,10 +394,10 @@ public class DialogAnonymization extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent arg0) {
                 if (radioAlgorithmFlashOptimal.getSelection()) {
                     configuration.setSearchType(SearchType.OPTIMAL);
-                    btnStepLimit.setSelection(false);
-                    btnStepLimit.setEnabled(false);
-                    btnTimeLimit.setSelection(false);
-                    btnTimeLimit.setEnabled(false);
+                    radioStepLimit.setSelection(false);
+                    radioStepLimit.setEnabled(false);
+                    radioTimeLimit.setSelection(false);
+                    radioTimeLimit.setEnabled(false);
                     txtHeuristicSearchStepLimit.setEnabled(false);
                     txtHeuristicSearchTimeLimit.setEnabled(false);
                 }
@@ -410,8 +410,8 @@ public class DialogAnonymization extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent arg0) {
                 if (radioAlgorithmFlashHeuristic.getSelection()) {
                     configuration.setSearchType(SearchType.HEURISTIC_BINARY);
-                    btnStepLimit.setEnabled(true);
-                    btnTimeLimit.setEnabled(true);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
                     txtHeuristicSearchStepLimit.setEnabled(true);
                     txtHeuristicSearchTimeLimit.setEnabled(true);
                 }
@@ -424,8 +424,8 @@ public class DialogAnonymization extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent arg0) {
                 if (radioAlgorithmLightning.getSelection()) {
                     configuration.setSearchType(SearchType.HEURISTIC_BOTTOM_UP);
-                    btnStepLimit.setEnabled(true);
-                    btnTimeLimit.setEnabled(true);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
                     txtHeuristicSearchStepLimit.setEnabled(true);
                     txtHeuristicSearchTimeLimit.setEnabled(true);
                     
@@ -439,8 +439,8 @@ public class DialogAnonymization extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent arg0) {
                 if (radioAlgorithmLightningTopDown.getSelection()) {
                     configuration.setSearchType(SearchType.HEURISTIC_TOP_DOWN);
-                    btnStepLimit.setEnabled(true);
-                    btnTimeLimit.setEnabled(true);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
                     txtHeuristicSearchStepLimit.setEnabled(true);
                     txtHeuristicSearchTimeLimit.setEnabled(true);
                     
@@ -454,8 +454,8 @@ public class DialogAnonymization extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent arg0) {
                 if (radioAlgorithmGenetic.getSelection()) {
                     configuration.setSearchType(SearchType.HEURISTIC_GENETIC);
-                    btnStepLimit.setEnabled(true);
-                    btnTimeLimit.setEnabled(true);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
                     txtHeuristicSearchStepLimit.setEnabled(true);
                     txtHeuristicSearchTimeLimit.setEnabled(true);
                 }
@@ -465,7 +465,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.txtHeuristicSearchStepLimit.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
-                btnStepLimit.setSelection(true);
+                radioStepLimit.setSelection(true);
             	//TODO
                 checkValidity();
             }
@@ -474,7 +474,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.txtHeuristicSearchTimeLimit.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
-                btnTimeLimit.setSelection(true);
+                radioTimeLimit.setSelection(true);
             	//TODO
                 checkValidity();
             }
@@ -511,16 +511,16 @@ public class DialogAnonymization extends TitleAreaDialog {
         // Prepare radio buttons
         if (!this.optimalSearchAvailable) {
                         
-            btnStepLimit.setEnabled(true);
+            radioStepLimit.setEnabled(true);
             this.txtHeuristicSearchStepLimit.setEnabled(true);
-            btnTimeLimit.setEnabled(true);
+            radioTimeLimit.setEnabled(true);
             this.txtHeuristicSearchTimeLimit.setEnabled(true);
             radioAlgorithmFlashOptimal.setEnabled(false);
             radioAlgorithmFlashOptimal.setSelection(false);
 
             if (configuration.getSearchType() == SearchType.OPTIMAL) {
                 radioAlgorithmLightning.setSelection(true);
-                btnStepLimit.setSelection(true);
+                radioStepLimit.setSelection(true);
             }
             
             // Message
@@ -529,38 +529,38 @@ public class DialogAnonymization extends TitleAreaDialog {
         
         // Time and step limit
         if (configuration.getSearchType() == SearchType.OPTIMAL && this.optimalSearchAvailable) {
-            btnStepLimit.setEnabled(false);
-            btnStepLimit.setSelection(false);
+            radioStepLimit.setEnabled(false);
+            radioStepLimit.setSelection(false);
             this.txtHeuristicSearchStepLimit.setEnabled(false);
-            btnTimeLimit.setEnabled(false);
-            btnTimeLimit.setSelection(false);
+            radioTimeLimit.setEnabled(false);
+            radioTimeLimit.setSelection(false);
             this.txtHeuristicSearchTimeLimit.setEnabled(false);
         } else if (!this.heuristicSearchStepLimitAvailable) {
-            btnStepLimit.setEnabled(false);
-            btnStepLimit.setSelection(false);
+            radioStepLimit.setEnabled(false);
+            radioStepLimit.setSelection(false);
             this.txtHeuristicSearchStepLimit.setEnabled(false);
-            btnTimeLimit.setEnabled(true);
-            btnTimeLimit.setSelection(true);
+            radioTimeLimit.setEnabled(true);
+            radioTimeLimit.setSelection(true);
             this.txtHeuristicSearchTimeLimit.setEnabled(true);
         } else if (!this.heuristicSearchTimeLimitAvailable) {
-            btnStepLimit.setEnabled(true);
-            btnStepLimit.setSelection(true);
+            radioStepLimit.setEnabled(true);
+            radioStepLimit.setSelection(true);
             this.txtHeuristicSearchStepLimit.setEnabled(true);
-            btnTimeLimit.setEnabled(false);
-            btnTimeLimit.setSelection(false);
+            radioTimeLimit.setEnabled(false);
+            radioTimeLimit.setSelection(false);
             this.txtHeuristicSearchTimeLimit.setEnabled(false);
         } else {
-            btnStepLimit.setEnabled(true);
-            btnStepLimit.setSelection(true);
+            radioStepLimit.setEnabled(true);
+            radioStepLimit.setSelection(true);
             this.txtHeuristicSearchStepLimit.setEnabled(true);
-            btnTimeLimit.setEnabled(true);
-            btnTimeLimit.setSelection(true);
+            radioTimeLimit.setEnabled(true);
+            radioTimeLimit.setSelection(true);
             this.txtHeuristicSearchTimeLimit.setEnabled(true);
         }
 
         // Configuration
-        btnTimeLimit.setSelection(configuration.isTimeLimitEnabled());
-        btnStepLimit.setSelection(configuration.isStepLimitEnabled());
+        radioTimeLimit.setSelection(configuration.isTimeLimitEnabled());
+        radioStepLimit.setSelection(configuration.isStepLimitEnabled());
         
         // Prepare
         applyDialogFont(base);
