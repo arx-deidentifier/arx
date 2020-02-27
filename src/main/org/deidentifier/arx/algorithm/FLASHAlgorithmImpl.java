@@ -78,13 +78,17 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      * @param checker
      * @param strategy
      * @param config
+     * @param timeLimit
+     * @param checkLimit
      */
     public FLASHAlgorithmImpl(SolutionSpace<Long> solutionSpace,
                               TransformationChecker checker,
                               FLASHStrategy strategy,
-                              FLASHConfiguration config) {
+                              FLASHConfiguration config,
+                              int timeLimit,
+                              int checkLimit) {
 
-        super(solutionSpace, checker);
+        super(solutionSpace, checker, timeLimit, checkLimit);
         if (solutionSpace.getSize().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
             throw new IllegalArgumentException("Solution space is too large for running Flash. Choose another algorithm.");
         }
@@ -127,7 +131,18 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // For each node in the lattice
         for (int level = bottom.getLevel(); level <= top.getLevel(); level++) {
+            
+            // Stop if needed
+            if (mustStop()) {
+                break;
+            }
+            
             for (int id : getSortedUnprocessedNodes(level, outerLoopConfiguration.getTriggerSkip())) {
+                
+                // Stop if needed
+                if (mustStop()) {
+                    break;
+                }
 
                 // Run the correct phase
                 Transformation<Long> transformation = ((SolutionSpaceLong)solutionSpace).getTransformation((long)id);
@@ -152,7 +167,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         }
         
         // Return whether the optimum has been found
-        return this.getGlobalOptimum() != null;
+        return (this.getGlobalOptimum() != null && !mustStop());
     }
 
     /**
@@ -171,6 +186,12 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         // While queue is not empty
         while (!queue.isEmpty()) {
+            
+
+            // Stop if needed
+            if (mustStop()) {
+                return;
+            }
 
             // Remove head and process
             transformation = ((SolutionSpaceLong)solutionSpace).getTransformation((long)queue.poll());
@@ -208,7 +229,12 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             }
         } else if (configuration.getTriggerCheck().appliesTo(transformation)) {
             transformation.setChecked(checker.check(transformation));
-            progress((double)++checked / (double)solutionSpaceSize);
+            trackProgressFromLimits((double)++checked / (double)solutionSpaceSize);
+        }
+        
+        // Stop if needed
+        if (mustStop()) {
+            return;
         }
 
         // Store optimum
@@ -243,6 +269,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
         // While not done
         while (low <= high) {
 
+            // Stop if needed
+            if (mustStop()) {
+                break;
+            }
+            
             // Init
             final int mid = (low + high) / 2;
             final Transformation<Long> transformation = path.get(mid);
@@ -274,6 +305,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
             }
         }
         
+        // Done
         return lastAnonymousTransformation;
     }
 
@@ -356,6 +388,11 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
      */
     private void linearSearch(Transformation<Long> transformation) {
 
+        // Stop if needed
+        if (mustStop()) {
+            return;
+        }
+        
         // Obtain node action
         DependentAction triggerSkip = config.getLinearPhaseConfiguration().getTriggerSkip();
 

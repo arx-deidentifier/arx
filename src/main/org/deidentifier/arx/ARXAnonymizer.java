@@ -221,7 +221,6 @@ public class ARXAnonymizer { // NO_UCD
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
                                          manager.getDataAnalyzed().getArray());
 
-
         // Execute
         return anonymize(manager, handle.getDefinition(), config).asResult(config, handle);
     }
@@ -621,11 +620,66 @@ public class ARXAnonymizer { // NO_UCD
                                            final DataManager manager,
                                            final SolutionSpace<?> solutionSpace,
                                            final TransformationChecker checker) {
-    	
+        
+        // Prepare
     	int numQIs = manager.getHierarchies().length;
     	
-    	if (true) {
-            return GAAlgorithm.create(solutionSpace,
+    	// Execute DP algorithm, if needed
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent()) {
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
+                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs),
+                                                         config.getDPSearchBudget(),
+                                                         config.getHeuristicSearchTimeLimit(),
+                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+            }
+        }
+    	
+    	// Select algorithm to execute
+    	switch(config.getAlgorithm()) {
+    	case OPTIMAL:
+    	    
+    	    // Sanity check
+    	    if (!(solutionSpace instanceof SolutionSpaceLong) ||
+    	          solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
+    	        throw new IllegalArgumentException("Solution space is too large to execute the optimal algorithm. It may help to change the threshold defined in the configuration.");
+    	    }
+    	            
+    	    // Run optimal algorithm
+            FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
+            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy,
+                                         Integer.MAX_VALUE,
+                                         Integer.MAX_VALUE);
+    	    
+    	case BEST_EFFORT_BINARY:
+    	    
+            // Sanity check
+            if (!(solutionSpace instanceof SolutionSpaceLong)) {
+                throw new IllegalArgumentException("Solution space is too large to execute the binary heuristic algorithm. This is an implementation restriction which we hope to fix soon.");
+            }
+                    
+            // Run binary algorithm with limits
+            FLASHStrategy strategy2 = new FLASHStrategy(solutionSpace, manager.getHierarchies());
+            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy2,
+                                         config.getHeuristicSearchTimeLimit(),
+                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+            
+    	case BEST_EFFORT_BOTTOM_UP:
+    	    
+    	    // Run lightning
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
+                                             config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+    	    
+    	case BEST_EFFORT_TOP_DOWN:
+    	    
+    	    // TODO: IMPLEMENT
+    	    throw new UnsupportedOperationException("Not implemented, yet.");
+    	    
+    	case BEST_EFFORT_GENETIC:
+    	    
+    	    // Run the genetic algorithm
+    	    return GAAlgorithm.create(solutionSpace,
                                       checker,
                                       config.getGeneticAlgorithmIterations(),
                                       config.getGeneticAlgorithmCrossoverFraction(),
@@ -634,27 +688,14 @@ public class ARXAnonymizer { // NO_UCD
                                       config.getGeneticAlgorithmImmigrationFraction(),
                                       config.getGeneticAlgorithmImmigrationInterval(),
                                       config.getGeneticAlgorithmMutationProbability(),
-                                      config.getGeneticAlgorithmSubpopulationSize());
+                                      config.getGeneticAlgorithmSubpopulationSize(),
+                                      config.getHeuristicSearchTimeLimit(),
+                                      config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+    	    
+    	default:
+    	    
+    	    throw new IllegalArgumentException("Unknown algorithm");
     	}
-    	
-        
-        
-        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
-            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
-            if (edpModel.isDataDependent()) {
-                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs), config.getDPSearchBudget());
-            }
-        }
-
-        if (!(solutionSpace instanceof SolutionSpaceLong) || config.isHeuristicSearchEnabled() || solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
-                                             config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
-            
-        } else {
-            FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
-            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy);
-        }
     }
 
     /**

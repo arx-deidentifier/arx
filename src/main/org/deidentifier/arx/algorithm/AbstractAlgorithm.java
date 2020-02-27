@@ -60,21 +60,7 @@ public abstract class AbstractAlgorithm {
     private final int               checkLimit;
 
     /**
-     * Walks the lattice.
-     * 
-     * @param solutionSpace The solution space
-     * @param checker The checker
-     */
-    protected AbstractAlgorithm(final SolutionSpace<?>  solutionSpace,
-                                final TransformationChecker checker) {
-        this.checker = checker;
-        this.solutionSpace = solutionSpace;
-        this.timeLimit = Integer.MAX_VALUE;
-        this.checkLimit = Integer.MAX_VALUE;
-    }
-
-    /**
-     * Walks the lattice.
+     * Initializes the algorithm
      * 
      * @param solutionSpace The solution space
      * @param checker The checker
@@ -218,8 +204,16 @@ public abstract class AbstractAlgorithm {
      * Track progress from limits
      */
     protected void trackProgressFromLimits() {
+        trackProgressFromLimits(0d);
+    }
+    
+    /**
+     * Track progress from limits
+     * @param algorithmProgress 
+     */
+    protected void trackProgressFromLimits(double algorithmProgress) {
         double progressSteps = (double)getCheckCount() / (double)getCheckLimit();
         double progressTime = (double)(System.currentTimeMillis() - getTimeStart()) / (double)getTimeLimit();
-        progress(Math.max(progressSteps, progressTime));
+        progress(Math.min(1.0d, Math.max(algorithmProgress, Math.max(progressSteps, progressTime))));
     }
 }

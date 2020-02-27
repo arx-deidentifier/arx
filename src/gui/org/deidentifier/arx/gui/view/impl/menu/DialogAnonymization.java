@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Text;
  * A dialog for defining parameters of the anonymization method
  * 
  * @author Fabian Prasser
+ * @author Thierry Meurers
  */
 public class DialogAnonymization extends TitleAreaDialog {
 
@@ -74,6 +75,10 @@ public class DialogAnonymization extends TitleAreaDialog {
     private Text                            txtHeuristicSearchStepLimit;
     /** View */
     private Text                            textNumIterations;
+    /** View */    
+    private Button                          radioTimeLimit;
+    /** View */
+    private Button                          radioStepLimit;
 
     /** Result */
     private ModelAnonymizationConfiguration configuration;
@@ -159,6 +164,19 @@ public class DialogAnonymization extends TitleAreaDialog {
             configuration.setHeuristicSearchStepLimit(getHeuristicSearchStepLimit());
         }
 
+        // Handle parameter
+        if (!radioTimeLimit.isEnabled() || !radioTimeLimit.getSelection()) {
+            configuration.setTimeLimitEnabled(false);
+        } else {
+            configuration.setTimeLimitEnabled(true);
+        }
+        
+        if (!radioStepLimit.isEnabled() || !radioStepLimit.getSelection()) {
+            configuration.setStepLimitEnabled(false);
+        } else {
+            configuration.setStepLimitEnabled(true);
+        }
+
         // Update state
         setErrorMessage(error);
         if (okButton != null) {
@@ -183,6 +201,7 @@ public class DialogAnonymization extends TitleAreaDialog {
     * @return
     */
    private Integer getHeuristicSearchStepLimit() {
+    
        int value = 0;
        try {
            value = Integer.valueOf(txtHeuristicSearchStepLimit.getText());
@@ -201,6 +220,7 @@ public class DialogAnonymization extends TitleAreaDialog {
      * @return
      */
     private Double getHeuristicSearchTimeLimit() {
+
         double value = 0d;
         try {
             value = Double.valueOf(txtHeuristicSearchTimeLimit.getText());
@@ -311,7 +331,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         group2.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
         
         // Checkbox - step limit
-        final Button radioStepLimit = new Button(group2, SWT.RADIO);
+        radioStepLimit = new Button(group2, SWT.RADIO);
         radioStepLimit.setText(Resources.getMessage("DialogAnonymization.7"));
         
         // Text - step limit
@@ -319,7 +339,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.txtHeuristicSearchStepLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         
         // Checkbox - time limit
-        final Button radioTimeLimit = new Button(group2, SWT.RADIO);
+        radioTimeLimit = new Button(group2, SWT.RADIO);
         radioTimeLimit.setText(Resources.getMessage("DialogAnonymization.2"));
         
         // Text - time limit

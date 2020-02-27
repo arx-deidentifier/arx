@@ -38,72 +38,86 @@ import org.deidentifier.arx.metric.InformationLoss;
  * 
  * @author Kieu-Mi Do
  * @author Fabian Prasser
+ * @author Thierry Meurers
  */
 public class GAAlgorithm extends AbstractAlgorithm {
 
 	/**
 	 * Returns a new instance
-	 * 
 	 * @param solutionSpace
 	 * @param checker
+	 * @param heuristicSearchStepLimit
+	 * @param geneticAlgorithmCrossoverFraction
+	 * @param geneticAlgorithmDeterministic
+	 * @param geneticAlgorithmEliteFraction
+	 * @param geneticAlgorithmImmigrationFraction
+	 * @param geneticAlgorithmImmigrationInterval
+	 * @param geneticAlgorithmMutationProbability
+	 * @param geneticAlgorithmSubpopulationSize
+	 * @param timeLimit
+	 * @param checkLimit
 	 * @return
 	 */
 	public static AbstractAlgorithm create(SolutionSpace<?> solutionSpace, TransformationChecker checker,
 			int heuristicSearchStepLimit, double geneticAlgorithmCrossoverFraction,
 			boolean geneticAlgorithmDeterministic, double geneticAlgorithmEliteFraction,
 			double geneticAlgorithmImmigrationFraction, int geneticAlgorithmImmigrationInterval,
-			double geneticAlgorithmMutationProbability, int geneticAlgorithmSubpopulationSize) {
+			double geneticAlgorithmMutationProbability, int geneticAlgorithmSubpopulationSize, int timeLimit, int checkLimit) {
 		return new GAAlgorithm(solutionSpace, checker, heuristicSearchStepLimit, geneticAlgorithmCrossoverFraction,
 				geneticAlgorithmDeterministic, geneticAlgorithmEliteFraction, geneticAlgorithmImmigrationFraction,
 				geneticAlgorithmImmigrationInterval, geneticAlgorithmMutationProbability,
-				geneticAlgorithmSubpopulationSize);
+				geneticAlgorithmSubpopulationSize, timeLimit, checkLimit);
 	}
 
-	/** RNG */
-	private final Random random;
-	
-
-	/** Max values */
-	private final int[] maxLevels;
-	/** Min values */
-	private final int[] minLevels;
-	/** Checker */
-	private final TransformationChecker checker;
-
-	/** Configuration */
-	//TODO - currently the iterations are simply derived from the heuristicSearchStepLimit
-	private int geneticAlgorithmIterations;
-
-	private double geneticAlgorithmCrossoverFraction;
-
-	private double geneticAlgorithmEliteFraction;
-
-	private double geneticAlgorithmImmigrationFraction;
-
-	private int geneticAlgorithmImmigrationInterval;
-
-	private double geneticAlgorithmMutationProbability;
-
-	private int geneticAlgorithmSubpopulationSize;
+    /** RNG */
+    private final Random                random;
+    /** Max values */
+    private final int[]                 maxLevels;
+    /** Min values */
+    private final int[]                 minLevels;
+    /** Checker */
+    private final TransformationChecker checker;
+    /** Configuration */
+    private int                         geneticAlgorithmIterations;
+    /** Configuration */
+    private double                      geneticAlgorithmCrossoverFraction;
+    /** Configuration */
+    private double                      geneticAlgorithmEliteFraction;
+    /** Configuration */
+    private double                      geneticAlgorithmImmigrationFraction;
+    /** Configuration */
+    private int                         geneticAlgorithmImmigrationInterval;
+    /** Configuration */
+    private double                      geneticAlgorithmMutationProbability;
+    /** Configuration */
+    private int                         geneticAlgorithmSubpopulationSize;
 
 	/**
 	 * Creates a new instance
-	 * 
 	 * @param solutionSpace
 	 * @param checker
+	 * @param geneticAlgorithmIterations
+	 * @param geneticAlgorithmCrossoverFraction
+	 * @param geneticAlgorithmDeterministic
+	 * @param geneticAlgorithmEliteFraction
+	 * @param geneticAlgorithmImmigrationFraction
+	 * @param geneticAlgorithmImmigrationInterval
+	 * @param geneticAlgorithmMutationProbability
+	 * @param geneticAlgorithmSubpopulationSize
+	 * @param timeLimit
+	 * @param checkLimit
 	 */
 	public GAAlgorithm(SolutionSpace<?> solutionSpace, TransformationChecker checker, int geneticAlgorithmIterations,
 			double geneticAlgorithmCrossoverFraction, boolean geneticAlgorithmDeterministic,
 			double geneticAlgorithmEliteFraction, double geneticAlgorithmImmigrationFraction,
 			int geneticAlgorithmImmigrationInterval, double geneticAlgorithmMutationProbability,
-			int geneticAlgorithmSubpopulationSize) {
-		super(solutionSpace, checker);
+			int geneticAlgorithmSubpopulationSize, int timeLimit, int checkLimit) {
+		super(solutionSpace, checker, timeLimit, checkLimit);
 		this.checker = checker;
 		this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
 		this.maxLevels = solutionSpace.getTop().getGeneralization();
 		this.minLevels = solutionSpace.getBottom().getGeneralization();
 		this.geneticAlgorithmIterations = geneticAlgorithmIterations;
-
 		this.geneticAlgorithmCrossoverFraction = geneticAlgorithmCrossoverFraction;
 		this.geneticAlgorithmEliteFraction = geneticAlgorithmEliteFraction;
 		this.geneticAlgorithmImmigrationFraction = geneticAlgorithmImmigrationFraction;

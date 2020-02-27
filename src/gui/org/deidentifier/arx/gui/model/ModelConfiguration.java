@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
@@ -148,6 +149,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getAlgorithm()
+     */
+    public AnonymizationAlgorithm getAlgorithm() {
+        return config.getAlgorithm();
+    }
+    
+    /**
      * Returns the associated attribute weight.
      *
      * @param attribute
@@ -214,6 +223,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.getGeneticAlgorithmCrossoverFraction();
     }
     
+
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmDeterministic()
@@ -222,7 +232,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
         return config.getGeneticAlgorithmDeterministic();
     }
     
-
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmEliteFraction()
@@ -230,7 +239,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public double getGeneticAlgorithmEliteFraction() {
         return config.getGeneticAlgorithmEliteFraction();
     }
-    
+
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmImmigrationFraction()
@@ -278,7 +287,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public int getHeuristicSearchThreshold() {
         return config.getHeuristicSearchThreshold();
     }
-
+    
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getHeuristicSearchTimeLimit()
@@ -420,7 +429,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public double getSuppressionLimit() {
         return config.getSuppressionLimit();
     }
-    
+
     /**
      * Returns the suppression/generalization weight, that will be respected by
      * the NDS metric.
@@ -435,7 +444,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return suppressionWeight;
     }
-
+    
     /**
      * Returns the transformation mode for the given attribute. Returns ModelTransformationMode.GENERALIZATION
      * if no entry was found, for backwards compatibility
@@ -469,14 +478,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
      */
     public boolean isHeuristicForSampleBasedCriteria() {
         return config.isUseHeuristicSearchForSampleBasedCriteria();
-    }
-    
-    /**
-     * @return
-     * @see org.deidentifier.arx.ARXConfiguration#isHeuristicSearchEnabled()
-     */
-    public boolean isHeuristicSearchEnabled() {
-        return config.isHeuristicSearchEnabled();
     }
     
     /**
@@ -555,6 +556,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
 
     /**
+     * @param algorithm
+     * @see org.deidentifier.arx.ARXConfiguration#setAlgorithm(algorithm)
+     */
+    public void setAlgorithm(AnonymizationAlgorithm algorithm) {
+        setModified();
+        config.setAlgorithm(algorithm);
+    }
+
+    /**
      * @param type
      * @param enabled
      * @see org.deidentifier.arx.ARXConfiguration#setAttributeTypeSuppressed(org.deidentifier.arx.AttributeType, boolean)
@@ -624,7 +634,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmImmigrationInterval(geneticAlgorithmImmigrationInterval);
     }
-
+    
     /**
      * @param geneticAlgorithmIterations
      * @see org.deidentifier.arx.ARXConfiguration#setGeneticAlgorithmIterations(int)
@@ -633,7 +643,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmIterations(geneticAlgorithmIterations);
     }
-    
+
     /**
      * Sets the mutation probability
      * 
@@ -643,7 +653,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setGeneticAlgorithmMutationProbability(geneticAlgorithmMutationProbability);
     }
-
+    
     /**
      * Setter
      * 
@@ -661,15 +671,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setHeuristicForSampleBasedCriteria(boolean value) {
         setModified();
         config.setUseHeuristicSearchForSampleBasedCriteria(value);
-    }
-    
-    /**
-     * @param heuristicSearchEnabled
-     * @see org.deidentifier.arx.ARXConfiguration#setHeuristicSearchEnabled(boolean)
-     */
-    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
-        setModified();
-        config.setHeuristicSearchEnabled(heuristicSearchEnabled);
     }
     
     /**
