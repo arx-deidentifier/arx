@@ -17,6 +17,7 @@
 package org.deidentifier.arx.algorithm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -117,6 +118,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
 		this.maxLevels = solutionSpace.getTop().getGeneralization();
 		this.minLevels = solutionSpace.getBottom().getGeneralization();
+		//System.out.println("Top: " + Arrays.toString(maxLevels) + " Bottom: " + Arrays.toString(minLevels));
 		this.geneticAlgorithmIterations = geneticAlgorithmIterations;
 		this.geneticAlgorithmCrossoverFraction = geneticAlgorithmCrossoverFraction;
 		this.geneticAlgorithmEliteFraction = geneticAlgorithmEliteFraction;
@@ -127,6 +129,11 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		this.random = geneticAlgorithmDeterministic ? new Random(0xDEADBEEF) : new Random();
 	}
 
+	int initLoop1Count = 0;
+	int initLoop2Count = 0;
+	int crossoverLoopCount = 0;
+	int mutateLoopCount = 0;
+	
 	@Override
 	public boolean traverse() {
         
@@ -138,10 +145,12 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		// from breaking the algorithm, as very small values fail to
 		// solve. The GA requires diversity, and small sub-populations do not
 		// provide enough information to satisfy that
+	    
+	    
 		int k = this.maxLevels.length + geneticAlgorithmSubpopulationSize;
 		int itr = geneticAlgorithmIterations;
 		int imm = geneticAlgorithmImmigrationInterval;
-		double immf = geneticAlgorithmImmigrationFraction;
+		int immigrationCount = (int) geneticAlgorithmImmigrationFraction*k;
 
 		// Build sub-populations
 		GASubpopulation z1 = new GASubpopulation();
@@ -178,7 +187,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
             if (mustStop()) {
                 return false;
             }
-            
+            initLoop1Count++;
 			z1.addIndividual(getIndividual(generalization));
 		}
 
@@ -198,22 +207,25 @@ public class GAAlgorithm extends AbstractAlgorithm {
                 return false;
             }
             
+            initLoop2Count++;
 			z2.addIndividual(getIndividual(generalization));
 		}
-
+		System.out.println("Pop1 size: " + z1.individualCount() + " | Pop2 size: " + z2.individualCount());
 		// Main iterator
 		for (int t = 0; t < itr; t++) {
 
 			// Sort by fitness descending
 			z1.sort();
 			z2.sort();
-
+			
 			// Swap individuals between GASubpopulations periodically
 			if (t % imm == 0) {
 
 				// Moves the imff fittest individuals between groups
-				z1.moveFittestIndividuals(z2, immf);
-				z2.moveFittestIndividuals(z1, immf);
+				z1.moveFittestIndividuals(z2, immigrationCount);
+				z2.moveFittestIndividuals(z1, immigrationCount);
+				
+				
 
 				// Sort by fitness descending
 				z1.sort();
@@ -223,13 +235,15 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			// Iterate
 			iterateSubpopulation(z1);
 			iterateSubpopulation(z2);
-
+			
             // Stop
             if (mustStop()) {
                 return false;
             }
+            
 		}
-
+		System.out.println("Iter: "+ itr + " Checks: " + checker.getNumChecksPerformed() + " Total: " + checksNum2 + " Loop1: " + initLoop1Count + " Loop2: " + initLoop2Count + " Mutate Loop: " + mutateLoopCount + " Crossover Loop: " + crossoverLoopCount);
+		// System.out.println("Pop1 size: " + z1.individualCount() + "Pop2 size: " + z2.individualCount());
 		// Check whether we found a solution
 		return getGlobalOptimum() != null;
 	}
@@ -240,10 +254,16 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 * @param generalization
 	 * @return
 	 */
+	int checksNum = 0;
+	int checksNum2 = 0;
+	
 	private Transformation<?> getIndividual(int[] generalization) {
-		Transformation<?> transformation = this.solutionSpace.getTransformation(generalization);
+		checksNum2++;
+	    Transformation<?> transformation = this.solutionSpace.getTransformation(generalization);
 		if (!transformation.hasProperty(this.solutionSpace.getPropertyChecked())) {
 			transformation.setChecked(this.checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
+			checksNum++;
+			//System.out.println(Arrays.toString(generalization));
 		}
 		trackOptimum(transformation);
         trackProgressFromLimits();
@@ -365,6 +385,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 */
 	private void iterateSubpopulation(GASubpopulation population) {
 
+	    
+	    
 		// The population (ordered by fitness descending) consists of 3 groups
 		// - First: all individuals in the elite group will remain unchanged
 		// - Second: all individuals in the next group will be replaced by mutated
@@ -375,6 +397,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		int k = population.individualCount();
 		int crossoverCount = (int) Math.ceil(geneticAlgorithmCrossoverFraction * k);
 		int eliteCount = (int) Math.ceil(geneticAlgorithmEliteFraction * k);
+		
 
 		// Mutate fittest non-elite individuals
 		for (int mutation = eliteCount; mutation < k - crossoverCount; mutation++) {
@@ -385,6 +408,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
             }
             
 			// Mutate
+            mutateLoopCount++;
 			Transformation<?> individual = getMutatedIndividual(population.getIndividual(mutation));
 			if (individual != null) {
 				population.setIndividual(mutation, individual);
@@ -408,6 +432,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			}
 			
 			// Replace
+			crossoverLoopCount++;
 			population.setIndividual(k - crossover - 1, getIndividual(vec));
 		}
 	}
