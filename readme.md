@@ -6,7 +6,7 @@ Note
 
 ARX is the result of a research project. To support our research, please cite one of our papers instead of referencing our website in scientific articles. You can find an overview of papers about ARX [here](https://arx.deidentifier.org/publications/). If you are not sure which paper to cite, we recommend this one:
 
-Prasser F., Eicher J., Spengler H., Bild R., Kuhn K. A. (2020) Flexible Data Anonymization Using ARX — Current Status and Challenges Ahead. Software Pract Exper 2020;1–28. [Link](https://doi.org/10.1002/spe.2812)
+Prasser F., Eicher J., Spengler H., Bild R., Kuhn K. A. (2020) Flexible Data Anonymization Using ARX — Current Status and Challenges Ahead. Software Pract Exper 2020;1–28. [(Link)](https://doi.org/10.1002/spe.2812)
 
 Thanks!
 
@@ -40,7 +40,7 @@ The Ant build script features various targets that can be used to build differen
 Contributing and code of conduct
 ------
 
-See [here](https://github.com/arx-deidentifier/arx/blob/master/contributing.md) and [here](https://github.com/arx-deidentifier/arx/blob/master/code_of_conduct.md) 
+See [here](https://github.com/arx-deidentifier/arx/blob/master/contributing.md) and [here](https://github.com/arx-deidentifier/arx/blob/master/code_of_conduct.md).
 
 License
 ------
