@@ -173,6 +173,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		GASubpopulation z1 = new GASubpopulation();
 		GASubpopulation z2 = new GASubpopulation();
 
+		System.out.println("Total Solutions: " + solutionSpace.getSize());
+		
 		// Fill sub-population 1
 		long tempTime = System.currentTimeMillis();
 		for (int i = 0; i < k; i++) {
@@ -232,7 +234,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		
 		
 		//System.out.println("Pop1 size: " + z1.individualCount() + " | Pop2 size: " + z2.individualCount());
-		
+		System.out.println("0;"+checker.getNumChecksPerformed());
 		tempTime = System.currentTimeMillis();
 		
 		// Main iterator
@@ -264,6 +266,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
             if (mustStop()) {
                 return false;
             }
+            
+            System.out.println((t+1)+";"+checker.getNumChecksPerformed()+";"+checksNum2);
             
 		}
 		this.iterPhase = System.currentTimeMillis() - tempTime;
