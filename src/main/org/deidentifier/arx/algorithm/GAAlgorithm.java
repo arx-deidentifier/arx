@@ -118,7 +118,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
 		this.maxLevels = solutionSpace.getTop().getGeneralization();
 		this.minLevels = solutionSpace.getBottom().getGeneralization();
-		//System.out.println("Top: " + Arrays.toString(maxLevels) + " Bottom: " + Arrays.toString(minLevels));
+		System.out.println("Top: " + Arrays.toString(maxLevels) + " Bottom: " + Arrays.toString(minLevels));
 		this.geneticAlgorithmIterations = geneticAlgorithmIterations;
 		this.geneticAlgorithmCrossoverFraction = geneticAlgorithmCrossoverFraction;
 		this.geneticAlgorithmEliteFraction = geneticAlgorithmEliteFraction;
@@ -129,10 +129,27 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		this.random = geneticAlgorithmDeterministic ? new Random(0xDEADBEEF) : new Random();
 	}
 
-	int initLoop1Count = 0;
-	int initLoop2Count = 0;
-	int crossoverLoopCount = 0;
-	int mutateLoopCount = 0;
+	/*
+	 * Varaibles for checking and understanding GA
+	 */
+	
+    int  initLoop1Count     = 0;
+    int  initLoop2Count     = 0;
+    int  crossoverLoopCount = 0;
+    int  mutateLoopCount    = 0;
+
+    int  checksNum          = 0;
+    int  checksNum2         = 0;
+
+    
+    /*
+     * Time measurements
+     */
+    long sumTime            = 0;
+    long checkerTime        = 0;
+    long initialPhase       = 0;
+    long iterPhase          = 0;
+	    
 	
 	@Override
 	public boolean traverse() {
@@ -157,6 +174,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		GASubpopulation z2 = new GASubpopulation();
 
 		// Fill sub-population 1
+		long tempTime = System.currentTimeMillis();
 		for (int i = 0; i < k; i++) {
 
 			// Prepare
@@ -210,7 +228,13 @@ public class GAAlgorithm extends AbstractAlgorithm {
             initLoop2Count++;
 			z2.addIndividual(getIndividual(generalization));
 		}
-		System.out.println("Pop1 size: " + z1.individualCount() + " | Pop2 size: " + z2.individualCount());
+		this.initialPhase = System.currentTimeMillis() - tempTime;
+		
+		
+		//System.out.println("Pop1 size: " + z1.individualCount() + " | Pop2 size: " + z2.individualCount());
+		
+		tempTime = System.currentTimeMillis();
+		
 		// Main iterator
 		for (int t = 0; t < itr; t++) {
 
@@ -242,7 +266,10 @@ public class GAAlgorithm extends AbstractAlgorithm {
             }
             
 		}
-		System.out.println("Iter: "+ itr + " Checks: " + checker.getNumChecksPerformed() + " Total: " + checksNum2 + " Loop1: " + initLoop1Count + " Loop2: " + initLoop2Count + " Mutate Loop: " + mutateLoopCount + " Crossover Loop: " + crossoverLoopCount);
+		this.iterPhase = System.currentTimeMillis() - tempTime;
+		
+		System.out.println("Iter: "+ itr + " Checks: " + checker.getNumChecksPerformed() + "(/" + checksNum + ") Total: " + checksNum2 + " Loop1: " + initLoop1Count + " Loop2: " + initLoop2Count + " Mutate Loop: " + mutateLoopCount + " Crossover Loop: " + crossoverLoopCount);
+		System.out.println("Init: " + initialPhase + "ms | Iter: " + iterPhase + "ms | getIndividualTime: " + sumTime + "ms | checkerTime: " + checkerTime);
 		// System.out.println("Pop1 size: " + z1.individualCount() + "Pop2 size: " + z2.individualCount());
 		// Check whether we found a solution
 		return getGlobalOptimum() != null;
@@ -254,19 +281,22 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 * @param generalization
 	 * @return
 	 */
-	int checksNum = 0;
-	int checksNum2 = 0;
+
 	
 	private Transformation<?> getIndividual(int[] generalization) {
 		checksNum2++;
-	    Transformation<?> transformation = this.solutionSpace.getTransformation(generalization);
+	    long tempTime = System.currentTimeMillis();
+		Transformation<?> transformation = this.solutionSpace.getTransformation(generalization);
 		if (!transformation.hasProperty(this.solutionSpace.getPropertyChecked())) {
-			transformation.setChecked(this.checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
+			long tempTime2 = System.currentTimeMillis();
+		    transformation.setChecked(this.checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
 			checksNum++;
+			checkerTime += System.currentTimeMillis() - tempTime2;
 			//System.out.println(Arrays.toString(generalization));
 		}
 		trackOptimum(transformation);
         trackProgressFromLimits();
+        sumTime += System.currentTimeMillis() - tempTime;
 		return transformation;
 	}
 

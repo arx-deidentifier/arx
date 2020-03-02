@@ -285,7 +285,7 @@ public class DialogAnonymization extends TitleAreaDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
 
-    	/** 
+    	/* 
     	 * Initialization 
     	 * */
         Composite composite = (Composite) super.createDialogArea(parent);        
@@ -330,7 +330,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         group2.setLayoutData(data2);
         group2.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
         
-        // Checkbox - step limit
+        // Radio - step limit
         radioStepLimit = new Button(group2, SWT.RADIO);
         radioStepLimit.setText(Resources.getMessage("DialogAnonymization.7"));
         
@@ -338,7 +338,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.txtHeuristicSearchStepLimit = new Text(group2, SWT.BORDER);
         this.txtHeuristicSearchStepLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
         
-        // Checkbox - time limit
+        // Radio - time limit
         radioTimeLimit = new Button(group2, SWT.RADIO);
         radioTimeLimit.setText(Resources.getMessage("DialogAnonymization.2"));
         
@@ -363,10 +363,14 @@ public class DialogAnonymization extends TitleAreaDialog {
         final Button btnLocalTransformation = new Button(group3, SWT.RADIO);
         btnLocalTransformation.setText(Resources.getMessage("DialogAnonymization.3")); //$NON-NLS-1$
 
-        // Tet - number iterations
+        // Text - number iterations
         this.textNumIterations = new Text(group3, SWT.BORDER);
         this.textNumIterations.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
 
+        /*
+         * Load configuration
+         */
+        
         // Search strategy radio buttons
         switch(configuration.getSearchType()) {
         case HEURISTIC_BINARY: radioAlgorithmFlashHeuristic.setSelection(true); break;
