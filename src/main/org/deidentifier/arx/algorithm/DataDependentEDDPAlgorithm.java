@@ -123,6 +123,9 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
         // Initialize tracking
         progress(0d);
 
+        // Track optimum
+        trackOptimum(pivot);
+        
         // Initialize the set of candidates, each mapped to its respective score
         Map<Object, ILScore> transformationIDToScore = new HashMap<>();
         transformationIDToScore.put(pivot.getIdentifier(), score);
