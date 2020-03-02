@@ -6,7 +6,7 @@ Note
 
 ARX is the result of a research project. To support our research, please cite one of our papers instead of referencing our website in scientific articles. You can find an overview of papers about ARX [here](https://arx.deidentifier.org/publications/). If you are not sure which paper to cite, we recommend this one:
 
-* Prasser F., Kohlmayer, F. (2015). Putting statistical disclosure control into practice: The ARX data anonymization tool. In Medical Data Privacy Handbook (pp. 111-148). Springer, Cham.
+Prasser F., Eicher J., Spengler H., Bild R., Kuhn K. A. (2020) Flexible Data Anonymization Using ARX — Current Status and Challenges Ahead. Software Pract Exper 2020;1–28. [Link](https://doi.org/10.1002/spe.2812)
 
 Thanks!
 
