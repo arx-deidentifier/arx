@@ -118,7 +118,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
 		this.maxLevels = solutionSpace.getTop().getGeneralization();
 		this.minLevels = solutionSpace.getBottom().getGeneralization();
-		System.out.println("Top: " + Arrays.toString(maxLevels) + " Bottom: " + Arrays.toString(minLevels));
+		//System.out.println("Top: " + Arrays.toString(maxLevels) + " Bottom: " + Arrays.toString(minLevels));
 		this.geneticAlgorithmIterations = geneticAlgorithmIterations;
 		this.geneticAlgorithmCrossoverFraction = geneticAlgorithmCrossoverFraction;
 		this.geneticAlgorithmEliteFraction = geneticAlgorithmEliteFraction;
@@ -173,7 +173,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		GASubpopulation z1 = new GASubpopulation();
 		GASubpopulation z2 = new GASubpopulation();
 
-		System.out.println("Total Solutions: " + solutionSpace.getSize());
+		//System.out.println("Total Solutions: " + solutionSpace.getSize());
 		
 		// Fill sub-population 1
 		long tempTime = System.currentTimeMillis();
@@ -234,7 +234,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		
 		
 		//System.out.println("Pop1 size: " + z1.individualCount() + " | Pop2 size: " + z2.individualCount());
-		System.out.println("0;"+checker.getNumChecksPerformed());
+		//System.out.println("0;"+checker.getNumChecksPerformed());
 		tempTime = System.currentTimeMillis();
 		
 		// Main iterator
@@ -267,13 +267,13 @@ public class GAAlgorithm extends AbstractAlgorithm {
                 return false;
             }
             
-            System.out.println((t+1)+";"+checker.getNumChecksPerformed()+";"+checksNum2);
+            //System.out.println((t+1)+";"+checker.getNumChecksPerformed()+";"+checksNum2);
             
 		}
 		this.iterPhase = System.currentTimeMillis() - tempTime;
 		
-		System.out.println("Iter: "+ itr + " Checks: " + checker.getNumChecksPerformed() + "(/" + checksNum + ") Total: " + checksNum2 + " Loop1: " + initLoop1Count + " Loop2: " + initLoop2Count + " Mutate Loop: " + mutateLoopCount + " Crossover Loop: " + crossoverLoopCount);
-		System.out.println("Init: " + initialPhase + "ms | Iter: " + iterPhase + "ms | getIndividualTime: " + sumTime + "ms | checkerTime: " + checkerTime);
+		//System.out.println("Iter: "+ itr + " Checks: " + checker.getNumChecksPerformed() + "(/" + checksNum + ") Total: " + checksNum2 + " Loop1: " + initLoop1Count + " Loop2: " + initLoop2Count + " Mutate Loop: " + mutateLoopCount + " Crossover Loop: " + crossoverLoopCount);
+		//System.out.println("Init: " + initialPhase + "ms | Iter: " + iterPhase + "ms | getIndividualTime: " + sumTime + "ms | checkerTime: " + checkerTime);
 		// System.out.println("Pop1 size: " + z1.individualCount() + "Pop2 size: " + z2.individualCount());
 		// Check whether we found a solution
 		return getGlobalOptimum() != null;

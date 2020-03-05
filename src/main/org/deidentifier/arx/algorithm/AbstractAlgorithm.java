@@ -59,6 +59,9 @@ public abstract class AbstractAlgorithm {
     /** The number of checks */
     private final int               checkLimit;
 
+    /** Limit to aboard run */
+    public static double            lossLimit              = -1;
+
     /**
      * Initializes the algorithm
      * 
@@ -165,7 +168,8 @@ public abstract class AbstractAlgorithm {
      */
     protected boolean mustStop() {
         return ((int)(System.currentTimeMillis() - timeStart) > timeLimit) ||
-               (checker.getNumChecksPerformed() >= checkLimit);
+               (checker.getNumChecksPerformed() >= checkLimit) ||
+               (optimalInformationLoss != null && (Math.abs(Double.valueOf(optimalInformationLoss.toString()) - lossLimit) < 0.000001));
     }
 
     /**
@@ -197,6 +201,7 @@ public abstract class AbstractAlgorithm {
             ((transformation.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (transformation.getLevel() < globalOptimum.getLevel())))) {
             globalOptimum = transformation;
             optimalInformationLoss = transformation.getInformationLoss();
+            System.out.println(optimalInformationLoss);
         }
     }
 
