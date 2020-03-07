@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.algorithm;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -193,7 +194,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         
         // If a current optimum has been discovered
         Transformation<?> optimum = getGlobalOptimum();
-        if (optimum != null) {
+        if (optimum != null && !Arrays.equals(optimum.getGeneralization(), transformation.getGeneralization())) {
             
             // We can compare lower bounds on quality
             InformationLoss<?> bound = transformation.getLowerBound();
