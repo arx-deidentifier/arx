@@ -32,6 +32,7 @@ import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.GAAlgorithm;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
+import org.deidentifier.arx.algorithm.LIGHTNINGTopDownAlgorithm;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
@@ -672,10 +673,11 @@ public class ARXAnonymizer { // NO_UCD
                                              config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
     	    
     	case BEST_EFFORT_TOP_DOWN:
-    	    
-    	    // TODO: IMPLEMENT
-    	    throw new UnsupportedOperationException("Not implemented, yet.");
-    	    
+
+            // Run lightning
+            return LIGHTNINGTopDownAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
+                                                    config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+            
     	case BEST_EFFORT_GENETIC:
     	    
     	    // Run the genetic algorithm
