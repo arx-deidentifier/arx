@@ -63,7 +63,7 @@ public class Inclusion extends DPresence {
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         return true;
     }
     

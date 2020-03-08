@@ -37,6 +37,14 @@ import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IView;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.TableViewerColumn;
+import org.eclipse.nebula.widgets.pagination.IPageLoader;
+import org.eclipse.nebula.widgets.pagination.PageableController;
+import org.eclipse.nebula.widgets.pagination.collections.PageListHelper;
+import org.eclipse.nebula.widgets.pagination.collections.PageResult;
+import org.eclipse.nebula.widgets.pagination.table.PageableTable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -45,13 +53,13 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import de.linearbits.swt.table.DynamicTable;
-import de.linearbits.swt.table.DynamicTableColumn;
 
 /**
  * This view lists all attributes and their metadata
@@ -62,22 +70,40 @@ import de.linearbits.swt.table.DynamicTableColumn;
  */
 public class ViewAttributeList implements IView {
 
+    /**
+     * Page loader
+     * @author Fabian Prasser
+     */
+    private class AttributesPageLoader implements IPageLoader<PageResult<String>> {
+
+        @Override
+        public PageResult<String> loadPage(PageableController controller) {
+            if (attributes == null || attributes.isEmpty()) {
+                return PageListHelper.createPage(new ArrayList<String>(), controller);
+            } else {
+                return PageListHelper.createPage(attributes, controller);
+            }
+        }
+    }
+
     /** Resource */
     private final Image      IMAGE_ENABLED;
+
     /** Resource */
     private final Image      IMAGE_DISABLED;
-    
+
     /** Controller */
     private final Controller controller;
-
     /** Model */
     private Model            model;
     /** Model */
     private String[]         dataTypes;
 
+    /** Model */
+    private List<String>     attributes = new ArrayList<>();
+
     /** View */
-    private DynamicTable     table;
-    
+    private PageableTable    table;
 
     /**
      * Creates a new instance.
@@ -86,8 +112,7 @@ public class ViewAttributeList implements IView {
      * @param controller
      * @param layoutCriteria 
      */
-    public ViewAttributeList(final Composite parent,
-                             final Controller controller) {
+    public ViewAttributeList(final Composite parent, final Controller controller) {
         
         // Load images
         IMAGE_ENABLED           = controller.getResources().getManagedImage("tick.png"); //$NON-NLS-1$
@@ -99,6 +124,7 @@ public class ViewAttributeList implements IView {
         this.controller.addListener(ModelPart.MODEL, this);
         this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         this.controller.addListener(ModelPart.DATA_TYPE, this);
         this.dataTypes = getDataTypes();
         
@@ -114,12 +140,10 @@ public class ViewAttributeList implements IView {
 
     @Override
     public void reset() {
-        table.setRedraw(false);
-        for (TableItem item : table.getItems()) {
-            item.dispose();
-        }
-        table.setRedraw(true);
-        SWTUtil.disable(table);
+        this.attributes = null;
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
+        SWTUtil.disable(this.table);
     }
 
     @Override
@@ -132,10 +156,15 @@ public class ViewAttributeList implements IView {
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
             String attribute = (String) event.data;
             updateSelectedAttribute(attribute);
-        } else if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            updateAttributeTypes();
+        } else if (event.part == ModelPart.ATTRIBUTE_TYPE ||
+                   event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
+            if (!attributes.isEmpty()) {
+                table.refreshPage();
+            }
         } else if (event.part == ModelPart.DATA_TYPE) {
-            updateDataTypes();
+            if (!attributes.isEmpty()) {
+                table.refreshPage();
+            }
         }
     }
 
@@ -214,7 +243,7 @@ public class ViewAttributeList implements IView {
             // Set and update
             if (changed) {
                 this.model.getInputDefinition().setDataType(attribute, type);
-                this.updateDataTypes();
+                table.refreshPage();
                 this.controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
             }
         }
@@ -226,39 +255,85 @@ public class ViewAttributeList implements IView {
      * @param parent
      */
     private void create(final Composite parent) {
-        this.table = SWTUtil.createTableDynamic(parent, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
-        this.table.setHeaderVisible(true);
-        this.table.setLinesVisible(true);
+        this.table = SWTUtil.createPageableTableViewer(parent, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION, true, true);
         this.table.setLayoutData(SWTUtil.createFillGridData());
-        SWTUtil.createGenericTooltip(table);
-        DynamicTableColumn column0 = new DynamicTableColumn(table, SWT.NONE);
-        column0.setText(""); //$NON-NLS-1$
-        column0.setWidth("4%", "5px"); //$NON-NLS-1$ //$NON-NLS-2$
-        DynamicTableColumn column1 = new DynamicTableColumn(table, SWT.NONE);
-        column1.setText(Resources.getMessage("ViewAttributeList.0")); //$NON-NLS-1$
-        column1.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
-        DynamicTableColumn column2 = new DynamicTableColumn(table, SWT.NONE);
-        column2.setText(Resources.getMessage("ViewAttributeList.1")); //$NON-NLS-1$
-        column2.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
-        DynamicTableColumn column3 = new DynamicTableColumn(table, SWT.NONE);
-        column3.setText(Resources.getMessage("ViewAttributeList.2")); //$NON-NLS-1$
-        column3.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
-        DynamicTableColumn column4 = new DynamicTableColumn(table, SWT.NONE);
-        column4.setText(Resources.getMessage("ViewAttributeList.3")); //$NON-NLS-1$
-        column4.setWidth("24%", "30px"); //$NON-NLS-1$ //$NON-NLS-2$
-        column1.pack();
-        column2.pack();
-        column3.pack();
-        column4.pack();
+        this.table.getViewer().setContentProvider(new ArrayContentProvider());
+        this.table.setPageLoader(new AttributesPageLoader());
+
+        // Table
+        Table tTable = this.table.getViewer().getTable();
+        tTable.setHeaderVisible(true);
+        tTable.setLinesVisible(true);
+        GridData gd = SWTUtil.createFillGridData();
+        gd.heightHint = 100;
+        tTable.setLayoutData(gd);
+        SWTUtil.createGenericTooltip(tTable);
         
-        this.table.addSelectionListener(new SelectionAdapter(){
+        // Column: name and icon
+        this.createColumn(table, Resources.getMessage("ViewAttributeList.0"), //$NON-NLS-1$
+                          30, new ColumnLabelProvider() {
+                            @Override
+                            public Image getImage(Object element) {
+                                if (model == null) {
+                                    return null;
+                                }
+                                String attribute = (String)element;
+                                AttributeType type = model.getInputDefinition().getAttributeType(attribute);
+                                boolean isResponseVariable = model.getInputDefinition().isResponseVariable(attribute);
+                                return controller.getResources().getImage(type, isResponseVariable);
+                            }
+
+                            @Override
+                            public String getText(Object element) {
+                                return (String)element;
+                            }
+        });
+
+        // Column: data type
+        this.createColumn(table, Resources.getMessage("ViewAttributeList.1"), //$NON-NLS-1$
+                          30, new ColumnLabelProvider() {
+            @Override
+            public String getText(Object element) {
+                return getDataType((String)element);
+            }
+        });
+
+        // Column: format
+        this.createColumn(table, Resources.getMessage("ViewAttributeList.2"), //$NON-NLS-1$
+                          30, new ColumnLabelProvider() {
+            @Override
+            public String getText(Object element) {
+                return getDataTypeFormat((String)element);
+            }
+        });
+
+        // Column: target
+        this.createColumn(table, Resources.getMessage("ViewAttributeList.3"), //$NON-NLS-1$
+                          30, new ColumnLabelProvider() {
+                            @Override
+                            public Image getImage(Object element) {
+                                if (model == null) {
+                                    return null;
+                                }
+                                String attribute = (String)element;
+                                boolean isResponseVariable = model.getInputDefinition().isResponseVariable(attribute);
+                                return isResponseVariable ? IMAGE_ENABLED : IMAGE_DISABLED;
+                            }
+                            @Override
+                            public String getText(Object element) {
+                                return "";
+                            }
+        });
+        
+        // Attribute selection update
+        this.table.getViewer().getTable().addSelectionListener(new SelectionAdapter(){
             @Override public void widgetSelected(SelectionEvent arg0) {
                 if (model == null || model.getInputConfig() == null || model.getInputConfig().getInput() == null) {
                     return;
                 }
-                int index = table.getSelectionIndex();
-                if (index >= 0 && index <= model.getInputConfig().getInput().getHandle().getNumColumns()) {
-                    String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
+                int index = table.getViewer().getTable().getSelectionIndex();
+                if (index >= 0) {
+                    String attribute = (String)table.getViewer().getTable().getItem(index).getData();
                     model.setSelectedAttribute(attribute);
                     controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute));
                 }
@@ -276,31 +351,31 @@ public class ViewAttributeList implements IView {
                 }
             });
         }
-        
+
         // Trigger menu
-        this.table.addMouseListener(new MouseAdapter(){
+        this.table.getViewer().getTable().addMouseListener(new MouseAdapter(){
             @Override public void mouseDown(MouseEvent e) {
                 Point pt = new Point(e.x, e.y);
-                int index = table.getTopIndex();
-                while (index < table.getItemCount()) {
-                    TableItem item = table.getItem(index);
+                int index = table.getViewer().getTable().getTopIndex();
+                while (index < table.getViewer().getTable().getItemCount()) {
+                    TableItem item = table.getViewer().getTable().getItem(index);
                     for (int i = 0; i < 5; i++) {
                         Rectangle rect = item.getBounds(i);
                         if (rect.contains(pt)) {
                             
                             // Data type or Format and right click
-                            if ((i == 2 || i == 3) && e.button == 3) {
+                            if ((i == 1 || i == 2) && e.button == 3) {
                                 menu.setLocation(table.toDisplay(e.x, e.y));
                                 menu.setVisible(true);
                                 return;
                             }
+                            
                             // Response variable and left click
-                            else if (i == 4 && e.button == 1) {
-                                String attribute = model.getInputConfig().getInput().getHandle().getAttributeName(index);
+                            else if (i == 3 && e.button == 1) {
+                                String attribute = (String)item.getData();
                                 boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
                                 model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
-                                item.setImage(0, controller.getResources().getImage(model.getInputDefinition().getAttributeType(attribute), isResponseVariable));
-                                item.setImage(4, isResponseVariable ? IMAGE_ENABLED : IMAGE_DISABLED);
+                                table.refreshPage();
                                 controller.update(new ModelEvent(this, ModelPart.RESPONSE_VARIABLES, attribute));
                                 return;
                             }
@@ -310,6 +385,30 @@ public class ViewAttributeList implements IView {
                 }
             }
         });
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
+    }
+
+    /**
+     * Creates a new column
+     * @param table
+     * @param name
+     * @param width
+     * @param provider
+     */
+    private TableViewerColumn createColumn(PageableTable table,
+                                           String name, 
+                                           int width,
+                                           ColumnLabelProvider provider) {
+        
+        TableViewerColumn column = new TableViewerColumn(table.getViewer(), SWT.NONE);
+        column.setLabelProvider(provider);
+        TableColumn tColumn = column.getColumn();
+        tColumn.setToolTipText(name);
+        tColumn.setText(name);
+        tColumn.setWidth(width);
+        tColumn.setResizable(true);
+        return column;
     }
 
     /**
@@ -444,40 +543,6 @@ public class ViewAttributeList implements IView {
     }
   
     /**
-     * Update
-     */
-    private void updateAttributeTypes() {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
-            table.setRedraw(false);
-            DataHandle data = model.getInputConfig().getInput().getHandle();
-            for (int i = 0; i < data.getNumColumns(); i++) {
-                String attribute = data.getAttributeName(i);
-                AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-                table.getItem(i).setImage(0, controller.getResources().getImage(type, model.getInputDefinition().isResponseVariable(attribute)));
-            }
-            table.setRedraw(true);
-            SWTUtil.enable(table);
-        }
-    }
-
-    /**
-     * Update
-     */
-    private void updateDataTypes() {
-        if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
-            table.setRedraw(false);
-            DataHandle data = model.getInputConfig().getInput().getHandle();
-            for (int i = 0; i < data.getNumColumns(); i++) {
-                String attribute = data.getAttributeName(i);
-                table.getItem(i).setText(2, getDataType(attribute));
-                table.getItem(i).setText(3, getDataTypeFormat(attribute));
-            }
-            table.setRedraw(true);
-            SWTUtil.enable(table);
-        }
-    }
-    
-    /**
      * Updates the view.
      * 
      * @param node
@@ -489,24 +554,18 @@ public class ViewAttributeList implements IView {
             return; 
         }
 
-        table.setRedraw(false);
-        table.removeAll();
+        // Update data
+        this.attributes = new ArrayList<String>();
         DataHandle data = model.getInputConfig().getInput().getHandle();
         for (int i = 0; i < data.getNumColumns(); i++) {
             String attribute = data.getAttributeName(i);
-            TableItem item = new TableItem(table, SWT.NONE);
-            item.setText(new String[] { "", attribute, getDataType(attribute), getDataTypeFormat(attribute) }); //$NON-NLS-1$
-            AttributeType type = model.getInputDefinition().getAttributeType(attribute);
-            boolean isResponseVariable = model.getInputDefinition().isResponseVariable(attribute);
-            item.setImage(0, controller.getResources().getImage(type, isResponseVariable));
-            item.setImage(4, isResponseVariable ? IMAGE_ENABLED : IMAGE_DISABLED);
-            if (model.getSelectedAttribute() != null && model.getSelectedAttribute().equals(attribute)) {
-                table.select(i);
-            }
+            this.attributes.add(attribute);
         }
         
-        table.setRedraw(true);
-        SWTUtil.enable(table);
+        // Refresh
+        this.table.setCurrentPage(0);
+        this.table.refreshPage();
+        SWTUtil.enable(this.table);
     }
 
     /**
@@ -515,13 +574,14 @@ public class ViewAttributeList implements IView {
      */
     private void updateSelectedAttribute(String attribute) {
         if (model != null && model.getInputConfig() != null && model.getInputConfig().getInput() != null) {
-            DataHandle data = model.getInputConfig().getInput().getHandle();
-            for (int i = 0; i < data.getNumColumns(); i++) {
-                if (data.getAttributeName(i).equals(attribute)) {
+            Table table = this.table.getViewer().getTable();
+            for (int i=0; i < table.getItemCount(); i++) {
+                TableItem item = table.getItem(i);
+                if (item.getData().equals(attribute)) {
                     table.select(i);
                     break;
                 }
-            }   
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ public class ProfitabilityJournalistNoAttack extends ProfitabilityProsecutorNoAt
     private static final long serialVersionUID = 1073520003237793563L;
 
     /** The data subset */
-    private final DataSubset        subset;
+    private final DataSubset  subset;
 
     /**
      * Creates a new instance
@@ -91,7 +91,7 @@ public class ProfitabilityJournalistNoAttack extends ProfitabilityProsecutorNoAt
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         return entry.pcount >= super.getK();
     }
     

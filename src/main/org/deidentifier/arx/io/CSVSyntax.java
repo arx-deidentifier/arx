@@ -41,6 +41,9 @@ public class CSVSyntax implements Serializable { // NO_UCD
 
     /** The linebreak. */
     private char[]            linebreak;
+    
+    /** Max columns*/
+    private int               maxColumns;
 
     /** Default values. */
     public static final char   DEFAULT_DELIMITER = ';';
@@ -222,6 +225,14 @@ public class CSVSyntax implements Serializable { // NO_UCD
     public char getQuote() {
         return quote;
     }
+    
+    /**
+     * Returns the max columns
+     * @return
+     */
+    public int getMaxColumns() {
+        return maxColumns;
+    }
 
     /**
      * Sets the delimiter.
@@ -269,5 +280,13 @@ public class CSVSyntax implements Serializable { // NO_UCD
      */
     public void setQuote(char quote) {
         this.quote = quote;
+    }
+
+    /**
+     * Sets max columns
+     * @param maxColumns
+     */
+    public void setMaxColumns(int maxColumns) {
+        this.maxColumns = maxColumns;
     }
 }

@@ -158,6 +158,25 @@ public class DataAggregationInformation implements Serializable {
     }
     
     /**
+     * Returns a clone for data subsets
+     * @return
+     */
+    public DataAggregationInformation clone() {
+        return new DataAggregationInformation(this.header,
+                                              this.columns,
+                                              this.hotThreshold,
+                                              this.hotQIsNotGeneralized,
+                                              this.clone(this.hotQIsNotGeneralizedFunctions),
+                                              this.hotQIsNotGeneralizedDomainSizes,
+                                              this.hotQIsGeneralized,
+                                              this.clone(this.hotQIsGeneralizedFunctions),
+                                              this.hotQIsGeneralizedDomainSizes,
+                                              this.coldQIs,
+                                              this.clone(this.coldQIsFunctions),
+                                              this.coldQIsDomainSizes);
+    }
+
+    /**
      * @return the coldQIs
      */
     public int[] getColdQIs() {
@@ -318,25 +337,6 @@ public class DataAggregationInformation implements Serializable {
             array[i] = result.get(i);
         }
         return array;
-    }
-
-    /**
-     * Returns a clone for data subsets
-     * @return
-     */
-    public DataAggregationInformation getSubsetInstance() {
-        return new DataAggregationInformation(this.header,
-                                              this.columns,
-                                              this.hotThreshold,
-                                              this.hotQIsNotGeneralized,
-                                              this.clone(this.hotQIsNotGeneralizedFunctions),
-                                              this.hotQIsNotGeneralizedDomainSizes,
-                                              this.hotQIsGeneralized,
-                                              this.clone(this.hotQIsGeneralizedFunctions),
-                                              this.hotQIsGeneralizedDomainSizes,
-                                              this.coldQIs,
-                                              this.clone(this.coldQIsFunctions),
-                                              this.coldQIsDomainSizes);
     }
 
     @Override

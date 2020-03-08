@@ -27,9 +27,6 @@ import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes.Type;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest.SplitRule;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM.Kernel;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM.MulticlassType;
 import org.deidentifier.arx.gui.resources.Resources;
 import org.deidentifier.arx.gui.view.def.IDialog;
 import org.eclipse.swt.widgets.Shell;
@@ -72,8 +69,6 @@ public class DialogClassificationConfiguration implements IDialog {
             createContentForNaiveBayes((ClassificationConfigurationNaiveBayes) config);
         } else if (config instanceof ClassificationConfigurationRandomForest) {
             createContentForRandomForest((ClassificationConfigurationRandomForest) config);
-        } else if (config instanceof ClassificationConfigurationSVM) {
-            createContentForSVM((ClassificationConfigurationSVM) config);
         } else {
             throw new IllegalArgumentException("Unknown classification configuration");
         }
@@ -181,65 +176,6 @@ public class DialogClassificationConfiguration implements IDialog {
             protected String getValue() { return config.getSplitRule().name(); }
             protected void setValue(Object arg0) { config.setSplitRule(SplitRule.valueOf((String)arg0));  }
         });
-    }
-    
-    /**
-     * Creates content for SVM
-     * @param config
-     */
-    private void createContentForSVM(final ClassificationConfigurationSVM config) {
-        this.dialog.addCategory(Resources.getMessage("DialogClassificationConfiguration.5")); //$NON-NLS-1$
-        
-        // C
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.25"), 0d, Double.MAX_VALUE, ClassificationConfigurationSVM.DEFAULT_C) { //$NON-NLS-1$
-            protected Double getValue() { return config.getC(); }
-            protected void setValue(Object t) { config.setC((Double)t); }});
-        
-        // Kernel degree
-        this.dialog.addPreference(new PreferenceInteger(Resources.getMessage("ViewClassificationAttributes.26"), 0, Integer.MAX_VALUE, ClassificationConfigurationSVM.DEFAULT_KERNEL_DEGREE) { //$NON-NLS-1$
-            protected Integer getValue() { return config.getKernelDegree(); }
-            protected void setValue(Object t) { config.setKernelDegree((Integer)t); }});
-
-        // Kernel sigma
-        this.dialog.addPreference(new PreferenceDouble(Resources.getMessage("ViewClassificationAttributes.27"), 0d, Double.MAX_VALUE, ClassificationConfigurationSVM.DEFAULT_KERNEL_SIGMA) { //$NON-NLS-1$
-            protected Double getValue() { return config.getKernelSigma(); }
-            protected void setValue(Object t) { config.setKernelSigma((Double)t); }});
-        
-        // Kernel type
-        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.28"), getKernels(), ClassificationConfigurationSVM.DEFAULT_KERNEL_TYPE.toString()) { //$NON-NLS-1$
-            protected String getValue() { return config.getKernelType().name(); }
-            protected void setValue(Object arg0) { config.setKernelType(Kernel.valueOf((String)arg0));  }
-        });
-
-        // Multiclass type
-        this.dialog.addPreference(new PreferenceSelection(Resources.getMessage("ViewClassificationAttributes.29"), getMulticlassTypes(), ClassificationConfigurationSVM.DEFAULT_MULTICLASS_TYPE.toString()) { //$NON-NLS-1$
-            protected String getValue() { return config.getMulticlassType().name(); }
-            protected void setValue(Object arg0) { config.setMulticlassType(MulticlassType.valueOf((String)arg0));  }
-        });
-    }
-    
-    /**
-     * Creates a list of kernels
-     * @return
-     */
-    private String[] getKernels() {
-        List<String> result = new ArrayList<String>();
-        for (Kernel kernel : Kernel.values()) {
-            result.add(kernel.name());
-        }
-        return result.toArray(new String[result.size()]);
-    }
-
-    /**
-     * Creates a list of multiclass types
-     * @return
-     */
-    private String[] getMulticlassTypes() {
-        List<String> result = new ArrayList<String>();
-        for (MulticlassType multiclassType : MulticlassType.values()) {
-            result.add(multiclassType.name());
-        }
-        return result.toArray(new String[result.size()]);
     }
     
     /**

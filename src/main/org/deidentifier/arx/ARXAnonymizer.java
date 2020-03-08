@@ -18,13 +18,16 @@
 package org.deidentifier.arx;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.deidentifier.arx.ARXConfiguration.SearchStepSemantics;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunction;
 import org.deidentifier.arx.algorithm.AbstractAlgorithm;
+import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
@@ -42,6 +45,7 @@ import org.deidentifier.arx.framework.data.DataMatrix;
 import org.deidentifier.arx.framework.data.Dictionary;
 import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
+import org.deidentifier.arx.framework.lattice.SolutionSpaceLong;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.MetricSDClassification;
 
@@ -53,6 +57,12 @@ import org.deidentifier.arx.metric.v2.MetricSDClassification;
  * @author Florian Kohlmayer
  */
 public class ARXAnonymizer { // NO_UCD
+    
+    /** Is this a production release?*/
+    public static final boolean PRODUCTION_RELEASE = true;
+	
+	/** The global version string of this release*/
+	public static final String VERSION = "3.8.0";
 
     /**
      * Temporary result of the ARX algorithm.
@@ -69,7 +79,7 @@ public class ARXAnonymizer { // NO_UCD
         final TransformationChecker checker;
 
         /** The solution space. */
-        final SolutionSpace         solutionSpace;
+        final SolutionSpace<?>      solutionSpace;
 
         /** The data manager. */
         final DataManager           manager;
@@ -78,7 +88,7 @@ public class ARXAnonymizer { // NO_UCD
         final long                  time;
 
         /** The global optimum */
-        final Transformation        optimum;
+        final Transformation<?>     optimum;
 
         /** Whether the optimum has been found */
         final boolean               optimumFound;
@@ -94,7 +104,7 @@ public class ARXAnonymizer { // NO_UCD
          * @param time
          */
         Result(final TransformationChecker checker,
-               final SolutionSpace solutionSpace,
+               final SolutionSpace<?> solutionSpace,
                final DataManager manager,
                final AbstractAlgorithm algorithm,
                final long time,
@@ -417,13 +427,6 @@ public class ARXAnonymizer { // NO_UCD
             }
         }
         
-        // Check if all needed hierarchies have been defined
-        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
-            if (handle.getDefinition().getHierarchy(attribute) == null) {
-                throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
-            }
-        }
-        
         for (String attr : handle.getDefinition().getSensitiveAttributes()){
             boolean found = false;
             for (LDiversity c : config.getPrivacyModels(LDiversity.class)) {
@@ -505,6 +508,8 @@ public class ARXAnonymizer { // NO_UCD
         for (int i=0; i<handle.getNumColumns(); i++){
             attributes.add(handle.getAttributeName(i));
         }
+
+        // Check if specified attributes are here
         for (String attribute : handle.getDefinition().getSensitiveAttributes()){
             if (!attributes.contains(attribute)) {
                 throw new IllegalArgumentException("Sensitive attribute '"+attribute+"' is not contained in the dataset");
@@ -525,7 +530,15 @@ public class ARXAnonymizer { // NO_UCD
                 throw new IllegalArgumentException("Quasi-identifying attribute '"+attribute+"' is not contained in the dataset");
             }
         }
+
+        // Check if all needed hierarchies have been defined
+        for (String attribute : handle.getDefinition().getQuasiIdentifiersWithGeneralization()) {
+            if (handle.getDefinition().getHierarchy(attribute) == null) {
+                throw new IllegalStateException("No hierarchy available for quasi-identifier (" + attribute + ")");
+            }
+        }
         
+        // Check if aggregate functions have been defined
         for (String attribute : handle.getDefinition().getQuasiIdentifiersWithMicroaggregation()) {
             
             if (handle.getDefinition().getMicroAggregationFunction(attribute)==null) {
@@ -543,6 +556,28 @@ public class ARXAnonymizer { // NO_UCD
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
             if (!definition.getQuasiIdentifiersWithMicroaggregation().isEmpty()) {
                 throw new IllegalArgumentException("Differential privacy must not be combined with micro-aggregation");
+            }
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.getEpsilon() <= 0d) {
+                throw new IllegalArgumentException("The privacy budget must be > 0");
+            }
+            if (edpModel.getDelta() <= 0d || edpModel.getDelta() >= 1) {
+                throw new IllegalArgumentException("The privacy parameter delta must be in (0,1)");
+            }
+            if (edpModel.isDataDependent()) {
+                if (!config.getQualityModel().isScoreFunctionSupported()) {
+                    throw new IllegalArgumentException("Data-dependent differential privacy for the quality model '" + config.getQualityModel().getName() + "' is not yet implemented");
+                }
+                if (config.getDPSearchBudget() <= 0) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be > 0");
+                }
+                if (config.getDPSearchBudget() >= edpModel.getEpsilon()) {
+                    throw new IllegalArgumentException("The privacy budget to use for the search algorithm must be smaller than the overall privacy budget");
+                }
+                int numQIs = handle.getDefinition().getQuasiIdentifyingAttributes().size();
+                if (config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs) == Integer.MAX_VALUE) {
+                    throw new IllegalArgumentException("The number of heuristic search steps has to be limited when using data-dependent differential privacy");
+                }
             }
         }
         
@@ -583,15 +618,26 @@ public class ARXAnonymizer { // NO_UCD
      */
     private AbstractAlgorithm getAlgorithm(final ARXConfiguration config,
                                            final DataManager manager,
-                                           final SolutionSpace solutionSpace,
+                                           final SolutionSpace<?> solutionSpace,
                                            final TransformationChecker checker) {
+
+        int numQIs = manager.getHierarchies().length;
         
-        if (config.isHeuristicSearchEnabled() || solutionSpace.getSize() > config.getHeuristicSearchThreshold()) {
-            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(), config.getHeuristicSearchStepLimit());
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
+            EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            if (edpModel.isDataDependent()) {
+                return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
+                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs), config.getDPSearchBudget());
+            }
+        }
+
+        if (!(solutionSpace instanceof SolutionSpaceLong) || config.isHeuristicSearchEnabled() || solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
+            return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
+                                             config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             
         } else {
             FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
-            return FLASHAlgorithm.create(solutionSpace, checker, strategy);
+            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy);
         }
     }
 
@@ -614,9 +660,8 @@ public class ARXAnonymizer { // NO_UCD
                                                     dataArray,
                                                     dictionary,
                                                     definition,
-                                                    config.getPrivacyModels(),
                                                     getAggregateFunctions(definition),
-                                                    config.getQualityModel());
+                                                    config);
         return manager;
     }
 
@@ -640,8 +685,8 @@ public class ARXAnonymizer { // NO_UCD
         checkAfterEncoding(config, manager);
 
         // Build or clean the lattice
-        SolutionSpace solutionSpace = new SolutionSpace(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
-
+        SolutionSpace<?> solutionSpace = SolutionSpace.create(manager.getHierarchiesMinLevels(), manager.getHierarchiesMaxLevels());
+      
         // Initialize the metric
         config.getQualityModel().initialize(manager, definition, manager.getDataGeneralized(), manager.getHierarchies(), config);
 

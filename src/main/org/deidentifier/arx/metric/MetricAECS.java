@@ -77,7 +77,7 @@ public class MetricAECS extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation node, final HashGroupify g) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(final Transformation<?> node, final HashGroupify g) {
 
         // The total number of groups with suppression
         int groupsWithSuppression = 0;
@@ -108,17 +108,17 @@ public class MetricAECS extends MetricDefault {
     }
 
     @Override
-    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<InformationLossDefault> getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         return new InformationLossDefaultWithBound(entry.count, entry.count);
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Transformation node) {
+    protected InformationLossDefault getLowerBoundInternal(Transformation<?> node) {
         return null;
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(Transformation node,
+    protected InformationLossDefault getLowerBoundInternal(Transformation<?> node,
                                                            HashGroupify groupify) {
         // The total number of tuples
         int tuples = 0;

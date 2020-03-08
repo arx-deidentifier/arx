@@ -24,7 +24,6 @@ import org.deidentifier.arx.ARXFeatureScaling;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationLogisticRegression;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationRandomForest;
-import org.deidentifier.arx.aggregates.ClassificationConfigurationSVM;
 
 /**
  * This class represents a model
@@ -46,8 +45,6 @@ public class ModelClassification implements Serializable {
     private ClassificationConfigurationNaiveBayes         configNaiveBayes   = null;
     /** Configuration random forest */
     private ClassificationConfigurationRandomForest       configRandomForest = null;
-    /** Configuration SVM */
-    private ClassificationConfigurationSVM                configSVM          = null;
     /** Feature scaling */
     private ARXFeatureScaling                             featureScaling;
 
@@ -107,24 +104,13 @@ public class ModelClassification implements Serializable {
     }
     
     /**
-     * Returns a SVM configuration for ARX
-     * @return
-     */
-    public ClassificationConfigurationSVM getSVMConfiguration() {
-        if (this.configSVM == null) {
-            this.configSVM = ClassificationConfigurationSVM.create();
-        }
-        return this.configSVM;
-    }
-
-    /**
      * Is this model or one of the configurations modified
      * 
      * @return
      */
     public boolean isModified() {
         return this.modified || getLogisticRegressionConfiguration().isModified() || getNaiveBayesConfiguration().isModified() ||
-                                getRandomForestConfiguration().isModified() || getSVMConfiguration().isModified();
+                                getRandomForestConfiguration().isModified();
     }
     
     /**
@@ -144,7 +130,6 @@ public class ModelClassification implements Serializable {
         this.config.setDeterministic(t);
         this.configNaiveBayes.setDeterministic(t);
         this.configRandomForest.setDeterministic(t);
-        this.configSVM.setDeterministic(t);
         this.setModified();
     }
     
@@ -156,7 +141,6 @@ public class ModelClassification implements Serializable {
         this.config.setMaxRecords(t);
         this.configNaiveBayes.setMaxRecords(t);
         this.configRandomForest.setMaxRecords(t);
-        this.configSVM.setMaxRecords(t);
         this.setModified();
     }
     
@@ -168,7 +152,6 @@ public class ModelClassification implements Serializable {
         this.config.setNumFolds(t);
         this.configNaiveBayes.setNumFolds(t);
         this.configRandomForest.setNumFolds(t);
-        this.configSVM.setNumFolds(t);
         this.setModified();
     }
 
@@ -190,7 +173,6 @@ public class ModelClassification implements Serializable {
         getLogisticRegressionConfiguration().setUnmodified();
         getNaiveBayesConfiguration().setUnmodified();
         getRandomForestConfiguration().setUnmodified();
-        getSVMConfiguration().setUnmodified();
     }
 
     /**
@@ -201,7 +183,6 @@ public class ModelClassification implements Serializable {
         this.config.setVectorLength(t);
         this.configNaiveBayes.setVectorLength(t);
         this.configRandomForest.setVectorLength(t);
-        this.configSVM.setVectorLength(t);
         this.setModified();
     }
 

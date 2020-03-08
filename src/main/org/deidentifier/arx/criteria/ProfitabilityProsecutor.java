@@ -50,7 +50,7 @@ public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
     private DomainShare[]               shares;
 
     /** The microaggregation functions. */
-    private DataAggregationInformation        aggregation;
+    private DataAggregationInformation  aggregation;
 
     /** MaxIL */
     private double                      maxIL;
@@ -110,7 +110,7 @@ public class ProfitabilityProsecutor extends ImplicitPrivacyCriterion {
     }
 
     @Override
-    public boolean isAnonymous(Transformation transformation, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> transformation, HashGroupifyEntry entry) {
         
         // This is a class containing only records from the population
         if (entry.count == 0) {

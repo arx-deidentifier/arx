@@ -92,6 +92,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         controller.addListener(ModelPart.MODEL, this);
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.DATA_TYPE, this);
         controller.addListener(ModelPart.SELECTED_UTILITY_VISUALIZATION, this);
         controller.addListener(ModelPart.ATTRIBUTE_VALUE, this);
@@ -201,7 +202,9 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         }
         
         // Potentially invalidate
-        if (event.part == ModelPart.DATA_TYPE || event.part == ModelPart.ATTRIBUTE_TYPE) {
+        if (event.part == ModelPart.DATA_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
             if (dependsOnAttribute) {
                 if (model == null ||  viewContext == null || viewContext.isAttributeSelected(model.getSelectedAttribute())) {
                     this.triggerUpdate();
@@ -219,8 +222,6 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         
         // Update
         if (event.part == target ||
-            event.part == ModelPart.SELECTED_ATTRIBUTE ||
-            event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.SELECTED_VIEW_CONFIG ||
             event.part == ModelPart.SELECTED_UTILITY_VISUALIZATION ||
             (event.part == ModelPart.SELECTED_PERSPECTIVE && model != null && model.getPerspective() == Perspective.ANALYSIS)) {
@@ -241,7 +242,7 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
         }
 
         // Check visibility
-        if (!this.status.isVisible()){
+        if (!this.status.isVisible() || this.status.isStopped()) {
             return;
         }
 
@@ -356,7 +357,15 @@ public abstract class ViewStatistics<T extends AnalysisContextVisualization> imp
      * @return
      */
     protected abstract boolean isRunning();           
-    
+
+    /**
+     * Returns whether the view displays an empty result
+     * @return
+     */
+    protected boolean isEmpty() {
+       return this.status.isEmpty();
+    }
+
     /**
      * Status update.
      */

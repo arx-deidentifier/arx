@@ -122,14 +122,14 @@ public class ProfitabilityProsecutorNoAttack extends ImplicitPrivacyCriterion {
         } else if (Double.isInfinite(threshold)) {
             this.k = Integer.MAX_VALUE;
         } else if ((threshold == Math.floor(threshold))) {
-            this.k = (int) threshold + 1;
+            this.k = (int)threshold + 1;
         } else {
             this.k = (int)Math.ceil(threshold);
         }
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         return entry.count >= k;
     }
 

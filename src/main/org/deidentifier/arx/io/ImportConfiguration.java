@@ -44,6 +44,10 @@ public abstract class ImportConfiguration {
      */
     protected List<ImportColumn> columns = new ArrayList<ImportColumn>();
 
+    /**
+     * Optimized loading, if supported
+     */
+    private boolean optimizedLoading = false;
 
     /**
      * Adds a single column to import from.
@@ -62,5 +66,21 @@ public abstract class ImportConfiguration {
      */
     public List<ImportColumn> getColumns() {
         return columns;
+    }
+
+    /**
+     * Tries to enable more efficient loading, if supported
+     * @return the optimizedLoading
+     */
+    public boolean isOptimizedLoading() {
+        return optimizedLoading;
+    }
+
+    /**
+     * Tries to enable more efficient loading, if supported
+     * @param optimizedLoading
+     */
+    public void setOptimizedLoading(boolean optimizedLoading) {
+        this.optimizedLoading = optimizedLoading;
     }
 }

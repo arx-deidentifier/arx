@@ -120,6 +120,11 @@ public class ImportAdapterJDBC extends ImportAdapter {
         header = createHeader();
     }
     
+    @Override
+    public Integer getLength() {
+        return totalRows + 1;
+    }
+    
     /**
      * Returns the percentage of data that has already been returned
      * 
@@ -276,7 +281,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
         return header;
         
     }
-    
+
     /**
      * Returns an array with indexes of columns that should be imported
      * 

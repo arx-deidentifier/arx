@@ -260,6 +260,7 @@ public class MainWindow implements IView {
     public void reset() {
         root.setSelection(0);
         root.setEnabled(false);
+        shell.setText(Resources.getMessage("MainWindow.0")); //$NON-NLS-1$
     }
 
     /**
@@ -838,6 +839,24 @@ public class MainWindow implements IView {
             }
         });
 
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.45"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuEditCreateSuppressionHierarchy(false); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
+        items.add(new MainMenuItem(Resources.getMessage("MainMenu.46"), //$NON-NLS-1$
+                                   controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
+                                   false) {
+            public void action(Controller controller) { controller.actionMenuEditCreateSuppressionHierarchy(true); }
+            public boolean isEnabled(Model model) { 
+                return model != null && model.getSelectedAttribute() != null && model.getPerspective() == Perspective.CONFIGURATION;
+            }
+        });
+
         items.add(new MainMenuItem(Resources.getMessage("MainMenu.42"), //$NON-NLS-1$
                                    controller.getResources().getManagedImage("edit_create_hierarchy.png"), //$NON-NLS-1$
                                    false) {
@@ -929,7 +948,7 @@ public class MainWindow implements IView {
                                    true) {
             public void action(Controller controller) { controller.actionApplySelectedTransformation(); }
             public boolean isEnabled(Model model) { 
-                return model != null && model.getResult() != null && model.getSelectedNode() != null;
+                return model != null && model.getResult() != null && model.getSelectedNode() != null && !model.getProcessStatistics().isLocalTransformation();
             }
         });
         

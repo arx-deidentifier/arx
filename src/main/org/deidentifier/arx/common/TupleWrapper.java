@@ -32,13 +32,11 @@ public class TupleWrapper {
     private final int      hashcode;
     /** Indices */
     private final String[] values;
-    /** Suppressed */
-    private final boolean  suppressed;
 
     /**
-     * Constructor
-     * 
+     * Creates a new instance
      * @param handle
+     * @param indices
      * @param row
      */
     public TupleWrapper(DataHandle handle, int[] indices, int row) {
@@ -51,28 +49,37 @@ public class TupleWrapper {
             values[idx++] = value;
         }
         this.hashcode = hashcode;
-        this.suppressed = handle.isOutlier(row);
     }
     
     /**
-     * Constructor
-     * 
+     * Creates a new instance
      * @param handle
+     * @param indices
      * @param row
      */
-    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreSuppression) {
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row) {
+        this(handle, indices, row, false);
+    }
+    
+    /**
+     * Creates a new instance
+     * @param handle
+     * @param indices
+     * @param row
+     * @param ignoreOutliers Needed to measure journalist and marketer risk
+     */
+    public TupleWrapper(DataHandleInternal handle, int[] indices, int row, boolean ignoreOutliers) {
         this.values = new String[indices.length];
         int hashcode = 1;
         int idx = 0;
         for (int index : indices) {
-            String value = handle.getValue(row, index, ignoreSuppression);
+            String value = handle.getValue(row, index, ignoreOutliers);
             hashcode = 31 * hashcode + value.hashCode();
             values[idx++] = value;
         }
         this.hashcode = hashcode;
-        this.suppressed = handle.isOutlier(row);
     }
-
+    
     @Override
     public boolean equals(Object other) {
         return Arrays.equals(((TupleWrapper) other).values, this.values);
@@ -89,13 +96,5 @@ public class TupleWrapper {
     @Override
     public int hashCode() {
         return hashcode;
-    }
-    
-    /**
-     * Is this tuple suppressed
-     * @return
-     */
-    public boolean isOutlier() {
-        return suppressed;
     }
 }

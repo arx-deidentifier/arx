@@ -17,9 +17,10 @@
 
 package org.deidentifier.arx.algorithm;
 
-import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
+import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.framework.check.TransformationChecker;
+import org.deidentifier.arx.framework.check.TransformationChecker.ScoreType;
 import org.deidentifier.arx.framework.check.groupify.HashGroupify;
 import org.deidentifier.arx.framework.lattice.SolutionSpace;
 import org.deidentifier.arx.framework.lattice.Transformation;
@@ -35,7 +36,7 @@ import org.deidentifier.arx.metric.InformationLossWithBound;
 public abstract class AbstractAlgorithm {
 
     /** The optimal transformation. */
-    private Transformation          globalOptimum          = null;
+    private Transformation<?>       globalOptimum          = null;
 
     /** The optimal information loss. */
     private InformationLoss<?>      optimalInformationLoss = null;
@@ -47,7 +48,7 @@ public abstract class AbstractAlgorithm {
     protected TransformationChecker checker                = null;
 
     /** The lattice. */
-    protected SolutionSpace         solutionSpace          = null;
+    protected SolutionSpace<?>      solutionSpace          = null;
 
     /**
      * Walks the lattice.
@@ -55,7 +56,7 @@ public abstract class AbstractAlgorithm {
      * @param solutionSpace The solution space
      * @param checker The checker
      */
-    protected AbstractAlgorithm(final SolutionSpace  solutionSpace,
+    protected AbstractAlgorithm(final SolutionSpace<?>  solutionSpace,
                                 final TransformationChecker checker) {
         this.checker = checker;
         this.solutionSpace = solutionSpace;
@@ -66,7 +67,7 @@ public abstract class AbstractAlgorithm {
      *
      * @return
      */
-    public Transformation getGlobalOptimum() {
+    public Transformation<?> getGlobalOptimum() {
         return globalOptimum;
     }
 
@@ -86,13 +87,12 @@ public abstract class AbstractAlgorithm {
     public abstract boolean traverse();
 
     /**
-     * Determine information loss of the given node if it can be
-     * used for estimating minimum and maximum information
-     * loss for tagged nodes.
+     * Determine information loss implied by the given transformation if it can be
+     * used for estimating minimum and maximum information loss for tagged nodes.
      *
      * @param transformation
      */
-    protected void computeUtilityForMonotonicMetrics(Transformation transformation) {
+    protected void computeUtilityForMonotonicMetrics(Transformation<?> transformation) {
         if (checker.getConfiguration().getMonotonicityOfUtility() == Monotonicity.FULL &&
             transformation.getInformationLoss() == null) {
 
@@ -102,7 +102,7 @@ public abstract class AbstractAlgorithm {
                 transformation.setInformationLoss(loss.getInformationLoss());
                 transformation.setLowerBound(loss.getLowerBound());
             } else {
-                transformation.setChecked(checker.check(transformation, true));
+                transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             }
         }
     }
@@ -122,7 +122,7 @@ public abstract class AbstractAlgorithm {
      *
      * @param transformation
      */
-    protected void trackOptimum(Transformation transformation) {
+    protected void trackOptimum(Transformation<?> transformation) {
         if (transformation.hasProperty(solutionSpace.getPropertyAnonymous()) &&
             ((globalOptimum == null) ||
              (transformation.getInformationLoss().compareTo(optimalInformationLoss) < 0) ||

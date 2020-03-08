@@ -23,6 +23,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -58,6 +59,9 @@ public class MainMenu extends AbstractMenu {
 
         // Set menu bar
         shell.setMenuBar(this.menu);
+        
+        // Enhance experience on OSX
+        SWTUtil.fixOSXMenu(controller);
         
         // Initialize
         this.update(new ModelEvent(this, ModelPart.MODEL, null));

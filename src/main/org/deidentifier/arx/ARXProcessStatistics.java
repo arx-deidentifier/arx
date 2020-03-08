@@ -17,6 +17,7 @@
 package org.deidentifier.arx;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,11 +25,10 @@ import java.util.Map;
 
 import org.deidentifier.arx.ARXAnonymizer.Result;
 import org.deidentifier.arx.ARXLattice.ARXNode;
+import org.deidentifier.arx.framework.lattice.ObjectIterator;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.v2.QualityMetadata;
-
-import de.linearbits.jhpl.JHPLIterator.LongIterator;
 
 /**
  * Statistics about the anonymization process for output data
@@ -47,7 +47,7 @@ public class ARXProcessStatistics implements Serializable {
         /** SVUID */
         private static final long        serialVersionUID      = -7432752645871431439L;
 
-        /** Transformation selected in this step */
+        /** Transformation<?> selected in this step */
         private int[]                    transformation;
 
         /** Top transformation available in this step */
@@ -87,7 +87,7 @@ public class ARXProcessStatistics implements Serializable {
          * @param isOptimum
          * @param numRecords
          */
-        public Step(Transformation top, Transformation optimum, boolean isOptimum, int numRecords) {
+        public Step(Transformation<?> top, Transformation<?> optimum, boolean isOptimum, int numRecords) {
             this.transformation = optimum.getGeneralization();
             this.top = top.getGeneralization();
             this.score = optimum.getInformationLoss();
@@ -145,6 +145,14 @@ public class ARXProcessStatistics implements Serializable {
         }
 
         /**
+         * Maps attribute name to position
+         * @return
+         */
+        public Map<String, Integer> getHeader() {
+            return this.headermap;
+        }
+
+        /**
          * Returns the maximal generalization level for the attribute.
          *
          * @param attribute
@@ -172,7 +180,7 @@ public class ARXProcessStatistics implements Serializable {
         public List<QualityMetadata<?>> getMetadata() {
             return score.getMetadata();
         }
-
+        
         /**
          * Returns the number of records transformed in this step, <code>-1</code>
          * if not known.
@@ -181,7 +189,7 @@ public class ARXProcessStatistics implements Serializable {
         public int getNumberOfRecordsTransformed() {
             return this.numRecordsTransformed;
         }
-        
+
         /**
          * Returns the quasi identifiers.
          *
@@ -194,7 +202,7 @@ public class ARXProcessStatistics implements Serializable {
             }
             return result;
         }
-
+        
         /**
          * Returns a node's lower bound, if any.
          *
@@ -203,7 +211,7 @@ public class ARXProcessStatistics implements Serializable {
         public InformationLoss<?> getScore(){
             return this.score;
         }
-        
+
         /**
          * Returns the sum of all generalization levels.
          *
@@ -216,7 +224,7 @@ public class ARXProcessStatistics implements Serializable {
             }
             return level;
         }
-
+        
         /**
          * Returns the transformation as an array.
          *
@@ -225,7 +233,7 @@ public class ARXProcessStatistics implements Serializable {
         public int[] getTransformation() {
             return this.transformation;
         }
-        
+
         /**
          * Returns whether it is known how many records have been transformed
          * in this step.
@@ -253,6 +261,9 @@ public class ARXProcessStatistics implements Serializable {
     /** Total transformations available in this step */
     private long              transformationsTotal;
 
+    /** Total transformations available in this step */
+    private BigInteger        transformationsTotalLargeLattice;
+
     /** Transformations checked in this step */
     private long              transformationsChecked;
 
@@ -269,6 +280,7 @@ public class ARXProcessStatistics implements Serializable {
     private ARXProcessStatistics(ARXProcessStatistics other) {
         this.transformationsChecked = other.transformationsChecked;
         this.transformationsTotal = other.transformationsTotal;
+        this.transformationsTotalLargeLattice = other.transformationsTotalLargeLattice;
         this.duration = other.duration;
         this.initialNumberOfRecords = other.initialNumberOfRecords;
         this.steps = new ArrayList<>();
@@ -300,7 +312,9 @@ public class ARXProcessStatistics implements Serializable {
 
         // Compute statistics
         this.duration += duration;
-        this.transformationsTotal += lattice.getVirtualSize();        
+        this.transformationsTotal += lattice.getVirtualSize().longValue();  
+        this.transformationsTotalLargeLattice = BigInteger.valueOf(0);
+        this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(lattice.getVirtualSize());
         for (final ARXNode[] level : lattice.getLevels()) {
             for (final ARXNode node : level) {
                 if (node.isChecked() || node.getHighestScore().compareTo(node.getLowestScore()) == 0) {
@@ -337,12 +351,14 @@ public class ARXProcessStatistics implements Serializable {
         
         // Compute statistics
         this.initialNumberOfRecords = initialNumberOfRecords;
-        this.transformationsTotal += result.solutionSpace.getSize();
+        this.transformationsTotalLargeLattice = BigInteger.valueOf(0);
+        this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(result.solutionSpace.getSize());
+        this.transformationsTotal += result.solutionSpace.getSize().longValue();
         this.duration += duration;
         
         // Collect number of checked transformations
-        for (LongIterator iterator = result.solutionSpace.getMaterializedTransformations(); iterator.hasNext();) {
-            Transformation transformation = result.solutionSpace.getTransformation(iterator.next());
+        for (ObjectIterator<?> iterator = result.solutionSpace.getMaterializedTransformations(); iterator.hasNext();) {
+            Transformation<?> transformation = result.solutionSpace.getTransformation(iterator.next());
             if (transformation.hasProperty(result.solutionSpace.getPropertyChecked()) || (transformation.getInformationLoss() != null)) {
                 this.transformationsChecked++;
             }
@@ -363,13 +379,21 @@ public class ARXProcessStatistics implements Serializable {
     }
     
     /**
+     * Converts the statistics into a lattice
+     * @return
+     */
+    public ARXLattice getLattice() {
+        return new ARXLattice(this);
+    }
+    
+    /**
      * Returns the number of steps performed
      * @return
      */
     public int getNumberOfSteps() {
         return steps.size();
     }
-    
+
     /**
      * Returns a step performed during the anonymization process
      * @param index
@@ -382,21 +406,37 @@ public class ARXProcessStatistics implements Serializable {
             return steps.get(index);
         }
     }
-
+    
     /**
-     * Returns the number of transformations available in this step
+     * Returns all steps
      * @return
      */
-    public long getTransformationsAvailable() {
-        return this.transformationsTotal;
+    public List<Step> getSteps() {
+        return this.steps;
+    }
+
+    /**
+     * Returns the number of transformations available in this process
+     * @return
+     */
+    public BigInteger getTransformationsAvailable() {
+        return this.transformationsTotalLargeLattice != null ? transformationsTotalLargeLattice : BigInteger.valueOf(this.transformationsTotal);
     }
     
     /**
-     * Returns the number of transformations checked in this step
+     * Returns the number of transformations checked in this process
      * @return
      */
     public long getTransformationsChecked() {
         return this.transformationsChecked;
+    }
+    
+    /**
+     * Returns whether the result is a local transformation scheme
+     * @return
+     */
+    public boolean isLocalTransformation() {
+        return this.getNumberOfSteps() > 1;
     }
 
     /**
@@ -406,7 +446,7 @@ public class ARXProcessStatistics implements Serializable {
     public boolean isSolutationAvailable() {
         return !this.steps.isEmpty();
     }
-    
+
     /**
      * Returns new process statistics that are a merger of this and the other statistics
      * @param statistics
@@ -416,14 +456,14 @@ public class ARXProcessStatistics implements Serializable {
         result.mergeInternal(statistics);
         return result;
     }
-    
+
     /**
      * Merges this instance with the other instance
      * @param stats
      */
     private void mergeInternal(ARXProcessStatistics stats) {
-        if (this.initialNumberOfRecords == -1 && !this.steps.isEmpty() && !this.steps.get(0).isNumberOfRecordsTransformedAvailable()) {
-            this.steps.get(0).numRecordsTransformed = stats.initialNumberOfRecords;
+        if (this.initialNumberOfRecords == -1 && stats.initialNumberOfRecords != -1) {
+            this.initialNumberOfRecords = stats.initialNumberOfRecords;
         }
         for (Step step : stats.steps) {
             step = step.clone();
@@ -432,6 +472,17 @@ public class ARXProcessStatistics implements Serializable {
             }
             this.steps.add(step);
         }
+        if (!this.steps.isEmpty() && !this.steps.get(0).isNumberOfRecordsTransformedAvailable()) {
+            this.steps.get(0).numRecordsTransformed = this.initialNumberOfRecords;
+        }
+        if (this.transformationsTotalLargeLattice == null) {
+            this.transformationsTotalLargeLattice = BigInteger.valueOf(0);
+        }
+        BigInteger otherTransformationsTotalLargeLattice = stats.transformationsTotalLargeLattice;
+        if (otherTransformationsTotalLargeLattice == null) {
+            otherTransformationsTotalLargeLattice = BigInteger.valueOf(0);
+        }
+        this.transformationsTotalLargeLattice = this.transformationsTotalLargeLattice.add(otherTransformationsTotalLargeLattice);
         this.transformationsTotal += stats.transformationsTotal;
         this.transformationsChecked += stats.transformationsChecked;
         this.duration += stats.duration;

@@ -26,6 +26,7 @@ import org.deidentifier.arx.common.TupleWrapper;
 import org.deidentifier.arx.common.WrappedBoolean;
 import org.deidentifier.arx.common.WrappedInteger;
 import org.deidentifier.arx.exceptions.ComputationInterruptedException;
+import org.deidentifier.arx.reliability.ParameterTranslation;
 
 /**
  * This class implements risk measures as proposed by El Emam in
@@ -44,12 +45,13 @@ public class RiskModelSampleSummary {
 
         /**
          * Creates a new instance
+         * @param t
          * @param rA
          * @param rB
          * @param rC
          */
-        protected JournalistRisk(double rA, double rB, double rC) {
-            super(rA, rB, rC);
+        protected JournalistRisk(double t, double rA, double rB, double rC) {
+            super(t, rA, rB, rC);
         }
     }
     
@@ -76,7 +78,7 @@ public class RiskModelSampleSummary {
          * @return
          */
         public double getSuccessRate() {
-            return rC;
+            return Double.isNaN(rC) ? 0d : rC;
         }
     }
 
@@ -88,12 +90,13 @@ public class RiskModelSampleSummary {
 
         /**
          * Creates a new instance
+         * @param t
          * @param rA
          * @param rB
          * @param rC
          */
-        protected ProsecutorRisk(double rA, double rB, double rC) {
-            super(rA, rB, rC);
+        protected ProsecutorRisk(double t,double rA, double rB, double rC) {
+            super(t, rA, rB, rC);
         }
     }
     /**
@@ -103,6 +106,8 @@ public class RiskModelSampleSummary {
      */
     public static class RiskSummary {
         
+        /** User-specified threshold*/
+        private final double t;
         /** Proportion of records with risk above threshold*/
         private final double rA;
         /** Maximum probability of re-identification*/
@@ -112,22 +117,40 @@ public class RiskModelSampleSummary {
         
         /**
          * Creates a new instance
+         * @param t
          * @param rA
          * @param rB
          * @param rC
          */
-        protected RiskSummary(double rA, double rB, double rC) {
+        protected RiskSummary(double t, double rA, double rB, double rC) {
+            this.t = t;
             this.rA = rA;
             this.rB = rB;
             this.rC = rC;
         }
 
         /**
+         * Returns the average risk
+         * @return the average risk
+         */
+        public double getAverageRisk() {
+            return getSuccessRate();
+        }
+
+        /**
+         * Returns the effective threshold, which may differ from user-specified parameters due to rounding issues.
+         * @return
+         */
+        public double getEffectiveRiskThreshold() {
+            return ParameterTranslation.getEffectiveRiskThreshold(t);
+        }
+        
+        /**
          * Maximum probability of re-identification
          * @return
          */
         public double getHighestRisk() {
-            return rB;
+            return Double.isNaN(rB) ? 0d : rB;
         }
 
         /**
@@ -135,7 +158,16 @@ public class RiskModelSampleSummary {
          * @return
          */
         public double getRecordsAtRisk() {
-            return rA;
+            return Double.isNaN(rA) ? 0d : rA;
+        }
+
+        /**
+         * Returns the threshold specified by the user. Note: the actual threshold used may differ slightly.
+         * See: <code>getEffectiveRiskThreshold()</code>.
+         * @return
+         */
+        public double getRiskThreshold() {
+            return t;
         }
 
         /**
@@ -143,7 +175,7 @@ public class RiskModelSampleSummary {
          * @return
          */
         public double getSuccessRate() {
-            return rC;
+            return Double.isNaN(rC) ? 0d : rC;
         }
     }
 
@@ -153,7 +185,6 @@ public class RiskModelSampleSummary {
     private final JournalistRisk journalistRisk;
     /** Marketer risk */
     private final MarketerRisk   marketerRisk;
-
     /** Acceptable highest probability of re-identification for a single record */
     private final double         threshold;
 
@@ -161,13 +192,16 @@ public class RiskModelSampleSummary {
      * Creates a new instance
      * @param handle Handle
      * @param identifiers Identifiers
-     * @param threshold Acceptable highest probability of re-identification for a single record
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
+     * @param suppressed 
      * @param stop Stop flag
      * @param progress Progress
      */
     public RiskModelSampleSummary(DataHandleInternal handle,
                                   Set<String> identifiers,
                                   double threshold,
+                                  String suppressed, 
                                   WrappedBoolean stop,
                                   WrappedInteger progress) {
 
@@ -178,16 +212,39 @@ public class RiskModelSampleSummary {
         Groupify<TupleWrapper> sample;
         Groupify<TupleWrapper> population;
         if (handle.getSuperset() != null) {
-            sample = getGroups(handle, identifiers, 0d, 0.45d, stop, progress, false);
-            population = getGroups(handle.getSuperset(), identifiers,  0.45d, 0.45d, stop, progress, true);
+            sample = getGroups(handle, identifiers, 0d, 0.45d, stop, progress, false, suppressed);
+            population = getGroups(handle.getSuperset(), identifiers,  0.45d, 0.45d, stop, progress, true, suppressed);
         } else {
-            sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress, false);
+            sample = getGroups(handle, identifiers, 0d, 0.9d, stop, progress, false, suppressed);
             population = sample;
         }
-        
-        this.prosecutorRisk = getProsecutorRisk(population, sample, 0.9d, stop, progress);
-        this.journalistRisk = getJournalistRisk(population, sample, 0.933d, stop, progress);
-        this.marketerRisk = getMarketerRisk(population, sample, 0.966d, stop, progress);
+        if (sample.size() == 0) {
+            this.prosecutorRisk = new ProsecutorRisk(threshold, 0d, 0d, 0d);
+            this.journalistRisk = new JournalistRisk(threshold, 0d, 0d, 0d);
+            this.marketerRisk = new MarketerRisk(0d);          
+        } else {
+            this.prosecutorRisk = getProsecutorRisk(population, sample, 0.9d, stop, progress);
+            this.journalistRisk = getJournalistRisk(population, sample, 0.933d, stop, progress);
+            this.marketerRisk = getMarketerRisk(population, sample, 0.966d, stop, progress);
+        }
+    }
+    
+    /**
+     * Creates a new instance
+     * @param handle Handle
+     * @param identifiers Identifiers
+     * @param threshold Acceptable highest probability of re-identification for a single record. Please note that this
+     *                  threshold may be exceeded by up to 1% due to rounding issues.
+     * @param suppressed 
+     * @param stop Stop flag
+     * @param progress Progress
+     */
+    public RiskModelSampleSummary(DataHandleInternal handle,
+                                  Set<String> identifiers,
+                                  double threshold,
+                                  WrappedBoolean stop,
+                                  WrappedInteger progress) {
+        this(handle, identifiers, threshold, null, stop, progress);
     }
 
     /**
@@ -231,6 +288,7 @@ public class RiskModelSampleSummary {
      * @param stop
      * @param progress
      * @param ignoreOutliers 
+     * @param suppressed 
      * @return
      */
     private Groupify<TupleWrapper> getGroups(DataHandleInternal handle,
@@ -239,7 +297,8 @@ public class RiskModelSampleSummary {
                                              double factor,
                                              WrappedBoolean stop,
                                              WrappedInteger progress,
-                                             boolean ignoreOutliers) {
+                                             boolean ignoreOutliers,
+                                             String suppressed) {
 
         /* ********************************
          * Check 
@@ -272,8 +331,10 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
 
-            TupleWrapper tuple = new TupleWrapper(handle, indices, row, ignoreOutliers);
-            map.add(tuple);
+            if (ignoreOutliers || !handle.isOutlier(row, indices)) {
+                TupleWrapper tuple = new TupleWrapper(handle, indices, row, ignoreOutliers);
+                map.add(tuple);
+            }
             if (stop.value) { throw new ComputationInterruptedException(); }
         }
 
@@ -317,30 +378,27 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
             
-            // Only process unsuppressed records
-            if (!element.getElement().isOutlier()) {
-                
-                int groupSizeInSample = element.getCount();
-                int groupSizeInPopulation = groupSizeInSample;
-                if (population != sample) {
-                    groupSizeInPopulation = population.get(element.getElement()).getCount();
-                }
-                
-                // Compute rA
-                if (1d / groupSizeInPopulation > threshold) {
-                    rA += groupSizeInSample;
-                }
-                // Compute rB
-                if (groupSizeInPopulation < smallestClassSizeInPopulation) {
-                    smallestClassSizeInPopulation = groupSizeInPopulation;
-                }
-                // Compute rC
-                numClassesInSample++;
-                numRecordsInSample += groupSizeInSample;
-                rC1 += groupSizeInPopulation;
-                rC2 += (double)groupSizeInSample / (double)groupSizeInPopulation;
+            // Process
+            int groupSizeInSample = element.getCount();
+            int groupSizeInPopulation = groupSizeInSample;
+            if (population != sample) {
+                groupSizeInPopulation = population.get(element.getElement()).getCount();
             }
-                
+
+            // Compute rA
+            if (1d / groupSizeInPopulation > threshold) {
+                rA += groupSizeInSample;
+            }
+            // Compute rB
+            if (groupSizeInPopulation < smallestClassSizeInPopulation) {
+                smallestClassSizeInPopulation = groupSizeInPopulation;
+            }
+            // Compute rC
+            numClassesInSample++;
+            numRecordsInSample += groupSizeInSample;
+            rC1 += groupSizeInPopulation;
+            rC2 += (double) groupSizeInSample / (double) groupSizeInPopulation;
+
             // Next element
             element = element.next();
             
@@ -360,7 +418,7 @@ public class RiskModelSampleSummary {
         rC = Math.max(rC1,  rC2);
         
         // Return
-        return new JournalistRisk(rA, rB, rC); 
+        return new JournalistRisk(threshold, rA, rB, rC); 
     }
 
     /**
@@ -394,20 +452,17 @@ public class RiskModelSampleSummary {
                 progress.value = prog;
             }
             
-            // Only process unsuppressed records
-            if (!element.getElement().isOutlier()) {
-                
-                int groupSizeInSample = element.getCount();
-                int groupSizeInPopulation = groupSizeInSample;
-                if (population != sample) {
-                    groupSizeInPopulation = population.get(element.getElement()).getCount();
-                }
-                
-                // Compute rC
-                numRecordsInSample += groupSizeInSample;
-                rC += (double)groupSizeInSample / (double)groupSizeInPopulation;
+            // Process
+            int groupSizeInSample = element.getCount();
+            int groupSizeInPopulation = groupSizeInSample;
+            if (population != sample) {
+                groupSizeInPopulation = population.get(element.getElement()).getCount();
             }
-                
+
+            // Compute rC
+            numRecordsInSample += groupSizeInSample;
+            rC += (double) groupSizeInSample / (double) groupSizeInPopulation;
+
             // Next element
             element = element.next();
             
@@ -456,24 +511,20 @@ public class RiskModelSampleSummary {
             if (prog != progress.value) {
                 progress.value = prog;
             }
-            
-            // Only process unsuppressed records
-            if (!element.getElement().isOutlier()) {
-                
-                // Compute rA
-                int groupSize = element.getCount();
-                if (1d / groupSize > threshold) {
-                    rA += groupSize;
-                }
-                // Compute rB
-                if (groupSize < smallestClassSize) {
-                    smallestClassSize = groupSize;
-                }
-                // Compute rC
-                numClasses++;
-                numRecords += groupSize;
+
+            // Compute rA
+            int groupSize = element.getCount();
+            if (1d / groupSize > threshold) {
+                rA += groupSize;
             }
-                
+            // Compute rB
+            if (groupSize < smallestClassSize) {
+                smallestClassSize = groupSize;
+            }
+            // Compute rC
+            numClasses++;
+            numRecords += groupSize;
+    
             // Next element
             element = element.next();
             
@@ -491,6 +542,6 @@ public class RiskModelSampleSummary {
         rC = numClasses / numRecords;
         
         // Return
-        return new ProsecutorRisk(rA, rB, rC); 
+        return new ProsecutorRisk(threshold, rA, rB, rC); 
     }
 }

@@ -90,6 +90,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
 
         // Register
         controller.addListener(ModelPart.MODEL, this);
+        controller.addListener(ModelPart.INPUT, this);
         controller.addListener(ModelPart.SELECTED_PERSPECTIVE, this);
         controller.addListener(ModelPart.SELECTED_VIEW_CONFIG, this);
         controller.addListener(ModelPart.SELECTED_RISK_VISUALIZATION, this);
@@ -214,7 +215,7 @@ public abstract class ViewRisks<T extends AnalysisContextVisualization> implemen
         }
 
         // Check visibility
-        if (!this.status.isVisible()){
+        if (!this.status.isVisible() || this.status.isStopped()) {
             return;
         }
 

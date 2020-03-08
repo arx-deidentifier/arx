@@ -26,8 +26,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.apache.poi.ss.formula.functions.T;
 import org.deidentifier.arx.io.CSVDataInput;
+import org.deidentifier.arx.io.CSVOptions;
 import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.io.ImportAdapter;
 import org.deidentifier.arx.io.ImportConfiguration;
@@ -127,6 +127,9 @@ public abstract class Data { // NO_UCD
 
         /** Iterator over tuples. */
         private Iterator<String[]> iterator = null;
+        
+        /** Length*/
+        private Integer length;
 
         /**
          * Creates a new instance.
@@ -135,8 +138,24 @@ public abstract class Data { // NO_UCD
          */
         private IterableData(final Iterator<String[]> iterator) {
             this.iterator = iterator;
+            this.length = null;
         }
 
+        /**
+         * Creates a new instance.
+         *
+         * @param iterator the iterator
+         */
+        private IterableData(final Iterator<String[]> iterator, Integer length) {
+            this.iterator = iterator;
+            this.length = length;
+        }
+
+        @Override
+        protected Integer getLength() {
+            return length;
+        }
+        
         @Override
         protected Iterator<String[]> iterator() {
             return iterator;
@@ -163,11 +182,11 @@ public abstract class Data { // NO_UCD
 
         ImportConfiguration config = source.getConfiguration();
         ImportAdapter adapter = ImportAdapter.create(config);
-        return create(adapter);
+        return create(adapter, adapter.getLength());
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @return the data
@@ -178,7 +197,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file A file
      * @param delimiter The utilized separator character
@@ -190,7 +209,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file A file
      * @param delimiter The utilized separator character
@@ -203,7 +222,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param delimiter the delimiter
@@ -217,7 +236,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param delimiter the delimiter
@@ -232,7 +251,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param config the config
@@ -244,7 +263,20 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
+     *
+     * @param file the file
+     * @param config the config
+     * @param options the options
+     * @return the data
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final File file, final Charset charset, final CSVSyntax config, final CSVOptions options) throws IOException {
+        return new IterableData(new CSVDataInput(file, charset, config, options).iterator());
+    }
+
+    /**
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param file the file
      * @param config the config
@@ -252,12 +284,11 @@ public abstract class Data { // NO_UCD
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final File file, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+    public static Data create(final File file, final Charset charset, final CSVSyntax config, final DataType<?>[] datatypes) throws IOException {
         return new IterableData(new CSVDataInput(file, charset, config, datatypes).iterator());
     }
-
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @return the data
@@ -268,7 +299,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream An input stream
      * @param delimiter The utilized separator character
@@ -280,7 +311,20 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
+     *
+     * @param stream An input stream
+     * @param delimiter The utilized separator character
+     * @param length For improved memory requirements
+     * @return A Data object
+     * @throws IOException Signals that an I/O exception has occurred.
+     */
+    public static Data create(final InputStream stream, final Charset charset, final char delimiter, final int length) throws IOException {
+        return new IterableData(new CSVDataInput(stream, charset, delimiter).iterator(), length);
+    }
+    
+    /**
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream An input stream
      * @param delimiter The utilized separator character
@@ -293,7 +337,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param delimiter the delimiter
@@ -307,7 +351,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param delimiter the delimiter
@@ -322,7 +366,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param config the config
@@ -334,7 +378,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param stream the stream
      * @param config the config
@@ -342,7 +386,7 @@ public abstract class Data { // NO_UCD
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final InputStream stream, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+    public static Data create(final InputStream stream, final Charset charset, final CSVSyntax config, final DataType<?>[] datatypes) throws IOException {
         return new IterableData(new CSVDataInput(stream, charset, config, datatypes).iterator());
     }
 
@@ -353,9 +397,21 @@ public abstract class Data { // NO_UCD
      * @return A Data object
      */
     public static Data create(final Iterator<String[]> iterator) {
+        
+        // Prepare
+        IterableData result = null;
+        
+        // Optimize, if possible
+        if (iterator instanceof ImportAdapter) {
+            
+            // Obtain data
+            result = new IterableData(iterator, ((ImportAdapter)iterator).getLength());
+            
+        } else {
 
-        // Obtain data
-        IterableData result = new IterableData(iterator);
+            // Obtain data
+            result = new IterableData(iterator);
+        }
 
         // Update definition, if needed
         if (iterator instanceof ImportAdapter) {
@@ -367,6 +423,27 @@ public abstract class Data { // NO_UCD
     }
 
     /**
+     * Creates a new data object from an iterator over tuples.
+     *
+     * @param iterator An iterator
+     * @param length number of records to load
+     * @return A data object
+     */
+    public static Data create(final Iterator<String[]> iterator, Integer length) {
+
+        // Obtain data
+        IterableData result = new IterableData(iterator, length);
+
+        // Update definition, if needed
+        if (iterator instanceof ImportAdapter) {
+            result.getDefinition().parse((ImportAdapter) iterator);
+        }
+
+        // Return
+        return result;
+    }
+    
+    /**
      * Creates a new data object from a list.
      *
      * @param list The list
@@ -375,9 +452,9 @@ public abstract class Data { // NO_UCD
     public static Data create(final List<String[]> list) {
         return new IterableData(list.iterator());
     }
-
+    
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @return the data
@@ -388,7 +465,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path A path to the file
      * @param delimiter The utilized separator character
@@ -400,7 +477,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path A path to the file
      * @param delimiter The utilized separator character
@@ -413,7 +490,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param delimiter the delimiter
@@ -427,7 +504,7 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param delimiter the delimiter
@@ -442,19 +519,20 @@ public abstract class Data { // NO_UCD
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param config the config
+     * @param options the options
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final Charset charset, final CSVSyntax config) throws IOException {
-        return new IterableData(new CSVDataInput(path, charset, config).iterator());
+    public static Data create(final String path, final Charset charset, final CSVSyntax config, final CSVOptions options) throws IOException {
+        return new IterableData(new CSVDataInput(path, charset, config, options).iterator());
     }
 
     /**
-     * Creates a new data object from a CSV file.
+     * Creates a new data object from a CSV file. Assumes that the file contains a header.
      *
      * @param path the path
      * @param config the config
@@ -462,7 +540,7 @@ public abstract class Data { // NO_UCD
      * @return the data
      * @throws IOException Signals that an I/O exception has occurred.
      */
-    public static Data create(final String path, final Charset charset, final CSVSyntax config, final DataType<T>[] datatypes) throws IOException {
+    public static Data create(final String path, final Charset charset, final CSVSyntax config, final DataType<?>[] datatypes) throws IOException {
         return new IterableData(new CSVDataInput(path, charset, config, datatypes).iterator());
     }
 
@@ -503,6 +581,14 @@ public abstract class Data { // NO_UCD
             handle.update(this);
         }
         return handle;
+    }
+
+    /**
+     * Override to return a length to improve loading
+     * @return
+     */
+    protected Integer getLength() {
+        return null;
     }
 
     /**

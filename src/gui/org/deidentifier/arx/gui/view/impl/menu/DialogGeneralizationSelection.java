@@ -179,7 +179,12 @@ public class DialogGeneralizationSelection extends TitleAreaDialog implements ID
         for (String attribute : attributes) {
             TableItem item = new TableItem(table, SWT.NONE);
             int level = selection.get(attribute);
-            item.setText(new String[] {attribute, String.valueOf(level), hierarchies.get(attribute)[0][level]});
+            String[][] hierarchy = hierarchies.get(attribute);
+            if (hierarchy == null) {
+                item.setText(new String[] {attribute, String.valueOf(level)});
+            } else {
+                item.setText(new String[] {attribute, String.valueOf(level), hierarchy[0][level]});
+            }
         }
         
 
@@ -194,7 +199,7 @@ public class DialogGeneralizationSelection extends TitleAreaDialog implements ID
                     items[i].dispose();
                 }
                 
-                if (attribute != null) {
+                if (attribute != null && hierarchies.get(attribute) != null) {
                     
                     for (int i=0; i<hierarchies.get(attribute)[0].length; i++) {
                         MenuItem newItem = new MenuItem(menu, SWT.NONE);

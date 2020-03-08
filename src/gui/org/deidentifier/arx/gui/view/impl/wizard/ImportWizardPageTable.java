@@ -75,7 +75,7 @@ public class ImportWizardPageTable extends WizardPage {
         
         int unit = 1000;
         if (rows < unit) {
-            return new Long(rows).toString();
+            return String.valueOf(rows);
         } else {
             int exp = (int) (Math.log(rows) / Math.log(unit));
             char pre = "kMGTPE".charAt(exp - 1); //$NON-NLS-1$

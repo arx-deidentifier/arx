@@ -124,13 +124,16 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
         controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        controller.addListener(ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, this);
         controller.addListener(ModelPart.POPULATION_MODEL, this);
     }
     
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE || event.part == ModelPart.POPULATION_MODEL) {
+        if (event.part == ModelPart.ATTRIBUTE_TYPE ||
+            event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
+            event.part == ModelPart.POPULATION_MODEL) {
             triggerUpdate();
         }
     }
@@ -432,7 +435,7 @@ public class ViewRisksPopulationUniques extends ViewRisks<AnalysisContextRisk> {
                     ARXPopulationModel population = ARXPopulationModel.create(sampleSize, POINTS[idx]);
                     builder = getBuilder(context, population, histogram);
                     
-                    if (idx == 0 && builder.getSampleBasedUniquenessRisk().getFractionOfUniqueTuples() == 0.0d) {
+                    if (idx == 0 && builder.getSampleBasedUniquenessRisk().getFractionOfUniqueRecords() == 0.0d) {
                         Arrays.fill(dataDankar, 0.0d);
                         Arrays.fill(dataPitman, 0.0d);
                         Arrays.fill(dataZayatz, 0.0d);

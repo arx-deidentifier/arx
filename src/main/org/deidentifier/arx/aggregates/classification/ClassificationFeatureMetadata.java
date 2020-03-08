@@ -40,19 +40,24 @@ public class ClassificationFeatureMetadata {
     private final Expression  expression;
     /** Is this a numeric attribute */
     private final boolean     numeric;
+    /** Is this attribute microaggregated in a type preserving manner */
+    private final boolean     isTypePreservingMicroaggregation;
 
     /**
      * Creates a new instance
      * @param attribute
      * @param type
      * @param scaling
+     * @param isTypePreservingMicroaggregation
      */
     public ClassificationFeatureMetadata(String attribute, 
                                          DataType<?> type,
-                                         ARXFeatureScaling scaling) {
+                                         ARXFeatureScaling scaling,
+                                         boolean isTypePreservingMicroaggregation) {
         this.attribute = attribute;
         this.type = type;
         this.numeric = (type instanceof ARXDecimal) || (type instanceof ARXInteger) || (type instanceof ARXDate);
+        this.isTypePreservingMicroaggregation = isTypePreservingMicroaggregation;
         Expression e = scaling != null ? scaling.getScalingExpression(attribute) : null;
         if (e != null && this.numeric) {
             this.expression = e;
@@ -69,6 +74,14 @@ public class ClassificationFeatureMetadata {
         return this.attribute;
     }
     
+    /**
+     * Returns whether this attribute is numeric and microaggregated in a type preserving manner
+     * @return
+     */
+    public boolean isNumericMicroaggregation() {
+        return isTypePreservingMicroaggregation && numeric;
+    }
+
     /**
      * Returns whether this is a numeric attribute
      * @return

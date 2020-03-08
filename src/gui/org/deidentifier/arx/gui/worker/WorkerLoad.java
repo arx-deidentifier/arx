@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -32,6 +33,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
@@ -57,6 +60,7 @@ import org.deidentifier.arx.gui.worker.io.BackwardsCompatibleObjectInputStream;
 import org.deidentifier.arx.gui.worker.io.Vocabulary;
 import org.deidentifier.arx.gui.worker.io.Vocabulary_V2;
 import org.deidentifier.arx.gui.worker.io.XMLHandler;
+import org.deidentifier.arx.io.CSVSyntax;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.Metric;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -66,24 +70,35 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvParserSettings;
+import com.univocity.parsers.csv.CsvRoutines;
+
 /**
  * This worker loads a project file from disk.
  *
  * @author Fabian Prasser
  */
+@SuppressWarnings("deprecation")
 public class WorkerLoad extends Worker<Model> {
 
-	/** The vocabulary to use. */
-	private Vocabulary vocabulary = null;
-	
-	/** The zip file. */
-	private ZipFile    zipfile;
-	
-	/** The lattice. */
-	private ARXLattice lattice;
-	
-	/** The model. */
-	private Model      model;
+    /** The vocabulary to use. */
+    private Vocabulary vocabulary = null;
+
+    /** The zip file. */
+    private ZipFile    zipfile;
+
+    /** The lattice. */
+    private ARXLattice lattice;
+
+    /** The model. */
+    private Model      model;
+
+    /** The controller */
+    private Controller controller;
+
+    /** The charset */
+    private Charset    charset    = null;
 
     /**
      * Constructor.
@@ -94,6 +109,7 @@ public class WorkerLoad extends Worker<Model> {
      */
     public WorkerLoad(final String path, final Controller controller) throws IOException {
         this.zipfile = new ZipFile(path);
+        this.controller = controller;
     }
 
     @Override
@@ -128,6 +144,31 @@ public class WorkerLoad extends Worker<Model> {
         arg0.worked(1);
         arg0.done();
     }
+    
+    /**
+     * Returns the charset
+     * @return
+     */
+    private Charset getCharset() {
+        
+        // Already determined
+        if (charset != null) {
+            return charset;
+        }
+        
+        // Determine
+        if (model == null) {
+            charset = StandardCharsets.UTF_8;
+        } else if (model.getCharset() == null){
+            Charset c = controller.actionShowCharsetInputDialog();
+            charset = c == null ? StandardCharsets.UTF_8 : c;
+        } else {
+            charset = StandardCharsets.UTF_8;
+        }
+        
+        // Return
+        return charset;
+    }
 
     /**
      * Reads the clipboard from the file.
@@ -136,10 +177,11 @@ public class WorkerLoad extends Worker<Model> {
      * @param zip
      * @throws SAXException
      * @throws IOException
+     * @throws ParserConfigurationException 
      */
     private void readClipboard(final Map<String, ARXNode> map,
                                final ZipFile zip) throws SAXException,
-                                                 IOException {
+                                                 IOException, ParserConfigurationException {
 
         // Check
         final ZipEntry entry = zip.getEntry("clipboard.xml"); //$NON-NLS-1$
@@ -149,7 +191,7 @@ public class WorkerLoad extends Worker<Model> {
         model.getClipboard().clearClipboard();
 
         // Parse
-        final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             @Override
@@ -193,11 +235,13 @@ public class WorkerLoad extends Worker<Model> {
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws SAXException
+     * @throws ParserConfigurationException 
      */
     private void readConfiguration(final Map<String, ARXNode> map,
                                    final ZipFile zip) throws IOException,
                                                      ClassNotFoundException,
-                                                     SAXException {
+                                                     SAXException, 
+                                                     ParserConfigurationException {
 
         readConfiguration("input/", false, map, zip); //$NON-NLS-1$
         readConfiguration("output/", true, map, zip); //$NON-NLS-1$
@@ -214,14 +258,14 @@ public class WorkerLoad extends Worker<Model> {
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws SAXException
+     * @throws ParserConfigurationException 
      */
-    @SuppressWarnings("deprecation")
     private void readConfiguration(final String prefix,
                                    final boolean output,
                                    final Map<String, ARXNode> map,
                                    final ZipFile zip) throws IOException,
                                                      ClassNotFoundException,
-                                                     SAXException {
+                                                     SAXException, ParserConfigurationException {
 
         // Check
         final ZipEntry entry = zip.getEntry(prefix + "config.dat"); //$NON-NLS-1$
@@ -286,7 +330,7 @@ public class WorkerLoad extends Worker<Model> {
             
             // Create solution space
             ARXConfiguration arxconfig = model.getOutputConfig().getConfig();
-            SolutionSpace solutions = new SolutionSpace(lattice, arxconfig);
+            SolutionSpace<?> solutions = SolutionSpace.create(lattice, arxconfig);
             
             // Update model
             model.setResult(new ARXResult(config.getInput().getHandle(),
@@ -332,19 +376,20 @@ public class WorkerLoad extends Worker<Model> {
      * @param zip
      * @throws IOException
      * @throws SAXException
+     * @throws ParserConfigurationException 
      */
     private void readDefinition(final ModelConfiguration config,
                                 final boolean output,
                                 final DataDefinition definition,
                                 final String prefix,
-                                final ZipFile zip) throws IOException, SAXException {
+                                final ZipFile zip) throws IOException, SAXException, ParserConfigurationException {
     	
     	// Obtain entry
         final ZipEntry entry = zip.getEntry(prefix + "definition.xml"); //$NON-NLS-1$
         if (entry == null) { return; }
 
         // Read xml
-        final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
         	
@@ -653,12 +698,12 @@ public class WorkerLoad extends Worker<Model> {
 
         final ZipEntry entry = zip.getEntry("data/input.csv"); //$NON-NLS-1$
         if (entry == null) { return; }
-
+        
         // Read input
         // Use project delimiter for backwards compatibility
         config.setInput(Data.create(new BufferedInputStream(zip.getInputStream(entry)),
-                                    Charset.defaultCharset(),
-                                    model.getCSVSyntax().getDelimiter()));
+                                    getCharset(),
+                                    model.getCSVSyntax().getDelimiter(), getLength(zip, entry)));
 
         // And encode
         config.getInput().getHandle();
@@ -669,6 +714,35 @@ public class WorkerLoad extends Worker<Model> {
             model.setVisualizationEnabled(false);
         }
     }
+    
+    /**
+     * Returns the length of the input file, stored in the given entry
+     * @param zip
+     * @param entry
+     * @return
+     * @throws IOException 
+     */
+    private int getLength(ZipFile zip, ZipEntry entry) throws IOException {
+
+        CsvFormat format = new CsvFormat();
+        format.setDelimiter(model.getCSVSyntax().getDelimiter());
+        format.setQuote(CSVSyntax.DEFAULT_QUOTE);
+        format.setQuoteEscape(CSVSyntax.DEFAULT_ESCAPE);
+        format.setLineSeparator(CSVSyntax.DEFAULT_LINEBREAK);
+        format.setNormalizedNewline(CSVSyntax.getNormalizedLinebreak(CSVSyntax.DEFAULT_LINEBREAK));
+        format.setComment('\0');
+
+        CsvParserSettings settings = new CsvParserSettings();
+        settings.setEmptyValue("");
+        settings.setNullValue("");
+        settings.setFormat(format);
+        
+        InputStream stream = new BufferedInputStream(zip.getInputStream(entry));
+        CsvRoutines routines = new CsvRoutines(settings);
+        long records = routines.getInputDimension(stream).rowCount();
+        stream.close();
+        return (int)records;
+    }
 
     /**
      * Reads the lattice from several files.
@@ -678,11 +752,12 @@ public class WorkerLoad extends Worker<Model> {
      * @throws IOException
      * @throws ClassNotFoundException
      * @throws SAXException
+     * @throws ParserConfigurationException 
      */
     @SuppressWarnings({ "unchecked" })
     private Map<String, ARXNode> readLattice(final ZipFile zip) throws IOException,
                                                                        ClassNotFoundException,
-                                                                       SAXException {
+                                                                       SAXException, ParserConfigurationException {
 
         ZipEntry entry = zip.getEntry("infoloss.dat"); //$NON-NLS-1$
         if (entry == null) { return null; }
@@ -725,7 +800,7 @@ public class WorkerLoad extends Worker<Model> {
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.7")); } //$NON-NLS-1$
 
         final Map<Integer, ARXNode> map = new HashMap<Integer, ARXNode>();
-        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
 
@@ -927,15 +1002,16 @@ public class WorkerLoad extends Worker<Model> {
      * @param zip
      * @throws IOException
      * @throws SAXException
+     * @throws ParserConfigurationException 
      */
     private void readMetadata(final ZipFile zip) throws IOException,
-                                                SAXException {
+                                                SAXException, ParserConfigurationException {
         
         final ZipEntry entry = zip.getEntry("metadata.xml"); //$NON-NLS-1$
         if (entry == null) { throw new IOException(Resources.getMessage("WorkerLoad.9")); } //$NON-NLS-1$
 
         // Read vocabulary
-        final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         final InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             
@@ -988,8 +1064,9 @@ public class WorkerLoad extends Worker<Model> {
      * @return
      * @throws SAXException
      * @throws IOException
+     * @throws ParserConfigurationException 
      */
-    private int[] readMinMax(final ZipFile zip) throws SAXException, IOException  {
+    private int[] readMinMax(final ZipFile zip) throws SAXException, IOException, ParserConfigurationException  {
 
         // Read the lattice
         ZipEntry entry = zip.getEntry("lattice.xml"); //$NON-NLS-1$
@@ -1001,7 +1078,7 @@ public class WorkerLoad extends Worker<Model> {
         final int[] result = new int[]{Integer.MAX_VALUE, 0};
         
         // Read
-        XMLReader xmlReader = XMLReaderFactory.createXMLReader();
+		final XMLReader xmlReader = XMLReaderFactory.createXMLReader();
         InputSource inputSource = new InputSource(new BufferedInputStream(zip.getInputStream(entry)));
         xmlReader.setContentHandler(new XMLHandler() {
             

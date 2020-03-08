@@ -57,12 +57,12 @@ public abstract class MetricDefault extends Metric<InformationLossDefault> {
     }
     
     @Override
-    protected InformationLossDefault getLowerBoundInternal(final Transformation node) {
+    protected InformationLossDefault getLowerBoundInternal(final Transformation<?> node) {
         return (InformationLossDefault)node.getLowerBound();
     }
 
     @Override
-    protected InformationLossDefault getLowerBoundInternal(final Transformation node, final HashGroupify groupify) {
+    protected InformationLossDefault getLowerBoundInternal(final Transformation<?> node, final HashGroupify groupify) {
         return (InformationLossDefault)node.getLowerBound();
     }
     

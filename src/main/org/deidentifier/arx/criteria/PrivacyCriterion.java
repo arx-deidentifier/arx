@@ -148,13 +148,37 @@ public abstract class PrivacyCriterion implements Serializable{
     }
     
     /**
+     * Returns whether the criterion supports heuristic search strategies.
+     * @return
+     */
+    public boolean isHeuristicSearchSupported() {
+        return true;
+    }
+    
+    /**
+     * Returns whether the criterion supports heuristic search strategies with time limits.
+     * @return
+     */
+    public boolean isHeuristicSearchWithTimeLimitSupported() {
+        return true;
+    }
+    
+    /**
+     * Returns whether the criterion supports optimal search strategies.
+     * @return
+     */
+    public boolean isOptimalSearchSupported() {
+        return true;
+    }
+    
+    /**
      * Implement this, to enforce the criterion.
      * @param node TODO
      * @param entry
      *
      * @return
      */
-    public abstract boolean isAnonymous(Transformation node, HashGroupifyEntry entry);
+    public abstract boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry);
 
     /**
      * Returns whether the criterion supports local recoding.

@@ -80,7 +80,7 @@ public class ARXResult {
     private final DataRegistry              registry;
 
     /** The solution space. */
-    private final SolutionSpace             solutionSpace;
+    private final SolutionSpace<?>             solutionSpace;
 
     /** Whether the optimum has been found */
     private final boolean                   optimumFound;
@@ -113,7 +113,7 @@ public class ARXResult {
                      ARXConfiguration config,
                      ARXNode optimum,
                      final long time,
-                     SolutionSpace solutionSpace,
+                     SolutionSpace<?> solutionSpace,
                      ARXProcessStatistics statistics) {
 
         // Set registry and definition
@@ -133,9 +133,8 @@ public class ARXResult {
                                               dataArray,
                                               dictionary,
                                               handle.getDefinition(),
-                                              config.getPrivacyModels(),
                                               getAggregateFunctions(handle.getDefinition()),
-                                              config.getQualityModel());
+                                              config);
 
         // Update handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
@@ -188,7 +187,7 @@ public class ARXResult {
                         ARXConfiguration config,
                         ARXLattice lattice,
                         long duration,
-                        SolutionSpace solutionSpace,
+                        SolutionSpace<?> solutionSpace,
                         boolean optimumFound) {
 
         this.anonymizer = anonymizer;
@@ -238,6 +237,14 @@ public class ARXResult {
      */
     public ARXLattice getLattice() {
         return lattice;
+    }
+    
+    /**
+     * Returns the associated input handle
+     * @return
+     */
+    public DataHandle getInput() {
+        return this.registry.getInputHandle();
     }
 
     /**
@@ -312,7 +319,7 @@ public class ARXResult {
         }
 
         // Apply the transformation
-        final Transformation transformation = solutionSpace.getTransformation(node.getTransformation());
+        final Transformation<?> transformation = solutionSpace.getTransformation(node.getTransformation());
         TransformationApplicator applicator = new TransformationApplicator(this.manager,
                                                                            this.buffer,
                                                                            this.config.getQualityModel(),
@@ -774,7 +781,7 @@ public class ARXResult {
                                                   final int maxIterations,
                                                   final double adaptionFactor,
                                                   final ARXListener listener) throws RollbackRequiredException {
-        
+        // Check parameters
         if (gsFactor < 0d || gsFactor > 1d) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
         }
@@ -783,6 +790,9 @@ public class ARXResult {
         }
         if (maxIterations <= 0) {
             throw new IllegalArgumentException("Max. iterations must be > zero");
+        }
+        if (handle == null) {
+            throw new NullPointerException("Handle must not be null");
         }
         
         // Prepare 
@@ -883,11 +893,15 @@ public class ARXResult {
                                                       double gsFactor,
                                                       final ARXListener listener) throws RollbackRequiredException {
         
+        // Check parameters
         if (!Double.isNaN(gsFactor) && (gsFactor < 0d || gsFactor > 1d)) {
             throw new IllegalArgumentException("Generalization/suppression factor must be in [0, 1]");
         }
         if (records < 0d || records > 1d) {
             throw new IllegalArgumentException("Number of records to optimize must be in [0, 1]");
+        }
+        if (handle == null) {
+            throw new NullPointerException("Handle must not be null");
         }
 
         // Prepare 

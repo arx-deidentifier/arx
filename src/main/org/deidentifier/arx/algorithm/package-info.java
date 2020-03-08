@@ -17,9 +17,7 @@
  */
 
 /**
- * This package provides algorithms which traverse the generalization lattice.
- * An abstract base class can be utilized to implement novel algorithms within
- * the anonymization framework.
+ * This package provides implementations of search algorithms
  * 
  * @author Fabian Prasser
  * @author Florian Kohlmayer

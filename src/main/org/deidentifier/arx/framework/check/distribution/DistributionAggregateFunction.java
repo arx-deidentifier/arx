@@ -19,6 +19,7 @@ package org.deidentifier.arx.framework.check.distribution;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -579,6 +580,71 @@ public abstract class DistributionAggregateFunction implements Serializable {
                 }
             }
             return mode;
+        }
+    }
+
+    /**
+     * This class calculates a set for a given distribution.
+     * 
+     * @author Fabian Prasser
+     * @author Florian Kohlmayer
+     * 
+     */
+    public static class DistributionAggregateFunctionSet extends DistributionAggregateFunction {
+
+        /** SVUID. */
+		private static final long serialVersionUID = -1489391869325498958L;
+
+		/**
+         * Instantiates.
+         * 
+         * @param ignoreMissingData
+         */
+        public DistributionAggregateFunctionSet(boolean ignoreMissingData) {
+            super(ignoreMissingData, false);
+        }
+
+        @Override
+        public <T> String aggregate(Distribution distribution) {
+
+            // Collect
+            int[] buckets = distribution.getBuckets();
+            List<Integer> list = new ArrayList<>();
+            for (int i = 0; i < buckets.length; i += 2) {
+                int value = buckets[i];
+                if (value != -1) {
+                	list.add(value);
+                }
+            }
+            Collections.sort(list);
+            
+            // Render to list
+            StringBuilder builder = new StringBuilder();
+            for (int value : list) {
+	        	if (builder.length() != 0) {
+	        		builder.append(", ");
+	        	}
+	        	builder.append(dictionary[value]);
+            }
+            
+            // Format
+            return builder.length() == 0 ? DataType.NULL_VALUE : "{" + builder.toString() + "}";
+        }
+
+        /**
+         * Clone method
+         */
+        public DistributionAggregateFunctionSet clone() {
+        	DistributionAggregateFunctionSet result = new DistributionAggregateFunctionSet(this.ignoreMissingData);
+            if (dictionary != null) {
+                result.initialize(dictionary, type);
+            }
+            return result;
+        }
+
+        @Override
+        public <T> double getError(Distribution distribution) {
+            return getInformationLoss(distribution);
         }
     }
 

@@ -154,7 +154,7 @@ public class HierarchyBuilderDate extends HierarchyBuilder<Date> implements Seri
                 if (c == '\'') {
                     ignore = !ignore;
                 } else if (!ignore && Character.isLetter(c)) {
-                    list.add(new Character(c));
+                    list.add(Character.valueOf(c));
                 }
             }
             
