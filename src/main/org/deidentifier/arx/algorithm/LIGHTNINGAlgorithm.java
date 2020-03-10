@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.algorithm;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.PriorityQueue;
 
@@ -31,6 +32,11 @@ import org.deidentifier.arx.metric.InformationLoss;
 import de.linearbits.jhpl.PredictiveProperty;
 
 /**
+ * Lightning algorithm as described in:<br>
+ * <br>
+ * Prasser, F., Bild, R., Eicher, J., Spengler, H., Kohlmayer, F., & Kuhn, K. A. (2016). 
+ * Lightning: Utility-Driven Anonymization of High-Dimensional Data.
+ * Transactions on Data Privacy, 9(2), 161-185.
  * 
  * @author Fabian Prasser
  * @author Raffael Bild
@@ -57,7 +63,6 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     private final PredictiveProperty propertyExpanded;
     /** Property */
     private final PredictiveProperty propertyInsufficientUtility;
-
     /** The number indicating how often a depth-first-search will be performed */
     private final int                stepping;
     
@@ -68,7 +73,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param timeLimit
     * @param checkLimit
     */
-    private LIGHTNINGAlgorithm(SolutionSpace<?> space, TransformationChecker checker, int timeLimit, int checkLimit) {
+    protected LIGHTNINGAlgorithm(SolutionSpace<?> space, TransformationChecker checker, int timeLimit, int checkLimit) {
         super(space, checker, timeLimit, checkLimit);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         int stepping = space.getTop().getLevel();
@@ -84,7 +89,6 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
 
         // Prepare
         super.startTraverse();
-        
         PriorityQueue<Object> queue = new PriorityQueue<>(stepping, new Comparator<Object>() {
             @Override
             public int compare(Object arg0, Object arg1) {
@@ -94,17 +98,18 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         Transformation<?> bottom = solutionSpace.getBottom();
         assureChecked(bottom);
         queue.add(bottom.getIdentifier());
-        Transformation<?> next;
+        
+        // Start bottom-up best-first search combined with depth-first search
         int step = 0;
         Object nextId;
         while ((nextId = queue.poll()) != null) {
-            next = solutionSpace.getTransformation(nextId);
+            Transformation<?> next = solutionSpace.getTransformation(nextId);
             if (!prune(next)) {
                 step++;
                 if (step % stepping == 0) {
                     dfs(queue, next);
                 } else {
-                    expand(queue, next);
+                    expand(queue, next, true);
                 }
                 if (mustStop()) {
                     break;
@@ -121,7 +126,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * Makes sure that the given Transformation<?> has been checked
     * @param transformation
     */
-    private void assureChecked(final Transformation<?> transformation) {
+    protected void assureChecked(final Transformation<?> transformation) {
         if (!transformation.hasProperty(propertyChecked)) {
             transformation.setChecked(checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
             trackOptimum(transformation);
@@ -138,7 +143,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         if (mustStop()) {
             return;
         }
-        Transformation<?> next = expand(queue, transformation);
+        Transformation<?> next = expand(queue, transformation, true);
         if (next != null) {
             queue.remove(next.getIdentifier());
             dfs(queue, next);
@@ -149,12 +154,13 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * Returns the successor with minimal information loss, if any, null otherwise.
     * @param queue
     * @param transformation
+    * @param up
     * @return
     */
-    private Transformation<?> expand(PriorityQueue<Object> queue, Transformation<?> transformation) {
+    protected Transformation<?> expand(PriorityQueue<Object> queue, Transformation<?> transformation, boolean up) {
         
         Transformation<?> result = null;
-        TransformationList<?> list = transformation.getSuccessors();
+        TransformationList<?> list = up ? transformation.getSuccessors() : transformation.getPredecessors();
         for (int i = 0; i < list.size(); i++) {
             Object id = list.getQuick(i);
             Transformation<?> successor = solutionSpace.getTransformation(id);
@@ -178,7 +184,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param transformation
     * @return
     */
-    private boolean prune(Transformation<?> transformation) {
+    protected boolean prune(Transformation<?> transformation) {
         
         // Already expanded
         if (transformation.hasProperty(propertyExpanded) ||
@@ -188,7 +194,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         
         // If a current optimum has been discovered
         Transformation<?> optimum = getGlobalOptimum();
-        if (optimum != null) {
+        if (optimum != null && !Arrays.equals(optimum.getGeneralization(), transformation.getGeneralization())) {
             
             // We can compare lower bounds on quality
             InformationLoss<?> bound = transformation.getLowerBound();

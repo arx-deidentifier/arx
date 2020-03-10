@@ -188,12 +188,13 @@ public class DialogAnonymization extends TitleAreaDialog {
     /**
      * Adds a message to the given group
      * @param group
+     * @param span
      * @param message
      */
-    private void createMessage(Group group, String message) {
+    private void createMessage(Group group, int span, String message) {
         Label label = new Label(group, SWT.NONE);
         label.setText(Resources.getMessage("DialogAnonymization.14") + message); //$NON-NLS-1$
-        label.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).create());
+        label.setLayoutData(GridDataFactory.fillDefaults().span(span, 1).create());
     }
 
    /**
@@ -409,7 +410,7 @@ public class DialogAnonymization extends TitleAreaDialog {
             btnGlobalTransformation.setSelection(true);
             configuration.setTransformationType(TransformationType.GLOBAL);
             textNumIterations.setEnabled(false);
-            createMessage(group3, Resources.getMessage("DialogAnonymization.12")); //$NON-NLS-1$
+            createMessage(group3, 2, Resources.getMessage("DialogAnonymization.12")); //$NON-NLS-1$
         }
         
         // Radio listener
@@ -490,7 +491,6 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radioStepLimit.setSelection(true);
-            	//TODO
                 checkValidity();
             }
         });
@@ -499,7 +499,6 @@ public class DialogAnonymization extends TitleAreaDialog {
             @Override
             public void modifyText(ModifyEvent arg0) {
                 radioTimeLimit.setSelection(true);
-            	//TODO
                 checkValidity();
             }
         });
@@ -535,50 +534,54 @@ public class DialogAnonymization extends TitleAreaDialog {
         // Prepare radio buttons
         if (!this.optimalSearchAvailable) {
                         
-            radioStepLimit.setEnabled(true);
+            this.radioStepLimit.setEnabled(true);
             this.txtHeuristicSearchStepLimit.setEnabled(true);
-            radioTimeLimit.setEnabled(true);
+            this.radioTimeLimit.setEnabled(true);
             this.txtHeuristicSearchTimeLimit.setEnabled(true);
             radioAlgorithmFlashOptimal.setEnabled(false);
             radioAlgorithmFlashOptimal.setSelection(false);
 
             if (configuration.getSearchType() == SearchType.OPTIMAL) {
+                configuration.setSearchType(SearchType.HEURISTIC_TOP_DOWN);
                 radioAlgorithmLightning.setSelection(true);
-                radioStepLimit.setSelection(true);
+                
+                if (!configuration.isTimeLimitEnabled() && !configuration.isStepLimitEnabled()) {
+                    configuration.setTimeLimitEnabled(true);
+                }
             }
             
             // Message
-            createMessage(group1, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
+            createMessage(group1, 3, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
         }
         
         // Time and step limit
         if (configuration.getSearchType() == SearchType.OPTIMAL && this.optimalSearchAvailable) {
-            radioStepLimit.setEnabled(false);
-            radioStepLimit.setSelection(false);
+            this.radioStepLimit.setEnabled(false);
+            this.radioStepLimit.setSelection(false);
             this.txtHeuristicSearchStepLimit.setEnabled(false);
-            radioTimeLimit.setEnabled(false);
-            radioTimeLimit.setSelection(false);
+            this.radioTimeLimit.setEnabled(false);
+            this.radioTimeLimit.setSelection(false);
             this.txtHeuristicSearchTimeLimit.setEnabled(false);
         } else if (!this.heuristicSearchStepLimitAvailable) {
-            radioStepLimit.setEnabled(false);
-            radioStepLimit.setSelection(false);
+            this.radioStepLimit.setEnabled(false);
+            this.radioStepLimit.setSelection(false);
             this.txtHeuristicSearchStepLimit.setEnabled(false);
-            radioTimeLimit.setEnabled(true);
-            radioTimeLimit.setSelection(true);
+            this.radioTimeLimit.setEnabled(true);
+            this.radioTimeLimit.setSelection(true);
             this.txtHeuristicSearchTimeLimit.setEnabled(true);
         } else if (!this.heuristicSearchTimeLimitAvailable) {
-            radioStepLimit.setEnabled(true);
-            radioStepLimit.setSelection(true);
+            this.radioStepLimit.setEnabled(true);
+            this.radioStepLimit.setSelection(true);
             this.txtHeuristicSearchStepLimit.setEnabled(true);
-            radioTimeLimit.setEnabled(false);
-            radioTimeLimit.setSelection(false);
+            this.radioTimeLimit.setEnabled(false);
+            this.radioTimeLimit.setSelection(false);
             this.txtHeuristicSearchTimeLimit.setEnabled(false);
         } else {
-            radioStepLimit.setEnabled(true);
-            radioStepLimit.setSelection(true);
+            this.radioStepLimit.setEnabled(true);
+            this.radioStepLimit.setSelection(true);
             this.txtHeuristicSearchStepLimit.setEnabled(true);
-            radioTimeLimit.setEnabled(true);
-            radioTimeLimit.setSelection(true);
+            this.radioTimeLimit.setEnabled(true);
+            this.radioTimeLimit.setSelection(true);
             this.txtHeuristicSearchTimeLimit.setEnabled(true);
         }
 
