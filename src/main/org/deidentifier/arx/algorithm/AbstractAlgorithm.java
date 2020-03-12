@@ -17,6 +17,9 @@
 
 package org.deidentifier.arx.algorithm;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.deidentifier.arx.ARXConfiguration.Monotonicity;
 import org.deidentifier.arx.ARXListener;
 import org.deidentifier.arx.framework.check.TransformationChecker;
@@ -61,6 +64,10 @@ public abstract class AbstractAlgorithm {
 
     /** Limit to aboard run */
     public static double            lossLimit              = -1;
+    
+    private static List<TimeUtilityTuple>  trackedOptimums        = new ArrayList<TimeUtilityTuple>();
+    
+    
 
     /**
      * Initializes the algorithm
@@ -201,7 +208,8 @@ public abstract class AbstractAlgorithm {
             ((transformation.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (transformation.getLevel() < globalOptimum.getLevel())))) {
             globalOptimum = transformation;
             optimalInformationLoss = transformation.getInformationLoss();
-            System.out.println(optimalInformationLoss);
+            this.trackedOptimums.add(new TimeUtilityTuple((System.currentTimeMillis() - timeStart), Double.valueOf(optimalInformationLoss.toString())));
+            //System.out.println(optimalInformationLoss);
         }
     }
 
@@ -220,5 +228,29 @@ public abstract class AbstractAlgorithm {
         double progressSteps = (double)getCheckCount() / (double)getCheckLimit();
         double progressTime = (double)(System.currentTimeMillis() - getTimeStart()) / (double)getTimeLimit();
         progress(Math.min(1.0d, Math.max(algorithmProgress, Math.max(progressSteps, progressTime))));
+    }
+    
+    public static List<TimeUtilityTuple> getTrackedOptimums(){
+        return trackedOptimums;
+    }
+    
+    public class TimeUtilityTuple{
+        
+        private long time;
+        private double utility;
+        
+        TimeUtilityTuple(long time, double utility){
+            this.time = time;
+            this.utility = utility;
+        }
+        
+        public long getTime() {
+            return time;
+        }
+        
+        public double getUtility() {
+            return utility;
+        }
+        
     }
 }
