@@ -208,8 +208,8 @@ public abstract class AbstractAlgorithm {
             ((transformation.getInformationLoss().compareTo(optimalInformationLoss) == 0) && (transformation.getLevel() < globalOptimum.getLevel())))) {
             globalOptimum = transformation;
             optimalInformationLoss = transformation.getInformationLoss();
-            this.trackedOptimums.add(new TimeUtilityTuple((System.currentTimeMillis() - timeStart), Double.valueOf(optimalInformationLoss.toString())));
-            //System.out.println(optimalInformationLoss);
+            trackedOptimums.add(new TimeUtilityTuple((System.currentTimeMillis() - timeStart), Double.valueOf(optimalInformationLoss.toString())));
+            //System.out.println(trackedOptimums.get(trackedOptimums.size()-1));
         }
     }
 
@@ -250,6 +250,11 @@ public abstract class AbstractAlgorithm {
         
         public double getUtility() {
             return utility;
+        }
+        
+        @Override
+        public String toString() {
+            return "Time: " + time + "/ Utility: " + utility;
         }
         
     }
