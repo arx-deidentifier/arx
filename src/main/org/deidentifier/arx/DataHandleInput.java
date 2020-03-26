@@ -111,6 +111,11 @@ public class DataHandleInput extends DataHandle {
                 this.data.setRow(row, tuple);
                 row++;
             }
+            
+            // Sanity check to prevent loading errors
+            if (row != records) {
+                throw new IllegalStateException("Invalid internal state. Numbers of records don't match!");
+            }
 
         } else { 
     
