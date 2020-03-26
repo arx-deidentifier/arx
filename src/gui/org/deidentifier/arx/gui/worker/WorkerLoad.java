@@ -571,7 +571,7 @@ public class WorkerLoad extends Worker<Model> {
                     return true;
 
                 } else if (vocabulary.isName(localName)) {
-                    attr = payload;
+                    attr = payload.trim();
                     return true;
                 } else if (vocabulary.isType(localName)) {
                     atype = payload;
