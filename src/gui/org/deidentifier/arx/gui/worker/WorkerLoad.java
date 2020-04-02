@@ -741,7 +741,7 @@ public class WorkerLoad extends Worker<Model> {
         CsvRoutines routines = new CsvRoutines(settings);
         long records = routines.getInputDimension(stream).rowCount();
         stream.close();
-        return (int)records;
+        return (int)records - 1;
     }
 
     /**
