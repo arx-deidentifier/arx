@@ -95,11 +95,6 @@ public class DataHandleInput extends DataHandle {
             int row = 0;
             while (iterator.hasNext()) {
     
-                // Check
-                if (row == records) {
-                    throw new IllegalArgumentException("Number of records exceeds estimate"); 
-                }
-                
                 // Process a tuple
                 String[] strings = iterator.next();
                 int[] tuple = new int[header.length];
@@ -110,6 +105,11 @@ public class DataHandleInput extends DataHandle {
                 }
                 this.data.setRow(row, tuple);
                 row++;
+            }
+            
+            // Sanity check to prevent loading errors
+            if (row != records) {
+                throw new IllegalStateException("Invalid internal state. Numbers of records don't match. Expected: <" + records + "> is: <" + row + ">");
             }
 
         } else { 
