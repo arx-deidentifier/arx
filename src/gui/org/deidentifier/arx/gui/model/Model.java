@@ -523,6 +523,7 @@ public class Model implements Serializable {
             }            
         }
     }
+    
     /**
      * Returns the current anonymization configuration
      * @return
@@ -1362,6 +1363,7 @@ public class Model implements Serializable {
         this.localRecodingModel = null;
         this.selectedClassValue = null;
         this.selectedAttribute = null;
+        //TODO: add new GA varaibles
     }
 
     /**
@@ -1863,7 +1865,7 @@ public class Model implements Serializable {
         this.setModified();
     }
 
-    /**
+	/**
      * Converts attributes into an array ordered by occurrence in the dataset
      * @param set
      * @return

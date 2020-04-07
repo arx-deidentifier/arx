@@ -107,7 +107,7 @@ public abstract class SolutionSpace<T> {
 
     /** Static property */
     private final PredictiveProperty                              propertySuccessorsPruned    = new PredictiveProperty("Successors pruned",
-                                                                                                                       Direction.UP);         // TODO: Was NONE?
+                                                                                                                       Direction.UP);
     /** Static property */
     private final PredictiveProperty                              propertyVisited             = new PredictiveProperty("Visited",
                                                                                                                        Direction.NONE);
