@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Text;
  * A dialog for defining parameters of the anonymization method
  * 
  * @author Fabian Prasser
+ * @author Thierry Meurers
  */
 public class DialogAnonymization extends TitleAreaDialog {
 
@@ -74,6 +75,10 @@ public class DialogAnonymization extends TitleAreaDialog {
     private Text                            txtHeuristicSearchStepLimit;
     /** View */
     private Text                            textNumIterations;
+    /** View */    
+    private Button                          radioTimeLimit;
+    /** View */
+    private Button                          radioStepLimit;
 
     /** Result */
     private ModelAnonymizationConfiguration configuration;
@@ -159,6 +164,19 @@ public class DialogAnonymization extends TitleAreaDialog {
             configuration.setHeuristicSearchStepLimit(getHeuristicSearchStepLimit());
         }
 
+        // Handle parameter
+        if (!radioTimeLimit.isEnabled() || !radioTimeLimit.getSelection()) {
+            configuration.setTimeLimitEnabled(false);
+        } else {
+            configuration.setTimeLimitEnabled(true);
+        }
+        
+        if (!radioStepLimit.isEnabled() || !radioStepLimit.getSelection()) {
+            configuration.setStepLimitEnabled(false);
+        } else {
+            configuration.setStepLimitEnabled(true);
+        }
+
         // Update state
         setErrorMessage(error);
         if (okButton != null) {
@@ -170,12 +188,13 @@ public class DialogAnonymization extends TitleAreaDialog {
     /**
      * Adds a message to the given group
      * @param group
+     * @param span
      * @param message
      */
-    private void createMessage(Group group, String message) {
+    private void createMessage(Group group, int span, String message) {
         Label label = new Label(group, SWT.NONE);
         label.setText(Resources.getMessage("DialogAnonymization.14") + message); //$NON-NLS-1$
-        label.setLayoutData(GridDataFactory.fillDefaults().span(2, 1).create());
+        label.setLayoutData(GridDataFactory.fillDefaults().span(span, 1).create());
     }
 
    /**
@@ -183,6 +202,7 @@ public class DialogAnonymization extends TitleAreaDialog {
     * @return
     */
    private Integer getHeuristicSearchStepLimit() {
+    
        int value = 0;
        try {
            value = Integer.valueOf(txtHeuristicSearchStepLimit.getText());
@@ -201,6 +221,7 @@ public class DialogAnonymization extends TitleAreaDialog {
      * @return
      */
     private Double getHeuristicSearchTimeLimit() {
+
         double value = 0d;
         try {
             value = Double.valueOf(txtHeuristicSearchTimeLimit.getText());
@@ -265,183 +286,306 @@ public class DialogAnonymization extends TitleAreaDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
 
+    	/** 
+    	 * Initialization 
+    	 * */
         Composite composite = (Composite) super.createDialogArea(parent);        
         Composite base = new Composite(composite, SWT.NONE);
         base.setLayoutData(SWTUtil.createFillGridData());
         base.setLayout(SWTUtil.createGridLayout(1, false));
         
-        // Upper group
+        // Group - search strategy
         Group group1 = new Group(parent, SWT.SHADOW_ETCHED_IN);
         group1.setText(Resources.getMessage("DialogAnonymization.6")); //$NON-NLS-1$
         GridData data1 = SWTUtil.createFillGridData();
         data1.horizontalIndent = 5;
         group1.setLayoutData(data1);
-        group1.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        group1.setLayout(GridLayoutFactory.swtDefaults().numColumns(3).create());
 
-        // Optimal
-        final Button radio11 = new Button(group1, SWT.RADIO);
-        radio11.setText(Resources.getMessage("DialogAnonymization.11")); //$NON-NLS-1$
-        radio11.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
-        radio11.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                if (radio11.getSelection()) {
-                    configuration.setSearchType(SearchType.OPTIMAL);
-                }
-            }
-        });
+        // Radio - optimal
+        final Button radioAlgorithmFlashOptimal = new Button(group1, SWT.RADIO);
+        radioAlgorithmFlashOptimal.setText(Resources.getMessage("DialogAnonymization.11")); //$NON-NLS-1$
+        //radio11.setLayoutData(GridDataFactory.swtDefaults().span(3, 1).create());
 
-        // Steps
-        final Button radio12 = new Button(group1, SWT.RADIO);
-        radio12.setText(Resources.getMessage("DialogAnonymization.7")); //$NON-NLS-1$
-        radio12.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                if (radio12.getSelection()) {
-                    configuration.setSearchType(SearchType.STEP_LIMIT);
-                }
-            }
-        });
-
-        this.txtHeuristicSearchStepLimit = new Text(group1, SWT.BORDER);
-        this.txtHeuristicSearchStepLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        this.txtHeuristicSearchStepLimit.setText(String.valueOf(configuration.getHeuristicSearchStepLimit()));
-
-        // Time
-        final Button radio13 = new Button(group1, SWT.RADIO);
-        radio13.setText(Resources.getMessage("DialogAnonymization.2")); //$NON-NLS-1$
-        radio13.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent arg0) {
-                if (radio13.getSelection()) {
-                    configuration.setSearchType(SearchType.TIME_LIMIT);
-                }
-            }
-        });
+        // Radio - best-effort binary
+        final Button radioAlgorithmFlashHeuristic = new Button(group1, SWT.RADIO);
+        radioAlgorithmFlashHeuristic.setText(Resources.getMessage("DialogAnonymization.19")); //$NON-NLS-1$
         
-        // Needs to be deferred because of scope
-        this.txtHeuristicSearchStepLimit.addModifyListener(new ModifyListener() {
-            @Override
-            public void modifyText(ModifyEvent arg0) {
-                radio12.setSelection(true);
-                radio11.setSelection(false);
-                radio13.setSelection(false);
-                configuration.setSearchType(SearchType.STEP_LIMIT);
-                checkValidity();
-            }
-        });
-        
+        // Radio - Heuristic
+        final Button radioAlgorithmLightning = new Button(group1, SWT.RADIO);
+        radioAlgorithmLightning.setText(Resources.getMessage("DialogAnonymization.16")); //$NON-NLS-1$
 
-        this.txtHeuristicSearchTimeLimit = new Text(group1, SWT.BORDER);
-        this.txtHeuristicSearchTimeLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        this.txtHeuristicSearchTimeLimit.setText(String.valueOf(configuration.getHeuristicSearchTimeLimit()));
-        this.txtHeuristicSearchTimeLimit.addModifyListener(new ModifyListener() {
-            @Override
-            public void modifyText(ModifyEvent arg0) {
-                radio13.setSelection(true);
-                radio11.setSelection(false);
-                radio12.setSelection(false);
-                configuration.setSearchType(SearchType.TIME_LIMIT);
-                checkValidity();
-            }
-        });
+        // Radio - best-effort binary
+        final Button radioAlgorithmLightningTopDown = new Button(group1, SWT.RADIO);
+        radioAlgorithmLightningTopDown.setText(Resources.getMessage("DialogAnonymization.20")); //$NON-NLS-1$
         
-        switch(configuration.getSearchType()) {
-        case OPTIMAL: radio11.setSelection(true); break;
-        case STEP_LIMIT: radio12.setSelection(true); break;
-        case TIME_LIMIT: radio13.setSelection(true); break;
-    }
+        // Radio - Genetic
+        final Button radioAlgorithmGenetic = new Button(group1, SWT.RADIO);
+        radioAlgorithmGenetic.setText(Resources.getMessage("DialogAnonymization.17")); //$NON-NLS-1$
         
-        // Prepare radio buttons
-        if (this.optimalSearchAvailable) {
-            radio11.setEnabled(true);
-            radio11.setSelection(true);
-            radio12.setSelection(false);
-            radio13.setSelection(false);
-        } else {
-            radio11.setEnabled(false);
-            radio11.setSelection(false);
-            if (!this.heuristicSearchStepLimitAvailable) {
-                radio12.setEnabled(false);
-                radio12.setSelection(false);
-                this.txtHeuristicSearchStepLimit.setEnabled(false);
-            } else if (configuration.getSearchType() == SearchType.OPTIMAL) {
-                radio12.setSelection(true);
-                configuration.setSearchType(SearchType.STEP_LIMIT);
-            }
-            if (!this.heuristicSearchTimeLimitAvailable) {
-                radio13.setEnabled(false);
-                radio13.setSelection(false);
-                this.txtHeuristicSearchTimeLimit.setEnabled(false);
-                createMessage(group1, Resources.getMessage("DialogAnonymization.15")); //$NON-NLS-1$
-            } else {
-                createMessage(group1, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
-            }
-        }
-
-        // Lower group
+        // Group - Limitations
         Group group2 = new Group(parent, SWT.SHADOW_ETCHED_IN);
-        group2.setText(Resources.getMessage("DialogAnonymization.9")); //$NON-NLS-1$
+        group2.setText(Resources.getMessage("DialogAnonymization.18")); //$NON-NLS-1$
         GridData data2 = SWTUtil.createFillGridData();
         data2.horizontalIndent = 5;
         group2.setLayoutData(data2);
         group2.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
+        
+        // Checkbox - step limit
+        radioStepLimit = new Button(group2, SWT.RADIO);
+        radioStepLimit.setText(Resources.getMessage("DialogAnonymization.7"));
+        
+        // Text - step limit
+        this.txtHeuristicSearchStepLimit = new Text(group2, SWT.BORDER);
+        this.txtHeuristicSearchStepLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+        
+        // Checkbox - time limit
+        radioTimeLimit = new Button(group2, SWT.RADIO);
+        radioTimeLimit.setText(Resources.getMessage("DialogAnonymization.2"));
+        
+        // Text - time limit
+        this.txtHeuristicSearchTimeLimit = new Text(group2, SWT.BORDER);
+        this.txtHeuristicSearchTimeLimit.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+        
+        // Group - transformation model
+        Group group3 = new Group(parent, SWT.SHADOW_ETCHED_IN);
+        group3.setText(Resources.getMessage("DialogAnonymization.9")); //$NON-NLS-1$
+        GridData data3 = SWTUtil.createFillGridData();
+        data3.horizontalIndent = 5;
+        group3.setLayoutData(data3);
+        group3.setLayout(GridLayoutFactory.swtDefaults().numColumns(2).create());
 
-        // Global transformation
-        final Button radio21 = new Button(group2, SWT.RADIO);
-        radio21.setText(Resources.getMessage("DialogAnonymization.10")); //$NON-NLS-1$
-        radio21.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
-        radio21.addSelectionListener(new SelectionAdapter() {
+        // Radio - global transformation
+        final Button btnGlobalTransformation = new Button(group3, SWT.RADIO);
+        btnGlobalTransformation.setText(Resources.getMessage("DialogAnonymization.10")); //$NON-NLS-1$
+        btnGlobalTransformation.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
+
+        // Radio - local transformation
+        final Button btnLocalTransformation = new Button(group3, SWT.RADIO);
+        btnLocalTransformation.setText(Resources.getMessage("DialogAnonymization.3")); //$NON-NLS-1$
+
+        // Tet - number iterations
+        this.textNumIterations = new Text(group3, SWT.BORDER);
+        this.textNumIterations.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
+
+        // Search strategy radio buttons
+        switch(configuration.getSearchType()) {
+        case HEURISTIC_BINARY: radioAlgorithmFlashHeuristic.setSelection(true); break;
+        case HEURISTIC_BOTTOM_UP: radioAlgorithmLightning.setSelection(true); break;
+        case HEURISTIC_TOP_DOWN: radioAlgorithmLightningTopDown.setSelection(true); break;
+        case HEURISTIC_GENETIC: radioAlgorithmGenetic.setSelection(true); break;
+		default:
+			radioAlgorithmFlashOptimal.setSelection(true);
+			radioStepLimit.setSelection(false);
+            radioStepLimit.setEnabled(false);
+            radioTimeLimit.setSelection(false);
+            radioTimeLimit.setEnabled(false);
+            txtHeuristicSearchStepLimit.setEnabled(false);
+            txtHeuristicSearchTimeLimit.setEnabled(false);
+        }
+        
+        // text - step limit
+        this.txtHeuristicSearchStepLimit.setText(String.valueOf(configuration.getHeuristicSearchStepLimit()));
+        // text - time limit
+        this.txtHeuristicSearchTimeLimit.setText(String.valueOf(configuration.getHeuristicSearchTimeLimit()));
+        
+        // Transformation type radio buttons
+        switch(configuration.getTransformationType()) {
+            case GLOBAL: btnGlobalTransformation.setSelection(true); break;
+            case LOCAL: btnLocalTransformation.setSelection(true); break;
+        }
+        
+        // text - number iterations
+        this.textNumIterations.setText(String.valueOf(configuration.getNumIterations()));
+        
+        // Show message
+        if (this.localRecodingAvailable) {
+            btnLocalTransformation.setEnabled(true);
+        } else {
+            btnLocalTransformation.setEnabled(false);
+            btnGlobalTransformation.setSelection(true);
+            configuration.setTransformationType(TransformationType.GLOBAL);
+            textNumIterations.setEnabled(false);
+            createMessage(group3, 2, Resources.getMessage("DialogAnonymization.12")); //$NON-NLS-1$
+        }
+        
+        // Radio listener
+        radioAlgorithmFlashOptimal.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                if (radio21.getSelection()) {
+                if (radioAlgorithmFlashOptimal.getSelection()) {
+                    configuration.setSearchType(SearchType.OPTIMAL);
+                    radioStepLimit.setSelection(false);
+                    radioStepLimit.setEnabled(false);
+                    radioTimeLimit.setSelection(false);
+                    radioTimeLimit.setEnabled(false);
+                    txtHeuristicSearchStepLimit.setEnabled(false);
+                    txtHeuristicSearchTimeLimit.setEnabled(false);
+                }
+            }
+        });
+        
+        // Radio listener
+        radioAlgorithmFlashHeuristic.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (radioAlgorithmFlashHeuristic.getSelection()) {
+                    configuration.setSearchType(SearchType.HEURISTIC_BINARY);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
+                    txtHeuristicSearchStepLimit.setEnabled(true);
+                    txtHeuristicSearchTimeLimit.setEnabled(true);
+                }
+            }
+        });
+
+        // Radio listener
+        radioAlgorithmLightning.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (radioAlgorithmLightning.getSelection()) {
+                    configuration.setSearchType(SearchType.HEURISTIC_BOTTOM_UP);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
+                    txtHeuristicSearchStepLimit.setEnabled(true);
+                    txtHeuristicSearchTimeLimit.setEnabled(true);
+                    
+                }
+            }
+        });
+
+        // Radio listener
+        radioAlgorithmLightningTopDown.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (radioAlgorithmLightningTopDown.getSelection()) {
+                    configuration.setSearchType(SearchType.HEURISTIC_TOP_DOWN);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
+                    txtHeuristicSearchStepLimit.setEnabled(true);
+                    txtHeuristicSearchTimeLimit.setEnabled(true);
+                    
+                }
+            }
+        });
+        
+        // Radio listener
+        radioAlgorithmGenetic.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (radioAlgorithmGenetic.getSelection()) {
+                    configuration.setSearchType(SearchType.HEURISTIC_GENETIC);
+                    radioStepLimit.setEnabled(true);
+                    radioTimeLimit.setEnabled(true);
+                    txtHeuristicSearchStepLimit.setEnabled(true);
+                    txtHeuristicSearchTimeLimit.setEnabled(true);
+                }
+            }
+        });
+       
+        this.txtHeuristicSearchStepLimit.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                radioStepLimit.setSelection(true);
+                checkValidity();
+            }
+        });
+        
+        this.txtHeuristicSearchTimeLimit.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                radioTimeLimit.setSelection(true);
+                checkValidity();
+            }
+        });
+        
+        btnGlobalTransformation.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                if (btnGlobalTransformation.getSelection()) {
                     configuration.setTransformationType(TransformationType.GLOBAL);
                 }
             }
         });
-
-        // Local transformation
-        final Button radio22 = new Button(group2, SWT.RADIO);
-        radio22.setText(Resources.getMessage("DialogAnonymization.3")); //$NON-NLS-1$
-        radio22.addSelectionListener(new SelectionAdapter() {
+        
+        btnLocalTransformation.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent arg0) {
-                if (radio22.getSelection()) {
+                if (btnLocalTransformation.getSelection()) {
                     configuration.setTransformationType(TransformationType.LOCAL);
                 }
             }
         });
-
-        this.textNumIterations = new Text(group2, SWT.BORDER);
-        this.textNumIterations.setLayoutData(GridDataFactory.fillDefaults().grab(true, false).create());
-        this.textNumIterations.setText(String.valueOf(configuration.getNumIterations()));
+        
         this.textNumIterations.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent arg0) {
-                radio22.setSelection(true);
-                radio21.setSelection(false);
+                btnLocalTransformation.setSelection(true);
+                btnGlobalTransformation.setSelection(false);
                 configuration.setTransformationType(TransformationType.LOCAL);
                 checkValidity();
             }
         });
-
+        
         // Prepare radio buttons
-        switch(configuration.getTransformationType()) {
-            case GLOBAL: radio21.setSelection(true); break;
-            case LOCAL: radio22.setSelection(true); break;
+        if (!this.optimalSearchAvailable) {
+                        
+            this.radioStepLimit.setEnabled(true);
+            this.txtHeuristicSearchStepLimit.setEnabled(true);
+            this.radioTimeLimit.setEnabled(true);
+            this.txtHeuristicSearchTimeLimit.setEnabled(true);
+            radioAlgorithmFlashOptimal.setEnabled(false);
+            radioAlgorithmFlashOptimal.setSelection(false);
+
+            if (configuration.getSearchType() == SearchType.OPTIMAL) {
+                configuration.setSearchType(SearchType.HEURISTIC_TOP_DOWN);
+                radioAlgorithmLightning.setSelection(true);
+                
+                if (!configuration.isTimeLimitEnabled() && !configuration.isStepLimitEnabled()) {
+                    configuration.setTimeLimitEnabled(true);
+                }
+            }
+            
+            // Message
+            createMessage(group1, 3, Resources.getMessage("DialogAnonymization.13")); //$NON-NLS-1$
         }
         
-        // Show message
-        if (this.localRecodingAvailable) {
-            radio22.setEnabled(true);
+        // Time and step limit
+        if (configuration.getSearchType() == SearchType.OPTIMAL && this.optimalSearchAvailable) {
+            this.radioStepLimit.setEnabled(false);
+            this.radioStepLimit.setSelection(false);
+            this.txtHeuristicSearchStepLimit.setEnabled(false);
+            this.radioTimeLimit.setEnabled(false);
+            this.radioTimeLimit.setSelection(false);
+            this.txtHeuristicSearchTimeLimit.setEnabled(false);
+        } else if (!this.heuristicSearchStepLimitAvailable) {
+            this.radioStepLimit.setEnabled(false);
+            this.radioStepLimit.setSelection(false);
+            this.txtHeuristicSearchStepLimit.setEnabled(false);
+            this.radioTimeLimit.setEnabled(true);
+            this.radioTimeLimit.setSelection(true);
+            this.txtHeuristicSearchTimeLimit.setEnabled(true);
+        } else if (!this.heuristicSearchTimeLimitAvailable) {
+            this.radioStepLimit.setEnabled(true);
+            this.radioStepLimit.setSelection(true);
+            this.txtHeuristicSearchStepLimit.setEnabled(true);
+            this.radioTimeLimit.setEnabled(false);
+            this.radioTimeLimit.setSelection(false);
+            this.txtHeuristicSearchTimeLimit.setEnabled(false);
         } else {
-            radio22.setEnabled(false);
-            radio21.setSelection(true);
-            configuration.setTransformationType(TransformationType.GLOBAL);
-            textNumIterations.setEnabled(false);
-            createMessage(group2, Resources.getMessage("DialogAnonymization.12")); //$NON-NLS-1$
+            this.radioStepLimit.setEnabled(true);
+            this.radioStepLimit.setSelection(true);
+            this.txtHeuristicSearchStepLimit.setEnabled(true);
+            this.radioTimeLimit.setEnabled(true);
+            this.radioTimeLimit.setSelection(true);
+            this.txtHeuristicSearchTimeLimit.setEnabled(true);
         }
 
+        // Configuration
+        radioTimeLimit.setSelection(configuration.isTimeLimitEnabled());
+        radioStepLimit.setSelection(configuration.isStepLimitEnabled());
+        
+        // Prepare
         applyDialogFont(base);
         checkValidity();
         return composite;

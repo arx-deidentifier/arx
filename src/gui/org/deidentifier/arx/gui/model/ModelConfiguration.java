@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
 import org.deidentifier.arx.AttributeType.MicroAggregationFunctionDescription;
@@ -148,12 +149,11 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Delegates to an instance of ARXConfiguration.
-     *
      * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getAlgorithm()
      */
-    public double getSuppressionLimit() {
-        return config.getSuppressionLimit();
+    public AnonymizationAlgorithm getAlgorithm() {
+        return config.getAlgorithm();
     }
     
     /**
@@ -217,13 +217,77 @@ public class ModelConfiguration implements Serializable, Cloneable {
     
     /**
      * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmCrossoverFraction()
+     */
+    public double getGeneticAlgorithmCrossoverFraction() {
+        return config.getGeneticAlgorithmCrossoverFraction();
+    }
+    
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmDeterministic()
+     */
+    public boolean getGeneticAlgorithmDeterministic() {
+        return config.getGeneticAlgorithmDeterministic();
+    }
+    
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmEliteFraction()
+     */
+    public double getGeneticAlgorithmEliteFraction() {
+        return config.getGeneticAlgorithmEliteFraction();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmImmigrationFraction()
+     */
+    public double getGeneticAlgorithmImmigrationFraction() {
+        return config.getGeneticAlgorithmImmigrationFraction();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmImmigrationInterval()
+     */
+    public int getGeneticAlgorithmImmigrationInterval() {
+        return config.getGeneticAlgorithmImmigrationInterval();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmIterations()
+     */
+    public int getGeneticAlgorithmIterations() {
+        return config.getGeneticAlgorithmIterations();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmMutationProbability()
+     */
+    public double getGeneticAlgorithmMutationProbability() {
+        return config.getGeneticAlgorithmMutationProbability();
+    }
+
+    /**
+     * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmSubpopulationSize()
+     */
+    public int getGeneticAlgorithmSubpopulationSize() {
+        return config.getGeneticAlgorithmSubpopulationSize();
+    }
+
+    /**
+     * @return
      * @see org.deidentifier.arx.ARXConfiguration#getHeuristicSearchThreshold()
      */
     public int getHeuristicSearchThreshold() {
         return config.getHeuristicSearchThreshold();
     }
     
-
     /**
      * @return
      * @see org.deidentifier.arx.ARXConfiguration#getHeuristicSearchTimeLimit()
@@ -240,7 +304,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Map<String, Hierarchy> getHierarchies() {
         return this.hierarchies;
     }
-
+    
     /**
      * Returns the assigned hierarchy, if any. Else null.
      *
@@ -250,7 +314,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Hierarchy getHierarchy(String attribute) {
         return this.hierarchies.get(attribute);
     }
-
+    
     /**
      * Returns the according builder.
      *
@@ -261,14 +325,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
         if (hierarchyBuilders == null) return null;
         else return hierarchyBuilders.get(attr);
     }
-
+    
     /**
      * @return the input
      */
     public Data getInput() {
         return input;
     }
-
+    
     /**
      * Maximum generalization.
      *
@@ -281,7 +345,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         return this.max.get(attribute);
     }
-
+    
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -290,7 +354,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public Metric<?> getMetric() {
         return config.getQualityModel();
     }
-
+    
     /**
      * Returns the microaggregation function.
      *
@@ -358,6 +422,15 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
+     * Delegates to an instance of ARXConfiguration.
+     *
+     * @return
+     */
+    public double getSuppressionLimit() {
+        return config.getSuppressionLimit();
+    }
+
+    /**
      * Returns the suppression/generalization weight, that will be respected by
      * the NDS metric.
      *
@@ -408,14 +481,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * @return
-     * @see org.deidentifier.arx.ARXConfiguration#isHeuristicSearchEnabled()
-     */
-    public boolean isHeuristicSearchEnabled() {
-        return config.isHeuristicSearchEnabled();
-    }
-    
-    /**
      * Has the config been modified.
      *
      * @return
@@ -445,9 +510,10 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * Removes all criteria.
      */
     public void removeAllCriteria() {
+        setModified();
         this.getCriteria().clear();
     }
-
+    
     /**
      * Removes a hierarchy.
      *
@@ -488,17 +554,16 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         this.config.getCostBenefitConfiguration().setAdversaryGain(adversaryGain);
     }
-    
+
     /**
-     * Delegates to an instance of ARXConfiguration.
-     *
-     * @param supp
+     * @param algorithm
+     * @see org.deidentifier.arx.ARXConfiguration#setAlgorithm(algorithm)
      */
-    public void setSuppressionLimit(double supp) {
+    public void setAlgorithm(AnonymizationAlgorithm algorithm) {
         setModified();
-        config.setSuppressionLimit(supp);
+        config.setAlgorithm(algorithm);
     }
-    
+
     /**
      * @param type
      * @param enabled
@@ -508,7 +573,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAttributeTypeSuppressed(type, enabled);
     }
-    
+
     /**
      * Sets the according attribute weight.
      *
@@ -519,21 +584,93 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setAttributeWeight(attribute, weight);
     }
+
+    /**
+     * Sets crossover percentage
+     * 
+     * @param geneticAlgorithmCrossoverFraction
+     */
+    public void setGeneticAlgorithmCrossoverFraction(double geneticAlgorithmCrossoverFraction) {
+        setModified();
+        config.setGeneticAlgorithmCrossoverFraction(geneticAlgorithmCrossoverFraction);
+    }
+
+    /**
+     * Deterministic execution
+     * 
+     * @param geneticAlgorithmDeterministic
+     */
+    public void setGeneticAlgorithmDeterministic(boolean geneticAlgorithmDeterministic) {
+        setModified();
+        config.setGeneticAlgorithmDeterministic(geneticAlgorithmDeterministic);
+    }
+
+    /**
+     * Sets the size of the elite group
+     * 
+     * @param geneticAlgorithmEliteFraction
+     */
+    public void setGeneticAlgorithmEliteFraction(double geneticAlgorithmEliteFraction) {
+        setModified();
+        config.setGeneticAlgorithmEliteFraction(geneticAlgorithmEliteFraction);
+    }
+
+    /**
+     * Sets the fraction to immigrate
+     * 
+     * @param geneticAlgorithmImmigrationFraction
+     */
+    public void setGeneticAlgorithmImmigrationFraction(double geneticAlgorithmImmigrationFraction) {
+        setModified();
+        config.setGeneticAlgorithmImmigrationFraction(geneticAlgorithmImmigrationFraction);
+    }
+
+    /**
+     * Sets the immigration interval
+     * 
+     * @param geneticAlgorithmImmigrationInterval
+     */
+    public void setGeneticAlgorithmImmigrationInterval(int geneticAlgorithmImmigrationInterval) {
+        setModified();
+        config.setGeneticAlgorithmImmigrationInterval(geneticAlgorithmImmigrationInterval);
+    }
+    
+    /**
+     * @param geneticAlgorithmIterations
+     * @see org.deidentifier.arx.ARXConfiguration#setGeneticAlgorithmIterations(int)
+     */
+    public void setGeneticAlgorithmIterations(int geneticAlgorithmIterations) {
+        setModified();
+        config.setGeneticAlgorithmIterations(geneticAlgorithmIterations);
+    }
+
+    /**
+     * Sets the mutation probability
+     * 
+     * @param geneticAlgorithmMutationProbability
+     */
+    public void setGeneticAlgorithmMutationProbability(double geneticAlgorithmMutationProbability) {
+        setModified();
+        config.setGeneticAlgorithmMutationProbability(geneticAlgorithmMutationProbability);
+    }
+    
+    /**
+     * Setter
+     * 
+     * @param geneticAlgorithmSubpopulationSize
+     */
+    public void setGeneticAlgorithmSubpopulationSize(int geneticAlgorithmSubpopulationSize) {
+        setModified();
+        config.setGeneticAlgorithmSubpopulationSize(geneticAlgorithmSubpopulationSize);
+    }
     
     /**
      * @param value
      * @see org.deidentifier.arx.ARXConfiguration#setUseHeuristicSearchForSampleBasedCriteria(boolean)
      */
     public void setHeuristicForSampleBasedCriteria(boolean value) {
+        setModified();
         config.setUseHeuristicSearchForSampleBasedCriteria(value);
-    }
-    
-    /**
-     * @param heuristicSearchEnabled
-     * @see org.deidentifier.arx.ARXConfiguration#setHeuristicSearchEnabled(boolean)
-     */
-    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
-        config.setHeuristicSearchEnabled(heuristicSearchEnabled);
     }
     
     /**
@@ -541,6 +678,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @see org.deidentifier.arx.ARXConfiguration#setHeuristicSearchThreshold(int)
      */
     public void setHeuristicSearchThreshold(int numberOfTransformations) {
+        setModified();
         config.setHeuristicSearchThreshold(numberOfTransformations);
     }
     
@@ -549,6 +687,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @see org.deidentifier.arx.ARXConfiguration#setHeuristicSearchTimeLimit(int)
      */
     public void setHeuristicSearchTimeLimit(int timeInMillis) {
+        setModified();
         config.setHeuristicSearchTimeLimit(timeInMillis);
     }
     
@@ -582,8 +721,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
      *            the input to set
      */
     public void setInput(final Data data) {
-        input = data;
         setModified();
+        input = data;
     }
     
     /**
@@ -599,7 +738,8 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.max.put(attribute, max);
     }
-    
+
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -609,7 +749,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setQualityModel(metric);
     }
-    
+
     /**
      * Assigns a microaggregation function.
      *
@@ -637,7 +777,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         this.microAggregationIgnoreMissingData.put(attribute, ignoreMissingData);
         this.setModified();
     }
-    
+
     /**
      * Minimum generalization.
      *
@@ -651,7 +791,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.min.put(attribute, min);
     }
-    
+
     /**
      * Delegates to an instance of ARXConfiguration.
      *
@@ -661,7 +801,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         config.setPracticalMonotonicity(assumeMonotonicity);
     }
-    
+
     /**
      * @param publisherBenefit the publisherBenefit to set
      */
@@ -671,7 +811,6 @@ public class ModelConfiguration implements Serializable, Cloneable {
         }
         this.config.getCostBenefitConfiguration().setPublisherBenefit(publisherBenefit);
     }
-
 
     /**
      * @param publisherLoss the publisherLoss to set
@@ -692,7 +831,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
         setModified();
         this.researchSubset = subset;
     }
-    
+
     /**
      * @param enabled
      * @see org.deidentifier.arx.ARXConfiguration#setSuppressionAlwaysEnabled(boolean)
@@ -700,6 +839,16 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setSuppressionAlwaysEnabled(boolean enabled) {
         setModified();
         config.setSuppressionAlwaysEnabled(enabled);
+    }
+
+    /**
+     * Delegates to an instance of ARXConfiguration.
+     *
+     * @param supp
+     */
+    public void setSuppressionLimit(double supp) {
+        setModified();
+        config.setSuppressionLimit(supp);
     }
 
     /**
@@ -739,4 +888,5 @@ public class ModelConfiguration implements Serializable, Cloneable {
     private void setModified() {
         modified = true;
     }
+
 }

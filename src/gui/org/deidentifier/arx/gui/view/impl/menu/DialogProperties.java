@@ -77,6 +77,7 @@ public class DialogProperties implements IDialog {
         this.createTabSearch(this.dialog);
         this.createTabUtility(this.dialog);
         this.createTabRisk(this.dialog);
+        this.createTabGeneticAlgorithm(this.dialog);
     }
 
     /**
@@ -86,6 +87,50 @@ public class DialogProperties implements IDialog {
         this.dialog.open();
     }
     
+    /**
+     * Create a tab
+     * @param window
+     */
+    private void createTabGeneticAlgorithm(PreferencesDialog window) {
+
+        window.addCategory(Resources.getMessage("PropertyDialog.136"), //$NON-NLS-1$
+        controller.getResources().getManagedImage("symbol_g.png")); //$NON-NLS-1$
+        
+        window.addGroup(Resources.getMessage("DialogProperties.21")); //$NON-NLS-1$
+
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.143"), 1, 10000000, 50) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getInputConfig().getGeneticAlgorithmIterations(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmIterations((Integer)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.137"), 1, 1000000, 100) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getInputConfig().getGeneticAlgorithmSubpopulationSize(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmSubpopulationSize((Integer)t); }});
+        
+        window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.138"), 1, 1000000, 10) { //$NON-NLS-1$
+            protected Integer getValue() { return model.getInputConfig().getGeneticAlgorithmImmigrationInterval(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmImmigrationInterval((Integer)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.139"), 0, 1, 0.1d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmImmigrationFraction(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmImmigrationFraction((Double)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.140"), 0, 100,  0.2d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmEliteFraction(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmEliteFraction((Double)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.141"), 0, 100,  0.2d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmCrossoverFraction(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmCrossoverFraction((Double)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.142"), 0, 1,  0.2d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmMutationProbability(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmMutationProbability((Double)t); }});  
+        
+        window.addPreference(new PreferenceBoolean(Resources.getMessage("PropertyDialog.56"), false) { //$NON-NLS-1$
+        protected Boolean getValue() { return model.getInputConfig().getGeneticAlgorithmDeterministic(); }
+        protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmDeterministic((Boolean)t); }});
+    }
+
     /**
      * Create a tab
      * @param window
@@ -217,7 +262,7 @@ public class DialogProperties implements IDialog {
             protected Boolean getValue() { return model.getRiskModel().getSolverConfiguration().isDeterministic(); }
             protected void setValue(Object t) { model.getRiskModel().getSolverConfiguration().setDeterministic((Boolean)t); }});        
     }
-
+    
     /**
      * Create a tab
      * @param window
