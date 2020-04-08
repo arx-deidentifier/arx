@@ -122,7 +122,7 @@ public class ImportAdapterJDBC extends ImportAdapter {
     
     @Override
     public Integer getLength() {
-        return totalRows + 1;
+        return totalRows;
     }
     
     /**
