@@ -698,7 +698,7 @@ public class ModelConfiguration implements Serializable, Cloneable {
      * @param hierarchy
      */
     public void setHierarchy(String attribute, Hierarchy hierarchy) {
-        setModified();
+        this.hierarchies.put(attribute, hierarchy);
         this.setModified();
     }
     
