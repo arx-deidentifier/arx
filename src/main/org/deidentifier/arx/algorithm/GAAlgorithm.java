@@ -132,15 +132,17 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	/*
 	 * Varaibles for checking and understanding GA
 	 */
-	
-    int  initLoop1Count     = 0;
-    int  initLoop2Count     = 0;
-    int  crossoverLoopCount = 0;
-    int  mutateLoopCount    = 0;
 
-    int  checksNum          = 0;
-    int  checksNum2         = 0;
+    int  initLoop1Count          = 0;
+    int  initLoop2Count          = 0;
+    int  crossoverLoopCount      = 0;
+    int  mutateLoopCount         = 0;
 
+    int  checksNum               = 0;
+    int  checksNum2              = 0;
+    int  individualsTotal        = 0;
+    int  individualsWithHighLoss = 0;
+    
     
     /*
      * Time measurements
@@ -173,7 +175,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		GASubpopulation z1 = new GASubpopulation();
 		GASubpopulation z2 = new GASubpopulation();
 
-		//System.out.println("Total Solutions: " + solutionSpace.getSize());
+		System.out.println("Total Solutions: " + solutionSpace.getSize());
 		
 		// Fill sub-population 1
 		long tempTime = System.currentTimeMillis();
@@ -264,6 +266,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			
             // Stop
             if (mustStop()) {
+                System.out.println("Individuals: " + this.individualsTotal + " with loss > 0.99999: " + this.individualsWithHighLoss);
+                System.out.println();
                 return false;
             }
             
@@ -276,6 +280,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		//System.out.println("Init: " + initialPhase + "ms | Iter: " + iterPhase + "ms | getIndividualTime: " + sumTime + "ms | checkerTime: " + checkerTime);
 		// System.out.println("Pop1 size: " + z1.individualCount() + "Pop2 size: " + z2.individualCount());
 		// Check whether we found a solution
+		System.out.println("Total Individuals: " + this.individualsTotal + " with loss > 0.99999: " + this.individualsWithHighLoss);
 		return getGlobalOptimum() != null;
 	}
 
@@ -294,9 +299,14 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		if (!transformation.hasProperty(this.solutionSpace.getPropertyChecked())) {
 			long tempTime2 = System.currentTimeMillis();
 		    transformation.setChecked(this.checker.check(transformation, true, ScoreType.INFORMATION_LOSS));
+		    
+		    this.individualsTotal++;
+		    if (Double.valueOf(transformation.getInformationLoss().toString()) > 0.99999){
+		        this.individualsWithHighLoss++;
+		    }
+
 			checksNum++;
 			checkerTime += System.currentTimeMillis() - tempTime2;
-			//System.out.println(Arrays.toString(generalization));
 		}
 		trackOptimum(transformation);
         trackProgressFromLimits();
