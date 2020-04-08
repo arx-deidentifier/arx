@@ -561,7 +561,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchStepLimit = this.heuristicSearchStepLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         result.dpSearchBudget = this.dpSearchBudget;
-        result.searchStepSemantics = this.searchStepSemantics;
+        result.heuristicSearchStepSemantics = this.heuristicSearchStepSemantics;
 		    result.geneticAlgorithmSubpopulationSize = this.geneticAlgorithmSubpopulationSize;
 		    result.geneticAlgorithmImmigrationInterval = this.geneticAlgorithmImmigrationInterval;
 		    result.geneticAlgorithmImmigrationFraction = this.geneticAlgorithmImmigrationFraction;
@@ -744,61 +744,38 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public int getHeuristicSearchStepLimit(SearchStepSemantics requestedSearchStepSemantics, int numQIs) {
         
         // Sanity check
-        if (this.heuristicSearchStepLimit == null) {
-            this.heuristicSearchStepLimit = Integer.MAX_VALUE;
+        if (this.heuristicSearchStepSemantics == null) {
+            this.heuristicSearchStepSemantics = SearchStepSemantics.CHECKS;
         }
 
         // Early return
-        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE || requestedSemantics == this.searchStepSemantics) {
+        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE || requestedSearchStepSemantics == this.heuristicSearchStepSemantics) {
             return this.heuristicSearchStepLimit;
-        }
-        
-        // Calculate depending on configuration
-        switch (requestedSemantics) {
-        case CHECKS:
-            // Convert the limit of expansions which has been set to the requested limit of checks
-            return this.heuristicSearchStepLimit * numQIs;
-        case EXPANSIONS:
-            // Convert the limit of checks which has been set to the requested limit of expansions
-            return this.heuristicSearchStepLimit / numQIs;
-        default:
-            throw new RuntimeException("The search step semantic " + requestedSemantics + " is not supported");
-        }
-     }
-
-    /**
-     * The semantics of heuristic search steps.
-     * The default is <code>SearchStepSemantics.CHECKS</code>.
-     * @return
-     */
-    public SearchStepSemantics getHeuristicSearchStepSemantics() {
-        if (this.searchStepSemantics == null) {
-            this.searchStepSemantics = SearchStepSemantics.CHECKS;
         }
 
         // Choose correct semantics
         switch (this.heuristicSearchStepSemantics) {
-        	case CHECKS:
-        		switch (requestedSearchStepSemantics) {
-			        case EXPANSIONS:
-			            // Convert the limit of checks which has been set to the requested limit of expansions
-			            return this.heuristicSearchStepLimit / numQIs;
-			        default:
-			            throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
-			        }
+            case CHECKS:
+                switch (requestedSearchStepSemantics) {
+                    case EXPANSIONS:
+                        // Convert the limit of checks which has been set to the requested limit of expansions
+                        return this.heuristicSearchStepLimit / numQIs;
+                    default:
+                        throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+                    }
 
-        	case EXPANSIONS:
-        		switch (requestedSearchStepSemantics) {
-			        case CHECKS:
-			            // Convert the limit of expansions which has been set to the requested limit of checks
-			            return this.heuristicSearchStepLimit * numQIs;
-			        default:
-			            throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
-			        }
-        	default:
-	            throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
-	    }
-    }
+            case EXPANSIONS:
+                switch (requestedSearchStepSemantics) {
+                    case CHECKS:
+                        // Convert the limit of expansions which has been set to the requested limit of checks
+                        return this.heuristicSearchStepLimit * numQIs;
+                    default:
+                        throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+                    }
+            default:
+                throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+        }
+     }
 
     /**
      * When the size of the solution space exceeds the returned number of transformations,
