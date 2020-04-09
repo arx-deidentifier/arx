@@ -141,7 +141,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		int k = this.maxLevels.length + geneticAlgorithmSubpopulationSize;
 		int itr = geneticAlgorithmIterations;
 		int imm = geneticAlgorithmImmigrationInterval;
-		double immf = geneticAlgorithmImmigrationFraction;
+		int immigrationCount = (int) geneticAlgorithmImmigrationFraction*k;
 
 		// Build sub-populations
 		GASubpopulation z1 = new GASubpopulation();
@@ -212,8 +212,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			if (t % imm == 0) {
 
 				// Moves the imff fittest individuals between groups
-				z1.moveFittestIndividuals(z2, immf);
-				z2.moveFittestIndividuals(z1, immf);
+				z1.moveFittestIndividuals(z2, immigrationCount);
+				z2.moveFittestIndividuals(z1, immigrationCount);
 
 				// Sort by fitness descending
 				z1.sort();
