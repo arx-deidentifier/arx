@@ -17,31 +17,30 @@
 package org.deidentifier.arx.masking;
 
 /**
- * This class is used to map attributes to their MaskingType and related
- * configuration options, used in MaskingConfiguration.java
+ * This class is used to map attributes to their MaskingType and related configuration options, used in MaskingConfiguration.java
  * 
  * @author Sandro Schaeffler
  * @author Peter Bock
  */
 public class AttributeParameters {
 
-	/** Masking type */
-	public MaskingType maskingType = MaskingType.SUPPRESSED;
+    /** Masking type */
+    public MaskingType maskingType               = MaskingType.SUPPRESSED;
 
-	/** 0 as default value represents the "Identity" Distribution */
-	public int selectedDistributionIndex = 0;
+    /** 0 as default value represents the "Identity" Distribution */
+    public int         selectedDistributionIndex = 0;
 
-	/** String length */
-	public int stringLength = 15;
+    /** String length */
+    public int         stringLength              = 15;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
-	@Override
-	public String toString() {
-		return "MaskingType: " + maskingType.getLabel() + ", Distribution: " + selectedDistributionIndex;
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "MaskingType: " + maskingType.getLabel() + ", Distribution: " + selectedDistributionIndex;
+    }
 
 }

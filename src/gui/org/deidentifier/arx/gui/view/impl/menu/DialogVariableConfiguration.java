@@ -52,409 +52,395 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Dialog allowing to configure variable distribution
  * 
- * @TODO Re-consider if it is a good idea to inject the controller into this
- *       dialog and handling all of the logic (add variables, send
- *       notifications, etc.) within the dialog itself, or whether it should be
- *       handled outside. In order to check whether the variable name is unique
- *       the dialog needs to know about all defined variables, so it probably
- *       needs access to the controller.
+ * @TODO Re-consider if it is a good idea to inject the controller into this dialog and handling all of the logic
+ *       (add variables, send notifications, etc.) within the dialog itself, or whether it should be handled outside.
+ *       In order to check whether the variable name is unique the dialog needs to know about all defined variables, so
+ *       it probably needs access to the controller.
  *
  * @TODO Make sure names are unique?
  *
- * @TODO Use databinding (good validation support):
- *       http://www.vogella.com/tutorials/EclipseDataBinding/article.html
+ * @TODO Use databinding (good validation support): http://www.vogella.com/tutorials/EclipseDataBinding/article.html
  *
  * @author Karol Babioch
  */
 public class DialogVariableConfiguration extends TitleAreaDialog implements IDialog {
-	private static final int EMPTY_NAME_ERROR = 1;
-	private static final int NUMBER_NOT_INTEGER_ERROR = 2;
-	private static final int PROB_NOT_DOUBLE_ERROR = 3;
-	private static final int UNKNOWN_PARAMETER_ERROR = 4;
-	private static final int PROB_OUT_OF_BOUNDS_ERROR = 5;
-	private static final int NUMBER_OUT_OF_BOUNDS_ERROR = 6;
-	// TODO: add corresponding error message to Resource file
-	private static final int NAME_ALREADY_TAKEN_ERROR = 7;
-	private static final String NAME_ERROR_MSG = "Variable names must be unique.";
-	/** Combo for distributions */
-	private Combo comboDistribution;
+    private static final int     EMPTY_NAME_ERROR           = 1;
+    private static final int     NUMBER_NOT_INTEGER_ERROR   = 2;
+    private static final int     PROB_NOT_DOUBLE_ERROR      = 3;
+    private static final int     UNKNOWN_PARAMETER_ERROR    = 4;
+    private static final int     PROB_OUT_OF_BOUNDS_ERROR   = 5;
+    private static final int     NUMBER_OUT_OF_BOUNDS_ERROR = 6;
+    // TODO: add corresponding error message to Resource file
+    private static final int     NAME_ALREADY_TAKEN_ERROR   = 7;
+    private static final String  NAME_ERROR_MSG             = "Variable names must be unique.";
 
-	/** Layout */
-	private GridLayout compositeLabelMinLayout;
+    /** Combo for distributions */
+    private Combo          comboDistribution;
 
-	/** Composite for parameter */
-	private Composite compositeParameter;
+    /** Layout */
+    private GridLayout     compositeLabelMinLayout;
 
-	/** Controller */
-	private Controller controller;
+    /** Composite for parameter */
+    private Composite      compositeParameter;
 
-	/**
-	 * Flag whether a variable is newly created, or an existing one is being
-	 * edited
-	 */
-	private boolean isNewVariable = false;
+    /** Controller */
+    private Controller     controller;
 
-	/** Map translating parameter names to labels */
-	Map<String, String> parameterLabels = new HashMap<>();
+    /** Flag whether a variable is newly created, or an existing one is being edited */
+    private boolean        isNewVariable   = false;
 
-	/** Text */
-	private Text textVariableName;
+    /** Map translating parameter names to labels */
+    Map<String, String>    parameterLabels = new HashMap<>();
 
-	/** Variable */
-	private RandomVariable variable;
+    /** Text */
+    private Text           textVariableName;
 
-	/**
-	 * List of all currently pending error messages. <br>
-	 * The integer refers to the index of the error message to allow for easy
-	 * adding and removing
-	 */
-	private Map<Integer, String> errorMessages = new HashMap<>();
+    /** Variable */
+    private RandomVariable variable;
 
-	/**
-	 * Constructor in case a new random variable is created
-	 * 
-	 * @param controller
-	 */
-	public DialogVariableConfiguration(Controller controller) {
-		this(controller, new RandomVariable(""));
-		this.isNewVariable = true;
+    /**
+     * List of all currently pending error messages. <br>
+     * The integer refers to the index of the error message to allow for easy
+     * adding and removing
+     */
+    private Map<Integer, String> errorMessages              = new HashMap<>();
+    
+    /**
+     * Constructor in case a new random variable is created
+     * @param controller
+     */
+    public DialogVariableConfiguration(Controller controller) {
 
-	}
+        this(controller, new RandomVariable(""));
+        this.isNewVariable = true;
 
-	/**
-	 * Constructor in case a new random variable is created
-	 * 
-	 * @param controller
-	 * @param variable
-	 */
-	public DialogVariableConfiguration(Controller controller, RandomVariable variable) {
+    }
 
-		super(controller.getResources().getShell());
+    /**
+     * Constructor in case a new random variable is created
+     * @param controller
+     * @param variable
+     */
+    public DialogVariableConfiguration(Controller controller, RandomVariable variable) {
 
-		initiliazeParameterLabelMap();
+        super(controller.getResources().getShell());
 
-		this.controller = controller;
-		this.variable = variable;
+        initiliazeParameterLabelMap();
 
-	}
+        this.controller = controller;
+        this.variable = variable;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#create()
-	 */
-	@Override
-	public void create() {
-		super.create();
+    }
 
-		if (isNewVariable) {
-			setTitle(Resources.getMessage("DialogVariableConfiguration.0"));
-		} else {
-			setTitle(Resources.getMessage("DialogVariableConfiguration.1"));
-		}
-		setMessage(Resources.getMessage("DialogVariableConfiguration.2"), IMessageProvider.INFORMATION);
-		textVariableName.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent arg0) {
-				validateVariableName(textVariableName.getText());
-			}
-		});
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.Dialog#create()
+     */
+    @Override
+    public void create() {
 
-	private void validateVariableName(String name) {
-		if (name.equals(""))
-			setErrorMessage(EMPTY_NAME_ERROR, Resources.getMessage("DialogVariableConfiguration.5"));
-		else
-			setErrorMessage(EMPTY_NAME_ERROR, null);
+        super.create();
 
-		for (RandomVariable v : controller.getModel().getMaskingModel().getRandomVariables()) {
-			if (v == variable) {
-				continue;
-			}
+        if (isNewVariable) {
+            setTitle(Resources.getMessage("DialogVariableConfiguration.0")); //$NON-NLS-1$ F
+        } else {
+            setTitle(Resources.getMessage("DialogVariableConfiguration.1")); //$NON-NLS-1$
+        }
+        setMessage(Resources.getMessage("DialogVariableConfiguration.2"), IMessageProvider.INFORMATION); //$NON-NLS-1$
+        textVariableName.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                validateVariableName(textVariableName.getText());
+            }
+        });
+    }
 
-			if (v.getName().equals(name)) {
-				setErrorMessage(NAME_ALREADY_TAKEN_ERROR, NAME_ERROR_MSG);
-				return;
-			}
-		}
-		setErrorMessage(NAME_ALREADY_TAKEN_ERROR, null);
-	}
+    private void validateVariableName(String name) {
+        if (name.equals("")) setErrorMessage(EMPTY_NAME_ERROR,
+                                             Resources.getMessage("DialogVariableConfiguration.5"));
+        else setErrorMessage(EMPTY_NAME_ERROR, null);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.
-	 * swt.widgets.Composite)
-	 */
-	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, Window.OK, Resources.getMessage("DialogVariableConfiguration.9"), true);
-		createButton(parent, Window.CANCEL, Resources.getMessage("DialogVariableConfiguration.10"), false);
-		validateVariableName(textVariableName.getText());
-	}
+        for (RandomVariable v : controller.getModel().getMaskingModel().getRandomVariables()) {
+            if (v == variable) {
+                continue;
+            }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.
-	 * swt.widgets.Composite)
-	 */
-	@Override
-	protected Control createDialogArea(Composite composite) {
+            if (v.getName().equals(name)) {
+                setErrorMessage(NAME_ALREADY_TAKEN_ERROR, NAME_ERROR_MSG);
+                return;
+            }
+        }
+        setErrorMessage(NAME_ALREADY_TAKEN_ERROR, null);
+    }
 
-		composite.setLayout(SWTUtil.createGridLayout(2));
-		compositeLabelMinLayout = new GridLayout();
-		compositeLabelMinLayout.numColumns = 1;
-		compositeLabelMinLayout.marginLeft = 0;
-		compositeLabelMinLayout.marginRight = 0;
-		compositeLabelMinLayout.marginWidth = 0;
-		compositeLabelMinLayout.marginHeight = 0;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+     */
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
 
-		Composite compositeGeneral = new Composite(composite, SWT.NONE);
-		compositeGeneral.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
-		final GridLayout typeInputGridLayout = new GridLayout();
-		typeInputGridLayout.numColumns = 2;
-		typeInputGridLayout.makeColumnsEqualWidth = true;
-		compositeGeneral.setLayout(typeInputGridLayout);
+        createButton(parent, Window.OK, Resources.getMessage("DialogVariableConfiguration.9"), true); //$NON-NLS-1$
+        createButton(parent, Window.CANCEL, Resources.getMessage("DialogVariableConfiguration.10"), false); //$NON-NLS-1$
+        
+        validateVariableName(textVariableName.getText()); //$NON-NLS-1$
+    }
 
-		// Variable name
-		Composite compositeString = new Composite(compositeGeneral, SWT.NONE);
-		compositeString.setLayout(compositeLabelMinLayout);
-		Label labelVariableName = new Label(compositeString, SWT.NONE);
-		labelVariableName.setText(Resources.getMessage("DialogVariableConfiguration.3")); //$NON-NLS-1$
-		textVariableName = new Text(compositeGeneral, SWT.BORDER);
-		textVariableName.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		textVariableName.setText(variable.getName());
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
+     */
+    @Override
+    protected Control createDialogArea(Composite composite) {
 
-		// Variable distribution
-		Composite compositeString2 = new Composite(compositeGeneral, SWT.NONE);
-		compositeString2.setLayout(compositeLabelMinLayout);
-		Label labelDistribution = new Label(compositeString2, SWT.NONE);
-		labelDistribution.setText(Resources.getMessage("DialogVariableConfiguration.4")); //$NON-NLS-1$
-		comboDistribution = new Combo(compositeGeneral, SWT.READ_ONLY);
-		comboDistribution.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        composite.setLayout(SWTUtil.createGridLayout(2));
+        compositeLabelMinLayout = new GridLayout();
+        compositeLabelMinLayout.numColumns = 1;
+        compositeLabelMinLayout.marginLeft = 0;
+        compositeLabelMinLayout.marginRight = 0;
+        compositeLabelMinLayout.marginWidth = 0;
+        compositeLabelMinLayout.marginHeight = 0;
 
-		// Add all available distributions to combo box
-		List<DistributionTypeDescription> distributions = DistributionType.list();
+        Composite compositeGeneral = new Composite(composite, SWT.NONE);
+        compositeGeneral.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
+        final GridLayout typeInputGridLayout = new GridLayout();
+        typeInputGridLayout.numColumns = 2;
+        typeInputGridLayout.makeColumnsEqualWidth = true;
+        compositeGeneral.setLayout(typeInputGridLayout);
 
-		for (DistributionTypeDescription distribution : distributions) {
-			comboDistribution.add(distribution.getLabel());
-		}
+        // Variable name
+        Composite compositeString = new Composite(compositeGeneral, SWT.NONE);
+        compositeString.setLayout(compositeLabelMinLayout);
+        Label labelVariableName = new Label(compositeString, SWT.NONE);
+        labelVariableName.setText(Resources.getMessage("DialogVariableConfiguration.3")); //$NON-NLS-1$
+        textVariableName = new Text(compositeGeneral, SWT.BORDER);
+        textVariableName.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        textVariableName.setText(variable.getName());
 
-		// Preselect correct distribution
-		if (!isNewVariable) {
-			comboDistribution
-					.select(comboDistribution.indexOf(variable.getDistributionType().getDescription().getLabel()));
-		}
-		// New variable, select first element
-		else {
-			comboDistribution.select(0);
-		}
+        // Variable distribution
+        Composite compositeString2 = new Composite(compositeGeneral, SWT.NONE);
+        compositeString2.setLayout(compositeLabelMinLayout);
+        Label labelDistribution = new Label(compositeString2, SWT.NONE);
+        labelDistribution.setText(Resources.getMessage("DialogVariableConfiguration.4")); //$NON-NLS-1$
+        comboDistribution = new Combo(compositeGeneral, SWT.READ_ONLY);
+        comboDistribution.setLayoutData(SWTUtil.createFillHorizontallyGridData());
 
-		// Update parameters whenever selection changes
-		comboDistribution.addSelectionListener(new SelectionAdapter() {
+        // Add all available distributions to combo box
+        List<DistributionTypeDescription> distributions = DistributionType.list();
 
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				updateParameters();
-			}
+        for (DistributionTypeDescription distribution : distributions) {
+            comboDistribution.add(distribution.getLabel());
+        }
 
-		});
+        // Preselect correct distribution
+        if (!isNewVariable) {
+            comboDistribution.select(comboDistribution.indexOf(variable.getDistributionType().getDescription().getLabel()));
+        }
+        // New variable, select first element
+        else {
+            comboDistribution.select(0);
+        }
 
-		// Composite for parameters
-		compositeParameter = new Composite(composite, SWT.NONE);
-		compositeParameter.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
-		compositeParameter.setLayout(typeInputGridLayout);
+        // Update parameters whenever selection changes
+        comboDistribution.addSelectionListener(new SelectionAdapter() {
 
-		// Display parameters initially
-		updateParameters();
+            @Override
+            public void widgetSelected(SelectionEvent arg0) {
+                updateParameters();
+            }
 
-		return composite;
+        });
 
-	}
+        // Composite for parameters
+        compositeParameter = new Composite(composite, SWT.NONE);
+        compositeParameter.setLayoutData(SWTUtil.createFillHorizontallyGridData(true, 2));
+        compositeParameter.setLayout(typeInputGridLayout);
 
-	/**
-	 * Creates a text for this parameter.
-	 * 
-	 * @param parameter
-	 */
-	private void createText(final DistributionParameter<?> parameter) {
-		if (parameter == null) {
-			Composite compositeString = new Composite(compositeParameter, SWT.NONE);
-			compositeString.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-			Label label = new Label(compositeString, SWT.NONE);
-			label.setText("");
-			return;
-		}
+        // Display parameters initially
+        updateParameters();
 
-		// Create label
-		Composite compositeString = new Composite(compositeParameter, SWT.NONE);
-		compositeString.setLayout(compositeLabelMinLayout);
-		Label label = new Label(compositeString, SWT.NONE);
-		label.setText(parameterLabels.get(parameter.getName()));
+        return composite;
 
-		// Create text
-		final ParameterText text = new ParameterText(parameter, compositeParameter, SWT.BORDER);
-		text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-		text.setText(String.valueOf(parameter.getValue()));
-		text.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent arg0) {
-				setErrorMessage(UNKNOWN_PARAMETER_ERROR, null);
-				if (parameter.getType().equals(Integer.class)) {
-					try {
-						setErrorMessage(NUMBER_NOT_INTEGER_ERROR, null);
-						int value = Integer.parseInt(text.getText());
-						if (value > (Integer) parameter.getMax() || value < (Integer) parameter.getMin())
-							setErrorMessage(NUMBER_OUT_OF_BOUNDS_ERROR,
-									Resources.getMessage("DialogVariableConfiguration.6"));
-						else
-							setErrorMessage(NUMBER_OUT_OF_BOUNDS_ERROR, null);
-					} catch (Exception e) {
-						setErrorMessage(NUMBER_NOT_INTEGER_ERROR,
-								"Parameter '" + parameterLabels.get(parameter.getName()) + "' has to be of type "
-										+ parameter.getType().getSimpleName());
-					}
-				} else if (parameter.getType().equals(Double.class)) {
-					try {
-						setErrorMessage(PROB_NOT_DOUBLE_ERROR, null);
-						Double value = Double.parseDouble(text.getText());
-						if (value > (Double) parameter.getMax() || value < (Double) parameter.getMin())
-							setErrorMessage(PROB_OUT_OF_BOUNDS_ERROR,
-									Resources.getMessage("DialogVariableConfiguration.6"));
-						else
-							setErrorMessage(PROB_OUT_OF_BOUNDS_ERROR, null);
-					} catch (Exception e) {
-						setErrorMessage(PROB_NOT_DOUBLE_ERROR, "Parameter '" + parameterLabels.get(parameter.getName())
-								+ "' has to be of type " + parameter.getType().getSimpleName());
-					}
-				} else
-					setErrorMessage(UNKNOWN_PARAMETER_ERROR, "Unknown parameter type");
-			}
-		});
-	}
+    }
 
-	/**
-	 * Initialize parameter to label map
-	 */
-	private void initiliazeParameterLabelMap() {
-		parameterLabels.put("number", Resources.getMessage("DialogVariableConfiguration.7")); //$NON-NLS-1$
-		parameterLabels.put("probability", Resources.getMessage("DialogVariableConfiguration.8")); //$NON-NLS-1$
-	}
+    /**
+     * Creates a text for this parameter.
+     * @param parameter
+     */
+    private void createText(final DistributionParameter<?> parameter) {
+        if (parameter == null) {
+            Composite compositeString = new Composite(compositeParameter, SWT.NONE);
+            compositeString.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+            Label label = new Label(compositeString, SWT.NONE);
+            label.setText("");
+            return;
+        }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
-	@Override
-	protected void okPressed() {
-		// Set name of variable
-		variable.setName(textVariableName.getText());
+        // Create label
+        Composite compositeString = new Composite(compositeParameter, SWT.NONE);
+        compositeString.setLayout(compositeLabelMinLayout);
+        Label label = new Label(compositeString, SWT.NONE);
+        label.setText(parameterLabels.get(parameter.getName()));
 
-		// Set variable type
-		switch (comboDistribution.getText()) {
+        // Create text
+        final ParameterText text = new ParameterText(parameter, compositeParameter, SWT.BORDER);
+        text.setLayoutData(SWTUtil.createFillHorizontallyGridData());
+        text.setText(String.valueOf(parameter.getValue()));
+        text.addModifyListener(new ModifyListener() {
+            @Override
+            public void modifyText(ModifyEvent arg0) {
+                setErrorMessage(UNKNOWN_PARAMETER_ERROR, null);
+                if (parameter.getType().equals(Integer.class)) {
+                    try {
+                        setErrorMessage(NUMBER_NOT_INTEGER_ERROR, null);
+                        int value = Integer.parseInt(text.getText());
+                        if (value > (Integer) parameter.getMax() ||
+                            value < (Integer) parameter.getMin()) setErrorMessage(NUMBER_OUT_OF_BOUNDS_ERROR,
+                                                                                  Resources.getMessage("DialogVariableConfiguration.6"));
+                        else setErrorMessage(NUMBER_OUT_OF_BOUNDS_ERROR, null);
+                    } catch (Exception e) {
+                        setErrorMessage(NUMBER_NOT_INTEGER_ERROR,
+                                        "Parameter '" + parameterLabels.get(parameter.getName()) +
+                                                                  "' has to be of type " +
+                                                                  parameter.getType()
+                                                                           .getSimpleName());
+                    }
+                } else if (parameter.getType().equals(Double.class)) {
+                    try {
+                        setErrorMessage(PROB_NOT_DOUBLE_ERROR, null);
+                        Double value = Double.parseDouble(text.getText());
+                        if (value > (Double) parameter.getMax() ||
+                            value < (Double) parameter.getMin()) setErrorMessage(PROB_OUT_OF_BOUNDS_ERROR,
+                                                                                 Resources.getMessage("DialogVariableConfiguration.6"));
+                        else setErrorMessage(PROB_OUT_OF_BOUNDS_ERROR, null);
+                    } catch (Exception e) {
+                        setErrorMessage(PROB_NOT_DOUBLE_ERROR,
+                                        "Parameter '" + parameterLabels.get(parameter.getName()) +
+                                                               "' has to be of type " +
+                                                               parameter.getType().getSimpleName());
+                    }
+                } else setErrorMessage(UNKNOWN_PARAMETER_ERROR, "Unknown parameter type");
+            }
+        });
+    }
 
-		// TODO: Export, so no hardcoded strings?
-		case "Binomial distribution (discrete)":
-			variable.setDistributionType(DistributionType.DISCRETE_BINOMIAL);
-			break;
+    /**
+     * Initialize parameter to label map
+     */
+    private void initiliazeParameterLabelMap() {
+        parameterLabels.put("number", Resources.getMessage("DialogVariableConfiguration.7")); //$NON-NLS-1$
+        parameterLabels.put("probability", Resources.getMessage("DialogVariableConfiguration.8")); //$NON-NLS-1$
+    }
 
-		case "Geometric distribution (discrete)":
-			variable.setDistributionType(DistributionType.DISCRETE_GEOMETRIC);
-			break;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+     */
+    @Override
+    protected void okPressed() {
 
-		}
+        // Set name of variable
+        variable.setName(textVariableName.getText());
 
-		// Iterate over all available parameters and add them
-		for (Control children : compositeParameter.getChildren()) {
+        // Set variable type
+        switch (comboDistribution.getText()) {
 
-			if (children instanceof ParameterText) {
+        // TODO: Export, so no hardcoded strings?
+        case "Binomial distribution (discrete)":
+            variable.setDistributionType(DistributionType.DISCRETE_BINOMIAL);
+            break;
 
-				// Replace new parameter
-				// TODO Clean this up
-				DistributionParameter<?> parameter = ((ParameterText) children).getParameter();
-				variable.removeParameter(parameter.getName());
-				variable.addParameter(parameter);
+        case "Geometric distribution (discrete)":
+            variable.setDistributionType(DistributionType.DISCRETE_GEOMETRIC);
+            break;
 
-			}
+        }
 
-		}
+        // Iterate over all available parameters and add them
+        for (Control children : compositeParameter.getChildren()) {
 
-		// Add or replace variable in model
-		ModelMasking maskingModel = controller.getModel().getMaskingModel();
-		int index = maskingModel.getRandomVariables().indexOf(variable);
+            if (children instanceof ParameterText) {
 
-		// Variable not yet in model -> add
-		if (index == -1) {
-			maskingModel.addRandomVariable(variable);
-		}
-		// Variable already in model -> replace
-		else {
-			maskingModel.getRandomVariables().set(index, variable);
-		}
+                // Replace new parameter
+                // TODO Clean this up
+                DistributionParameter<?> parameter = ((ParameterText) children).getParameter();
+                variable.removeParameter(parameter.getName());
+                variable.addParameter(parameter);
 
-		// Send notification about update
-		controller.update(new ModelEvent(this, ModelPart.RANDOM_VARIABLE, variable));
+            }
 
-		// Dispose dialog, etc.
-		super.okPressed();
+        }
 
-	}
+        // Add or replace variable in model
+        ModelMasking maskingModel = controller.getModel().getMaskingModel();
+        int index = maskingModel.getRandomVariables().indexOf(variable);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#setErrorMessage(java.lang.
-	 * String)
-	 */
-	public void setErrorMessage(int index, String newErrorMessage) {
-		if (newErrorMessage == null)
-			errorMessages.remove(index);
-		else
-			errorMessages.put(index, newErrorMessage);
+        // Variable not yet in model -> add
+        if (index == -1) {
+            maskingModel.addRandomVariable(variable);
+        }
+        // Variable already in model -> replace
+        else {
+            maskingModel.getRandomVariables().set(index, variable);
+        }
 
-		Button okButton = getButton(Window.OK);
-		if (okButton != null)
-			okButton.setEnabled(errorMessages.isEmpty());
+        // Send notification about update
+        controller.update(new ModelEvent(this, ModelPart.RANDOM_VARIABLE, variable));
 
-		if (errorMessages.isEmpty())
-			super.setErrorMessage(null);
-		else
-			super.setErrorMessage((String) errorMessages.values().toArray()[0]);
-	}
+        // Dispose dialog, etc.
+        super.okPressed();
 
-	/**
-	 * Update parameters.
-	 */
-	private void updateParameters() {
-		// Dispose all existing parameter widgets
-		for (Control children : compositeParameter.getChildren()) {
-			children.dispose();
-		}
+    }
 
-		int counter = 0;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.eclipse.jface.dialogs.TitleAreaDialog#setErrorMessage(java.lang.
+     * String)
+     */
+    public void setErrorMessage(int index, String newErrorMessage) {
+        if (newErrorMessage == null) errorMessages.remove(index);
+        else errorMessages.put(index, newErrorMessage);
 
-		// Iterate over parameters for selected distribution
-		for (DistributionTypeDescription distribution : DistributionType.list()) {
-			if (distribution.getLabel().equals(comboDistribution.getText())) {
-				for (DistributionParameter<?> parameter : distribution.getParameters()) {
-					DistributionParameter<?> localParam = variable.getParameter(parameter.getName());
-					counter++;
-					if (localParam != null)
-						createText(localParam);
-					else {
-						parameter.reset();
-						createText(parameter);
-					}
-				}
-			}
-		}
-		while (counter++ < 2)
-			createText(null);
-		// Update layout
-		compositeParameter.layout();
-	}
+        Button okButton = getButton(Window.OK);
+        if (okButton != null) okButton.setEnabled(errorMessages.isEmpty());
+
+        if (errorMessages.isEmpty()) super.setErrorMessage(null);
+        else super.setErrorMessage((String) errorMessages.values().toArray()[0]);
+    }
+
+    /**
+     * Update parameters.
+     */
+    private void updateParameters() {
+        // Dispose all existing parameter widgets
+        for (Control children : compositeParameter.getChildren()) {
+            children.dispose();
+        }
+
+        int counter = 0;
+
+        // Iterate over parameters for selected distribution
+        for (DistributionTypeDescription distribution : DistributionType.list()) {
+            if (distribution.getLabel().equals(comboDistribution.getText())) {
+                for (DistributionParameter<?> parameter : distribution.getParameters()) {
+                    DistributionParameter<?> localParam = variable.getParameter(parameter.getName());
+                    counter++;
+                    if (localParam != null) createText(localParam);
+                    else {
+                        parameter.reset();
+                        createText(parameter);
+                    }
+                }
+            }
+        }
+        while (counter++ < 2)
+            createText(null);
+        // Update layout
+        compositeParameter.layout();
+    }
 }

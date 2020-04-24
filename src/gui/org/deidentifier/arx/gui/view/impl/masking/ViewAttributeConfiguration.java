@@ -48,8 +48,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
- * This view displays all available attributes and allows to choose a masking
- * operation for them
+ * This view displays all available attributes and allows to choose a masking operation for them
  *
  * @author Karol Babioch
  * @author Sandro Schaeffler
@@ -57,325 +56,308 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class ViewAttributeConfiguration implements IView {
 
-	/**
-	 * Container describing an attribute
-	 *
-	 * @author Karol Babioch
-	 */
-	public class Attribute {
+    /**
+     * Container describing an attribute
+     *
+     * @author Karol Babioch
+     */
+    public class Attribute {
 
-		/** Attribute name */
-		private String name;
+        /** Attribute name */
+        private String      name;
 
-		/** Attribute type */
-		private DataType<?> type;
+        /** Attribute type */
+        private DataType<?> type;
 
-		/**
-		 * Creates an instance.
-		 * 
-		 * @param name
-		 * @param type
-		 */
-		public Attribute(String name, DataType<?> type) {
-			this.name = name;
-			this.type = type;
-		}
+        /**
+         * Creates an instance.
+         * 
+         * @param name
+         * @param type
+         */
+        public Attribute(String name, DataType<?> type) {
+            this.name = name;
+            this.type = type;
+        }
 
-		/**
-		 * Tests equality on the attribute name.
-		 * 
-		 * @param attribute
-		 * @return
-		 */
-		public boolean equals(String attribute) {
-			if (name.equals(attribute)) {
-				return true;
-			} else {
-				return false;
-			}
-		}
+        /**
+         * Tests equality on the attribute name.
+         * 
+         * @param attribute
+         * @return
+         */
+        public boolean equals(String attribute) {
+            if (name.equals(attribute)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
-		/**
-		 * Returns the name.
-		 * 
-		 * @return
-		 */
-		public String getName() {
-			return name;
-		}
+        /**
+         * Returns the name.
+         * @return
+         */
+        public String getName() {
+            return name;
+        }
 
-		/**
-		 * Returns the data type.
-		 * 
-		 * @return
-		 */
-		public DataType<?> getType() {
-			return type;
-		}
+        /**
+         * Returns the data type.
+         * @return
+         */
+        public DataType<?> getType() {
+            return type;
+        }
 
-	}
+    }
 
-	/**
-	 * Content provider for attributes
-	 *
-	 * This content provider retrieves the available attributes from the model
-	 * and iterates over them in order to retrieve the required information.
-	 *
-	 * @author Karol Babioch
-	 */
-	private class AttributeContentProvider implements IStructuredContentProvider {
+    /**
+     * Content provider for attributes
+     *
+     * This content provider retrieves the available attributes from the model and iterates over them in order to
+     * retrieve the required information.
+     *
+     * @author Karol Babioch
+     */
+    private class AttributeContentProvider implements IStructuredContentProvider {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-		 */
-		@Override
-		public void dispose() {
-			// Nothing to do
-		}
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.viewers.IContentProvider#dispose()
+         */
+        @Override
+        public void dispose() {
+            // Nothing to do
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java
-		 * .lang.Object)
-		 */
-		@Override
-		public Object[] getElements(Object inputData) {
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
+         */
+        @Override
+        public Object[] getElements(Object inputData) {
 
-			Model model = (Model) inputData;
-			List<Attribute> list = new ArrayList<Attribute>();
+            Model model = (Model) inputData;
+            List<Attribute> list = new ArrayList<Attribute>();
 
-			try {
+            try {
 
-				DataHandle data = model.getInputConfig().getInput().getHandle();
+                DataHandle data = model.getInputConfig().getInput().getHandle();
 
-				// For each column
-				for (int i = 0; i < data.getNumColumns(); i++) {
+                // For each column
+                for (int i = 0; i < data.getNumColumns(); i++) {
 
-					String attributeName = data.getAttributeName(i);
-					AttributeType attributeType = model.getInputDefinition().getAttributeType(attributeName);
+                    String attributeName = data.getAttributeName(i);
+                    AttributeType attributeType = model.getInputDefinition().getAttributeType(attributeName);
 
-					// Skip if attribute is not identifying
-					if (attributeType != AttributeType.IDENTIFYING_ATTRIBUTE) {
-						continue;
-					}
+                    // Skip if attribute is not identifying
+                    if (attributeType != AttributeType.IDENTIFYING_ATTRIBUTE) {
+                        continue;
+                    }
 
-					DataType<?> dataType = model.getInputDefinition().getDataType(attributeName);
-					list.add(new Attribute(attributeName, dataType));
-				}
+                    DataType<?> dataType = model.getInputDefinition().getDataType(attributeName);
+                    list.add(new Attribute(attributeName, dataType));
+                }
 
-			} catch (NullPointerException e) {
-				// Silently catch NullPointerExceptions here (when model is not
-				// yet defined, etc.)
-			}
+            } catch (NullPointerException e) {
+                // Silently catch NullPointerExceptions here (when model is not yet defined, etc.)
+            }
 
-			return list.toArray();
-		}
+            return list.toArray();
+        }
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.
-		 * jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
-		@Override
-		public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
-			// Nothing to do
-		}
+        /*
+         * (non-Javadoc)
+         * 
+         * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public void inputChanged(Viewer arg0, Object arg1, Object arg2) {
+            // Nothing to do
+        }
 
-	}
+    }
 
-	/** Controller */
-	private Controller controller;
+    /** Controller */
+    private Controller  controller;
 
-	/** Table viewer */
-	private TableViewer tableViewer;
+    /** Table viewer */
+    private TableViewer tableViewer;
 
-	/**
-	 * Creates an instance.
-	 * 
-	 * @param parent
-	 * @param controller
-	 */
-	public ViewAttributeConfiguration(final Composite parent, final Controller controller) {
+    /**
+     * Creates an instance.
+     * 
+     * @param parent
+     * @param controller
+     */
+    public ViewAttributeConfiguration(final Composite parent, final Controller controller) {
 
-		this.controller = controller;
+        this.controller = controller;
 
-		// Build view
-		build(parent);
+        // Build view
+        build(parent);
 
-		// These events are triggered when data is imported or attribute
-		// configuration changes
-		this.controller.addListener(ModelPart.INPUT, this); // TODO: Is this
-															// actually needed?
-															// Can data be
-															// imported with an
-															// attribute being
-															// set as
-															// identifying?
-		this.controller.addListener(ModelPart.DATA_TYPE, this);
-		this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
-		this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
-		this.controller.addListener(ModelPart.MASKING_CONFIGURATION, this);
+        // These events are triggered when data is imported or attribute configuration changes
+        this.controller.addListener(ModelPart.INPUT, this); // TODO: Is this actually needed? Can data be imported with an attribute being set as identifying?
+        this.controller.addListener(ModelPart.DATA_TYPE, this);
+        this.controller.addListener(ModelPart.ATTRIBUTE_TYPE, this);
+        this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
+        this.controller.addListener(ModelPart.MASKING_CONFIGURATION, this);
 
-	}
+    }
 
-	/**
-	 * Build.
-	 * 
-	 * @param parent
-	 */
-	private void build(Composite parent) {
+    /**
+     * Build.
+     * 
+     * @param parent
+     */
+    private void build(Composite parent) {
 
-		// Title bar
-		ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, null);
-		folder.setLayoutData(SWTUtil.createFillGridData());
+        // Title bar
+        ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, null, null);
+        folder.setLayoutData(SWTUtil.createFillGridData());
 
-		// First tab
-		Composite composite = folder.createItem(Resources.getMessage("MaskingView.1"), null); //$NON-NLS-1$
-		composite.setLayout(SWTUtil.createGridLayout(1));
-		folder.setSelection(0);
+        // First tab
+        Composite composite = folder.createItem(Resources.getMessage("MaskingView.1"), null); //$NON-NLS-1$
+        composite.setLayout(SWTUtil.createGridLayout(1));
+        folder.setSelection(0);
 
-		// Create table
-		tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
-		tableViewer.setContentProvider(new AttributeContentProvider());
+        // Create table
+        tableViewer = SWTUtil.createTableViewer(composite, SWT.BORDER | SWT.FULL_SELECTION);
+        tableViewer.setContentProvider(new AttributeContentProvider());
 
-		Table table = tableViewer.getTable();
-		table.setHeaderVisible(true);
-		table.setLinesVisible(true);
-		table.setLayoutData(SWTUtil.createFillGridData());
-		table.addSelectionListener(new SelectionAdapter() {
+        Table table = tableViewer.getTable();
+        table.setHeaderVisible(true);
+        table.setLinesVisible(true);
+        table.setLayoutData(SWTUtil.createFillGridData());
+        table.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(SelectionEvent event) {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
 
-				Attribute attribute = (Attribute) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
-				controller.getModel().setSelectedAttribute(attribute.getName());
+                Attribute attribute = (Attribute) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+                controller.getModel().setSelectedAttribute(attribute.getName());
 
-				// Send notification
-				controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute.getName()));
+                // Send notification
+                controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attribute.getName()));
 
-			}
+            }
 
-		});
+        });
 
-		// Column containing attribute names
-		TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
-		tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
+        // Column containing attribute names
+        TableViewerColumn tableViewerColumnName = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnName.setLabelProvider(new ColumnLabelProvider() {
 
-			@Override
-			public String getText(Object element) {
-				return ((Attribute) element).getName();
-			}
+            @Override
+            public String getText(Object element) {
+                return ((Attribute) element).getName();
+            }
 
-		});
+        });
 
-		TableColumn columnName = tableViewerColumnName.getColumn();
-		columnName.setToolTipText(Resources.getMessage("MaskingView.6")); //$NON-NLS-1$
-		columnName.setText(Resources.getMessage("MaskingView.7")); //$NON-NLS-1$
-		columnName.setWidth(100);
+        TableColumn columnName = tableViewerColumnName.getColumn();
+        columnName.setToolTipText(Resources.getMessage("MaskingView.6")); //$NON-NLS-1$
+        columnName.setText(Resources.getMessage("MaskingView.7")); //$NON-NLS-1$
+        columnName.setWidth(100);
 
-		// Column containing attribute data type
-		TableViewerColumn tableViewerColumnDataType = new TableViewerColumn(tableViewer, SWT.NONE);
-		tableViewerColumnDataType.setLabelProvider(new ColumnLabelProvider() {
+        // Column containing attribute data type
+        TableViewerColumn tableViewerColumnDataType = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnDataType.setLabelProvider(new ColumnLabelProvider() {
 
-			@Override
-			public String getText(Object element) {
-				return ((Attribute) element).getType().getDescription().getLabel();
-			}
+            @Override
+            public String getText(Object element) {
+                return ((Attribute) element).getType().getDescription().getLabel();
+            }
 
-		});
+        });
 
-		TableColumn columnDataType = tableViewerColumnDataType.getColumn();
-		columnDataType.setToolTipText(Resources.getMessage("MaskingView.8")); //$NON-NLS-1$
-		columnDataType.setText(Resources.getMessage("MaskingView.9")); //$NON-NLS-1$
-		columnDataType.setWidth(100);
+        TableColumn columnDataType = tableViewerColumnDataType.getColumn();
+        columnDataType.setToolTipText(Resources.getMessage("MaskingView.8")); //$NON-NLS-1$
+        columnDataType.setText(Resources.getMessage("MaskingView.9")); //$NON-NLS-1$
+        columnDataType.setWidth(100);
 
-		// Column containing masking operation
-		TableViewerColumn tableViewerColumnMasking = new TableViewerColumn(tableViewer, SWT.NONE);
-		tableViewerColumnMasking.setLabelProvider(new ColumnLabelProvider() {
+        // Column containing masking operation
+        TableViewerColumn tableViewerColumnMasking = new TableViewerColumn(tableViewer, SWT.NONE);
+        tableViewerColumnMasking.setLabelProvider(new ColumnLabelProvider() {
 
-			@Override
-			public String getText(Object element) {
+            @Override
+            public String getText(Object element) {
 
-				Attribute attribute = ((Attribute) element);
-				MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute.getName());
-				if (maskingType == null) {
-					return Resources.getMessage("MaskingView.10"); //$NON-NLS-1$
-				}
-				return maskingType.getLabel();
-			}
+                Attribute attribute = ((Attribute) element);
+                MaskingType maskingType = MaskingConfiguration.getMaskingType(attribute.getName());
+                if (maskingType == null) {
+                    return Resources.getMessage("MaskingView.10"); //$NON-NLS-1$
+                }
+                return maskingType.getLabel();
+            }
 
-		});
+        });
 
-		TableColumn columnMasking = tableViewerColumnMasking.getColumn();
-		columnMasking.setToolTipText(Resources.getMessage("MaskingView.11")); //$NON-NLS-1$
-		columnMasking.setText(Resources.getMessage("MaskingView.12")); //$NON-NLS-1$
-		columnMasking.setWidth(150);
+        TableColumn columnMasking = tableViewerColumnMasking.getColumn();
+        columnMasking.setToolTipText(Resources.getMessage("MaskingView.11")); //$NON-NLS-1$
+        columnMasking.setText(Resources.getMessage("MaskingView.12")); //$NON-NLS-1$
+        columnMasking.setWidth(150);
 
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.deidentifier.arx.gui.view.def.IView#dispose()
-	 */
-	@Override
-	public void dispose() {
-		controller.removeListener(this);
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#dispose()
+     */
+    @Override
+    public void dispose() {
+        controller.removeListener(this);
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.deidentifier.arx.gui.view.def.IView#reset()
-	 */
-	@Override
-	public void reset() {
-		tableViewer.getTable().clearAll();
-	}
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#reset()
+     */
+    @Override
+    public void reset() {
+        tableViewer.getTable().clearAll();
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.
-	 * model.ModelEvent)
-	 */
-	@Override
-	public void update(ModelEvent event) {
-		// Disable redrawing, so changes won't be noticed by the user and appear
-		// to be atomic
-		Model model = controller.getModel();
-		tableViewer.getTable().setRedraw(false);
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.deidentifier.arx.gui.view.def.IView#update(org.deidentifier.arx.gui.model.ModelEvent)
+     */
+    @Override
+    public void update(ModelEvent event) {
 
-		// Remove all data
-		tableViewer.getTable().removeAll();
+        // Disable redrawing, so changes won't be noticed by the user and appear to be atomic
+        Model model = controller.getModel();
+        tableViewer.getTable().setRedraw(false);
 
-		// Apply new data
-		tableViewer.setInput(model);
+        // Remove all data
+        tableViewer.getTable().removeAll();
 
-		// Highlights the currently active (highlighted) attribute
-		if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
-			Object[] currentlyIdentifying = ((AttributeContentProvider) tableViewer.getContentProvider())
-					.getElements(model);
-			String selectedAttribute = model.getSelectedAttribute();
-			for (int i = 0; i < currentlyIdentifying.length; i++) {
-				if (((Attribute) currentlyIdentifying[i]).equals(selectedAttribute)) {
-					tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(i)), true);
-					break;
-				}
+        // Apply new data
+        tableViewer.setInput(model);
 
-			}
-		}
+        // Highlights the currently active (highlighted) attribute
+        if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
+            Object[] currentlyIdentifying = ((AttributeContentProvider) tableViewer.getContentProvider()).getElements(model);
+            String selectedAttribute = model.getSelectedAttribute();
+            for (int i = 0; i < currentlyIdentifying.length; i++) {
+                if (((Attribute) currentlyIdentifying[i]).equals(selectedAttribute)) {
+                    tableViewer.setSelection(new StructuredSelection(tableViewer.getElementAt(i)), true);
+                    break;
+                }
 
-		// Reenable redrawing
-		tableViewer.getTable().setRedraw(true);
+            }
+        }
 
-	}
+        // Reenable redrawing
+        tableViewer.getTable().setRedraw(true);
+
+    }
 
 }
