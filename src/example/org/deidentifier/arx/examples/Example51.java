@@ -23,8 +23,8 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.Arrays;
 
-import org.apache.mahout.math.Arrays;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.ARXCostBenefitConfiguration;
@@ -176,7 +176,7 @@ public class Example51 extends Example {
         for (QualityMetadata<?> metadata : node.getLowestScore().getMetadata()) {
             System.out.println("   * " + metadata.getParameter() + ": " + metadata.getValue());
         }
-        System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfOutlyingTuples());
+        System.out.println("   * Suppressed records: " + handle.getStatistics().getEquivalenceClassStatistics().getNumberOfSuppressedRecords());
  
     }
 }

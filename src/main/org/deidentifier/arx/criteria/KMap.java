@@ -300,7 +300,7 @@ public class KMap extends ImplicitPrivacyCriterion {
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         if (this.estimator == null) {
             return entry.pcount >= this.k;
         } else {

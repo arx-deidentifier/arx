@@ -69,9 +69,6 @@ public class LayoutUtilityStatistics implements ILayout, IView {
     private static final String                         TAB_PROPERTIES              = Resources.getMessage("StatisticsView.2");             //$NON-NLS-1$
 
     /** Constant */
-    private static final String                         TAB_LOCAL_RECODING          = Resources.getMessage("StatisticsView.8");             //$NON-NLS-1$
-
-    /** Constant */
     private static final String                         TAB_CLASSIFICATION_ANALYSIS = Resources.getMessage("StatisticsView.9");             //$NON-NLS-1$
 
     /** View */
@@ -142,7 +139,6 @@ public class LayoutUtilityStatistics implements ILayout, IView {
         } else {
             this.registerView(new ViewPropertiesOutput(folder.createItem(TAB_PROPERTIES, null, true), controller), "help.utility.outputproperties"); //$NON-NLS-1$
             this.registerView(new ViewStatisticsClassificationConfiguration(folder.createItem(TAB_CLASSIFICATION_ANALYSIS, null, false, new StackLayout()), controller), "help.utility.accuracy"); //$NON-NLS-1$
-            this.registerView(new ViewLocalRecoding(folder.createItem(TAB_LOCAL_RECODING, null, false), controller), "help.utility.localrecoding"); //$NON-NLS-1$
         }
         
         // Init folder

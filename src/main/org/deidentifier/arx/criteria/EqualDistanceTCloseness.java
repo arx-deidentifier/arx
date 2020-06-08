@@ -62,7 +62,7 @@ public class EqualDistanceTCloseness extends TCloseness {
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
 
         // Calculate EMD with equal distance
         int[] buckets = entry.distributions[index].getBuckets();

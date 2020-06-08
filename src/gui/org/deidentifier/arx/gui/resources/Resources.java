@@ -146,15 +146,6 @@ public class Resources {
     }
     
     /**
-     * Returns the version.
-     *
-     * @return
-     */
-    public static String getVersion() {
-        return Resources.getMessage("Resources.0"); //$NON-NLS-1$;
-    }
-    
-    /**
      * Loads an image. Adds a dispose listener that disposes the image when the display is disposed
      * @param display
      * @param resource

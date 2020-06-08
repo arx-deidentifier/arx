@@ -36,6 +36,7 @@ import org.deidentifier.arx.framework.data.GeneralizationHierarchy;
 import org.deidentifier.arx.framework.lattice.Transformation;
 import org.deidentifier.arx.metric.v2.AbstractILMultiDimensional;
 import org.deidentifier.arx.metric.v2.AbstractMetricMultiDimensional;
+import org.deidentifier.arx.metric.v2.ILScore;
 import org.deidentifier.arx.metric.v2.ILSingleDimensional;
 import org.deidentifier.arx.metric.v2.MetricMDHeight;
 import org.deidentifier.arx.metric.v2.MetricMDNMLoss;
@@ -1341,7 +1342,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param groupify The groupify operator of the previous check
      * @return the information loss
      */
-    public final InformationLossWithBound<T> getInformationLoss(final Transformation node, final HashGroupify groupify) {
+    public final InformationLossWithBound<T> getInformationLoss(final Transformation<?> node, final HashGroupify groupify) {
         return this.getInformationLossInternal(node, groupify);
     }
     
@@ -1354,7 +1355,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param entry
      * @return
      */
-    public final InformationLossWithBound<T> getInformationLoss(final Transformation node, final HashGroupifyEntry entry) {
+    public final InformationLossWithBound<T> getInformationLoss(final Transformation<?> node, final HashGroupifyEntry entry) {
         return this.getInformationLossInternal(node, entry);
     }
     
@@ -1368,7 +1369,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T getLowerBound(final Transformation node) {
+    public T getLowerBound(final Transformation<?> node) {
         if (node.getLowerBound() != null) {
             return (T)node.getLowerBound();
         } else {
@@ -1388,7 +1389,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @return
      */
     @SuppressWarnings("unchecked")
-    public T getLowerBound(final Transformation node, final HashGroupify groupify) {
+    public T getLowerBound(final Transformation<?> node, final HashGroupify groupify) {
         if (node.getLowerBound() != null) {
             return (T)node.getLowerBound();
         } else {
@@ -1403,6 +1404,19 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      */
     public String getName() {
         return this.toString();
+    }
+    
+    /**
+     * Calculates the score.
+     * Note: All score functions are expected to return a score value divided by the sensitivity of the score function.
+     * 
+     * @param node
+     * @param groupify
+     * @return
+     */
+    public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
+        throw new RuntimeException("Data-dependent differential privacy for the quality model '"
+            + getName() + "' is not yet implemented");
     }
     
     /**
@@ -1519,6 +1533,14 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
     }
     
     /**
+     * Returns whether the metric provides a score function
+     * @return
+     */
+    public boolean isScoreFunctionSupported() {
+        return false;
+    }
+    
+    /**
      * Returns true if the metric is weighted.
      *
      * @return
@@ -1549,7 +1571,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param groupify The groupify operator of the previous check
      * @return the double
      */
-    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, final HashGroupify groupify);
+    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation<?> node, final HashGroupify groupify);
     
  
     /**
@@ -1561,7 +1583,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param entry
      * @return
      */
-    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation node, HashGroupifyEntry entry);
+    protected abstract InformationLossWithBound<T> getInformationLossInternal(final Transformation<?> node, HashGroupifyEntry entry);
 
     /**
      * Returns a lower bound for the information loss for the given node. 
@@ -1572,7 +1594,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param node
      * @return
      */
-    protected abstract T getLowerBoundInternal(Transformation node);
+    protected abstract T getLowerBoundInternal(Transformation<?> node);
 
     /**
      * Returns a lower bound for the information loss for the given node.
@@ -1589,7 +1611,7 @@ public abstract class Metric<T extends InformationLoss<?>> implements Serializab
      * @param groupify
      * @return
      */
-    protected abstract T getLowerBoundInternal(final Transformation node, final HashGroupify groupify);
+    protected abstract T getLowerBoundInternal(final Transformation<?> node, final HashGroupify groupify);
     
     /**
      * Returns the number of records

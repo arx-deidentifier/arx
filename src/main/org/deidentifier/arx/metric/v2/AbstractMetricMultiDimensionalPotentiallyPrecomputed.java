@@ -128,6 +128,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     public double getGeneralizationSuppressionFactor() {
         return defaultMetric.getGeneralizationSuppressionFactor();
     }
+    
+    @Override
+    public ILScore getScore(final Transformation<?> node, final HashGroupify groupify) {
+        return precomputed ?
+               precomputedMetric.getScore(node, groupify) :
+               defaultMetric.getScore(node, groupify);
+    }
 
     @Override
     public double getSuppressionFactor() {
@@ -144,6 +151,11 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     public boolean isPrecomputed() {
         return this.precomputed;
     }
+    
+    @Override
+    public boolean isScoreFunctionSupported() {
+        return isPrecomputed() ? precomputedMetric.isScoreFunctionSupported() : defaultMetric.isScoreFunctionSupported();
+    }
 
     /**
      * Returns the default variant.
@@ -156,13 +168,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
 
     @Override
     protected InformationLossWithBound<AbstractILMultiDimensional>
-            getInformationLossInternal(Transformation node, HashGroupify groupify) {
+            getInformationLossInternal(Transformation<?> node, HashGroupify groupify) {
         return precomputed ? precomputedMetric.getInformationLoss(node, groupify) : 
                              defaultMetric.getInformationLoss(node, groupify);
     }
 
     @Override
-    protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected InformationLossWithBound<AbstractILMultiDimensional> getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
         if (precomputed) {
             return precomputedMetric.getInformationLoss(node, entry);
         } else {
@@ -171,13 +183,13 @@ public abstract class AbstractMetricMultiDimensionalPotentiallyPrecomputed exten
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node) {
         return precomputed ? precomputedMetric.getLowerBound(node) : 
                              defaultMetric.getLowerBound(node);
     }
     
     @Override
-    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation node, HashGroupify groupify) {
+    protected AbstractILMultiDimensional getLowerBoundInternal(Transformation<?> node, HashGroupify groupify) {
         return precomputed ? precomputedMetric.getLowerBound(node, groupify) : 
                              defaultMetric.getLowerBound(node, groupify);
     }

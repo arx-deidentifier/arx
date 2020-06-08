@@ -68,6 +68,8 @@ public class Gradient {
      */
     public Color getColor(double value) {
         int index = (int)Math.round((double)(colors.length-1) * value);
+        index = index < 0 ? 0 : index;
+        index = index > colors.length - 1 ? colors.length - 1 : index;
         return colors[index];
     }
 

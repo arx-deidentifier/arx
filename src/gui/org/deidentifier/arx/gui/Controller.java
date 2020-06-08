@@ -658,8 +658,8 @@ public class Controller implements IView {
             // Create filter
             ModelNodeFilter filter = new ModelNodeFilter(result.getLattice().getTop().getTransformation(), 
                                                          model.getInitialNodesInViewer());
-            filter.initialize(result, allResults.getSecond().getNumberOfSteps() > 1);
-            if (allResults.getSecond().getNumberOfSteps() > 1) {
+            filter.initialize(result, allResults.getSecond().isLocalTransformation());
+            if (allResults.getSecond().isLocalTransformation()) {
                 filter.reset(workerResult.getSecond(), workerResult.getSecond() == null ? null : workerResult.getSecond().getDefinition());
             }
             model.setNodeFilter(filter);
@@ -669,16 +669,21 @@ public class Controller implements IView {
             update(new ModelEvent(this, ModelPart.RESULT, result));
             model.getClipboard().addInterestingTransformations(model);
             update(new ModelEvent(this, ModelPart.CLIPBOARD, null));
+            
+            // If result has been found
             if (result.isResultAvailable()) {
+
+                // Update output
                 model.setOutput(workerResult.getSecond(), result.getGlobalOptimum());
                 model.setSelectedNode(result.getGlobalOptimum());
-                
-                // Classification parameter
-                model.getSelectedFeatures().clear();
-                model.getSelectedFeatures().addAll(model.getOutputDefinition().getQuasiIdentifyingAttributes());
-                model.getSelectedClasses().clear();
-                model.getSelectedClasses().addAll(model.getOutputDefinition().getResponseVariables());
-                
+
+                // Classification parameters
+                if (model.setFeaturesAndClasses(model.getOutputDefinition())) {
+                    update(new ModelEvent(this,
+                                          ModelPart.CLASSIFICATION_CONFIGURATION,
+                                          result.getGlobalOptimum()));
+                }
+
                 // Events
                 update(new ModelEvent(this,
                                       ModelPart.OUTPUT,
@@ -710,6 +715,46 @@ public class Controller implements IView {
                                   ModelPart.SELECTED_ATTRIBUTE,
                                   model.getSelectedAttribute()));
         }
+    }
+
+    /**
+     * Initializes the hierarchy for the currently selected attribute with a scheme
+     * for attribute suppression.
+     */
+    public void actionMenuEditCreateAttributeSuppressionHierarchy() {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Obtain values
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
+        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
+        
+        // Create hierarchy
+        String[][] array;
+        try {
+            array = new String[values.length][2];
+            for (int i = 0; i < values.length; i++) {
+
+                String value = values[i];
+                String coded = "*"; //$NON-NLS-1$
+                array[i] = new String[] {value, coded};
+            }
+        } catch (Exception e) {
+            this.actionShowInfoDialog(main.getShell(), Resources.getMessage("Controller.159"), Resources.getMessage("Controller.153")); //$NON-NLS-1$ //$NON-NLS-2$
+            return;
+        }
+        
+        // Update
+        Hierarchy hierarchy = Hierarchy.create(array);
+        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
+        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
     }
 
     /**
@@ -766,6 +811,50 @@ public class Controller implements IView {
         }
     }
 
+    /**
+     * Create a cell suppression hierarchy for all attributes
+     * @param all
+     */
+    public void actionMenuEditCreateSuppressionHierarchy(boolean all) {
+
+        // Check
+        if (model == null ||
+            model.getInputConfig() == null ||
+            model.getInputConfig().getInput() == null ||
+            model.getSelectedAttribute() == null) {
+            return;
+        }
+        
+        // Prepare
+        DataHandle handle = model.getInputConfig().getInput().getHandle();
+        
+        // Determine indices
+        List<String> attributes = new ArrayList<>();
+        if (!all) {
+            attributes.add(model.getSelectedAttribute());
+        } else {
+            for (String qi : model.getInputDefinition().getQuasiIdentifyingAttributes()) {
+                attributes.add(qi);
+            }
+        }
+        
+        // Process each index
+        for (String attribute : attributes) {
+            
+            // Create hierarchy
+            String[] values = handle.getStatistics().getDistinctValuesOrdered(handle.getColumnIndexOf(attribute));
+            String[][] array = new String[values.length][0];
+            for (int i = 0; i < values.length; i++) {
+                array[i] = new String[] { values[i], DataType.ANY_VALUE };
+            }
+            
+            // Update
+            Hierarchy hierarchy = Hierarchy.create(array);
+            this.model.getInputConfig().setHierarchy(attribute, hierarchy);
+            this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
+        }
+    }
+    
     /**
      * Initializes the hierarchy for the currently selected attribute with a scheme
      * for top-/bottom coding.
@@ -843,45 +932,6 @@ public class Controller implements IView {
     }
 
     /**
-     * Initializes the hierarchy for the currently selected attribute with a scheme
-     * for attribute suppression.
-     */
-    public void actionMenuEditCreateAttributeSuppressionHierarchy() {
-
-        // Check
-        if (model == null ||
-            model.getInputConfig() == null ||
-            model.getInputConfig().getInput() == null ||
-            model.getSelectedAttribute() == null) {
-            return;
-        }
-        
-        // Obtain values
-        DataHandle handle = model.getInputConfig().getInput().getHandle();
-        int index = handle.getColumnIndexOf(model.getSelectedAttribute());
-        String[] values = handle.getStatistics().getDistinctValuesOrdered(index);
-        
-        // Create hierarchy
-        String[][] array;
-        try {
-            array = new String[values.length][2];
-            for (int i = 0; i < values.length; i++) {
-
-                String value = values[i];
-                String coded = "*"; //$NON-NLS-1$
-                array[i] = new String[] {value, coded};
-            }
-        } catch (Exception e) {
-            this.actionShowInfoDialog(main.getShell(), Resources.getMessage("Controller.159"), Resources.getMessage("Controller.153")); //$NON-NLS-1$ //$NON-NLS-2$
-            return;
-        }
-        
-        // Update
-        Hierarchy hierarchy = Hierarchy.create(array);
-        this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
-        this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
-    }
-    /**
      * Find and replace action
      */
     public void actionMenuEditFindReplace() {
@@ -952,7 +1002,6 @@ public class Controller implements IView {
             model.setModified();
         }
     }
-
     /**
      * Initializes the hierarchy for the currently selected attribute
      */
@@ -982,6 +1031,7 @@ public class Controller implements IView {
         this.model.getInputConfig().setHierarchy(model.getSelectedAttribute(), hierarchy);
         this.update(new ModelEvent(this, ModelPart.HIERARCHY, hierarchy));
     }
+
     /**
      * Resets the current output
      */
@@ -1455,6 +1505,9 @@ public class Controller implements IView {
         } catch (final IOException e) {
             main.showInfoDialog(main.getShell(),
                                 Resources.getMessage("Controller.82"), e.getMessage()); //$NON-NLS-1$
+
+            // Reset and return
+            reset();
             return;
         }
 
@@ -1472,6 +1525,8 @@ public class Controller implements IView {
             getResources().getLogger().info(worker.getError());
             main.showInfoDialog(main.getShell(), Resources.getMessage("Controller.85"), //$NON-NLS-1$
                                 message);
+            // Reset and return
+            reset();
             return;
         }
 
@@ -1551,17 +1606,10 @@ public class Controller implements IView {
                                   ModelPart.CLIPBOARD,
                                   model.getClipboard().getClipboardEntries()));
         }
-
+        
         // Update the attribute types
         if (model.getInputConfig().getInput() != null) {
-            final DataHandle handle = model.getInputConfig()
-                                           .getInput()
-                                           .getHandle();
-            for (int i = 0; i < handle.getNumColumns(); i++) {
-                update(new ModelEvent(this,
-                                      ModelPart.ATTRIBUTE_TYPE,
-                                      handle.getAttributeName(i)));
-            }
+            new ModelEvent(this, ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE, model.getInputDefinition());
         }
 
         // Update research subset
@@ -1599,16 +1647,22 @@ public class Controller implements IView {
     public void actionShowAuditTrail() {
         main.showAuditTrail(model.getAuditTrail());
     }
-
+    
     /**
      * Shows an input dialog for selecting a charset.
-     * @param shell
      * @return
      */
-    public Charset actionShowCharsetInputDialog(final Shell shell) {
-        return main.showCharsetInputDialog(shell);
+    public Charset actionShowCharsetInputDialog() {
+        final Charset[] result = new Charset[1];
+        main.getShell().getDisplay().syncExec(new Runnable() {
+            @Override
+            public void run() {
+                result[0] = main.showCharsetInputDialog(main.getShell());
+            }
+        });
+        return result[0];
     }
-    
+
     /**
      * Shows a dialog for configuring classifiers
      * @param config 
@@ -1649,7 +1703,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, values);
     }
-
+    
     /**
      * Shows a dialog for selecting a format string for a data type.
      *
@@ -1670,7 +1724,7 @@ public class Controller implements IView {
 
         return main.showFormatInputDialog(shell, title, text, null, locale, type, Arrays.asList(values));
     }
-    
+
     /**
      * Shows a help dialog.
      *
@@ -1679,7 +1733,6 @@ public class Controller implements IView {
     public void actionShowHelpDialog(String id) {
         main.showHelpDialog(id);
     }
-
     /**
      * Shows an info dialog.
      *
@@ -1690,6 +1743,7 @@ public class Controller implements IView {
     public void actionShowInfoDialog(final Shell shell, final String header, final String text) {
         main.showInfoDialog(shell, header, text);
     }
+
     /**
      * Shows an input dialog.
      *
@@ -1776,7 +1830,6 @@ public class Controller implements IView {
 
         return main.showOrderValuesDialog(shell, title, text, type, locale, values);
     }
-
     /**
      * Shows a progress dialog.
      *
@@ -1787,6 +1840,7 @@ public class Controller implements IView {
                                          final Worker<?> worker) {
         main.showProgressDialog(text, worker);
     }
+    
     /**
      * Shows a question dialog.
      *
@@ -1800,7 +1854,7 @@ public class Controller implements IView {
                                             final String text) {
         return main.showQuestionDialog(shell, header, text);
     }
-    
+
     /**
      * Shows a question dialog.
      *
@@ -1897,7 +1951,7 @@ public class Controller implements IView {
                               ModelPart.RESEARCH_SUBSET,
                               empty));
     }
-
+    
     /**
      * Creates a subset by executing a query.
      */
@@ -1914,7 +1968,7 @@ public class Controller implements IView {
         model.setSubsetOrigin(Resources.getMessage("Controller.70")); //$NON-NLS-1$
         update(new ModelEvent(this, ModelPart.RESEARCH_SUBSET, subset.getSet()));
     }
-    
+
     /**
      * Creates a subset via random sampling
      */
@@ -2025,6 +2079,9 @@ public class Controller implements IView {
 
     @Override
     public void reset() {
+        if (model != null) {
+            model.reset();
+        }
         for (final Set<IView> listeners : getListeners().values()) {
             for (final IView listener : listeners) {
                 listener.reset();
@@ -2100,6 +2157,7 @@ public class Controller implements IView {
             model.getCSVSyntax().setEscape(csvconfig.getEscape());
             model.getCSVSyntax().setLinebreak(csvconfig.getLinebreak());
             model.getCSVSyntax().setQuote(csvconfig.getQuote());
+            model.getCSVSyntax().setMaxColumns(csvconfig.getMaxColumns());
         } else {
             model.setInputBytes(0);
         }

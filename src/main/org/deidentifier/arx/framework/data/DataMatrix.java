@@ -55,9 +55,14 @@ public class DataMatrix implements Serializable {
      * @param columns the num columns
      */
     public DataMatrix(final int rows, final int columns) {
-        this.columns = columns;
-        this.rows = rows;
-        this.array = new int[columns * rows];
+        try {
+            this.columns = columns;
+            this.rows = rows;
+            int cells = Math.multiplyExact(rows, columns);
+            this.array = new int[cells];
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("Not more then 2^31-1 cells supported");
+        }
     }
 
     /**
@@ -393,9 +398,7 @@ public class DataMatrix implements Serializable {
      */
     public void setRow(int row, int[] data) {
         int offset = row * columns;
-        for (int i = 0; i < data.length; i++) {
-            this.array[offset++] = data[i];
-        }
+        System.arraycopy(data, 0, this.array, offset, data.length);
     }
 
     /**

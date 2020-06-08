@@ -23,9 +23,10 @@ import org.apache.mahout.math.function.DoubleDoubleFunction;
 import org.apache.mahout.math.function.DoubleFunction;
 import org.apache.mahout.vectorizer.encoders.ConstantValueEncoder;
 import org.apache.mahout.vectorizer.encoders.StaticWordValueEncoder;
+import org.deidentifier.arx.DataHandleInternal;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes;
 import org.deidentifier.arx.aggregates.ClassificationConfigurationNaiveBayes.Type;
-import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.WrappedBoolean;
 
 import smile.classification.NaiveBayes;
 import smile.classification.NaiveBayes.Model;
@@ -34,7 +35,7 @@ import smile.classification.NaiveBayes.Model;
  * Implements a classifier
  * @author Fabian Prasser
  */
-public class MultiClassNaiveBayes implements ClassificationMethod {
+public class MultiClassNaiveBayes extends ClassificationMethod {
     
     private static class NBVector implements Vector {
 
@@ -93,31 +94,40 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
     }
 
     /** Config */
-    private final ClassificationConfigurationNaiveBayes      config;
+    private final ClassificationConfigurationNaiveBayes config;
     /** Encoder */
-    private final ConstantValueEncoder            interceptEncoder;
+    private final ConstantValueEncoder                  interceptEncoder;
     /** Instance */
-    private final NaiveBayes                      nb;
+    private final NaiveBayes                            nb;
     /** Specification */
-    private final ClassificationDataSpecification specification;
+    private final ClassificationDataSpecification       specification;
     /** Encoder */
-    private final StaticWordValueEncoder          wordEncoder;
+    private final StaticWordValueEncoder                wordEncoder;
+    /** Input handle */
+    private final DataHandleInternal                    inputHandle;
 
     /**
      * Creates a new instance
+     * @param interrupt
      * @param specification
      * @param config
+     * @param inputHandle
      */
-    public MultiClassNaiveBayes(ClassificationDataSpecification specification,
-                                ClassificationConfigurationNaiveBayes config) {
+    public MultiClassNaiveBayes(WrappedBoolean interrupt,
+                                ClassificationDataSpecification specification,
+                                ClassificationConfigurationNaiveBayes config,
+                                DataHandleInternal inputHandle) {
+
+        super(interrupt);
 
         // Store
         this.config = config;
         this.specification = specification;
+        this.inputHandle = inputHandle;
         
         // Prepare classifier
         this.nb = new NaiveBayes(config.getType() == Type.BERNOULLI ? Model.BERNOULLI : Model.MULTINOMIAL, 
-                                 this.specification.classMap.size(), config.getVectorLength(), config.getSigma());
+                                 this.specification.classMap.size(), config.getVectorLength(), config.getSigma(), null);
                 
         // Prepare encoders
         this.interceptEncoder = new ConstantValueEncoder("intercept");
@@ -127,7 +137,7 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
     @Override
     public ClassificationResult classify(DataHandleInternal features, int row) {
         double[] probabilities = new double[specification.classMap.size()];
-        int result = nb.predict(encodeFeatures(features, row), probabilities);
+        int result = nb.predict(encodeFeatures(features, row, true), probabilities);
         return new MultiClassNaiveBayesClassificationResult(result, probabilities, specification.classMap);
     }
 
@@ -138,7 +148,7 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
 
     @Override
     public void train(DataHandleInternal features, DataHandleInternal clazz, int row) {
-        nb.learn(encodeFeatures(features, row), encodeClass(clazz, row));
+        nb.learn(encodeFeatures(features, row, false), encodeClass(clazz, row));
     }
 
     /**
@@ -155,9 +165,10 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
      * Encodes a feature
      * @param handle
      * @param row
+     * @param classify
      * @return
      */
-    private double[] encodeFeatures(DataHandleInternal handle, int row) {
+    private double[] encodeFeatures(DataHandleInternal handle, int row, boolean classify) {
 
         // Prepare
         NBVector vector = new NBVector(config.getVectorLength());
@@ -175,7 +186,12 @@ public class MultiClassNaiveBayes implements ClassificationMethod {
             
             // Obtain data
             ClassificationFeatureMetadata metadata = specification.featureMetadata[count];
-            String value = handle.getValue(row, index, true);
+            String value = null;
+            if (classify && metadata.isNumericMicroaggregation()) {
+                value = inputHandle.getValue(row, index, true);
+            } else {
+                value = handle.getValue(row, index, true);
+            }
             Double numeric = metadata.getNumericValue(value);
             if (Double.isNaN(numeric)) {    
                 wordEncoder.addToVector("Attribute-" + index + ":" + value, 1, vector);

@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: de.linearbits:libjhc:swt">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/linearbits/libjhc/swt/libjhc-swt.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/de/linearbits/libjhc/swt/libjhc-swt-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/de/linearbits/libjhc/swt/libjhc-swt-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

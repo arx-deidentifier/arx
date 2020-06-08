@@ -150,7 +150,7 @@ public class ViewPopulationModel implements IView {
         text.setEditable(false);
         
         // Button for updating
-        Button btn1 = new Button(parent, SWT.PUSH);
+        Button btn1 = new Button(parent, SWT.FLAT);
         btn1.setText(Resources.getMessage("ViewPopulationModel.0")); //$NON-NLS-1$
         btn1.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -206,7 +206,7 @@ public class ViewPopulationModel implements IView {
         text2.setEditable(false);
 
         // Button for updating
-        Button btn2 = new Button(parent, SWT.PUSH);
+        Button btn2 = new Button(parent, SWT.FLAT);
         btn2.setText(Resources.getMessage("ViewPopulationModel.8")); //$NON-NLS-1$
         btn2.addSelectionListener(new SelectionAdapter() {
             @Override

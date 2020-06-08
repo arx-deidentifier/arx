@@ -248,7 +248,7 @@ public class ViewTiles extends ViewSolutionSpace {
                 SWTUtil.enable(tiles);
                 tiles.setRedraw(true);
                 
-                final ARXLattice l = getModel().getProcessStatistics().getNumberOfSteps() > 1 ? 
+                final ARXLattice l = getModel().getProcessStatistics().isLocalTransformation() ? 
                                      getModel().getProcessStatistics().getLattice() : lattice;
 
                 List<ARXNode> list = new ArrayList<ARXNode>();
@@ -275,7 +275,9 @@ public class ViewTiles extends ViewSolutionSpace {
     @Override
     protected void eventFilterChanged(ARXResult result, ModelNodeFilter filter) {
         if (getModel() != null && result != null) {
-            updateFilter(result.getLattice(), filter);
+            ARXLattice lattice = getModel().getProcessStatistics().isLocalTransformation() ?
+                                 getModel().getProcessStatistics().getLattice() : result.getLattice();
+            updateFilter(lattice, filter);
         } else {
             reset();
         }

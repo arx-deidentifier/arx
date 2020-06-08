@@ -20,12 +20,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.deidentifier.arx.DataHandleInternal;
+import org.deidentifier.arx.common.WrappedBoolean;
 
 /**
  * Implements a classifier
  * @author Fabian Prasser
  */
-public class MultiClassZeroR implements ClassificationMethod {
+public class MultiClassZeroR extends ClassificationMethod {
 
     /** Counts */
     private final Map<Integer, Integer>           counts = new HashMap<>();
@@ -36,9 +37,11 @@ public class MultiClassZeroR implements ClassificationMethod {
     
     /**
      * Creates a new instance
+     * @param interrupt
      * @param specification
      */
-    public MultiClassZeroR(ClassificationDataSpecification specification) {
+    public MultiClassZeroR(WrappedBoolean interrupt, ClassificationDataSpecification specification) {
+        super(interrupt);
         this.specification = specification;
     }
 

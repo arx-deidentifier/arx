@@ -106,7 +106,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupify g) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupify g) {
 
         // Init
         int[] transformation = node.getGeneralization();
@@ -141,7 +141,7 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     }
     
     @Override
-    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation node, HashGroupifyEntry entry) {
+    protected ILSingleDimensionalWithBound getInformationLossInternal(Transformation<?> node, HashGroupifyEntry entry) {
 
         // Init
         int[] transformation = node.getGeneralization();
@@ -161,12 +161,12 @@ public class MetricSDNMAmbiguity extends AbstractMetricSingleDimensional {
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation node) {
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node) {
         return null;
     }
 
     @Override
-    protected ILSingleDimensional getLowerBoundInternal(Transformation node,
+    protected ILSingleDimensional getLowerBoundInternal(Transformation<?> node,
                                                                HashGroupify g) {
         
 

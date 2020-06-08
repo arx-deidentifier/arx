@@ -103,6 +103,14 @@ public class QualityMeasureColumnOriented {
             }
         }
     }
+    
+    /**
+     * Returns an aggregate, or NaN if not available. Higher is better.
+     * @return
+     */
+    public double getArithmeticMean() {
+        return this.getArithmeticMean(false);
+    }
 
     /**
      * Returns an aggregate, or NaN if not available. Higher is better.
@@ -121,6 +129,14 @@ public class QualityMeasureColumnOriented {
     
     /**
      * Returns an aggregate, or NaN if not available. Higher is better.
+     * @return
+     */
+    public double getGeometricMean() {
+        return this.getGeometricMean(false);
+    }
+    
+    /**
+     * Returns an aggregate, or NaN if not available. Higher is better.
      * @param normalizeBeforeAggregation
      * @return
      */
@@ -132,6 +148,14 @@ public class QualityMeasureColumnOriented {
         val = val < 0d ? 0d : val; // Truncate
         val = val > 1d ? 1d : val; // Truncate
         return 1d - val;
+    }
+    
+    /**
+     * Returns an aggregate, or NaN if not available. Higher is better.
+     * @return
+     */
+    public double getMax() {
+        return this.getMax(false);
     }
 
     /**

@@ -91,7 +91,7 @@ public class ProfitabilityJournalistNoAttack extends ProfitabilityProsecutorNoAt
     }
 
     @Override
-    public boolean isAnonymous(Transformation node, HashGroupifyEntry entry) {
+    public boolean isAnonymous(Transformation<?> node, HashGroupifyEntry entry) {
         return entry.pcount >= super.getK();
     }
     

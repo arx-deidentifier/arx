@@ -111,10 +111,17 @@ public class RiskModelSampleRiskDistribution {
         }
         double cumulativeRisk = 0;
         for (int i=0; i<thresholdsHigh.length; i++) {
+            
+            // Calculate
             cumulativeRisk += this.recordsAtRisk[i];
+            
+            // Fix minor rounding issues
+            cumulativeRisk = cumulativeRisk > 1d ? 1d : cumulativeRisk;
+            
+            // Store
             this.recordsAtCumulativeRisk[i] = cumulativeRisk;
         }
-        this.threshold = Math.min(1.0d / (double)histogram.getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
+        this.threshold = histogram.isEmpty() ? 0d : Math.min(1.0d / (double)histogram.getHistogram()[0], config != null && anonymous ? config.getRiskThresholdProsecutor() : 1d);
     }
     
     /**
@@ -187,7 +194,7 @@ public class RiskModelSampleRiskDistribution {
     }
 
     /**
-     * Returns the threshold for which is available on prosecutor risks
+     * Returns the threshold which is available on prosecutor risks
      * @return
      */
     public double getRiskThreshold() {

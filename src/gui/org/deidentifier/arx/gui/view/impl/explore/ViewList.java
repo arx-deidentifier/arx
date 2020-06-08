@@ -342,11 +342,11 @@ public class ViewList extends ViewSolutionSpace {
                 }
                 list.clear();
                 
-                final ARXLattice l = getModel().getProcessStatistics().getNumberOfSteps() > 1 ? 
-                                     getModel().getProcessStatistics().getLattice() : result.getLattice();
-                for (final ARXNode[] level : l.getLevels()) {
+                final ARXLattice lattice = getModel().getProcessStatistics().isLocalTransformation() ? 
+                                           getModel().getProcessStatistics().getLattice() : result.getLattice();
+                for (final ARXNode[] level : lattice.getLevels()) {
                     for (final ARXNode node : level) {
-                        if (filter.isAllowed(result.getLattice(), node)) {
+                        if (filter.isAllowed(lattice, node)) {
                             list.add(node);
                         }
                     }
@@ -356,8 +356,7 @@ public class ViewList extends ViewSolutionSpace {
                     @Override
                     public int compare(final ARXNode arg0,
                                        final ARXNode arg1) {
-                        return arg0.getHighestScore()
-                                   .compareTo(arg1.getHighestScore());
+                        return arg0.getHighestScore().compareTo(arg1.getHighestScore());
                     }
                 });
 

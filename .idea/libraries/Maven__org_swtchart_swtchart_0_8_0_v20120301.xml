@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: org.swtchart:swtchart:0.8.0.v20120301">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/swtchart/swtchart/0.8.0.v20120301/swtchart-0.8.0.v20120301.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$MAVEN_REPOSITORY$/org/swtchart/swtchart/0.8.0.v20120301/swtchart-0.8.0.v20120301-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$MAVEN_REPOSITORY$/org/swtchart/swtchart/0.8.0.v20120301/swtchart-0.8.0.v20120301-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

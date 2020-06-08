@@ -314,6 +314,18 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public static ARXConfiguration create(Metric<?> metric) {
         return new ARXConfiguration(metric);
     }
+    
+    /**
+     * The semantics of heuristic search steps.
+     */
+    public static enum SearchStepSemantics {
+        
+        /** Steps correspond to checks */
+        CHECKS,
+        
+        /** Steps correspond to expansions */
+        EXPANSIONS
+    }
 
     /** Absolute suppression limit. */
     private int                                absMaxOutliers                        = 0;
@@ -366,14 +378,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** The heuristic algorithm will terminate after the given time limit */
     private Integer                            heuristicSearchTimeLimit              = 30000;
 
-    /** The heuristic algorithm will terminate after the given time limit */
+    /** The heuristic algorithm will terminate after the given number of search steps */
     private Integer                            heuristicSearchStepLimit              = Integer.MAX_VALUE;
 
     /** Cost/benefit configuration */
     private ARXCostBenefitConfiguration        costBenefitConfiguration              = ARXCostBenefitConfiguration.create();
 
+    /** The privacy budget to use for the data-dependent differential privacy search algorithm */
+    private Double                             dpSearchBudget                        = 0.1d;
+
     /** Number of output records */
     private int                                numOutputRecords                      = 0;
+    
+    /** Semantics of heuristic search steps */
+    private SearchStepSemantics                heuristicSearchStepSemantics                   = SearchStepSemantics.CHECKS;
 
     /**
      * Creates a new configuration without tuple suppression.
@@ -501,7 +519,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchEnabled = this.heuristicSearchEnabled;
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
+        result.heuristicSearchStepLimit = this.heuristicSearchStepLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
+        result.dpSearchBudget = this.dpSearchBudget;
+        result.heuristicSearchStepSemantics = this.heuristicSearchStepSemantics;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -553,15 +574,61 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * The heuristic search algorithm will terminate after the returned number of transformations
-     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * Returns the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
      * @return
      */
-    public int getHeuristicSearchStepLimit() {
+    public double getDPSearchBudget() {
+        if (this.dpSearchBudget == null) {
+            this.dpSearchBudget = 0.1d;
+        }
+        return this.dpSearchBudget;
+    }
+    
+    /**
+     * The heuristic search algorithm will terminate after the returned number of steps.
+     * The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * @param requestedSearchStepSemantics the semantics of the number of search steps to be returned
+     * @param numQIs the number of QIs
+     * @return
+     */
+    public int getHeuristicSearchStepLimit(SearchStepSemantics requestedSearchStepSemantics, int numQIs) {
+        
+    	// Check some defaults
         if (this.heuristicSearchStepLimit == null) {
             this.heuristicSearchStepLimit = Integer.MAX_VALUE;
         }
-        return this.heuristicSearchStepLimit;
+        if (this.heuristicSearchStepSemantics == null) {
+            this.heuristicSearchStepSemantics = SearchStepSemantics.CHECKS;
+        }
+        
+        // No need to calculate anything
+        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE || requestedSearchStepSemantics == this.heuristicSearchStepSemantics) {
+            return this.heuristicSearchStepLimit;
+        }
+
+        // Choose correct semantics
+        switch (this.heuristicSearchStepSemantics) {
+        	case CHECKS:
+        		switch (requestedSearchStepSemantics) {
+			        case EXPANSIONS:
+			            // Convert the limit of checks which has been set to the requested limit of expansions
+			            return this.heuristicSearchStepLimit / numQIs;
+			        default:
+			            throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+			        }
+
+        	case EXPANSIONS:
+        		switch (requestedSearchStepSemantics) {
+			        case CHECKS:
+			            // Convert the limit of expansions which has been set to the requested limit of checks
+			            return this.heuristicSearchStepLimit * numQIs;
+			        default:
+			            throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+			        }
+        	default:
+	            throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+	    }
     }
     
     /**
@@ -907,6 +974,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.costBenefitConfiguration = config;
         return this;
     }
+    
+    /**
+     * Sets the privacy budget to use for the data-dependent
+     * differential privacy search algorithm. The default is 0.1.
+     * @param budget
+     */
+    public void setDPSearchBudget(double budget) {
+        if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.dpSearchBudget = budget;
+    }
 
     /**
      * Sets whether ARX will use a heuristic search strategy. The default is false.
@@ -919,14 +996,33 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /**
      * The heuristic search algorithm will terminate after the given number of transformations
-     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit. ARX supports different
+     * search step semantics. The standards semantics (implemented by this method) is that this parameter
+     * restricts the number of transformations from the solution space that are searched during anonymization.
      * @param numberOfTransformations
      */
     public void setHeuristicSearchStepLimit(int numberOfTransformations) {
         if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchStepLimit = numberOfTransformations;
+        this.heuristicSearchStepSemantics = SearchStepSemantics.CHECKS;
     }
 
+    /**
+     * The heuristic search algorithm will terminate after the given number of transformations
+     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit. ARX supports different
+     * search step semantics. The standards semantics is that this parameter restricts the number of transformations
+     * from the solution space that are checked during anonymization. If the semantic <code>EXPANSIONS</code> is set, 
+     * then the limit of the number of checks will be calculated by multiplying the heuristic search step limit with
+     * the number of QIs.
+     * @param numberOfTransformations
+     * @param searchStepSemantics
+     */
+    public void setHeuristicSearchStepLimit(int numberOfTransformations, SearchStepSemantics searchStepSemantics) {
+        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.heuristicSearchStepLimit = numberOfTransformations;
+        this.heuristicSearchStepSemantics = searchStepSemantics;
+    }
+    
     /**
      * When the size of the solution space exceeds the given number of transformations,
      * ARX will use a heuristic search strategy. The default is 100.000.
@@ -1262,7 +1358,10 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
         // Initialize
         for (PrivacyCriterion c : criteria) {
-            c.initialize(manager, this);
+            // Differential Privacy has already been initialized by the DataManager
+            if (!(c instanceof EDDifferentialPrivacy)) {
+                c.initialize(manager, this);
+            }
         }
         
         // Calculate number of records in output data

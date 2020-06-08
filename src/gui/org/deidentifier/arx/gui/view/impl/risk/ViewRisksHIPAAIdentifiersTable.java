@@ -65,9 +65,9 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
      * @param reset
      */
     public ViewRisksHIPAAIdentifiersTable(final Composite parent,
-                                    final Controller controller,
-                                    final ModelPart target,
-                                    final ModelPart reset) {
+                                          final Controller controller,
+                                          final ModelPart target,
+                                          final ModelPart reset) {
                                     
         super(parent, controller, target, reset);
         this.manager = new AnalysisManager(parent.getDisplay());
@@ -76,9 +76,6 @@ public class ViewRisksHIPAAIdentifiersTable extends ViewRisks<AnalysisContextRis
     @Override
     public void update(ModelEvent event) {
         super.update(event);
-        if (event.part == ModelPart.ATTRIBUTE_TYPE) {
-            triggerUpdate();
-        }
     }
     
     /**

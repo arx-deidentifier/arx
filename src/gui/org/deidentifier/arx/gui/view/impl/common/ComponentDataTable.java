@@ -369,7 +369,7 @@ public class ComponentDataTable implements IComponent {
 
         // Register default cell painter
         natTable.getConfigRegistry().registerConfigAttribute(CellConfigAttributes.CELL_PAINTER, 
-                                                             new DataTableDecorator( new TextPainter(false, true, 0, true),
+                                                             new DataTableDecorator( new TextPainter(false, true, 0, false),
                                                              new BorderStyle(2, GUIHelper.COLOR_BLACK, LineStyleEnum.SOLID)),
                                                                 DisplayMode.NORMAL,
                                                                 GridRegion.BODY);

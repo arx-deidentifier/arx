@@ -38,6 +38,9 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
 
     /** Character that escapes. */
     private final char   escape;
+    
+    /** Max columns*/
+    private final int    maxColumns;
 
     /**
      * Indicates whether first row contains header (names of columns).
@@ -138,6 +141,38 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
         this.containsHeader = containsHeader;
         this.linebreak = linebreak;
         this.charset = charset;
+        this.maxColumns = 0;
+    }
+
+    /**
+     * Creates a new instance of this object.
+     *
+     * @param fileLocation the file location
+     * @param charset the charset
+     * @param delimiter the delimiter
+     * @param quote the quote
+     * @param escape the escape
+     * @param linebreak the linebreak
+     * @param containsHeader the contains header
+     * @param maxColumns
+     */
+    public ImportConfigurationCSV(String fileLocation,
+                                  Charset charset,
+                                  char delimiter,
+                                  char quote,
+                                  char escape,
+                                  char[] linebreak,
+                                  boolean containsHeader,
+                                  int maxColumns) {
+
+        setFileLocation(fileLocation);
+        this.quote = quote;
+        this.delimiter = delimiter;
+        this.escape = escape;
+        this.containsHeader = containsHeader;
+        this.linebreak = linebreak;
+        this.charset = charset;
+        this.maxColumns = maxColumns;
     }
 
     /**
@@ -228,6 +263,14 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     }
 
     /**
+     * Returns max columns
+     * @return
+     */
+    public int getMaxColumns() {
+        return maxColumns;
+    }
+
+    /**
      * Gets the quote.
      *
      * @return {@link #quote}
@@ -237,11 +280,21 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
     }
 
     /**
+     * Sets the contains header.
+     *
+     * @param containsHeader {@link #containsHeader}
+     */
+    @Override
+    public void setContainsHeader(boolean containsHeader) {
+        this.containsHeader = containsHeader;
+    }
+
+    /**
      * Sets the indexes based on the header.
      *
      * @param row the row
      */
-    public void prepare(String[] row) {
+    protected void prepare(String[] row) {
 
         for (ImportColumn c : super.getColumns()) {
             ImportColumnCSV column = (ImportColumnCSV) c;
@@ -258,15 +311,5 @@ public class ImportConfigurationCSV extends ImportConfigurationFile implements I
                 }
             }
         }
-    }
-
-    /**
-     * Sets the contains header.
-     *
-     * @param containsHeader {@link #containsHeader}
-     */
-    @Override
-    public void setContainsHeader(boolean containsHeader) {
-        this.containsHeader = containsHeader;
     }
 }

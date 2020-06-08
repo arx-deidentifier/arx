@@ -19,6 +19,7 @@ package org.deidentifier.arx.aggregates;
 
 import java.text.ParseException;
 import java.util.Map;
+import java.util.Set;
 
 import org.deidentifier.arx.ARXClassificationConfiguration;
 import org.deidentifier.arx.ARXFeatureScaling;
@@ -63,6 +64,8 @@ public class StatisticsBuilderInterruptible { // NO_UCD
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
+                throw new InterruptedException("Interrupted");
             } else {
                 throw new UnexpectedErrorException(e);
             }
@@ -83,6 +86,8 @@ public class StatisticsBuilderInterruptible { // NO_UCD
             return builder.getClassificationPerformance(features, clazz, config);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
                 throw new InterruptedException("Interrupted");
             } else {
                 throw new UnexpectedErrorException(e);
@@ -107,8 +112,10 @@ public class StatisticsBuilderInterruptible { // NO_UCD
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");
+            } else if (e instanceof InterruptedException) {
+                throw new InterruptedException("Interrupted");
             } else {
-                throw new InterruptedException("Interrupted by exception: " + e.getMessage());
+                throw new UnexpectedErrorException(e);
             }
         }
     }
@@ -515,6 +522,45 @@ public class StatisticsBuilderInterruptible { // NO_UCD
     public StatisticsQuality getQualityStatistics(DataHandle output) throws InterruptedException {
         try {
             return builder.getQualityStatistics(output);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
+     * Returns data quality according to various models. This is a special variant of 
+     * the method supporting arbitrary user-defined outputs.
+     * 
+     * @param output
+     * @param qis
+     * @return
+     * @throws InterruptedException 
+     */
+    public StatisticsQuality getQualityStatistics(DataHandle output, Set<String> qis) throws InterruptedException {
+        try {
+            return builder.getQualityStatistics(output, qis);
+        } catch (Exception e) {
+            if (e instanceof ComputationInterruptedException) {
+                throw new InterruptedException("Interrupted");
+            } else {
+                throw new UnexpectedErrorException(e);
+            }
+        }
+    }
+
+    /**
+     * Returns data quality according to various models.
+     * @param qis
+     * @return
+     * @throws InterruptedException 
+     */
+    public StatisticsQuality getQualityStatistics(Set<String> qis) throws InterruptedException {
+        try {
+            return builder.getQualityStatistics(qis);
         } catch (Exception e) {
             if (e instanceof ComputationInterruptedException) {
                 throw new InterruptedException("Interrupted");

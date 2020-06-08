@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.deidentifier.arx.DataHandleInternal.InterruptHandler;
 import org.deidentifier.arx.aggregates.StatisticsBuilder;
@@ -36,19 +37,25 @@ import org.deidentifier.arx.framework.data.Dictionary;
 public class DataHandleInput extends DataHandle {
 
     /** The data. */
-    protected DataMatrix data            = null;
+    protected DataMatrix data               = null;
 
     /** The dictionary. */
-    protected Dictionary dictionary      = null;
+    protected Dictionary dictionary         = null;
 
     /** The data. */
-    private DataMatrix   dataGeneralized = null;
+    private DataMatrix   dataGeneralized    = null;
 
     /** The data. */
-    private DataMatrix   dataAnalyzed    = null;
+    private DataMatrix   dataAnalyzed       = null;
 
     /** Is this handle locked?. */
-    private boolean      locked          = false;
+    private boolean      locked             = false;
+
+    /** Stores the set of QIs for which the suppression status has been determined */
+    private Set<String>  suppressionQIs     = null;
+
+    /** Stores the set of rows which are suppressed */
+    private RowSet       suppressionRecords = null;
 
     /**
      * Creates a new data handle.
@@ -74,26 +81,59 @@ public class DataHandleInput extends DataHandle {
 
         // Init dictionary
         this.dictionary = new Dictionary(header.length);
+        
+        // Optimized code-path, if the number of records is known
+        if (data.getLength() != null && data.getLength() > 0) {
+            
+            // Records
+            int records = data.getLength();
 
-        // Encode data
-        List<int[]> vals = new ArrayList<int[]>();
-        while (iterator.hasNext()) {
-
-            // Process a tuple
-            String[] strings = iterator.next();
-            int[] tuple = new int[header.length];
-            for (int i = 0; i < header.length; i++) {
-                String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
-                value = (value != null) ? value : DataType.NULL_VALUE;
-                tuple[i] = dictionary.register(i, value);
+            // Build array
+            this.data = new DataMatrix(records, header.length);
+            
+            // Encode data on the fly
+            int row = 0;
+            while (iterator.hasNext()) {
+    
+                // Process a tuple
+                String[] strings = iterator.next();
+                int[] tuple = new int[header.length];
+                for (int i = 0; i < header.length; i++) {
+                    String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
+                    value = (value != null) ? value : DataType.NULL_VALUE;
+                    tuple[i] = dictionary.register(i, value);
+                }
+                this.data.setRow(row, tuple);
+                row++;
             }
-            vals.add(tuple);
-        }
+            
+            // Sanity check to prevent loading errors
+            if (row != records) {
+                throw new IllegalStateException("Invalid internal state. Numbers of records don't match. Expected: <" + records + "> is: <" + row + ">");
+            }
 
-        // Build array
-        this.data = new DataMatrix(vals.size(), header.length);
-        for (int row = 0; row < vals.size(); row++) {
-            this.data.setRow(row, vals.get(row));
+        } else { 
+    
+            // Encode data
+            List<int[]> vals = new ArrayList<int[]>();
+            while (iterator.hasNext()) {
+    
+                // Process a tuple
+                String[] strings = iterator.next();
+                int[] tuple = new int[header.length];
+                for (int i = 0; i < header.length; i++) {
+                    String value = (i < strings.length) ? strings[i] : DataType.NULL_VALUE;
+                    value = (value != null) ? value : DataType.NULL_VALUE;
+                    tuple[i] = dictionary.register(i, value);
+                }
+                vals.add(tuple);
+            }
+    
+            // Build array
+            this.data = new DataMatrix(vals.size(), header.length);
+            for (int row = 0; row < vals.size(); row++) {
+                this.data.setRow(row, vals.get(row));
+            }
         }
 
         // finalize dictionary
@@ -105,50 +145,46 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     public String getAttributeName(final int column) {
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         return header[column];
     }
 
     @Override
     public int getGeneralization(final String attribute) {
-        checkRegistry();
+        checkReleased();
         return 0;
     }
 
     @Override
     public int getNumColumns() {
-        checkRegistry();
+        checkReleased();
         return header.length;
     }
 
     @Override
     public int getNumRows() {
-        checkRegistry();
+        checkReleased();
         return data.getNumRows();
     }
 
     @Override
     public StatisticsBuilder getStatistics() {
+        checkReleased();
         return new StatisticsBuilder(new DataHandleInternal(this));
     }
-
+    
     @Override
     public String getValue(final int row, final int column) {
-        checkRegistry();
+        checkReleased();
         checkColumn(column);
         checkRow(row, data.getNumRows());
         return internalGetValue(row, column, false);
     }
-
-    @Override
-    public boolean isOutlier(int row){
-        return false;
-    }
-
+    
     @Override
     public Iterator<String[]> iterator() {
-        checkRegistry();
+        checkReleased();
         return new Iterator<String[]>() {
 
             int index = -1;
@@ -179,7 +215,53 @@ public class DataHandleInput extends DataHandle {
             }
         };
     }
-    
+
+    /**
+     * Flags suppressed records
+     */
+    private void flagSuppressedRecords() {
+
+        // Definition will always return the same object if no changes have been performed
+        Set<String> qis = getDefinition().getQuasiIdentifyingAttributes();
+        if (qis == suppressionQIs) {
+            return;
+        }
+        
+        // Prepare
+        this.suppressionQIs = qis;
+        this.suppressionRecords = new RowSet(this.data.getNumRows());
+
+        // Determine columns
+        int[] columns;
+        
+        // If no QIs, we look at all columns
+        if (qis == null || qis.isEmpty()) {
+            
+            columns = new int[header.length];
+            for (int column = 0; column < header.length; column++) {
+                columns[column] = column;
+            }
+            
+        // Else we look at the qis only
+        } else {
+            
+            columns = new int[qis.size()];
+            int idx = 0;
+            for (int column = 0; column < header.length; column++) {
+                if (qis.contains(header[column])) {
+                    columns[idx++] = column;
+                }
+            }
+        }
+        
+        // Flag each row
+        for (int row = 0; row < data.getNumRows(); row++) {
+            if (internalIsOutlier(row, columns)) {
+                suppressionRecords.add(row);
+            }
+        }
+    }
+
     /**
      * Releases all resources.
      */
@@ -195,13 +277,8 @@ public class DataHandleInput extends DataHandle {
     }
 
     @Override
-    protected ARXConfiguration getConfiguration() {
-        return null;
-    }
-
-    @Override
     protected DataType<?>[] getColumnToDataType() {
-        checkRegistry();
+        checkReleased();
         DataType<?>[] dataTypes = new DataType[header.length];
         for (int i = 0; i < header.length; i++) {
             final DataType<?> type = definition.getDataType(header[i]);
@@ -215,8 +292,13 @@ public class DataHandleInput extends DataHandle {
     }
     
     @Override
+    protected ARXConfiguration getConfiguration() {
+        return null;
+    }
+
+    @Override
     protected String[] getDistinctValues(final int column, final boolean ignoreSuppression, InterruptHandler handler) {
-        checkRegistry();
+        checkReleased();
         handler.checkInterrupt();
         checkColumn(column);
         handler.checkInterrupt();
@@ -227,13 +309,13 @@ public class DataHandleInput extends DataHandle {
         System.arraycopy(dict, 0, vals, 0, vals.length);
         return vals;
     }
-
+    
     /**
      * Returns the input buffer
      * @return
      */
     protected DataMatrix getInputBuffer() {
-        checkRegistry();
+        checkReleased();
         return this.dataGeneralized;
     }
     
@@ -252,10 +334,45 @@ public class DataHandleInput extends DataHandle {
     protected int internalGetEncodedValue(final int row, final int column, final boolean ignoreSuppression) {
         return data.get(row, column);
     }
-    
+
     @Override
     protected String internalGetValue(final int row, final int column, final boolean ignoreSuppression) {
-        return dictionary.getMapping()[column][data.get(row, column)];
+        return dictionary.getMapping()[column][internalGetEncodedValue(row, column, ignoreSuppression)];
+    }
+
+    /**
+     * Returns whether the given row is an outlier.
+     *
+     * @param row
+     * @return
+     */
+    protected boolean internalIsOutlier(int row) {
+        
+        // Flag
+        flagSuppressedRecords();
+        
+        // Return
+        return this.suppressionRecords.contains(row);
+    }
+
+    @Override
+    protected boolean internalIsOutlier(int row, int[] columns) {
+        
+        // No data, no suppression
+        if (columns == null || columns.length == 0) {
+            return false;
+        }
+ 
+        // Check columns
+        int[] suppressed = dictionary.getSuppressedCodes();
+        for (int column : columns) {
+            if (data.get(row, column) != suppressed[column]) {
+                return false;
+            }
+        }
+        
+        // Done
+        return true;
     }
 
     @Override
@@ -318,7 +435,7 @@ public class DataHandleInput extends DataHandle {
     protected void setLocked(boolean locked){
         this.locked = locked;
     }
-
+    
     /**
      * Update the definition.
      *

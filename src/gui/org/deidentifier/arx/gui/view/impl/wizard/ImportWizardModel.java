@@ -17,20 +17,27 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataType;
+import org.deidentifier.arx.DataType.DataTypeWithFormat;
+import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.Model;
-import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.worker.Worker;
 import org.deidentifier.arx.io.ImportColumn;
 import org.deidentifier.arx.io.ImportColumnIndexed;
 import org.deidentifier.arx.io.ImportColumnJDBC;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Stores all of the data gathered by the wizard and offers means to access it
@@ -252,24 +259,97 @@ public class ImportWizardModel {
     
     /**
      * Returns a list of matching data types
-     * @param column
+     * @param controller 
+     * @param columns
      */
-    public List<Pair<DataType<?>, Double>> getMatchingDataTypes(ImportWizardModelColumn column) {
+    public Pair<Map<ImportWizardModelColumn, Map<String, DataType<?>>>,
+                Map<ImportWizardModelColumn, Map<String, DataType<?>>>> getMatchingDataTypes(Controller controller, 
+                                                                                             final List<ImportWizardModelColumn> columns) {
         
-        if (wizardColumns.indexOf(column) == -1) { 
-            throw new IllegalArgumentException(Resources.getMessage("ImportWizardModel.0"));  //$NON-NLS-1$
-        }
 
-        Data data = Data.create(getPreviewData());
-        int columnIndex = -1;
-        ImportColumn c = column.getColumn();
-        if (c instanceof ImportColumnIndexed) {
-            columnIndex =  ((ImportColumnIndexed) column.getColumn()).getIndex();
-        } else if (column.getColumn() instanceof ImportColumnJDBC){
-            columnIndex = ((ImportColumnJDBC) column.getColumn()).getIndex();
-        }
+        // Detect data types
+        Worker<Pair<Map<ImportWizardModelColumn, Map<String, DataType<?>>>,
+                    Map<ImportWizardModelColumn, Map<String, DataType<?>>>>> worker = new Worker<Pair<Map<ImportWizardModelColumn, Map<String, DataType<?>>>,
+                                                                                                      Map<ImportWizardModelColumn, Map<String, DataType<?>>>>>() {
+            
         
-        return data.getHandle().getMatchingDataTypes(columnIndex, locale, 0d);
+            @Override
+            public void run(IProgressMonitor arg0) throws InvocationTargetException,
+                                                          InterruptedException {
+
+                // Init
+                Map<ImportWizardModelColumn, Map<String, DataType<?>>> matching = new HashMap<>();
+                Map<ImportWizardModelColumn, Map<String, DataType<?>>> nonmatching = new HashMap<>();
+                
+                arg0.beginTask("Detecting data types", columns.size());
+
+                // Prepare
+                Data data = Data.create(getPreviewData());
+                
+                // For each column
+                int work = 0;
+                for (ImportWizardModelColumn column : columns) {
+                    
+                    // Status
+                    arg0.worked(work++);
+
+                    // Get index
+                    int columnIndex = -1;
+                    ImportColumn c = column.getColumn();
+                    if (c instanceof ImportColumnIndexed) {
+                        columnIndex =  ((ImportColumnIndexed) column.getColumn()).getIndex();
+                    } else if (column.getColumn() instanceof ImportColumnJDBC){
+                        columnIndex = ((ImportColumnJDBC) column.getColumn()).getIndex();
+                    }
+                    
+                    // Compute and store
+                    List<Pair<DataType<?>, Double>> matchingtypes = data.getHandle().getMatchingDataTypes(columnIndex, locale, 0d);
+                
+                    // Prepare
+                    matching.put(column, new LinkedHashMap<String, DataType<?>>());
+                    nonmatching.put(column, new LinkedHashMap<String, DataType<?>>());
+                    List<String> labels = new ArrayList<String>();
+                    List<DataType<?>> types = new ArrayList<DataType<?>>();
+                    
+                    // Enable first match
+                    if (column.getColumn().getDataType() == null || column.getColumn().getDataType() == DataType.STRING) {
+                        column.getColumn().setDataType(matchingtypes.iterator().next().getFirst());
+                    }
+                    
+                    // Store rest
+                    for (Pair<DataType<?>, Double> match : matchingtypes) {
+                        
+                        StringBuilder builder = new StringBuilder();
+                        builder.append(match.getFirst().getDescription().getLabel());
+                        if (match.getFirst() instanceof DataTypeWithFormat && ((DataTypeWithFormat)match.getFirst()).getFormat() != null) {
+                            builder.append(" ("); //$NON-NLS-1$
+                            builder.append(((DataTypeWithFormat)match.getFirst()).getFormat());
+                            builder.append(")"); //$NON-NLS-1$
+                        }
+                        builder.append(" "); //$NON-NLS-1$
+                        builder.append((int)(match.getSecond() * 100d));
+                        builder.append("%"); //$NON-NLS-1$
+                        
+                        String label = builder.toString();
+                        DataType<?> type = match.getFirst();
+                        labels.add(label);
+                        types.add(type);
+                        
+                        if (match.getSecond() > 0.5d) {
+                            matching.get(column).put(label, type);
+                        } else {
+                            nonmatching.get(column).put(label, type);   
+                        }
+                    }
+                }
+                
+                // Done
+                this.result = new Pair<>(matching, nonmatching);
+                arg0.done();
+            }
+        };
+        controller.actionShowProgressDialog("Detecting data types", worker);
+        return worker.getResult();
     }
 
     /**

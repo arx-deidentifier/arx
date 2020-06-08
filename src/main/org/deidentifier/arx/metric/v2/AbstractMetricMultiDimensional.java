@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.DataDefinition;
+import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
 import org.deidentifier.arx.framework.check.distribution.DistributionAggregateFunction;
 import org.deidentifier.arx.framework.data.Data;
 import org.deidentifier.arx.framework.data.DataAggregationInformation;
@@ -38,31 +39,34 @@ import org.deidentifier.arx.metric.Metric;
 public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMultiDimensional> {
 
     /** SVUID. */
-    private static final long               serialVersionUID = 3909752748519119689L;
+    private static final long          serialVersionUID = 3909752748519119689L;
 
     /** The weights. */
-    private double[]                        weights;
+    private double[]                   weights;
 
     /** Number of dimensions. */
-    private int                             dimensions;
+    private int                        dimensions;
 
     /** Number of dimensions with generalization */
-    private int                             dimensionsGeneralized;
+    private int                        dimensionsGeneralized;
 
     /** Number of dimensions with aggregation */
-    private int                             dimensionsAggregated;
+    private int                        dimensionsAggregated;
 
     /** Min. */
-    private double[]                        min;
+    private double[]                   min;
 
     /** Max. */
-    private double[]                        max;
+    private double[]                   max;
 
     /** The aggregate function. */
-    private AggregateFunction               function;
+    private AggregateFunction          function;
 
     /** The microaggregation functions. */
-    private DataAggregationInformation            aggregation;
+    private DataAggregationInformation aggregation;
+
+    /** Minimal size of equivalence classes enforced by the differential privacy model */
+    protected int                      k                = -1;
 
     /**
      * Creates a new instance.
@@ -282,6 +286,12 @@ public abstract class AbstractMetricMultiDimensional extends Metric<AbstractILMu
         Arrays.fill(min, 0d);
         this.max = new double[this.dimensions];
         Arrays.fill(max, Double.MAX_VALUE);
+        
+        if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)) {
+            // Store minimal size of equivalence classes
+            EDDifferentialPrivacy dpCriterion = config.getPrivacyModel(EDDifferentialPrivacy.class);
+            this.k = dpCriterion.getMinimalClassSize();
+        }
     }
 
     /**

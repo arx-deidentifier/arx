@@ -73,8 +73,8 @@ public class Example26 extends Example {
 
         DataType<Double> dataType = DataType.createDecimal("#.####", Locale.ENGLISH);
 
-        Double lower = new Double(40d);
-        Double upper = new Double(41d);
+        double lower = 40d;
+        double upper = 41d;
 
         // Create the builder
         HierarchyBuilderIntervalBased<Double> builder = HierarchyBuilderIntervalBased.create(
@@ -84,7 +84,7 @@ public class Example26 extends Example {
 
         // Define base intervals
         builder.setAggregateFunction(dataType.createAggregate().createIntervalFunction(true, false));
-        builder.addInterval(new Double(0d), interval);
+        builder.addInterval(0d, interval);
 
         // Define grouping fanouts
         builder.getLevel(0).addGroup(2);

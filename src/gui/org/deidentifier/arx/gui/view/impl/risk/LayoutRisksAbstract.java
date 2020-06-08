@@ -168,6 +168,21 @@ public class LayoutRisksAbstract implements ILayout, IView {
     public ViewRisks<?> getViewForSelectionIndex(final int index) {
         return this.views.get(index);
     }
+
+    /**
+     * Returns the according view type
+     * @param clazz
+     * @return
+     */
+    @SuppressWarnings("unchecked")
+    public <U> U getViewForType(final Class<U> clazz) {
+        for (ViewRisks<?> view : this.views.values()) {
+            if (view.getClass().equals(clazz)) {
+                return (U)view;
+            }
+        }
+        return null;
+    }
     
     @Override
     public void reset() {

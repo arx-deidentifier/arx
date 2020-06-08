@@ -488,7 +488,7 @@ public class HierarchyBuilderRedactionBased<T> extends HierarchyBuilder<T> imple
                 if (redactionOrder == Order.RIGHT_TO_LEFT) {
                     result[i][j] =  base[i].substring(0, length - j) + redact;
                 } else {
-                    result[i][j] =  redact + base[i].substring(0, length - j);
+                    result[i][j] =  redact + base[i].substring(j, length);
                 }
             }
         }

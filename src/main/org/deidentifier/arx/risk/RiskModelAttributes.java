@@ -94,13 +94,13 @@ public class RiskModelAttributes {
             }
 
             // Compare distinction
-            cmp = Double.compare(this.alphaDistinction, other.alphaDistinction);
+            cmp = Double.compare(this.getDistinction(), other.getDistinction());
             if (cmp != 0) {
                 return cmp;
             }
 
             // Compare separation
-            cmp = Double.compare(this.alphaSeparation, other.alphaSeparation);
+            cmp = Double.compare(this.getSeparation(), other.getSeparation());
             if (cmp != 0) {
                 return cmp;
             }
@@ -115,7 +115,7 @@ public class RiskModelAttributes {
          * @return the alpha distinction
          */
         public double getDistinction() {
-            return alphaDistinction;
+            return Double.isNaN(alphaDistinction) ? 0d : alphaDistinction;
         }
 
         /**
@@ -133,7 +133,7 @@ public class RiskModelAttributes {
          * @return the alpha separation
          */
         public double getSeparation() {
-            return alphaSeparation;
+            return Double.isNaN(alphaSeparation) ? 0d : alphaSeparation;
         }
     }
     /** Stop flag */
@@ -191,7 +191,7 @@ public class RiskModelAttributes {
                     public int compare(String o1, String o2) {
                         int index1 = handle.getColumnIndexOf(o1);
                         int index2 = handle.getColumnIndexOf(o2);
-                        return new Integer(index1).compareTo(index2);
+                        return Integer.valueOf(index1).compareTo(index2);
                     }
                 });
             }

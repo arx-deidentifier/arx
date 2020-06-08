@@ -20,12 +20,17 @@ package org.deidentifier.arx.io;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.deidentifier.arx.DataType;
+
+import com.univocity.parsers.csv.CsvFormat;
+import com.univocity.parsers.csv.CsvParserSettings;
+import com.univocity.parsers.csv.CsvRoutines;
 
 /**
  * Import adapter for CSV files
@@ -79,11 +84,15 @@ public class ImportAdapterCSV extends ImportAdapter {
     /**
      * Indicates whether the first row has already been returned
      * 
-     * The first row contains the name of the columns. Depending upon {@link #containsHeader} and whether the name of the column has been
+     * The first row contains the name of the columns. Depending upon
+     * {@link #containsHeader} and whether the name of the column has been
      * assigned explicitly, this is either the value of the file itself, the
      * value defined by the user, or a default value.
      */
     private boolean                headerReturned = false;
+
+    /** Num records, if available */
+    private Integer                records        = null;
 
     /**
      * Creates a new instance of this object with given configuration.
@@ -100,9 +109,14 @@ public class ImportAdapterCSV extends ImportAdapter {
         /* Used to keep track of progress */
         cin = new CountingInputStream(new FileInputStream(new File(config.getFileLocation())));
 
+        /* Determine length*/
+        if (config.isOptimizedLoading()) {
+            records = getLength(new FileInputStream(new File(config.getFileLocation())), config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), config.getMaxColumns());
+        }
+        
         /* Get CSV iterator */
-        in = new CSVDataInput(cin, config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak());
-        it = in.iterator();
+        in = new CSVDataInput(cin, config.getCharset(), config.getDelimiter(), config.getQuote(), config.getEscape(), config.getLinebreak(), new CSVOptions(config.getMaxColumns()));
+        it = in.iterator(config.getContainsHeader());
 
         /* Check whether there is actual data within the CSV file */
         if (it.hasNext()) {
@@ -118,6 +132,57 @@ public class ImportAdapterCSV extends ImportAdapter {
 
         // Create header
         header = createHeader();
+    }
+
+    /**
+     * Determines the length of the file. Closes the stream that is passed in.
+     * @param stream
+     * @param charset
+     * @param delimiter
+     * @param quote
+     * @param escape
+     * @param linebreak
+     * @return
+     * @throws IOException 
+     */
+    private Integer getLength(FileInputStream stream,
+                              Charset charset,
+                              char delimiter,
+                              char quote,
+                              char escape,
+                              char[] linebreak,
+                              int maxColumns) throws IOException {
+
+        CsvFormat format = new CsvFormat();
+        format.setDelimiter(delimiter);
+        format.setQuote(quote);
+        format.setQuoteEscape(escape);
+        format.setLineSeparator(linebreak);
+        format.setNormalizedNewline(CSVSyntax.getNormalizedLinebreak(linebreak));
+        format.setComment('\0');
+
+        CsvParserSettings settings = new CsvParserSettings();
+        settings.setEmptyValue("");
+        settings.setNullValue("");
+        settings.setFormat(format);
+        settings.setIgnoreLeadingWhitespacesInQuotes(true);
+        settings.setIgnoreTrailingWhitespacesInQuotes(true);
+        if (maxColumns > 0) {
+            settings.setMaxColumns(maxColumns);
+        }
+        
+        CsvRoutines routines = new CsvRoutines(settings);
+        long records = routines.getInputDimension(stream).rowCount();
+        stream.close();
+        if (records > (long)Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("Too many records (more than " + Integer.MAX_VALUE+")");
+        }
+        return (int)records - (config.getContainsHeader() ? 1 : 0);
+    }
+
+    @Override
+    public Integer getLength() {
+        return records;
     }
 
     /**

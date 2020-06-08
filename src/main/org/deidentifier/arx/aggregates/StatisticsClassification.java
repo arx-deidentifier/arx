@@ -191,7 +191,7 @@ public class StatisticsClassification {
          * @return
          */
         public double getAUC() {
-            return AUC;
+            return Double.isNaN(AUC) ? 0d : AUC;
         }
         
         /**
@@ -215,7 +215,7 @@ public class StatisticsClassification {
          * @return the sensitivity
          */
         public double getSensitivity() {
-            return sensitivity;
+            return Double.isNaN(sensitivity) ? 0d : sensitivity;
         }
         
         /**
@@ -223,7 +223,7 @@ public class StatisticsClassification {
          * @return the specificity
          */
         public double getSpecificity() {
-            return specificity;
+            return Double.isNaN(specificity) ? 0d : specificity;
         }
 
         /**
@@ -237,20 +237,24 @@ public class StatisticsClassification {
     
     /**
      * Returns the classification method for the given config
+     * @param interrupt
      * @param specification
      * @param config
+     * @param inputHandle
      * @return
      */
-    private static ClassificationMethod getClassifier(ClassificationDataSpecification specification,
-                                                      ARXClassificationConfiguration<?> config) {
+    private static ClassificationMethod getClassifier(WrappedBoolean interrupt,
+                                                      ClassificationDataSpecification specification,
+                                                      ARXClassificationConfiguration<?> config,
+                                                      DataHandleInternal inputHandle) {
         if (config instanceof ClassificationConfigurationLogisticRegression) {
-            return new MultiClassLogisticRegression(specification, (ClassificationConfigurationLogisticRegression)config);
+            return new MultiClassLogisticRegression(interrupt, specification, (ClassificationConfigurationLogisticRegression)config, inputHandle);
         } else if (config instanceof ClassificationConfigurationNaiveBayes) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassNaiveBayes(specification, (ClassificationConfigurationNaiveBayes)config);
+            return new MultiClassNaiveBayes(interrupt, specification, (ClassificationConfigurationNaiveBayes)config, inputHandle);
         } else if (config instanceof ClassificationConfigurationRandomForest) {
             System.setProperty("smile.threads", "1");
-            return new MultiClassRandomForest(specification, (ClassificationConfigurationRandomForest)config);
+            return new MultiClassRandomForest(interrupt, specification, (ClassificationConfigurationRandomForest)config, inputHandle);
         } else {
             throw new IllegalArgumentException("Unknown type of configuration");
         }
@@ -275,20 +279,26 @@ public class StatisticsClassification {
     private double                zeroRAverageError;
     /** ZeroR ROC curve */
     private Map<String, ROCCurve> zerorROC    = new HashMap<>();
+    /** ZerorR brier score */
+    private double                zerorBrierScore;
 
     /** Original/Output accuracy */
     private double                accuracy;
     /** Original/Output average error */
     private double                averageError;
     /** Original/Output ROC curve */
-    private Map<String, ROCCurve> ROC   = new HashMap<>();
-
+    private Map<String, ROCCurve> ROC         = new HashMap<>();
+    /** Original/Output brier score */
+    private double                brierScore;
+    
     /** Original accuracy */
     private double                originalAccuracy;
     /** Original accuracy */
     private double                originalAverageError;
     /** Original ROC curve */
     private Map<String, ROCCurve> originalROC = new HashMap<>();
+    /** Original brier score */
+    private double                originalBrierScore;
 
     /**
      * Creates a new set of statistics for the given classification task
@@ -355,11 +365,11 @@ public class StatisticsClassification {
         for (int evaluationFold = 0; evaluationFold < folds.size(); evaluationFold++) {
             
             // Create classifiers
-            ClassificationMethod inputClassifier = getClassifier(specification, config);
-            ClassificationMethod inputZeroR = new MultiClassZeroR(specification);
+            ClassificationMethod inputClassifier = getClassifier(interrupt, specification, config, inputHandle);
+            ClassificationMethod inputZeroR = new MultiClassZeroR(interrupt, specification);
             ClassificationMethod outputClassifier = null;
             if (inputHandle != outputHandle) {
-                outputClassifier = getClassifier(specification, config);
+                outputClassifier = getClassifier(interrupt, specification, config, inputHandle);
             }
             
             // Try
@@ -451,6 +461,13 @@ public class StatisticsClassification {
         this.originalAverageError /= (double)classifications;
         this.originalAccuracy /= (double)classifications;
         
+        // Brier score
+        this.zerorBrierScore = calculateBrierScore(zerorConfidences, outputHandle, specification);
+        this.originalBrierScore = calculateBrierScore(inputConfidences, outputHandle, specification);
+        if (inputHandle != outputHandle) {
+            this.brierScore = calculateBrierScore(outputConfidences, outputHandle, specification);
+        }
+        
         // Initialize ROC curves for zeroR
         for (String attr : specification.classMap.keySet()) {
             zerorROC.put(attr, new ROCCurve(attr,
@@ -493,6 +510,38 @@ public class StatisticsClassification {
         
         this.numMeasurements = classifications;
     }
+    
+    /**
+     * Calculate brier score.
+     * @param confidences
+     * @param handle
+     * @param specification
+     * @return
+     */
+    private double calculateBrierScore(double[] confidences, DataHandleInternal handle, ClassificationDataSpecification specification) {
+        // Brier score
+        double brier = 0d;
+        int column = specification.classIndex;
+        int records = 0;
+
+        // For each record
+        for (int i = 0; i < confidences.length; i += (numClasses + 1)) {
+
+            // Prepare
+            int row = (int) confidences[i];
+            int correctIndex = specification.classMap.get(handle.getValue(row, column, true));
+
+            // Calculate for this record
+            int offset = 0;
+            for (int j = i + 1; j < i + numClasses + 1; j++) {
+                brier += Math.pow(confidences[j] - (((offset++) == correctIndex) ? 1 : 0), 2);
+            }
+
+            // Count
+            records++;
+        }
+        return brier / (double) records;
+    }
 
     /**
      * Returns the resulting accuracy. Obtained by generating a
@@ -512,6 +561,38 @@ public class StatisticsClassification {
      */
     public double getAverageError() {
         return this.averageError;
+    }
+    
+    /**
+     * Returns the brier score of the ZeroR classifier. 
+     * @return
+     */
+    public double getZerorBrierScore() {
+        return zerorBrierScore;
+    }
+
+    /**
+     * Returns the brier score of the classifier trained on output data.
+     * @return
+     */
+    public double getBrierScore() {
+        return brierScore;
+    }
+
+    /**
+     * Returns the brier score of the classifier trained on input data.
+     * @return
+     */
+    public double getOriginalBrierScore() {
+        return originalBrierScore;
+    }
+    
+    /**
+     * Returns the brier skill score, defined as 1-(brier output/brier input)
+     * @return
+     */
+    public double getBrierSkillScore() {
+        return brierScore == 0d ? 0d : (1 - brierScore / originalBrierScore);
     }
 
     /**
@@ -617,6 +698,10 @@ public class StatisticsClassification {
         builder.append("   * Original: ").append(originalAverageError).append("\n");
         builder.append("   * ZeroR: ").append(zeroRAverageError).append("\n");
         builder.append("   * Output: ").append(averageError).append("\n");
+        builder.append(" - Brier score:\n");
+        builder.append("   * Original: ").append(originalBrierScore).append("\n");
+        builder.append("   * ZeroR: ").append(zerorBrierScore).append("\n");
+        builder.append("   * Output: ").append(brierScore).append("\n");
         builder.append(" - Number of classes: ").append(numClasses).append("\n");
         builder.append(" - Number of measurements: ").append(numMeasurements).append("\n");
         builder.append("}");

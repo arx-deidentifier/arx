@@ -182,7 +182,7 @@ public class ViewCostBenefitModel implements IView {
         text.setEditable(false);
         
         // Button
-        Button btn1 = new Button(root, SWT.PUSH);
+        Button btn1 = new Button(root, SWT.FLAT);
         btn1.setText(Resources.getMessage("ViewCostBenefitModel.0")); //$NON-NLS-1$
         btn1.addSelectionListener(new SelectionAdapter() {
             @Override
