@@ -40,7 +40,7 @@ import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.config.DefaultRowStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
-import org.eclipse.nebula.widgets.nattable.layer.cell.AggregrateConfigLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.layer.cell.AggregateConfigLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnOverrideLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.CheckBoxPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
@@ -345,7 +345,7 @@ public class ComponentDataTable implements IComponent {
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
 
         // Add an AggregrateConfigLabelAccumulator 
-        final AggregrateConfigLabelAccumulator aggregrateConfigLabelAccumulator = new AggregrateConfigLabelAccumulator();
+        final AggregateConfigLabelAccumulator aggregrateConfigLabelAccumulator = new AggregateConfigLabelAccumulator();
         bodyDataLayer.setConfigLabelAccumulator(aggregrateConfigLabelAccumulator);
 
         final ColumnOverrideLabelAccumulator columnLabelAccumulator = new ColumnOverrideLabelAccumulator(bodyDataLayer);
