@@ -218,7 +218,7 @@ public class ImportWizardPagePreview extends WizardPage {
             /* Make table visible again */
             table.layout();
             table.setRedraw(true);
-
+            table.redraw();
             setPageComplete(true);
 
         } else {
