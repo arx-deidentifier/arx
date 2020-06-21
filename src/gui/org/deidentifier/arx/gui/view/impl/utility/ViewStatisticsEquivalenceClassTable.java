@@ -214,7 +214,7 @@ public class ViewStatisticsEquivalenceClassTable extends ViewStatistics<Analysis
                            SWTUtil.getPrettyString(summary.getNumberOfRecords()));
                 
                 table.setRedraw(true);
-                
+                table.redraw();
                 setStatusDone();
             }
 
