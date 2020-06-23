@@ -22,6 +22,7 @@ import java.util.List;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableBodyLayerStack;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
@@ -183,6 +184,10 @@ public class ComponentDataTable implements IComponent {
      */
     public void redraw() {
         this.table.redraw();
+        // Fix update issues on MacOS
+        if (SWTUtil.isMac()) {
+            this.table.refresh();
+        }
     }
     
     /**
