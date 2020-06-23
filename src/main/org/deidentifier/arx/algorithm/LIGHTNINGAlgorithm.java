@@ -104,7 +104,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         Object nextId;
         while ((nextId = queue.poll()) != null) {
             Transformation<?> next = solutionSpace.getTransformation(nextId);
-            if (!prune(next)) {
+            if (!prune(next, true)) {
                 step++;
                 if (step % stepping == 0) {
                     dfs(queue, next);
@@ -184,23 +184,24 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     * @param transformation
     * @return
     */
-    protected boolean prune(Transformation<?> transformation) {
+    protected boolean prune(Transformation<?> transformation, boolean up) {
         
         // Already expanded
-        if (transformation.hasProperty(propertyExpanded) ||
-            transformation.hasProperty(propertyInsufficientUtility)){
+        if (transformation.hasProperty(propertyExpanded) || (up && transformation.hasProperty(propertyInsufficientUtility))){
             return true;
         }
         
-        // If a current optimum has been discovered
-        Transformation<?> optimum = getGlobalOptimum();
-        if (optimum != null && !Arrays.equals(optimum.getGeneralization(), transformation.getGeneralization())) {
-            
-            // We can compare lower bounds on quality
-            InformationLoss<?> bound = transformation.getLowerBound();
-            if (bound != null && bound.compareTo(optimum.getInformationLoss()) >= 0) {
-                transformation.setProperty(propertyInsufficientUtility);
-                return true;
+        if (!up) {
+            // If a current optimum has been discovered
+            Transformation<?> optimum = getGlobalOptimum();
+            if (optimum != null && !Arrays.equals(optimum.getGeneralization(), transformation.getGeneralization())) {
+                
+                // We can compare lower bounds on quality
+                InformationLoss<?> bound = transformation.getLowerBound();
+                if (bound != null && bound.compareTo(optimum.getInformationLoss()) >= 0) {
+                    transformation.setProperty(propertyInsufficientUtility);
+                    return true;
+                }
             }
         }
         
