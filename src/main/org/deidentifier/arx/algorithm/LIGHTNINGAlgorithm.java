@@ -191,7 +191,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
             return true;
         }
         
-        if (!up) {
+        if (up) {
             // If a current optimum has been discovered
             Transformation<?> optimum = getGlobalOptimum();
             if (optimum != null && !Arrays.equals(optimum.getGeneralization(), transformation.getGeneralization())) {
