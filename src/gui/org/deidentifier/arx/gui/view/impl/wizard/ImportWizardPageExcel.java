@@ -484,6 +484,7 @@ public class ImportWizardPageExcel extends WizardPage {
         tablePreview.setVisible(true);
         tablePreview.layout();
         tablePreview.setRedraw(true);
+        tablePreview.redraw();
     }
 
     /**

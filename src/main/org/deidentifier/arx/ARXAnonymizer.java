@@ -402,6 +402,9 @@ public class ARXAnonymizer { // NO_UCD
 
         // Check for null
         if (handle == null) { throw new NullPointerException("Data must not be null"); }
+
+        // Check for null
+        if (handle.getNumRows() == 0) { throw new IllegalArgumentException("Data does not contain any rows"); }
         
         // Check sensitive attributes
         if (config.isPrivacyModelSpecified(LDiversity.class) ||

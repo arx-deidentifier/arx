@@ -181,7 +181,7 @@ public class ViewStatisticsSummaryTable extends ViewStatistics<AnalysisContextDi
                 if (summary.isGeometricMeanAvailable()) createItem(Resources.getMessage("SummaryStatistics.11"), summary.getGeometricMeanAsString()); //$NON-NLS-1$
 
                 table.setRedraw(true);
-                
+                table.redraw();
                 setStatusDone();
             }
 

@@ -305,6 +305,10 @@ public abstract class ViewData implements IView {
             model.setSelectedAttribute(attr);
             table.setSelectedAttribute(attr);
             controller.update(new ModelEvent(this, ModelPart.SELECTED_ATTRIBUTE, attr));
+            // Fix missing table update on MacOS
+            if (SWTUtil.isMac()) {
+                this.table.redraw();
+            }
         }
     }
 
