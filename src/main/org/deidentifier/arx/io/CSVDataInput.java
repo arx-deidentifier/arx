@@ -591,6 +591,8 @@ public class CSVDataInput {
         settings.setNullValue("");
         settings.setFormat(format);
         settings.setMaxColumns(4096);
+        settings.setIgnoreLeadingWhitespacesInQuotes(true);
+        settings.setIgnoreTrailingWhitespacesInQuotes(true);
         if (options != null) {
             options.apply(settings);
         }

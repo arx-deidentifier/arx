@@ -19,6 +19,9 @@ package org.deidentifier.arx.gui.view.impl.utility;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.deidentifier.arx.ARXCostBenefitConfiguration;
@@ -334,22 +337,23 @@ public class ViewPropertiesInput extends ViewProperties {
         // Print identifying attributes
         final Property identifying = new Property(attributes, Resources.getMessage("PropertiesView.13"), new String[] { String.valueOf(definition.getIdentifyingAttributes().size()) }); //$NON-NLS-1$
         int index = 0;
-        for (String s : definition.getIdentifyingAttributes()) {
+        for (String s : getOrdered(data, definition.getIdentifyingAttributes())) {
             final String[] values = new String[] { s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             values[1] = definition.getDataType(s).toString();
             if (index < MAX_ATTRIBUTES) {
                 new Property(identifying, Resources.getMessage("PropertiesView.19") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(identifying, "...", values); //$NON-NLS-1$
+                break;
             }
         }
 
         // Print quasi-identifying attributes
         final Property quasiIdentifying = new Property(attributes, Resources.getMessage("PropertiesView.20"), new String[] { String.valueOf(definition.getQuasiIdentifyingAttributes().size()) }); //$NON-NLS-1$
         index = 0;
-        for (String s : definition.getQuasiIdentifyingAttributes()) {
+        for (String s : getOrdered(data, definition.getQuasiIdentifyingAttributes())) {
             final String[] values = new String[] { s, "", "", "", "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
             if (definition.getHierarchy(s) != null) {
                 DataType<?> type = definition.getDataType(s);
@@ -377,16 +381,16 @@ public class ViewPropertiesInput extends ViewProperties {
                 new Property(quasiIdentifying, Resources.getMessage("PropertiesView.26") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) +
-                            Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getQuasiIdentifyingAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(quasiIdentifying, "...", values); //$NON-NLS-1$
+                break;
             }
         }
         
         // Print sensitive attributes
         final Property sensitive = new Property(attributes, Resources.getMessage("PropertiesView.27"), new String[] { String.valueOf(definition.getSensitiveAttributes().size()) }); //$NON-NLS-1$
         index = 0;
-        for (String s : definition.getSensitiveAttributes()) {
+        for (String s : getOrdered(data, definition.getSensitiveAttributes())) {
             final String[] values = new String[] {s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             if (config.getHierarchy(s) != null && config.getHierarchy(s).getHierarchy() != null) {
                 int height = 0;
@@ -400,8 +404,9 @@ public class ViewPropertiesInput extends ViewProperties {
                 new Property(sensitive, Resources.getMessage("PropertiesView.33") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getSensitiveAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(sensitive, "...", values); //$NON-NLS-1$
+                break;
             }
         }
 
@@ -409,7 +414,7 @@ public class ViewPropertiesInput extends ViewProperties {
         final Property insensitive = new Property(attributes, Resources.getMessage("PropertiesView.34"), new String[] { String.valueOf(definition.getInsensitiveAttributes().size()) }); //$NON-NLS-1$
 
         index = 0;
-        for (String s : definition.getInsensitiveAttributes()) {
+        for (String s : getOrdered(data, definition.getInsensitiveAttributes())) {
             final String[] values = new String[] { s, "", "", "", "" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
             values[0] = s;
             values[1] = definition.getDataType(s).toString();
@@ -417,8 +422,9 @@ public class ViewPropertiesInput extends ViewProperties {
                 new Property(insensitive, Resources.getMessage("PropertiesView.40") + (index++), values); //$NON-NLS-1$
             } else {
                 Arrays.fill(values, ""); //$NON-NLS-1$
-                values[0] = (definition.getIdentifyingAttributes().size() - MAX_ATTRIBUTES) + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
+                values[0] = (definition.getInsensitiveAttributes().size() - MAX_ATTRIBUTES) + " " + Resources.getMessage("PropertiesView.176"); //$NON-NLS-1$
                 new Property(insensitive, "...", values); //$NON-NLS-1$
+                break;
             }
         }
 
@@ -429,5 +435,22 @@ public class ViewPropertiesInput extends ViewProperties {
 
         // Redraw
         root.setRedraw(true);
+    }
+    
+    /**
+     * Return
+     * @param handle
+     * @param attibutes
+     * @return
+     */
+    private List<String> getOrdered(DataHandle handle, Collection<String> attributes) {
+        List<String> result = new ArrayList<String>(attributes);
+        Collections.sort(result, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return Integer.compare(handle.getColumnIndexOf(o1), handle.getColumnIndexOf(o2));
+            }
+        });
+        return result;
     }
 }
