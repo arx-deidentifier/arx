@@ -4,7 +4,7 @@
     <description>Builds, tests, and runs the project.</description>
 
     <!-- defines the version number -->
-    <property name="arx.version" value="3.8.0" />
+    <property name="arx.version" value="3.9.0" />
 
     <!-- add extra parameter to javadoc generation to deal with errors in newer Java versions -->
     <property name="javadoc.additionalparam" value="-notimestamp -Xdoclint:none" />
@@ -44,17 +44,10 @@
 
     <fileset id="gui.jars" dir="lib/ant">
         <or>
-            <filename name="**/org.eclipse.draw2d_3.8.1.201301141834.jar" />
-            <filename name="**/org.eclipse.core.commands_3.6.2.v20130123-162658.jar" />
-            <filename name="**/org.eclipse.core.runtime_3.8.0.v20120912-155025.jar" />
-            <filename name="**/org.eclipse.equinox.common_3.6.100.v20120522-1841.jar" />
-            <filename name="**/org.eclipse.jface_3.8.102.v20130123-162658.jar" />
             <filename name="**/libjhc-1.0.0-swt.jar" />
             <filename name="**/junit-4.11.jar" />
             <filename name="**/log4j-1.2.17.jar" />
             <filename name="**/swtknob-1.0.0.jar" />
-            <filename name="**/org.eclipse.nebula.widgets.nattable.core_1.1.0.201405012245.jar" />
-            <filename name="**/org.swtchart_0.8.0.v20120301.jar" />
             <filename name="**/swttable-0.0.1.jar" />
             <filename name="**/swtchoicesdialog-0.0.1.jar" />
             <filename name="**/swtrangeslider-0.0.1.jar" />
@@ -66,9 +59,16 @@
             <filename name="**/postgresql-9.3-1101.jdbc41.jar" />
             <filename name="**/sqlite-jdbc-3.7.2.jar" />
             <filename name="**/ojdbc7.jar" />
-            <filename name="**/org.eclipse.nebula.visualization.widgets_1.0.0.201511041902.jar" />
-            <filename name="**/org.eclipse.nebula.visualization.xygraph_1.0.0.201511041902.jar" />
-            <filename name="**/org.eclipse.nebula.widgets.pagination_1.0.0.201806070735.jar" />
+        	<filename name="**/org.eclipse.core.commands_3.9.700.v20191217-1850.jar" />
+        	<filename name="**/org.eclipse.core.runtime_3.18.0.v20200506-2143.jar" />
+        	<filename name="**/org.eclipse.draw2d_3.10.100.201606061308.jar" />
+        	<filename name="**/org.eclipse.equinox.common_3.12.0.v20200504-1602.jar" />
+        	<filename name="**/org.eclipse.jface_3.20.0.v20200505-1952.jar" />
+        	<filename name="**/org.eclipse.nebula.visualization.widgets_1.1.0.202006092019.jar" />
+        	<filename name="**/org.eclipse.nebula.visualization.xygraph_3.1.0.202006092019.jar" />
+        	<filename name="**/org.eclipse.nebula.widgets.nattable.core_1.6.0.201909181823.jar" />
+        	<filename name="**/org.eclipse.nebula.widgets.pagination_1.0.0.202006191828.jar" />
+        	<filename name="**/org.swtchart_0.8.0.v20120301.jar" />        	
         </or>
     </fileset>
 
@@ -108,7 +108,7 @@
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
                 <fileset refid="test.jars" />
-                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
+                <path path="lib/ant/eclipse/org.eclipse.swt.gtk.linux.x86_64_3.114.100.v20200604-0951.jar" />
             </classpath>
         </javac>
 
@@ -141,7 +141,7 @@
                 <path path="build/test" />
                 <path path="lib/ant/log4j/log4j-1.2.17.jar" />
                 <path path="lib/ant/sqlite/sqlite-jdbc-3.7.2.jar" />
-                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            	<path path="lib/ant/eclipse/org.eclipse.swt.gtk.linux.x86_64_3.114.100.v20200604-0951.jar" />
             </classpath>
             <batchtest todir="build/junitReports">
                 <fileset dir="src/test/">
@@ -178,7 +178,7 @@
                 <path path="build/test" />
                 <path path="lib/ant/log4j/log4j-1.2.17.jar" />
                 <path path="lib/ant/sqlite/sqlite-jdbc-3.7.2.jar" />
-                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            	<path path="lib/ant/eclipse/org.eclipse.swt.gtk.linux.x86_64_3.114.100.v20200604-0951.jar" />
             </classpath>
             <batchtest todir="build/junitReports" fork="yes">
                 <fileset dir="src/test/" includes="**/Test*.java" />
@@ -260,14 +260,13 @@
         </javadoc>
     </target>
 
-
     <target name="javadoc-gui" depends="clean-javadoc">
         <mkdir dir="doc/gui" />
         <javadoc overview="doc/overview-gui.html" destdir="doc/gui" source="1.8" notree="false" use="true" nonavbar="false" noindex="false" splitindex="false" author="Florian Kohlmayer and Fabian Praßer" version="${arx.version}" windowtitle="ARX GUI Documentation" private="false" failonerror="true" additionalparam="${javadoc.additionalparam}">
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
-                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            	<path path="lib/ant/eclipse/org.eclipse.swt.gtk.linux.x86_64_3.114.100.v20200604-0951.jar" />
                 <path path="src/main" />
             </classpath>
 
@@ -296,7 +295,7 @@
             <classpath>
                 <fileset refid="lib.jars" />
                 <fileset refid="gui.jars" />
-                <path path="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" />
+            	<path path="lib/ant/eclipse/org.eclipse.swt.gtk.linux.x86_64_3.114.100.v20200604-0951.jar" />
                 <path path="src/main" />
             </classpath>
         </javac>
@@ -341,20 +340,11 @@
     </target>
 
     <target name="jar-win" depends="compile, buildExternalLibs">
-        <jar destfile="jars/arx-${arx.version}-win.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/ant/swt/swt-4.2.1-win32-win32-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
         <jar destfile="jars/arx-${arx.version}-win-64.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/ant/swt/swt-4.2.1-win32-win32-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+        	<zipfileset src="lib/ant/eclipse/org.eclipse.swt.win32.win32.x86_64_3.114.100.v20200604-0951.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -362,20 +352,11 @@
     </target>
 
     <target name="jar-linux" depends="compile, buildExternalLibs">
-        <jar destfile="jars/arx-${arx.version}-gtk.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/ant/swt/swt-4.2.1-gtk-linux-x86.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
         <jar destfile="jars/arx-${arx.version}-gtk-64.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/ant/swt/swt-4.2.1-gtk-linux-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+        	<zipfileset src="lib/ant/eclipse/org.eclipse.swt.gtk.linux.x86_64_3.114.100.v20200604-0951.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>
@@ -383,20 +364,11 @@
     </target>
 
     <target name="jar-osx" depends="compile, buildExternalLibs">
-        <jar destfile="jars/arx-${arx.version}-osx.jar">
-            <fileset dir="build/gui" defaultexcludes="no" />
-            <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/ant/swt/swt-4.2.1-cocoa-macosx.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <manifest>
-                <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
-            </manifest>
-        </jar>
         <jar destfile="jars/arx-${arx.version}-osx-64.jar">
             <fileset dir="build/gui" defaultexcludes="no" />
             <zipfileset src="build/extLibs/lib.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <zipfileset src="build/extLibs/gui.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
-            <zipfileset src="lib/ant/swt/swt-4.2.1-cocoa-macosx-x86_64.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
+        	<zipfileset src="lib/ant/eclipse/org.eclipse.swt.cocoa.macosx.x86_64_3.114.100.v20200604-0951.jar" excludes="META-INF/*.RSA,META-INF/*.SF,META-INF/*.DSA" />
             <manifest>
                 <attribute name="Main-Class" value="org.deidentifier.arx.gui.Main" />
             </manifest>

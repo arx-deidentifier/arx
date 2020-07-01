@@ -351,6 +351,7 @@ public class ViewStatisticsClassificationConfiguration implements IView, ViewSta
         }
         
         this.root.setRedraw(true);
+        this.table.redraw();
         SWTUtil.enable(this.root);
     }
 }

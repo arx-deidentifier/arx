@@ -230,6 +230,7 @@ public class ViewRisksOverview extends ViewRisks<AnalysisContextRisk> {
 
                 table.setRedraw(true);
                 table.layout();
+                table.redraw();
                 
                 setStatusDone();
             }

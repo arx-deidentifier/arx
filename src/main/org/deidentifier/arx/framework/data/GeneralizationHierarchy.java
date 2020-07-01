@@ -108,14 +108,16 @@ public class GeneralizationHierarchy {
         // Count distinct values on each level
         this.distinctValues = new int[height];
 
-        // for each column
-        final IntOpenHashSet vals = new IntOpenHashSet();
-        for (int column = 0; column < map[0].length; column++) {
-            for (int row = 0; row < map.length; row++) {
-                vals.add(map[row][column]);
-            }
-            this.distinctValues[column] = vals.size();
-            vals.clear();
+        // For each column
+        if (map.length > 0) {
+	        final IntOpenHashSet vals = new IntOpenHashSet();
+	        for (int column = 0; column < map[0].length; column++) {
+	            for (int row = 0; row < map.length; row++) {
+	                vals.add(map[row][column]);
+	            }
+	            this.distinctValues[column] = vals.size();
+	            vals.clear();
+	        }
         }
     }
 
