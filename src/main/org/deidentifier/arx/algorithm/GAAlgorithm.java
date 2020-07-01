@@ -92,6 +92,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
     private double                      geneticAlgorithmMutationProbability;
     /** Configuration */
     private int                         geneticAlgorithmSubpopulationSize;
+    
+    private double                      geneticAlgorithmpProductionFraction = 0.2;
 
 	/**
 	 * Creates a new instance
@@ -175,7 +177,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		GASubpopulation z1 = new GASubpopulation();
 		GASubpopulation z2 = new GASubpopulation();
 
-		System.out.println("Total Solutions: " + solutionSpace.getSize());
+		//System.out.println("Total Solutions: " + solutionSpace.getSize());
 		
 		// Fill sub-population 1
 		long tempTime = System.currentTimeMillis();
@@ -234,12 +236,14 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		}
 		this.initialPhase = System.currentTimeMillis() - tempTime;
 		
-		
+		//System.out.println("Initilization");
+		//printPopulations(z1, z2);
 		//System.out.println("Pop1 size: " + z1.individualCount() + " | Pop2 size: " + z2.individualCount());
 		//System.out.println("0;"+checker.getNumChecksPerformed());
 		tempTime = System.currentTimeMillis();
 		
 		// Main iterator
+		//System.out.println("Iters: "+ itr);
 		for (int t = 0; t < itr; t++) {
 
 			// Sort by fitness descending
@@ -266,8 +270,9 @@ public class GAAlgorithm extends AbstractAlgorithm {
 			
             // Stop
             if (mustStop()) {
-                System.out.println("Individuals: " + this.individualsTotal + " with loss > 0.99999: " + this.individualsWithHighLoss);
-                System.out.println();
+                //System.out.println("Individuals: " + this.individualsTotal + " with loss > 0.99999: " + this.individualsWithHighLoss);
+                //System.out.println("Result");
+                //printPopulations(z1, z2);
                 return false;
             }
             
@@ -280,10 +285,21 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		//System.out.println("Init: " + initialPhase + "ms | Iter: " + iterPhase + "ms | getIndividualTime: " + sumTime + "ms | checkerTime: " + checkerTime);
 		// System.out.println("Pop1 size: " + z1.individualCount() + "Pop2 size: " + z2.individualCount());
 		// Check whether we found a solution
-		System.out.println("Total Individuals: " + this.individualsTotal + " with loss > 0.99999: " + this.individualsWithHighLoss);
+		//System.out.println("Total Individuals: " + this.individualsTotal + " with loss > 0.99999: " + this.individualsWithHighLoss);
 		return getGlobalOptimum() != null;
 	}
 
+	private void printPopulations(GASubpopulation z1, GASubpopulation z2) {
+	    for(int i = 0; i < z1.individualCount(); i++) {
+	        int[] indi1 = z1.getIndividual(i).getGeneralization();
+	        int[] indi2 = z2.getIndividual(i).getGeneralization();
+	        System.out.print(Arrays.toString(indi1));
+	        System.out.print(" - ");
+	        System.out.println(Arrays.toString(indi2));
+	    }
+	    
+	}
+	
 	/**
 	 * Returns an individual
 	 * 
@@ -347,6 +363,9 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		// Replace selected places with random levels
 		for (int index : mutationIndices) {
 			generalization[index] = getRandomGeneralizationLevel(index);
+		    //int currentLevel = generalization[index];
+		    //generalization[index] = getMutatedGeneralizationLevel(index, generalization[index]);
+		    //System.out.println(currentLevel + " >>> " + generalization[index]);
 		}
 
 		// Done
@@ -362,6 +381,18 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	private int getRandomGeneralizationLevel(int dimension) {
 		return minLevels[dimension]
 				+ (int) Math.round(random.nextDouble() * (maxLevels[dimension] - minLevels[dimension]));
+	}
+	
+    private int getMutatedGeneralizationLevel(int dimension, int currentLevel) {
+        if (random.nextBoolean()) {
+            if (currentLevel + 1 <= maxLevels[dimension]) return currentLevel + 1;
+            else if (currentLevel - 1 >= minLevels[dimension]) return currentLevel - 1;
+        } else {
+            if (currentLevel - 1 >= minLevels[dimension]) {
+                return currentLevel - 1;
+            } else if (currentLevel + 1 <= maxLevels[dimension]) return currentLevel + 1;
+        }
+        return 0;
 	}
 
 	/**
@@ -422,6 +453,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		return result;
 	}
 
+	
 	/**
 	 * Performs one iteration on a sub-population.
 	 * 
@@ -429,7 +461,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
 	 */
 	private void iterateSubpopulation(GASubpopulation population) {
 
-	    
+	    // Copy old Population
+	    GASubpopulation oldPopulation = new GASubpopulation(population);
 	    
 		// The population (ordered by fitness descending) consists of 3 groups
 		// - First: all individuals in the elite group will remain unchanged
@@ -437,47 +470,53 @@ public class GAAlgorithm extends AbstractAlgorithm {
 		// instances
 		// - Third: all remaining individuals will replaced by crossed-over instances
 
+	    
+	    
 		// Calculate mutation configuration parameters
 		int k = population.individualCount();
 		int crossoverCount = (int) Math.ceil(geneticAlgorithmCrossoverFraction * k);
 		int eliteCount = (int) Math.ceil(geneticAlgorithmEliteFraction * k);
+		int productionCount = (int) Math.ceil(geneticAlgorithmpProductionFraction *k);
 		
+        // Crossover worst individuals
+        Transformation<?>[] parents1 = getRandomIndividuals(population, productionCount, crossoverCount);
+        Transformation<?>[] parents2 = getRandomIndividuals(population, productionCount, crossoverCount);
+        for (int crossover = 0; crossover < crossoverCount; crossover++) {
 
-		// Mutate fittest non-elite individuals
-		for (int mutation = eliteCount; mutation < k - crossoverCount; mutation++) {
+            // Create crossover child
+            int[] vec = new int[maxLevels.length];
+            for (int i = 0; i < maxLevels.length; i++) {
+                vec[i] = (random.nextDouble() < 0.5 ? parents1[crossover] : parents2[crossover]).getGeneralization()[i];
+            }
+
+            // Stop
+            if (mustStop()) {
+                //TODO - add to code again 
+                return;
+            }
+            
+            // Replace
+            crossoverLoopCount++;
+            population.setIndividual(k - crossover - 1, getIndividual(vec));
+        }
+		
+	    // Mutate fittest non-elite individuals
+        for (int mutation = eliteCount; mutation < k - crossoverCount; mutation++) {
 
             // Stop
             if (mustStop()) {
                 return;
             }
             
-			// Mutate
+            // Mutate
             mutateLoopCount++;
-			Transformation<?> individual = getMutatedIndividual(population.getIndividual(mutation));
-			if (individual != null) {
-				population.setIndividual(mutation, individual);
-			}
-		}
+            Transformation<?> individual = getMutatedIndividual(oldPopulation.getIndividual(random.nextInt(k)));
+            //Transformation<?> individual = getMutatedIndividual(population.getIndividual(mutation));
+            if (individual != null) {
+                population.setIndividual(mutation, individual);
+            }
+        }
 
-		// Crossover worst individuals
-		Transformation<?>[] parents1 = getRandomIndividuals(population, eliteCount, crossoverCount);
-		Transformation<?>[] parents2 = getRandomIndividuals(population, eliteCount, crossoverCount);
-		for (int crossover = 0; crossover < crossoverCount; crossover++) {
 
-			// Create crossover child
-			int[] vec = new int[maxLevels.length];
-			for (int i = 0; i < maxLevels.length; i++) {
-				vec[i] = (random.nextDouble() < 0.5 ? parents1[crossover] : parents2[crossover]).getGeneralization()[i];
-			}
-
-			// Stop
-			if (mustStop()) {
-			    return;
-			}
-			
-			// Replace
-			crossoverLoopCount++;
-			population.setIndividual(k - crossover - 1, getIndividual(vec));
-		}
 	}
 }

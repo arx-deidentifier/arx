@@ -31,8 +31,17 @@ import org.deidentifier.arx.framework.lattice.Transformation;
 public class GASubpopulation {
 
 	/** List of individuals*/
-	private List<Transformation<?>> individuals = new ArrayList<>();
+	private List<Transformation<?>> individuals;
 
+	
+	public GASubpopulation() {
+	    this.individuals = new ArrayList<>();;
+	}
+	
+	public GASubpopulation(GASubpopulation pop) {
+	    this.individuals = new ArrayList<Transformation<?>>(pop.getIndividuals());
+	}
+	
 	/**
 	 * Adds an individual to the subpopulation.
 	 * 
@@ -59,6 +68,10 @@ public class GASubpopulation {
 	 */
 	public int individualCount() {
 		return individuals.size();
+	}
+	
+	public List<Transformation<?>> getIndividuals(){
+	    return individuals;
 	}
 
 	/**

@@ -238,18 +238,27 @@ public abstract class AbstractAlgorithm {
         
         private long time;
         private double utility;
+        private Transformation<?> transformation;
         
         TimeUtilityTuple(long time, double utility){
             this.time = time;
             this.utility = utility;
         }
         
-        public long getTime() {
+        public long getTime2() {
             return time;
         }
         
-        public double getUtility() {
+        public double getUtility2() {
             return utility;
+        }
+        
+        public double setUtility() {
+            return utility;
+        }
+        
+        public Transformation<?> getTransfomration() {
+            return transformation;
         }
         
         @Override

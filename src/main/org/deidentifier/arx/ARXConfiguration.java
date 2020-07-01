@@ -411,7 +411,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Integer                            geneticAlgorithmImmigrationInterval   = 10;
     
     /** Immigration fraction */
-    private Double                             geneticAlgorithmImmigrationFraction   = 0.1d;
+    private Double                             geneticAlgorithmImmigrationFraction   = 0.2d;
     
     /** Size of the elite */
     private Double                             geneticAlgorithmEliteFraction          = 0.2d;

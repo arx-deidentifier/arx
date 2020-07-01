@@ -73,7 +73,7 @@ public class LIGHTNINGTopDownAlgorithm extends LIGHTNINGAlgorithm {
         Object nextId;
         while ((nextId = queue.poll()) != null) {
             Transformation<?> next = solutionSpace.getTransformation(nextId);
-            if (!prune(next)) {
+            if (!prune(next, false)) {
                 expand(queue, next, false);
                 if (mustStop()) {
                     break;
