@@ -1099,7 +1099,9 @@ public class ARXLattice implements Serializable {
     }
 
     /**
-     * Returns the ARXNode for the given generalization scheme, <code>null</code> if not found
+     * Returns the ARXNode for the given generalization scheme, <code>null</code> if not found.
+     * This method does have side effects, as it expands all nodes on the path from bottom to the
+     * node returned.
      * @param transformation
      * @return
      */
