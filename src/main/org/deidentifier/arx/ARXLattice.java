@@ -922,7 +922,7 @@ public class ARXLattice implements Serializable {
     public Access access() {
         return access;
     }
-
+    
     /**
      * Materializes any non-materialized predecessors and successors
      */
@@ -1055,7 +1055,7 @@ public class ARXLattice implements Serializable {
             node.access.setHighestScore(max);
         }
     }
-    
+
     /**
      * Returns the bottom node.
      *
@@ -1064,7 +1064,7 @@ public class ARXLattice implements Serializable {
     public ARXNode getBottom() {
         return bottom;
     }
-
+    
     /**
      * Returns the highest score. Lower is better.
      * @return
@@ -1076,7 +1076,7 @@ public class ARXLattice implements Serializable {
         }
         return this.maximumInformationLoss;
     }
-    
+
     /**
      * Returns the levels of the generalization lattice.
      *
@@ -1085,7 +1085,7 @@ public class ARXLattice implements Serializable {
     public ARXNode[][] getLevels() {
         return levels;
     }
-
+    
     /**
      * Returns the lowest score. Lower is better.
      * @return
@@ -1096,6 +1096,67 @@ public class ARXLattice implements Serializable {
             this.estimateInformationLoss();
         }
         return this.minimumInformationLoss;
+    }
+
+    /**
+     * Returns the ARXNode for the given generalization scheme, <code>null</code> if not found.
+     * This method does have side effects, as it expands all nodes on the path from bottom to the
+     * node returned.
+     * @param transformation
+     * @return
+     */
+    public ARXNode getNode(int[] transformation) {
+        
+        // Prepare
+        ARXNode node = getBottom();
+        
+        // Search
+        while (!Arrays.equals(node.getTransformation(), transformation)) {
+            
+            // Successors
+           node.expand();
+           ARXNode[] successors = node.getSuccessors().clone();
+            
+            // Not found
+            if (successors.length == 0) {
+                return null;
+            }
+            
+            // Sort according to distance
+            Arrays.sort(successors, new Comparator<ARXNode>() {
+                
+                @Override
+                public int compare(ARXNode o1, ARXNode o2) {
+                    return Integer.compare(getDistance(o1.getTransformation(), transformation),
+                                           getDistance(o2.getTransformation(), transformation));
+                                           
+                }
+ 
+                /**
+                 * Calculate distance
+                 * @param current
+                 * @param target
+                 * @return
+                 */
+                private int getDistance(int[] current, int[] target) {
+                    int distance = 0;
+                    for (int i = 0; i < current.length; i++) {
+                        if (current[i] > target[i]) {
+                            return Integer.MAX_VALUE;
+                        } else {
+                            distance += target [i] - current[i];
+                        }
+                    }
+                    return distance;
+                }
+            });
+            
+            // Take closest node
+            node = successors[0];
+        }
+        
+        // Done
+        return node;
     }
 
     /**
