@@ -253,7 +253,7 @@ public class ImportWizardPageTable extends WizardPage {
         
         if (visible) {
             tableViewer.setInput(wizardImport.getData().getJdbcTables());
-            
+            tableViewer.getControl().redraw();
             /* Mark page as complete when table has been selected before */
             if (wizardImport.getData().getSelectedJdbcTable() != null) {
                 setPageComplete(true);

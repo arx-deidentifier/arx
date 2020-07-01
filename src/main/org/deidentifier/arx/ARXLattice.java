@@ -754,7 +754,7 @@ public class ARXLattice implements Serializable {
     private InformationLoss<?>                                 maximumInformationLoss = null;
 
     /** The solution space */
-    private transient SolutionSpace<?>                            solutions;
+    private transient SolutionSpace<?>                         solutions;
 
     /** Map from ids to nodes */
     private transient ObjectObjectOpenHashMap<Object, ARXNode> map;

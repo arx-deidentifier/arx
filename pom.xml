@@ -173,17 +173,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.sarasvati.thirdparty.eclipse</groupId>
-            <artifactId>draw2d</artifactId>
-            <version>3.8.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
             <groupId>net.objecthunter</groupId>
             <artifactId>exp4j</artifactId>
             <version>0.4.8</version>
@@ -380,52 +369,38 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
-        <!--local dependencies-->
+        <!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.commands -->
         <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>commands</artifactId>
-            <version>3.6.2</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.core.commands</artifactId>
+            <version>3.9.700</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.core.runtime -->
         <dependency>
-            <groupId>org.eclipse.core</groupId>
-            <artifactId>runtime</artifactId>
-            <version>3.8.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.core.runtime</artifactId>
+            <version>3.18.0</version>
         </dependency>
-        <dependency>
-            <groupId>org.eclipse.equinox</groupId>
-            <artifactId>common</artifactId>
-            <version>3.6.100</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse/draw2d -->
         <dependency>
             <groupId>org.eclipse</groupId>
-            <artifactId>jface</artifactId>
-            <version>3.8.102</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>*</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <artifactId>draw2d</artifactId>
+            <version>3.10.1</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.equinox.common -->
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.equinox.common</artifactId>
+            <version>3.12.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.eclipse.platform/org.eclipse.jface -->
+        <dependency>
+            <groupId>org.eclipse.platform</groupId>
+            <artifactId>org.eclipse.jface</artifactId>
+            <version>3.20.0</version>
+        </dependency>
+
+        <!--local dependencies-->
         <dependency>
             <groupId>de.linearbits</groupId>
             <artifactId>libjhc</artifactId>
@@ -462,7 +437,7 @@
         <dependency>
             <groupId>org.eclipse.nebula.widgets.nattable</groupId>
             <artifactId>core</artifactId>
-            <version>1.1.0</version>
+            <version>1.6.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -616,7 +591,7 @@
         <dependency>
             <groupId>org.eclipse.nebula.visualization</groupId>
             <artifactId>widgets</artifactId>
-            <version>1.0.0.201511041902</version>
+            <version>1.1.0.202006092019</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -627,7 +602,7 @@
         <dependency>
             <groupId>org.eclipse.nebula.visualization</groupId>
             <artifactId>xygraph</artifactId>
-            <version>1.0.0.201511041902</version>
+            <version>3.1.0.202006092019</version>
             <exclusions>
                 <exclusion>
                     <groupId>*</groupId>
@@ -665,9 +640,9 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>4.2.1-cocoa-macosx-x86_64</version>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt.cocoa.macosx.x86_64</artifactId>
+                    <version>3.114.100</version>
                     <exclusions>
                         <exclusion>
                             <groupId>*</groupId>
@@ -695,67 +670,9 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>4.2.1-win32-win32-x86_64</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>*</groupId>
-                            <artifactId>*</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>win</id>
-            <activation>
-                <os>
-                    <family>Windows</family>
-                    <arch>x86</arch>
-                </os>
-                <property>
-                    <name>core</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-            <properties>
-                <envClassifier>win</envClassifier>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>4.2.1-win32-win32-x86</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>*</groupId>
-                            <artifactId>*</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>gtk</id>
-            <activation>
-                <os>
-                    <name>Linux</name>
-                    <arch>x86</arch>
-                </os>
-                <property>
-                    <name>core</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-            <properties>
-                <envClassifier>gtk</envClassifier>
-            </properties>
-            <dependencies>
-                <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>4.2.1-gtk-linux-x86</version>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+                    <version>3.114.100</version>
                     <exclusions>
                         <exclusion>
                             <groupId>*</groupId>
@@ -782,9 +699,9 @@
             </properties>
             <dependencies>
                 <dependency>
-                    <groupId>org.eclipse</groupId>
-                    <artifactId>swt</artifactId>
-                    <version>4.2.1-gtk-linux-x86_64</version>
+                    <groupId>org.eclipse.platform</groupId>
+                    <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+                    <version>3.114.100</version>
                     <exclusions>
                         <exclusion>
                             <groupId>*</groupId>
