@@ -142,7 +142,7 @@ public class ViewAttributeList implements IView {
     public void reset() {
         this.attributes = null;
         this.table.setCurrentPage(0);
-        this.table.refreshPage();
+        this.refreshTable();
         SWTUtil.disable(this.table);
     }
 
@@ -159,11 +159,11 @@ public class ViewAttributeList implements IView {
         } else if (event.part == ModelPart.ATTRIBUTE_TYPE ||
                    event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE) {
             if (!attributes.isEmpty()) {
-                table.refreshPage();
+            	this.refreshTable();
             }
         } else if (event.part == ModelPart.DATA_TYPE) {
             if (!attributes.isEmpty()) {
-                table.refreshPage();
+            	this.refreshTable();
             }
         }
     }
@@ -243,7 +243,7 @@ public class ViewAttributeList implements IView {
             // Set and update
             if (changed) {
                 this.model.getInputDefinition().setDataType(attribute, type);
-                table.refreshPage();
+                this.refreshTable();
                 this.controller.update(new ModelEvent(this, ModelPart.DATA_TYPE, attribute));
             }
         }
@@ -375,7 +375,7 @@ public class ViewAttributeList implements IView {
                                 String attribute = (String)item.getData();
                                 boolean isResponseVariable = !model.getInputDefinition().isResponseVariable(attribute);
                                 model.getInputDefinition().setResponseVariable(attribute, isResponseVariable);
-                                table.refreshPage();
+                                refreshTable();
                                 controller.update(new ModelEvent(this, ModelPart.RESPONSE_VARIABLES, attribute));
                                 return;
                             }
@@ -386,7 +386,7 @@ public class ViewAttributeList implements IView {
             }
         });
         this.table.setCurrentPage(0);
-        this.table.refreshPage();
+        this.refreshTable();
     }
 
     /**
@@ -543,6 +543,14 @@ public class ViewAttributeList implements IView {
     }
   
     /**
+     * Refresh the table
+     */
+    private void refreshTable() {
+    	this.table.getViewer().refresh();
+    	this.table.refreshPage();
+    }
+
+    /**
      * Updates the view.
      * 
      * @param node
@@ -564,10 +572,10 @@ public class ViewAttributeList implements IView {
         
         // Refresh
         this.table.setCurrentPage(0);
-        this.table.refreshPage();
+        this.refreshTable();
         SWTUtil.enable(this.table);
     }
-
+    
     /**
      * Update
      * @param attribute
