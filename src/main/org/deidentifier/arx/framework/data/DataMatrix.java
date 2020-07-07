@@ -26,27 +26,18 @@ import java.io.Serializable;
  * @author Fabian Prasser
  */
 public class DataMatrix implements Serializable {
-
+	
     /** SVUID */
     private static final long serialVersionUID = 1626391500373995527L;
 
     /** Backing array */
-    private final int[]       array;
-
+    private Matrix			  matrix;
+    
     /** The number of rows. */
     private final int         rows;
 
     /** The number of columns. */
     private final int         columns;
-
-    /** Iterate */
-    private int               iteratorI        = 0;
-
-    /** Iterate */
-    private int               iteratorOffset   = 0;
-
-    /** Iterate */
-    private int               baseOffset       = 0;
 
     /**
      * Instantiates a new memory block.
@@ -55,29 +46,48 @@ public class DataMatrix implements Serializable {
      * @param columns the num columns
      */
     public DataMatrix(final int rows, final int columns) {
-        try {
-            this.columns = columns;
-            this.rows = rows;
-            int cells = Math.multiplyExact(rows, columns);
-            this.array = new int[cells];
+        this.columns = columns;
+        this.rows = rows;
+
+        try{
+        	/** Creates a single array if there are 2^31-1 cells or less than that */
+            Math.multiplyExact(rows, columns);
+            this.matrix = new SingleArrayMatrix(rows, columns);
         } catch (ArithmeticException e) {
-            throw new IllegalArgumentException("Not more then 2^31-1 cells supported");
+            /** Creates a multidimensional array if there are more than 2^31-1 cells */
+            this.matrix = new MultidimensionalArrayMatrix(rows, columns);
         }
     }
-
+    
+    /**
+     * Get the matrix object
+     * @return
+     */
+    public Matrix getMatrix() {
+    	return this.matrix;
+    }
+    
+    /**
+     * Set the matrix object
+     * @return
+     */
+    public void setMatrix(Matrix matrix) {
+    	this.matrix = matrix;
+    }
+    
     /**
      * ANDs the first value of the row with the given value
      * @param row
      * @param value
      */
     public void and(int row, int value) {
-        array[row * columns] &= value;
+    	this.matrix.and(row, value);
     }
-
+    
     @Override
     public DataMatrix clone() {
-        DataMatrix result = new DataMatrix(this.rows, this.columns);
-        System.arraycopy(this.array, 0, result.array, 0, this.array.length);
+    	DataMatrix result = new DataMatrix(this.rows, this.columns);
+    	result.matrix = this.matrix.clone();
         return result;
     }
     
@@ -88,9 +98,7 @@ public class DataMatrix implements Serializable {
      * @param sourceRow
      */
     public void copyFrom(int row, DataMatrix sourceMatrix, int sourceRow) {
-        int sourceOffset = sourceRow * columns;
-        int thisOffset = row * columns;
-        System.arraycopy(sourceMatrix.array, sourceOffset, this.array, thisOffset, columns);
+        this.matrix.copyFrom(row, sourceMatrix, sourceRow);
     }
 
     /**
@@ -110,13 +118,7 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public boolean equals(int row, int[] data) {
-        int offset = row * columns;
-        for (int i = 0; i < columns; i++) {
-            if (this.array[offset++] != data[i]) { 
-                return false; 
-            }
-        }
-        return true;
+        return this.matrix.equals(row, data);
     }
 
     /**
@@ -127,103 +129,7 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public boolean equalsIgnore(int row1, int row2, int ignore) {
-
-        int offset1 = row1 * columns;
-        int offset2 = row2 * columns;
-
-        switch (columns) {
-        case 20:
-            if ((ignore != 19) && this.array[offset1 + 19] != this.array[offset2 + 19]) {
-                return false;
-            }
-        case 19:
-            if ((ignore != 18) && this.array[offset1 + 18] != this.array[offset2 + 18]) {
-                return false;
-            }
-        case 18:
-            if ((ignore != 17) && this.array[offset1 + 17] != this.array[offset2 + 17]) {
-                return false;
-            }
-        case 17:
-            if ((ignore != 16) && this.array[offset1 + 16] != this.array[offset2 + 16]) {
-                return false;
-            }
-        case 16:
-            if ((ignore != 15) && this.array[offset1 + 15] != this.array[offset2 + 15]) {
-                return false;
-            }
-        case 15:
-            if ((ignore != 14) && this.array[offset1 + 14] != this.array[offset2 + 14]) {
-                return false;
-            }
-        case 14:
-            if ((ignore != 13) && this.array[offset1 + 13] != this.array[offset2 + 13]) {
-                return false;
-            }
-        case 13:
-            if ((ignore != 12) && this.array[offset1 + 12] != this.array[offset2 + 12]) {
-                return false;
-            }
-        case 12:
-            if ((ignore != 11) && this.array[offset1 + 11] != this.array[offset2 + 11]) {
-                return false;
-            }
-        case 11:
-            if ((ignore != 10) && this.array[offset1 + 10] != this.array[offset2 + 10]) {
-                return false;
-            }
-        case 10:
-            if ((ignore != 9) && this.array[offset1 + 9] != this.array[offset2 + 9]) {
-                return false;
-            }
-        case 9:
-            if ((ignore != 8) && this.array[offset1 + 8] != this.array[offset2 + 8]) {
-                return false;
-            }
-        case 8:
-            if ((ignore != 7) && this.array[offset1 + 7] != this.array[offset2 + 7]) {
-                return false;
-            }
-        case 7:
-            if ((ignore != 6) && this.array[offset1 + 6] != this.array[offset2 + 6]) {
-                return false;
-            }
-        case 6:
-            if ((ignore != 5) && this.array[offset1 + 5] != this.array[offset2 + 5]) {
-                return false;
-            }
-        case 5:
-            if ((ignore != 4) && this.array[offset1 + 4] != this.array[offset2 + 4]) {
-                return false;
-            }
-        case 4:
-            if ((ignore != 3) && this.array[offset1 + 3] != this.array[offset2 + 3]) {
-                return false;
-            }
-        case 3:
-            if ((ignore != 2) && this.array[offset1 + 2] != this.array[offset2 + 2]) {
-                return false;
-            }
-        case 2:
-            if ((ignore != 1) && this.array[offset1 + 1] != this.array[offset2 + 1]) {
-                return false;
-            }
-        case 1:
-            if ((ignore != 0) && (this.array[offset1 + 0]) != (this.array[offset2 + 0])) {
-                return false;
-            }
-            break;
-        default:
-            if ((ignore != 0) && (this.array[offset1]) != (this.array[offset2] )) {
-                return false;
-            }
-            for (int i = 1; i < columns; i++) {
-                if ((ignore != i) && this.array[offset1 + i] != this.array[offset2 + i]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+        return this.matrix.equalsIgnore(row1, row2, ignore);
     }
     
     /**
@@ -243,7 +149,7 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public int get(final int row, final int col) {
-        return this.array[row * columns + col];
+        return this.matrix.get(row, col);
     }
     
     /**
@@ -251,7 +157,7 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public int getNumColumns() {
-        return columns;
+        return this.columns;
     }
 
     /**
@@ -259,17 +165,16 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public int getNumRows() {
-        return rows;
+        return this.rows;
     }
 
     /**
      * Gets the value in the given column for the row which
      * has been set via setRow(row).
      * @param column
-     * @param value
      */
     public int getValueAtColumn(int column) {
-        return this.array[baseOffset + column];
+        return this.matrix.getValueAtColumn(column);
     }
 
     /**
@@ -278,12 +183,7 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public int hashCode(final int row) {
-        int offset = row * columns;
-        int result = 23;
-        for (int i = 0; i < columns; i++) {
-            result = (37 * result) + this.array[offset++];
-        }
-        return result;        
+        return this.matrix.hashCode(row);       
     }
 
     /**
@@ -318,13 +218,7 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public int hashCodeIgnore(final int row, final int ignore) {
-        int offset = row * columns;
-        int result = 23;
-        for (int i = 0; i < columns; i++) {
-            result = (i == ignore) ? result : ((37 * result) + this.array[offset]);
-            offset++;
-        }
-        return result;        
+        return this.matrix.hashCodeIgnore(row, ignore);     
     }
     
     /**
@@ -332,8 +226,7 @@ public class DataMatrix implements Serializable {
      * @param row
      */
     public void iterator(int row) {
-        iteratorOffset = row * columns;
-        iteratorI = 0;
+        this.matrix.iterator(row);
     }
 
     /**
@@ -341,27 +234,24 @@ public class DataMatrix implements Serializable {
      * @return
      */
     public boolean iterator_hasNext() {
-        return iteratorI < columns;
+        return this.matrix.iterator_hasNext();
     }
 
     /**
-     * First iterator
+     * Get the next value in the iteration
      * @return
      */
     public int iterator_next() {
-        int result = this.array[iteratorOffset++];
-        iteratorI++;
-        return result;
+    	return this.matrix.iterator_next();
     }
     
     /**
-     * First iterator
+     * Write a value in the current iterator position
      * @param value
      * @return
      */
     public void iterator_write(int value) {
-        this.array[iteratorOffset++] = value;
-        iteratorI++;
+        this.matrix.iterator_write(value);
     }
 
     /**
@@ -370,7 +260,7 @@ public class DataMatrix implements Serializable {
      * @param value
      */
     public void or(int row, int value) {
-        array[row * columns] |= value;
+        this.matrix.or(row, value);
     }
 
     /**
@@ -380,7 +270,7 @@ public class DataMatrix implements Serializable {
      * @param value
      */
     public void set(int row, int column, int value) {
-        this.array[row * columns + column] = value;
+        this.matrix.set(row, column, value);
     }
 
     /**
@@ -388,7 +278,7 @@ public class DataMatrix implements Serializable {
      * @param row
      */
     public void setRow(int row) {
-        this.baseOffset = row * columns;
+        this.matrix.setRow(row);
     }
 
     /**
@@ -397,8 +287,7 @@ public class DataMatrix implements Serializable {
      * @param data
      */
     public void setRow(int row, int[] data) {
-        int offset = row * columns;
-        System.arraycopy(data, 0, this.array, offset, data.length);
+        this.matrix.setRow(row, data);
     }
 
     /**
@@ -408,7 +297,7 @@ public class DataMatrix implements Serializable {
      * @param value
      */
     public void setValueAtColumn(int column, int value) {
-        this.array[baseOffset + column] = value;
+        this.matrix.setValueAtColumn(column, value);
     }
 
     /**
@@ -417,15 +306,7 @@ public class DataMatrix implements Serializable {
      * @param row2
      */
     public void swap(int row1, int row2) {
-        int offset1 = row1 * columns;
-        int offset2 = row2 * columns;
-        for (int i = 0; i < this.columns; i++) {
-            int temp = this.array[offset1];
-            this.array[offset1] = this.array[offset2];
-            this.array[offset2] = temp;
-            offset1 ++;
-            offset2 ++;
-        }
+        this.matrix.swap(row1, row2);
     }
 
     /**
@@ -436,103 +317,7 @@ public class DataMatrix implements Serializable {
      * @return
      */
     private boolean equals(int row1, int row2, int flag) {
-
-        int offset1 = row1 * columns;
-        int offset2 = row2 * columns;
-
-        switch (columns) {
-        case 20:
-            if (this.array[offset1 + 19] != this.array[offset2 + 19]) {
-                return false;
-            }
-        case 19:
-            if (this.array[offset1 + 18] != this.array[offset2 + 18]) {
-                return false;
-            }
-        case 18:
-            if (this.array[offset1 + 17] != this.array[offset2 + 17]) {
-                return false;
-            }
-        case 17:
-            if (this.array[offset1 + 16] != this.array[offset2 + 16]) {
-                return false;
-            }
-        case 16:
-            if (this.array[offset1 + 15] != this.array[offset2 + 15]) {
-                return false;
-            }
-        case 15:
-            if (this.array[offset1 + 14] != this.array[offset2 + 14]) {
-                return false;
-            }
-        case 14:
-            if (this.array[offset1 + 13] != this.array[offset2 + 13]) {
-                return false;
-            }
-        case 13:
-            if (this.array[offset1 + 12] != this.array[offset2 + 12]) {
-                return false;
-            }
-        case 12:
-            if (this.array[offset1 + 11] != this.array[offset2 + 11]) {
-                return false;
-            }
-        case 11:
-            if (this.array[offset1 + 10] != this.array[offset2 + 10]) {
-                return false;
-            }
-        case 10:
-            if (this.array[offset1 + 9] != this.array[offset2 + 9]) {
-                return false;
-            }
-        case 9:
-            if (this.array[offset1 + 8] != this.array[offset2 + 8]) {
-                return false;
-            }
-        case 8:
-            if (this.array[offset1 + 7] != this.array[offset2 + 7]) {
-                return false;
-            }
-        case 7:
-            if (this.array[offset1 + 6] != this.array[offset2 + 6]) {
-                return false;
-            }
-        case 6:
-            if (this.array[offset1 + 5] != this.array[offset2 + 5]) {
-                return false;
-            }
-        case 5:
-            if (this.array[offset1 + 4] != this.array[offset2 + 4]) {
-                return false;
-            }
-        case 4:
-            if (this.array[offset1 + 3] != this.array[offset2 + 3]) {
-                return false;
-            }
-        case 3:
-            if (this.array[offset1 + 2] != this.array[offset2 + 2]) {
-                return false;
-            }
-        case 2:
-            if (this.array[offset1 + 1] != this.array[offset2 + 1]) {
-                return false;
-            }
-        case 1:
-            if ((this.array[offset1 + 0] & flag) != (this.array[offset2 + 0] & flag)) {
-                return false;
-            }
-            break;
-        default:
-            if ((this.array[offset1] & flag) != (this.array[offset2] & flag)) {
-                return false;
-            }
-            for (int i = 1; i < columns; i++) {
-                if (this.array[offset1 + i] != this.array[offset2 + i]) {
-                    return false;
-                }
-            }
-        }
-        return true;
+    	return this.matrix.equals(row1, row2, flag);
     }
 
     /**
@@ -546,12 +331,7 @@ public class DataMatrix implements Serializable {
         DataMatrix result = new DataMatrix(subset.length, this.columns);
         
         // Copy subset
-        int targetOffset = 0;
-        for (int source : subset) {
-            int sourceOffset = source * columns;
-            System.arraycopy(this.array, sourceOffset, result.array, targetOffset, columns);
-            targetOffset += columns;
-        }
+        result.setMatrix(this.matrix.clone(subset)); 
         
         // Return
         return result;
