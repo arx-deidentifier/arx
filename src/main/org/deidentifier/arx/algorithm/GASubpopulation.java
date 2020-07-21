@@ -30,43 +30,54 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  */
 public class GASubpopulation {
 
-	/** List of individuals*/
-	private List<Transformation<?>> individuals = new ArrayList<>();
+    /** List of individuals */
+    private List<Transformation<?>> individuals;
 
-	/**
-	 * Adds an individual to the subpopulation.
-	 * 
-	 * @param individual
-	 */
-	public void addIndividual(Transformation<?> individual) {
-		individuals.add(individual);
-	}
+    /** Default constructor **/
+    public GASubpopulation() {
+        this.individuals = new ArrayList<>();
+        ;
+    }
 
-	/**
-	 * Gets the individual at index.
-	 * 
-	 * @param index
-	 * @return
-	 */
-	public Transformation<?> getIndividual(int index) {
-		return individuals.get(index);
-	}
+    /** Constructor used to create an identical copy **/
+    public GASubpopulation(GASubpopulation pop) {
+        this.individuals = new ArrayList<Transformation<?>>(pop.getIndividuals());
+    }
 
-	/**
-	 * Gets the size of the subpopulation.
-	 * 
-	 * @return
-	 */
-	public int individualCount() {
-		return individuals.size();
-	}
+    /**
+     * Adds an individual to the subpopulation.
+     * 
+     * @param individual
+     */
+    public void addIndividual(Transformation<?> individual) {
+        individuals.add(individual);
+    }
 
-	/**
-	 * Moves 'count' Individuals from this subpopulation to 'other'
-	 * 
-	 * @param other
-	 * @param count
-	 */
+    /**
+     * Gets the individual at index.
+     * 
+     * @param index
+     * @return
+     */
+    public Transformation<?> getIndividual(int index) {
+        return individuals.get(index);
+    }
+
+    /**
+     * Gets the size of the subpopulation.
+     * 
+     * @return
+     */
+    public int individualCount() {
+        return individuals.size();
+    }
+
+    /**
+     * Moves 'count' Individuals from this subpopulation to 'other'
+     * 
+     * @param other
+     * @param count
+     */
     public void moveFittestIndividuals(GASubpopulation other, int immigrationCount) {
         int size = this.individualCount();
         immigrationCount = Math.min(size, immigrationCount);
@@ -75,32 +86,35 @@ public class GASubpopulation {
         }
     }
 
-	/**
-	 * Replaces the individual at a certain index
-	 * @param index
-	 * @param individual
-	 */
-	public void setIndividual(int index, Transformation<?> individual) {
-		this.individuals.set(index, individual);
-	}
+    /**
+     * Replaces the individual at a certain index
+     * 
+     * @param index
+     * @param individual
+     */
+    public void setIndividual(int index, Transformation<?> individual) {
+        this.individuals.set(index, individual);
+    }
 
-	/**
-	 * Sorts the individuals descending by fitness, which means ascending in terms of information loss.
-	 */
-	public void sort() {
-		
-		// Sort descending by fitness, ascending in terms of information loss.
-		individuals.sort(new Comparator<Transformation<?>>() {
+    /** Return the list containing the individuals **/ 
+    public List<Transformation<?>> getIndividuals() {
+        return individuals;
+    }
+
+    /**
+     * Sorts the individuals descending by fitness, which means ascending in
+     * terms of information loss.
+     */
+    public void sort() {
+
+        // Sort descending by fitness, ascending in terms of information loss.
+        individuals.sort(new Comparator<Transformation<?>>() {
             @Override
             public int compare(Transformation<?> t1, Transformation<?> t2) {
-                if (t1 == null) {
-                    return -1;
-                }
-                if (t2 == null) {
-                    return +1;
-                }
+                if (t1 == null) { return -1; }
+                if (t2 == null) { return +1; }
                 return t1.getInformationLoss().compareTo(t2.getInformationLoss());
             }
         });
-	}
+    }
 }

@@ -691,6 +691,7 @@ public class ARXAnonymizer { // NO_UCD
                                       config.getGeneticAlgorithmImmigrationInterval(),
                                       config.getGeneticAlgorithmMutationProbability(),
                                       config.getGeneticAlgorithmSubpopulationSize(),
+                                      config.getGeneticAlgorithmProductionFraction(),
                                       config.getHeuristicSearchTimeLimit(),
                                       config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
     	    
