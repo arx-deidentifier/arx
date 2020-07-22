@@ -274,6 +274,14 @@ public class ModelConfiguration implements Serializable, Cloneable {
 
     /**
      * @return
+     * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmProductionFraction()
+     */
+    public double getGeneticAlgorithmProductionFraction() {
+        return config.getGeneticAlgorithmProductionFraction();
+    }
+    
+    /**
+     * @return
      * @see org.deidentifier.arx.ARXConfiguration#getGeneticAlgorithmSubpopulationSize()
      */
     public int getGeneticAlgorithmSubpopulationSize() {
@@ -652,6 +660,16 @@ public class ModelConfiguration implements Serializable, Cloneable {
     public void setGeneticAlgorithmMutationProbability(double geneticAlgorithmMutationProbability) {
         setModified();
         config.setGeneticAlgorithmMutationProbability(geneticAlgorithmMutationProbability);
+    }
+    
+    /**
+     * Sets the production fraction
+     * 
+     * @param geneticAlgorithmProductionFraction
+     */
+    public void setGeneticAlgorithmProductionFraction(double geneticAlgorithmProductionFraction) {
+        setModified();
+        config.setGeneticAlgorithmProductionFraction(geneticAlgorithmProductionFraction);
     }
     
     /**
