@@ -165,6 +165,8 @@ public class ImportAdapterCSV extends ImportAdapter {
         settings.setEmptyValue("");
         settings.setNullValue("");
         settings.setFormat(format);
+        settings.setIgnoreLeadingWhitespacesInQuotes(true);
+        settings.setIgnoreTrailingWhitespacesInQuotes(true);
         if (maxColumns > 0) {
             settings.setMaxColumns(maxColumns);
         }
@@ -175,8 +177,7 @@ public class ImportAdapterCSV extends ImportAdapter {
         if (records > (long)Integer.MAX_VALUE) {
             throw new IllegalArgumentException("Too many records (more than " + Integer.MAX_VALUE+")");
         }
-
-        return (int)records + (config.getContainsHeader() ? 0 : 1);
+        return (int)records - (config.getContainsHeader() ? 1 : 0);
     }
 
     @Override

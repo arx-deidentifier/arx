@@ -64,7 +64,7 @@ public class ARXAnonymizer { // NO_UCD
     public static final boolean PRODUCTION_RELEASE = true;
 	
 	/** The global version string of this release*/
-	public static final String VERSION = "3.8.0";
+	public static final String VERSION = "3.9.0";
 
     /**
      * Temporary result of the ARX algorithm.
@@ -411,6 +411,9 @@ public class ARXAnonymizer { // NO_UCD
 
         // Check for null
         if (handle == null) { throw new NullPointerException("Data must not be null"); }
+
+        // Check for null
+        if (handle.getNumRows() == 0) { throw new IllegalArgumentException("Data does not contain any rows"); }
         
         // Check sensitive attributes
         if (config.isPrivacyModelSpecified(LDiversity.class) ||
