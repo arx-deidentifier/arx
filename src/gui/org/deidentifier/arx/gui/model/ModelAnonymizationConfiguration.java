@@ -60,8 +60,6 @@ public class ModelAnonymizationConfiguration implements Serializable {
     private ModelAnonymizationConfiguration.TransformationType transformationType = TransformationType.GLOBAL;
     /** Limits */
     private Boolean                                            stepLimitEnabled   = false;
-    /** Limits */
-    private Boolean                                            timeLimitEnabled   = false;
 
     /**
      * Creates a new instance
@@ -142,14 +140,7 @@ public class ModelAnonymizationConfiguration implements Serializable {
      * @return the timeLimitEnabled
      */
     public boolean isTimeLimitEnabled() {
-        
-        // Backwards compatibility
-        if (timeLimitEnabled == null) {
-           return (this.searchType == SearchType.TIME_LIMIT) ? true : false; 
-        }
-        
-        // Done
-        return timeLimitEnabled;
+        return !isStepLimitEnabled();
     }
     
     /**
@@ -191,7 +182,7 @@ public class ModelAnonymizationConfiguration implements Serializable {
      * @param timeLimitEnabled the timeLimitEnabled to set
      */
     public void setTimeLimitEnabled(boolean timeLimitEnabled) {
-        this.timeLimitEnabled = timeLimitEnabled;
+        this.stepLimitEnabled = !timeLimitEnabled;
     }
 
     /**

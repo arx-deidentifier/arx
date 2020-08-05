@@ -758,9 +758,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public int getHeuristicSearchStepLimit(SearchStepSemantics requestedSearchStepSemantics, int numQIs) {
         
-        // Sanity check
+        // Sanity checks
+        if (numQIs <= 0) {
+            throw new IllegalArgumentException("Number of QIs must be >= 1");
+        }
         if (this.heuristicSearchStepSemantics == null) {
             this.heuristicSearchStepSemantics = SearchStepSemantics.CHECKS;
+        }
+        if (this.heuristicSearchStepLimit == null) {
+            this.heuristicSearchStepLimit = Integer.MAX_VALUE;
         }
 
         // Early return
@@ -777,16 +783,19 @@ public class ARXConfiguration implements Serializable, Cloneable {
                         return this.heuristicSearchStepLimit / numQIs;
                     default:
                         throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
-                    }
-
+                }
             case EXPANSIONS:
                 switch (requestedSearchStepSemantics) {
                     case CHECKS:
                         // Convert the limit of expansions which has been set to the requested limit of checks
-                        return this.heuristicSearchStepLimit * numQIs;
+                    try {
+                        return Math.multiplyExact(this.heuristicSearchStepLimit, numQIs);
+                    } catch (Exception e) {
+                        return Integer.MAX_VALUE;
+                    }
                     default:
                         throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
-                    }
+                }
             default:
                 throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
         }
