@@ -1363,7 +1363,6 @@ public class Model implements Serializable {
         this.localRecodingModel = null;
         this.selectedClassValue = null;
         this.selectedAttribute = null;
-        //TODO: add new GA varaibles
     }
 
     /**

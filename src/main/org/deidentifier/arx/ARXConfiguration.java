@@ -411,7 +411,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private Integer                            geneticAlgorithmImmigrationInterval   = 10;
     
     /** Immigration fraction */
-    private Double                             geneticAlgorithmImmigrationFraction   = 0.1d;
+    private Double                             geneticAlgorithmImmigrationFraction   = 0.2d;
     
     /** Size of the elite */
     private Double                             geneticAlgorithmEliteFraction          = 0.2d;
@@ -425,6 +425,9 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Mutation probability */
     private Double                             geneticAlgorithmMutationProbability   = 0.2d;
     
+    /** Production Fraction **/
+    private Double                             geneticAlgorithmProductionFraction   = 0.2d;
+
     /** Number of GA iterations */
     private Integer                            geneticAlgorithmIterations            = 50;
     
@@ -562,15 +565,16 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         result.dpSearchBudget = this.dpSearchBudget;
         result.heuristicSearchStepSemantics = this.heuristicSearchStepSemantics;
-		    result.geneticAlgorithmSubpopulationSize = this.geneticAlgorithmSubpopulationSize;
-		    result.geneticAlgorithmImmigrationInterval = this.geneticAlgorithmImmigrationInterval;
-		    result.geneticAlgorithmImmigrationFraction = this.geneticAlgorithmImmigrationFraction;
-		    result.geneticAlgorithmEliteFraction = this.geneticAlgorithmEliteFraction;
-		    result.geneticAlgorithmCrossoverFraction = this.geneticAlgorithmCrossoverFraction;
-		    result.geneticAlgorithmDeterministic = this.geneticAlgorithmDeterministic;
-		    result.geneticAlgorithmMutationProbability = this.geneticAlgorithmMutationProbability;
-		    result.geneticAlgorithmIterations = this.geneticAlgorithmIterations;
-		    result.algorithm = this.algorithm;
+		result.geneticAlgorithmSubpopulationSize = this.geneticAlgorithmSubpopulationSize;
+		result.geneticAlgorithmImmigrationInterval = this.geneticAlgorithmImmigrationInterval;
+        result.geneticAlgorithmImmigrationFraction = this.geneticAlgorithmImmigrationFraction;
+        result.geneticAlgorithmEliteFraction = this.geneticAlgorithmEliteFraction;
+        result.geneticAlgorithmCrossoverFraction = this.geneticAlgorithmCrossoverFraction;
+        result.geneticAlgorithmDeterministic = this.geneticAlgorithmDeterministic;
+        result.geneticAlgorithmMutationProbability = this.geneticAlgorithmMutationProbability;
+		result.geneticAlgorithmProductionFraction = this.geneticAlgorithmProductionFraction;
+        result.geneticAlgorithmIterations = this.geneticAlgorithmIterations;
+        result.algorithm = this.algorithm;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -724,6 +728,17 @@ public class ARXConfiguration implements Serializable, Cloneable {
 	}
     
     /**
+     * Returns the production fraction
+     * @return
+     */
+    public double getGeneticAlgorithmProductionFraction() {
+        if (this.geneticAlgorithmProductionFraction == null) {
+            this.geneticAlgorithmProductionFraction = 0.2d;
+        }
+        return geneticAlgorithmProductionFraction;
+    }
+	
+    /**
 	 * Returns the size of the sub-population
 	 * @return
 	 */
@@ -733,7 +748,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		}
 		return geneticAlgorithmSubpopulationSize;
 	}
-    
+	
     /**
      * The heuristic search algorithm will terminate after the returned number of steps.
      * The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
@@ -1170,14 +1185,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
 		this.geneticAlgorithmImmigrationInterval = geneticAlgorithmImmigrationInterval;
 	}
 	
-	/**
+    /**
 	 * Sets the genetic algorithm iterations
 	 * @param geneticAlgorithmIterations
 	 */
 	public void setGeneticAlgorithmIterations(int geneticAlgorithmIterations) {
 	    this.geneticAlgorithmIterations = geneticAlgorithmIterations;
 	}
-
+	
 	/**
 	 * Sets the mutation probability
 	 * @param geneticAlgorithmMutationProbability
@@ -1185,6 +1200,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
 	public void setGeneticAlgorithmMutationProbability(double geneticAlgorithmMutationProbability) {
 		this.geneticAlgorithmMutationProbability = geneticAlgorithmMutationProbability;
 	}
+
+	/**
+     * Sets the production fraction
+     * @param geneticAlgorithmImmigrationInterval
+     */
+    public void setGeneticAlgorithmProductionFraction(double geneticAlgorithmProductionFraction) {
+        this.geneticAlgorithmProductionFraction = geneticAlgorithmProductionFraction;
+    }
 
 	/**
 	 * Setter

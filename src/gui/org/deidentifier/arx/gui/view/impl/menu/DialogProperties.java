@@ -109,18 +109,22 @@ public class DialogProperties implements IDialog {
         window.addPreference(new PreferenceInteger(Resources.getMessage("PropertyDialog.138"), 1, 1000000, 10) { //$NON-NLS-1$
             protected Integer getValue() { return model.getInputConfig().getGeneticAlgorithmImmigrationInterval(); }
             protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmImmigrationInterval((Integer)t); }});
-        
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.139"), 0, 1, 0.1d) { //$NON-NLS-1$
+ 
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.139"), 0, 1, 0.2d) { //$NON-NLS-1$
             protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmImmigrationFraction(); }
             protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmImmigrationFraction((Double)t); }});
         
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.140"), 0, 100,  0.2d) { //$NON-NLS-1$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.140"), 0, 1,  0.2d) { //$NON-NLS-1$
             protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmEliteFraction(); }
             protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmEliteFraction((Double)t); }});
         
-        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.141"), 0, 100,  0.2d) { //$NON-NLS-1$
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.141"), 0, 1,  0.2d) { //$NON-NLS-1$
             protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmCrossoverFraction(); }
             protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmCrossoverFraction((Double)t); }});
+        
+        window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.144"), 0, 1,  0.2d) { //$NON-NLS-1$
+            protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmProductionFraction(); }
+            protected void setValue(Object t) { model.getInputConfig().setGeneticAlgorithmProductionFraction((Double)t); }});
         
         window.addPreference(new PreferenceDouble(Resources.getMessage("PropertyDialog.142"), 0, 1,  0.2d) { //$NON-NLS-1$
             protected Double getValue() { return model.getInputConfig().getGeneticAlgorithmMutationProbability(); }

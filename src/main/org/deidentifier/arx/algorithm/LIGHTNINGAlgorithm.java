@@ -182,6 +182,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
     /**
     * Returns whether we can prune this Transformation
     * @param transformation
+    * @param up whether this is a bottom-up search
     * @return
     */
     protected boolean prune(Transformation<?> transformation, boolean up) {
@@ -190,7 +191,7 @@ public class LIGHTNINGAlgorithm extends AbstractAlgorithm{
         if (transformation.hasProperty(propertyExpanded) || (up && transformation.hasProperty(propertyInsufficientUtility))){
             return true;
         }
-        
+
         if (up) {
             // If a current optimum has been discovered
             Transformation<?> optimum = getGlobalOptimum();
