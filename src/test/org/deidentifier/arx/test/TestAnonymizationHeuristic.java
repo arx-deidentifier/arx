@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.runner.RunWith;
@@ -71,7 +72,7 @@ public class TestAnonymizationHeuristic extends AbstractAnonymizationTest {
         
         // Enable heuristic search
         for (Object[] testcase : cases) {
-            ((ARXAnonymizationTestCase)testcase[0]).config.setHeuristicSearchEnabled(true);
+            ((ARXAnonymizationTestCase)testcase[0]).config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
             ((ARXAnonymizationTestCase)testcase[0]).config.setHeuristicSearchTimeLimit(Integer.MAX_VALUE);
             ((ARXAnonymizationTestCase)testcase[0]).config.setHeuristicSearchStepLimit(1000);
         }

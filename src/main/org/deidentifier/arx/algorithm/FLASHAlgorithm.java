@@ -42,11 +42,15 @@ public class FLASHAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
+     * @param timeLimit
+     * @param checkLimit
      * @return
      */
     public static AbstractAlgorithm create(final SolutionSpace<Long> solutionSpace,
                                            final TransformationChecker checker,
-                                           final FLASHStrategy strategy) {
+                                           final FLASHStrategy strategy,
+                                           final int timeLimit,
+                                           final int checkLimit) {
 
         // Init
         ARXConfigurationInternal config = checker.getConfiguration();
@@ -57,42 +61,42 @@ public class FLASHAlgorithm {
         // CASE 1
         // ******************************
         if ((monotonicityOfPrivacy == Monotonicity.FULL) && (monotonicityOfUtility == Monotonicity.FULL)) {
-            return createFullFull(solutionSpace, checker, strategy);
+            return createFullFull(solutionSpace, checker, strategy, timeLimit, checkLimit);
         }
 
         // ******************************
         // CASE 2
         // ******************************
         if ((monotonicityOfPrivacy == Monotonicity.FULL) && (monotonicityOfUtility == Monotonicity.NONE)) {
-            return createFullNone(solutionSpace, checker, strategy);
+            return createFullNone(solutionSpace, checker, strategy, timeLimit, checkLimit);
         }
 
         // ******************************
         // CASE 3
         // ******************************
         if ((monotonicityOfPrivacy == Monotonicity.PARTIAL) && (monotonicityOfUtility == Monotonicity.FULL)) {
-            return createPartialFull(solutionSpace, checker, strategy);
+            return createPartialFull(solutionSpace, checker, strategy, timeLimit, checkLimit);
         }
 
         // ******************************
         // CASE 4
         // ******************************
         if ((monotonicityOfPrivacy == Monotonicity.PARTIAL) && (monotonicityOfUtility == Monotonicity.NONE)) {
-            return createPartialNone(solutionSpace, checker, strategy);
+            return createPartialNone(solutionSpace, checker, strategy, timeLimit, checkLimit);
         }
 
         // ******************************
         // CASE 5
         // ******************************
         if ((monotonicityOfPrivacy == Monotonicity.NONE) && (monotonicityOfUtility == Monotonicity.FULL)) {
-            return createNoneFull(solutionSpace, checker, strategy);
+            return createNoneFull(solutionSpace, checker, strategy, timeLimit, checkLimit);
         }
 
         // ******************************
         // CASE 6
         // ******************************
         if ((monotonicityOfPrivacy == Monotonicity.NONE) && (monotonicityOfUtility == Monotonicity.NONE)) {
-            return createNoneNone(solutionSpace, checker, strategy);
+            return createNoneNone(solutionSpace, checker, strategy, timeLimit, checkLimit);
         }
 
         throw new IllegalStateException("Oops");
@@ -104,11 +108,13 @@ public class FLASHAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
+     * @param checkLimit 
+     * @param timeLimit 
      * @return
      */
     private static AbstractAlgorithm createFullFull(final SolutionSpace<Long> solutionSpace,
                                                     final TransformationChecker checker,
-                                                    final FLASHStrategy strategy) {
+                                                    final FLASHStrategy strategy, int timeLimit, int checkLimit) {
 
         // We focus on the anonymity property
         PhaseAnonymityProperty anonymityProperty = PhaseAnonymityProperty.ANONYMITY;
@@ -150,7 +156,7 @@ public class FLASHAlgorithm {
                                                                                       false,
                                                                                       true);
 
-        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config);
+        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config, timeLimit, checkLimit);
     }
 
     /**
@@ -159,11 +165,13 @@ public class FLASHAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
+     * @param checkLimit 
+     * @param timeLimit 
      * @return
      */
     private static AbstractAlgorithm createFullNone(final SolutionSpace<Long> solutionSpace,
                                                     final TransformationChecker checker,
-                                                    final FLASHStrategy strategy) {
+                                                    final FLASHStrategy strategy, int timeLimit, int checkLimit) {
 
         /* *******************************
          * BINARY PHASE
@@ -264,7 +272,7 @@ public class FLASHAlgorithm {
                                                                                    true,
                                                                                    true);
 
-        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config);
+        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config, timeLimit, checkLimit);
     }
 
     /**
@@ -273,11 +281,13 @@ public class FLASHAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
+     * @param checkLimit 
+     * @param timeLimit 
      * @return
      */
     private static AbstractAlgorithm createNoneFull(final SolutionSpace<Long> solutionSpace,
                                                     final TransformationChecker checker,
-                                                    final FLASHStrategy strategy) {
+                                                    final FLASHStrategy strategy, int timeLimit, int checkLimit) {
 
         // We focus on the anonymity property
         PhaseAnonymityProperty anonymityProperty = PhaseAnonymityProperty.ANONYMITY;
@@ -320,7 +330,7 @@ public class FLASHAlgorithm {
                                                                                       true,
                                                                                       false);
 
-        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config);
+        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config, timeLimit, checkLimit);
     }
 
     /**
@@ -329,11 +339,13 @@ public class FLASHAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
+     * @param checkLimit 
+     * @param timeLimit 
      * @return
      */
     private static AbstractAlgorithm createNoneNone(final SolutionSpace<Long> solutionSpace,
                                                     TransformationChecker checker,
-                                                    FLASHStrategy strategy) {
+                                                    FLASHStrategy strategy, int timeLimit, int checkLimit) {
 
         // We focus on the anonymity property
         PhaseAnonymityProperty anonymityProperty = PhaseAnonymityProperty.ANONYMITY;
@@ -362,7 +374,7 @@ public class FLASHAlgorithm {
                                                                                       true,
                                                                                       false);
 
-        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config);
+        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config, timeLimit, checkLimit);
     }
 
     /**
@@ -371,11 +383,13 @@ public class FLASHAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
+     * @param checkLimit 
+     * @param timeLimit 
      * @return
      */
     private static AbstractAlgorithm createPartialFull(final SolutionSpace<Long> solutionSpace,
                                                        final TransformationChecker checker,
-                                                       final FLASHStrategy strategy) {
+                                                       final FLASHStrategy strategy, int timeLimit, int checkLimit) {
         /* *******************************
          * BINARY PHASE
          * *******************************
@@ -479,7 +493,7 @@ public class FLASHAlgorithm {
                                                                                    true,
                                                                                    false);
 
-        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config);
+        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config, timeLimit, checkLimit);
     }
 
     /**
@@ -488,11 +502,13 @@ public class FLASHAlgorithm {
      * @param solutionSpace
      * @param checker
      * @param strategy
+     * @param checkLimit 
+     * @param timeLimit 
      * @return
      */
     private static AbstractAlgorithm createPartialNone(final SolutionSpace<Long> solutionSpace,
                                                        final TransformationChecker checker,
-                                                       final FLASHStrategy strategy) {
+                                                       final FLASHStrategy strategy, int timeLimit, int checkLimit) {
         /* *******************************
          * BINARY PHASE
          * *******************************
@@ -584,6 +600,6 @@ public class FLASHAlgorithm {
                                                                                    true,
                                                                                    false);
 
-        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config);
+        return new FLASHAlgorithmImpl(solutionSpace, checker, strategy, config, timeLimit, checkLimit);
     }
 }

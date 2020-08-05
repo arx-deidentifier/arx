@@ -31,10 +31,15 @@ public class ModelAnonymizationConfiguration implements Serializable {
      * @author Fabian Prasser
      */
     public static enum SearchType {
-        OPTIMAL,
-        STEP_LIMIT,
-        TIME_LIMIT
+        OPTIMAL,             // Flash, optimal
+        STEP_LIMIT,          // Lightning, bottom-up - kept for backwards compatibility only
+        TIME_LIMIT,          // Lightning, bottom-up - kept for backwards compatibility only
+        HEURISTIC_BINARY,    // Flash, heuristic
+        HEURISTIC_BOTTOM_UP, // Lightning, bottom-up
+        HEURISTIC_TOP_DOWN,  // Lightning, top-down
+        HEURISTIC_GENETIC    // Genetic algorithm
     }
+    
     /**
      * Transformation type
      * @author Fabian Prasser
@@ -53,9 +58,14 @@ public class ModelAnonymizationConfiguration implements Serializable {
     private ModelAnonymizationConfiguration.SearchType         searchType         = SearchType.OPTIMAL;
     /** Result */
     private ModelAnonymizationConfiguration.TransformationType transformationType = TransformationType.GLOBAL;
+    /** Limits */
+    private Boolean                                            stepLimitEnabled   = false;
+    /** Limits */
+    private Boolean                                            timeLimitEnabled   = false;
 
     /**
      * Creates a new instance
+     * 
      * @param model
      */
     ModelAnonymizationConfiguration(Model model) {
@@ -70,6 +80,7 @@ public class ModelAnonymizationConfiguration implements Serializable {
     public int getHeuristicSearchStepLimit() {
         return model.getHeuristicSearchStepLimit();
     }
+    
     /**
      * Search time limit for SearchType.TIME_LIMIT
      * 
@@ -94,6 +105,13 @@ public class ModelAnonymizationConfiguration implements Serializable {
      * @return the searchType
      */
     public ModelAnonymizationConfiguration.SearchType getSearchType() {
+    	
+    	// Fix for backwards compatibility
+    	if (searchType == SearchType.STEP_LIMIT || searchType == SearchType.TIME_LIMIT) {
+    		return SearchType.HEURISTIC_BOTTOM_UP;
+    	}
+    	
+    	// Return default
         return searchType;
     }
     
@@ -104,6 +122,34 @@ public class ModelAnonymizationConfiguration implements Serializable {
      */
     public ModelAnonymizationConfiguration.TransformationType getTransformationType() {
         return transformationType;
+    }
+    
+    /**
+     * @return the stepLimitEnabled
+     */
+    public boolean isStepLimitEnabled() {
+        
+        // Backwards compatibility
+        if (stepLimitEnabled == null) {
+           return (this.searchType == SearchType.STEP_LIMIT) ? true : false; 
+        }
+        
+        // Done
+        return stepLimitEnabled;
+    }
+    
+    /**
+     * @return the timeLimitEnabled
+     */
+    public boolean isTimeLimitEnabled() {
+        
+        // Backwards compatibility
+        if (timeLimitEnabled == null) {
+           return (this.searchType == SearchType.TIME_LIMIT) ? true : false; 
+        }
+        
+        // Done
+        return timeLimitEnabled;
     }
     
     /**
@@ -126,14 +172,28 @@ public class ModelAnonymizationConfiguration implements Serializable {
     public void setNumIterations(int numIterations) {
         model.getLocalRecodingModel().setNumIterations(numIterations);
     }
-    
+
     /**
      * @param searchType the searchType to set
      */
     public void setSearchType(ModelAnonymizationConfiguration.SearchType searchType) {
         this.searchType = searchType;
     }
-    
+
+    /**
+     * @param stepLimitEnabled the stepLimitEnabled to set
+     */
+    public void setStepLimitEnabled(boolean stepLimitEnabled) {
+        this.stepLimitEnabled = stepLimitEnabled;
+    }
+
+    /**
+     * @param timeLimitEnabled the timeLimitEnabled to set
+     */
+    public void setTimeLimitEnabled(boolean timeLimitEnabled) {
+        this.timeLimitEnabled = timeLimitEnabled;
+    }
+
     /**
      * @param transformationType the transformationType to set
      */

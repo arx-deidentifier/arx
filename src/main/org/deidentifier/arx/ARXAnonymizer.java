@@ -30,7 +30,9 @@ import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
+import org.deidentifier.arx.algorithm.GAAlgorithm;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
+import org.deidentifier.arx.algorithm.LIGHTNINGTopDownAlgorithm;
 import org.deidentifier.arx.criteria.BasicBLikeness;
 import org.deidentifier.arx.criteria.DDisclosurePrivacy;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
@@ -219,7 +221,6 @@ public class ARXAnonymizer { // NO_UCD
         // Attach arrays to data handle
         ((DataHandleInput)handle).update(manager.getDataGeneralized().getArray(), 
                                          manager.getDataAnalyzed().getArray());
-
 
         // Execute
         return anonymize(manager, handle.getDefinition(), config).asResult(config, handle);
@@ -623,25 +624,84 @@ public class ARXAnonymizer { // NO_UCD
                                            final DataManager manager,
                                            final SolutionSpace<?> solutionSpace,
                                            final TransformationChecker checker) {
-
-        int numQIs = manager.getHierarchies().length;
         
+        // Prepare
+    	int numQIs = manager.getHierarchies().length;
+    	
+    	// Execute DP algorithm, if needed
         if (config.isPrivacyModelSpecified(EDDifferentialPrivacy.class)){
             EDDifferentialPrivacy edpModel = config.getPrivacyModel(EDDifferentialPrivacy.class);
             if (edpModel.isDataDependent()) {
                 return DataDependentEDDPAlgorithm.create(solutionSpace, checker, edpModel.isDeterministic(),
-                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs), config.getDPSearchBudget());
+                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.EXPANSIONS, numQIs),
+                                                         config.getDPSearchBudget(),
+                                                         config.getHeuristicSearchTimeLimit(),
+                                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             }
         }
-
-        if (!(solutionSpace instanceof SolutionSpaceLong) || config.isHeuristicSearchEnabled() || solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
+    	
+    	// Select algorithm to execute
+    	switch(config.getAlgorithm()) {
+    	case OPTIMAL:
+    	    
+    	    // Sanity check
+    	    if (!(solutionSpace instanceof SolutionSpaceLong) ||
+    	          solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
+    	        throw new IllegalArgumentException("Solution space is too large to execute the optimal algorithm. It may help to change the threshold defined in the configuration.");
+    	    }
+    	            
+    	    // Run optimal algorithm
+            FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
+            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy,
+                                         Integer.MAX_VALUE,
+                                         Integer.MAX_VALUE);
+    	    
+    	case BEST_EFFORT_BINARY:
+    	    
+            // Sanity check
+            if (!(solutionSpace instanceof SolutionSpaceLong)) {
+                throw new IllegalArgumentException("Solution space is too large to execute the binary heuristic algorithm. This is an implementation restriction which we hope to fix soon.");
+            }
+                    
+            // Run binary algorithm with limits
+            FLASHStrategy strategy2 = new FLASHStrategy(solutionSpace, manager.getHierarchies());
+            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy2,
+                                         config.getHeuristicSearchTimeLimit(),
+                                         config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+            
+    	case BEST_EFFORT_BOTTOM_UP:
+    	    
+    	    // Run lightning
             return LIGHTNINGAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
                                              config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+    	    
+    	case BEST_EFFORT_TOP_DOWN:
+
+            // Run lightning
+            return LIGHTNINGTopDownAlgorithm.create(solutionSpace, checker, config.getHeuristicSearchTimeLimit(),
+                                                    config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
             
-        } else {
-            FLASHStrategy strategy = new FLASHStrategy(solutionSpace, manager.getHierarchies());
-            return FLASHAlgorithm.create((SolutionSpaceLong)solutionSpace, checker, strategy);
-        }
+    	case BEST_EFFORT_GENETIC:
+    	    
+    	    // Run the genetic algorithm
+    	    return GAAlgorithm.create(solutionSpace,
+                                      checker,
+                                      config.getGeneticAlgorithmIterations(),
+                                      config.getGeneticAlgorithmCrossoverFraction(),
+                                      config.getGeneticAlgorithmDeterministic(),
+                                      config.getGeneticAlgorithmEliteFraction(),
+                                      config.getGeneticAlgorithmImmigrationFraction(),
+                                      config.getGeneticAlgorithmImmigrationInterval(),
+                                      config.getGeneticAlgorithmMutationProbability(),
+                                      config.getGeneticAlgorithmSubpopulationSize(),
+                                      config.getGeneticAlgorithmProductionFraction(),
+                                      config.getHeuristicSearchTimeLimit(),
+                                      config.getHeuristicSearchStepLimit(SearchStepSemantics.CHECKS, numQIs));
+    	    
+    	default:
+    	    
+    	    throw new IllegalArgumentException("Unknown algorithm");
+    	}
     }
 
     /**
