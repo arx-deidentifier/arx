@@ -141,6 +141,7 @@ public class ViewAttributeList implements IView {
     @Override
     public void reset() {
         this.attributes = null;
+        this.model = null;
         this.table.setCurrentPage(0);
         this.refreshTable();
         SWTUtil.disable(this.table);
@@ -285,6 +286,9 @@ public class ViewAttributeList implements IView {
 
                             @Override
                             public String getText(Object element) {
+                                if (model == null) {
+                                    return null;
+                                }
                                 return (String)element;
                             }
         });
@@ -294,6 +298,9 @@ public class ViewAttributeList implements IView {
                           30, new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
+                if (model == null) {
+                    return null;
+                }
                 return getDataType((String)element);
             }
         });
@@ -303,6 +310,9 @@ public class ViewAttributeList implements IView {
                           30, new ColumnLabelProvider() {
             @Override
             public String getText(Object element) {
+                if (model == null) {
+                    return null;
+                }
                 return getDataTypeFormat((String)element);
             }
         });
