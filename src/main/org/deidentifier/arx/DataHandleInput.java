@@ -230,13 +230,27 @@ public class DataHandleInput extends DataHandle {
         // Prepare
         this.suppressionQIs = qis;
         this.suppressionRecords = new RowSet(this.data.getNumRows());
-        
+
         // Determine columns
-        int[] columns = new int[qis.size()];
-        int idx = 0;
-        for (int column = 0; column < header.length; column++) {
-            if (qis.contains(header[column])) {
-                columns[idx++] = column;
+        int[] columns;
+        
+        // If no QIs, we look at all columns
+        if (qis == null || qis.isEmpty()) {
+            
+            columns = new int[header.length];
+            for (int column = 0; column < header.length; column++) {
+                columns[column] = column;
+            }
+            
+        // Else we look at the qis only
+        } else {
+            
+            columns = new int[qis.size()];
+            int idx = 0;
+            for (int column = 0; column < header.length; column++) {
+                if (qis.contains(header[column])) {
+                    columns[idx++] = column;
+                }
             }
         }
         
@@ -343,13 +357,21 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     protected boolean internalIsOutlier(int row, int[] columns) {
+        
+        // No data, no suppression
+        if (columns == null || columns.length == 0) {
+            return false;
+        }
  
+        // Check columns
         int[] suppressed = dictionary.getSuppressedCodes();
         for (int column : columns) {
             if (data.get(row, column) != suppressed[column]) {
                 return false;
             }
         }
+        
+        // Done
         return true;
     }
 

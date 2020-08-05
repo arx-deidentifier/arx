@@ -26,6 +26,7 @@ import org.deidentifier.arx.gui.Controller;
 import org.deidentifier.arx.gui.model.ModelEvent;
 import org.deidentifier.arx.gui.model.ModelEvent.ModelPart;
 import org.deidentifier.arx.gui.resources.Resources;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.nebula.widgets.nattable.selection.event.CellSelectionEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
@@ -264,6 +265,11 @@ public class ViewDataInput extends ViewData {
             // Fire event
             model.setSubsetManual();
             controller.update(new ModelEvent(this,  ModelPart.RESEARCH_SUBSET, subset));
+            
+            // Fix missing table update on MacOS
+            if (SWTUtil.isMac()) {
+                this.table.redraw();
+            }
         }
     }
 

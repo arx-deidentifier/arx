@@ -677,7 +677,14 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
         }
 
         // Redraw
-        root.setRedraw(true);
+        this.root.setRedraw(true);
+        this.root.redraw();
+        this.performanceRoot.redraw();
+        this.rocRoot.redraw();
+        this.rocCombo.redraw();
+        this.rocTable.redraw();
+        this.performanceTableOverview.redraw();
+        this.performanceTableSensitivitySpecificity.redraw();
     }
 
     /**
@@ -884,6 +891,13 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
 
         // Redraw
         this.root.setRedraw(true);
+        this.root.redraw();
+        this.performanceRoot.redraw();
+        this.rocRoot.redraw();
+        this.rocCombo.redraw();
+        this.rocTable.redraw();
+        this.performanceTableOverview.redraw();
+        this.performanceTableSensitivitySpecificity.redraw();
     }
 
     @Override
@@ -1067,6 +1081,8 @@ public abstract class ViewStatisticsClassification extends ViewStatistics<Analys
 
                 // Redraw
                 root.setRedraw(true);
+                performanceTableOverview.redraw();
+                performanceTableSensitivitySpecificity.redraw();
                 
                 // Done
                 setStatusDone();

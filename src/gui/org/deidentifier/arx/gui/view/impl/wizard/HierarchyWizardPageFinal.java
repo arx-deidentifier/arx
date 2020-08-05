@@ -46,7 +46,7 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
     private List                     list;
     
     /** Var. */
-    private ComponentHierarchy            view;
+    private ComponentHierarchy       view;
     
     /** Var. */
     private int[]                    groups;
@@ -150,5 +150,9 @@ public class HierarchyWizardPageFinal<T> extends WizardPage{
             if (save != null) save.setEnabled(false);
         }
         super.setVisible(value);
+        
+        // Hack to render list and caption nicely on MacOS Catalina
+        list.redraw();
+        list.getParent().redraw();
     }
 }
