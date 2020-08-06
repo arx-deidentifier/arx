@@ -59,7 +59,7 @@ public class DialogAnonymization extends TitleAreaDialog {
     /** Model */
     private String                          message;
     /** Model */
-    private boolean                         optimalSearchAvailable;
+    private boolean                         flashAlgorithmAvailable;
     /** Model */
     private boolean                         heuristicSearchStepLimitAvailable;
     /** Model */
@@ -116,13 +116,13 @@ public class DialogAnonymization extends TitleAreaDialog {
         this.localRecodingAvailable = true;
         this.heuristicSearchStepLimitAvailable = true;
         this.heuristicSearchTimeLimitAvailable = true;
-        this.optimalSearchAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
+        this.flashAlgorithmAvailable = model.getSolutionSpaceSize() <= model.getHeuristicSearchThreshold();
         for (PrivacyCriterion c : model.getInputConfig().getCriteria()) {
             if (!c.isLocalRecodingSupported()) {
                 this.localRecodingAvailable = false;
             }
             if (!c.isOptimalSearchSupported()) {
-                this.optimalSearchAvailable = false;
+                this.flashAlgorithmAvailable = false;
             }
             if (!c.isHeuristicSearchSupported()) {
                 this.heuristicSearchStepLimitAvailable = false;
@@ -442,7 +442,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         }
 
         // Optimal search
-        if (!this.optimalSearchAvailable) {
+        if (!this.flashAlgorithmAvailable) {
                         
             this.radioStepLimit.setEnabled(true);
             this.txtHeuristicSearchStepLimit.setEnabled(true);
@@ -450,7 +450,9 @@ public class DialogAnonymization extends TitleAreaDialog {
             this.txtHeuristicSearchTimeLimit.setEnabled(true);
             this.radioAlgorithmFlashOptimal.setEnabled(false);
             this.radioAlgorithmFlashOptimal.setSelection(false);
-            if (configuration.getSearchType() == SearchType.OPTIMAL) {
+            this.radioAlgorithmFlashHeuristic.setEnabled(false);
+            this.radioAlgorithmFlashHeuristic.setSelection(false);
+            if (configuration.getSearchType() == SearchType.OPTIMAL || configuration.getSearchType() == SearchType.HEURISTIC_BINARY) {
                 configuration.setSearchType(SearchType.HEURISTIC_TOP_DOWN);
                 this.radioAlgorithmLightning.setSelection(true);
             }
@@ -460,7 +462,7 @@ public class DialogAnonymization extends TitleAreaDialog {
         }
         
         // Time and step limit
-        if (configuration.getSearchType() == SearchType.OPTIMAL && this.optimalSearchAvailable) {
+        if (configuration.getSearchType() == SearchType.OPTIMAL && this.flashAlgorithmAvailable) {
             this.radioStepLimit.setEnabled(false);
             this.txtHeuristicSearchStepLimit.setEnabled(false);
             this.radioTimeLimit.setEnabled(false);

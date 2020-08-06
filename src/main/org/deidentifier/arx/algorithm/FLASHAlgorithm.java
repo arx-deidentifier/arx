@@ -99,7 +99,7 @@ public class FLASHAlgorithm {
             return createNoneNone(solutionSpace, checker, strategy, timeLimit, checkLimit);
         }
 
-        throw new IllegalStateException("Oops");
+        throw new IllegalStateException("Should not happen");
     }
 
     /**

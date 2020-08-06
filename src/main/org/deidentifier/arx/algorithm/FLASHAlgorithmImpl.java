@@ -90,7 +90,7 @@ public class FLASHAlgorithmImpl extends AbstractAlgorithm {
 
         super(solutionSpace, checker, timeLimit, checkLimit);
         if (solutionSpace.getSize().compareTo(BigInteger.valueOf(Integer.MAX_VALUE)) > 0) {
-            throw new IllegalArgumentException("Solution space is too large for running Flash. Choose another algorithm.");
+            throw new IllegalArgumentException("Solution space is too large to execute the optimal algorithm. Please choose another algorithm.");
         }
         this.solutionSpaceSize = solutionSpace.getSize().intValue();
         this.checked = 0;

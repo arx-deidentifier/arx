@@ -659,7 +659,8 @@ public class ARXAnonymizer { // NO_UCD
     	case BEST_EFFORT_BINARY:
     	    
             // Sanity check
-            if (!(solutionSpace instanceof SolutionSpaceLong)) {
+            if (!(solutionSpace instanceof SolutionSpaceLong) ||
+                  solutionSpace.getSize().compareTo(BigInteger.valueOf(config.getHeuristicSearchThreshold())) > 0) {
                 throw new IllegalArgumentException("Solution space is too large to execute the binary heuristic algorithm. This is an implementation restriction which we hope to fix soon.");
             }
                     
