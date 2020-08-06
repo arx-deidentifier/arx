@@ -94,7 +94,7 @@ public class DialogProperties implements IDialog {
     private void createTabGeneticAlgorithm(PreferencesDialog window) {
 
         window.addCategory(Resources.getMessage("PropertyDialog.136"), //$NON-NLS-1$
-        controller.getResources().getManagedImage("symbol_g.png")); //$NON-NLS-1$
+        controller.getResources().getManagedImage("genetic.png")); //$NON-NLS-1$
         
         window.addGroup(Resources.getMessage("DialogProperties.21")); //$NON-NLS-1$
 
