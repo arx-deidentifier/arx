@@ -40,7 +40,7 @@ import org.deidentifier.arx.metric.InformationLoss;
  * @author Fabian Prasser
  * @author Thierry Meurers
  */
-public class GAAlgorithm extends AbstractAlgorithm {
+public class GeneticAlgorithm extends AbstractAlgorithm {
 
     /**
      * Returns a new instance
@@ -72,7 +72,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
                                            double geneticAlgorithmpProductionFraction,
                                            int timeLimit,
                                            int checkLimit) {
-        return new GAAlgorithm(solutionSpace,
+        return new GeneticAlgorithm(solutionSpace,
                                checker,
                                heuristicSearchStepLimit,
                                geneticAlgorithmCrossoverFraction,
@@ -110,7 +110,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
     /** Configuration */
     private int                         geneticAlgorithmSubpopulationSize;
     /** Configuration */
-    private double                      geneticAlgorithmpProductionFraction;
+    private double                      geneticAlgorithmProductionFraction;
 
     /**
      * Creates a new instance
@@ -128,7 +128,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
      * @param timeLimit
      * @param checkLimit
      */
-    public GAAlgorithm(SolutionSpace<?> solutionSpace,
+    public GeneticAlgorithm(SolutionSpace<?> solutionSpace,
                        TransformationChecker checker,
                        int geneticAlgorithmIterations,
                        double geneticAlgorithmCrossoverFraction,
@@ -153,7 +153,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
         this.geneticAlgorithmImmigrationInterval = geneticAlgorithmImmigrationInterval;
         this.geneticAlgorithmMutationProbability = geneticAlgorithmMutationProbability;
         this.geneticAlgorithmSubpopulationSize = geneticAlgorithmSubpopulationSize;
-        this.geneticAlgorithmpProductionFraction = geneticAlgorithmpProductionFraction;
+        this.geneticAlgorithmProductionFraction = geneticAlgorithmpProductionFraction;
         this.random = geneticAlgorithmDeterministic ? new Random(0xDEADBEEF) : new Random();
     }
 
@@ -173,8 +173,8 @@ public class GAAlgorithm extends AbstractAlgorithm {
         int immigrationCount = (int) geneticAlgorithmImmigrationFraction * k;
 
         // Build sub-populations
-        GASubpopulation z1 = new GASubpopulation();
-        GASubpopulation z2 = new GASubpopulation();
+        GeneticAlgorithmSubpopulation z1 = new GeneticAlgorithmSubpopulation();
+        GeneticAlgorithmSubpopulation z2 = new GeneticAlgorithmSubpopulation();
 
         // Fill sub-population 1
         for (int i = 0; i < k; i++) {
@@ -331,7 +331,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
      * @param range
      * @return
      */
-    private Transformation<?>[] getRandomIndividuals(GASubpopulation population, int range, int count) {
+    private Transformation<?>[] getRandomIndividuals(GeneticAlgorithmSubpopulation population, int range, int count) {
 
         // Array of transformations, min and max
         InformationLoss<?> min = null;
@@ -384,10 +384,10 @@ public class GAAlgorithm extends AbstractAlgorithm {
      * 
      * @param population
      */
-    private void iterateSubpopulation(GASubpopulation population) {
+    private void iterateSubpopulation(GeneticAlgorithmSubpopulation population) {
 
         // Copy old Population
-        GASubpopulation oldPopulation = new GASubpopulation(population);
+        GeneticAlgorithmSubpopulation oldPopulation = new GeneticAlgorithmSubpopulation(population);
 
         // The population (ordered by fitness descending) consists of 3 groups
         // - First: all individuals in the elite group will remain unchanged
@@ -400,7 +400,7 @@ public class GAAlgorithm extends AbstractAlgorithm {
         int k = population.individualCount();
         int crossoverCount = (int) Math.ceil(geneticAlgorithmCrossoverFraction * k);
         int eliteCount = (int) Math.ceil(geneticAlgorithmEliteFraction * k);
-        int productionCount = (int) Math.ceil(geneticAlgorithmpProductionFraction * k);
+        int productionCount = (int) Math.ceil(geneticAlgorithmProductionFraction * k);
 
         // Crossover individuals
         Transformation<?>[] parents1 = getRandomIndividuals(population, productionCount, crossoverCount);

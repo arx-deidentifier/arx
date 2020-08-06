@@ -402,36 +402,36 @@ public class ARXConfiguration implements Serializable, Cloneable {
     private int                                numOutputRecords                      = 0;
 
     /** Semantics of heuristic search steps */
-    private SearchStepSemantics                heuristicSearchStepSemantics                   = SearchStepSemantics.CHECKS;
+    private SearchStepSemantics                heuristicSearchStepSemantics          = SearchStepSemantics.CHECKS;
 
     /** Sub-population size */
     private Integer                            geneticAlgorithmSubpopulationSize     = 100;
-    
+
     /** Immigration interval */
     private Integer                            geneticAlgorithmImmigrationInterval   = 10;
-    
+
     /** Immigration fraction */
     private Double                             geneticAlgorithmImmigrationFraction   = 0.2d;
-    
+
     /** Size of the elite */
-    private Double                             geneticAlgorithmEliteFraction          = 0.2d;
-    
+    private Double                             geneticAlgorithmEliteFraction         = 0.2d;
+
     /** Fraction of individuals crossed-over */
-    private Double                             geneticAlgorithmCrossoverFraction      = 0.2d;
-    
+    private Double                             geneticAlgorithmCrossoverFraction     = 0.2d;
+
     /** Deterministic */
     private boolean                            geneticAlgorithmDeterministic         = false;
-    
+
     /** Mutation probability */
     private Double                             geneticAlgorithmMutationProbability   = 0.2d;
-    
+
     /** Production Fraction **/
-    private Double                             geneticAlgorithmProductionFraction   = 0.2d;
+    private Double                             geneticAlgorithmProductionFraction    = 0.2d;
 
     /** Number of GA iterations */
     private Integer                            geneticAlgorithmIterations            = 50;
-    
-    /** The algorithm to use*/
+
+    /** The algorithm to use */
     private AnonymizationAlgorithm             algorithm                             = AnonymizationAlgorithm.OPTIMAL;
 
 	
@@ -688,7 +688,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
 	 */
 	public double getGeneticAlgorithmImmigrationFraction() {
 		if (this.geneticAlgorithmImmigrationFraction == null) {
-			this.geneticAlgorithmImmigrationFraction = 0.1d;
+			this.geneticAlgorithmImmigrationFraction = 0.2d;
 		}
 		return geneticAlgorithmImmigrationFraction;
 	}

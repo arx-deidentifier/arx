@@ -30,7 +30,7 @@ import org.deidentifier.arx.algorithm.AbstractAlgorithm;
 import org.deidentifier.arx.algorithm.DataDependentEDDPAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHAlgorithm;
 import org.deidentifier.arx.algorithm.FLASHStrategy;
-import org.deidentifier.arx.algorithm.GAAlgorithm;
+import org.deidentifier.arx.algorithm.GeneticAlgorithm;
 import org.deidentifier.arx.algorithm.LIGHTNINGAlgorithm;
 import org.deidentifier.arx.algorithm.LIGHTNINGTopDownAlgorithm;
 import org.deidentifier.arx.criteria.BasicBLikeness;
@@ -685,7 +685,7 @@ public class ARXAnonymizer { // NO_UCD
     	case BEST_EFFORT_GENETIC:
     	    
     	    // Run the genetic algorithm
-    	    return GAAlgorithm.create(solutionSpace,
+    	    return GeneticAlgorithm.create(solutionSpace,
                                       checker,
                                       config.getGeneticAlgorithmIterations(),
                                       config.getGeneticAlgorithmCrossoverFraction(),

@@ -29,18 +29,18 @@ import org.deidentifier.arx.framework.lattice.Transformation;
  * @author Fabian Prasser
  * @author Thierry Meurers
  */
-public class GASubpopulation {
+public class GeneticAlgorithmSubpopulation {
 
     /** List of individuals */
     private List<Transformation<?>> individuals;
 
     /** Default constructor **/
-    public GASubpopulation() {
+    public GeneticAlgorithmSubpopulation() {
         this.individuals = new ArrayList<>();
     }
 
     /** Constructor used to create an identical copy **/
-    public GASubpopulation(GASubpopulation pop) {
+    public GeneticAlgorithmSubpopulation(GeneticAlgorithmSubpopulation pop) {
         this.individuals = new ArrayList<Transformation<?>>(pop.getIndividuals());
     }
 
@@ -78,7 +78,7 @@ public class GASubpopulation {
      * @param other
      * @param count
      */
-    public void moveFittestIndividuals(GASubpopulation other, int immigrationCount) {
+    public void moveFittestIndividuals(GeneticAlgorithmSubpopulation other, int immigrationCount) {
         int size = this.individualCount();
         immigrationCount = Math.min(size, immigrationCount);
         for (int i = 0; i < immigrationCount; i++) {
