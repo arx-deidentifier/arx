@@ -88,8 +88,8 @@ public class ExamplePerson extends Example {
     protected static ARXConfiguration config = ARXConfiguration.create();
     protected static ARXResult result;
     protected static final SimpleDateFormat arxFormat = new SimpleDateFormat("dd.MM.yyyy");
-    protected static final String ROWNUM = "1000000";
-    protected static final String TABLE = "persons";
+    protected static final String ROWNUM = "100";
+    protected static final String TABLE = "person_arx";
     protected static final String dbUrl = "jdbc:oracle:thin:@localhost:1521/IVZPDB";
     protected static final String dbUser = "ARX";
     protected static final String dbPw = "ARX";
