@@ -109,8 +109,10 @@ public class ExamplePerson extends Example {
 
     protected static ARXConfiguration setKAnonymity() {
     	config = ARXConfiguration.create();
-		config.addPrivacyModel(new KAnonymity(3));
-		config.setSuppressionLimit(0d);
+		config.addPrivacyModel(new KAnonymity(4));
+		config.setSuppressionLimit(1d);
+        config.setHeuristicSearchStepLimit(1000);
+        config.setHeuristicSearchEnabled(true);
 		return config;
     }
     

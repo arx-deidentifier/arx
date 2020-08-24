@@ -42,10 +42,10 @@ public class ExamplePersonCsv26Attributes extends ExamplePerson {
 	 */
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		try {
-			// Working example
-			DataSource source = DataSource.createCSVSource("data/21_persons.csv", StandardCharsets.UTF_8, ';', true);
-			// No solution found!
-//			DataSource source = DataSource.createCSVSource("data/257k_persons.csv", StandardCharsets.UTF_8, ';', true);
+			// Small data input
+			// DataSource source = DataSource.createCSVSource("data/21_persons.csv", StandardCharsets.UTF_8, ';', true);
+			// Large data input
+			DataSource source = DataSource.createCSVSource("data/257k_persons.csv", StandardCharsets.UTF_8, ';', true);
 			source.addColumn(ID, DataType.STRING);
 			source.addColumn(ORGANISATION_NAME, DataType.STRING);
 			source.addColumn(ORGANISATION_ADDITIONAL_NAME, DataType.STRING);
@@ -75,7 +75,6 @@ public class ExamplePersonCsv26Attributes extends ExamplePerson {
 			
 			// Create data object
 			Data data = Data.create(source);
-
 			System.out.println("------After data PREPARATION: " + LocalDateTime.now());
 
 			data.getDefinition().setAttributeType(ID, AttributeType.INSENSITIVE_ATTRIBUTE);
@@ -91,7 +90,8 @@ public class ExamplePersonCsv26Attributes extends ExamplePerson {
 			System.out.println("\n - Input data");
 			print(data.getHandle());
 
-			setKAnonymity();
+//			setKAnonymity();
+			setEDDifferentialPrivacy();
 			runAnonymization(data);
 			printResults(data);
 		} catch (Exception e) {
