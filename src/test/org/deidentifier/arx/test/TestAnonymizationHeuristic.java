@@ -31,7 +31,6 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Tests the heuristic lightning algorithm.
  * 
- * TODO: These tests use a time limit, so they may fail if executed on different hardware 
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
