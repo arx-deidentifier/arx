@@ -30,9 +30,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests the heuristic lightning algorithm.
- * 
- * TODO: These tests use a time limit, so they may fail if executed on different hardware 
+ * Tests the heuristic bottom-up lightning algorithm.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -70,7 +68,7 @@ public class TestAnonymizationHeuristic extends AbstractAnonymizationTest {
              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createDiscernabilityMetric(false)).addPrivacyModel(new KAnonymity(100)), "./data/fars.csv", 2.51820865E8, new int[] {1, 2, 1, 3, 1, 2, 3, 1}, true) },
         });
         
-        // Enable heuristic search
+        // Select bottom-up lightning algorithm and set limits
         for (Object[] testcase : cases) {
             ((ARXAnonymizationTestCase)testcase[0]).config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
             ((ARXAnonymizationTestCase)testcase[0]).config.setHeuristicSearchTimeLimit(Integer.MAX_VALUE);
