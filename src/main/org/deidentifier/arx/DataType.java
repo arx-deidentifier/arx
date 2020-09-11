@@ -319,7 +319,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public Date parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE) || s.equals("")) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE) || s.isEmpty()) {
                 return null;
             }
         	try {
@@ -604,7 +604,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public Double parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE) || s.isEmpty()) {
                 return null;
             }
             try {
@@ -885,7 +885,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public Long parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE) || s.isEmpty()) {
                 return null;
             }
             try {
@@ -1140,7 +1140,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
 
         @Override
         public String parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE) || s.isEmpty()) {
                 return null;
             }
             if (order != null && !order.containsKey(s)) {
