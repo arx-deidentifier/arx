@@ -319,7 +319,7 @@ public abstract class DataType<T> implements Serializable, Comparator<T> { // NO
         
         @Override
         public Date parse(String s) {
-            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE)) {
+            if(s.length() == NULL_VALUE.length() && s.toUpperCase().equals(NULL_VALUE) || s.equals("")) {
                 return null;
             }
         	try {
