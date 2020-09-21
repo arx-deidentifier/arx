@@ -215,8 +215,16 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
                     
                     String actualLoss = node.getHighestScore().toString();
                     String expectedLoss = testcase.informationLoss.get(label);
-                    
-                    assertEquals(label, expectedLoss, actualLoss);
+                    try {
+                        try {
+                            assertEquals(label, Double.valueOf(expectedLoss), Double.valueOf(actualLoss), 0.00000001d);
+                        } catch (AssertionError e) {
+                            System.out.println(Math.abs(Double.valueOf(expectedLoss) - Double.valueOf(actualLoss)));
+                            throw(e);
+                        }
+                    } catch (NumberFormatException e) {
+                        assertEquals(label, expectedLoss, actualLoss);
+                    }
                 }
             }
         }
