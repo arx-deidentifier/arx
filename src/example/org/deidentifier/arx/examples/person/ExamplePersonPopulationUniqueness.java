@@ -40,7 +40,8 @@ public class ExamplePersonPopulationUniqueness extends ExamplePerson {
 			createHierarchy(data, OFFICIAL_NAME, DataType.STRING);
 			createHierarchy(data, ORIGINAL_NAME, DataType.STRING);
 			createHierarchy(data, FIRST_NAME, DataType.STRING);
-			data = setQuasiIdentifiersDate(data);
+			setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
+			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
 			ARXPopulationModel europeanPopulationmodel = ARXPopulationModel.create(Region.EUROPE);
 			config = ARXConfiguration.create();
 			config.addPrivacyModel(new PopulationUniqueness(0.99, europeanPopulationmodel));

@@ -19,6 +19,7 @@ package org.deidentifier.arx.examples.person;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.SampleUniqueness;
 import org.deidentifier.arx.metric.Metric;
 
@@ -36,6 +37,9 @@ public class ExamplePersonSampleUniqueness extends ExamplePerson {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
 			data = setQuasiIdentifiers(data);
+			setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
+			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
+			data = setQuasiIdentifiersInteger(data);
 			config = ARXConfiguration.create(1d, Metric.createAECSMetric());
 			config.addPrivacyModel(new SampleUniqueness(0.7d));
 

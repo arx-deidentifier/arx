@@ -19,6 +19,7 @@ package org.deidentifier.arx.examples.person;
 
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.AverageReidentificationRisk;
 
 /**
@@ -34,6 +35,9 @@ public class ExamplePersonAverageReidentificationRisk extends ExamplePerson {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
 			data = setQuasiIdentifiers(data);
+			setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
+			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
+			data = setQuasiIdentifiersInteger(data);
 			config = ARXConfiguration.create();
 			config.addPrivacyModel(new AverageReidentificationRisk(0.94d));
 	        config.setSuppressionLimit(1d);

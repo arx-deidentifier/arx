@@ -28,7 +28,7 @@ import org.deidentifier.arx.criteria.KMap;
  * 
  * @author Nenad Jevdjenic
  */
-public class ExamplePersonKMap extends ExamplePerson {
+public class ExamplePersonKMap extends ExamplePersonKAnonymity {
 	/**
 	 * Entry point.
 	 */
@@ -36,7 +36,7 @@ public class ExamplePersonKMap extends ExamplePerson {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
-			data = setQuasiIdentifiers(data);
+			data = prepareAttributesKAnonymity(data);
 			
 			ARXPopulationModel europeanPopulationModel = ARXPopulationModel.create(Region.EUROPE);
 			KMap kMap = new KMap(3, 0.7d, europeanPopulationModel);

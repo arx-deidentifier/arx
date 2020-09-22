@@ -35,7 +35,7 @@ public class ExamplePersonTCloseness extends ExamplePersonKAnonymity {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
-			data = setQuasiIdentifiers(data);
+			data = prepareAttributesKAnonymity(data);
 			setKAnonymity();
 	        DefaultHierarchy countryHierarchy = createHierarchyCountry(data, COUNTRY_OF_ORIGIN);
 	        DefaultHierarchy nationHierarchy = createHierarchyCountry(data, NATIONALITY);

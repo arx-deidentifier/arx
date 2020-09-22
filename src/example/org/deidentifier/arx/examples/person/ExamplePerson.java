@@ -262,8 +262,6 @@ public class ExamplePerson extends Example {
 		createHierarchyCountry(data, NATIONALITY);
 		createHierarchyCanton(data, MANDATOR);
 		createHierarchyLanguage(data, LANGUAGE);
-		data = setQuasiIdentifiersDate(data);
-		data = setQuasiIdentifiersInteger(data);
 		return data;
 	}
 
@@ -286,19 +284,6 @@ public class ExamplePerson extends Example {
 		createHierarchy(data, REMARK, DataType.STRING);
 		createHierarchy(data, EMAIL, DataType.STRING);
 		createHierarchy(data, CURRENT_TOWN, DataType.STRING);
-		return data;
-	}
-	
-	/**
-	 * Set quasi identifiers for attributes of type DATE
-	 * @param data
-	 * @return prepared data
-	 */
-	protected static Data setQuasiIdentifiersDate(Data data) {
-		setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
-		setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
-		setMicroAggregation(data, LAST_MEDICAL_CHECKUP, DataType.DATE);
-		setMicroAggregation(data, NEXT_MEDICAL_CHECKUP, DataType.DATE);
 		return data;
 	}
 	
@@ -505,7 +490,7 @@ public class ExamplePerson extends Example {
 		// Process results
 		System.out.println("-------------Transformed data: ");
         final Iterator<String[]> itHandle = handle.iterator();
-		for (int i = 0; i < 200; i++) {
+		for (int i = 0; i < 120; i++) {
 			System.out.print(" ");
 			System.out.println(Arrays.toString(itHandle.next()));
 		}

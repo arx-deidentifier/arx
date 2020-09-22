@@ -34,11 +34,11 @@ public class ExamplePersonLDiversity extends ExamplePersonKAnonymity {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
-			data = setQuasiIdentifiers(data);
+			data = prepareAttributesKAnonymity(data);
 			setKAnonymity();
 			
 	        data.getDefinition().setAttributeType(PLACE_OF_ORIGIN_NAME, AttributeType.SENSITIVE_ATTRIBUTE);
-	        config.addPrivacyModel(new EntropyLDiversity(PLACE_OF_ORIGIN_NAME, 3));
+	        config.addPrivacyModel(new EntropyLDiversity(PLACE_OF_ORIGIN_NAME, 1));
 	        
 	        runAnonymization(data);
 		} catch (Exception e) {
