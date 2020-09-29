@@ -38,11 +38,13 @@ public class ExamplePersonKMap extends ExamplePersonKAnonymity {
 			data = setInsensitiveAttr(data);
 			data = prepareAttributesKAnonymity(data);
 			
-			ARXPopulationModel europeanPopulationModel = ARXPopulationModel.create(Region.EUROPE);
-			KMap kMap = new KMap(3, 0.7d, europeanPopulationModel);
+			ARXPopulationModel europe = ARXPopulationModel.create(Region.EUROPE);
 			config = ARXConfiguration.create();
-			config.addPrivacyModel(kMap);
-	        config.setSuppressionLimit(1d);
+			config.addPrivacyModel(new KMap(50, 0.2, europe));
+	        config.setSuppressionLimit(1);
+	        config.setHeuristicSearchThreshold(1000);
+			config.setHeuristicSearchStepLimit(Integer.MAX_VALUE);
+			config.setHeuristicSearchTimeLimit(60000);
 	        
 			runAnonymization(data);
 		} catch (Exception e) {

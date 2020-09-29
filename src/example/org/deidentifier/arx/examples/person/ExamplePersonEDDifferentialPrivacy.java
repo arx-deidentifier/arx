@@ -18,15 +18,10 @@
 package org.deidentifier.arx.examples.person;
 
 import org.deidentifier.arx.ARXConfiguration;
-import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataGeneralizationScheme;
-import org.deidentifier.arx.DataType;
-import org.deidentifier.arx.ARXConfiguration.SearchStepSemantics;
 import org.deidentifier.arx.DataGeneralizationScheme.GeneralizationDegree;
 import org.deidentifier.arx.criteria.EDDifferentialPrivacy;
-import org.deidentifier.arx.criteria.EntropyLDiversity;
-import org.deidentifier.arx.metric.Metric;
 
 /**
  * This class represents an example for person data anonymized with (ε,δ)-Differential Privacy.
@@ -41,23 +36,15 @@ public class ExamplePersonEDDifferentialPrivacy extends ExamplePerson {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
+			data.getDefinition().setResponseVariable(ID, true);
 			data = setQuasiIdentifiers(data);
-			createHierarchy(data, DATE_OF_BIRTH, DataType.DATE);
-			createHierarchy(data, DATE_OF_DEATH, DataType.DATE);
-			createHierarchy(data, PHONE_NUMBER, DataType.INTEGER);
-			createHierarchy(data, CURRENT_ZIP_CODE, DataType.INTEGER);
-			createHierarchy(data, CELL_NUMBER, DataType.INTEGER);
+			createHierarchyString(data, DATE_OF_BIRTH);
+			createHierarchyString(data, DATE_OF_DEATH);
+			createHierarchyInteger(data, PHONE_NUMBER);
+			createHierarchyInteger(data, CURRENT_ZIP_CODE);
+			createHierarchyInteger(data, CELL_NUMBER);
 			
-			data.getDefinition().setResponseVariable(SEX, true);
-			data.getDefinition().setResponseVariable(OFFICIAL_NAME, true);
-			data.getDefinition().setResponseVariable(FIRST_NAME, true);
-
-//			setEDDifferentialPrivacy(Metric.createClassificationMetric(), 2d, 1d, 1E-5d, 5);
-//			setEDDifferentialPrivacy(2d, 1E-5d, null, true, 50, 0.2, Metric.createLossMetric(), 1d);
-//			setEDDifferentialPrivacy(2d, 1E-5d, null, true, 100, 1d, Metric.createClassificationMetric(), 1d);
-			setEDDifferentialPrivacy(2d, 1E-6d, DataGeneralizationScheme.create(GeneralizationDegree.MEDIUM_HIGH), true, 10, 0.1, Metric.createClassificationMetric(), 1d);
-			data.getDefinition().setAttributeType(PLACE_OF_ORIGIN_NAME, AttributeType.SENSITIVE_ATTRIBUTE);
-	        config.addPrivacyModel(new EntropyLDiversity(PLACE_OF_ORIGIN_NAME, 1));
+			setEDDifferentialPrivacy(2d, 0.9d, DataGeneralizationScheme.create(GeneralizationDegree.HIGH), true, 100);
 			runAnonymization(data);
 		} catch (Exception e) {
 			System.out.println(e);
@@ -65,14 +52,10 @@ public class ExamplePersonEDDifferentialPrivacy extends ExamplePerson {
 	}
 
 	protected static ARXConfiguration setEDDifferentialPrivacy(double epsilon, double delta,
-			DataGeneralizationScheme dgs, boolean deterministic, int searchSteps, double searchBudget, Metric<?> metric,
-			double suppressionLimit) {
-		config = ARXConfiguration.create(1d, metric);
-		config.addPrivacyModel(new EDDifferentialPrivacy(epsilon, delta, null, deterministic));
+			DataGeneralizationScheme dgs, boolean deterministic, double searchBudget) {
+		config = ARXConfiguration.create();
+		config.addPrivacyModel(new EDDifferentialPrivacy(epsilon, delta, dgs, deterministic));
 		config.setDPSearchBudget(searchBudget);
-		config.setHeuristicSearchThreshold(1);
-		config.setHeuristicSearchStepLimit(searchSteps, SearchStepSemantics.EXPANSIONS);
-		config.setHeuristicSearchTimeLimit(120000);
 		return config;
 	}
 }	

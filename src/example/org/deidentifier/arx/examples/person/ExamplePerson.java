@@ -47,8 +47,8 @@ import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased;
 import org.deidentifier.arx.aggregates.HierarchyBuilderRedactionBased.Order;
+import org.deidentifier.arx.aggregates.StatisticsEquivalenceClasses;
 import org.deidentifier.arx.examples.Example;
-import org.deidentifier.arx.exceptions.RollbackRequiredException;
 
 /**
  * This is the base class for many examples based on CSV and DB input data with
@@ -89,7 +89,6 @@ public class ExamplePerson extends Example {
 	protected static ARXConfiguration config;
 	protected static ARXResult result;
 	protected static final SimpleDateFormat arxFormat = new SimpleDateFormat("dd.MM.yyyy");
-	protected static final double oMin = 0.01d;
 	/** CSV Input files */
 	protected static final String CSV_SMALL = "data/20_persons.csv";
 	protected static final String CSV_LARGE = "data/146k_persons.csv";
@@ -254,9 +253,9 @@ public class ExamplePerson extends Example {
 	 * @return prepared data
 	 */
 	protected static Data setQuasiIdentifiers(Data data) {
-		createHierarchy(data, OFFICIAL_NAME, DataType.STRING);
-		createHierarchy(data, ORIGINAL_NAME, DataType.STRING);
-		createHierarchy(data, FIRST_NAME, DataType.STRING);
+		createHierarchyString(data, OFFICIAL_NAME);
+		createHierarchyString(data, ORIGINAL_NAME);
+		createHierarchyString(data, FIRST_NAME);
 		createHierarchySex(data);
 		createHierarchyCountry(data, COUNTRY_OF_ORIGIN);
 		createHierarchyCountry(data, NATIONALITY);
@@ -264,26 +263,26 @@ public class ExamplePerson extends Example {
 		createHierarchyLanguage(data, LANGUAGE);
 		return data;
 	}
-
+	
 	/**
 	 * Set quasi identifiers for attributes of type STRING
 	 * @param data
 	 * @return prepared data
 	 */
 	protected static Data setQuasiIdentifiersString(Data data) {
-		createHierarchy(data, ORGANISATION_NAME, DataType.STRING);
-		createHierarchy(data, ORGANISATION_ADDITIONAL_NAME, DataType.STRING);
-		createHierarchy(data, DEPARTMENT, DataType.STRING);
-		createHierarchy(data, OFFICIAL_NAME, DataType.STRING);
-		createHierarchy(data, ORIGINAL_NAME, DataType.STRING);
-		createHierarchy(data, FIRST_NAME, DataType.STRING);
-		createHierarchy(data, PLACE_OF_ORIGIN_NAME, DataType.STRING);
-		createHierarchy(data, SECOND_PLACE_OF_ORIGIN_NAME, DataType.STRING);
-		createHierarchy(data, PLACE_OF_BIRTH_COUNTRY, DataType.STRING);
-		createHierarchy(data, SEX, DataType.STRING);
-		createHierarchy(data, REMARK, DataType.STRING);
-		createHierarchy(data, EMAIL, DataType.STRING);
-		createHierarchy(data, CURRENT_TOWN, DataType.STRING);
+		createHierarchyString(data, ORGANISATION_NAME);
+		createHierarchyString(data, ORGANISATION_ADDITIONAL_NAME);
+		createHierarchyString(data, DEPARTMENT);
+		createHierarchyString(data, OFFICIAL_NAME);
+		createHierarchyString(data, ORIGINAL_NAME);
+		createHierarchyString(data, FIRST_NAME);
+		createHierarchyString(data, PLACE_OF_ORIGIN_NAME);
+		createHierarchyString(data, SECOND_PLACE_OF_ORIGIN_NAME);
+		createHierarchyString(data, PLACE_OF_BIRTH_COUNTRY);
+		createHierarchyString(data, SEX);
+		createHierarchyString(data, REMARK);
+		createHierarchyString(data, EMAIL);
+		createHierarchyString(data, CURRENT_TOWN);
 		return data;
 	}
 	
@@ -308,14 +307,28 @@ public class ExamplePerson extends Example {
 	 * @param dataType
 	 * @return Hierarchy for attribute transformation
 	 */
-	protected static HierarchyBuilderRedactionBased<?> createHierarchy(Data data, String attribute,
-			DataType<?> dataType) {
+	protected static HierarchyBuilderRedactionBased<?> createHierarchyString(Data data, String attribute) {
 		HierarchyBuilderRedactionBased<?> builder = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
 				Order.RIGHT_TO_LEFT, ' ', generateRandomString());
 		data.getDefinition().setAttributeType(attribute, builder);
-		data.getDefinition().setDataType(attribute, dataType);
+		data.getDefinition().setDataType(attribute, DataType.STRING);
 		return builder;
 	}
+	
+	/**
+	 * @param data
+	 * @param attribute
+	 * @param dataType
+	 * @return Hierarchy for attribute transformation
+	 */
+	protected static HierarchyBuilderRedactionBased<?> createHierarchyInteger(Data data, String attribute) {
+		HierarchyBuilderRedactionBased<?> builder = HierarchyBuilderRedactionBased.create(Order.RIGHT_TO_LEFT,
+				Order.RIGHT_TO_LEFT, ' ', generateRandomInt());
+		data.getDefinition().setAttributeType(attribute, builder);
+		data.getDefinition().setDataType(attribute, DataType.INTEGER);
+		return builder;
+	}
+	
 	
 	/**
 	 * Sets micro aggregation
@@ -340,6 +353,7 @@ public class ExamplePerson extends Example {
 	}
 
 	/**
+	 * Hierarchy for possible sex values
 	 * @param data
 	 */
 	protected static void createHierarchySex(Data data) {
@@ -355,6 +369,7 @@ public class ExamplePerson extends Example {
 	}
 
 	/**
+	 * Hierarchy for languages
 	 * @param data
 	 * @param attribute
 	 */
@@ -363,17 +378,18 @@ public class ExamplePerson extends Example {
 		for (String l : Locale.getISOLanguages()) {
 			lang.add(l, "D");
 		}
-		lang.add("A", "E");lang.add("B", "E");lang.add("C", "E");lang.add("D", "E");lang.add("E", "E");lang.add("F", "E");lang.add("G", "E");
+		lang.add("A", "F");lang.add("B", "F");lang.add("C", "F");lang.add("D", "F");lang.add("E", "F");lang.add("F", "F");lang.add("G", "F");
 		lang.add("H", "D");lang.add("I", "D");lang.add("J", "D");lang.add("K", "D");lang.add("L", "D");lang.add("M", "D");lang.add("N", "D");
 		lang.add("O", "F");lang.add("P", "F");lang.add("Q", "F");lang.add("R", "F");lang.add("S", "F");lang.add("T", "F");lang.add("U", "F");
 		lang.add("V", "I");lang.add("W", "I");lang.add("X", "I");lang.add("Y", "I");lang.add("Z", "I");
-		lang.add("null", "E");lang.add("", "I");lang.add("NULL", "F");
+		lang.add("null", "F");lang.add("", "I");lang.add("NULL", "F");
 		data.getDefinition().setAttributeType(attribute, lang);
 		data.getDefinition().setDataType(attribute, DataType.STRING);
 		data.getDefinition().setHierarchy(attribute, lang);
 	}
 	
 	/**
+	 * Hierarchy for cantons in Switzerland
 	 * @param data
 	 * @param attribute
 	 */
@@ -382,19 +398,20 @@ public class ExamplePerson extends Example {
 		canton.add("M", "ZH");canton.add("##", "ZH");canton.add("AG", "ZH");canton.add("AI", "ZH");canton.add("AR", "ZH");canton.add("AS", "ZH");
 		canton.add("BA", "GE");canton.add("BE", "GE");canton.add("BL", "GE");canton.add("BP", "GE");canton.add("BS", "GE");canton.add("BU", "GE");
 		canton.add("FL", "BS");canton.add("FR", "BS");canton.add("GE", "BS");canton.add("GL", "BS");canton.add("GR", "BS");canton.add("JU", "BS");
-		canton.add("LU", "ZG");canton.add("NE", "ZG");canton.add("NW", "ZG");canton.add("OW", "ZG");canton.add("PT", "ZG");canton.add("RP", "ZG");
+		canton.add("LU", "ZH");canton.add("NE", "ZH");canton.add("NW", "ZH");canton.add("OW", "ZH");canton.add("PT", "ZG");canton.add("RP", "ZG");
 		canton.add("SG", "SO");canton.add("SH", "SO");canton.add("SO", "SO");canton.add("SZ", "SO");canton.add("TG", "SO");canton.add("TI", "SO");
 		canton.add("UR", "ZH");canton.add("VD", "ZH");canton.add("VS", "ZH");canton.add("ZG", "ZH");canton.add("ZH", "ZH");canton.add("12", "ZH");
-		canton.add("ZU", "SH");canton.add("null", "BE");canton.add("", "BE");canton.add("NULL", "BE");
+		canton.add("ZU", "ZH");canton.add("null", "BS");canton.add("", "BS");canton.add("NULL", "BS");
 		data.getDefinition().setAttributeType(attribute, canton);
 		data.getDefinition().setDataType(attribute, DataType.STRING);
 		data.getDefinition().setHierarchy(attribute, canton);
 	}
 
 	/**
+	 * Hierarchy for countries
 	 * @param data
 	 * @param attribute
-	 * @return hierarchy for countries
+	 * @return hierarchy
 	 */
 	protected static DefaultHierarchy createHierarchyCountry(Data data, String attribute) {
 		DefaultHierarchy country = Hierarchy.create();
@@ -448,29 +465,22 @@ public class ExamplePerson extends Example {
 		result = anonymizer.anonymize(data, config);
 		System.out.println("----After data ANONYMIZATION: " + LocalDateTime.now());
 		
-		// Check heuristic
+		// Check heuristic search
 		System.out.println("Heuristic search threshold (config.getHeuristicSearchThreshold()): " + config.getHeuristicSearchThreshold() + ", ARXLattice.size(): " + result.getLattice().getSize());
-		System.out.println("Heuristic search? ARXLattice.size(): " + result.getLattice().getSize() + ", config.getHeuristicSearchThreshold()): " + config.getHeuristicSearchThreshold());
 		
 		// Print info
 		printResult(result, data);
-		System.out.println();
+		StatisticsEquivalenceClasses stat = result.getOutput(result.getGlobalOptimum(), false).getStatistics().getEquivalenceClassStatistics();
+		System.out.print(stat.getAverageEquivalenceClassSize() + ", ");
+		System.out.print(stat.getMaximalEquivalenceClassSize() + ", ");
+		System.out.print(stat.getMinimalEquivalenceClassSize() + ", ");
+		System.out.print(stat.getNumberOfEquivalenceClasses() + ", ");
+		System.out.print(stat.getNumberOfRecords() + ", ");
+		System.out.print(stat.getNumberOfSuppressedRecords());
 		
-		// Print result of global recoding
+		// Print results
         DataHandle optimum = result.getOutput(false);
-        System.out.println(" - Global recoding:");
-        printHandleFirst(optimum);
-        // Now apply local recoding to the result
-        try {
-        	// Print result of local recoding
-            System.out.println(" - Local recoding:");
-            printHandleFirst(optimum);
-            
-        	result.optimizeIterativeFast(optimum, oMin);
-		} catch (RollbackRequiredException e) {
-			// This part is important to ensure that privacy is preserved, even in case of exceptions
-            optimum = result.getOutput();
-		}
+        printOutput(optimum);
 	}
 	
 	/**
@@ -486,7 +496,7 @@ public class ExamplePerson extends Example {
 		}
 	}
 
-	protected static void printHandleFirst(DataHandle handle) {
+	protected static void printOutput(DataHandle handle) {
 		// Process results
 		System.out.println("-------------Transformed data: ");
         final Iterator<String[]> itHandle = handle.iterator();

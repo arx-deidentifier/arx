@@ -20,7 +20,9 @@ package org.deidentifier.arx.examples.person;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
+import org.deidentifier.arx.criteria.EqualDistanceTCloseness;
 import org.deidentifier.arx.criteria.HierarchicalDistanceTCloseness;
+import org.deidentifier.arx.criteria.OrderedDistanceTCloseness;
 
 /**
  * This class represents an example for person data anonymized with the T-Closeness privacy model.
@@ -34,17 +36,18 @@ public class ExamplePersonTCloseness extends ExamplePersonKAnonymity {
 	public static void main(String[] args) {
 		try {
 			Data data = csvInit26AttrLarge();
-			data = setInsensitiveAttr(data);
 			data = prepareAttributesKAnonymity(data);
 			setKAnonymity();
-	        DefaultHierarchy countryHierarchy = createHierarchyCountry(data, COUNTRY_OF_ORIGIN);
-	        DefaultHierarchy nationHierarchy = createHierarchyCountry(data, NATIONALITY);
+
+			DefaultHierarchy countryHierarchy = createHierarchyCountry(data, COUNTRY_OF_ORIGIN);
 	        data.getDefinition().setAttributeType(COUNTRY_OF_ORIGIN, AttributeType.SENSITIVE_ATTRIBUTE);
-			data.getDefinition().setAttributeType(NATIONALITY, AttributeType.SENSITIVE_ATTRIBUTE);
-	        config.addPrivacyModel(new HierarchicalDistanceTCloseness(COUNTRY_OF_ORIGIN, 0.6d, countryHierarchy));
-	        config.addPrivacyModel(new HierarchicalDistanceTCloseness(NATIONALITY, 0.6d, nationHierarchy));
-	        
-	        runAnonymization(data);
+	        config.addPrivacyModel(new HierarchicalDistanceTCloseness(COUNTRY_OF_ORIGIN, 0.5, countryHierarchy));
+			data.getDefinition().setAttributeType(PHONE_NUMBER, AttributeType.SENSITIVE_ATTRIBUTE);
+			config.addPrivacyModel(new OrderedDistanceTCloseness(PHONE_NUMBER, 0.5));
+			data.getDefinition().setAttributeType(PLACE_OF_BIRTH_COUNTRY, AttributeType.SENSITIVE_ATTRIBUTE);
+			config.addPrivacyModel(new EqualDistanceTCloseness(PLACE_OF_BIRTH_COUNTRY, 0.5));
+
+			runAnonymization(data);
 		} catch (Exception e) {
 			System.out.println(e);
 		}

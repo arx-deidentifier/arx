@@ -34,7 +34,9 @@ public class ExamplePersonAverageReidentificationRisk extends ExamplePerson {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
-			data = setQuasiIdentifiers(data);
+			createHierarchyString(data, OFFICIAL_NAME);
+			createHierarchyString(data, ORIGINAL_NAME);
+			createHierarchyString(data, FIRST_NAME);
 			setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
 			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
 			data = setQuasiIdentifiersInteger(data);

@@ -20,7 +20,6 @@ package org.deidentifier.arx.examples.person;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.DataSubset;
-import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.DPresence;
 
 /**
@@ -36,7 +35,7 @@ public class ExamplePersonDPresence extends ExamplePerson {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
-			createHierarchy(data, OFFICIAL_NAME, DataType.STRING);
+			createHierarchyString(data, OFFICIAL_NAME);
 
 			// Load csv subset with 20 values which are included in the large csv	
 			Data subsetData = csvInit26AttrSmall();

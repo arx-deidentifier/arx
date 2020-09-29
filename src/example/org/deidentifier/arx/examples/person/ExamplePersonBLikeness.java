@@ -33,7 +33,6 @@ public class ExamplePersonBLikeness extends ExamplePersonKAnonymity {
 	public static void main(String[] args) {
 		try {
 			Data data = csvInit26AttrLarge();
-			data = setInsensitiveAttr(data);
 			data = prepareAttributesKAnonymity(data);
 			setKAnonymity();
 			

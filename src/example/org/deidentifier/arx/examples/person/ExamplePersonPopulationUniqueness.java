@@ -37,11 +37,12 @@ public class ExamplePersonPopulationUniqueness extends ExamplePerson {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
-			createHierarchy(data, OFFICIAL_NAME, DataType.STRING);
-			createHierarchy(data, ORIGINAL_NAME, DataType.STRING);
-			createHierarchy(data, FIRST_NAME, DataType.STRING);
+			createHierarchyString(data, OFFICIAL_NAME);
+			createHierarchyString(data, ORIGINAL_NAME);
+			createHierarchyString(data, FIRST_NAME);
 			setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
 			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
+			data = setQuasiIdentifiersInteger(data);
 			ARXPopulationModel europeanPopulationmodel = ARXPopulationModel.create(Region.EUROPE);
 			config = ARXConfiguration.create();
 			config.addPrivacyModel(new PopulationUniqueness(0.99, europeanPopulationmodel));
