@@ -37,11 +37,11 @@ public class ExamplePersonBLikeness extends ExamplePersonKAnonymity {
 			setKAnonymity();
 			
 	        data.getDefinition().setAttributeType(PLACE_OF_ORIGIN_NAME, AttributeType.SENSITIVE_ATTRIBUTE);
-	        config.addPrivacyModel(new BasicBLikeness(PLACE_OF_ORIGIN_NAME, 3));
-	        data.getDefinition().setAttributeType(SECOND_PLACE_OF_ORIGIN_NAME, AttributeType.SENSITIVE_ATTRIBUTE);
-	        config.addPrivacyModel(new BasicBLikeness(SECOND_PLACE_OF_ORIGIN_NAME, 3));
+	        config.addPrivacyModel(new BasicBLikeness(PLACE_OF_ORIGIN_NAME, 10));
+	        data.getDefinition().setAttributeType(EMAIL, AttributeType.SENSITIVE_ATTRIBUTE);
+	        config.addPrivacyModel(new BasicBLikeness(EMAIL, 10));
 	        data.getDefinition().setAttributeType(REMARK, AttributeType.SENSITIVE_ATTRIBUTE);
-	        config.addPrivacyModel(new BasicBLikeness(REMARK, 3));
+	        config.addPrivacyModel(new BasicBLikeness(REMARK, 15));
 	        
 	        runAnonymization(data);
 		} catch (Exception e) {

@@ -43,9 +43,9 @@ public class ExamplePersonPopulationUniqueness extends ExamplePerson {
 			setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
 			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
 			data = setQuasiIdentifiersInteger(data);
-			ARXPopulationModel europeanPopulationmodel = ARXPopulationModel.create(Region.EUROPE);
+			ARXPopulationModel europe = ARXPopulationModel.create(Region.EUROPE);
 			config = ARXConfiguration.create();
-			config.addPrivacyModel(new PopulationUniqueness(0.99, europeanPopulationmodel));
+			config.addPrivacyModel(new PopulationUniqueness(0.99, europe));
 			config.setSuppressionLimit(1d);
 			
 			runAnonymization(data);

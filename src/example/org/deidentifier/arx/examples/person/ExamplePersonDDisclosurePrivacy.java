@@ -33,12 +33,11 @@ public class ExamplePersonDDisclosurePrivacy extends ExamplePersonKAnonymity {
 	public static void main(String[] args) {
 		try {
 			Data data = csvInit26AttrLarge();
-			data = setInsensitiveAttr(data);
 			data = prepareAttributesKAnonymity(data);
 			setKAnonymity();
 			
 	        data.getDefinition().setAttributeType(SECOND_PLACE_OF_ORIGIN_NAME, AttributeType.SENSITIVE_ATTRIBUTE);
-	        config.addPrivacyModel(new DDisclosurePrivacy(SECOND_PLACE_OF_ORIGIN_NAME, 3d));
+	        config.addPrivacyModel(new DDisclosurePrivacy(SECOND_PLACE_OF_ORIGIN_NAME, 4));
 
 	        runAnonymization(data);
 		} catch (Exception e) {

@@ -36,26 +36,24 @@ public class ExamplePersonEDDifferentialPrivacy extends ExamplePerson {
 		try {
 			Data data = csvInit26AttrLarge();
 			data = setInsensitiveAttr(data);
-			data.getDefinition().setResponseVariable(ID, true);
 			data = setQuasiIdentifiers(data);
-			createHierarchyString(data, DATE_OF_BIRTH);
-			createHierarchyString(data, DATE_OF_DEATH);
+			createHierarchyString(data, ORGANISATION_ADDITIONAL_NAME);
+			createHierarchyString(data, ORGANISATION_NAME);
+			createHierarchyString(data, DEPARTMENT);
 			createHierarchyInteger(data, PHONE_NUMBER);
 			createHierarchyInteger(data, CURRENT_ZIP_CODE);
 			createHierarchyInteger(data, CELL_NUMBER);
 			
-			setEDDifferentialPrivacy(2d, 0.9d, DataGeneralizationScheme.create(GeneralizationDegree.HIGH), true, 100);
+			data.getDefinition().setResponseVariable(ID, true);
+			config = ARXConfiguration.create();
+			DataGeneralizationScheme dgs = DataGeneralizationScheme.create(GeneralizationDegree.HIGH);
+			config.addPrivacyModel(new EDDifferentialPrivacy(4, 0.9, dgs));
+			config.setDPSearchBudget(3);
+			
 			runAnonymization(data);
 		} catch (Exception e) {
 			System.out.println(e);
 		}
 	}
 
-	protected static ARXConfiguration setEDDifferentialPrivacy(double epsilon, double delta,
-			DataGeneralizationScheme dgs, boolean deterministic, double searchBudget) {
-		config = ARXConfiguration.create();
-		config.addPrivacyModel(new EDDifferentialPrivacy(epsilon, delta, dgs, deterministic));
-		config.setDPSearchBudget(searchBudget);
-		return config;
-	}
 }	
