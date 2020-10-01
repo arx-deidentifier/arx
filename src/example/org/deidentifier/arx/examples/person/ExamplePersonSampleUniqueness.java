@@ -40,8 +40,8 @@ public class ExamplePersonSampleUniqueness extends ExamplePerson {
 			setMicroAggregation(data, DATE_OF_BIRTH, DataType.DATE);
 			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
 			data = setQuasiIdentifiersInteger(data);
-			config = ARXConfiguration.create(1d, Metric.createAECSMetric());
-			config.addPrivacyModel(new SampleUniqueness(0.7d));
+			config = ARXConfiguration.create(1, Metric.createLossMetric());
+			config.addPrivacyModel(new SampleUniqueness(0.7));
 
 			runAnonymization(data);
 		} catch (Exception e) {

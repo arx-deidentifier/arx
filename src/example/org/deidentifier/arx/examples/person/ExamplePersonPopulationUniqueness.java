@@ -45,8 +45,8 @@ public class ExamplePersonPopulationUniqueness extends ExamplePerson {
 			data = setQuasiIdentifiersInteger(data);
 			ARXPopulationModel europe = ARXPopulationModel.create(Region.EUROPE);
 			config = ARXConfiguration.create();
-			config.addPrivacyModel(new PopulationUniqueness(0.99, europe));
-			config.setSuppressionLimit(1d);
+			config.addPrivacyModel(new PopulationUniqueness(0.7, europe));
+			config.setSuppressionLimit(1);
 			
 			runAnonymization(data);
 		} catch (Exception e) {

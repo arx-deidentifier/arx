@@ -41,8 +41,8 @@ public class ExamplePersonAverageReidentificationRisk extends ExamplePerson {
 			setMicroAggregation(data, DATE_OF_DEATH, DataType.DATE);
 			data = setQuasiIdentifiersInteger(data);
 			config = ARXConfiguration.create();
-			config.addPrivacyModel(new AverageReidentificationRisk(0.94d));
-	        config.setSuppressionLimit(1d);
+			config.addPrivacyModel(new AverageReidentificationRisk(0.94));
+	        config.setSuppressionLimit(1);
 
 	        runAnonymization(data);
 		} catch (Exception e) {
