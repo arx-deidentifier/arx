@@ -142,10 +142,6 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
                 assureChecked(predecessor);
                 transformationIDToScore.put(id, (ILScore)predecessor.getInformationLoss());
                 
-                // Stop if needed
-                if (mustStop()) {
-                    return false;
-                }
             }
             
             // Remove the current pivot element from the set of candidates
