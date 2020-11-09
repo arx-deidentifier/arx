@@ -23,6 +23,7 @@ import java.util.Iterator;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -34,7 +35,7 @@ import org.deidentifier.arx.DataType;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
- * This class implements an example of how to use the heuristic search algorithm
+ * This class implements an example of how to use a heuristic search algorithm
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -95,7 +96,7 @@ public class Example34 extends Example {
         // Create an instance of the anonymizer
         ARXAnonymizer anonymizer = new ARXAnonymizer();
         ARXConfiguration config = ARXConfiguration.create();
-        config.setHeuristicSearchEnabled(true);
+        config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
         config.setHeuristicSearchTimeLimit(10);
         config.addPrivacyModel(new KAnonymity(2));
         config.setSuppressionLimit(0.5d);

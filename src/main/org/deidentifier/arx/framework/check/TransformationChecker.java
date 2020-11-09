@@ -59,7 +59,7 @@ public class TransformationChecker {
 
     /** The data manager. */
     private final DataManager                       manager;
-    
+
     /** The data. */
     private final Data                              dataGeneralized;
 
@@ -82,10 +82,13 @@ public class TransformationChecker {
     private final Transformer                       transformer;
 
     /** The solution space */
-    private final SolutionSpace<?>                     solutionSpace;
+    private final SolutionSpace<?>                  solutionSpace;
 
     /** Is a minimal class size required */
     private final boolean                           minimalClassSizeRequired;
+
+    /** Count the number of checks performed */
+    private int                                     numChecksPerformed = 0;
 
     /**
      * Creates a new transformation checker.
@@ -176,6 +179,9 @@ public class TransformationChecker {
      */
     public TransformationResult check(final Transformation<?> node, final boolean forceMeasureInfoLoss, final ScoreType scoreType) {
         
+        // Count number of checks
+        numChecksPerformed++;
+        
         // If the result is already know, simply return it
         if (node.getData() != null && node.getData() instanceof TransformationResult) {
             return (TransformationResult) node.getData();
@@ -247,7 +253,7 @@ public class TransformationChecker {
     public TransformationApplicator getApplicator() {
         return new TransformationApplicator(this.manager, this.getOutputBuffer(), this.metric, this.config);
     }
-
+    
     /**
      * Returns the configuration
      * @return
@@ -255,7 +261,7 @@ public class TransformationChecker {
     public ARXConfigurationInternal getConfiguration() {
         return config;
     }
-    
+
     /**
      * Returns the header of generalized data
      * @return
@@ -287,6 +293,14 @@ public class TransformationChecker {
      */
     public Metric<?> getMetric() {
         return metric;
+    }
+    
+    /**
+     * Returns the number of checks performed
+     * @return
+     */
+    public int getNumChecksPerformed() {
+        return this.numChecksPerformed;
     }
     
     /**

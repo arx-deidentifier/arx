@@ -28,6 +28,7 @@ import java.util.Random;
 
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
@@ -211,7 +212,7 @@ public class TestAnonymizationCellSuppression {
         } else {
             config.addPrivacyModel(new AverageReidentificationRisk(risks.averageRisk, risks.highestRisk, risks.recordsAtRisk));
         }
-        config.setHeuristicSearchEnabled(false);
+        config.setAlgorithm(AnonymizationAlgorithm.OPTIMAL);
         
         // Perform anonymization
         ARXResult result = anonymizer.anonymize(data, config);

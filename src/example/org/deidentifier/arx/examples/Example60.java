@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2020 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,10 +29,11 @@ import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
 import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.DataHandle;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.criteria.KAnonymity;
 
 /**
- * This class implements an example of processing highdimensional data
+ * This class implements an example of processing high-dimensional data
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -155,7 +156,7 @@ public class Example60 extends Example {
         config.addPrivacyModel(new KAnonymity(2));
         config.setSuppressionLimit(1d);
         config.setHeuristicSearchStepLimit(1000);
-        config.setHeuristicSearchEnabled(true);
+        config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
         ARXResult result = anonymizer.anonymize(data, config);
 
         // Obtain results
