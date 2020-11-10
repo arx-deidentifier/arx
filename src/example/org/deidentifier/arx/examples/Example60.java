@@ -103,7 +103,7 @@ public class Example60 extends Example {
             System.out.println(" - Input data:");
             printHandle(data.getHandle());
 
-            // Print results
+            // Print top and bottom
             System.out.println("\n - Top node data:");
             printHandle(top);
 
@@ -111,7 +111,11 @@ public class Example60 extends Example {
             printHandle(bottom);
         }
         
-        System.out.println("\n - Optimal output data (" + algorithm +"):");
+        // Calculate granularity of optimal result
+        double granularity = optimal.getStatistics().getQualityStatistics().getGranularity().getArithmeticMean();
+        
+        // Print optimal result
+        System.out.println(String.format("\n - Optimal output data for %s (Granularity: %,.3f):", algorithm, granularity));
         printHandle(optimal);
     }
         
