@@ -48,8 +48,9 @@ public class Example60 extends Example {
      */
     public static void main(String[] args) throws IOException {
         
-        // Create the dataset
-        Data data = createData();
+        // Create a dataset
+        int attributeRepetition = 50;
+        Data data = createData(attributeRepetition);
         
         // Run top-down search
         solve(data, AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN, true);
@@ -65,7 +66,8 @@ public class Example60 extends Example {
      * Anonymize the dataset with k-Anonymity (k=2).
      * 
      * @param data
-     * @param config
+     * @param algorithm
+     * @param printVerbose
      * @throws IOException
      */
     public static void solve(Data data, AnonymizationAlgorithm algorithm, boolean printVerbose) throws IOException {
@@ -80,7 +82,7 @@ public class Example60 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
         config.setSuppressionLimit(1d);
-        config.setHeuristicSearchStepLimit(1000);
+        config.setHeuristicSearchStepLimit(5000);
         config.setAlgorithm(algorithm);
         ARXResult result = anonymizer.anonymize(data, config);
         
@@ -91,7 +93,6 @@ public class Example60 extends Example {
         DataHandle optimal = result.getOutput();
 
         if (printVerbose) {
-            
             // Obtain top and bottom representation
             ARXNode topNode = lattice.getTop();
             ARXNode bottomNode = lattice.getBottom();
@@ -103,100 +104,99 @@ public class Example60 extends Example {
             printHandle(data.getHandle());
 
             // Print results
-            System.out.println(" - Top node data:");
+            System.out.println("\n - Top node data:");
             printHandle(top);
 
-            System.out.println(" - Bottom node data:");
+            System.out.println("\n - Bottom node data:");
             printHandle(bottom);
         }
         
-        System.out.println(" - Optimal data (" + algorithm +"):");
+        System.out.println("\n - Optimal output data (" + algorithm +"):");
         printHandle(optimal);
     }
-    
+        
     /**
      * Creates a high-dimensional dataset.
      * 
-     * @param dataset
+     * @param attributeRepetition Defines how often the 3 base attributes (age, gender, zipcode) are repeated.
      * @return
-     * @throws IOException
      */
-    public static Data createData() {
-        // Create a dataset with 3000 columns
+    public static Data createData(int attributeRepetition) {
+        // Create a dataset with 3*attributeRepetition columns
         DefaultData data = Data.create();
-        
+
         // Header
-        String[] row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "age-" + i;
-            row[i*3 + 1] = "gender-" + i;
-            row[i*3 + 2] = "zipcode-" + i;
+        String[] row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "age-" + i;
+            row[i * 3 + 1] = "gender-" + i;
+            row[i * 3 + 2] = "zipcode-" + i;
         }
         data.add(row);
-        
+
         // Row 1
-        row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "34";
-            row[i*3 + 1] = "male";
-            row[i*3 + 2] = "81667";
+        row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "34";
+            row[i * 3 + 1] = "male";
+            row[i * 3 + 2] = "81667";
         }
         data.add(row);
 
         // Row 2
-        row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "45";
-            row[i*3 + 1] = "female";
-            row[i*3 + 2] = "81675";
+        row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "45";
+            row[i * 3 + 1] = "female";
+            row[i * 3 + 2] = "81675";
         }
         data.add(row);
 
         // Row 3
-        row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "66";
-            row[i*3 + 1] = "male";
-            row[i*3 + 2] = "81925";
+        row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "66";
+            row[i * 3 + 1] = "male";
+            row[i * 3 + 2] = "81925";
         }
         data.add(row);
 
         // Row 4
-        row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "70";
-            row[i*3 + 1] = "female";
-            row[i*3 + 2] = "81931";
+        row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "70";
+            row[i * 3 + 1] = "female";
+            row[i * 3 + 2] = "81931";
         }
         data.add(row);
 
         // Row 5
-        row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "34";
-            row[i*3 + 1] = "female";
-            row[i*3 + 2] = "81931";
+        row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "34";
+            row[i * 3 + 1] = "female";
+            row[i * 3 + 2] = "81931";
         }
         data.add(row);
 
         // Row 6
-        row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "70";
-            row[i*3 + 1] = "male";
-            row[i*3 + 2] = "81931";
+        row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "70";
+            row[i * 3 + 1] = "male";
+            row[i * 3 + 2] = "81931";
         }
         data.add(row);
 
         // Row 7
-        row = new String[3000];
-        for (int i=0; i < 1000; i++) {
-            row[i*3 + 0] = "45";
-            row[i*3 + 1] = "male";
-            row[i*3 + 2] = "81931";
+        row = new String[3 * attributeRepetition];
+        for (int i = 0; i < attributeRepetition; i++) {
+            row[i * 3 + 0] = "45";
+            row[i * 3 + 1] = "male";
+            row[i * 3 + 2] = "81931";
         }
         data.add(row);
-        
+
         // Define hierarchies
         DefaultHierarchy age = Hierarchy.create();
         age.add("34", "<50", "*");
@@ -216,12 +216,12 @@ public class Example60 extends Example {
         zipcode.add("81931", "8193*", "819**", "81***", "8****", "*****");
 
         // Assign hierarchies
-        for (int i=0; i < 1000; i++) {
+        for (int i = 0; i < attributeRepetition; i++) {
             data.getDefinition().setAttributeType("age-" + i, age);
             data.getDefinition().setAttributeType("gender-" + i, gender);
             data.getDefinition().setAttributeType("zipcode-" + i, zipcode);
         }
-        
+
         return data;
     }
 }
