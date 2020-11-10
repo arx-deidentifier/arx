@@ -51,14 +51,14 @@ public class Example60 extends Example {
         // Create the dataset
         Data data = createData();
         
-        // run top-down search
-        solve(data, AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
+        // Run top-down search
+        solve(data, AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN, true);
         
-        // run bottom-up search
-        solve(data, AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
+        // Run bottom-up search
+        solve(data, AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP, false);
         
-        // run genetic search
-        solve(data, AnonymizationAlgorithm.BEST_EFFORT_GENETIC);
+        // Run genetic search
+        solve(data, AnonymizationAlgorithm.BEST_EFFORT_GENETIC, false);
     }
     
     /**
@@ -68,7 +68,7 @@ public class Example60 extends Example {
      * @param config
      * @throws IOException
      */
-    public static void solve(Data data, AnonymizationAlgorithm algorithm) throws IOException {
+    public static void solve(Data data, AnonymizationAlgorithm algorithm, boolean printVerbose) throws IOException {
      
         // Release
         data.getHandle().release();
@@ -84,31 +84,34 @@ public class Example60 extends Example {
         config.setAlgorithm(algorithm);
         ARXResult result = anonymizer.anonymize(data, config);
         
-        // Obtain results
+        // Obtain lattice
         ARXLattice lattice = result.getLattice();
-        ARXNode topNode = lattice.getTop();
-        ARXNode bottomNode = lattice.getBottom();
 
-        // Obtain various data representations
+        // Obtain optimal data representations
         DataHandle optimal = result.getOutput();
-        DataHandle top = result.getOutput(topNode);
-        DataHandle bottom = result.getOutput(bottomNode);
 
-        // Print input
-        System.out.println(" - Input data:");
-        printHandle(data.getHandle());
+        if (printVerbose) {
+            
+            // Obtain top and bottom representation
+            ARXNode topNode = lattice.getTop();
+            ARXNode bottomNode = lattice.getBottom();
+            DataHandle top = result.getOutput(topNode);
+            DataHandle bottom = result.getOutput(bottomNode);
+            
+            // Print input
+            System.out.println(" - Input data:");
+            printHandle(data.getHandle());
 
-        // Print results
-        System.out.println(" - Top node data:");
-        printHandle(top);
+            // Print results
+            System.out.println(" - Top node data:");
+            printHandle(top);
 
-        System.out.println(" - Bottom node data:");
-        printHandle(bottom);
-
-        System.out.println(" - Optimal data:");
+            System.out.println(" - Bottom node data:");
+            printHandle(bottom);
+        }
+        
+        System.out.println(" - Optimal data (" + algorithm +"):");
         printHandle(optimal);
-        
-        
     }
     
     /**
