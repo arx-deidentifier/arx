@@ -46,10 +46,9 @@ public class Example60 extends Example {
      * @param args
      *            the arguments
      */
-    
-    
     public static void main(String[] args) throws IOException {
         
+        // Create the dataset
         Data data = createData();
         
         // run top-down search
@@ -62,6 +61,13 @@ public class Example60 extends Example {
         solve(data, AnonymizationAlgorithm.BEST_EFFORT_GENETIC);
     }
     
+    /**
+     * Anonymize the dataset with k-Anonymity (k=2).
+     * 
+     * @param data
+     * @param config
+     * @throws IOException
+     */
     public static void solve(Data data, AnonymizationAlgorithm algorithm) throws IOException {
      
         // Release
@@ -105,6 +111,13 @@ public class Example60 extends Example {
         
     }
     
+    /**
+     * Creates a high-dimensional dataset.
+     * 
+     * @param dataset
+     * @return
+     * @throws IOException
+     */
     public static Data createData() {
         // Create a dataset with 3000 columns
         DefaultData data = Data.create();
