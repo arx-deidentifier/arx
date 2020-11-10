@@ -46,8 +46,66 @@ public class Example60 extends Example {
      * @param args
      *            the arguments
      */
+    
+    
     public static void main(String[] args) throws IOException {
         
+        Data data = createData();
+        
+        // run top-down search
+        solve(data, AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN);
+        
+        // run bottom-up search
+        solve(data, AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
+        
+        // run genetic search
+        solve(data, AnonymizationAlgorithm.BEST_EFFORT_GENETIC);
+    }
+    
+    public static void solve(Data data, AnonymizationAlgorithm algorithm) throws IOException {
+     
+        // Release
+        data.getHandle().release();
+        
+        // Create an instance of the anonymizer
+        ARXAnonymizer anonymizer = new ARXAnonymizer();
+
+        // Create config
+        ARXConfiguration config = ARXConfiguration.create();
+        config.addPrivacyModel(new KAnonymity(2));
+        config.setSuppressionLimit(1d);
+        config.setHeuristicSearchStepLimit(1000);
+        config.setAlgorithm(algorithm);
+        ARXResult result = anonymizer.anonymize(data, config);
+        
+        // Obtain results
+        ARXLattice lattice = result.getLattice();
+        ARXNode topNode = lattice.getTop();
+        ARXNode bottomNode = lattice.getBottom();
+
+        // Obtain various data representations
+        DataHandle optimal = result.getOutput();
+        DataHandle top = result.getOutput(topNode);
+        DataHandle bottom = result.getOutput(bottomNode);
+
+        // Print input
+        System.out.println(" - Input data:");
+        printHandle(data.getHandle());
+
+        // Print results
+        System.out.println(" - Top node data:");
+        printHandle(top);
+
+        System.out.println(" - Bottom node data:");
+        printHandle(bottom);
+
+        System.out.println(" - Optimal data:");
+        printHandle(optimal);
+        
+        
+    }
+    
+    public static Data createData() {
         // Create a dataset with 3000 columns
         DefaultData data = Data.create();
         
@@ -147,40 +205,7 @@ public class Example60 extends Example {
             data.getDefinition().setAttributeType("gender-" + i, gender);
             data.getDefinition().setAttributeType("zipcode-" + i, zipcode);
         }
-
-        // Create an instance of the anonymizer
-        ARXAnonymizer anonymizer = new ARXAnonymizer();
-
-        // Create config
-        ARXConfiguration config = ARXConfiguration.create();
-        config.addPrivacyModel(new KAnonymity(2));
-        config.setSuppressionLimit(1d);
-        config.setHeuristicSearchStepLimit(1000);
-        config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
-        ARXResult result = anonymizer.anonymize(data, config);
-
-        // Obtain results
-        ARXLattice lattice = result.getLattice();
-        ARXNode topNode = lattice.getTop();
-        ARXNode bottomNode = lattice.getBottom();
-
-        // Obtain various data representations
-        DataHandle optimal = result.getOutput();
-        DataHandle top = result.getOutput(topNode);
-        DataHandle bottom = result.getOutput(bottomNode);
-
-        // Print input
-        System.out.println(" - Input data:");
-        printHandle(data.getHandle());
-
-        // Print results
-        System.out.println(" - Top node data:");
-        printHandle(top);
-
-        System.out.println(" - Bottom node data:");
-        printHandle(bottom);
-
-        System.out.println(" - Optimal data:");
-        printHandle(optimal);
+        
+        return data;
     }
 }
