@@ -82,7 +82,7 @@ public class Example60 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
         config.setSuppressionLimit(1d);
-        config.setHeuristicSearchStepLimit(5000);
+        config.setHeuristicSearchStepLimit(10000);
         config.setAlgorithm(algorithm);
         ARXResult result = anonymizer.anonymize(data, config);
         
@@ -100,14 +100,14 @@ public class Example60 extends Example {
             DataHandle bottom = result.getOutput(bottomNode);
             
             // Print input
-            System.out.println(" - Input data:");
+            System.out.println(String.format(" - Input data (Granularity: %,.3f):", data.getHandle().getStatistics().getQualityStatistics().getGranularity().getArithmeticMean()));
             printHandle(data.getHandle());
 
             // Print top and bottom
-            System.out.println("\n - Top node data:");
+            System.out.println(String.format("\n - Top node data (Granularity: %,.3f):", top.getStatistics().getQualityStatistics().getGranularity().getArithmeticMean()));
             printHandle(top);
 
-            System.out.println("\n - Bottom node data:");
+            System.out.println(String.format("\n - Bottom node data (Granularity: %,.3f):", bottom.getStatistics().getQualityStatistics().getGranularity().getArithmeticMean()));
             printHandle(bottom);
         }
         
