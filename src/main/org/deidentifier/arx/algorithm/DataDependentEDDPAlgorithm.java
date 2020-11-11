@@ -147,6 +147,11 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
             // Remove the current pivot element from the set of candidates
             transformationIDToScore.remove(pivot.getIdentifier());
             
+            // Stop if no more transformations available
+            if (transformationIDToScore.isEmpty()) {
+                return false;
+            }
+            
             // Select the next pivot element from the set of candidates using the exponential mechanism
             Object id = executeExponentialMechanism(transformationIDToScore, exponentialMechanism);
             pivot = solutionSpace.getTransformation(id);
