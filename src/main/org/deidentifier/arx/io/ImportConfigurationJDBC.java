@@ -1,13 +1,13 @@
 /*
  * ARX: Powerful Data Anonymization
  * Copyright 2014 - 2015 Karol Babioch, Fabian Prasser, Florian Kohlmayer
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -30,7 +30,7 @@ import java.util.NoSuchElementException;
  * @author Fabian Prasser
  */
 public class ImportConfigurationJDBC extends ImportConfiguration {
-    
+
     /**
      * Connection to be used.
      *
@@ -38,32 +38,62 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      * @see {@link #getConnection()}
      */
     private Connection connection;
-    
+
     /**
      * Name of table to be used.
      *
      * @see {@link #setTable(String)}
      * @see {@link #getTable()}
      */
-    private String     table;
-    
+    private String table;
+
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public void setSchemaName(String schemaName) {
+        this.schemaName = schemaName;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+    public void setDbName(String dbName) {
+        this.dbName = dbName;
+    }
+
+    private String schemaName;
+
+    private String dbName;
+
+    public int getMaxRows() {
+        return maxRows;
+    }
+
+    public void setMaxRows(int maxRows) {
+        this.maxRows = maxRows;
+    }
+
+    private int maxRows;
+
     /**
      * Determines whether we need to manage the JDBC connection.
      */
     private final boolean manageConnection;
-    
+
     /**
      * Creates a new instance of this object.
      *
      * @param connection {@link #setConnection(Connection)}
-     * @param table {@link #setTable(String)}
+     * @param table      {@link #setTable(String)}
      */
     public ImportConfigurationJDBC(Connection connection, String table) {
         this.connection = connection;
         this.table = table;
         this.manageConnection = false;
     }
-    
+
     /**
      * Creates a new instance of this object.
      *
@@ -76,57 +106,59 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         this.table = table;
         this.manageConnection = true;
     }
-    
+
     /**
      * Creates a new instance of this object.
      *
      * @param url
      * @param user
      * @param password
-     * @param table {@link #setTable(String)}
+     * @param table    {@link #setTable(String)}
      * @throws SQLException
      */
-    public ImportConfigurationJDBC(String url, String user, String password, String table) throws SQLException {
+    public ImportConfigurationJDBC(String url, String user, String password, String dbName, String schemaName, String table, int maxRows) throws SQLException {
         this.connection = DriverManager.getConnection(url, user, password);
         this.table = table;
+        this.dbName = dbName;
+        this.schemaName = schemaName;
+        this.maxRows = maxRows;
         this.manageConnection = true;
     }
-    
+
     /**
      * Adds a single column to import from
-     * 
+     * <p>
      * This makes sure that only {@link ImportColumnJDBC} can be added,
      * otherwise an {@link IllegalArgumentException} will be thrown.
-     * 
-     * @param column
-     *            A single column to import from, {@link ImportColumnJDBC}
+     *
+     * @param column A single column to import from, {@link ImportColumnJDBC}
      */
     @Override
     public void addColumn(ImportColumn column) {
-        
+
         if (!(column instanceof ImportColumnJDBC)) {
             throw new IllegalArgumentException("");
         }
-        
+
         if (((ImportColumnJDBC) column).getIndex() == -1) {
             int index = getIndexForColumn(((ImportColumnJDBC) column).getName());
             ((ImportColumnJDBC) column).setIndex(index);
         }
-        
+
         for (ImportColumn c : columns) {
-            
+
             if (((ImportColumnJDBC) column).getIndex() == ((ImportColumnJDBC) c).getIndex()) {
                 throw new IllegalArgumentException("Column for this index already assigned");
             }
-            
+
             if (column.getAliasName() != null && c.getAliasName() != null &&
-                c.getAliasName().equals(column.getAliasName())) {
+                    c.getAliasName().equals(column.getAliasName())) {
                 throw new IllegalArgumentException("Column names need to be unique");
             }
         }
         this.columns.add(column);
     }
-    
+
     /**
      * Closes any underlying JDBC connection that may have either been created by ARX or passed during construction.
      */
@@ -137,10 +169,8 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
             // Ignore
         }
     }
-    
+
     /**
-     * 
-     *
      * @param aliasName
      * @return
      * @throws NoSuchElementException
@@ -149,16 +179,17 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         ResultSet rs = null;
         int index = -1;
         try {
-            
-            rs = connection.getMetaData().getColumns(null,
-                                                     null,
-                                                     table,
-                                                     null);
-            
+
+            rs = connection.getMetaData().getColumns(dbName,
+                    schemaName,
+                    table,
+                    null);
+
             int i = 0;
             while (rs.next()) {
                 if (rs.getString("COLUMN_NAME").equals(aliasName)) {
                     index = i;
+                    break;
                 }
                 i++;
             }
@@ -177,26 +208,27 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
             return index;
         }
         throw new NoSuchElementException("Index for column '" + aliasName +
-                                         "' couldn't be found");
-        
+                "' couldn't be found");
+
     }
-    
+
     /**
      * @return {@link #connection}
      */
     protected Connection getConnection() {
         return this.connection;
     }
-    
+
     /**
      * @return {@link #table}
      */
     protected String getTable() {
         return this.table;
     }
-    
+
     /**
      * Returns whether we need to close the connection
+     *
      * @return
      */
     protected boolean isManageConnection() {

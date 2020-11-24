@@ -1,13 +1,13 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2020 Fabian Prasser and contributors
- * 
+ * Copyright 2012 - 2018 Fabian Prasser and contributors
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,17 +16,11 @@
  */
 package org.deidentifier.arx;
 
+import org.deidentifier.arx.io.*;
+
 import java.io.File;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
-
-import org.deidentifier.arx.io.ImportColumnCSV;
-import org.deidentifier.arx.io.ImportColumnExcel;
-import org.deidentifier.arx.io.ImportColumnJDBC;
-import org.deidentifier.arx.io.ImportConfiguration;
-import org.deidentifier.arx.io.ImportConfigurationCSV;
-import org.deidentifier.arx.io.ImportConfigurationExcel;
-import org.deidentifier.arx.io.ImportConfigurationJDBC;
 
 /**
  * This class provides configuration options for importing data from CSV-files, from Excel-files
@@ -36,7 +30,7 @@ import org.deidentifier.arx.io.ImportConfigurationJDBC;
  * @author Florian Kohlmayer
  */
 public class DataSource { // NO_UCD
-    
+
     /**
      * Creates a CSV data source.
      *
@@ -48,7 +42,7 @@ public class DataSource { // NO_UCD
     public static DataSource createCSVSource(File file, Charset charset, char separator, boolean containsHeader) {
         return new DataSource(file, charset, separator, containsHeader);
     }
-    
+
     /**
      * Creates a CSV data source.
      *
@@ -60,7 +54,7 @@ public class DataSource { // NO_UCD
     public static DataSource createCSVSource(String file, Charset charset, char separator, boolean containsHeader) {
         return createCSVSource(new File(file), charset, separator, containsHeader);
     }
-    
+
     /**
      * Creates an Excel data source.
      *
@@ -72,7 +66,7 @@ public class DataSource { // NO_UCD
     public static DataSource createExcelSource(File file, int sheetIndex, boolean containsHeader) {
         return new DataSource(file, sheetIndex, containsHeader);
     }
-    
+
     /**
      * Creates an Excel data source.
      *
@@ -84,7 +78,7 @@ public class DataSource { // NO_UCD
     public static DataSource createExcelSource(String file, int sheetIndex, boolean containsHeader) {
         return createExcelSource(new File(file), sheetIndex, containsHeader);
     }
-    
+
     /**
      * Creates a JDBC data source.
      *
@@ -96,7 +90,7 @@ public class DataSource { // NO_UCD
     public static DataSource createJDBCSource(String url, String table) throws SQLException {
         return new DataSource(url, table);
     }
-    
+
     /**
      * Creates a JDBC data source.
      *
@@ -107,13 +101,15 @@ public class DataSource { // NO_UCD
      * @return
      * @throws SQLException
      */
-    public static DataSource createJDBCSource(String url, String user, String password, String table) throws SQLException {
-        return new DataSource(url, user, password, table);
+    public static DataSource createJDBCSource(String url, String user, String password, String dbName, String schemaName, String table, int maxRows) throws SQLException {
+        return new DataSource(url, user, password, dbName, schemaName, table, maxRows);
     }
-    
-    /** The config. */
+
+    /**
+     * The config.
+     */
     private final ImportConfiguration config;
-    
+
     /**
      * Creates a CSV source.
      *
@@ -124,7 +120,7 @@ public class DataSource { // NO_UCD
     private DataSource(File file, Charset charset, char separator, boolean containsHeader) {
         config = new ImportConfigurationCSV(file.getAbsolutePath(), charset, separator, containsHeader);
     }
-    
+
     /**
      * Creates an Excel source.
      *
@@ -135,7 +131,7 @@ public class DataSource { // NO_UCD
     private DataSource(File file, int sheetIndex, boolean containsHeader) {
         config = new ImportConfigurationExcel(file.getAbsolutePath(), sheetIndex, containsHeader);
     }
-    
+
     /**
      * Creates a JDBC data source.
      *
@@ -146,7 +142,7 @@ public class DataSource { // NO_UCD
     private DataSource(String url, String table) throws SQLException {
         config = new ImportConfigurationJDBC(url, table);
     }
-    
+
     /**
      * Creates a JDBC data source.
      *
@@ -156,10 +152,10 @@ public class DataSource { // NO_UCD
      * @param table
      * @throws SQLException
      */
-    private DataSource(String url, String user, String password, String table) throws SQLException {
-        config = new ImportConfigurationJDBC(url, user, password, table);
+    private DataSource(String url, String user, String password, String dbName, String schemaName, String table, int maxRows) throws SQLException {
+        config = new ImportConfigurationJDBC(url, user, password, dbName, schemaName, table, maxRows);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -168,7 +164,7 @@ public class DataSource { // NO_UCD
     public void addColumn(int index) {
         addColumn(index, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -184,7 +180,7 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(index, datatype));
         }
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -200,7 +196,7 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(index, datatype, cleansing));
         }
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -210,7 +206,7 @@ public class DataSource { // NO_UCD
     public void addColumn(int index, String alias) {
         addColumn(index, alias, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -227,10 +223,10 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(index, alias, datatype));
         }
     }
-    
+
     /**
      * Adds a new column.
-     * 
+     *
      * @param index
      * @param alias
      * @param datatype
@@ -245,7 +241,7 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(index, alias, datatype, cleansing));
         }
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -254,7 +250,7 @@ public class DataSource { // NO_UCD
     public void addColumn(String name) {
         addColumn(name, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -270,7 +266,7 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(name, datatype));
         }
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -287,7 +283,7 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(name, datatype, cleansing));
         }
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -297,7 +293,7 @@ public class DataSource { // NO_UCD
     public void addColumn(String name, String alias) {
         addColumn(name, alias, DataType.STRING);
     }
-    
+
     /**
      * Adds a new column.
      *
@@ -314,9 +310,10 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(name, alias, datatype));
         }
     }
-    
+
     /**
      * Adds a new column.
+     *
      * @param name
      * @param alias
      * @param datatype
@@ -331,7 +328,7 @@ public class DataSource { // NO_UCD
             config.addColumn(new ImportColumnJDBC(name, alias, datatype, cleansing));
         }
     }
-    
+
     /**
      * Returns the configuration.
      *
