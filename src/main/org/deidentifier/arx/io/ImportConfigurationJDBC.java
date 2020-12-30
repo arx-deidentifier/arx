@@ -166,7 +166,9 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
             // Ignore
         }
     }
-    
+
+
+
     /**
      * 
      *
@@ -178,12 +180,20 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         ResultSet rs = null;
         int index = -1;
         try {
-            
-            rs = connection.getMetaData().getColumns(null,
-                                                     null,
-                                                     table,
-                                                     null);
-            
+            if(dbName!=null || schemaName != null){
+                rs = connection.getMetaData().getColumns(dbName,
+                        schemaName,
+                        table,
+                        null);
+
+            }else {
+
+                rs = connection.getMetaData().getColumns(null,
+                        null,
+                        table,
+                        null);
+            }
+
             int i = 0;
             while (rs.next()) {
                 if (rs.getString("COLUMN_NAME").equals(aliasName)) {
