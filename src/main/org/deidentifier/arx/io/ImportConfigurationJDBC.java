@@ -38,7 +38,20 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
      * @see {@link #getConnection()}
      */
     private Connection connection;
-    
+
+
+    private String dbName;
+    private String schemaName;
+
+    public String getSchemaName() {
+        return schemaName;
+    }
+
+    public String getDbName() {
+        return dbName;
+    }
+
+
     /**
      * Name of table to be used.
      *
@@ -91,7 +104,23 @@ public class ImportConfigurationJDBC extends ImportConfiguration {
         this.table = table;
         this.manageConnection = true;
     }
-    
+
+    /***
+    * @Description:  include dbName and schemaName
+    * @Param: [url, user, password, dbName, schemaName, table]
+    * @return:
+    * @Author: mulming@163.com
+    * @Date: 2020/12/30
+    */
+    public ImportConfigurationJDBC(String url, String user, String password, String dbName, String schemaName, String table) throws SQLException {
+        this.connection = DriverManager.getConnection(url, user, password);
+        this.table = table;
+        this.dbName = dbName;
+        this.schemaName = schemaName;
+        this.manageConnection = true;
+    }
+
+
     /**
      * Adds a single column to import from
      * 

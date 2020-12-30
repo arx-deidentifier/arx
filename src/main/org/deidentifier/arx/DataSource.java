@@ -110,7 +110,21 @@ public class DataSource { // NO_UCD
     public static DataSource createJDBCSource(String url, String user, String password, String table) throws SQLException {
         return new DataSource(url, user, password, table);
     }
-    
+
+    /***
+    * @Description:
+     * if db2 ： dbName is null
+     *  if oracle : dbName is the same as schemaName
+     *   if mysql : schemaName is the same as dbName
+    * @Param: [url, user, password, dbName, schemaName, table]
+    * @return: org.deidentifier.arx.DataSource
+    * @Author:  mulming@163.com
+    * @Date: 2020/12/30
+    */
+    public static DataSource createJDBCSource(String url, String user, String password, String dbName, String schemaName, String table) throws SQLException {
+        return new DataSource(url, user, password, dbName, schemaName, table);
+    }
+
     /** The config. */
     private final ImportConfiguration config;
     
@@ -159,7 +173,18 @@ public class DataSource { // NO_UCD
     private DataSource(String url, String user, String password, String table) throws SQLException {
         config = new ImportConfigurationJDBC(url, user, password, table);
     }
-    
+
+    /**
+     * @Description: add method including dbName and schemaName
+     * @Param: [url, user, password, dbName, schemaName, table]
+     * @return:
+     * @Author: mulming@163.com
+     * @Date: 2020/12/30
+     */
+    private DataSource(String url, String user, String password, String dbName, String schemaName, String table) throws SQLException {
+        config = new ImportConfigurationJDBC(url, user, password, dbName, schemaName, table);
+    }
+
     /**
      * Adds a new column.
      *

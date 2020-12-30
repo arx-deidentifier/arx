@@ -18,6 +18,7 @@
 package org.deidentifier.arx.io;
 
 import java.io.IOException;
+import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -68,7 +69,93 @@ public class ImportAdapterJDBC extends ImportAdapter {
      * @see {@link #getProgress()}
      */
     private int                     totalRows;
-    
+
+    private void ImportAdapterJDBC4DBName(ImportConfigurationJDBC config) throws IOException {
+        /* Preparation work */
+        indexes = getIndexesToImport();
+        dataTypes = getColumnDatatypes();
+
+        try {
+
+            /* Used to keep track of progress */
+            statement = config.getConnection().createStatement();
+
+            String tableName = config.getTable();
+            String schemaName = config.getSchemaName();
+            String dbName = config.getDbName();
+            DatabaseMetaData meta = config.getConnection().getMetaData();
+            String productName = meta.getDatabaseProductName().toLowerCase();
+
+            String afterTableName = "";
+
+            String databaseType = "";
+
+            if (productName.contains("oracle")) {
+                databaseType = "oracle";
+            } else if (productName.contains("db2")) {
+                databaseType = "db2";
+            } else if (productName.startsWith("microsoft sql server")) {
+                databaseType = "sqlserver";
+            } else if (productName.contains("mysql")) {
+                databaseType = "mysql";
+            } else {
+                databaseType = "other";
+            }
+
+            switch (databaseType) {
+                case "mysql":
+                    afterTableName = "`" + schemaName + "`.`" + tableName + "`";
+                    break;
+                case "oracle":
+                    afterTableName = "\"" + schemaName + "\".\"" + tableName + "\"";
+                    break;
+                case "db2":
+                    afterTableName = "\"" + schemaName + "\".\"" + tableName + "\"";
+                    break;
+                case "sqlserver":
+                    afterTableName = "[" + dbName + "].[" + schemaName + "].[" + tableName + "]";
+                    break;
+                default:
+                    afterTableName = tableName;
+                    break;
+            }
+
+
+            statement.execute("SELECT COUNT(*) FROM " + afterTableName);
+            resultSet = statement.getResultSet();
+
+            if (resultSet.next()) {
+
+                totalRows = resultSet.getInt(1);
+
+                if (totalRows == 0) {
+                    closeResources();
+                    throw new IOException("Table doesn't contain any rows");
+                }
+
+            } else {
+                closeResources();
+                throw new IOException("Couldn't determine number of rows");
+            }
+
+            /* Query for actual data */
+            statement = config.getConnection().createStatement();
+
+            String querySql = "SELECT * FROM " + afterTableName;
+
+            statement.execute(querySql);
+            resultSet = statement.getResultSet();
+            hasNext = resultSet.next();
+
+        } catch (SQLException e) {
+            closeResources();
+            throw new IOException(e.getMessage());
+        }
+
+        // Create header
+        header = createHeader();
+    }
+
     /**
      * Creates a new instance of this object with given configuration.
      *
@@ -80,7 +167,12 @@ public class ImportAdapterJDBC extends ImportAdapter {
         
         super(config);
         this.config = config;
-        
+
+        if(config.getDbName()!=null || config.getSchemaName()!=null){
+            ImportAdapterJDBC4DBName(config);
+            return;
+        }
+
         /* Preparation work */
         indexes = getIndexesToImport();
         dataTypes = getColumnDatatypes();
