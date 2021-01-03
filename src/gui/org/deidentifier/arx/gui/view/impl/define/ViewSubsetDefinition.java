@@ -132,6 +132,7 @@ public class ViewSubsetDefinition implements IView{
      */
     private Composite build(Composite parent) {
 
+        // Button bar
         ComponentTitledFolderButtonBar bar = new ComponentTitledFolderButtonBar("id-40"); //$NON-NLS-1$
         bar.add(Resources.getMessage("SubsetDefinitionView.1"),  //$NON-NLS-1$
                 controller.getResources().getManagedImage("page_white.png"), //$NON-NLS-1$
@@ -174,34 +175,44 @@ public class ViewSubsetDefinition implements IView{
                     }
                 });
         
+        // Folder
         ComponentTitledFolder folder = new ComponentTitledFolder(parent, controller, bar, null);
         folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Composite group = folder.createItem(Resources.getMessage("SubsetDefinitionView.0"), null); //$NON-NLS-1$
         folder.setSelection(0);
+        group.setLayoutData(SWTUtil.createFillGridData());
+        
+        // Layout within folder
         GridLayout layout = new GridLayout();
         layout.numColumns = 8;
         layout.makeColumnsEqualWidth = false;
         group.setLayout(layout);
-        group.setLayoutData(SWTUtil.createFillGridData());
         
+        // Size
         Label l = new Label(group, SWT.NONE);
         l.setText(Resources.getMessage("SubsetDefinitionView.6")); //$NON-NLS-1$
         size = new Text(group, SWT.BORDER);
         size.setText("0"); //$NON-NLS-1$
         size.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         size.setEditable(false);
+        
+        // Total
         l = new Label(group, SWT.NONE);
         l.setText("/"); //$NON-NLS-1$
         total = new Text(group, SWT.BORDER);
         total.setText("0"); //$NON-NLS-1$
         total.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         total.setEditable(false);
+        
+        // Percent
         l = new Label(group, SWT.NONE);
         l.setText("="); //$NON-NLS-1$
         percent = new Text(group, SWT.BORDER);
         percent.setText("0%"); //$NON-NLS-1$
         percent.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         percent.setEditable(false);
+        
+        // Origin
         l = new Label(group, SWT.NONE);
         l.setText(Resources.getMessage("SubsetDefinitionView.5")); //$NON-NLS-1$
         origin = new Text(group, SWT.BORDER);
@@ -209,11 +220,13 @@ public class ViewSubsetDefinition implements IView{
         origin.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         origin.setEditable(false);
         
+        // Buttons
         all = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.1")); //$NON-NLS-1$
         none = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.2")); //$NON-NLS-1$
         file = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.3")); //$NON-NLS-1$
         filter = folder.getButtonItem(Resources.getMessage("SubsetDefinitionView.4")); //$NON-NLS-1$
         
+        // Done
         return group;
     }
     
