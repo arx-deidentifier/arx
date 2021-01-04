@@ -22,7 +22,6 @@ import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.ILayout;
 import org.deidentifier.arx.gui.view.impl.common.ViewDataInput;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -44,51 +43,36 @@ public class LayoutDefinition implements ILayout {
      */
     public LayoutDefinition(final Composite parent, final Controller controller) {
 
-		// Define
-        Composite compositeLeft;
-		Composite compositeRight;
-		Composite compositeTopRight;
-		Composite compositeCenterRight;
-		Composite compositeBottomRight;
-
+        // -----------------------
         // Create center composite
+        // -----------------------
         center = new Composite(parent, SWT.NONE);
         center.setLayoutData(SWTUtil.createFillGridData());
         final GridLayout centerLayout = SWTUtil.createGridLayout(2);
         centerLayout.makeColumnsEqualWidth = true;
         center.setLayout(centerLayout);
 
+        // -----------------------
         // Create left composite
-        compositeLeft = new Composite(center, SWT.NONE);
+        // -----------------------
+        Composite compositeLeft = new Composite(center, SWT.NONE);
         compositeLeft.setLayoutData(SWTUtil.createFillGridData());
         compositeLeft.setLayout(SWTUtil.createGridLayout(1));
-
-        // Create right composite
-        compositeRight = new Composite(center, SWT.NONE);
-        compositeRight.setLayoutData(SWTUtil.createFillGridData());
-        compositeRight.setLayout(SWTUtil.createGridLayout(1));
-        
-        // Create top-right composite
-        compositeTopRight = new Composite(compositeRight, SWT.NONE);
-        compositeTopRight.setLayoutData(SWTUtil.createFillGridData());
-        compositeTopRight.setLayout(SWTUtil.createGridLayout(1));
-
-        // Create center-right composite
-        compositeCenterRight = new Composite(compositeRight, SWT.NONE);
-        compositeCenterRight.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        compositeCenterRight.setLayout(new FillLayout());
-        
-        // Create bottom-right composite
-        compositeBottomRight = new Composite(compositeRight, SWT.NONE);
-        compositeBottomRight.setLayoutData(SWTUtil.createFillHorizontallyGridData());
-        compositeBottomRight.setLayout(SWTUtil.createGridLayout(1));
 
         // Create views
         new ViewDataInput(compositeLeft, controller, "id-140", true); //$NON-NLS-1$
         new ViewSubsetDefinition(compositeLeft, controller);
-        new LayoutAttributeSettings(compositeTopRight, controller);
-        new LayoutPrivacySettings(compositeCenterRight, controller);
-        new LayoutTransformationModel(compositeBottomRight, controller);
+        
+        // -----------------------
+        // Create right composite
+        // -----------------------
+        Composite compositeRight = new Composite(center, SWT.NONE);
+        compositeRight.setLayoutData(SWTUtil.createFillGridData());
+        compositeRight.setLayout(SWTUtil.createGridLayout(1));
+        
+        // Create views
+        new LayoutAttributeSettings(compositeRight, controller);
+        new LayoutPrivacySettings(compositeRight, controller);
+        new LayoutTransformationModel(compositeRight, controller);
     }
-
 }

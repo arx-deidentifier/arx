@@ -488,9 +488,7 @@ public class ComponentTitledFolder implements IComponent {
                     }
                 }
             });
-        }   
-        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
+        }
     }
     
     /**

@@ -253,8 +253,8 @@ public class SWTUtil {
         data.verticalAlignment = SWT.FILL;
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = true;
-        data.horizontalIndent=0;
-        data.verticalIndent=0;
+        data.horizontalIndent = 0;
+        data.verticalIndent = 0;
         data.horizontalSpan = span;
         return data;
     }
@@ -288,8 +288,8 @@ public class SWTUtil {
         data.grabExcessHorizontalSpace = true;
         data.grabExcessVerticalSpace = false;
         data.horizontalSpan = span;
-        data.horizontalIndent=0;
-        data.verticalIndent=0;
+        data.horizontalIndent = 0;
+        data.verticalIndent = 0;
         return data;
     }
 
@@ -441,13 +441,11 @@ public class SWTUtil {
                                         final String id,
                                         final Map<Composite, String> helpids) {
         ToolBar toolbar = new ToolBar(folder, SWT.FLAT);
-        folder.setTopRight( toolbar, SWT.RIGHT );
+        folder.setTopRight( toolbar, SWT.RIGHT);
         ToolItem item = new ToolItem( toolbar, SWT.PUSH );
         item.setImage(controller.getResources().getManagedImage("help.png"));  //$NON-NLS-1$
         item.setToolTipText(Resources.getMessage("General.0")); //$NON-NLS-1$
         createDisabledImage(item);
-        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
         item.addSelectionListener(new SelectionAdapter(){
             @Override
             public void widgetSelected(SelectionEvent arg0) {
