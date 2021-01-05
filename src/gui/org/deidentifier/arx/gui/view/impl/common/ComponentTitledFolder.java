@@ -90,7 +90,7 @@ public class ComponentTitledFolder implements IComponent {
     private List<TitledFolderEntry>    entries = new ArrayList<TitledFolderEntry>();
 
     /** The folder */
-    private final CTabFolder           folder;
+    private final ComponentTabFolder           folder;
 
     /** Flag */
     private final boolean              hasHidingMenu;
@@ -165,7 +165,7 @@ public class ComponentTitledFolder implements IComponent {
         
         this.hasHidingMenu = hasHidingMenu;
         
-        this.folder = new CTabFolder(parent, flags);
+        this.folder = new ComponentTabFolder(parent, flags);
         this.folder.setUnselectedCloseVisible(false);
         this.folder.setSimple(false);
         
