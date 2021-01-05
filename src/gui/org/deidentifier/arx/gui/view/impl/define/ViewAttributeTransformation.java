@@ -114,8 +114,8 @@ public class ViewAttributeTransformation implements IView {
      * @param attribute
      * @param controller
      */
-    public ViewAttributeTransformation(final Composite parent,
-                                   final Controller controller) {
+    public ViewAttributeTransformation(final Composite root,
+                                       final Controller controller) {
         
         // Register
         this.controller = controller;
@@ -129,11 +129,8 @@ public class ViewAttributeTransformation implements IView {
         this.controller.addListener(ModelPart.SELECTED_ATTRIBUTE, this);
         
         // Group
-        root = new Composite(parent, SWT.NULL);
-        root.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout groupInputGridLayout = new GridLayout();
-        groupInputGridLayout.numColumns = 1;
-        root.setLayout(groupInputGridLayout);
+        this.root = root;
+        root.setLayout(SWTUtil.createGridLayout(1));
         
         // Group
         final Composite innerGroup = new Composite(root, SWT.NULL);

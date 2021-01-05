@@ -35,8 +35,6 @@ import org.deidentifier.arx.gui.view.impl.common.ComponentTitledBorder;
 import org.deidentifier.arx.metric.InformationLoss;
 import org.deidentifier.arx.metric.v2.QualityMetadata;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -77,18 +75,15 @@ public class ViewProperties implements IView {
         // Create group
         ComponentTitledBorder border = new ComponentTitledBorder(parent, controller, Resources.getMessage("NodePropertiesView.0"), "id-22"); //$NON-NLS-1$ //$NON-NLS-2$
         root = new Composite(border.getControl(), SWT.NONE);
+        root.setLayout(SWTUtil.createGridLayout(1));
         border.setChild(root);
         border.setLayoutData(SWTUtil.createFillGridData());
-        final GridLayout groupNodeGridLayout = new GridLayout();
-        groupNodeGridLayout.numColumns = 1;
-        root.setLayout(groupNodeGridLayout);
 
         // Create controls
         table = SWTUtil.createTable(root, SWT.BORDER | SWT.FULL_SELECTION);
         table.setHeaderVisible(true);
         table.setLinesVisible(true);
-        final GridData gdata = SWTUtil.createFillGridData();
-        table.setLayoutData(gdata);
+        table.setLayoutData(SWTUtil.createFillGridData());
         table.setMenu(new ClipboardHandlerTable(table).getMenu());
 
         // Add columns
