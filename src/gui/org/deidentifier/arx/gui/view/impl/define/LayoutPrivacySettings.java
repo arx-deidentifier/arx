@@ -109,7 +109,7 @@ public class LayoutPrivacySettings implements ILayout {
 
         // Add view
         folder = new ComponentTitledFolder(parent, controller, bar, null);
-
+        folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         buttonCross = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.59")); //$NON-NLS-1$
         buttonUp = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.57")); //$NON-NLS-1$
         buttonDown = folder.getButtonItem(Resources.getMessage("CriterionDefinitionView.58")); //$NON-NLS-1$

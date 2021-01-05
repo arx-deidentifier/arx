@@ -180,7 +180,6 @@ public class ViewSubsetDefinition implements IView{
         folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         Composite group = folder.createItem(Resources.getMessage("SubsetDefinitionView.0"), null); //$NON-NLS-1$
         folder.setSelection(0);
-        group.setLayoutData(SWTUtil.createFillGridData());
         
         // Layout within folder
         GridLayout layout = new GridLayout();

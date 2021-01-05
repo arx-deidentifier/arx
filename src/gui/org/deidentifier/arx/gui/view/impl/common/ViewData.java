@@ -37,7 +37,6 @@ import org.eclipse.nebula.widgets.nattable.selection.event.ColumnSelectionEvent;
 import org.eclipse.nebula.widgets.nattable.viewport.ViewportLayer;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ToolItem;
@@ -156,9 +155,7 @@ public abstract class ViewData implements IView {
         folder.setLayoutData(SWTUtil.createFillGridData());
         Composite c = folder.createItem(title, null);
         folder.setSelection(0);
-        GridLayout l = new GridLayout();
-        l.numColumns = 1;
-        c.setLayout(l);
+        c.setLayout(SWTUtil.createGridLayout(1));
         
         // Build table
         table = new ComponentDataTable(controller, c);
