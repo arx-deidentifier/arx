@@ -20,11 +20,14 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.deidentifier.arx.gui.view.SWTUtil;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 
 /**
  * This wrapper around CTabFolder fixes SWT bug 507611 for ARX
@@ -67,6 +70,36 @@ public class ComponentTabFolder extends CTabFolder {
                 }
             });
         }
+    }
+    
+    /**
+     * Generate a SelectionEvent when index changes, so that the refresh functionality for MacOS will
+     * also work when the selection is changed programmatically (normally, SelectionEvents are only fired 
+     * when the selection is changed by the user).
+     */
+    @Override
+    public void setSelection(int index) {
+        
+        int currentIndex = super.getSelectionIndex();
+        if (currentIndex != index && SWTUtil.isMac()) {
+            this.notifyListeners(SWT.Selection, new Event());
+        }
+        super.setSelection(index);
+    }
+
+    /**
+     * Generate a SelectionEvent when index changes, so that the refresh functionality for MacOS will
+     * also work when the selection is changed programmatically (normally, SelectionEvents are only fired 
+     * when the selection is changed by the user).
+     */
+    @Override
+    public void setSelection(CTabItem item) {
+        
+        CTabItem currentItem = super.getSelection();
+        if (currentItem != item && SWTUtil.isMac()) {
+            this.notifyListeners(SWT.Selection, new Event());
+        }
+        super.setSelection(item);
     }
 
     @Override

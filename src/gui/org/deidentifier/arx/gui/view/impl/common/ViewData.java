@@ -243,18 +243,10 @@ public abstract class ViewData implements IView {
     }
 
     /**
-     * Sets the selection
-     * @param index
-     */
-    public void setSelectedItem(int index) {
-        folder.setSelection(index);
-    }
-
-    /**
      * Sets the selection index of the folder
      * @param index
      */
-    public void setSelectionIndex(int index) {
+    public void setSelection(int index) {
         folder.setSelection(index);
     }
     
