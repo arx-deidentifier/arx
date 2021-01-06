@@ -738,6 +738,19 @@ public class SWTUtil {
     }
    
     /**
+     * Force redraw on control hierarchy
+     * @param control
+     */
+    public static void redraw(Control control) {
+        control.redraw();
+        if (control instanceof Composite) {
+            for (Control c : ((Composite) control).getChildren()) {
+                redraw(c);
+            }
+        }
+    }
+    
+    /**
      * Converts the slider value to a double.
      *
      * @param min
@@ -780,7 +793,7 @@ public class SWTUtil {
             table.getHorizontalBar().addSelectionListener(bugFixer);
         }
     }
-    
+
     /**
      * En-/disables the composite and its children.
      *
@@ -796,5 +809,5 @@ public class SWTUtil {
                 c.setEnabled(val);
             }
         }
-    }
+    } 
 }
