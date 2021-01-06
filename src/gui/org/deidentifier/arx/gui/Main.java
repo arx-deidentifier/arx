@@ -135,9 +135,9 @@ public class Main {
             final String trace = sw.toString();
 
             // Show message
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, trace, "Unexpected error", JOptionPane.ERROR_MESSAGE); //$NON-NLS-1$
             System.exit(1);
-
         }
     }
 
