@@ -19,12 +19,15 @@ package org.deidentifier.arx.gui.view.impl.common;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This wrapper around CTabFolder fixes SWT bug 507611 for ARX
+ * This wrapper around CTabFolder fixes SWT bug 507611 for ARX and
+ * refresh issues with CTabFolders when changing selected items.
  * TODO: Check whether this can be removed in future releases
  *  
  * @author Fabian Prasser
@@ -39,7 +42,7 @@ public class ComponentTabFolder extends CTabFolder {
     public ComponentTabFolder(Composite parent, int style) {
         super(parent, style);
     }
-
+    
     @Override
     public Rectangle getClientArea() {
         
@@ -52,6 +55,44 @@ public class ComponentTabFolder extends CTabFolder {
         // Now call method in superclass
         return super.getClientArea();
     }
+    
+    /**
+     * Force a redraw on MacOS when the selection is changed. This is needed to 
+     * fix refresh bugs with synchronized tab folders.
+     */
+    @Override
+    public void setSelection(CTabItem item) {
+    	CTabItem currentItem = super.getSelection();
+        super.setSelection(item);
+        if (currentItem != item && SWTUtil.isMac()) {
+            this.forceRedraw();
+        }
+    }
+
+    /**
+     * Force a redraw on MacOS when the selection is changed. This is needed to 
+     * fix refresh bugs with tab folders.
+     */
+    @Override
+    public void setSelection(int index) {
+        int currentIndex = super.getSelectionIndex();
+        super.setSelection(index);
+        if (currentIndex != index && SWTUtil.isMac()) {
+            this.forceRedraw();
+        }
+    }
+
+    /**
+     * Enforces a redraw on the CTabFolder and all its child controls
+     */
+	private void forceRedraw() {
+        this.getDisplay().syncExec(new Runnable() {
+            @Override
+             public void run() {
+            	SWTUtil.redraw(ComponentTabFolder.this);
+             }
+         });
+	}
 
     /**
      * Call private methods to fix bug in CTabFolder. See:
