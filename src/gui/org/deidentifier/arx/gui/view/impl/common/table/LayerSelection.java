@@ -61,6 +61,7 @@ public class LayerSelection extends SelectionLayer implements CTComponent {
                     @Override
                     public void run(NatTable natTable, MouseEvent event) {
                         super.run(natTable, event);
+                        // Fixes redrawing bug on MacOS
                         natTable.redraw();
                     }
                 };
