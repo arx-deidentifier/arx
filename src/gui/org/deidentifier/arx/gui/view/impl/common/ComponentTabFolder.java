@@ -46,12 +46,9 @@ public class ComponentTabFolder extends CTabFolder {
     @Override
     public Rectangle getClientArea() {
         
-        try {
-            updateTabHeight();
-        } catch (Exception e) {
-            /* Catch silently, as it's just a bugfix */
-        }
-        
+    	// Bugfix
+        updateTabHeight();
+            
         // Now call method in superclass
         return super.getClientArea();
     }
@@ -105,16 +102,22 @@ public class ComponentTabFolder extends CTabFolder {
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      */
-    private void updateTabHeight() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private void updateTabHeight() {
         
-        // Update buttons
-        Method updateButtons = this.getClass().getSuperclass().getDeclaredMethod("updateButtons");
-        updateButtons.setAccessible(true);
-        updateButtons.invoke(this);
-        
-        // Update tab height
-        Method updateTabHeight = this.getClass().getSuperclass().getDeclaredMethod("updateTabHeight", boolean.class);
-        updateTabHeight.setAccessible(true);
-        updateTabHeight.invoke(this, false);
-    }
+    	try {
+	    		
+	        // Update buttons
+	        Method updateButtons = this.getClass().getSuperclass().getDeclaredMethod("updateButtons");
+	        updateButtons.setAccessible(true);
+	        updateButtons.invoke(this);
+	        
+	        // Update tab height
+	        Method updateTabHeight = this.getClass().getSuperclass().getDeclaredMethod("updateTabHeight", boolean.class);
+	        updateTabHeight.setAccessible(true);
+	        updateTabHeight.invoke(this, false);
+	        
+	    } catch (Exception e) {
+            /* Catch silently, as it's just a bugfix */
+        }
+    } 
 }

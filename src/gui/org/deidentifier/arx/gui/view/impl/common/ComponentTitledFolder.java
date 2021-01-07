@@ -401,16 +401,6 @@ public class ComponentTitledFolder implements IComponent {
             event.widget = this.folder;
             this.itemVisibilityListener.widgetSelected(new SelectionEvent(event));
         }
-
-        // Redraw
-        if (SWTUtil.isMac()) {
-            this.folder.getDisplay().syncExec(new Runnable() {
-                @Override
-                public void run() {
-                    SWTUtil.redraw(ComponentTitledFolder.this.folder);
-                }
-            });
-        }
     }
 
     /**
@@ -579,6 +569,9 @@ public class ComponentTitledFolder implements IComponent {
                         index--;
                     }
                 }
+
+                // Fix MacOS bug: store height
+                int height = folder.getTabHeight();
                 
                 // Show
                 CTabItem item = new CTabItem(folder, SWT.NULL, index);
@@ -586,6 +579,11 @@ public class ComponentTitledFolder implements IComponent {
                 if (entry.image!=null) item.setImage(entry.image);
                 item.setShowClose(false);
                 item.setControl(entry.control);
+                
+                // Fix MacOS bug: update
+                folder.setTabHeight(height);
+                
+                // Done
                 return true;
             }
         }

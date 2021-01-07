@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ComponentTitledBorder implements IComponent{
     
-    /**  TODO */
+    /** Folder */
     private final CTabFolder folder;
     
-    /**  TODO */
+    /** Item */
     private final CTabItem tab; 
 
     /**
