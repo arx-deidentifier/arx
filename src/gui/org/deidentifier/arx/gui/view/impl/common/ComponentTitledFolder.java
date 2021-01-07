@@ -403,7 +403,14 @@ public class ComponentTitledFolder implements IComponent {
         }
 
         // Redraw
-        SWTUtil.redraw(this.folder);
+        if (SWTUtil.isMac()) {
+            this.folder.getDisplay().syncExec(new Runnable() {
+                @Override
+                public void run() {
+                    SWTUtil.redraw(ComponentTitledFolder.this.folder);
+                }
+            });
+        }
     }
 
     /**
