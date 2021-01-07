@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.wizard;
 
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.impl.wizard.HierarchyWizard.HierarchyWizardView;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.WizardPage;
@@ -80,6 +81,15 @@ public abstract class HierarchyWizardPageBuilder<T> extends WizardPage implement
     }
     
     @Override
+	protected boolean isCurrentPage() {
+		boolean current = super.isCurrentPage();
+		if (current) {
+			SWTUtil.redraw(this.getControl());
+		}
+		return current;
+	}
+
+	@Override
     public void update() {
         if (model.getError() != null) {
             this.setErrorMessage(model.getError());
