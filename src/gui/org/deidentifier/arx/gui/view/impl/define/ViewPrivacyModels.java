@@ -234,20 +234,28 @@ public class ViewPrivacyModels implements IView {
     
     @Override
     public void update(ModelEvent event) {
+    	
+    	// Model update
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
         } 
         
+        // Other updates
         if (event.part == ModelPart.CRITERION_DEFINITION ||
             event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
             event.part == ModelPart.MODEL) {
+        	
+        	// Update table
             if (model!=null) {
                 updateTable();
             }
         }
     }
 
+    /**
+     * Update table
+     */
     private void updateTable() {
         
         root.setRedraw(false);
@@ -351,8 +359,10 @@ public class ViewPrivacyModels implements IView {
             item.setData(c);
         }
 
+        // Update
         layout.updateButtons();
         root.setRedraw(true);
         SWTUtil.enable(root);
+        table.redraw();
     }
 }
