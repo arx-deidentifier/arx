@@ -403,8 +403,10 @@ public class ComponentTitledFolder implements IComponent {
      */
     public void setVisibleItems(List<String> items) {
         
+        // Change flag
         boolean changed = false;
         
+        // Hide/show items
         for (String item : getAllHideableItems()) {
             if (items.contains(item)) {
                 changed |= setVisible(item);
@@ -416,11 +418,15 @@ public class ComponentTitledFolder implements IComponent {
             }
         }
         
+        // If something has changed, fire event
         if (changed && this.itemVisibilityListener != null) {
             Event event = new Event();
             event.widget = this.folder;
             this.itemVisibilityListener.widgetSelected(new SelectionEvent(event));
         }
+        
+        // Redraw
+        this.folder.redraw();
     }
 
     /**
