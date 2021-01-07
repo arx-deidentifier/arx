@@ -225,6 +225,7 @@ public class ComponentTable implements IComponent {
         this.table.refresh();
         this.selectedRow = null;
         this.selectedColumn = null;
+        this.table.redraw();
     }
 
     /**
@@ -270,6 +271,7 @@ public class ComponentTable implements IComponent {
             this.dataProviderBody.getRowCount() == 0) {
             this.selectedRow = null;
         }
+        this.table.redraw();
     }
     
     /**
@@ -312,6 +314,7 @@ public class ComponentTable implements IComponent {
         // Redraw
         this.root.setRedraw(true);
         this.root.layout(true);
+        this.table.redraw();
         
         // Reset state
         this.selectedRow = null;
@@ -356,6 +359,7 @@ public class ComponentTable implements IComponent {
      */
     public void setSelection(int row, int column) {
         this.table.doCommand(new SelectCellCommand(bodyLayer.getSelectionLayer(), column, row, false, false));
+        this.table.redraw();
     }
 
     /**
