@@ -20,9 +20,10 @@ import org.eclipse.nebula.widgets.nattable.command.ILayerCommand;
 import org.eclipse.nebula.widgets.nattable.layer.ILayer;
 
 /**
- * 
+ * Reset command
+ * @author Fabian Prasser
  */
-public class FillLayerResetCommand implements ILayerCommand{
+public class FillLayerResetCommand implements ILayerCommand {
 
     @Override
     public ILayerCommand cloneCommand() {

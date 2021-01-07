@@ -35,23 +35,23 @@ import org.eclipse.swt.graphics.Font;
  */
 public class StyleConfigurationFillLayout extends CTStyleConfiguration {
     
-    /**  TODO */
+    /**  Parameter */
     public static final String DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL = "FillLayoutCell_"; //$NON-NLS-1$
 
-    /**  TODO */
+    /**  Parameter */
     private BorderStyle borderStyle = new BorderStyle(0, GUIHelper.getColor(240, 240, 240), LineStyleEnum.SOLID);
     
-    /**  TODO */
+    /**  Parameter */
     private Color fgColor = GUIHelper.COLOR_BLACK;
     
-    /**  TODO */
+    /**  Parameter */
     private Color bgColor = GUIHelper.getColor(245, 245, 245);
     
-    /**  TODO */
+    /**  Parameter */
     private Font font;
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param config
      */
@@ -66,7 +66,7 @@ public class StyleConfigurationFillLayout extends CTStyleConfiguration {
     }
     
     /**
-     * 
+     * Add config
      *
      * @param configRegistry
      */

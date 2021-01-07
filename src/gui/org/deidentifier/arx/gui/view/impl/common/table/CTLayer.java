@@ -21,20 +21,20 @@ import org.eclipse.nebula.widgets.nattable.layer.AbstractLayerTransform;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 
 /**
- * 
+ * Table layer transform wrapper
  * @author Fabian Prasser
  *
  */
 public abstract class CTLayer extends AbstractLayerTransform implements CTComponent {
 
-    /**  TODO */
+    /**  Config */
     private final CTConfiguration config;
     
-    /**  TODO */
+    /**  Context */
     private final CTContext context;
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param config
      * @param context
@@ -45,7 +45,7 @@ public abstract class CTLayer extends AbstractLayerTransform implements CTCompon
     }
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param underlyingDataLayer
      * @param config
@@ -57,12 +57,15 @@ public abstract class CTLayer extends AbstractLayerTransform implements CTCompon
         this.context = context;
     }
 
+    /**
+     * Returns the config
+     */
     public CTConfiguration getConfig(){
         return config;
     }
 
     /**
-     * 
+     * Returns the context
      *
      * @return
      */

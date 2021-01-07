@@ -33,7 +33,7 @@ import org.eclipse.nebula.widgets.nattable.layer.cell.LayerCell;
 public class LayerRowFillLayout extends CTLayer implements IUniqueIndexLayer {
 
     /**
-     * 
+     * Creates a new instance
      *
      * @param underlyingDataLayer
      * @param config

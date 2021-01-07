@@ -39,7 +39,7 @@ import org.eclipse.swt.SWT;
  */
 public class LayerSelection extends SelectionLayer implements CTComponent {
 
-    /**  TODO */
+    /**  Config */
     private final CTConfiguration config;
     
     /**
@@ -48,8 +48,7 @@ public class LayerSelection extends SelectionLayer implements CTComponent {
      * @param underlyingLayer
      * @param config
      */
-    public LayerSelection(IUniqueIndexLayer underlyingLayer,
-                            CTConfiguration config) {
+    public LayerSelection(IUniqueIndexLayer underlyingLayer, CTConfiguration config) {
         super(underlyingLayer, false);
         this.config = config;
         addConfiguration(new DefaultSelectionStyleConfiguration());

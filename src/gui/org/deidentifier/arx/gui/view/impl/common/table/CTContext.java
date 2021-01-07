@@ -20,27 +20,27 @@ package org.deidentifier.arx.gui.view.impl.common.table;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 
 /**
- * 
+ * Table context wrapper
  * @author Fabian Prasser
  *
  */
 public abstract class CTContext {
     
-    /**  TODO */
+    /**  Column */
     private boolean columnExpanded = false;
     
-    /**  TODO */
+    /**  Row */
     private boolean rowExpanded = false;
     
     /**
-     * 
+     * Returns table
      *
      * @return
      */
     public abstract NatTable getTable();
 
     /**
-     * 
+     * Returns whether column is expanded
      *
      * @return
      */
@@ -49,7 +49,7 @@ public abstract class CTContext {
     }
 
     /**
-     * 
+     * Returns whether row is expanded 
      *
      * @return
      */
@@ -58,7 +58,7 @@ public abstract class CTContext {
     }
 
     /**
-     * 
+     * Sets column expanded
      *
      * @param columnExpanded
      */
@@ -67,7 +67,7 @@ public abstract class CTContext {
     }
 
     /**
-     * 
+     * Sets row expanded
      *
      * @param rowExpanded
      */

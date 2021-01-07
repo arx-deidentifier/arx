@@ -37,32 +37,29 @@ import org.eclipse.swt.graphics.Font;
  */
 public class StyleConfigurationSelection extends CTStyleConfiguration {
 
-    // General style
-    /**  TODO */
+    /**  Parameter */
     public Font        font                       = getConfig().getFont();
 
-    /**  TODO */
+    /**  Parameter */
     public Color       selectionBgColor           = GUIHelper.COLOR_TITLE_INACTIVE_BACKGROUND;
     
-    /**  TODO */
+    /**  Parameter */
     public Color       selectionFgColor           = GUIHelper.COLOR_BLACK;
     
-    /**  TODO */
+    /**  Parameter */
     public Color       selectedHeaderBgColor      = GUIHelper.COLOR_TITLE_INACTIVE_BACKGROUND;
     
-    /**  TODO */
+    /**  Parameter */
     public Color       selectedHeaderFgColor      = GUIHelper.COLOR_BLACK;
     
-    /**  TODO */
-    public BorderStyle selectedHeaderBorderStyle  = new BorderStyle(-1,
-                                                                    selectedHeaderFgColor,
-                                                                    LineStyleEnum.SOLID);
+    /**  Parameter */
+    public BorderStyle selectedHeaderBorderStyle  = new BorderStyle(-1, selectedHeaderFgColor, LineStyleEnum.SOLID);
     
-    /**  TODO */
+    /**  Parameter */
     public Color       fullySelectedHeaderBgColor = GUIHelper.COLOR_WIDGET_NORMAL_SHADOW;
     
     /**
-     * 
+     * Creates a new instance 
      *
      * @param config
      */
@@ -79,7 +76,7 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
     }
 
     /**
-     * 
+     * Configure
      *
      * @param configRegistry
      */
@@ -101,7 +98,7 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
     }
 
     /**
-     * 
+     * Configure
      *
      * @param configRegistry
      */
@@ -144,7 +141,7 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
 
     
     /**
-     * 
+     * Configure
      *
      * @param configRegistry
      */
@@ -199,7 +196,7 @@ public class StyleConfigurationSelection extends CTStyleConfiguration {
     }
 
     /**
-     * 
+     * Configure
      *
      * @param configRegistry
      */

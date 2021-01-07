@@ -20,19 +20,18 @@ package org.deidentifier.arx.gui.view.impl.common.table;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /**
- * 
+ * Data provider wrapper
  * @author Fabian Prasser
- *
  */
 public interface CTDataProvider extends IDataProvider{
 
     /**
-     * 
+     * Clear
      */
     public void clear();
     
     /**
-     * 
+     * setData
      *
      * @param data
      */

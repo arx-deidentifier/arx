@@ -18,14 +18,13 @@
 package org.deidentifier.arx.gui.view.impl.common.table;
 
 /**
- * 
+ * Component table
  * @author Fabian Prasser
- *
  */
 public interface CTComponent {
 
     /**
-     * 
+     * Returns the configuration
      *
      * @return
      */

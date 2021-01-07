@@ -41,39 +41,37 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class StyleConfigurationHeader extends CTStyleConfiguration {
 
-    /**  TODO */
+    /**  Parameter */
     private final Font                    font;
     
-    /**  TODO */
+    /**  Parameter */
     private final Color                   bgColor         = GUIHelper.COLOR_WIDGET_BACKGROUND;
     
-    /**  TODO */
+    /**  Parameter */
     private final Color                   fgColor         = GUIHelper.COLOR_WIDGET_FOREGROUND;
     
-    /**  TODO */
+    /**  Parameter */
     private final Color                   gradientBgColor = GUIHelper.COLOR_WHITE;
     
-    /**  TODO */
-    private final Color                   gradientFgColor = GUIHelper.getColor(136,
-                                                                               212,
-                                                                               215);
+    /**  Parameter */
+    private final Color                   gradientFgColor = GUIHelper.getColor(136, 212, 215);
     
-    /**  TODO */
+    /**  Parameter */
     private final HorizontalAlignmentEnum hAlign          = HorizontalAlignmentEnum.CENTER;
     
-    /**  TODO */
+    /**  Parameter */
     private final VerticalAlignmentEnum   vAlign          = VerticalAlignmentEnum.MIDDLE;
     
-    /**  TODO */
+    /**  Parameter */
     private final BorderStyle             borderStyle     = null;
     
-    /**  TODO */
+    /**  Parameter */
     private final ICellPainter            cellPainter     = new BeveledBorderDecorator(new TextPainter(false, false, true, true));
     
-    /**  TODO */
+    /**  Parameter */
     private final Boolean                 renderGridLines = Boolean.FALSE;
     
-    /**  TODO */
+    /**  Parameter */
     private final String                  region;
     
     /**
@@ -91,7 +89,7 @@ public class StyleConfigurationHeader extends CTStyleConfiguration {
     
     @Override
     public void configureRegistry(IConfigRegistry configRegistry) {
-        //configure the painter
+        // Configure the painter
         configRegistry.registerConfigAttribute(
                 CellConfigAttributes.CELL_PAINTER, 
                 cellPainter, 
@@ -103,8 +101,8 @@ public class StyleConfigurationHeader extends CTStyleConfiguration {
                 DisplayMode.NORMAL, 
                 GridRegion.CORNER);
 
-        //configure whether to render grid lines or not
-        //e.g. for the BeveledBorderDecorator the rendering of the grid lines should be disabled
+        // Configure whether to render grid lines or not
+        // e.g. for the BeveledBorderDecorator the rendering of the grid lines should be disabled
         configRegistry.registerConfigAttribute(
                 CellConfigAttributes.RENDER_GRID_LINES, 
                 renderGridLines, 
@@ -116,7 +114,7 @@ public class StyleConfigurationHeader extends CTStyleConfiguration {
                 DisplayMode.NORMAL, 
                 GridRegion.CORNER);
         
-        //configure the normal style
+        // Configure the normal style
         Style cellStyle = new Style();
         cellStyle.setAttributeValue(CellStyleAttributes.BACKGROUND_COLOR, bgColor);
         cellStyle.setAttributeValue(CellStyleAttributes.FOREGROUND_COLOR, fgColor);
