@@ -384,17 +384,26 @@ public class ComponentTitledFolder implements IComponent {
      * @param visible
      */
     public void setVisible(String item, boolean visible) {
+        
+        // Change flag
         boolean changed = false;
+        
+        // Update
         if (visible) {
             changed = this.setVisible(item);
         } else {
             changed = this.setInvisible(item);
         }
+        
+        // If changed
         if (changed && this.itemVisibilityListener != null) {
             Event event = new Event();
             event.widget = this.folder;
             this.itemVisibilityListener.widgetSelected(new SelectionEvent(event));
         }
+
+        // Redraw
+        SWTUtil.redraw(this.folder);
     }
 
     /**
@@ -424,9 +433,6 @@ public class ComponentTitledFolder implements IComponent {
             event.widget = this.folder;
             this.itemVisibilityListener.widgetSelected(new SelectionEvent(event));
         }
-        
-        // Redraw
-        this.folder.redraw();
     }
 
     /**
