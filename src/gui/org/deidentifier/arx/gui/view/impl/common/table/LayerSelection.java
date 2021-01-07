@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.common.table;
 
+import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.search.config.DefaultSearchBindings;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
@@ -31,6 +32,7 @@ import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.viewport.action.ViewportSelectColumnAction;
 import org.eclipse.nebula.widgets.nattable.viewport.action.ViewportSelectRowAction;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
 
 /**
  * A selection layer for table views.
@@ -55,7 +57,13 @@ public class LayerSelection extends SelectionLayer implements CTComponent {
         addConfiguration(new DefaultSelectionBindings(){
             /** Override some default behavior */
             protected void configureBodyMouseClickBindings(UiBindingRegistry uiBindingRegistry) {
-                IMouseAction action = new SelectCellAction();
+                IMouseAction action = new SelectCellAction() {
+                    @Override
+                    public void run(NatTable natTable, MouseEvent event) {
+                        super.run(natTable, event);
+                        natTable.redraw();
+                    }
+                };
                 uiBindingRegistry.registerMouseDownBinding(MouseEventMatcher.bodyLeftClick(SWT.NONE), action);
             }
             /** Override some default behavior */
