@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ public class ComponentTitledFolder implements IComponent {
     private List<TitledFolderEntry>    entries = new ArrayList<TitledFolderEntry>();
 
     /** The folder */
-    private final CTabFolder           folder;
+    private final ComponentTabFolder           folder;
 
     /** Flag */
     private final boolean              hasHidingMenu;
@@ -165,7 +165,7 @@ public class ComponentTitledFolder implements IComponent {
         
         this.hasHidingMenu = hasHidingMenu;
         
-        this.folder = new CTabFolder(parent, flags);
+        this.folder = new ComponentTabFolder(parent, flags);
         this.folder.setUnselectedCloseVisible(false);
         this.folder.setSimple(false);
         
@@ -384,12 +384,18 @@ public class ComponentTitledFolder implements IComponent {
      * @param visible
      */
     public void setVisible(String item, boolean visible) {
+        
+        // Change flag
         boolean changed = false;
+        
+        // Update
         if (visible) {
             changed = this.setVisible(item);
         } else {
             changed = this.setInvisible(item);
         }
+        
+        // If changed
         if (changed && this.itemVisibilityListener != null) {
             Event event = new Event();
             event.widget = this.folder;
@@ -403,8 +409,10 @@ public class ComponentTitledFolder implements IComponent {
      */
     public void setVisibleItems(List<String> items) {
         
+        // Change flag
         boolean changed = false;
         
+        // Hide/show items
         for (String item : getAllHideableItems()) {
             if (items.contains(item)) {
                 changed |= setVisible(item);
@@ -416,6 +424,7 @@ public class ComponentTitledFolder implements IComponent {
             }
         }
         
+        // If something has changed, fire event
         if (changed && this.itemVisibilityListener != null) {
             Event event = new Event();
             event.widget = this.folder;
@@ -488,9 +497,7 @@ public class ComponentTitledFolder implements IComponent {
                     }
                 }
             });
-        }   
-        int height = toolbar.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
-        folder.setTabHeight(Math.max(height, folder.getTabHeight()));
+        }
     }
     
     /**
@@ -562,6 +569,9 @@ public class ComponentTitledFolder implements IComponent {
                         index--;
                     }
                 }
+
+                // Fix MacOS bug: store height
+                int height = folder.getTabHeight();
                 
                 // Show
                 CTabItem item = new CTabItem(folder, SWT.NULL, index);
@@ -569,6 +579,11 @@ public class ComponentTitledFolder implements IComponent {
                 if (entry.image!=null) item.setImage(entry.image);
                 item.setShowClose(false);
                 item.setControl(entry.control);
+                
+                // Fix MacOS bug: update
+                folder.setTabHeight(height);
+                
+                // Done
                 return true;
             }
         }

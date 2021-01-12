@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.common.table;
 
+import org.eclipse.nebula.widgets.nattable.NatTable;
 import org.eclipse.nebula.widgets.nattable.layer.IUniqueIndexLayer;
 import org.eclipse.nebula.widgets.nattable.search.config.DefaultSearchBindings;
 import org.eclipse.nebula.widgets.nattable.selection.SelectionLayer;
@@ -31,6 +32,7 @@ import org.eclipse.nebula.widgets.nattable.ui.matcher.MouseEventMatcher;
 import org.eclipse.nebula.widgets.nattable.viewport.action.ViewportSelectColumnAction;
 import org.eclipse.nebula.widgets.nattable.viewport.action.ViewportSelectRowAction;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseEvent;
 
 /**
  * A selection layer for table views.
@@ -39,7 +41,7 @@ import org.eclipse.swt.SWT;
  */
 public class LayerSelection extends SelectionLayer implements CTComponent {
 
-    /**  TODO */
+    /**  Config */
     private final CTConfiguration config;
     
     /**
@@ -48,15 +50,21 @@ public class LayerSelection extends SelectionLayer implements CTComponent {
      * @param underlyingLayer
      * @param config
      */
-    public LayerSelection(IUniqueIndexLayer underlyingLayer,
-                            CTConfiguration config) {
+    public LayerSelection(IUniqueIndexLayer underlyingLayer, CTConfiguration config) {
         super(underlyingLayer, false);
         this.config = config;
         addConfiguration(new DefaultSelectionStyleConfiguration());
         addConfiguration(new DefaultSelectionBindings(){
             /** Override some default behavior */
             protected void configureBodyMouseClickBindings(UiBindingRegistry uiBindingRegistry) {
-                IMouseAction action = new SelectCellAction();
+                IMouseAction action = new SelectCellAction() {
+                    @Override
+                    public void run(NatTable natTable, MouseEvent event) {
+                        super.run(natTable, event);
+                        // Fixes redrawing bug on MacOS
+                        natTable.redraw();
+                    }
+                };
                 uiBindingRegistry.registerMouseDownBinding(MouseEventMatcher.bodyLeftClick(SWT.NONE), action);
             }
             /** Override some default behavior */

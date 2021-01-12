@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -226,9 +226,9 @@ public abstract class HierarchyWizardModelGrouping<T> extends HierarchyWizardMod
                 }
                 
                 if (equals(type, DataType.INTEGER)) {
-                    max = dtype.add(max, (T)new Long(1)); // Add 1
+                    max = dtype.add(max, (T)Long.valueOf(1l)); // Add 1
                 } else if (equals(type, DataType.DECIMAL)) {
-                    max = dtype.add(max, (T)new Double(1)); // Add 1
+                    max = dtype.add(max, (T)Double.valueOf(1d)); // Add 1
                 } else if (equals(type, DataType.DATE)) {
                     max = dtype.add(max, (T)new Date(3600l * 1000l)); // Add 1 day
                 }

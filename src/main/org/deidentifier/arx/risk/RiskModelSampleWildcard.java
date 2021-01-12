@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,6 +103,8 @@ public class RiskModelSampleWildcard {
     private final double averageRisk;
     /** Highest risk */
     private final double highestRisk;
+    /** Lowest risk */
+    private final double lowestRisk;
     /** Threshold*/
     private final double threshold;
     /** Size threshold */
@@ -164,6 +166,7 @@ public class RiskModelSampleWildcard {
         // And evaluate
         double totalRisk = 0d;
         double highestRisk = 0d;
+        double lowestRisk = Double.MAX_VALUE;
         int numAtRisk = 0;
         group = groups.first();
         progressCount = 0;
@@ -174,6 +177,7 @@ public class RiskModelSampleWildcard {
             }
             double risk = 1d / (double) group.getCount();
             highestRisk = Math.max(highestRisk, risk);
+            lowestRisk = Math.min(lowestRisk, risk);
             totalRisk += risk * (double) frequencies.get(group);
             if (group.getCount() < sizeThreshold) {
                 numAtRisk += frequencies.get(group);
@@ -186,6 +190,9 @@ public class RiskModelSampleWildcard {
 
         // Highest risk
         this.highestRisk = numRecords == 0 ? 0d : highestRisk;
+
+        // Highest risk
+        this.lowestRisk = numRecords == 0 ? 0d : lowestRisk;
         
         // Average risk
         this.averageRisk = numRecords == 0 ? 0d : (double)totalRisk / (double)numRecords;
@@ -213,6 +220,14 @@ public class RiskModelSampleWildcard {
      */
     public double getHighestRisk() {
         return highestRisk;
+    }
+    
+    /**
+     * Returns the lowest risk
+     * @return the lowest risk
+     */
+    public double getLowestRisk() {
+        return lowestRisk;
     }
     
     /**

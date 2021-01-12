@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -600,6 +600,16 @@ public abstract class DataHandle {
         return registry == null;
     }
 
+    /**
+     * Determines whether a given row is completely suppressed
+     *
+     * @param row the row
+     * @return true, if is suppressed
+     */
+    public boolean isSuppressed(int row) {
+        return isOutlier(row);
+    }
+    
     /**
      * Returns an iterator over the data.
      *

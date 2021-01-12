@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -108,14 +108,16 @@ public class GeneralizationHierarchy {
         // Count distinct values on each level
         this.distinctValues = new int[height];
 
-        // for each column
-        final IntOpenHashSet vals = new IntOpenHashSet();
-        for (int column = 0; column < map[0].length; column++) {
-            for (int row = 0; row < map.length; row++) {
-                vals.add(map[row][column]);
-            }
-            this.distinctValues[column] = vals.size();
-            vals.clear();
+        // For each column
+        if (map.length > 0) {
+	        final IntOpenHashSet vals = new IntOpenHashSet();
+	        for (int column = 0; column < map[0].length; column++) {
+	            for (int row = 0; row < map.length; row++) {
+	                vals.add(map[row][column]);
+	            }
+	            this.distinctValues[column] = vals.size();
+	            vals.clear();
+	        }
         }
     }
 

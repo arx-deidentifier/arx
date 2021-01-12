@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,8 +73,8 @@ public class Example26 extends Example {
 
         DataType<Double> dataType = DataType.createDecimal("#.####", Locale.ENGLISH);
 
-        Double lower = new Double(40d);
-        Double upper = new Double(41d);
+        double lower = 40d;
+        double upper = 41d;
 
         // Create the builder
         HierarchyBuilderIntervalBased<Double> builder = HierarchyBuilderIntervalBased.create(
@@ -84,7 +84,7 @@ public class Example26 extends Example {
 
         // Define base intervals
         builder.setAggregateFunction(dataType.createAggregate().createIntervalFunction(true, false));
-        builder.addInterval(new Double(0d), interval);
+        builder.addInterval(0d, interval);
 
         // Define grouping fanouts
         builder.getLevel(0).addGroup(2);

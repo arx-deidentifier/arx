@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -191,7 +191,7 @@ public class RiskModelAttributes {
                     public int compare(String o1, String o2) {
                         int index1 = handle.getColumnIndexOf(o1);
                         int index2 = handle.getColumnIndexOf(o2);
-                        return new Integer(index1).compareTo(index2);
+                        return Integer.valueOf(index1).compareTo(index2);
                     }
                 });
             }

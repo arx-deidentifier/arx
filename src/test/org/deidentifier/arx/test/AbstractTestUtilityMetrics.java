@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -215,8 +215,16 @@ public abstract class AbstractTestUtilityMetrics extends AbstractTest {
                     
                     String actualLoss = node.getHighestScore().toString();
                     String expectedLoss = testcase.informationLoss.get(label);
-                    
-                    assertEquals(label, expectedLoss, actualLoss);
+                    try {
+                        try {
+                            assertEquals(label, Double.valueOf(expectedLoss), Double.valueOf(actualLoss), 0.00000001d);
+                        } catch (AssertionError e) {
+                            System.out.println(Math.abs(Double.valueOf(expectedLoss) - Double.valueOf(actualLoss)));
+                            throw(e);
+                        }
+                    } catch (NumberFormatException e) {
+                        assertEquals(label, expectedLoss, actualLoss);
+                    }
                 }
             }
         }

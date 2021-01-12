@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -196,7 +196,7 @@ public class LayoutUtility implements ILayout {
         dataInputView.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                dataOutputView.setSelectionIndex(dataInputView.getSelectionIndex());
+                dataOutputView.setSelection(dataInputView.getSelectionIndex());
                 
                 // Hack to show summary for input
                 if (dataInputView.getSelectionIndex() == 0) {
@@ -218,7 +218,7 @@ public class LayoutUtility implements ILayout {
         dataOutputView.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
-                dataInputView.setSelectionIndex(dataOutputView.getSelectionIndex());
+                dataInputView.setSelection(dataOutputView.getSelectionIndex());
                 
                 // Hack to show summary for output
                 if (dataOutputView.getSelectionIndex() == 0) {
@@ -242,8 +242,8 @@ public class LayoutUtility implements ILayout {
 
                 // Hack to show classification stuff
                 if (statisticsInputLayout.getSelectedView() == ViewUtilityType.CLASSIFICATION) {
-                    dataOutputView.setSelectionIndex(1);
-                    dataInputView.setSelectionIndex(1);
+                    dataOutputView.setSelection(1);
+                    dataInputView.setSelection(1);
                 }
                 
                 // Hack to update visualizations
@@ -257,8 +257,8 @@ public class LayoutUtility implements ILayout {
 
                 // Hack to show classification stuff
                 if (statisticsOutputLayout.getSelectedView() == ViewUtilityType.CLASSIFICATION) {
-                    dataOutputView.setSelectionIndex(1);
-                    dataInputView.setSelectionIndex(1);
+                    dataOutputView.setSelection(1);
+                    dataInputView.setSelection(1);
                 }
                 
                 // Hack to update visualizations

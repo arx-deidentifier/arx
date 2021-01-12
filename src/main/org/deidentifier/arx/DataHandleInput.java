@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,11 +95,6 @@ public class DataHandleInput extends DataHandle {
             int row = 0;
             while (iterator.hasNext()) {
     
-                // Check
-                if (row == records) {
-                    throw new IllegalArgumentException("Number of records exceeds estimate"); 
-                }
-                
                 // Process a tuple
                 String[] strings = iterator.next();
                 int[] tuple = new int[header.length];
@@ -110,6 +105,11 @@ public class DataHandleInput extends DataHandle {
                 }
                 this.data.setRow(row, tuple);
                 row++;
+            }
+            
+            // Sanity check to prevent loading errors
+            if (row != records) {
+                throw new IllegalStateException("Invalid internal state. Numbers of records don't match. Expected: <" + records + "> is: <" + row + ">");
             }
 
         } else { 
@@ -230,13 +230,27 @@ public class DataHandleInput extends DataHandle {
         // Prepare
         this.suppressionQIs = qis;
         this.suppressionRecords = new RowSet(this.data.getNumRows());
-        
+
         // Determine columns
-        int[] columns = new int[qis.size()];
-        int idx = 0;
-        for (int column = 0; column < header.length; column++) {
-            if (qis.contains(header[column])) {
-                columns[idx++] = column;
+        int[] columns;
+        
+        // If no QIs, we look at all columns
+        if (qis == null || qis.isEmpty()) {
+            
+            columns = new int[header.length];
+            for (int column = 0; column < header.length; column++) {
+                columns[column] = column;
+            }
+            
+        // Else we look at the qis only
+        } else {
+            
+            columns = new int[qis.size()];
+            int idx = 0;
+            for (int column = 0; column < header.length; column++) {
+                if (qis.contains(header[column])) {
+                    columns[idx++] = column;
+                }
             }
         }
         
@@ -262,6 +276,7 @@ public class DataHandleInput extends DataHandle {
         return this.getDataType(attribute);
     }
 
+    @Override
     protected DataType<?>[] getColumnToDataType() {
         checkReleased();
         DataType<?>[] dataTypes = new DataType[header.length];
@@ -275,7 +290,7 @@ public class DataHandleInput extends DataHandle {
         }
         return dataTypes;
     }
-
+    
     @Override
     protected ARXConfiguration getConfiguration() {
         return null;
@@ -348,13 +363,21 @@ public class DataHandleInput extends DataHandle {
 
     @Override
     protected boolean internalIsOutlier(int row, int[] columns) {
+        
+        // No data, no suppression
+        if (columns == null || columns.length == 0) {
+            return false;
+        }
  
+        // Check columns
         int[] suppressed = dictionary.getSuppressedCodes();
         for (int column : columns) {
             if (data.get(row, column) != suppressed[column]) {
                 return false;
             }
         }
+        
+        // Done
         return true;
     }
 

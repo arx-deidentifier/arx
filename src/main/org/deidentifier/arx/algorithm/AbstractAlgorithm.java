@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,18 +50,54 @@ public abstract class AbstractAlgorithm {
     /** The lattice. */
     protected SolutionSpace<?>      solutionSpace          = null;
 
+    /** Time limit */
+    private final int               timeLimit;
+
+    /** The start time */
+    private long                    timeStart;
+
+    /** The number of checks */
+    private final int               checkLimit;
+
     /**
-     * Walks the lattice.
+     * Initializes the algorithm
      * 
      * @param solutionSpace The solution space
      * @param checker The checker
      */
     protected AbstractAlgorithm(final SolutionSpace<?>  solutionSpace,
-                                final TransformationChecker checker) {
+                                final TransformationChecker checker, 
+                                final int timeLimit, 
+                                final int checkLimit) {
         this.checker = checker;
         this.solutionSpace = solutionSpace;
+        this.timeLimit = timeLimit;
+        this.checkLimit = checkLimit;
+        
+        if (timeLimit <= 0) { 
+            throw new IllegalArgumentException("Invalid time limit. Must be greater than zero."); 
+        }
+        if (checkLimit <= 0) { 
+            throw new IllegalArgumentException("Invalid step limit. Must be greater than zero."); 
+        }
     }
 
+    /**
+     * Return stuff for progress monitoring
+     * @return
+     */
+    public int getCheckCount() {
+        return checker.getNumChecksPerformed();
+    }
+
+    /**
+     * Return stuff for progress monitoring
+     * @return
+     */
+    public int getCheckLimit() {
+        return checkLimit;
+    }
+    
     /**
      * Returns the global optimum.
      *
@@ -72,13 +108,29 @@ public abstract class AbstractAlgorithm {
     }
 
     /**
+     * Return stuff for progress monitoring
+     * @return
+     */
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+
+    /**
+     * Return stuff for progress monitoring
+     * @return
+     */
+    public long getTimeStart() {
+        return timeStart;
+    }
+
+    /**
      * Sets a listener
      * @param listener
      */
     public void setListener(ARXListener listener) {
         this.listener = listener;
     }
-    
+
     /**
      * Implement this method in order to provide a new algorithm.
      * 
@@ -108,6 +160,15 @@ public abstract class AbstractAlgorithm {
     }
 
     /**
+     * Returns whether we have exceeded the allowed number of steps or time.
+     * @return
+     */
+    protected boolean mustStop() {
+        return ((int)(System.currentTimeMillis() - timeStart) > timeLimit) ||
+               (checker.getNumChecksPerformed() >= checkLimit);
+    }
+
+    /**
      * Propagate progress to listeners
      * @param progress
      */
@@ -115,6 +176,13 @@ public abstract class AbstractAlgorithm {
         if (this.listener != null) {
             this.listener.progress(progress);
         }
+    }
+
+    /**
+     * Call before traversal
+     */
+    protected void startTraverse() {
+        timeStart = System.currentTimeMillis();
     }
 
     /**
@@ -132,4 +200,20 @@ public abstract class AbstractAlgorithm {
         }
     }
 
+    /**
+     * Track progress from limits
+     */
+    protected void trackProgressFromLimits() {
+        trackProgressFromLimits(0d);
+    }
+    
+    /**
+     * Track progress from limits
+     * @param algorithmProgress 
+     */
+    protected void trackProgressFromLimits(double algorithmProgress) {
+        double progressSteps = (double)getCheckCount() / (double)getCheckLimit();
+        double progressTime = (double)(System.currentTimeMillis() - getTimeStart()) / (double)getTimeLimit();
+        progress(Math.min(1.0d, Math.max(algorithmProgress, Math.max(progressSteps, progressTime))));
+    }
 }

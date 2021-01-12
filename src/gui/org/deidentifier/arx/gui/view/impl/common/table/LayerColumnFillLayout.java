@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,13 +36,13 @@ import org.eclipse.nebula.widgets.nattable.resize.event.ColumnResizeEvent;
  */
 public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer {
     
-    /**  TODO */
+    /**  Parameter */
     private final boolean equalWidth;
     
-    /**  TODO */
+    /**  Parameter */
     private boolean modified = false;
     
-    /**  TODO */
+    /**  Parameter */
     private boolean ignore = false;
 
     /**
@@ -226,7 +226,7 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     }
     
     /**
-     * 
+     * Parameter
      *
      * @return
      */
@@ -235,7 +235,7 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     }
 
     /**
-     * 
+     * Parameter
      *
      * @return
      */
@@ -251,7 +251,7 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     }
 
     /**
-     * 
+     * Parameter
      *
      * @return
      */
@@ -262,7 +262,7 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     }
     
     /**
-     * 
+     * Parameter
      *
      * @param columnPosition
      * @return
@@ -272,7 +272,7 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     }
 
     /**
-     * 
+     * Parameter
      *
      * @return
      */
@@ -289,7 +289,7 @@ public class LayerColumnFillLayout extends CTLayer implements IUniqueIndexLayer 
     }
     
     /**
-     * 
+     * Parameter
      *
      * @return
      */

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.deidentifier.arx.gui.view.def.IView;
 import org.deidentifier.arx.gui.view.impl.common.ComponentTitledFolder;
 import org.deidentifier.arx.metric.MetricConfiguration;
 import org.deidentifier.arx.metric.MetricDescription;
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -97,15 +96,12 @@ public class LayoutTransformationModel implements ILayout, IView {
      */
     private Composite build(final Composite parent) {
 
-        // Create input group
-        Composite group = new Composite(parent, SWT.NONE);
-        group.setLayoutData(SWTUtil.createFillGridData());
-        group.setLayout(new FillLayout());
-
-        folder = new ComponentTitledFolder(group, controller, null, "id-60"); //$NON-NLS-1$
+        // Create folder
+        folder = new ComponentTitledFolder(parent, controller, null, "id-60"); //$NON-NLS-1$
+        folder.setLayoutData(SWTUtil.createFillHorizontallyGridData());
         
         // Create general tab
-        group = folder.createItem(Resources.getMessage("CriterionDefinitionView.61"), null);  //$NON-NLS-1$
+        Composite group = folder.createItem(Resources.getMessage("CriterionDefinitionView.61"), null);  //$NON-NLS-1$
         group.setLayout(new FillLayout());
         new ViewTransformationSettings(group, controller);
         

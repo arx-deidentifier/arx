@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,23 +35,23 @@ import org.eclipse.swt.graphics.Font;
  */
 public class StyleConfigurationFillLayout extends CTStyleConfiguration {
     
-    /**  TODO */
+    /**  Parameter */
     public static final String DEFAULT_FILL_LAYOUT_CELL_CONFIG_LABEL = "FillLayoutCell_"; //$NON-NLS-1$
 
-    /**  TODO */
+    /**  Parameter */
     private BorderStyle borderStyle = new BorderStyle(0, GUIHelper.getColor(240, 240, 240), LineStyleEnum.SOLID);
     
-    /**  TODO */
+    /**  Parameter */
     private Color fgColor = GUIHelper.COLOR_BLACK;
     
-    /**  TODO */
+    /**  Parameter */
     private Color bgColor = GUIHelper.getColor(245, 245, 245);
     
-    /**  TODO */
+    /**  Parameter */
     private Font font;
     
     /**
-     * 
+     * Creates a new instance
      *
      * @param config
      */
@@ -66,7 +66,7 @@ public class StyleConfigurationFillLayout extends CTStyleConfiguration {
     }
     
     /**
-     * 
+     * Add config
      *
      * @param configRegistry
      */

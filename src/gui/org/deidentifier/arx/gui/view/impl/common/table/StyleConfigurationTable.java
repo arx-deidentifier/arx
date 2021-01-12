@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,38 +40,37 @@ import org.eclipse.swt.graphics.Font;
  */
 public class StyleConfigurationTable extends CTStyleConfiguration {
 
-    /**  TODO */
-    public Color bgColor = GUIHelper.COLOR_WHITE;
-    
-    /**  TODO */
-    public Color fgColor = GUIHelper.COLOR_BLACK;
-    
-    /**  TODO */
-    public Color gradientBgColor = GUIHelper.COLOR_WHITE;
-    
-    /**  TODO */
-    public Color gradientFgColor = GUIHelper.getColor(136, 212, 215);
-    
-    /**  TODO */
-    public Font font = getConfig().getFont();
-    
-    /**  TODO */
-    public HorizontalAlignmentEnum hAlign = 
-            getConfig().getHorizontalAlignment() == SWT.LEFT ? HorizontalAlignmentEnum.LEFT : 
-                getConfig().getHorizontalAlignment() == SWT.RIGHT ? HorizontalAlignmentEnum.RIGHT : 
-            HorizontalAlignmentEnum.CENTER ;
-    
-    /**  TODO */
-    public VerticalAlignmentEnum vAlign = VerticalAlignmentEnum.MIDDLE;
-    
-    /**  TODO */
-    public BorderStyle borderStyle = null;
-    
-    /**  TODO */
-    public ICellPainter cellPainter = new LineBorderDecorator(new TextPainter());
+    /** Parameter */
+    public Color                   bgColor         = GUIHelper.COLOR_WHITE;
+
+    /** Parameter */
+    public Color                   fgColor         = GUIHelper.COLOR_BLACK;
+
+    /** Parameter */
+    public Color                   gradientBgColor = GUIHelper.COLOR_WHITE;
+
+    /** Parameter */
+    public Color                   gradientFgColor = GUIHelper.getColor(136, 212, 215);
+
+    /** Parameter */
+    public Font                    font            = getConfig().getFont();
+
+    /**  Parameter */
+    public HorizontalAlignmentEnum hAlign =  getConfig().getHorizontalAlignment() == SWT.LEFT ? HorizontalAlignmentEnum.LEFT : 
+                                             getConfig().getHorizontalAlignment() == SWT.RIGHT ? HorizontalAlignmentEnum.RIGHT : 
+                                             HorizontalAlignmentEnum.CENTER ;
+
+    /** Parameter */
+    public VerticalAlignmentEnum   vAlign          = VerticalAlignmentEnum.MIDDLE;
+
+    /** Parameter */
+    public BorderStyle             borderStyle     = null;
+
+    /** Parameter */
+    public ICellPainter            cellPainter     = new LineBorderDecorator(new TextPainter());
 
     /**
-     * 
+     * Creates a new instance
      *
      * @param config
      */
@@ -94,7 +93,6 @@ public class StyleConfigurationTable extends CTStyleConfiguration {
         cellStyle.setAttributeValue(CellStyleAttributes.BORDER_STYLE, borderStyle);
         
         configRegistry.registerConfigAttribute(CellConfigAttributes.CELL_STYLE, cellStyle);
-    
         configRegistry.registerConfigAttribute(CellConfigAttributes.DISPLAY_CONVERTER, new DefaultDisplayConverter());
     }
 }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,6 +57,17 @@ import org.deidentifier.arx.metric.MetricConfiguration;
 public class ARXConfiguration implements Serializable, Cloneable {
     
     // TODO: While in use, this configuration object should be locked, similar to, e.g., DataDefinition
+
+    /**
+     * The algorithms supported by ARX
+     */
+    public static enum AnonymizationAlgorithm {
+        OPTIMAL,
+        BEST_EFFORT_BINARY,
+        BEST_EFFORT_BOTTOM_UP,
+        BEST_EFFORT_TOP_DOWN,
+        BEST_EFFORT_GENETIC,
+    }
 
     /**
      * Class for internal use that provides access to more parameters and functionality.
@@ -269,16 +280,28 @@ public class ARXConfiguration implements Serializable, Cloneable {
         /**  Non-monotonic */
         NONE
     }
+    
+    /**
+     * The semantics of heuristic search steps.
+     */
+    public static enum SearchStepSemantics {
+        
+        /** Steps correspond to checks */
+        CHECKS,
+        
+        /** Steps correspond to expansions */
+        EXPANSIONS
+    }
 
     /** Do the criteria require a counter per equivalence class. */
     public static final int       REQUIREMENT_COUNTER           = 0x1;
 
     /** Do the criteria require distributions of sensitive values in the equivalence classes. */
     public static final int       REQUIREMENT_DISTRIBUTION      = 0x4;
-
+    
     /** Do the criteria require a second counter. */
     public static final int       REQUIREMENT_SECONDARY_COUNTER = 0x2;
-    
+
     /** For serialization. */
     private static final long     serialVersionUID              = -6713510386735241964L;
 
@@ -314,7 +337,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public static ARXConfiguration create(double suppressionLimit, Metric<?> metric) {
         return new ARXConfiguration(suppressionLimit, metric);
     }
-
+    
     /**
      * Creates a new configuration that allows to define the metric for measuring information loss.
      *
@@ -323,18 +346,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
      */
     public static ARXConfiguration create(Metric<?> metric) {
         return new ARXConfiguration(metric);
-    }
-    
-    /**
-     * The semantics of heuristic search steps.
-     */
-    public static enum SearchStepSemantics {
-        
-        /** Steps correspond to checks */
-        CHECKS,
-        
-        /** Steps correspond to expansions */
-        EXPANSIONS
     }
 
     /** Absolute suppression limit. */
@@ -382,7 +393,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     /** Are we performing optimal anonymization for sample-based criteria? */
     private boolean                            heuristicSearchForSampleBasedCriteria = false;
 
-    /** Should we use the heuristic search algorithm? */
+    /** Should we use the heuristic search algorithm? We keep this only for backwards compatibility */
     private boolean                            heuristicSearchEnabled                = false;
 
     /** We will use the heuristic algorithm, if the size of the search space exceeds this threshold */
@@ -402,10 +413,41 @@ public class ARXConfiguration implements Serializable, Cloneable {
 
     /** Number of output records */
     private int                                numOutputRecords                      = 0;
-    
-    /** Semantics of heuristic search steps */
-    private SearchStepSemantics                searchStepSemantics                   = SearchStepSemantics.CHECKS;
 
+    /** Semantics of heuristic search steps */
+    private SearchStepSemantics                heuristicSearchStepSemantics          = SearchStepSemantics.CHECKS;
+
+    /** Sub-population size */
+    private Integer                            geneticAlgorithmSubpopulationSize     = 100;
+
+    /** Immigration interval */
+    private Integer                            geneticAlgorithmImmigrationInterval   = 10;
+
+    /** Immigration fraction */
+    private Double                             geneticAlgorithmImmigrationFraction   = 0.2d;
+
+    /** Size of the elite */
+    private Double                             geneticAlgorithmEliteFraction         = 0.2d;
+
+    /** Fraction of individuals crossed-over */
+    private Double                             geneticAlgorithmCrossoverFraction     = 0.2d;
+
+    /** Deterministic */
+    private boolean                            geneticAlgorithmDeterministic         = false;
+
+    /** Mutation probability */
+    private Double                             geneticAlgorithmMutationProbability   = 0.2d;
+
+    /** Production Fraction **/
+    private Double                             geneticAlgorithmProductionFraction    = 0.2d;
+
+    /** Number of GA iterations */
+    private Integer                            geneticAlgorithmIterations            = 50;
+
+    /** The algorithm to use */
+    private AnonymizationAlgorithm             algorithm                             = AnonymizationAlgorithm.OPTIMAL;
+
+	
     /**
      * Creates a new configuration without tuple suppression.
      */
@@ -533,9 +575,20 @@ public class ARXConfiguration implements Serializable, Cloneable {
         result.heuristicSearchEnabled = this.heuristicSearchEnabled;
         result.heuristicSearchThreshold = this.heuristicSearchThreshold;
         result.heuristicSearchTimeLimit = this.heuristicSearchTimeLimit;
+        result.heuristicSearchStepLimit = this.heuristicSearchStepLimit;
         result.costBenefitConfiguration = this.getCostBenefitConfiguration().clone();
         result.dpSearchBudget = this.dpSearchBudget;
-        result.searchStepSemantics = this.searchStepSemantics;
+        result.heuristicSearchStepSemantics = this.heuristicSearchStepSemantics;
+		result.geneticAlgorithmSubpopulationSize = this.geneticAlgorithmSubpopulationSize;
+		result.geneticAlgorithmImmigrationInterval = this.geneticAlgorithmImmigrationInterval;
+        result.geneticAlgorithmImmigrationFraction = this.geneticAlgorithmImmigrationFraction;
+        result.geneticAlgorithmEliteFraction = this.geneticAlgorithmEliteFraction;
+        result.geneticAlgorithmCrossoverFraction = this.geneticAlgorithmCrossoverFraction;
+        result.geneticAlgorithmDeterministic = this.geneticAlgorithmDeterministic;
+        result.geneticAlgorithmMutationProbability = this.geneticAlgorithmMutationProbability;
+		result.geneticAlgorithmProductionFraction = this.geneticAlgorithmProductionFraction;
+        result.geneticAlgorithmIterations = this.geneticAlgorithmIterations;
+        result.algorithm = this.algorithm;
         if (this.attributeWeights != null) {
             result.attributeWeights = new HashMap<String, Double>(this.attributeWeights);
         } else {
@@ -544,6 +597,21 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return result;
     }
 
+    /**
+     * Returns the anonymization algorithm selected
+     * @return
+     */
+    public AnonymizationAlgorithm getAlgorithm() {
+        
+        // Backwards compatibility
+        if (this.algorithm == null) {
+            return this.heuristicSearchEnabled ? AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP : AnonymizationAlgorithm.OPTIMAL;
+        }
+        
+        // Return
+        return this.algorithm;
+    }
+    
     /**
      * Returns the weight for the given attribute.
      *
@@ -599,46 +667,154 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
+	 * Returns the fraction of individuals crossed over
+	 * @return
+	 */
+	public double getGeneticAlgorithmCrossoverFraction() {
+		if (this.geneticAlgorithmCrossoverFraction == null) {
+			this.geneticAlgorithmCrossoverFraction = 0.2d;
+		}
+		return geneticAlgorithmCrossoverFraction;
+	}
+    
+    /**
+	 * Deterministic execution
+	 * @return
+	 */
+	public boolean getGeneticAlgorithmDeterministic() {
+		return geneticAlgorithmDeterministic;
+	}
+    
+    /**
+	 * Returns the size of the elite group
+	 * @return
+	 */
+	public double getGeneticAlgorithmEliteFraction() {
+		if (this.geneticAlgorithmEliteFraction == null) {
+			this.geneticAlgorithmEliteFraction = 0.2d;
+		}
+		return geneticAlgorithmEliteFraction;
+	}
+    
+    /**
+	 * Returns the fraction to immigrate
+	 * @return
+	 */
+	public double getGeneticAlgorithmImmigrationFraction() {
+		if (this.geneticAlgorithmImmigrationFraction == null) {
+			this.geneticAlgorithmImmigrationFraction = 0.2d;
+		}
+		return geneticAlgorithmImmigrationFraction;
+	}
+  
+    /**
+	 * Returns the immigration interval
+	 * @return
+	 */
+	public int getGeneticAlgorithmImmigrationInterval() {
+		if (this.geneticAlgorithmImmigrationInterval == null) {
+			this.geneticAlgorithmImmigrationInterval = 10;
+		}
+		return geneticAlgorithmImmigrationInterval;
+	}
+
+	/**
+	 * Returns the genetic algorithm iterations
+	 * 
+	 * @return
+	 */
+	public int getGeneticAlgorithmIterations() {
+		if (this.geneticAlgorithmIterations == null) {
+			this.geneticAlgorithmIterations = 50;
+		}
+		return geneticAlgorithmIterations;
+	}
+
+    /**
+	 * Returns the mutation probability
+	 * @return
+	 */
+	public double getGeneticAlgorithmMutationProbability() {
+		if (this.geneticAlgorithmMutationProbability == null) {
+			this.geneticAlgorithmMutationProbability = 0.2d;
+		}
+	    return geneticAlgorithmMutationProbability;
+	}
+    
+    /**
+     * Returns the production fraction
+     * @return
+     */
+    public double getGeneticAlgorithmProductionFraction() {
+        if (this.geneticAlgorithmProductionFraction == null) {
+            this.geneticAlgorithmProductionFraction = 0.2d;
+        }
+        return geneticAlgorithmProductionFraction;
+    }
+	
+    /**
+	 * Returns the size of the sub-population
+	 * @return
+	 */
+	public int getGeneticAlgorithmSubpopulationSize() {
+		if (this.geneticAlgorithmSubpopulationSize == null) {
+			this.geneticAlgorithmSubpopulationSize = 100;
+		}
+		return geneticAlgorithmSubpopulationSize;
+	}
+	
+    /**
      * The heuristic search algorithm will terminate after the returned number of steps.
      * The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
-     * @param requestedSemantics the semantics of the number of search steps to be returned
+     * @param requestedSearchStepSemantics the semantics of the number of search steps to be returned
      * @param numQIs the number of QIs
      * @return
      */
-    public int getHeuristicSearchStepLimit(SearchStepSemantics requestedSemantics, int numQIs) {
+    public int getHeuristicSearchStepLimit(SearchStepSemantics requestedSearchStepSemantics, int numQIs) {
         
+        // Sanity checks
+        if (numQIs <= 0) {
+            throw new IllegalArgumentException("Number of QIs must be >= 1");
+        }
+        if (this.heuristicSearchStepSemantics == null) {
+            this.heuristicSearchStepSemantics = SearchStepSemantics.CHECKS;
+        }
         if (this.heuristicSearchStepLimit == null) {
             this.heuristicSearchStepLimit = Integer.MAX_VALUE;
         }
-        
-        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE || requestedSemantics == this.searchStepSemantics) {
+
+        // Early return
+        if (this.heuristicSearchStepLimit == Integer.MAX_VALUE || requestedSearchStepSemantics == this.heuristicSearchStepSemantics) {
             return this.heuristicSearchStepLimit;
         }
-        
-        switch (requestedSemantics) {
-        case CHECKS:
-            // Convert the limit of expansions which has been set to the requested limit of checks
-            return this.heuristicSearchStepLimit * numQIs;
-        case EXPANSIONS:
-            // Convert the limit of checks which has been set to the requested limit of expansions
-            return this.heuristicSearchStepLimit / numQIs;
-        default:
-            throw new RuntimeException("The search step semantic " + requestedSemantics + " is not supported");
+
+        // Choose correct semantics
+        switch (this.heuristicSearchStepSemantics) {
+            case CHECKS:
+                switch (requestedSearchStepSemantics) {
+                    case EXPANSIONS:
+                        // Convert the limit of checks which has been set to the requested limit of expansions
+                        return this.heuristicSearchStepLimit / numQIs;
+                    default:
+                        throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+                }
+            case EXPANSIONS:
+                switch (requestedSearchStepSemantics) {
+                    case CHECKS:
+                        // Convert the limit of expansions which has been set to the requested limit of checks
+                    try {
+                        return Math.multiplyExact(this.heuristicSearchStepLimit, numQIs);
+                    } catch (Exception e) {
+                        return Integer.MAX_VALUE;
+                    }
+                    default:
+                        throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
+                }
+            default:
+                throw new RuntimeException("The search step semantic " + requestedSearchStepSemantics + " is not supported");
         }
      }
-    
-    /**
-     * The semantics of heuristic search steps.
-     * The default is <code>SearchStepSemantics.CHECKS</code>.
-     * @return
-     */
-    public SearchStepSemantics getHeuristicSearchStepSemantics() {
-        if (this.searchStepSemantics == null) {
-            this.searchStepSemantics = SearchStepSemantics.CHECKS;
-        }
-        return this.searchStepSemantics;
-    }
-    
+
     /**
      * When the size of the solution space exceeds the returned number of transformations,
      * ARX will use a heuristic search strategy. The default is 100.000.
@@ -650,7 +826,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchThreshold;
     }
-  
+
     /**
      * The heuristic search algorithm will terminate after the returned number of milliseconds.
      * The default is 30 seconds.
@@ -662,7 +838,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return this.heuristicSearchTimeLimit;
     }
-
+    
     /**
      * Returns the maximum number of allowed outliers.
      * Deprecated. Use <code>getSuppressionLimit()</code> instead.
@@ -713,7 +889,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Full
         return Monotonicity.FULL;
     }
-    
+
     /**
      * Returns whether the utility measure is monotonic
      * @return
@@ -726,7 +902,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return Monotonicity.NONE;
         }
     }
-
+    
     /**
      * Returns an instance of the class, if any. Throws an exception if more than one such model exists.
      *
@@ -751,7 +927,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
             return null;
         }
     }
-
+    
     /**
      * Returns all privacy models.
      * @return
@@ -759,7 +935,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public Set<PrivacyCriterion> getPrivacyModels() {
         return this.criteria;
     }
-
+    
     /**
      * Returns all privacy models which are instances of the given class.
      *
@@ -799,7 +975,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-
+    
     /**
      * Return marketer risk threshold, 1 if there is none
      * @return
@@ -811,7 +987,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-    
+
     /**
      * Return prosecutor risk threshold, 1 if there is none
      * @return
@@ -823,7 +999,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         return risk;
     }
-    
+
     /**
      * Returns the suppression limit
      * @return
@@ -831,7 +1007,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public double getSuppressionLimit() {
         return this.getMaxOutliers();
     }
-    
+
     /**
      * Returns whether values of the given attribute type will be replaced by the suppression 
      * string in suppressed tuples.
@@ -848,14 +1024,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
     
     /**
-     * Returns whether ARX will use a heuristic search strategy. The default is false.
-     * @return
-     */
-    public boolean isHeuristicSearchEnabled() {
-        return this.heuristicSearchEnabled;
-    }
-    
-    /**
      * Is practical monotonicity assumed.
      *
      * @return
@@ -863,7 +1031,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public boolean isPracticalMonotonicity() {
         return practicalMonotonicity;
     }
-    
+
     /**
      * Returns whether the configuration contains a privacy model which is an instance of the given class.
      *
@@ -898,7 +1066,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public boolean isUseHeuristicSearchForSampleBasedCriteria() {
         return heuristicSearchForSampleBasedCriteria;
     }
-
+    
     /**
      * Removes the given criterion.
      *
@@ -910,7 +1078,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         checkArgument(arg);
         return criteria.remove(arg);
     }
-    
+
     /**
      * Renders this object 
      * @return
@@ -925,6 +1093,14 @@ public class ARXConfiguration implements Serializable, Cloneable {
         return result;
     }
 
+    /**
+     * Sets the algorithm to use
+     * @param algorithm
+     */
+    public void setAlgorithm(AnonymizationAlgorithm algorithm) {
+        this.algorithm = algorithm;
+    }
+    
     /**
      * Defines values of which attribute type are to be replaced by the suppression string in suppressed tuples.
      * With default settings, only quasi-identifiers will be suppressed.
@@ -955,7 +1131,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
         checkArgument(attribute);
         setAttributeWeight(attribute, Double.valueOf(weight));
     }
-
     /**
      * Sets the weight for the given attribute.
      *
@@ -970,7 +1145,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         }
         this.attributeWeights.put(attribute, weight);
     }
-
+    
     /**
      * Sets the cost/benefit configuration
      * @param config
@@ -982,7 +1157,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.costBenefitConfiguration = config;
         return this;
     }
-    
+
     /**
      * Sets the privacy budget to use for the data-dependent
      * differential privacy search algorithm. The default is 0.1.
@@ -992,37 +1167,105 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (budget <= 0d) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.dpSearchBudget = budget;
     }
+    
+    /**
+	 * Sets the fraction of individuals crossed over
+	 * @param geneticAlgorithmCrossoverPercent
+	 */
+	public void setGeneticAlgorithmCrossoverFraction(double geneticAlgorithmCrossoverFraction) {
+		this.geneticAlgorithmCrossoverFraction = geneticAlgorithmCrossoverFraction;
+	}
 
     /**
-     * Sets whether ARX will use a heuristic search strategy. The default is false.
-     * @param heuristicSearchEnabled
-     * @return
+	 * Deterministic execution
+	 * @param geneticAlgorithmDeterministic
+	 */
+	public void setGeneticAlgorithmDeterministic(boolean geneticAlgorithmDeterministic) {
+		this.geneticAlgorithmDeterministic = geneticAlgorithmDeterministic;
+	}
+
+	/**
+	 * Sets the size of the elite group
+	 * @param geneticAlgorithmElitePercent
+	 */
+	public void setGeneticAlgorithmEliteFraction(double geneticAlgorithmEliteFraction) {
+		this.geneticAlgorithmEliteFraction = geneticAlgorithmEliteFraction;
+	}
+
+	/**
+	 * Sets the fraction to immigrate
+	 * @param geneticAlgorithmImmigrationFraction
+	 */
+	public void setGeneticAlgorithmImmigrationFraction(double geneticAlgorithmImmigrationFraction) {
+		this.geneticAlgorithmImmigrationFraction = geneticAlgorithmImmigrationFraction;
+	}
+
+	/**
+	 * Sets the immigration interval
+	 * @param geneticAlgorithmImmigrationInterval
+	 */
+	public void setGeneticAlgorithmImmigrationInterval(int geneticAlgorithmImmigrationInterval) {
+		this.geneticAlgorithmImmigrationInterval = geneticAlgorithmImmigrationInterval;
+	}
+	
+    /**
+	 * Sets the genetic algorithm iterations
+	 * @param geneticAlgorithmIterations
+	 */
+	public void setGeneticAlgorithmIterations(int geneticAlgorithmIterations) {
+	    this.geneticAlgorithmIterations = geneticAlgorithmIterations;
+	}
+	
+	/**
+	 * Sets the mutation probability
+	 * @param geneticAlgorithmMutationProbability
+	 */
+	public void setGeneticAlgorithmMutationProbability(double geneticAlgorithmMutationProbability) {
+		this.geneticAlgorithmMutationProbability = geneticAlgorithmMutationProbability;
+	}
+
+	/**
+     * Sets the production fraction
+     * @param geneticAlgorithmImmigrationInterval
      */
-    public void setHeuristicSearchEnabled(boolean heuristicSearchEnabled) {
-        this.heuristicSearchEnabled = heuristicSearchEnabled;
+    public void setGeneticAlgorithmProductionFraction(double geneticAlgorithmProductionFraction) {
+        this.geneticAlgorithmProductionFraction = geneticAlgorithmProductionFraction;
     }
 
-    /**
+	/**
+	 * Setter
+	 * @param geneticAlgorithmSubpopulationSize
+	 */
+	public void setGeneticAlgorithmSubpopulationSize(int geneticAlgorithmSubpopulationSize) {
+		this.geneticAlgorithmSubpopulationSize = geneticAlgorithmSubpopulationSize;
+	}
+
+	/**
      * The heuristic search algorithm will terminate after the given number of transformations
-     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit.
+     * have been checked. The default is <code>Integer.MAX_VALUE</code>, i.e. no limit. ARX supports different
+     * search step semantics. The standards semantics (implemented by this method) is that this parameter
+     * restricts the number of transformations from the solution space that are searched during anonymization.
      * @param numberOfTransformations
      */
     public void setHeuristicSearchStepLimit(int numberOfTransformations) {
         if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchStepLimit = numberOfTransformations;
+        this.heuristicSearchStepSemantics = SearchStepSemantics.CHECKS;
     }
-    
-    /**
+
+	/**
      * Sets the semantics of heuristic search steps.
      * If the semantic <code>EXPANSIONS</code> is set, then the limit of the number of heuristic checks
      * will be calculated by multiplying the heuristic search step limit with the number of QIs.
      * @param searchStepSemantics
      */
-    public void setHeuristicSearchStepSemantics(SearchStepSemantics searchStepSemantics) {
-        this.searchStepSemantics = searchStepSemantics;
+    public void setHeuristicSearchStepLimit(int numberOfTransformations, SearchStepSemantics searchStepSemantics) {
+        if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
+        this.heuristicSearchStepLimit = numberOfTransformations;
+        this.heuristicSearchStepSemantics = searchStepSemantics;
     }
 
-    /**
+  /**
      * When the size of the solution space exceeds the given number of transformations,
      * ARX will use a heuristic search strategy. The default is 100.000.
      * @param numberOfTransformations
@@ -1032,7 +1275,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (numberOfTransformations <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchThreshold = numberOfTransformations;
     }
-    /**
+
+	/**
      * The heuristic search algorithm will terminate after the given number of milliseconds.
      * The default is 30 seconds.
      * @param timeInMillis
@@ -1041,8 +1285,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
         if (timeInMillis <= 0) { throw new IllegalArgumentException("Parameter must be > 0"); }
         this.heuristicSearchTimeLimit = timeInMillis;
     }
-    
-    /**
+
+	/**
      * Allows for a certain percentage of outliers and thus
      * triggers tuple suppression.
      * Deprecated. Use <code>setSuppressionLimit()</code> instead.
@@ -1054,7 +1298,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.relMaxOutliers = max;
     }
 
-    /**
+	/**
      * Set, if practical monotonicity assumed.
      *
      * @param assumeMonotonicity
@@ -1062,8 +1306,8 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setPracticalMonotonicity(final boolean assumeMonotonicity) {
         this.practicalMonotonicity = assumeMonotonicity;
     }
-    
-    /**
+
+	/**
      * Sets the quality model to be used for optimizing output data.
      *
      * @param model
@@ -1073,7 +1317,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         this.metric = model;
     }
 
-    /**
+	/**
      * Sets whether suppression is applied to the output of anonymous as well as non-anonymous transformations. If
      * this flag is set to <code>true</code>, suppression will be applied to the output of non-anonymous 
      * transformations to make them anonymous (if possible). Default is <code>true</code>. 
@@ -1082,7 +1326,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     public void setSuppressionAlwaysEnabled(boolean enabled){
     	this.suppressionAlwaysEnabled = enabled;
     }
-
     /**
      * Sets the suppression limit. This is an alias for setMaxOutliers().
      * @param limit
@@ -1158,15 +1401,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     }
 
     /**
-     * Returns the number of output records that will be produced,
-     * zero if this information is not available
-     * @return
-     */
-    protected int getNumOutputRecords() {
-        return this.numOutputRecords;
-    }
-    
-    /**
      * Clones this config and projects everything onto the given subset.<br>
      * - All privacy models will be cloned<br>
      * - Subsets in d-presence will be projected accordingly<br>
@@ -1234,7 +1468,7 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Return
         return result;
     }
-
+    
     /**
      * Returns an internal variant of the class which provides a broader interface
      *
@@ -1275,6 +1509,15 @@ public class ARXConfiguration implements Serializable, Cloneable {
         // Check & return
         if (result == -1) return Integer.MAX_VALUE;
         else return result;
+    }
+
+    /**
+     * Returns the number of output records that will be produced,
+     * zero if this information is not available
+     * @return
+     */
+    protected int getNumOutputRecords() {
+        return this.numOutputRecords;
     }
 
     /**
@@ -1454,4 +1697,6 @@ public class ARXConfiguration implements Serializable, Cloneable {
     protected boolean requires(int requirement) {
         return (this.requirements & requirement) != 0;
     }
+
+
 }

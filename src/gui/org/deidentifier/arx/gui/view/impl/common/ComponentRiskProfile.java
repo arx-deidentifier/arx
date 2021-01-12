@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -610,24 +610,29 @@ public class ComponentRiskProfile {
         }
         int width = (int)Math.round(100d / (double)columns);
         
-        // Add column for labels
-        DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
-        c.setWidth(width + "%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-        if (xAxisTitle != null) c.setText(xAxisTitle);
-        
-        // Add column for profiles
-        for (RiskProfile p : profiles) {
-            if (p.showInTable) {
-                c = new DynamicTableColumn(table, SWT.LEFT);
-                SWTUtil.createColumnWithBarCharts(table, c);
-                c.setWidth(width + "%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
-                c.setText(p.title); //$NON-NLS-1$
+        // TODO: Quick fix, because it seems to not be possible to remove
+        // columns in resetTable() or to just recreate an empty table
+        if (table.getColumnCount() == 0) {
+            
+            // Add column for labels
+            DynamicTableColumn c = new DynamicTableColumn(table, SWT.LEFT);
+            c.setWidth(width + "%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+            if (xAxisTitle != null) c.setText(xAxisTitle);
+            
+            // Add column for profiles
+            for (RiskProfile p : profiles) {
+                if (p.showInTable) {
+                    c = new DynamicTableColumn(table, SWT.LEFT);
+                    SWTUtil.createColumnWithBarCharts(table, c);
+                    c.setWidth(width + "%", "100px"); //$NON-NLS-1$ //$NON-NLS-2$
+                    c.setText(p.title); //$NON-NLS-1$
+                }
             }
-        }
-        
-        // Pack
-        for (final TableColumn col : table.getColumns()) {
-            col.pack();
+            
+            // Pack
+            for (final TableColumn col : table.getColumns()) {
+                col.pack();
+            }
         }
         
         // Update chart

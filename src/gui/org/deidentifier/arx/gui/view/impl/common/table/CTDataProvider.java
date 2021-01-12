@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,19 +20,18 @@ package org.deidentifier.arx.gui.view.impl.common.table;
 import org.eclipse.nebula.widgets.nattable.data.IDataProvider;
 
 /**
- * 
+ * Data provider wrapper
  * @author Fabian Prasser
- *
  */
 public interface CTDataProvider extends IDataProvider{
 
     /**
-     * 
+     * Clear
      */
     public void clear();
     
     /**
-     * 
+     * setData
      *
      * @param data
      */

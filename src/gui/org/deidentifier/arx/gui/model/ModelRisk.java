@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,8 @@ public class ModelRisk implements Serializable {
         CLASSES_PLOT,
         CLASSES_TABLE,
         CELL_BASED,
+        ATTRIBUTES,
+        HIPAA_ATTRIBUTES,
         KEY_SIZE,
         UNIQUES_DANKAR,
         UNIQUES_ALL,

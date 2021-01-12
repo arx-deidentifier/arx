@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,6 +102,8 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         public boolean                          optimizable        = false;
         /** Hierarchy builders */
         public Map<String, HierarchyBuilder<?>> builders;
+        /** Delta accepted when comparing the resulting information loss */
+        public Double                           delta              = null;
                                  
         /**
          * Creates a new instance.
@@ -128,6 +130,25 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
          * @param optimalInformationLoss
          * @param optimalTransformation
          * @param practical
+         * @param statistics
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical,
+                                        int[] statistics) {
+            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics, new String[0]);
+        }
+        
+        /**
+         * Creates a new instance.
+         *
+         * @param config
+         * @param dataset
+         * @param optimalInformationLoss
+         * @param optimalTransformation
+         * @param practical
          * @param responseAttributes
          */
         public ARXAnonymizationTestCase(final ARXConfiguration config,
@@ -140,22 +161,22 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
         }
         
         /**
-         * Creates a new instance.
-         *
+         * Creates a new test case with hierarchy builders
          * @param config
          * @param dataset
-         * @param optimalInformationLoss
-         * @param optimalTransformation
-         * @param practical
-         * @param statistics
+         * @param hierarchyBuilders
+         * @param informationLoss
+         * @param transformation
+         * @param practicalMonotonicity
          */
-        public ARXAnonymizationTestCase(final ARXConfiguration config,
-                                        final String dataset,
-                                        final double optimalInformationLoss,
-                                        final int[] optimalTransformation,
-                                        final boolean practical,
-                                        int[] statistics) {
-            this(config, "", dataset, optimalInformationLoss, optimalTransformation, practical, statistics, new String[0]);
+        public ARXAnonymizationTestCase(ARXConfiguration config,
+                                        String dataset,
+                                        Map<String, HierarchyBuilder<?>> hierarchyBuilders,
+                                        double informationLoss,
+                                        int[] transformation,
+                                        boolean practicalMonotonicity) {
+            this(config, dataset, informationLoss, transformation, practicalMonotonicity, new String[0]);
+            this.builders = hierarchyBuilders;
         }
         
         /**
@@ -186,6 +207,27 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
          * @param optimalInformationLoss
          * @param optimalTransformation
          * @param practical
+         * @param delta
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                                        final String sensitiveAttribute,
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical,
+                                        final Double delta) {
+            this(config, sensitiveAttribute, dataset, optimalInformationLoss, optimalTransformation, practical, null, new String[0], delta);
+        }
+
+        /**
+         * Creates a new instance.
+         *
+         * @param config
+         * @param sensitiveAttribute
+         * @param dataset
+         * @param optimalInformationLoss
+         * @param optimalTransformation
+         * @param practical
          * @param statistics
          * @param responseAttributes
          */
@@ -205,6 +247,56 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             this.practical = practical;
             this.statistics = statistics;
             this.responseAttributes = responseAttributes;
+        }
+        
+        /**
+         * Creates a new instance.
+         *
+         * @param config
+         * @param sensitiveAttribute
+         * @param dataset
+         * @param optimalInformationLoss
+         * @param optimalTransformation
+         * @param practical
+         * @param statistics
+         * @param responseAttributes
+         * @param delta
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                                        final String sensitiveAttribute,
+                                        final String dataset,
+                                        final double optimalInformationLoss,
+                                        final int[] optimalTransformation,
+                                        final boolean practical,
+                                        final int[] statistics,
+                                        final String[] responseAttributes,
+                                        final Double delta) {
+            this(config,
+                 sensitiveAttribute,
+                 dataset,
+                 optimalInformationLoss,
+                 optimalTransformation,
+                 practical,
+                 statistics,
+                 responseAttributes);
+            this.delta = delta;
+        }
+        
+        /**
+         * Constructor for local recoding tests
+         * @param config
+         * @param dataset
+         * @param sensitiveAttribute
+         * @param hashcode
+         */
+        public ARXAnonymizationTestCase(final ARXConfiguration config,
+                                        final String dataset,
+                                        final String sensitiveAttribute,
+                                        final int hashcode) {
+            this.config = config;
+            this.dataset = dataset;
+            this.sensitiveAttribute = sensitiveAttribute;
+            this.hashcode = hashcode;
         }
         
         /**
@@ -251,42 +343,6 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             this.optimalTransformation = optimalTransformation;
             this.practical = practical;
             this.statistics = statistics;
-        }
-        
-        /**
-         * Constructor for local recoding tests
-         * @param config
-         * @param dataset
-         * @param sensitiveAttribute
-         * @param hashcode
-         */
-        public ARXAnonymizationTestCase(final ARXConfiguration config,
-                                        final String dataset,
-                                        final String sensitiveAttribute,
-                                        final int hashcode) {
-            this.config = config;
-            this.dataset = dataset;
-            this.sensitiveAttribute = sensitiveAttribute;
-            this.hashcode = hashcode;
-        }
-        
-        /**
-         * Creates a new test case with hierarchy builders
-         * @param config
-         * @param dataset
-         * @param hierarchyBuilders
-         * @param informationLoss
-         * @param transformation
-         * @param practicalMonotonicity
-         */
-        public ARXAnonymizationTestCase(ARXConfiguration config,
-                                        String dataset,
-                                        Map<String, HierarchyBuilder<?>> hierarchyBuilders,
-                                        double informationLoss,
-                                        int[] transformation,
-                                        boolean practicalMonotonicity) {
-            this(config, dataset, informationLoss, transformation, practicalMonotonicity, new String[0]);
-            this.builders = hierarchyBuilders;
         }
 
         @Override
@@ -519,10 +575,18 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             String lossActual = result.getGlobalOptimum().getHighestScore().toString();
             String lossExpected = testCase.optimalInformationLoss;
             
-            assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
-                         lossActual + "(" + result.getGlobalOptimum().getLowestScore().toString() + ")",
-                         lossExpected,
-                         lossActual);
+            if (testCase.delta != null) {
+                assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
+                        lossActual + "(" + result.getGlobalOptimum().getLowestScore().toString() + ")",
+                        Double.valueOf(lossExpected),
+                        Double.valueOf(lossActual),
+                        testCase.delta);
+            } else {
+                assertEquals(testCase.dataset + "-should: " + lossExpected + " is: " +
+                             lossActual + "(" + result.getGlobalOptimum().getLowestScore().toString() + ")",
+                             lossExpected,
+                             lossActual);
+            }
                          
             if (!Arrays.equals(result.getGlobalOptimum().getTransformation(), testCase.optimalTransformation)) {
                 System.err.println("Note: Information loss equals, but the optimum differs:");
@@ -576,33 +640,6 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
             assertEquals(algorithmConfiguration + ". Mismatch: number of probably anonymous transformations", testCase.statistics[4], statistics[4]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of probably non-anonymous transformations", testCase.statistics[5], statistics[5]);
             assertEquals(algorithmConfiguration + ". Mismatch: number of transformations with utility available", testCase.statistics[6], statistics[6]);
-        }
-    }
-    
-    /**
-     * Appends the given value to the file
-     * @param value
-     * @param file
-     */
-    private void output(String value, String file) {
-        Writer writer = null;
-        try {
-            createHeader(file);
-            writer = new FileWriter(file, true);
-            writer = new BufferedWriter(writer);
-            writer.write(value);
-            writer.write(System.lineSeparator());
-            System.out.println(value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
     
@@ -671,5 +708,32 @@ public abstract class AbstractAnonymizationTest extends AbstractTest {
      */
     private String getAlgorithmConfiguration(ARXConfiguration config) {
         return config.getMonotonicityOfPrivacy() + " monotonicity of privacy with " + config.getMonotonicityOfUtility() + " monotonicity of utility";
+    }
+    
+    /**
+     * Appends the given value to the file
+     * @param value
+     * @param file
+     */
+    private void output(String value, String file) {
+        Writer writer = null;
+        try {
+            createHeader(file);
+            writer = new FileWriter(file, true);
+            writer = new BufferedWriter(writer);
+            writer.write(value);
+            writer.write(System.lineSeparator());
+            System.out.println(value);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (writer != null) {
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

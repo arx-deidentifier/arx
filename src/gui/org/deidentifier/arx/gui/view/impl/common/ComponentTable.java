@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,25 +83,25 @@ public class ComponentTable implements IComponent {
 
     /** The parent. */
     private final Composite         root;
-    
+
     /** The underlying nattable instance. */
-    private final NatTable                table;
-    
+    private final NatTable          table;
+
     /** The context. */
-    private final CTContext context;
-    
+    private final CTContext         context;
+
     /** Data provider. */
-    private final CTDataProvider dataProviderRowHeader;
-    
+    private final CTDataProvider    dataProviderRowHeader;
+
     /** Data provider. */
-    private final CTDataProvider dataProviderColumnHeader;
-    
+    private final CTDataProvider    dataProviderColumnHeader;
+
     /** Data provider. */
-    private final CTDataProvider dataProviderBody;
-    
+    private final CTDataProvider    dataProviderBody;
+
     /** State. */
     private Integer                 selectedRow        = null;
-    
+
     /** State. */
     private Integer                 selectedColumn     = null;
 
@@ -149,16 +149,10 @@ public class ComponentTable implements IComponent {
             
             // Create layers
             bodyLayer = new LayerBody(this.dataProviderBody, config, context);
-            LayerColumnHeader layerColumnHeader = new LayerColumnHeader(root,
-                                                                        dataProviderColumnHeader,
-                                                                        bodyLayer,
-                                                                        config,
-                                                                        context);
+            LayerColumnHeader layerColumnHeader = new LayerColumnHeader(root, dataProviderColumnHeader, bodyLayer, config, context);
             LayerRowHeader layerRowHeader = new LayerRowHeader(root, dataProviderRowHeader, bodyLayer, config, context);
-            CornerLayer layerCorner = new CornerLayer(new DataLayer(new DefaultCornerDataProvider(dataProviderColumnHeader,
-                                                                                                  dataProviderRowHeader)),
-                                                                    layerRowHeader,
-                                                                    layerColumnHeader);
+            CornerLayer layerCorner = new CornerLayer(new DataLayer(new DefaultCornerDataProvider(dataProviderColumnHeader, dataProviderRowHeader)),
+                                                                    layerRowHeader, layerColumnHeader);
             GridLayer gridLayer = new GridLayer(bodyLayer, layerColumnHeader, layerRowHeader, layerCorner);
 
             // Create table
@@ -172,11 +166,7 @@ public class ComponentTable implements IComponent {
 
             // Create layers
             bodyLayer = new LayerBody(dataProviderBody, config, context);
-            LayerColumnHeader layerColumnHeader = new LayerColumnHeader(root,
-                                                                        dataProviderColumnHeader,
-                                                                        bodyLayer,
-                                                                        config,
-                                                                        context);
+            LayerColumnHeader layerColumnHeader = new LayerColumnHeader(root, dataProviderColumnHeader, bodyLayer, config, context);
             CompositeLayer layerComposite = new CompositeLayer(1, 2);
             layerComposite.setChildLayer(GridRegion.BODY, bodyLayer, 0, 1);
             layerComposite.setChildLayer(GridRegion.COLUMN_HEADER, layerColumnHeader, 0, 0);
@@ -228,7 +218,6 @@ public class ComponentTable implements IComponent {
      * Clears the table.
      */
     public void clear() {
-
         this.table.doCommand(new FillLayerResetCommand());
         this.dataProviderBody.clear();
         this.dataProviderColumnHeader.clear();
@@ -236,6 +225,7 @@ public class ComponentTable implements IComponent {
         this.table.refresh();
         this.selectedRow = null;
         this.selectedColumn = null;
+        this.table.redraw();
     }
 
     /**
@@ -281,6 +271,7 @@ public class ComponentTable implements IComponent {
             this.dataProviderBody.getRowCount() == 0) {
             this.selectedRow = null;
         }
+        this.table.redraw();
     }
     
     /**
@@ -289,9 +280,7 @@ public class ComponentTable implements IComponent {
      * @param data
      */
     public void setData(IDataProvider data) {
-        this.setData(data, 
-                     createRowHeaderDataProvider(data.getRowCount()), 
-                     createColumnHeaderDataProvider(data.getColumnCount()));
+        this.setData(data, createRowHeaderDataProvider(data.getRowCount()),  createColumnHeaderDataProvider(data.getColumnCount()));
     }
 
     /**
@@ -301,9 +290,7 @@ public class ComponentTable implements IComponent {
      * @param columns
      */
     public void setData(IDataProvider data, IDataProvider columns) {
-        this.setData(data, 
-                     createRowHeaderDataProvider(data.getRowCount()), 
-                     columns);
+        this.setData(data, createRowHeaderDataProvider(data.getRowCount()), columns);
     }
 
     /**
@@ -313,9 +300,8 @@ public class ComponentTable implements IComponent {
      * @param rows
      * @param columns
      */
-    public void setData(IDataProvider data, 
-                        IDataProvider rows,
-                        IDataProvider columns) {
+    public void setData(IDataProvider data,  IDataProvider rows, IDataProvider columns) {
+        
         // Disable redrawing
         this.root.setRedraw(false);
         
@@ -328,6 +314,7 @@ public class ComponentTable implements IComponent {
         // Redraw
         this.root.setRedraw(true);
         this.root.layout(true);
+        this.table.redraw();
         
         // Reset state
         this.selectedRow = null;
@@ -371,11 +358,8 @@ public class ComponentTable implements IComponent {
      * @param column
      */
     public void setSelection(int row, int column) {
-        this.table.doCommand(new SelectCellCommand(bodyLayer.getSelectionLayer(), 
-                                                   column, 
-                                                   row, 
-                                                   false,
-                                                   false));
+        this.table.doCommand(new SelectCellCommand(bodyLayer.getSelectionLayer(), column, row, false, false));
+        this.table.redraw();
     }
 
     /**
@@ -393,7 +377,7 @@ public class ComponentTable implements IComponent {
         // Set
         int column = arg0.getColumnPosition();
         int row = arg0.getRowPosition();
-        if (column>=0 && row>=0 && row<dataProviderBody.getRowCount() && column<dataProviderBody.getColumnCount()){
+        if (column >= 0 && row >= 0 && row < dataProviderBody.getRowCount() && column < dataProviderBody.getColumnCount()) {
             this.selectedColumn = column;
             this.selectedRow = row;
             fireSelectionEvent();
@@ -417,7 +401,7 @@ public class ComponentTable implements IComponent {
         
         // Set
         int column = arg0.getColumnPositionRanges().iterator().next().start;
-        if (column>=0 && column<dataProviderBody.getColumnCount()){
+        if (column >= 0 && column < dataProviderBody.getColumnCount()) {
             this.selectedColumn = column;
             fireSelectionEvent();
             return true;
@@ -440,7 +424,7 @@ public class ComponentTable implements IComponent {
         
         // Set
         int row = arg0.getRowPositionRanges().iterator().next().start;
-        if (row>=0 && row<dataProviderBody.getRowCount()){
+        if (row >= 0 && row < dataProviderBody.getRowCount()) {
             this.selectedRow = row;
             fireSelectionEvent();
             return true;
@@ -473,17 +457,17 @@ public class ComponentTable implements IComponent {
                 }
             }
         });
-
     }
     
     /**
-     * 
+     * Create a data provider
      *
      * @param data
      * @return
      */
     private IDataProvider createBodyDataProvider(final String[][] data) {
 
+        // Create a ListDataProvider
         return new ListDataProvider<String[]>(Arrays.asList(data), new IColumnAccessor<String[]>(){
 
             @Override
@@ -504,13 +488,14 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * 
+     * Create a data provider
      *
      * @param length
      * @return
      */
     private IDataProvider createColumnHeaderDataProvider(final int length) {
 
+        // Create a DataProvider
         return new IDataProvider(){
 
             @Override
@@ -536,13 +521,14 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * 
+     * Create a data provider
      *
      * @param data
      * @return
      */
     private IDataProvider createColumnHeaderDataProvider(final String[] data) {
 
+        // Create a DataProvider
         return new IDataProvider(){
 
             @Override
@@ -568,13 +554,14 @@ public class ComponentTable implements IComponent {
     }
 
     /**
-     * 
+     * Create a data provider
      *
      * @param length
      * @return
      */
     private IDataProvider createRowHeaderDataProvider(final int length) {
 
+        // Create a data provider
         return new IDataProvider(){
 
             @Override
@@ -600,13 +587,14 @@ public class ComponentTable implements IComponent {
     }
     
     /**
-     * 
+     * Create a data provider
      *
      * @param data
      * @return
      */
     private IDataProvider createRowHeaderDataProvider(final String[] data) {
 
+        // Create a data provider
         return new IDataProvider(){
 
             @Override

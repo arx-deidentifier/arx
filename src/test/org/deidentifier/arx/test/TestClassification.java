@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -150,50 +150,50 @@ public class TestClassification {
         StatisticsClassification classResult = getResult().getOutput().getStatistics().getClassificationPerformance(getFeatures(), getClazz(), config);
 
         // Accuracy
-        assertEquals(0.6953119819640607, classResult.getOriginalAccuracy(), 0d);
-        assertEquals(0.4663152310854718, classResult.getZeroRAccuracy(), 0d);
-        assertEquals(0.6625555334526888, classResult.getAccuracy(), 0d);
+        assertEquals(0.6953119819640607, classResult.getOriginalAccuracy(), 0.000000000000001d);
+        assertEquals(0.4663152310854718, classResult.getZeroRAccuracy(), 0.000000000000001d);
+        assertEquals(0.6625555334526888, classResult.getAccuracy(), 0.000000000000001d);
 
         // Average error
-        assertEquals(0.43014671841651053, classResult.getOriginalAverageError(), 0d);
-        assertEquals(0.5336847689145282, classResult.getZeroRAverageError(), 0d);
-        assertEquals(0.458087061525274, classResult.getAverageError(), 0d);
+        assertEquals(0.43014671841651053, classResult.getOriginalAverageError(), 0.0000000000000001d);
+        assertEquals(0.5336847689145282, classResult.getZeroRAverageError(), 0.000000000000001d);
+        assertEquals(0.458087061525274, classResult.getAverageError(), 0.000000000000001d);
         
         // Sensitivity
-        assertEquals(0.28713811105837683, classResult.getROCCurve("Divorced").getSensitivity(), 0d);
-        assertEquals(0d, classResult.getROCCurve("Married-spouse-absent").getSensitivity(), 0d);
-        assertEquals(0.3349455864570738, classResult.getROCCurve("Widowed").getSensitivity(), 0d);
-        assertEquals(0d, classResult.getROCCurve("Separated").getSensitivity(), 0d);
-        assertEquals(0d, classResult.getROCCurve("Married-AF-spouse").getSensitivity(), 0d);
-        assertEquals(0.8457163170991824, classResult.getROCCurve("Married-civ-spouse").getSensitivity(), 0d);
-        assertEquals(0.678799095208719, classResult.getROCCurve("Never-married").getSensitivity(), 0d);
+        assertEquals(0.28713811105837683, classResult.getROCCurve("Divorced").getSensitivity(), 0.000000000000001d);
+        assertEquals(0d, classResult.getROCCurve("Married-spouse-absent").getSensitivity(), 0.000000000000001d);
+        assertEquals(0.3349455864570738, classResult.getROCCurve("Widowed").getSensitivity(), 0.000000000000001d);
+        assertEquals(0d, classResult.getROCCurve("Separated").getSensitivity(), 0.000000000000001d);
+        assertEquals(0d, classResult.getROCCurve("Married-AF-spouse").getSensitivity(), 0.000000000000001d);
+        assertEquals(0.8457163170991824, classResult.getROCCurve("Married-civ-spouse").getSensitivity(), 0.000000000000001d);
+        assertEquals(0.678799095208719, classResult.getROCCurve("Never-married").getSensitivity(), 0.000000000000001d);
         
         // Specificity
-        assertEquals(0.9507091105287498, classResult.getROCCurve("Divorced").getSpecificity(), 0d);
-        assertEquals(0.9999328678839957, classResult.getROCCurve("Married-spouse-absent").getSpecificity(), 0d);
-        assertEquals(0.991545934890063, classResult.getROCCurve("Widowed").getSpecificity(), 0d);
-        assertEquals(0.9998973411354071, classResult.getROCCurve("Separated").getSpecificity(), 0d);
-        assertEquals(1d, classResult.getROCCurve("Married-AF-spouse").getSpecificity(), 0d);
-        assertEquals(0.6962166863390694, classResult.getROCCurve("Married-civ-spouse").getSpecificity(), 0d);
-        assertEquals(0.8162066940692895, classResult.getROCCurve("Never-married").getSpecificity(), 0d);
+        assertEquals(0.9507091105287498, classResult.getROCCurve("Divorced").getSpecificity(), 0.000000000000001d);
+        assertEquals(0.9999328678839957, classResult.getROCCurve("Married-spouse-absent").getSpecificity(), 0.000000000000001d);
+        assertEquals(0.991545934890063, classResult.getROCCurve("Widowed").getSpecificity(), 0.000000000000001d);
+        assertEquals(0.9998973411354071, classResult.getROCCurve("Separated").getSpecificity(), 0.000000000000001d);
+        assertEquals(1d, classResult.getROCCurve("Married-AF-spouse").getSpecificity(), 0.000000000000001d);
+        assertEquals(0.6962166863390694, classResult.getROCCurve("Married-civ-spouse").getSpecificity(), 0.000000000000001d);
+        assertEquals(0.8162066940692895, classResult.getROCCurve("Never-married").getSpecificity(), 0.000000000000001d);
         
         // Brier score
-        assertEquals(0.10443452758431408, classResult.getROCCurve("Divorced").getBrierScore(), 0d);
-        assertEquals(0.012016040652422648, classResult.getROCCurve("Married-spouse-absent").getBrierScore(), 0d);
-        assertEquals(0.02128820838095078, classResult.getROCCurve("Widowed").getBrierScore(), 0d);
-        assertEquals(0.02923421938927171, classResult.getROCCurve("Separated").getBrierScore(), 0d);
-        assertEquals(6.961954804848942E-4, classResult.getROCCurve("Married-AF-spouse").getBrierScore(), 0d);
-        assertEquals(0.15298256377665254, classResult.getROCCurve("Married-civ-spouse").getBrierScore(), 0d);
-        assertEquals(0.14548728696298602, classResult.getROCCurve("Never-married").getBrierScore(), 0d);
+        assertEquals(0.10443452758431408, classResult.getROCCurve("Divorced").getBrierScore(), 0.000000000000001d);
+        assertEquals(0.012016040652422648, classResult.getROCCurve("Married-spouse-absent").getBrierScore(), 0.000000000000001d);
+        assertEquals(0.02128820838095078, classResult.getROCCurve("Widowed").getBrierScore(), 0.000000000000001d);
+        assertEquals(0.02923421938927171, classResult.getROCCurve("Separated").getBrierScore(), 0.000000000000001d);
+        assertEquals(6.961954804848942E-4, classResult.getROCCurve("Married-AF-spouse").getBrierScore(), 0.000000000000001d);
+        assertEquals(0.15298256377665254, classResult.getROCCurve("Married-civ-spouse").getBrierScore(), 0.000000000000001d);
+        assertEquals(0.14548728696298602, classResult.getROCCurve("Never-married").getBrierScore(), 0.000000000000001d);
 
         // AUC
-        assertEquals(0.7610124597337793, classResult.getROCCurve("Divorced").getAUC(), 0d);
-        assertEquals(0.7158230397421533, classResult.getROCCurve("Married-spouse-absent").getAUC(), 0d);
-        assertEquals(0.9062487311956317, classResult.getROCCurve("Widowed").getAUC(), 0d);
-        assertEquals(0.7386316240248749, classResult.getROCCurve("Separated").getAUC(), 0d);
-        assertEquals(0.5357992040583639, classResult.getROCCurve("Married-AF-spouse").getAUC(), 0d);
-        assertEquals(0.8556273433051558, classResult.getROCCurve("Married-civ-spouse").getAUC(), 0d);
-        assertEquals(0.8405758072618743, classResult.getROCCurve("Never-married").getAUC(), 0d);
+        assertEquals(0.7610124597337793, classResult.getROCCurve("Divorced").getAUC(), 0.000000000000001d);
+        assertEquals(0.7158230397421533, classResult.getROCCurve("Married-spouse-absent").getAUC(), 0.000000000000001d);
+        assertEquals(0.9062487311956317, classResult.getROCCurve("Widowed").getAUC(), 0.000000000000001d);
+        assertEquals(0.7386316240248749, classResult.getROCCurve("Separated").getAUC(), 0.000000000000001d);
+        assertEquals(0.5357992040583639, classResult.getROCCurve("Married-AF-spouse").getAUC(), 0.000000000000001d);
+        assertEquals(0.8556273433051558, classResult.getROCCurve("Married-civ-spouse").getAUC(), 0.000000000000001d);
+        assertEquals(0.8405758072618743, classResult.getROCCurve("Never-married").getAUC(), 0.000000000000001d);
 
         // Other properties
         assertEquals(7, classResult.getNumClasses(), 0d);

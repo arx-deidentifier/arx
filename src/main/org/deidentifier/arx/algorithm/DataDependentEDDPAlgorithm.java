@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,11 +60,13 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param deterministic
      * @param expansionLimit
      * @param epsilonSearch
+     * @param timeLimit
+     * @param stepLimit
      * @return
      */
     public static AbstractAlgorithm create(SolutionSpace<?> solutionSpace, TransformationChecker checker,
-                                           boolean deterministic, int expansionLimit, double epsilonSearch) {
-        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, expansionLimit, epsilonSearch);
+                                           boolean deterministic, int expansionLimit, double epsilonSearch, int timeLimit, int stepLimit) {
+        return new DataDependentEDDPAlgorithm(solutionSpace, checker, deterministic, expansionLimit, epsilonSearch, timeLimit, stepLimit);
     }
 
     /**
@@ -74,14 +76,23 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
      * @param deterministic
      * @param expansionLimit
      * @param epsilonSearch
+     * @param timeLimit
+     * @param stepLimit
      */
     private DataDependentEDDPAlgorithm(SolutionSpace<?> space, TransformationChecker checker,
-                                       boolean deterministic, int expansionLimit, double epsilonSearch) {
-        super(space, checker);
+                                       boolean deterministic, int expansionLimit, double epsilonSearch, int timeLimit, int stepLimit) {
+        
+        // Init
+        super(space, checker, timeLimit, stepLimit);
         this.checker.getHistory().setStorageStrategy(StorageStrategy.ALL);
         this.propertyChecked = space.getPropertyChecked();
         this.solutionSpace.setAnonymityPropertyPredictable(false);
         this.expansionLimit = expansionLimit;
+        
+        // Sanity check
+        if (this.expansionLimit == Integer.MAX_VALUE || stepLimit == Integer.MAX_VALUE) {
+            throw new IllegalArgumentException("You must specify a step limit");
+        }
         
         // Calculate the privacy budget to use for each step
         double epsilonPerStep = 0d;
@@ -100,18 +111,21 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
     
     @Override
     public boolean traverse() {
+
+        // Prepare
+        super.startTraverse();
         
         // Set the top-transformation to be the initial pivot element
         Transformation<?> pivot = solutionSpace.getTop();
         assureChecked(pivot);
         ILScore score = (ILScore)pivot.getInformationLoss();
         
-        // Initialize variables tracking the best of all pivot elements
-        Transformation<?> bestTransformation = pivot;
-        ILScore bestScore = score;
-        
+        // Initialize tracking
         progress(0d);
 
+        // Track optimum
+        trackOptimum(pivot);
+        
         // Initialize the set of candidates, each mapped to its respective score
         Map<Object, ILScore> transformationIDToScore = new HashMap<>();
         transformationIDToScore.put(pivot.getIdentifier(), score);
@@ -127,27 +141,34 @@ public class DataDependentEDDPAlgorithm extends AbstractAlgorithm {
                 Transformation<?> predecessor = solutionSpace.getTransformation(id);
                 assureChecked(predecessor);
                 transformationIDToScore.put(id, (ILScore)predecessor.getInformationLoss());
+                
             }
             
             // Remove the current pivot element from the set of candidates
             transformationIDToScore.remove(pivot.getIdentifier());
             
+            // Stop if no more transformations available
+            if (transformationIDToScore.isEmpty()) {
+                return false;
+            }
+            
             // Select the next pivot element from the set of candidates using the exponential mechanism
             Object id = executeExponentialMechanism(transformationIDToScore, exponentialMechanism);
             pivot = solutionSpace.getTransformation(id);
-            score = transformationIDToScore.get(id);
+           
+            // Track optimum
+            trackOptimum(pivot);
             
-            // Keep track of the best pivot element
-            if (score.compareTo(bestScore) < 0) {
-                bestTransformation = pivot;
-                bestScore = score;
+            // Track progress
+            trackProgressFromLimits((double)step / (double)expansionLimit);
+
+            // Stop if needed
+            if (mustStop()) {
+                return false;
             }
-            
-            progress((double)step / (double)expansionLimit);
         }
         
-        // Track optimum
-        trackOptimum(bestTransformation);
+        // Done
         return false;
     }
     

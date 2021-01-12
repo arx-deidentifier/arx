@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,14 +92,8 @@ public class LayoutRisks implements ILayout {
         centerRight.setLayout(new FillLayout());
 
         // Create views
-        layoutTopLeft = new LayoutRisksTop(centerLeft,
-                                          controller,
-                                          ModelPart.INPUT,
-                                          null);
-        layoutTopRight = new LayoutRisksTop(centerRight,
-                                           controller,
-                                           ModelPart.OUTPUT,
-                                           ModelPart.INPUT);
+        layoutTopLeft = new LayoutRisksTop(centerLeft, controller, ModelPart.INPUT, null);
+        layoutTopRight = new LayoutRisksTop(centerRight, controller, ModelPart.OUTPUT, ModelPart.INPUT);
         
         // Synchronize profiles
         ComponentRiskProfile profile1 = layoutTopLeft.getViewForType(ViewRisksRiskDistribution.class).getRiskProfile();
@@ -116,24 +110,18 @@ public class LayoutRisks implements ILayout {
         // Create bottom composite
         final Composite compositeBottom = new Composite(centerSash, SWT.NONE);
         compositeBottom.setLayout(new FillLayout());
-        final SashForm bottomSash = new SashForm(compositeBottom,
-                                                 SWT.HORIZONTAL | SWT.SMOOTH);
+        final SashForm bottomSash = new SashForm(compositeBottom, SWT.HORIZONTAL | SWT.SMOOTH);
 
+        // Bottom composites
         bottomLeft = new Composite(bottomSash, SWT.NONE);
         bottomLeft.setLayout(new FillLayout());
-
         bottomRight = new Composite(bottomSash, SWT.NONE);
         bottomRight.setLayout(new FillLayout());
 
         // Create views
-        layoutBottomLeft = new LayoutRisksBottom(bottomLeft,
-                                          controller,
-                                          ModelPart.INPUT,
-                                          null);
-        layoutBottomRight = new LayoutRisksBottom(bottomRight,
-                                           controller,
-                                           ModelPart.OUTPUT,
-                                           ModelPart.INPUT);
+        layoutBottomLeft = new LayoutRisksBottom(bottomLeft, controller, ModelPart.INPUT, null);
+        layoutBottomRight = new LayoutRisksBottom(bottomRight, controller, ModelPart.OUTPUT, ModelPart.INPUT);
+        
         // Sync folders
         layoutBottomLeft.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -148,6 +136,7 @@ public class LayoutRisks implements ILayout {
                     layoutTopRight.setSelectionIdex(1);
                 }
                 
+                // Send update
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });
@@ -164,10 +153,10 @@ public class LayoutRisks implements ILayout {
                     layoutTopRight.setSelectionIdex(1);
                 }
                 
+                // Send update
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });
-        
         layoutTopLeft.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(final SelectionEvent arg0) {
@@ -181,6 +170,7 @@ public class LayoutRisks implements ILayout {
                     layoutBottomRight.setSelectionIdex(0);
                 }
                 
+                // Send update
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });
@@ -197,6 +187,7 @@ public class LayoutRisks implements ILayout {
                     layoutBottomRight.setSelectionIdex(0);
                 }
                 
+                // Send update
                 controller.update(new ModelEvent(this, ModelPart.SELECTED_RISK_VISUALIZATION, null));
             }
         });

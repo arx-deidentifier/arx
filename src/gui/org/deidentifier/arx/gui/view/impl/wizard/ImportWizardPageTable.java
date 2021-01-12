@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,7 +75,7 @@ public class ImportWizardPageTable extends WizardPage {
         
         int unit = 1000;
         if (rows < unit) {
-            return new Long(rows).toString();
+            return String.valueOf(rows);
         } else {
             int exp = (int) (Math.log(rows) / Math.log(unit));
             char pre = "kMGTPE".charAt(exp - 1); //$NON-NLS-1$
@@ -253,7 +253,7 @@ public class ImportWizardPageTable extends WizardPage {
         
         if (visible) {
             tableViewer.setInput(wizardImport.getData().getJdbcTables());
-            
+            tableViewer.getControl().redraw();
             /* Mark page as complete when table has been selected before */
             if (wizardImport.getData().getSelectedJdbcTable() != null) {
                 setPageComplete(true);

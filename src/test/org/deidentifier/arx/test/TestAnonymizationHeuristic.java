@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.deidentifier.arx.metric.Metric;
 import org.junit.runner.RunWith;
@@ -29,9 +30,7 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests the heuristic lightning algorithm.
- * 
- * TODO: These tests use a time limit, so they may fail if executed on different hardware 
+ * Tests the heuristic bottom-up lightning algorithm.
  *
  * @author Fabian Prasser
  * @author Florian Kohlmayer
@@ -69,9 +68,9 @@ public class TestAnonymizationHeuristic extends AbstractAnonymizationTest {
              { new ARXAnonymizationTestCase(ARXConfiguration.create(0.04d, Metric.createDiscernabilityMetric(false)).addPrivacyModel(new KAnonymity(100)), "./data/fars.csv", 2.51820865E8, new int[] {1, 2, 1, 3, 1, 2, 3, 1}, true) },
         });
         
-        // Enable heuristic search
+        // Select bottom-up lightning algorithm and set limits
         for (Object[] testcase : cases) {
-            ((ARXAnonymizationTestCase)testcase[0]).config.setHeuristicSearchEnabled(true);
+            ((ARXAnonymizationTestCase)testcase[0]).config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP);
             ((ARXAnonymizationTestCase)testcase[0]).config.setHeuristicSearchTimeLimit(Integer.MAX_VALUE);
             ((ARXAnonymizationTestCase)testcase[0]).config.setHeuristicSearchStepLimit(1000);
         }

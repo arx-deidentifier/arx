@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -358,7 +358,7 @@ public abstract class HierarchyBuilderGroupingBased<T> extends HierarchyBuilder<
             @Override
             public int compare(Level<T> o1,
                                Level<T> o2) {
-                return new Integer(o1.getLevel()).compareTo(new Integer(o2.getLevel()));
+                return Integer.valueOf(o1.getLevel()).compareTo(Integer.valueOf(o2.getLevel()));
             }
         });
         return levels;
