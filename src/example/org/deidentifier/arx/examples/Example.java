@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.deidentifier.arx.examples;
+package org.deidentifier.arx.examples; 
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
