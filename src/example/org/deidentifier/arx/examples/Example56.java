@@ -94,7 +94,7 @@ public class Example56 extends Example {
         // Anonymize
         ARXResult result = anonymizer.anonymize(data, config);
         DataHandle output = result.getOutput();
-        result.optimizeIterativeFast(output, 0.1d);
+        result.optimizeIterativeFast(output, 1d / data.getHandle().getNumRows());
 
         // Perform risk analysis
         System.out.println("\n - Input data");
