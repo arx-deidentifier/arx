@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,18 +20,17 @@ package org.deidentifier.arx.gui.view.impl.common.table;
 import org.eclipse.nebula.widgets.nattable.config.AbstractRegistryConfiguration;
 
 /**
- * 
+ * Table style wrapper
  * @author Fabian Prasser
  *
  */
 public abstract class CTStyleConfiguration extends AbstractRegistryConfiguration implements CTComponent {
 
-    /**  TODO */
+    /**  Configuration */
     private final CTConfiguration config;
     
     /**
-     * 
-     *
+     * Creates a new instance
      * @param config
      */
     public CTStyleConfiguration(CTConfiguration config){

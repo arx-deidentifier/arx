@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,7 +93,7 @@ public class Example38 extends Example {
         ARXConfiguration config = ARXConfiguration.create();
         config.addPrivacyModel(new KAnonymity(2));
         config.setSuppressionLimit(1d);
-        config.setQualityModel(Metric.createLossMetric(0.25d));
+        config.setQualityModel(Metric.createLossMetric(0d));
 
         // Print input
         System.out.println(" - Input data:");
@@ -111,7 +111,7 @@ public class Example38 extends Example {
         try {
             
             // Now apply local recoding to the result
-            result.optimizeIterative(optimum, 0.05d, 100, 0.05d);
+            result.optimizeIterativeFast(optimum, 1d / data.getHandle().getNumRows());
 
             // Print result of local recoding
             System.out.println(" - Local recoding:");

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -160,13 +160,11 @@ public class MainToolBar extends AbstractMenu {
             if (model.getSelectedNode() != null) {
                 toolbar.setRedraw(false);
                 labelSelected.setText(Resources.getMessage("MainToolBar.3") + //$NON-NLS-1$
-                                      Arrays.toString(model.getSelectedNode().getTransformation())); 
-                labelSelected.pack();
+                                      Arrays.toString(model.getSelectedNode().getTransformation()));
                 layout();
                 toolbar.setRedraw(true);
             }
         } else if (event.part == ModelPart.OUTPUT) {
-            
             if (model.getOutputTransformation() != null) {
 
                 // Statistics
@@ -179,24 +177,15 @@ public class MainToolBar extends AbstractMenu {
                 toolbar.setRedraw(false);
                 labelTransformations.setText(Resources.getMessage("MainToolBar.6") + //$NON-NLS-1$
                                              SWTUtil.getPrettyString(statistics.getTransformationsAvailable()));
-                labelTransformations.pack();
-                
                 labelApplied.setText(Resources.getMessage("MainToolBar.4") + //$NON-NLS-1$
                                      Arrays.toString(model.getOutputTransformation().getTransformation()));
-                labelApplied.pack();
-                
-                // Layout
                 layout();
-                
                 toolbar.setRedraw(true);
                 
             } else {
-                
                 reset();
-                
             }
         } else if (event.part == ModelPart.RESULT) {
-            
             if (model.getResult() != null) {
                 
                 // Statistics
@@ -209,33 +198,22 @@ public class MainToolBar extends AbstractMenu {
                 toolbar.setRedraw(false);
                 labelTransformations.setText(Resources.getMessage("MainToolBar.6") + //$NON-NLS-1$
                                              SWTUtil.getPrettyString(statistics.getTransformationsAvailable())); 
-                labelTransformations.pack();
-
                 labelSelected.setText(Resources.getMessage("MainToolBar.7")); //$NON-NLS-1$
-                labelSelected.pack();
-
                 labelApplied.setText(Resources.getMessage("MainToolBar.8")); //$NON-NLS-1$
-                labelApplied.pack();
-                
                 layout();
-                
                 toolbar.setRedraw(true);
             }
-            
         } else if (event.part == ModelPart.SELECTED_ATTRIBUTE) {
 
             // Update label
             String attribute = (String)event.data;
             toolbar.setRedraw(false);
             labelAttribute.setText(Resources.getMessage("MainToolBar.50") + trim(attribute)); //$NON-NLS-1$
-            labelAttribute.pack();
             layout();
             toolbar.setRedraw(true);
             
         }  else if (event.part == ModelPart.MODEL) {
-            
             model = (Model) event.data;
-            
         }
     }
 
@@ -298,6 +276,9 @@ public class MainToolBar extends AbstractMenu {
         }
     }
 
+    /**
+     * Creates the required labels
+     */
     private void createLabels() {
 
         // Add status labels
@@ -348,12 +329,23 @@ public class MainToolBar extends AbstractMenu {
     }
 
     /**
-     * Performs layouting.
+     * Performs a layout update
      */
     private void layout() {
         
         // Disable redrawing
         toolbar.setRedraw(false);
+
+        // Fix rendering issues on MacOS Catalina
+        // This seems to enforce an otherwise lost redraw
+        labelAttribute.setText(labelAttribute.getText());
+        labelTransformations.setText(labelTransformations.getText());
+        labelApplied.setText(labelApplied.getText());
+        labelSelected.setText(labelSelected.getText());
+        labelAttribute.pack();
+        labelTransformations.pack();
+        labelApplied.pack();
+        labelSelected.pack();
         
         // Adjust size of items and composite
         Rectangle bounds = toolbar.getBounds();
@@ -393,6 +385,11 @@ public class MainToolBar extends AbstractMenu {
                 
         // Redraw
         toolbar.setRedraw(true);
+        toolbar.redraw();
+        
+        // Fix rendering issues on MacOS Catalina
+        // This seems to enforce an otherwise lost redraw
+        infoComposite.pack(true);
     }
 
     /**

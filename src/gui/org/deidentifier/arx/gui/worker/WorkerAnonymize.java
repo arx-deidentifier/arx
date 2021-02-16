@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.apache.commons.math3.util.Pair;
 import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
+import org.deidentifier.arx.ARXConfiguration.AnonymizationAlgorithm;
 import org.deidentifier.arx.ARXProcessStatistics;
 import org.deidentifier.arx.ARXResult;
 import org.deidentifier.arx.DataHandle;
@@ -68,9 +69,9 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
 
         // Remember user-defined settings
         ARXConfiguration config = model.getInputConfig().getConfig();
-        boolean heuristicSearchEnabled = config.isHeuristicSearchEnabled();
         int heuristicSearchTimeLimit = config.getHeuristicSearchTimeLimit();
         double suppressionLimit = config.getSuppressionLimit();
+        AnonymizationAlgorithm algorithm = config.getAlgorithm();
         
         // Perform all tasks
         try {
@@ -79,12 +80,32 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
             model.getInputConfig().getInput().getHandle().release();
             
             // Set properties for the heuristic search
-            if (searchType == SearchType.STEP_LIMIT) {
-                config.setHeuristicSearchEnabled(true);
+            if (model.getAnonymizationConfiguration().isStepLimitEnabled()) {
                 config.setHeuristicSearchStepLimit(model.getHeuristicSearchStepLimit());
-            } else if (searchType == SearchType.TIME_LIMIT) {
-                config.setHeuristicSearchEnabled(true);
+                config.setHeuristicSearchTimeLimit(Integer.MAX_VALUE);
+            } else if (model.getAnonymizationConfiguration().isTimeLimitEnabled()) {
                 config.setHeuristicSearchTimeLimit(model.getHeuristicSearchTimeLimit());
+                config.setHeuristicSearchStepLimit(Integer.MAX_VALUE);
+            }
+            
+            // Set algorithm
+            switch (searchType) {
+            case OPTIMAL: 
+                config.setAlgorithm(AnonymizationAlgorithm.OPTIMAL); 
+                break;
+            case HEURISTIC_BINARY:
+                config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BINARY); 
+                break;
+            case HEURISTIC_BOTTOM_UP:
+                config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_BOTTOM_UP); 
+                break;
+            case HEURISTIC_TOP_DOWN:
+                config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_TOP_DOWN); 
+                break;
+            case HEURISTIC_GENETIC:
+                config.setAlgorithm(AnonymizationAlgorithm.BEST_EFFORT_GENETIC); 
+                break;
+            default: throw new IllegalStateException("Invalid search type!");
             }
             
             // Overwrite user-defined settings to prepare local recoding
@@ -134,7 +155,7 @@ public class WorkerAnonymize extends Worker<Pair<Pair<ARXResult, DataHandle>, AR
         } finally {
             
             // Reset to user-defined settings
-            config.setHeuristicSearchEnabled(heuristicSearchEnabled);
+            config.setAlgorithm(algorithm);
             config.setHeuristicSearchTimeLimit(heuristicSearchTimeLimit);
             config.setSuppressionLimit(suppressionLimit);
         }

@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@ import org.deidentifier.arx.ARXAnonymizer;
 import org.deidentifier.arx.ARXConfiguration;
 import org.deidentifier.arx.AttributeType;
 import org.deidentifier.arx.AttributeType.Hierarchy;
+import org.deidentifier.arx.AttributeType.Hierarchy.DefaultHierarchy;
 import org.deidentifier.arx.Data;
+import org.deidentifier.arx.Data.DefaultData;
 import org.deidentifier.arx.criteria.DistinctLDiversity;
 import org.deidentifier.arx.criteria.KAnonymity;
 import org.junit.Assert;
@@ -53,20 +55,20 @@ public class TestIllegalArguments extends AbstractTest {
     public void testEmptyDatasetWithAttributeDefinition() throws IOException {
         try {
             final ARXAnonymizer anonymizer = new ARXAnonymizer();
-            final Data data = Data.create();
-            
-            data.getDefinition()
-                .setAttributeType("age", AttributeType.IDENTIFYING_ATTRIBUTE);
+            final DefaultData data = Data.create();
+            data.add("age");
+            DefaultHierarchy h = Hierarchy.create();
+            h.add("1", "1");
+            data.getDefinition().setAttributeType("age", h);
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setSuppressionLimit(1.2d);
-            anonymizer.anonymize(provider.getData(), config);
+            config.setSuppressionLimit(1d);
+            anonymizer.anonymize(data, config);
             
         } catch (final IllegalArgumentException e) {
             return;
         }
         Assert.fail();
-        
     }
     
     /**
@@ -83,7 +85,7 @@ public class TestIllegalArguments extends AbstractTest {
             
             final ARXConfiguration config = ARXConfiguration.create();
             config.addPrivacyModel(new KAnonymity(2));
-            config.setSuppressionLimit(1.2d);
+            config.setSuppressionLimit(1d);
             anonymizer.anonymize(data, config);
             
         } catch (final IllegalArgumentException e) {

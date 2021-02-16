@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@ public abstract class SolutionSpace<T> {
 
     /** Static property */
     private final PredictiveProperty                              propertySuccessorsPruned    = new PredictiveProperty("Successors pruned",
-                                                                                                                       Direction.UP);         // TODO: Was NONE?
+                                                                                                                       Direction.UP);
     /** Static property */
     private final PredictiveProperty                              propertyVisited             = new PredictiveProperty("Visited",
                                                                                                                        Direction.NONE);

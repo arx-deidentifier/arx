@@ -60,7 +60,6 @@
 /test_hierarchy_zipcode.csv
 /test.csv
 /.gitignore
-/tlfnc
 /adult_subset.csv
 /atus_subset.csv
 /cup_subset.csv
@@ -146,3 +145,5 @@
 /ss13acs_hierarchy_o_SCHG.csv
 /ss13acs_hierarchy_o_SCHL.csv
 /ss13acs_hierarchy_o_SEX.csv
+/highdimensional.csv
+/highdimensional-small.csv

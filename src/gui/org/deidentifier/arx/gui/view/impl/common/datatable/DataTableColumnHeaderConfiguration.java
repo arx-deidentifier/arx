@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 
 package org.deidentifier.arx.gui.view.impl.common.datatable;
 
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.eclipse.nebula.widgets.nattable.config.CellConfigAttributes;
 import org.eclipse.nebula.widgets.nattable.config.IConfigRegistry;
 import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
@@ -54,8 +55,10 @@ public class DataTableColumnHeaderConfiguration extends DefaultColumnHeaderStyle
     public DataTableColumnHeaderConfiguration(DataTableContext context) {
         this.context = context;
         this.font = context.getFont();
-        this.defaultBackground   = context.getController().getResources().getManagedImage("column_header_bg.png"); //$NON-NLS-1$
-        this.selectedBackground = context.getController().getResources().getManagedImage("selected_column_header_bg.png"); //$NON-NLS-1$
+        this.defaultBackground  = SWTUtil.isMac() ? context.getController().getResources().getManagedImage("column_header_bg_macos.png")  //$NON-NLS-1$
+                                                  : context.getController().getResources().getManagedImage("column_header_bg.png"); //$NON-NLS-1$
+        this.selectedBackground = SWTUtil.isMac() ? context.getController().getResources().getManagedImage("selected_column_header_bg_macos.png") //$NON-NLS-1$
+                                                  : context.getController().getResources().getManagedImage("selected_column_header_bg.png"); //$NON-NLS-1$
     }
 
     @Override

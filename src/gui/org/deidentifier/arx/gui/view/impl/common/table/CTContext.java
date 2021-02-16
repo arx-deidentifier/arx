@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,27 +20,27 @@ package org.deidentifier.arx.gui.view.impl.common.table;
 import org.eclipse.nebula.widgets.nattable.NatTable;
 
 /**
- * 
+ * Table context wrapper
  * @author Fabian Prasser
  *
  */
 public abstract class CTContext {
     
-    /**  TODO */
+    /**  Column */
     private boolean columnExpanded = false;
     
-    /**  TODO */
+    /**  Row */
     private boolean rowExpanded = false;
     
     /**
-     * 
+     * Returns table
      *
      * @return
      */
     public abstract NatTable getTable();
 
     /**
-     * 
+     * Returns whether column is expanded
      *
      * @return
      */
@@ -49,7 +49,7 @@ public abstract class CTContext {
     }
 
     /**
-     * 
+     * Returns whether row is expanded 
      *
      * @return
      */
@@ -58,7 +58,7 @@ public abstract class CTContext {
     }
 
     /**
-     * 
+     * Sets column expanded
      *
      * @param columnExpanded
      */
@@ -67,7 +67,7 @@ public abstract class CTContext {
     }
 
     /**
-     * 
+     * Sets row expanded
      *
      * @param rowExpanded
      */

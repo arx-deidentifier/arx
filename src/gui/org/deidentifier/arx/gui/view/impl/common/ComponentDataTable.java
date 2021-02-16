@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.List;
 import org.deidentifier.arx.DataHandle;
 import org.deidentifier.arx.RowSet;
 import org.deidentifier.arx.gui.Controller;
+import org.deidentifier.arx.gui.view.SWTUtil;
 import org.deidentifier.arx.gui.view.def.IComponent;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableBodyLayerStack;
 import org.deidentifier.arx.gui.view.impl.common.datatable.DataTableColumnHeaderConfiguration;
@@ -40,7 +41,7 @@ import org.eclipse.nebula.widgets.nattable.grid.GridRegion;
 import org.eclipse.nebula.widgets.nattable.grid.layer.config.DefaultRowStyleConfiguration;
 import org.eclipse.nebula.widgets.nattable.layer.DataLayer;
 import org.eclipse.nebula.widgets.nattable.layer.ILayerListener;
-import org.eclipse.nebula.widgets.nattable.layer.cell.AggregrateConfigLabelAccumulator;
+import org.eclipse.nebula.widgets.nattable.layer.cell.AggregateConfigLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.layer.cell.ColumnOverrideLabelAccumulator;
 import org.eclipse.nebula.widgets.nattable.painter.cell.CheckBoxPainter;
 import org.eclipse.nebula.widgets.nattable.painter.cell.TextPainter;
@@ -183,6 +184,10 @@ public class ComponentDataTable implements IComponent {
      */
     public void redraw() {
         this.table.redraw();
+        // Fix update issues on MacOS
+        if (SWTUtil.isMac()) {
+            this.table.refresh();
+        }
     }
     
     /**
@@ -345,7 +350,7 @@ public class ComponentDataTable implements IComponent {
         final DataLayer bodyDataLayer = (DataLayer) gridLayer.getBodyDataLayer();
 
         // Add an AggregrateConfigLabelAccumulator 
-        final AggregrateConfigLabelAccumulator aggregrateConfigLabelAccumulator = new AggregrateConfigLabelAccumulator();
+        final AggregateConfigLabelAccumulator aggregrateConfigLabelAccumulator = new AggregateConfigLabelAccumulator();
         bodyDataLayer.setConfigLabelAccumulator(aggregrateConfigLabelAccumulator);
 
         final ColumnOverrideLabelAccumulator columnLabelAccumulator = new ColumnOverrideLabelAccumulator(bodyDataLayer);

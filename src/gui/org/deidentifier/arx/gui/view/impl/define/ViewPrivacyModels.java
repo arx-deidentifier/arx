@@ -1,6 +1,6 @@
 /*
  * ARX: Powerful Data Anonymization
- * Copyright 2012 - 2018 Fabian Prasser and contributors
+ * Copyright 2012 - 2021 Fabian Prasser and contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -234,20 +234,28 @@ public class ViewPrivacyModels implements IView {
     
     @Override
     public void update(ModelEvent event) {
+    	
+    	// Model update
         if (event.part == ModelPart.MODEL) {
             this.model = (Model)event.data;
         } 
         
+        // Other updates
         if (event.part == ModelPart.CRITERION_DEFINITION ||
             event.part == ModelPart.ATTRIBUTE_TYPE ||
             event.part == ModelPart.ATTRIBUTE_TYPE_BULK_UPDATE ||
             event.part == ModelPart.MODEL) {
+        	
+        	// Update table
             if (model!=null) {
                 updateTable();
             }
         }
     }
 
+    /**
+     * Update table
+     */
     private void updateTable() {
         
         root.setRedraw(false);
@@ -351,8 +359,10 @@ public class ViewPrivacyModels implements IView {
             item.setData(c);
         }
 
+        // Update
         layout.updateButtons();
         root.setRedraw(true);
         SWTUtil.enable(root);
+        table.redraw();
     }
 }
