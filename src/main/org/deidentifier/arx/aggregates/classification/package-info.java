@@ -17,9 +17,7 @@
  */
 
 /**
- * This package implementations for analyzing the effect of 
- * anonymization on classification tasks
- * 
+ * This package implements classes for analyzing the effect of anonymization on classification tasks
  * @author Fabian Prasser
  */
 package org.deidentifier.arx.aggregates.classification;
