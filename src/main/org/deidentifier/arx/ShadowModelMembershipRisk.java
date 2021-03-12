@@ -49,7 +49,11 @@ public class ShadowModelMembershipRisk {
     public static void main(String[] args) throws IOException {
         
         // TODO: The current implementation will not work, when a model with a data subset is being used
-        // TODO: Examples: d-Presence or k-Map
+        // TODO: Examples: d-presence or k-map.
+        
+        // TODO: Maybe not anonymize the output again? Might also be realistic to assume that the adversary just
+        // TODO: transforms the data in a way that she feels fits to known output, and doesn't care whether privacy 
+        // TODO: models are satisfied.
         
         // Example scenario
         Data data = createData("adult");
